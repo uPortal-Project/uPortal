@@ -2238,30 +2238,47 @@ public class RDBMUserLayoutStore
    * get&increment method.
    */
   public synchronized int getIncrementIntegerId (String tableName) throws Exception {
-    int id;
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + tableName + "'";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          rs.next();
-          id = rs.getInt("SEQUENCE_VALUE") + 1;
-        } finally {
-          rs.close();
+        for (int i = 0; i < 25; i++) {
+          try {
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sQuery);
+            ResultSet rs = stmt.executeQuery(sQuery);
+            int origId;
+            int nextId;
+            try {
+              rs.next();
+              origId = rs.getInt(1);
+              nextId = origId + 1;
+            } catch (SQLException e) { // If the query fails, there is no hope in h**k
+              throw new Exception("RDBMUserLayoutStore::getIncrementInteger():" + e);
+            } finally {
+              rs.close();
+            }
+            String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + tableName + "'" +
+              " AND SEQUENCE_VALUE=" + origId;
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sInsert);
+            stmt.executeUpdate(sInsert);
+            return  nextId;
+          } catch (SQLException e) {
+            /**
+             * Assume a concurrent update. Try again after some random amount of microseconds.
+             */
+            Thread.sleep(java.lang.StrictMath.round(java.lang.StrictMath.random()*3000 * 1000)); // Retry in up to 3 seconds
+          }
         }
-        String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + id + " WHERE SEQUENCE_NAME='" + tableName + "'";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sInsert);
-        stmt.executeUpdate(sInsert);
       } finally {
         stmt.close();
       }
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       rdbmService.releaseConnection(con);
     }
-    return  id;
+    throw new Exception("Unable to increment counter for " + tableName);
   }
 
   /**
