@@ -45,16 +45,12 @@ import java.security.MessageDigest;
 import javax.naming.*;
 import javax.naming.directory.*;
 
-import jsbook.chapter11.crypt.JCrypt;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
- * credentials against a UNIX encrypted password entry from an LDAP
- * directory.  It expects to be able to query an LDAP directory for
- * a user and get back that user's credentials stored in the userPassword
- * attribute in this form, <b>"{crypt}xdfi9jadkjasjk"</b>, where
- * <b>"{crypt}"</b> indicates that the UNIX crypt function is used to
- * encrypt the cleartext password.</p>
+ * credentials against an LDAP directory.  It expects to be able to bind
+ * to the LDAP directory as the user so that it can authenticate the
+ * user.</p>
  *
  * @author Russell Tokuyama (University of Hawaii)
  * @version $Revision$
@@ -64,15 +60,13 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
   implements SecurityContext {
   
   // Attributes that we're interested in.
-  public static final int ATTR_UID         = 0;
-  public static final int ATTR_CREDENTIALS = ATTR_UID + 1;
-  public static final int ATTR_FIRSTNAME   = ATTR_CREDENTIALS + 1;
-  public static final int ATTR_LASTNAME    = ATTR_FIRSTNAME + 1;
+  public static final int ATTR_UID        = 0;
+  public static final int ATTR_FIRSTNAME  = ATTR_UID + 1;
+  public static final int ATTR_LASTNAME   = ATTR_FIRSTNAME + 1;
 
   private final int SIMPLE_LDAP_SECURITYAUTHTYPE = 0xFF03;
   private static final String[] attributes = {
     "uid",            // user ID
-    "userPassword",   // credentials
     "givenName",      // first name
     "sn"              // last name
   };
@@ -102,34 +96,62 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     this.isauth = false;
     
     LdapServices ldapservices = new LdapServices();
+    String creds = new String(this.myOpaqueCredentials.credentialstring);
     if (this.myPrincipal.UID != null &&
-        this.myOpaqueCredentials.credentialstring != null) {
+        ! this.myPrincipal.UID.trim().equals("") &&
+        this.myOpaqueCredentials.credentialstring != null &&
+        ! creds.trim().equals("")) {
       
       DirContext conn = null;
-      Attributes results = null;
+      NamingEnumeration results = null;
 
       String baseDN = null;
-      String user = null;
+      StringBuffer user = new StringBuffer("(");
       String passwd = null;
       String first_name = null;
       String last_name = null;
       
-      user = "uid=" + this.myPrincipal.UID + "," + ldapservices.getBaseDN();
-      passwd = new String(this.myOpaqueCredentials.credentialstring);
-      Logger.log(Logger.DEBUG, "Looking for " + user);
+      user.append(ldapservices.getUidAttribute()).append("=");
+      user.append(this.myPrincipal.UID).append(")");
+      Logger.log(Logger.DEBUG, "Looking for " + user.toString());
       
+      conn = ldapservices.getConnection();
+      // set up search controls
+      SearchControls searchCtls = new SearchControls();
+      searchCtls.setReturningAttributes(attributes);
+      searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+      
+      // do lookup
       try {
-        conn = ldapservices.getConnection();
-        results = conn.getAttributes(user, attributes);
+        results = conn.search(ldapservices.getBaseDN(), user.toString(), searchCtls);
         if (results != null) {
-          if (! (this.isauth = isAuth(results, passwd)))
-            return;
-          
-          first_name = getAttributeValue(results, ATTR_FIRSTNAME);
-          last_name  = getAttributeValue(results, ATTR_LASTNAME);
-          this.myPrincipal.FullName = first_name + " " + last_name;
-          Logger.log(Logger.DEBUG, "User " + this.myPrincipal.UID +
-                     " is authenticated");
+          Vector entries = new Vector();
+          while (results != null && results.hasMore()) {
+            SearchResult entry = (SearchResult) results.next();
+            StringBuffer dnBuffer = new StringBuffer();
+            dnBuffer.append(entry.getName()).append(", ");
+            dnBuffer.append(ldapservices.getBaseDN());
+            Attributes attrs = entry.getAttributes();
+            first_name = getAttributeValue(attrs, ATTR_FIRSTNAME);
+            last_name  = getAttributeValue(attrs, ATTR_LASTNAME);
+            
+            // re-bind as user
+            conn.removeFromEnvironment(javax.naming.Context.SECURITY_PRINCIPAL);
+            conn.removeFromEnvironment(javax.naming.Context.SECURITY_CREDENTIALS);
+            conn.addToEnvironment(javax.naming.Context.SECURITY_PRINCIPAL,
+                                  dnBuffer.toString() );
+            conn.addToEnvironment(javax.naming.Context.SECURITY_CREDENTIALS,
+                                  this.myOpaqueCredentials.credentialstring);
+            searchCtls = new SearchControls();
+            searchCtls.setReturningAttributes(new String[0]);
+            searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
+            conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
+            this.isauth = true;
+            this.myPrincipal.FullName = first_name + " " + last_name;
+            Logger.log(Logger.DEBUG, "User " + this.myPrincipal.UID +
+                       " (" + this.myPrincipal.FullName +
+                       ") is authenticated");
+          } // while (results != null && results.hasMore())
         }
         else {
           Logger.log(Logger.ERROR, "No such user: " + this.myPrincipal.UID);
@@ -137,7 +159,8 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       }
       catch (Exception e) {
         Logger.log(Logger.ERROR, new PortalSecurityException
-                   ("LDAP Error" + e));
+                   ("LDAP Error" + e + " with user: " +
+                    this.myPrincipal.UID));
       }
       finally {
         ldapservices.releaseConnection(conn);
@@ -155,55 +178,6 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
   
   
   /*--------------------- Helper methods ---------------------*/
-
-  /**
-   * Determines if a user has supplied the correct credentials.  In
-   * this implementation, the UNIX crypt encryption method is used.
-   * The user's credentials are expected to be stored in the userPassword
-   * attribute in this form, <b>"{crypt}xdfi9jadkjasjk"</b>, where
-   * <b>"{crypt}"</b> indicates that the UNIX crypt function is used to
-   * encrypt the cleartext password.</p>
-   *
-   * <p>We use the encrypted portion of the userPassword attribute value
-   * to encrypt the supplied user password and then compare the two.
-   * If they are the same, the user is authenticated.</p>
-   */
-  private boolean isAuth(Attributes results, String passwd)
-    throws NamingException {
-    
-    NamingEnumeration passwords = null;
-    String aPassword = null;
-    String encryptedPassword = null;
-    Object o = null;
-    Attribute attrib = results.get(attributes[ATTR_CREDENTIALS]);
-    
-    if (attrib != null) {
-      // look for the UNIX encrypted password
-      for (passwords = attrib.getAll(); passwords.hasMoreElements(); ) {
-        o = passwords.nextElement();
-        if (o.getClass().getName().trim().equals("[B")) {
-          aPassword = new String((byte[]) o);
-          Logger.log(Logger.DEBUG, "ldap credentials = " + aPassword);
-          if (aPassword != null && aPassword.startsWith("{crypt}")) {
-            aPassword = aPassword.trim().substring(7); // encrypted part
-            encryptedPassword = JCrypt.crypt(aPassword, passwd);
-            if (encryptedPassword.equals(aPassword)) {
-              Logger.log(Logger.INFO, "ldap credentials matched");
-              return true;
-            }
-          }
-        }
-      } // for (passwords...
-    } // if (attrib != null)
-    else {            
-      Logger.log(Logger.ERROR, "Password not found for " +
-                 this.myPrincipal.UID);
-      return false;  // user not authenticated
-    }
-    Logger.log(Logger.DEBUG, "SimpleLdapSecurityContext.isAuth() returning false");
-    return false;
-  }
-  
   /**
    * <p>Return a single value of an attribute from possibly multiple values,
    * grossly ignoring anything else.  If there are no values, then
@@ -213,7 +187,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
    * @param attribute LDAP attribute we are interested in
    * @return a single value of the attribute
    */
-  private String getAttributeValue(Attributes results, int attribute)
+  private String getAttributeValue(Attributes attrs, int attribute)
     throws NamingException {
     NamingEnumeration values = null;
     String aValue = "";
@@ -221,7 +195,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     if (!isAttribute(attribute))
       return aValue;
     
-    Attribute attrib = results.get(attributes[attribute]);
+    Attribute attrib = attrs.get(attributes[attribute]);
     if (attrib != null) {
       for (values = attrib.getAll(); values.hasMoreElements(); ) {
         aValue = (String) values.nextElement();

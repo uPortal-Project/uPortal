@@ -54,15 +54,15 @@ import javax.naming.directory.*;
 public class LdapServices extends GenericPortalBean
 {
   private static boolean bPropsLoaded = false;
-  private static String sLdapContextFactory = null;
-  private static String sLdapUrl            = null;
+  private static String sLdapHost           = null;
+  private static String sLdapPort           = null;
   private static String sLdapBaseDN         = null;
-  private static String sLdapAuthMethod     = null;
-  private static String sLdapPrincipal      = null;
-  private static String sLdapCredentials    = null;
+  private static String sLdapUidAttribute   = null;
+  private static String sLdapManagerDN      = null;
+  private static String sLdapManagerPW      = null;
 
   /**
-   * Constructor which loades LDAP parameters from property file
+   * Constructor that loads LDAP parameters from property file
    * upon first invocation.
    */
   public LdapServices () {
@@ -72,19 +72,20 @@ public class LdapServices extends GenericPortalBean
         Properties ldapProps = new Properties ();
         ldapProps.load (new FileInputStream (ldapPropsFile));
         
-        sLdapContextFactory = ldapProps.getProperty ("ldap.contextFactory");
-        sLdapUrl            = ldapProps.getProperty ("ldap.url");
-        sLdapBaseDN         = ldapProps.getProperty ("ldap.baseDN");
-        sLdapAuthMethod     = ldapProps.getProperty ("ldap.authMethod");
-        sLdapPrincipal      = ldapProps.getProperty ("ldap.principal");
-        sLdapCredentials    = ldapProps.getProperty ("ldap.credentials");
 
-        Logger.log (Logger.DEBUG, "ldap.contextFactory = " + sLdapContextFactory);
-        Logger.log (Logger.DEBUG, "ldap.url = " + sLdapUrl);
-        Logger.log (Logger.DEBUG, "ldap.baseDN = " + sLdapBaseDN);
-        Logger.log (Logger.DEBUG, "ldap.authMethod = " + sLdapAuthMethod);
-        Logger.log (Logger.DEBUG, "ldap.principal = " + sLdapPrincipal);
-        Logger.log (Logger.DEBUG, "ldap.credentials = " + sLdapCredentials);
+        sLdapHost         = ldapProps.getProperty ("ldap.host",         "");
+        sLdapPort         = ldapProps.getProperty ("ldap.port",         "389");
+        sLdapBaseDN       = ldapProps.getProperty ("ldap.baseDN",       "");
+        sLdapUidAttribute = ldapProps.getProperty ("ldap.uidAttribute", "");
+        sLdapManagerDN    = ldapProps.getProperty ("ldap.managerDN",    "");
+        sLdapManagerPW    = ldapProps.getProperty ("ldap.managerPW",    "");
+
+        Logger.log (Logger.DEBUG, "ldap.host = "         + sLdapHost);
+        Logger.log (Logger.DEBUG, "ldap.port = "         + sLdapPort);
+        Logger.log (Logger.DEBUG, "ldap.baseDN = "       + sLdapBaseDN);
+        Logger.log (Logger.DEBUG, "ldap.uidAttribute = " + sLdapUidAttribute);
+        Logger.log (Logger.DEBUG, "ldap.managerDN = "    + sLdapManagerDN);
+        Logger.log (Logger.DEBUG, "ldap.managerPW = "    + sLdapManagerPW);
 
         bPropsLoaded = true;
       }
@@ -98,23 +99,20 @@ public class LdapServices extends GenericPortalBean
    * Gets an LDAP directory context.
    * @return an LDAP directory context object
    */
-  public static DirContext getConnection() {
+  public DirContext getConnection() {
     DirContext conn = null;
     
     try {
       Hashtable env = new Hashtable(5, 0.75f);
-      env.put(Context.INITIAL_CONTEXT_FACTORY, sLdapContextFactory);
-      env.put(Context.PROVIDER_URL,            sLdapUrl);
+      env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+      StringBuffer urlBuffer = new StringBuffer("ldap://");
+      urlBuffer.append(sLdapHost).append(":").append(sLdapPort);
 
-      if (sLdapAuthMethod  != null ||
-          sLdapPrincipal   != null ||
-          sLdapCredentials != null ||
-          sLdapAuthMethod.trim().equalsIgnoreCase("simple")) {
-        env.put(Context.SECURITY_AUTHENTICATION, sLdapAuthMethod);
-        env.put(Context.SECURITY_PRINCIPAL,      sLdapPrincipal);
-        env.put(Context.SECURITY_CREDENTIALS,    sLdapCredentials);
-      }
-      // else default to anonymous bind
+      env.put(Context.PROVIDER_URL, urlBuffer.toString());
+      env.put(Context.SECURITY_AUTHENTICATION, "simple");
+      env.put(Context.SECURITY_PRINCIPAL,      sLdapManagerDN);
+      env.put(Context.SECURITY_CREDENTIALS,    sLdapManagerPW);
+        
       conn = new InitialDirContext(env);
     }
     catch ( Exception e ) {
@@ -128,16 +126,31 @@ public class LdapServices extends GenericPortalBean
    * Gets the base DN used to search the LDAP directory context.
    * @return a DN to use as reference point or context for queries
    */
-  public static String getBaseDN() {
+  public String getBaseDN() {
     return sLdapBaseDN;
+  }
+    
+  /**
+   * Gets the uid attribute used to search the LDAP directory context.
+   * @return a DN to use as reference point or context for queries
+   */
+  public String getUidAttribute() {
+    return sLdapUidAttribute;
   }
     
   /**
    * Releases an LDAP directory context.
    * @param an LDAP directory context object
    */
-  public static void releaseConnection (DirContext conn) {
-    // fake it to look like RdbmServices
+  public void releaseConnection (DirContext conn) {
+    if (conn == null)
+      return;
+    try {
+      conn.close();
+    }
+    catch (Exception e) {
+      Logger.log (Logger.DEBUG, e);
+    }
   }
 }
 
