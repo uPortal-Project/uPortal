@@ -2,8 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
-  <xsl:param name="action">defaultView</xsl:param>
-  <xsl:param name="stepID">1</xsl:param>
+  <xsl:param name="action">channelDef</xsl:param>
+  <xsl:param name="stepID">3</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
   <xsl:variable name="defaultLength">10</xsl:variable>
@@ -536,7 +536,7 @@
               <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
                 <tr>
                   <td class="uportal-text-small" align="center">
-                    <a><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select=".//step/ID"/>';document.workflow.submit()</xsl:attribute>
+                    <a><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="{$stepID}"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name) != ''"><xsl:value-of select="name"/></xsl:when>
                           <xsl:otherwise>Channel Parameters</xsl:otherwise>
@@ -948,6 +948,9 @@
                   <input type="hidden" name="uPCM_action" value="customSettings"/>
                   <input type="hidden" name="uPCM_capture" value="customSettings"/>
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
+                  <input type="hidden" name="uPCM_step" value="{$stepID}"/>
+                  <input type="hidden" name="uPCM_namePrefix" value="{params/step[position()=$stepID]/arbitrary-parameters[1]/paramName-prefix[1]}"/>
+
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
                     <td>Name:<br />
