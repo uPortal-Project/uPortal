@@ -4,9 +4,9 @@
   <xsl:param name="guest">false</xsl:param>
   <xsl:template match="header">
     <xsl:if test="$guest != 'true'">
-      <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=1" class="uportal-navigation-category">Home </a> | <xsl:if test="chan-mgr-chanid">
-      <a href="{$baseActionURL}?uP_root={chan-mgr-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none" class="uportal-navigation-category"> Channel Admin </a> | </xsl:if>
-      <a href="{$baseActionURL}?uP_root={preferences-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none" class="uportal-navigation-category"> Preferences </a> | <a href="logout.jsp" class="uportal-navigation-category"> Logout </a>
+      <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">Home </a> | <xsl:if test="chan-mgr-chanid">
+      <a href="{$baseActionURL}?uP_root={chan-mgr-chanid}" class="uportal-navigation-category"> Channel Admin </a> | </xsl:if>
+      <a href="{$baseActionURL}?uP_root={preferences-chanid}" class="uportal-navigation-category"> Preferences </a> | <a href="logout.jsp" class="uportal-navigation-category"> Logout </a>
     </xsl:if>
   </xsl:template>
 </xsl:stylesheet>
