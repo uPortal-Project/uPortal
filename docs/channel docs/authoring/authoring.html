@@ -1,9 +1,9 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Generator" content="Microsoft Word 97">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.77 [en] (WinNT; U) [Netscape]">
    <title>Writing a channel for the uPortal(tm)</title>
 </head>
 <body>
@@ -16,14 +16,22 @@
 <h2>
 Writing a Channel for the uPortal(tm)</h2>
 by Michael Oltz, Cornell University
-<p>FIRST DRAFT -- last revised 2000/10/08 18:01 EDT&nbsp;
+<p>SECOND DRAFT -- Minor revision (remove explicit DTD on RSS) 2001/04/26
+15:23
 <br>&nbsp;
-<p>I recommend that you start by reading "What is XML and why use it?"
-and "What and why is XSLT?". Both of them contribute to an overview of
-what is involved in developing for the JA-Sig uPortal(tm), and will give
-you an idea of whether you want to read the whole rest of the document
-or what parts.
 <br>&nbsp;
+<br>&nbsp;
+<p>I recommend that you start by reading "The Four Paths to Enlightenment,"
+"What is XML and why use it?" and "What and why is XSLT?". These contribute
+to an overview of what is involved in developing for the JA-Sig uPortal(tm),
+and will give you an idea of whether you want to read the whole rest of
+the document or what parts.
+<br>&nbsp;
+<p><a href="#Enlightenment">The Four Paths to Enlightenment</a>
+<p><a href="#Database">The Channel Database</a>
+<p><a href="#URL">An Ordinary URL</a>
+<p><a href="#RSS">An RSS Document</a>
+<p><a href="#Applet">An Applet</a>
 <p><a href="#XML">What is XML and why use it?</a>
 <p><a href="#decide_info">Decide what information you want to show</a>
 <p><a href="#decide_represent">Decide how to represent the information
@@ -43,6 +51,204 @@ as XML</a>
 <br>&nbsp;
 <br>&nbsp;
 <br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="Enlightenment"></a>The Four Paths to Enlightenment</h3>
+
+<p><br>In the JA-Sig uPortal(tm), each separate little window of information
+that users can show on their pages is called a "channel". uPortal supports
+four basic kinds of channels:
+<ul>
+<li>
+An ordinary URL (i.e. a normal web page)</li>
+
+<li>
+An RSS document</li>
+
+<li>
+An applet</li>
+
+<li>
+A servlet</li>
+</ul>
+This documentation will spend by far the most time discussing the fourth
+kind, the servlet, because it is the most complicated.
+<br>&nbsp;
+<h3>
+<a NAME="Database"></a>The Channel Database</h3>
+Each channel available for subscription at a particular uPortal site, is
+described by an entry in a relational database accessible to the uPortal
+web server. The entry for each channel contains a sequence number, the
+title of the channel, and an XML fragment that describes what the uPortal
+needs to know in order to run the channel. The title of the channel, as
+given in the separate database column, is shown on the "Personalize Channels"
+(channel subscription) page. For some kinds of channels, that title is
+also shown in the channel's titlebar; for other channels, the text shown
+in the titlebar comes from elsewhere, as described in the sections below.
+Here is an example of the XML fragment.
+<p><tt>&lt;channel minimized="false" class="org.jasig.portal.channels.CPageRenderer"></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="News From Nowhere" name="name"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="http://domain.com/news.html"
+name="url"/></tt>
+<br><tt>&lt;/channel></tt>
+<p>All channels must begin and end with the <tt>&lt;channel></tt> element.
+The channel element has two attributes. If "minimized" is "true" then when
+a user displays a portal page with that channel on it, the channel will
+initially be displayed as just a titlebar, and the user must click on the
+appropriate icon to open it. If "minimized" is "false" then the contents
+of the channel will be shown initially as well.&nbsp;
+<p>The "class" attribute gives the name of a Java class which implements
+the channel. For the first three kinds of uPortal channel we will be discussing
+(a URL, an RSS document, and an applet), Java classes have been provided
+with the uPortal software to implement those classes. For the fourth kind
+(a servlet) you must write the class yourself.
+<p>The channel element can contain zero or more <tt>&lt;parameter></tt>
+elements. The parameter elements give more details about what the particular
+instance of the channel is supposed to do. Each parameter element has two
+attributes. The "name" is the name of the parameter, and the "value" is
+the value of it (amazingly appropriate attributes!). The Java class can
+call a method that will get the value of a parameter of a given name, and
+can use that value to control what the Java code does.
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="URL"></a>An Ordinary URL</h3>
+The simplest kind of channel is a URL. All you have to to do, is make and
+maintain a web page, and tell the uPortal what the URL is. If the page
+is being handled by CGI, JSP, etc. on the web server from whence the page
+comes, then you can specify the parameters to be passed on the initial
+fetch of the page. The page cannot use user-specific cookies, because the
+cookies would be coming from the uPortal server rather than the individual
+user's workstation. Nor can it use a stylesheet, because when it's displayed
+through the portal it's not a whole page, just a table inside a page. Also,
+relative links such as "./images/me.gif" will not work, since when it is
+inside the portal page, such links are interpreted relative to the URL
+of the portal itself, rather than relative to the web server your page
+originates from.
+<p>Keep the minimum size of the page small, and keep it simple. Nested
+frames, especially with a form inside, can, on some web browsers, severely
+slow down the time it takes to format the downloaded page for display.
+<p>Use a URL channel when you wish to keep an existing web site in its
+present form, and have a "toehold" to lead people from the portal to the
+other site. Or, when you want to display a small amount of non-user-specific
+but slowly time-varying information, such as a weather report.
+<dl><i>What it looks like in the channel database</i></dl>
+The example given under the "Channel Database" topic above, is for a URL
+channel. Here's the example again.
+<p><tt>&lt;channel minimized="false" class="org.jasig.portal.channels.CPageRenderer"></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="News From Nowhere" name="name"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="http://domain.com/news.html"
+name="url"/></tt>
+<br><tt>&lt;/channel></tt>
+<p>The Java class must be <tt>org.jasig.portal.channels.CPageRenderer</tt>.
+This class will correctly pass through some of the simpler HTML tags, including
+forms. The parameter named "name" will be used in the titlebar of the channel,
+and the "url" parameter gives the URL from where to load the channel's
+contents.
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="RSS"></a>An RSS document</h3>
+Rich Site Summary, or RSS, is a standard developed by Netscape for its
+My Netscape portal. Its purpose is to provide a list of links to a site,
+each link having a title and a description. Thus, the list serves as a
+summary of the more interesting information found on the site being described.
+An RSS document is internally similar in appearance to an HTML web page,
+but the markup is more specialized to its purpose and less flexible. <a href="http://my.netscape.com/publish/help/mnn20/quickstart.html">This
+document</a> gives technical information on the format of an RSS document.&nbsp;
+<p>To create an RSS channel, you create an RSS document (perhaps by hand,
+perhaps by some program that runs at regular intervals), put the document
+on a web server, and tell uPortal where the document is. Here is an example
+of RSS (all the information, including the links, is imaginary)
+<p><tt>&lt;?xml version="1.0"?></tt>
+<p><tt>&lt;!DOCTYPE rss PUBLIC "-//Netscape Communications//DTD RSS 0.91//EN"></tt>
+<p><tt>&nbsp;&lt;rss version="0.91"></tt>
+<p><tt>&nbsp;&nbsp; &lt;channel></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;title>This RSS channel&lt;/title></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;description>Here is a lot of information
+for you, dear</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; surfer of
+the web!&lt;/description></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;link>http://domain.com/&lt;/link></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;language>en&lt;/language></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;item></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;title>The first item in
+the list&lt;/title></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;link>http://domain.com/firstone.html&lt;/link></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;description>Our initial
+thoughts about the Switch Master 5000&lt;/description></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;/item></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;item></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;title>The second item&lt;/title></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;link>http://domain.com/somethingelse.html&lt;/link></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;/item></tt>
+<p><tt>&nbsp;&nbsp; &lt;/channel></tt>
+<p><tt>&nbsp;&lt;/rss></tt>
+<br>&nbsp;
+<br>&nbsp;
+<p>The first four lines (the ?xml tag, the !DOCTYPE tag, the rss tag, and
+the channel tag) must appear in that order and must have the contents as
+shown. Of these four, the first two are header lines and do not have end
+tags. The channel tag and rss tag need to be closed with end tags at the
+bottom of the file. The !DOCTYPE tag may be wrapped around on your screen,
+but there should be EXACTLY ONE space instead of any apparent line breaks
+in that line. Note that you do not have to specify a URL for the DTD of
+RSS, because the uPortal distribution has that DTD file in it and will
+use that copy by default.
+<p>The next four lines after the channel tag (title, description, language,
+and link) must be present. The "en" in the language tag stands for "english".
+If your RSS channel is in another language, the codes for that are shown
+on the RSS documentation page accessible from the link given above.
+<p>Following those four tags, the RSS document may contain from zero to
+fifteen <tt>&lt;item></tt>s. Each item can contain a title, a description,
+and a link to which the user is taken when they click on the item title.
+<p>There are more tags in RSS, which are described in the RSS documentation
+page.
+<p><i>What it looks like in the channel database</i>
+<p><tt>&lt;channel minimized="false" class="org.jasig.portal.channels.CRSSChannel"></tt>
+<br><tt>&nbsp; &lt;parameter value="http://www.cornell.edu/Calendar/CalendarRSS.php3"
+name="url"/></tt>
+<br><tt>&lt;/channel></tt>
+<p>The Java class must be <tt>org.jasig.portal.channels.CRSSChannel</tt>.
+This kind of channel has only one parameter, the URL. The title used in
+the titlebar, will be the text from the <tt>&lt;title></tt> element in
+the RSS document itself.
+<br>&nbsp;
+<h3>
+<a NAME="Applet"></a>An Applet</h3>
+You may have a channel which is an applet, a Java program which runs in
+the user's browser. We will not go into detail here on how to write and
+test an applet; there are many books on the subject. There are no peculiar
+coding requirements for a uPortal applet, nor are there any uPortal-specific
+classes or methods provided especially for calling from your applet code.
+All that the uPortal makes possible, is that it will run that applet in
+a particular window if the user chooses to add it to their layout.
+<p><i>What it looks like in the channel database</i>
+<p><tt>&lt;channel minimized="false" class="org.jasig.portal.channels.CApplet"></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="ABC News" name="name"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="starwave.news.affiliate.Megaticker.class"
+name="code"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="http://webapp.abcnews.com/java/"
+name="codeBase"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="MegaTicker.jar" name="archive"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="141" name="width"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter value="409" name="height"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter name="APPLET.cabbase" value="MegaTicker.cab"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;parameter name="APPLET.station" value="KABC"/></tt>
+<br><tt>&lt;/channel></tt>
+<p>The Java class must be org.jasig.portal.channels.CApplet. There are
+six standard parameters, and one more unusual one. The value of the "name"
+parameter is used in the titlebar of the channel. The values of the other
+five standard parameters, "code", "codeBase", "archive", "width", and "height",
+are the familiar attributes of the HTML <tt>&lt;applet></tt> element. An
+applet element with these attributes will be put inside the channel window
+when the user displays a portal page with this channel on it. The "APPLET."
+parameter is used to specify additional attributes that the <i>particular</i>
+applet being called needs to see. The name of the attribute appears after
+the period. When these attributes are added to the <tt>&lt;applet></tt>
+element at runtime, the "APPLET." part is stripped off the parameter name
+as given in the channel XML.
 <br>&nbsp;
 <h3>
 <a NAME="XML"></a>What is XML and why use it?</h3>
@@ -75,7 +281,7 @@ displayed to the user, and you can generate that XML any way you want.
 <br><a href="edit_regular.xsl">edit_regular.xsl</a>
 <br><a href="editBookmark_regular.xsl">editBookmark_regular.xsl</a>
 <br><a href="view_regular.xsl">view_regular.xsl</a></dl>
-The steps involved in creating a channel are:
+The steps involved in creating a servlet channel are:
 <p>1. Decide what information you want to show in your portal window.
 <p>2. Decide how to represent the information as XML.
 <p>3. Optionally, write a DTD (Document Type Definition) which describes
@@ -404,8 +610,8 @@ and return an instance of the class <tt><a href="ChannelSubscriptionProperties.j
 The latter class contains generic characteristics of your channel: what
 is the user-visible name of the channel? What buttons should be shown in
 its title bar (minimize, close, edit)? Does the channel have a help screen?
-Can the the channel be "torn off" as a new browser window (I don't think
-this is implemented yet)?
+Can the channel be "torn off" as a new browser window (I don't think this
+is implemented yet)?
 <p>The uPortal will call the <tt>getRuntimeProperties()</tt> method immediately
 before requesting the channel to render itself. Your channel class should
 create, initialize and return an object of the class <tt><a href="ChannelRuntimeProperties.java">ChannelRuntimeProperties</a></tt>.&nbsp;
@@ -430,8 +636,8 @@ is the full filepath to the .jsp file that caused your channel to get called
 <br>and a reference to the <tt>HttpServletRequest</tt> object for the current
 <br>request. You can also call the <tt>getParameter </tt>method of your<tt>
 ChannelRuntimeData </tt>object to get at any parameters that are sent in
-to your channel (for example, from someone filling out any form blanks
-you may have put up).
+to your channel (from the <tt>&lt;parameter></tt> elements in the XML defining
+the channel, as described earlier).
 <p>One of the two methods in which "something actually happens" is <tt>receiveEvent.</tt>
 This method is called whenever the user clicks on a control (that the uPortal
 knows about) that affects your channel; for example the minimize, full-screen/restore,
@@ -546,7 +752,8 @@ a stylesheet to the output. The clause as shown here, does three things.
 First, it finds the stylesheet you want to use to transform your XML. The
 "<tt>set</tt>" object is initialized in the constructor; it keeps a list
 of the XML stylesheet(s) you have created for this channel.&nbsp; Secondly,
-the <tt>try</tt> clause makes an <tt>XSLTProcessor</tt> via the factory
+the
+<tt>try</tt> clause makes an <tt>XSLTProcessor</tt> via the factory
 method. Thirdly, it calls the <tt>process </tt>method of the <tt>XSLTProcessor</tt>.
 The three arguments are: (1) an <tt>XSLTInputSource</tt>, which is just
 a wrapper for several different kinds of input you can use. This first
@@ -602,8 +809,8 @@ one wishes to generate as a result, will be able to accommodate your development
 This is the only pattern we will describe here, and we will leave out considerable
 detail. For more information, consult the <a href="http://www.w3.org/TR/xslt">XSLT
 recommendation</a>, or the book <i>XSLT Programmer's Reference</i> by Michael
-Kay (Wrox Press, 1-861003-12-9). At this writing it is the only book whose
-sole subject is XSLT.
+Kay (Wrox Press, 1-861003-12-9). At this writing it is the most comprehensive
+book about XSLT.
 <p>An XSLT program written in the most declarative style, consists primarily
 of a series of <i>templates</i>. Each template describes a pattern of one
 or more nodes in the source XML document to search for. The template also
@@ -753,8 +960,18 @@ named 'timecard'</blockquote>
 payperiod attribute with value '12'</blockquote>
 
 <h3>
-<a NAME="XSLT_commands"></a>Some of the most useful XSLT commands</h3>
-To be written.
+<a NAME="XSLT_commands"></a>Some of the most useful XSLT elements.</h3>
+&lt;xsl:template match="" name="" priority="" mode="">
+<p>This is the primary organizing element of an XSLT spreadsheet. The purpose
+of xsl:template is to describe a particular node, or a particular kind
+of node, within the XML document being processed, and when a match occurs
+(during the searching process described in the section "How XSLT Works"
+above), the material enclosed by the xsl:template is inspected once for
+<i>each</i>
+node that is matched. If the enclosed material has any XSLT elements they
+are evaluated; any HTML commands or raw text are passed on to the XSLT
+output stream.
+<br>&nbsp;
 <br>&nbsp;
 <br>&nbsp;
 <h3>
