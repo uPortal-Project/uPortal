@@ -36,6 +36,9 @@
 package org.jasig.portal.channels;
 
 import java.io.StringWriter;
+import java.util.ResourceBundle;
+import java.text.MessageFormat;
+import java.lang.String;
 
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
@@ -58,6 +61,7 @@ public class CNumberGuess implements IChannel
   ChannelRuntimeData runtimeData = null;
 
   private static final String sslLocation = "CNumberGuess/CNumberGuess.ssl";
+  private static final String bundleLocation = "/org/jasig/portal/channels/CNumberGuess/CNumberGuess";
   private int iMinNum = 0;
   private int iMaxNum = 0;
   private int iGuess = 0;
@@ -103,13 +107,13 @@ public class CNumberGuess implements IChannel
     // (this is done to provide an example of how to use
     //  channel services use)
     if(logger==null) {
-        try {
-            logger=(LogService)sd.getJNDIContext().lookup("/services/org.jasig.portal.services.LogService");
-            LogService.log(LogService.DEBUG,"CNumberGuess::setStaticData() : obtained LogService instance from JNDI");
-        } catch (javax.naming.NamingException ne) {
+        //        try {
+        //  logger=(LogService)sd.getJNDIContext().lookup("/services/org.jasig.portal.services.LogService");
+        //  LogService.log(LogService.DEBUG,"CNumberGuess::setStaticData() : obtained LogService instance from JNDI");
+        //} catch (javax.naming.NamingException ne) {
             logger=LogService.instance();
-            LogService.log(LogService.ERROR, "CNumberGuess()::setStaticData() : unable to botain LogService instance from JNDI: "+ne);
-        }
+            //     LogService.log(LogService.ERROR, "CNumberGuess()::setStaticData() : unable to botain LogService instance from JNDI: "+ne);
+            //}
     }
 
 
@@ -169,10 +173,19 @@ public class CNumberGuess implements IChannel
   {
     String sSuggest = null;
 
+    ResourceBundle l10n = ResourceBundle.getBundle(bundleLocation,runtimeData.getLocales()[0]);
+
     if (iGuess < iAnswer)
-      sSuggest = "higher";
+        sSuggest = l10n.getString("HIGHER");
     else if (iGuess > iAnswer)
-      sSuggest = "lower";
+        sSuggest = l10n.getString("LOWER");
+
+    String GUESS_SUGGEST = MessageFormat.format(l10n.getString("GUESS_SUGGEST"), new  String[] {sSuggest});
+    String THE_ANSWER_WAS_X = MessageFormat.format(l10n.getString("THE_ANSWER_WAS_X"), new  String[] {String.valueOf(iAnswer)});
+    String YOU_GOT_IT_AFTER_X_TRIES = MessageFormat.format(l10n.getString("YOU_GOT_IT_AFTER_X_TRIES"), new String[] {String.valueOf(iGuesses)});
+    String YOU_HAVE_MADE_X_GUESSES = MessageFormat.format(l10n.getString("YOU_HAVE_MADE_X_GUESSES"), new String[] {String.valueOf(iGuesses)});
+    String YOUR_GUESS_OF_GUESS_WAS_INCORRECT = MessageFormat.format(l10n.getString("YOUR_GUESS_OF_GUESS_WAS_INCORRECT"), new String[] {String.valueOf(iGuess)});
+    String I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y = MessageFormat.format(l10n.getString("I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y"), new String[] {String.valueOf(iMinNum), String.valueOf(iMaxNum)});
 
     StringWriter w = new StringWriter ();
     w.write ("<?xml version='1.0'?>\n");
@@ -196,11 +209,18 @@ public class CNumberGuess implements IChannel
 
     w.write ("</content>\n");
 
-    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this);
+    xslt.setResourceBundle(l10n);
     xslt.setXML(w.toString());
     xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    xslt.setStylesheetParameter("guessSuggest", GUESS_SUGGEST);    
+    xslt.setStylesheetParameter("theAnswerWasX", THE_ANSWER_WAS_X);    
+    xslt.setStylesheetParameter("youHaveMadeXGuesses", YOU_HAVE_MADE_X_GUESSES);    
+    xslt.setStylesheetParameter("youGotItAfterXTries", YOU_GOT_IT_AFTER_X_TRIES);
+    xslt.setStylesheetParameter("YourGuessOfGuessWasIncorrect", YOUR_GUESS_OF_GUESS_WAS_INCORRECT);    
+    xslt.setStylesheetParameter("IAmThinkingOfANumberBetweenXAndY", I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y);    
     xslt.transform();
   }
 
