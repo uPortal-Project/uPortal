@@ -56,7 +56,9 @@ import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelFactory;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.ChannelRenderer;
+import org.jasig.portal.ChannelRendererFactory;
+import org.jasig.portal.IChannelRenderer;
+import org.jasig.portal.IChannelRendererFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.EntityIdentifier;
@@ -74,7 +76,6 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.utils.AbsoluteURLFilter;
-import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
@@ -86,8 +87,10 @@ import org.xml.sax.helpers.AttributesImpl;
  * @version $Revision$
  */
 public class RemoteChannel implements IRemoteChannel {
-  // Todo: Should get this thread pool from the ChannelManager!
-  private static final BoundedThreadPool renderThreadPool = new BoundedThreadPool(20, 150, 5);
+  private static final IChannelRendererFactory cChannelRendererFactory = 
+      ChannelRendererFactory.newInstance(
+          RemoteChannel.class.getName()
+          );
 
   protected static final String MARKUP_FRAGMENT_ROOT = "channel";
   protected static final String PERSON_KEY = "org.jasig.portal.security.IPerson";
@@ -212,7 +215,7 @@ public class RemoteChannel implements IRemoteChannel {
       throw new ResourceMissingException("id:" + instanceId, instanceId + " channel", "Unable to find a channel with instance ID '" + instanceId + "'");
     
     // Start rendering
-    ChannelRenderer cr = new ChannelRenderer(channel, runtimeData, renderThreadPool);
+    IChannelRenderer cr = cChannelRendererFactory.newInstance(channel, runtimeData);
     cr.setTimeout(channelDef.getTimeout());
     cr.startRendering();
 
@@ -244,7 +247,7 @@ public class RemoteChannel implements IRemoteChannel {
       
       // Begin chain: channel renderer --> URL filter --> SAX2DOM transformer
       int status = cr.outputRendering(urlFilter);      
-      if (status == ChannelRenderer.RENDERING_TIMED_OUT) {
+      if (status == IChannelRenderer.RENDERING_TIMED_OUT) {
         throw new InternalTimeoutException("The remote channel has timed out");
       }
     } catch (Exception e) {

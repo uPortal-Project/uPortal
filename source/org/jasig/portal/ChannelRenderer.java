@@ -56,11 +56,13 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class ChannelRenderer
+    implements IChannelRenderer
 {
     public static final boolean CACHE_CHANNELS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.cache_channels");
     public static final int RENDERING_SUCCESSFUL=0;
     public static final int RENDERING_FAILED=1;
     public static final int RENDERING_TIMED_OUT=2;
+  
     public static final String[] renderingStatus={"successful","failed","timed out"};
 
     protected IChannel channel;
@@ -87,8 +89,6 @@ public class ChannelRenderer
     protected SetCheckInSemaphore groupSemaphore;
     protected Object groupRenderingKey;
     private Object cacheWriteLock;
-
-
 
     /**
      * Default contstructor
@@ -152,13 +152,13 @@ public class ChannelRenderer
      * @return a key->rendering map for this channel
      */
     Map getChannelCache() {
-	if(channelCache==null) {
-	    if((channelCache=(SoftHashMap)cacheTables.get(channel))==null) {
-		channelCache=new SoftHashMap(1);
-		cacheTables.put(channel,channelCache);
-	    }
-	}
-	return channelCache;
+        if(channelCache==null) {
+            if((channelCache=(SoftHashMap)cacheTables.get(channel))==null) {
+                channelCache=new SoftHashMap(1);
+                cacheTables.put(channel,channelCache);
+            }
+        }
+        return channelCache;
     }
 
 
@@ -171,11 +171,11 @@ public class ChannelRenderer
     }
 
     public void setCacheTables(Map cacheTables) {
-	this.cacheTables=cacheTables;
+        this.cacheTables=cacheTables;
     }
 
     /**
-     * Informs ChannelRenderer that a character caching scheme
+     * Informs IChannelRenderer that a character caching scheme
      * will be used for the current rendering.
      * @param setting a <code>boolean</code> value
      */
@@ -203,6 +203,17 @@ public class ChannelRenderer
         this.groupSemaphore=groupSemaphore;
         this.groupRenderingKey=groupRenderingKey;
         this.startRendering();
+    }
+
+    /**
+     * <p>Cancels the rendering job.
+     **/
+    public void cancelRendering()
+    {
+        if( null != worker )
+        {
+            worker.kill();
+        }
     }
 
   /**
@@ -375,27 +386,27 @@ public class ChannelRenderer
         private boolean decremented;
         private IChannel channel;
         private ChannelRuntimeData rd;
-	private SAX2BufferImpl buffer;
+        private SAX2BufferImpl buffer;
         private String cbuffer;
         private Throwable exc=null;
 
-	protected class ChannelCacheEntry {
-	    private Object buffer;
-	    private final Object validity;
-	    public ChannelCacheEntry() {
-		buffer=null;
-		validity=null;
-	    }
-	    public ChannelCacheEntry(Object buffer,Object validity) {
-		this.buffer=buffer;
-		this.validity=validity;
-	    }
-	}
+        protected class ChannelCacheEntry {
+            private Object buffer;
+            private final Object validity;
+            public ChannelCacheEntry() {
+                buffer=null;
+                validity=null;
+            }
+            public ChannelCacheEntry(Object buffer,Object validity) {
+                this.buffer=buffer;
+                this.validity=validity;
+            }
+        }
 
         public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
             this.channel=ch;  this.rd=runtimeData;
             successful = false; done = false; setRuntimeDataComplete=false;
-	    buffer=null; cbuffer=null;
+            buffer=null; cbuffer=null;
         }
 
         public void setChannel(IChannel ch) {
@@ -417,18 +428,18 @@ public class ChannelRenderer
                     groupSemaphore.checkInAndWaitOn(groupRenderingKey);
                 }
 
-		if(CACHE_CHANNELS) {
-		    // try to obtain rendering from cache
-		    if(channel instanceof ICacheable ) {
-			ChannelCacheKey key=((ICacheable)channel).generateKey();
-			if(key!=null) {
-			    if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-				ChannelCacheEntry entry=(ChannelCacheEntry)systemCache.get(key.getKey());
-				if(entry!=null) {
-				    // found cached page
-				    // check page validity
-				    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
-					// use it
+                if(CACHE_CHANNELS) {
+                    // try to obtain rendering from cache
+                    if(channel instanceof ICacheable ) {
+                        ChannelCacheKey key=((ICacheable)channel).generateKey();
+                        if(key!=null) {
+                            if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+                                ChannelCacheEntry entry=(ChannelCacheEntry)systemCache.get(key.getKey());
+                                if(entry!=null) {
+                                    // found cached page
+                                    // check page validity
+                                    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
+                                        // use it
                                         if(ccacheable && (entry.buffer instanceof String)) {
                                             cbuffer=(String)entry.buffer;
                                             LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached character content based on a key \""+key.getKey()+"\"");
@@ -436,20 +447,20 @@ public class ChannelRenderer
                                             buffer=(SAX2BufferImpl) entry.buffer;
                                             LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
                                         }
-				    } else {
-					// remove it
-					systemCache.remove(key.getKey());
-					LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
-				    }
-				}
-			    } else {
-				// by default we assume INSTANCE_KEY_SCOPE
-				ChannelCacheEntry entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
-				if(entry!=null) {
-				    // found cached page
-				    // check page validity
-				    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
-					// use it
+                                    } else {
+                                        // remove it
+                                        systemCache.remove(key.getKey());
+                                        LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
+                                    }
+                                }
+                            } else {
+                                // by default we assume INSTANCE_KEY_SCOPE
+                                ChannelCacheEntry entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
+                                if(entry!=null) {
+                                    // found cached page
+                                    // check page validity
+                                    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
+                                        // use it
                                         if(ccacheable && (entry.buffer instanceof String)) {
                                             cbuffer=(String)entry.buffer;
                                             LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached character content based on a key \""+key.getKey()+"\"");
@@ -458,14 +469,14 @@ public class ChannelRenderer
                                             buffer=(SAX2BufferImpl) entry.buffer;
                                             LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
                                         }
-				    } else {
-					// remove it
-					getChannelCache().remove(key.getKey());
-					LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
-				    }
-				}
-			    }
-			}
+                                    } else {
+                                        // remove it
+                                        getChannelCache().remove(key.getKey());
+                                        LogService.log(LogService.DEBUG,"ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
+                                    }
+                                }
+                            }
+                        }
 
                         // future work: here we should synchronize based on a particular cache key.
                         // Imagine a VERY popular cache entry timing out, then portal will attempt
@@ -492,17 +503,17 @@ public class ChannelRenderer
                                 }
                             }
                         }
-		    } else {
-			buffer = new SAX2BufferImpl ();
-			buffer.startBuffering();
-			channel.renderXML(buffer);
-		    }
-		} else  {
-		    // in the case when channel cache is not enabled
-		    buffer = new SAX2BufferImpl ();
-		    buffer.startBuffering();
-		    channel.renderXML (buffer);
-		}
+                    } else {
+                        buffer = new SAX2BufferImpl ();
+                        buffer.startBuffering();
+                        channel.renderXML(buffer);
+                    }
+                } else  {
+                    // in the case when channel cache is not enabled
+                    buffer = new SAX2BufferImpl ();
+                    buffer.startBuffering();
+                    channel.renderXML (buffer);
+                }
                 successful = true;
             } catch (Exception e) {
                 if(groupSemaphore!=null) {
@@ -517,9 +528,9 @@ public class ChannelRenderer
             return this.successful;
         }
 
-	public SAX2BufferImpl getBuffer() {
-	    return this.buffer;
-	}
+        public SAX2BufferImpl getBuffer() {
+            return this.buffer;
+        }
 
         /**
          * Returns a character output of a channel rendering.
@@ -532,6 +543,7 @@ public class ChannelRenderer
                 return null;
             }
         }
+       
 
         /**
          * Sets a character cache for the current rendering.

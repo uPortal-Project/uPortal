@@ -70,7 +70,6 @@ import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.SoftHashMap;
-import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
@@ -113,8 +112,12 @@ public class ChannelManager implements LayoutEventListener {
 
     private IAuthorizationPrincipal ap;
 
-    private static BoundedThreadPool renderThreadPool;
-
+    /** Factory used to build all channel renderer objects. */
+    private static final IChannelRendererFactory cChannelRendererFactory = 
+        ChannelRendererFactory.newInstance(
+            ChannelManager.class.getName()
+            );
+    
     public UPFileSpec uPElement;
 
     // global channel rendering cache
@@ -133,15 +136,6 @@ public class ChannelManager implements LayoutEventListener {
         iccListeners=new HashMap();
         channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
         groupedRendering=false;
-        
-        // Set up a thread pool with init parameters from portal.properties
-        if (renderThreadPool == null) {
-            String prefix = this.getClass().getName() + ".threadPool_";
-            int initialThreads = PropertiesManager.getPropertyAsInt(prefix + "initialThreads");
-            int maxThreads = PropertiesManager.getPropertyAsInt(prefix + "maxThreads");
-            int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
-            renderThreadPool = new BoundedThreadPool(initialThreads, maxThreads, threadPriority);
-        }
     }
     
     /**
@@ -226,13 +220,13 @@ public class ChannelManager implements LayoutEventListener {
             SetCheckInSemaphore s0semaphore= new SetCheckInSemaphore(new HashSet(s0));
             for(Iterator gi=s0.iterator();gi.hasNext();) {
                 String channelSubscribeId=(String)gi.next();
-                ChannelRenderer cr=(ChannelRenderer) rendererTable.get(channelSubscribeId);
+                IChannelRenderer cr=(IChannelRenderer) rendererTable.get(channelSubscribeId);
                 cr.startRendering(s0semaphore,channelSubscribeId);
             }
 
             for(Iterator oi=pendingChannels.iterator();oi.hasNext();) {
                 String channelSubscribeId=(String)oi.next();
-                ChannelRenderer cr=(ChannelRenderer) rendererTable.get(channelSubscribeId);
+                IChannelRenderer cr=(IChannelRenderer) rendererTable.get(channelSubscribeId);
                 cr.startRendering();
             }
         }
@@ -290,8 +284,8 @@ public class ChannelManager implements LayoutEventListener {
      * @param ch a <code>ContentHandler</code> value
      */
     public void outputChannel(String channelSubscribeId,ContentHandler ch) {
-        // obtain ChannelRenderer
-        ChannelRenderer cr=(ChannelRenderer)rendererTable.get(channelSubscribeId);
+        // obtain IChannelRenderer
+        IChannelRenderer cr=(IChannelRenderer)rendererTable.get(channelSubscribeId);
         if(cr==null) {
             // channel rendering wasn't started ?
             try {
@@ -307,11 +301,11 @@ public class ChannelManager implements LayoutEventListener {
         try {
             renderingStatus=cr.completeRendering();
         } catch (Throwable t) {
-            handleRenderingError(channelSubscribeId,ch,t,renderingStatus,"encountered problem while trying to complete rendering","ChannelRenderer.completeRendering() threw",false);
+            handleRenderingError(channelSubscribeId,ch,t,renderingStatus,"encountered problem while trying to complete rendering","IChannelRenderer.completeRendering() threw",false);
             return;
         }
 
-        if(renderingStatus==ChannelRenderer.RENDERING_SUCCESSFUL) {
+        if(renderingStatus==IChannelRenderer.RENDERING_SUCCESSFUL) {
             // obtain content
             if(ch instanceof CachingSerializer && this.isCharacterCaching()) {
                 CachingSerializer cs=(CachingSerializer) ch;
@@ -356,7 +350,7 @@ public class ChannelManager implements LayoutEventListener {
                         }
 
                     } else {
-                        handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","ChannelRenderer.getBuffer() returned null",false);
+                        handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
                         return;
                     }                    
                 } else { // non-null characterContent case
@@ -382,7 +376,7 @@ public class ChannelManager implements LayoutEventListener {
                         return;
                     }
                 } else {
-                    handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","ChannelRenderer.getBuffer() returned null",false);
+                    handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
                     return;
                 }
             }
@@ -460,8 +454,22 @@ public class ChannelManager implements LayoutEventListener {
                 }
             } else {
                 // check status
-                if(renderingStatus!=-1) {
-                    message=message+" channelRenderingStatus="+ChannelRenderer.renderingStatus[renderingStatus];
+                message=message+" channelRenderingStatus=";
+                    
+                switch( renderingStatus )
+                {
+                    case IChannelRenderer.RENDERING_SUCCESSFUL:
+                        message += "successful";
+                        break;
+                    case IChannelRenderer.RENDERING_FAILED:
+                        message += "failed";
+                        break;
+                    case IChannelRenderer.RENDERING_TIMED_OUT:
+                        message += "timed out";
+                        break;
+                    default:
+                        message += "UNKNOWN CODE: " + renderingStatus;
+                        break;
                 }
             }
             message=message+" "+technicalMessage;
@@ -477,7 +485,7 @@ public class ChannelManager implements LayoutEventListener {
                     replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,t,technicalMessage,true);
                 }
             } else {
-                if(renderingStatus==ChannelRenderer.RENDERING_TIMED_OUT) {
+                if(renderingStatus==IChannelRenderer.RENDERING_TIMED_OUT) {
                     replaceWithErrorChannel(channelSubscribeId,CError.TIMEOUT_EXCEPTION,t,technicalMessage,true);
                 } else {
                     replaceWithErrorChannel(channelSubscribeId,CError.GENERAL_ERROR,t,technicalMessage,true);
@@ -884,10 +892,10 @@ public class ChannelManager implements LayoutEventListener {
      * Initiate channel rendering cycle.
      *
      * @param channelSubscribeId a <code>String</code> value
-     * @return a <code>ChannelRenderer</code> value
+     * @return a <code>IChannelRenderer</code> value
      * @exception PortalException if an error occurs
      */
-    public ChannelRenderer startChannelRendering(String channelSubscribeId) throws PortalException {
+    public IChannelRenderer startChannelRendering(String channelSubscribeId) throws PortalException {
         return startChannelRendering(channelSubscribeId,false);
     }
 
@@ -897,10 +905,10 @@ public class ChannelManager implements LayoutEventListener {
      * @param channelSubscribeId a <code>String</code> value
      * @param noTimeout a <code>boolean</code> value specifying if the 
      *                  time out rendering control should be disabled.
-     * @return a <code>ChannelRenderer</code> value
+     * @return a <code>IChannelRenderer</code> value
      * @exception PortalException if an error occurs
      */
-    private ChannelRenderer startChannelRendering(String channelSubscribeId,boolean noTimeout) throws PortalException {
+    private IChannelRenderer startChannelRendering(String channelSubscribeId,boolean noTimeout) throws PortalException {
         // see if the channel has already been instantiated
         // see if the channel is cached
         IChannel ch;
@@ -955,7 +963,7 @@ public class ChannelManager implements LayoutEventListener {
             rd.setUPFile(up);
 
         } else {
-            // set up runtime data that will be passed to the ChannelRenderer
+            // set up runtime data that will be passed to the IChannelRenderer
             if(!(ch instanceof IPrivileged)) {
                 rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
@@ -978,7 +986,12 @@ public class ChannelManager implements LayoutEventListener {
             rd.setRenderingAsRoot(true);
         }
 
-        ChannelRenderer cr = new ChannelRenderer(ch,rd,renderThreadPool);
+        // Build a new channel renderer instance.
+        IChannelRenderer cr = cChannelRendererFactory.newInstance(
+            ch,
+            rd
+            );
+        
         cr.setCharacterCacheable(this.isCharacterCaching());
         if(ch instanceof ICacheable) {
             cr.setCacheTables(this.channelCacheTable);
@@ -997,6 +1010,7 @@ public class ChannelManager implements LayoutEventListener {
             cr.startRendering();
         }
         rendererTable.put(channelSubscribeId,cr);
+
         return cr;        
     }
 

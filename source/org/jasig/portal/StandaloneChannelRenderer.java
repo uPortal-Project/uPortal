@@ -52,7 +52,6 @@ import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.threading.UnboundedThreadPool;
 
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels
@@ -62,7 +61,9 @@ import org.jasig.portal.utils.threading.UnboundedThreadPool;
  * @version $Revision$
  */
 
-public class StandaloneChannelRenderer extends BaseChannel {
+public class StandaloneChannelRenderer 
+    extends BaseChannel
+{
     private StylesheetSet set;
     private MediaManager mediaM;
     private String channelName;
@@ -76,8 +77,10 @@ public class StandaloneChannelRenderer extends BaseChannel {
     private static final String chanID="singleton";
     private static final String fs = File.separator;
     private static final String relativeSSLLocation = "/org/jasig/portal/tools/ChannelServlet/ChannelServlet.ssl";
-    private static final UnboundedThreadPool renderThreadPool = new UnboundedThreadPool(10, 5);
-
+    private static final IChannelRendererFactory cChannelRendererFactory = 
+        ChannelRendererFactory.newInstance(
+            StandaloneChannelRenderer.class.getName()
+            );
 
     /**
      * Initializes the channel and calls setStaticData() on the channel.
@@ -90,17 +93,17 @@ public class StandaloneChannelRenderer extends BaseChannel {
      * @param person a user IPerson object
      */
     public void initialize(Hashtable params,String channelName,boolean hasHelp, boolean hasAbout, boolean hasEdit, long timeOut,IPerson person) throws PortalException {
-	this.set = new StylesheetSet(ResourceLoader.getResourceAsURLString(this.getClass(), relativeSSLLocation));
+        this.set = new StylesheetSet(ResourceLoader.getResourceAsURLString(this.getClass(), relativeSSLLocation));
         String mediaPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/media.properties");
         String mimePropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/mime.properties");
         String serializerPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/serializer.properties");
-	this.set.setMediaProps(mediaPropsUrl);
+        this.set.setMediaProps(mediaPropsUrl);
         this.mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
-	this.channelName=channelName;
-	this.hasHelp=hasHelp;
-	this.hasAbout=hasAbout;
-	this.hasEdit=hasEdit;
-	this.timeOut=timeOut;
+        this.channelName=channelName;
+        this.hasHelp=hasHelp;
+        this.hasAbout=hasAbout;
+        this.hasEdit=hasEdit;
+        this.timeOut=timeOut;
 
         ChannelStaticData sd = new ChannelStaticData ();
         sd.setChannelSubscribeId (chanID);
@@ -108,7 +111,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
         sd.setParameters (params);
         // get person object from UsreLayoutManager
         sd.setPerson(person);
-	this.setStaticData(sd);
+        this.setStaticData(sd);
     }
 
     /**
@@ -118,11 +121,11 @@ public class StandaloneChannelRenderer extends BaseChannel {
      * @param res http response
      */
     public void prepare(HttpServletRequest req) throws Exception {
-	if(this instanceof IPrivilegedChannel) {
-	    ((IPrivilegedChannel) this).setPortalControlStructures(pcs);
-	}
-	this.setRuntimeData(getRuntimeData(req));
-	dataIsSet=true;
+        if(this instanceof IPrivilegedChannel) {
+            ((IPrivilegedChannel) this).setPortalControlStructures(pcs);
+        }
+        this.setRuntimeData(getRuntimeData(req));
+        dataIsSet=true;
     }
 
 
@@ -134,55 +137,55 @@ public class StandaloneChannelRenderer extends BaseChannel {
      * @param res http response
      */
     public void render(HttpServletRequest req,HttpServletResponse res) throws Throwable {
-	ChannelRuntimeData rd=null;
-	if(!dataIsSet) {
-	    if(this instanceof IPrivilegedChannel) {
-		((IPrivilegedChannel) this).setPortalControlStructures(pcs);
-	    }
-	    rd=getRuntimeData(req);
-	} else {
-	    dataIsSet=false;
-	}
+        ChannelRuntimeData rd=null;
+        if(!dataIsSet) {
+            if(this instanceof IPrivilegedChannel) {
+                ((IPrivilegedChannel) this).setPortalControlStructures(pcs);
+            }
+            rd=getRuntimeData(req);
+        } else {
+            dataIsSet=false;
+        }
 
-	// start rendering
-	ChannelRenderer cr = new ChannelRenderer (this,rd,renderThreadPool);
+        // start rendering
+        IChannelRenderer cr = cChannelRendererFactory.newInstance( this, rd );
         cr.setTimeout (timeOut);
         cr.startRendering ();
 
-	// set the output mime type
-	res.setContentType(mediaM.getReturnMimeType(req));
-	// set up the serializer
-	BaseMarkupSerializer ser = mediaM.getSerializer(mediaM.getMedia(req), res.getWriter());
-	ser.asContentHandler();
-	// get the framing stylesheet
-	String xslURI = ResourceLoader.getResourceAsURLString(this.getClass(), set.getStylesheetURI(req));
-	try {
+        // set the output mime type
+        res.setContentType(mediaM.getReturnMimeType(req));
+        // set up the serializer
+        BaseMarkupSerializer ser = mediaM.getSerializer(mediaM.getMedia(req), res.getWriter());
+        ser.asContentHandler();
+        // get the framing stylesheet
+        String xslURI = ResourceLoader.getResourceAsURLString(this.getClass(), set.getStylesheetURI(req));
+        try {
             TransformerHandler th=XSLT.getTransformerHandler(xslURI);
             th.setResult(new SAXResult(ser));
-	    org.xml.sax.helpers.AttributesImpl atl = new org.xml.sax.helpers.AttributesImpl();
-	    atl.addAttribute("","name","name", "CDATA", channelName);
-	    // add other attributes: hasHelp, hasAbout, hasEdit
+            org.xml.sax.helpers.AttributesImpl atl = new org.xml.sax.helpers.AttributesImpl();
+            atl.addAttribute("","name","name", "CDATA", channelName);
+            // add other attributes: hasHelp, hasAbout, hasEdit
             th.startDocument();
-	    th.startElement("","channel","channel", atl);
-	    ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(th);
-	    int out=cr.outputRendering(custodian);
-	    if(out==ChannelRenderer.RENDERING_TIMED_OUT) {
-		throw new InternalTimeoutException("The channel has timed out");
-	    }
-	    th.endElement("","channel","channel");
-	    th.endDocument();
-	} catch (InternalPortalException ipe) {
-	    throw ipe.getException();
-	}
+            th.startElement("","channel","channel", atl);
+            ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(th);
+            int out=cr.outputRendering(custodian);
+            if(out==IChannelRenderer.RENDERING_TIMED_OUT) {
+                throw new InternalTimeoutException("The channel has timed out");
+            }
+            th.endElement("","channel","channel");
+            th.endDocument();
+        } catch (InternalPortalException ipe) {
+            throw ipe.getException();
+        }
     }
 
     private ChannelRuntimeData getRuntimeData(HttpServletRequest req) {
-	// construct runtime data
+        // construct runtime data
         this.binfo=new BrowserInfo(req);
 
         Hashtable targetParams = new Hashtable();
         UPFileSpec upfs=new UPFileSpec(req);
-	String channelTarget = upfs.getTargetNodeId();
+        String channelTarget = upfs.getTargetNodeId();
 
         LogService.log(LogService.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
         Enumeration en = req.getParameterNames();
@@ -197,11 +200,11 @@ public class StandaloneChannelRenderer extends BaseChannel {
             }
         }
 
-	ChannelRuntimeData rd= new ChannelRuntimeData();
-	rd.setBrowserInfo(binfo);
+        ChannelRuntimeData rd= new ChannelRuntimeData();
+        rd.setBrowserInfo(binfo);
         rd.setHttpRequestMethod(req.getMethod());
-	if(channelTarget!=null && chanID.equals(channelTarget)) {
-	    rd.setParameters(targetParams);
+        if(channelTarget!=null && chanID.equals(channelTarget)) {
+            rd.setParameters(targetParams);
         }
 
         try {
@@ -210,7 +213,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
             LogService.log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
         }
 
-	return rd;
+        return rd;
 
     }
 }
