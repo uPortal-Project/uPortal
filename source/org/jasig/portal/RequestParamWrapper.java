@@ -7,10 +7,14 @@ package org.jasig.portal;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import org.apache.commons.collections.iterators.IteratorEnumeration;
+import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.properties.PropertiesManager;
 
 import com.oreilly.servlet.multipart.FilePart;
@@ -25,7 +29,7 @@ import com.oreilly.servlet.multipart.ParamPart;
  */
 public class RequestParamWrapper extends HttpServletRequestWrapper {
     
-    protected Hashtable parameters;
+    final protected Map parameters = new Hashtable();
     protected boolean request_verified;
     private static int sizeLimit = -1;
 
@@ -40,22 +44,26 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      *
      * @param source an <code>HttpServletRequest</code> value that's being wrapped.
      * @param request_verified a <code>boolean</code> flag that determines if the request params should be accessable.
-     * @param isPortletAction a <code>boolean</code> flag indicating if a portlet is currently being interacted with (in the case for a probable upload attempt).
      */
-    public RequestParamWrapper(HttpServletRequest source, boolean request_verified, boolean isPortletAction) {
+    public RequestParamWrapper(HttpServletRequest source, boolean request_verified) {
         super(source);        
         setFileUploadMaxSize();
                 
         // leech all of the information from the source request
         this.request_verified = request_verified;
-
-        parameters = new Hashtable();
-
+        
         // only bother with parameter work if should be accessable
         if (request_verified) {
+            //Decode portlet parameters and store them as standard request parameters in this wrapper
+            final Map portletParameters = PortletStateManager.getURLDecodedParameters(source);
+            this.parameters.putAll(portletParameters);
+            
+            //Determine if this is a request for a portlet
+            boolean isPortletRequest = parameters.containsKey(PortletStateManager.ACTION);
+                        
             // parse request body
             String contentType = source.getContentType();
-            if (contentType != null && contentType.startsWith("multipart/form-data") && !isPortletAction) {
+            if (contentType != null && contentType.startsWith("multipart/form-data") && !isPortletRequest) {
                 com.oreilly.servlet.multipart.Part attachmentPart;
                 try {
                     MultipartParser multi = new MultipartParser(source, source.getContentLength(), true, true, "UTF-8");
@@ -147,7 +155,8 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      * @return parameter names
      */
     public Enumeration getParameterNames() {
-        return this.parameters.keys();
+        final Iterator keyItr = this.getParameterMap().keySet().iterator();
+        return new IteratorEnumeration(keyItr);
     }
 
     /**
@@ -158,7 +167,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
     public String[] getParameterValues(String name) {
         Object[] pars = (Object[])this.parameters.get(name);
         if (pars != null && pars instanceof String[]) {
-            return (String[])this.parameters.get(name);
+            return (String[])this.getParameterMap().get(name);
         } else {
             return null;
         }
@@ -179,7 +188,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      * @return Object
      */
     public Object[] getObjectParameterValues(String name) {
-        return (Object[])this.parameters.get(name);
+        return (Object[])this.getParameterMap().get(name);
     }
     
     private void setFileUploadMaxSize() {

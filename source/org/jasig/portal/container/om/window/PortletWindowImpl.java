@@ -14,7 +14,6 @@ import org.apache.pluto.om.entity.PortletEntity;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.om.window.PortletWindowCtrl;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.container.IPortletActionResponse;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 
@@ -30,7 +29,6 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     
     private ChannelRuntimeData runtimeData;
     private HttpServletRequest request;
-    private IPortletActionResponse portletActionResponse;
 
     // PortletWindow methods
     
@@ -70,13 +68,4 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     public HttpServletRequest getHttpServletRequest() {
         return this.request;
     }
-
-    public IPortletActionResponse getPortletActionResponse() {
-        return portletActionResponse;
-    }
-
-    public void setPortletActionResponse(IPortletActionResponse portletActionResponse) {
-        this.portletActionResponse = portletActionResponse;
-    }
-
 }

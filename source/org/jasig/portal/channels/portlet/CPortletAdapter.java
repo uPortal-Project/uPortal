@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletContainer;
+import org.apache.pluto.PortletContainerImpl;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.factory.PortletObjectAccess;
@@ -50,8 +51,6 @@ import org.jasig.portal.IMultithreadedPrivileged;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.container.IPortletActionResponse;
-import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
@@ -75,6 +74,7 @@ import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
+import org.jasig.portal.utils.NullOutputStream;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
 
@@ -390,7 +390,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         try {
             PortletContainerServices.prepare(uniqueContainerName);
             
-            if (cd.isPortletWindowInitialized() && !cd.hasProcessedAction()) {
+            if (cd.isPortletWindowInitialized()) {
 				PortalControlStructures pcs = channelState.getPortalControlStructures();
 				HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
                         cd.getPortletWindow().getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
@@ -411,7 +411,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
  
                 //If portlet is rendering as root, change mode to maximized, otherwise minimized
                 WindowState newWindowState = cd.getNewWindowState();
-                if (rd.isRenderingAsRoot()) {
+                if (!psm.isAction() && rd.isRenderingAsRoot()) {
                     if (WindowState.MINIMIZED.equals(newWindowState)) {
                         pap.changePortletWindowState(WindowState.MINIMIZED);
                     }
@@ -421,7 +421,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 } else if (newWindowState != null) {
                     pap.changePortletWindowState(newWindowState);
                 }
-                else {
+                else if (!psm.isAction()) {
                     pap.changePortletWindowState(WindowState.NORMAL);
                 }
                 cd.setNewWindowState(null);
@@ -433,14 +433,21 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 cd.setNewPortletMode(null);
                 
                 // Process action if this is the targeted channel and the URL is an action URL
-                if (rd.isTargeted() && psm.isAction()) {
+                if (rd.isTargeted() && psm.isAction() && !cd.hasProcessedAction()) {
                     try {
-                        StringWriter sw = new StringWriter();
-                        PrintWriter pw = new PrintWriter(sw);
+                        //Create a sink to throw out and output (portlets can't output content during an action)
+                        PrintWriter pw = new PrintWriter(new NullOutputStream());
                         HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
-                        wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
                         
-                        portletContainer.processPortletAction(portletWindow, wrappedRequest, wrappedResponse);
+                        //See if a WindowState change was requested for an ActionURL
+                        final String newWindowStateName = wrappedRequest.getParameter(PortletStateManager.UP_WINDOW_STATE);
+                        if (newWindowStateName != null) {
+                            pap.changePortletWindowState(new WindowState(newWindowStateName));
+                        }
+                        
+                        HttpServletRequest wrappedPortletRequest = new PortletParameterRequestWrapper(wrappedRequest);
+                        
+                        portletContainer.processPortletAction(portletWindow, wrappedPortletRequest, wrappedResponse);
                         InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
                         cd.setProcessedAction(true);
                     } catch (Exception e) {
@@ -536,8 +543,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             PrintWriter pw = new PrintWriter(sw);
             HttpServletRequest wrappedRequest = ((PortletWindowImpl)cd.getPortletWindow()).getHttpServletRequest();
             HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
-            transferActionResultsToRequest(channelState, wrappedRequest);
-            
+           
                                                 
             // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
@@ -576,7 +582,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             markup = sw.toString();
             
             cd.setProcessedAction(false);
-            ((PortletWindowImpl)cd.getPortletWindow()).setPortletActionResponse(null);
                         
         } catch (Throwable t) {
             // TODO: review this
@@ -717,7 +722,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             //Create the request to send to the portlet container
             HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
                     portletWindow.getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
-            transferActionResultsToRequest(channelState, wrappedRequest);
                 
             //Set up request attributes (user info, portal session, etc...)
             setupRequestAttributes(wrappedRequest, uid);
@@ -730,6 +734,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             
             //Ensure all the data gets written out
             wrappedResponse.flushBuffer();
+            
+            cd.setProcessedAction(false);
                         
         } catch (Throwable t) {
             log.error(t, t);
@@ -743,41 +749,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     // Helper methods
     //***************************************************************  
 
-    /**
-     * Checks if the portlet has just processed an action during this request. If so then the
-     * changes that the portlet may have made during it's processAction are captured from the 
-     * portlet's ActionResponse and they are added to the request that will be passed to the portlet
-     * container.
-     * 
-     * <br>
-     * <b>PortletContainerServices.prepare</b> MUST be called before this method is called.
-     * <br>
-     * <b>PortletContainerServices.release</b> MUST be called after this method is called. 
-     * 
-     * @param channelState The state to read the action information from
-     * @param wrappedRequest The request to add data from the action to
-     */
-    private void transferActionResultsToRequest(ChannelState channelState, HttpServletRequest wrappedRequest) {
-        ChannelData cd = channelState.getChannelData();
-        PortalControlStructures pcs = channelState.getPortalControlStructures();
-        
-        if (cd.hasProcessedAction()) {
-            IPortletActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getPortletActionResponse();
-            PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
-            // Change modes
-            if (actionResponse.getChangedPortletMode() != null) {
-                pap.changePortletMode(actionResponse.getChangedPortletMode());
-            }
-            // Change window states
-            if (actionResponse.getChangedWindowState() != null) {
-                pap.changePortletWindowState(actionResponse.getChangedWindowState());
-            }
-            // Change render parameters
-            Map renderParameters = actionResponse.getRenderParameters();
-            ((ServletRequestImpl)wrappedRequest).setParameters(renderParameters);
-        }
-    }
-    
     /**
      * Retrieves the users password by iterating over
      * the user's security contexts and returning the first

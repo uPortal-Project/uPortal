@@ -12,7 +12,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,12 +25,10 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
-import org.jasig.portal.container.IPortletActionResponse;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IALFolderDescription;
 import org.jasig.portal.layout.IAggregatedUserLayoutManager;
-import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
@@ -191,38 +188,13 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param req the http servlet request
      * @param res the http servlet response
      */
-    private void processPortletActionIfNecessary(HttpServletRequest req, HttpServletResponse res) {
+    protected boolean processPortletActionIfNecessary(HttpServletRequest req, HttpServletResponse res) {
         boolean isPortletAction = (new Boolean(req.getParameter(PortletStateManager.ACTION))).booleanValue();
         if (isPortletAction) {
             this.channelManager.startRenderingCycle(req, res, new UPFileSpec(req));
-            IPortletActionResponse par = (IPortletActionResponse)req.getAttribute(IPortletActionResponse.REQUEST_ATTRIBUTE_KEY);
-
-            final String TRUE = "true";
-            final String FALSE = "false";
-
-            UserPreferences up = uPreferencesManager.getUserPreferences();
-            StructureStylesheetUserPreferences ssup = up.getStructureStylesheetUserPreferences();
-            ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
-            String targetNodeId = channelManager.getChannelTarget();
-
-            if (par != null) {
-                WindowState changedWindowState = par.getChangedWindowState();
-                if (changedWindowState != null) {
-                    final String USER_LAYOUT_ROOT = "userLayoutRoot";
-                    final String MINIMIZED = "minimized";
-
-                    if (WindowState.NORMAL.equals(changedWindowState)) {
-                        ssup.putParameterValue(USER_LAYOUT_ROOT, IUserLayout.ROOT_NODE_NAME);
-                        tsup.setChannelAttributeValue(targetNodeId, MINIMIZED, FALSE);
-                    } else if (WindowState.MAXIMIZED.equals(changedWindowState)) {
-                        ssup.putParameterValue(USER_LAYOUT_ROOT, targetNodeId);
-                        tsup.setChannelAttributeValue(targetNodeId, MINIMIZED, FALSE);
-                    } else if (WindowState.MINIMIZED.equals(changedWindowState)) {
-                        tsup.setChannelAttributeValue(targetNodeId, MINIMIZED, TRUE);
-                    }
-                }
-            }
         }
+        
+        return isPortletAction;
     }
 
     /**
@@ -308,11 +280,6 @@ public class UserInstance implements HttpSessionBindingListener {
                     } catch (PortalException pe) {
                         log.error("UserInstance.renderState(): processUserLayoutParameters() threw an exception - ", pe);
                     }
-                    
-                    // If this is a request to process a portlet action, do it now before the
-                    // rendering process so that the portlet can introduce changes to the window
-                    // state or even redirect the user to a new location.
-                    processPortletActionIfNecessary(req, res);
 
 
                     // determine uPElement (optimistic prediction) --end

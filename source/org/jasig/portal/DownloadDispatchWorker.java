@@ -76,8 +76,6 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 rd.setBrowserInfo(new BrowserInfo(req));
                 rd.setHttpRequestMethod(req.getMethod());
 				rd.setRemoteAddress(req.getRemoteAddr());
-                // just give a default baseActionURL
-                // this value should never really be used
                 rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,channelTarget,null));
                 
                 if (ch instanceof org.jasig.portal.IMimeResponse) {
@@ -134,6 +132,9 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                         }
                     }
                 } else if (ch instanceof org.jasig.portal.IDirectResponse) {
+                    //We are allowing the rendering of URLs in the IDirectResponse interface
+                    //so the tag needs to be set for the uPfile
+                    rd.getUPFile().setTagId(PortalSessionManager.INTERNAL_TAG_VALUE);
                     rd.setTargeted(true);
                     ch.setRuntimeData(rd);
                     

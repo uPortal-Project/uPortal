@@ -12,7 +12,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Random;
 import java.util.Set;
 
@@ -27,7 +26,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
-import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.ResourceLoader;
@@ -218,6 +216,9 @@ public class PortalSessionManager extends HttpServlet {
                     log.debug("PortalSessionManager::doGet() : request verified: "
                             + request_verified);
             }
+            else {
+                request_verified = true;
+            }
 
             try {
                 UserInstance userInstance = null;
@@ -229,11 +230,19 @@ public class PortalSessionManager extends HttpServlet {
                 	ExceptionHelper.generateErrorPage(res,e);
                 	return;
                 }
-
+                
+                final RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified);
+                
+                //If the request is for a portlet and an action request run that portlet's processAction 
+                final boolean didAction = userInstance.processPortletActionIfNecessary(wrappedRequest, res);
+                
+                //If an action was performed a redirect will be issued to the HttpResponse so this request won't render anything
+                if (didAction)
+                    return;
 
                 // fire away
                 if(ALLOW_REPEATED_REQUESTS) {
-                    userInstance.writeContent(new RequestParamWrapper(req,true, false),res);
+                    userInstance.writeContent(wrappedRequest, res);
                 } else {
                     // generate and register a new tag
                     String newTag=Long.toHexString(randomGenerator.nextLong());
@@ -245,14 +254,7 @@ public class PortalSessionManager extends HttpServlet {
                         log.error("PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
                     }
                     
-                    // need to decode before calling RequestParamWrapper due to potential portlet upload
-                    Hashtable params = PortletStateManager.getURLDecodedParameters(req);
-                    // do we have the uP_portlet_action parameter?
-                    boolean isPortletAction = params.containsKey(PortletStateManager.ACTION);
-                    RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified, isPortletAction);
- 			        wrappedRequest.getParameterMap().putAll(params);
-
-                    userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
+					userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }
             } catch (Exception e) {
             	ExceptionHelper.genericTopHandler(Errors.bug,e);

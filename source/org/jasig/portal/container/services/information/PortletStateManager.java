@@ -26,7 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.UserInstance;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.utils.CommonUtils;
@@ -58,6 +60,7 @@ public class PortletStateManager {
 	public static final String UP_HELP_TARGET = "uP_help_target";
 	public static final String UP_EDIT_TARGET = "uP_edit_target";
 	public static final String UP_VIEW_TARGET = "uP_view_target";
+    public static final String UP_WINDOW_STATE = "uP_window_state";
 	public static final String MIN_CHAN_ID = "minimized_channelId";
 	
     public static final String UP_PARAM_PREFIX = "uP_";
@@ -462,6 +465,20 @@ public class PortletStateManager {
 		  windowStates.put(getKey(window)+PREV_STATE, prevState);
 		// set current state
 	    windowStates.put(getKey(window)+STATE, state.toString() );
+        
+        //Ensure the uPFile for the window is setup appropriately for the window state
+        try {
+            final PortletWindowImpl windowImpl = (PortletWindowImpl)window;
+            final ChannelRuntimeData runtimeData = windowImpl.getChannelRuntimeData();
+            
+            if (!PortalContextProviderImpl.EXCLUSIVE.equals(state)) {
+                runtimeData.getUPFile().setMethod(UPFileSpec.RENDER_METHOD);
+                runtimeData.getUPFile().setMethodNodeId(UserInstance.USER_LAYOUT_ROOT_NODE);
+            }
+        }
+        catch (PortalException pe) {
+        	log.error("Error setting the uPFileSpec for a non-EXCLUSIVE URL", pe);
+        }            
 	}
 
 
@@ -471,78 +488,102 @@ public class PortletStateManager {
 	  * PortletWindow
 	  */ 
 	public String toString() {
-		
-		if ( windowOfAction == null ) return "";
+        if (windowOfAction == null)
+            return "";
 
-		StringBuffer url = new StringBuffer();
-		
-		String windowId = windowOfAction.getId().toString();
-		
-        if ( nextAction )
-            url.append(ACTION+"=true&");
+        StringBuffer url = new StringBuffer();
+
+        String windowId = windowOfAction.getId().toString();
+
+        if (nextAction)
+            url.append(ACTION + "=true&");
         else
-            url.append(ACTION+"=false&");
-		
-		// Window state
-		if ( nextState != null ) {
-			
-		 WindowState curState = getState(windowOfAction);
-				
-		 if ( nextState.equals(WindowState.MINIMIZED) )
-		  url.append(UP_TCATTR+"="+MINIMIZED+"&"+MIN_CHAN_ID+"="+windowId+"&"+MINIMIZED+"_"+windowId+"_value=true");
-		 else if ( nextState.equals(WindowState.NORMAL) && curState.equals(WindowState.MINIMIZED) )
-		  url.append(UP_TCATTR+"="+MINIMIZED+"&"+MIN_CHAN_ID+"="+windowId+"&"+MINIMIZED+"_"+windowId+"_value=false");
-		 else if ( nextState.equals(WindowState.NORMAL) && curState.equals(WindowState.MAXIMIZED) )
-		  url.append(UP_ROOT+"="+ROOT);
-		 else if ( nextState.equals(WindowState.MAXIMIZED) )
-		  url.append(UP_ROOT+"="+windowId); 
-		  
-		  url.append("&");  
-		}  
-		  
-		
-		  
-        //	Portlet mode
-        if ( nextMode != null ) {
-		
-		  if ( nextMode.equals(PortletMode.EDIT) )
-		     url.append(UP_EDIT_TARGET+"="+windowId);  
-		  else if ( nextMode.equals(PortletMode.HELP) ) 
-		     url.append(UP_HELP_TARGET+"="+windowId); 
-		  else if ( nextMode.equals(PortletMode.VIEW) ) 
-			 url.append(UP_VIEW_TARGET+"="+windowId);  	    	   
-	   
+            url.append(ACTION + "=false&");
 
-		  url.append("&");   
+        // Window state
+        if (nextState != null) {
+            if (nextAction) {
+                url.append(UP_WINDOW_STATE + "=" + nextState + "&");
+            }
+            else {
+                final WindowState curState;
+                if (isAction())
+                    //Generating a URL during an action means the action is
+                    //complete and this is the re-direct. We are actually interested
+                    //in the previous WindowState which is the state the last
+                    //render call took place in.
+                    curState = getPrevState(windowOfAction);
+                else
+                    curState = getState(windowOfAction);
+                
+                if (!nextState.equals(curState)) {
+                    
+                    //Switching to MINIMIZED, Goal is not focused and minimized
+                    if (WindowState.MINIMIZED.equals(nextState)) {
+                        url.append(UP_TCATTR + "=" + MINIMIZED + "&");
+                        url.append(MIN_CHAN_ID + "=" + windowId + "&");
+                        url.append(MINIMIZED + "_" + windowId + "_value=true&");
+                    }
+                    //Switching to NORMAL, Goal is not focused and not minimized
+                    else  if (WindowState.NORMAL.equals(nextState)) {
+                        url.append(UP_ROOT + "=" + ROOT + "&");
+                    }
+                    //Switching to MAXIMIZED, Goal is focused and not minimized
+                    else if (WindowState.MAXIMIZED.equals(nextState)) {
+                        url.append(UP_ROOT + "=" + windowId + "&");
+                    }
+                    
+                    //If our last state was minimized un-minimize it
+                    if (WindowState.MINIMIZED.equals(curState) && !PortalContextProviderImpl.EXCLUSIVE.equals(nextState)) {
+                        url.append(UP_TCATTR + "=" + MINIMIZED + "&");
+                        url.append(MIN_CHAN_ID + "=" + windowId + "&");
+                        url.append(MINIMIZED + "_" + windowId + "_value=false&");
+                    }
+                }
+            }
         }
-        
-        
+
+        //	Portlet mode
+        if (nextMode != null) {
+
+            if (nextMode.equals(PortletMode.EDIT))
+                url.append(UP_EDIT_TARGET + "=" + windowId);
+            else if (nextMode.equals(PortletMode.HELP))
+                url.append(UP_HELP_TARGET + "=" + windowId);
+            else if (nextMode.equals(PortletMode.VIEW))
+                url.append(UP_VIEW_TARGET + "=" + windowId);
+
+            url.append("&");
+        }
+
         // Other parameters  
-		Iterator keys = params.keySet().iterator();
-		while ( keys.hasNext() ) {
-			String name = (String) keys.next();
-			Object value = params.get(name);
-            String[] values = (value instanceof String[]) ? (String[]) value : new String[] {value.toString()};
-			for ( int i = 0; i < values.length; i++ ) {
-				 url.append(name).append("=").append(values[i]);
-				 url.append("&");
-			} 
-		}
-   
+        Iterator keys = params.keySet().iterator();
+        while (keys.hasNext()) {
+            String name = (String)keys.next();
+            Object value = params.get(name);
+            String[] values = (value instanceof String[]) ? (String[])value : new String[] { value.toString() };
+            for (int i = 0; i < values.length; i++) {
+                url.append(name).append("=").append(values[i]);
+                url.append("&");
+            }
+        }
+
         String strURL = url.toString();
-        while ( strURL.endsWith("&") )
-         strURL = strURL.substring(0,strURL.lastIndexOf("&"));
-		
-		return strURL;
-	} 
+        while (strURL.endsWith("&"))
+            strURL = strURL.substring(0, strURL.lastIndexOf("&"));
+
+        return strURL;
+    } 
 	
     public String getActionURL() {
         final StringBuffer actionUrl = new StringBuffer();
         final WindowState curState = getState(windowOfAction);
         final String encodedUrlParams = encodeURLParameters(this.toString());
-        
+        final StringBuffer urlEncodedParams = new StringBuffer();
+
+        //Generate the portlet encoded parameter string
         if (encodedUrlParams.length() > 0) {
-            actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_BEG);
+            urlEncodedParams.append(UPFileSpec.PORTLET_PARAMS_DELIM_BEG);
             
             final String urlEncodedUrlParams;
             try {
@@ -550,30 +591,35 @@ public class PortletStateManager {
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
-            actionUrl.append(urlEncodedUrlParams);
+            urlEncodedParams.append(urlEncodedUrlParams);
             
-            actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_END);
+            urlEncodedParams.append(UPFileSpec.PORTLET_PARAMS_DELIM_END);
+            urlEncodedParams.append(UPFileSpec.PORTAL_URL_SEPARATOR);
         }
         
+        //Get the appropriate URL base
         if (PortalContextProviderImpl.EXCLUSIVE.equals(this.nextState) || (this.nextState == null && PortalContextProviderImpl.EXCLUSIVE.equals(curState))) {
             final String urlBase = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
-            actionUrl.insert(0, UPFileSpec.PORTAL_URL_SEPARATOR);
-            actionUrl.insert(0, urlBase);
+            actionUrl.append(urlBase);
         }
         else {
             final String urlBase = runtimeData.getBaseActionURL();
-            actionUrl.append(UPFileSpec.PORTAL_URL_SEPARATOR);
             actionUrl.append(urlBase);
         }
         
+        //Insert the parameters in the url after the last slash to the uPfile is correct
+        final int lastSlash = actionUrl.lastIndexOf("/");
+        actionUrl.insert(lastSlash + 1, urlEncodedParams);
+        
+        //Add the anchor to the URL
         if (ChannelManager.isUseAnchors()) {
             actionUrl.append("#");
             actionUrl.append(windowOfAction.getId());
         }
         
-        if (PortalContextProviderImpl.EXCLUSIVE.equals(curState)) {
-            actionUrl.insert(0, "../../");
-        }
+        //Insert the uPortal context path, this makes sure the URLs will always work
+        actionUrl.insert(0, "/");
+        actionUrl.insert(0, request.getContextPath());
 
         return actionUrl.toString();
     }
