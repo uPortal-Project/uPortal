@@ -212,7 +212,7 @@ function openBrWindow(theURL,winName,features) {
 </tr>
 
 <tr>
-<td class="uportal-channel-text" colspan="2"><xsl:copy-of select="."/></td>
+<td class="uportal-channel-text" colspan="2"><xsl:if test="@minimized != 'true'"><xsl:copy-of select="."/></xsl:if></td>
 </tr>
 
 <tr>
