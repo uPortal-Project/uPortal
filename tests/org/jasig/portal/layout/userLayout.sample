@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE greeting SYSTEM "userLayout.dtd">
 
-<layout>
+<layout ID="root">
     <folder ID="s1" hidden="false" immutable="false" name="Header folder"
         type="header" unremovable="false">
         <channel ID="n2" chanID="10"
