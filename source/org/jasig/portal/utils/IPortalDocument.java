@@ -9,12 +9,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * An interface that allows a Document to cache elements by known keys.
- * This is used to locally store and manager the ID element mappings 
- * regardless of the actual DOM implementation.
+ * Prior to uPortal 2.5 this interface provided an ability to access DOM 3 functionality
+ * on top of a DOM 2 core Document implementation.
+ * 
+ * As of uPortal 2.5, uPortal has adopted the JAXP 1.3 standard DOM 3 core Document
+ * implementation (as available in the core JDK 1.5 release).  This does not imply a 
+ * requirement of JDK 1.5 -- these libraries are available as an endorsed extenstion for
+ * JDK 1.4.
+ * 
+ * Therefore, as of uPortal 2.5, there is no reason to write code to the IPortalDocument
+ * interface.  Instead, client code should be written to the core Document interface.
+ * 
+ * This interface is formally deprecated.  No new code should be written to this interface
+ * and all existing clients of this interface should be updated to consume the core
+ * DOM3 Document interface.
  *
  * @author Nick Bolton
  * @version $Revision$
+ * @deprecated use DOM 3 Documents instead.
  */
 public interface IPortalDocument extends Document {
 
