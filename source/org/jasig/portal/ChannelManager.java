@@ -250,10 +250,11 @@ public class ChannelManager {
         sd.setParameters (params);
         ch.setStaticData (sd);
         channelTable.put (chanID,ch);
-	//        sd.setPerson((IPerson) req.getAttribute("up_person"));
-	// I don't understand how the above is supposed to work. I'll just get IPerson from the internal structures for now.
+        // get person object from UsreLayoutManager
 	sd.setPerson(ulm.getPerson());
-        sd.setSecurityContext((ISecurityContext) req.getAttribute("up_SecurityContext"));
+        // security context is saved in the session as well
+        // Eventually it should be retrieved from authenticationService (?)
+        sd.setSecurityContext((ISecurityContext) req.getSession(false).getAttribute("up_SecurityContext"));
         return ch;
     }
 
