@@ -737,9 +737,12 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
           //set connection properties if request method was post
           if (state.runtimeData.getHttpRequestMethod().equals("POST"))
           {
-            httpUrlConnect.setRequestMethod("POST");
-            httpUrlConnect.setAllowUserInteraction(false);
-            httpUrlConnect.setDoOutput(true);  
+            if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals("")))
+            {
+              httpUrlConnect.setRequestMethod("POST");
+              httpUrlConnect.setAllowUserInteraction(false);
+              httpUrlConnect.setDoOutput(true);  
+            }
           }
 
           //send local data, if required 
