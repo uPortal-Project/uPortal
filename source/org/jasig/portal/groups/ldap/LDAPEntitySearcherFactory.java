@@ -34,8 +34,9 @@
 
 package org.jasig.portal.groups.ldap;
 
-import org.jasig.portal.groups.*;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntitySearcher;
+import org.jasig.portal.groups.IEntitySearcherFactory;
 
 /**
  * Returns an instance of the ldap <code>IEntitySearcher</code>.

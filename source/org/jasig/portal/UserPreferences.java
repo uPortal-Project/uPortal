@@ -37,12 +37,12 @@
 
 package org.jasig.portal;
 
+import java.util.Enumeration;
+import java.util.HashSet;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import org.jasig.portal.services.LogService;
 
 /**
  * Object managing user preferences.

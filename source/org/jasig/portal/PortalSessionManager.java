@@ -36,25 +36,21 @@
 
 package  org.jasig.portal;
 
-import java.io.Serializable;
-import java.io.PrintWriter;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Hashtable;
-import java.util.HashSet;
+import java.net.URL;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.net.URL;
-import java.lang.SecurityManager;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -66,13 +62,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.security.AccessController;
-import org.jasig.portal.services.LogService;
+
 import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.utils.SubstitutionWriter;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SubstitutionServletOutputStream;
-import com.oreilly.servlet.multipart.MultipartParser;
+import org.jasig.portal.utils.SubstitutionWriter;
+
 import com.oreilly.servlet.multipart.FilePart;
+import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 
 

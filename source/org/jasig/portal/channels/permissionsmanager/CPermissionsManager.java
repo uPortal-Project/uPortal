@@ -38,17 +38,25 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  java.io.*;
-import  java.util.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.utils.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.*;
-import  org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
-import  org.w3c.dom.Document;
-import org.w3c.dom.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Enumeration;
+
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Element;
 
 
 /**

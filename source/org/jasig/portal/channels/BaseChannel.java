@@ -36,13 +36,13 @@
 
 package  org.jasig.portal.channels;
 
-import  org.xml.sax.ContentHandler;
-import  org.jasig.portal.IChannel;
-import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.ChannelRuntimeProperties;
-import  org.jasig.portal.PortalException;
-import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.PortalEvent;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.xml.sax.ContentHandler;
 
 
 /**

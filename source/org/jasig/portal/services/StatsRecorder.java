@@ -35,38 +35,38 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.services.stats.IStatsRecorderFactory;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.stats.IStatsRecorder;
-import org.jasig.portal.services.stats.StatsRecorderSettings;
-import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
-import org.jasig.portal.services.stats.StatsRecorderWorkerTask;
+import org.jasig.portal.services.stats.IStatsRecorderFactory;
+import org.jasig.portal.services.stats.RecordChannelAddedToLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelDefinitionModifiedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelDefinitionPublishedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelDefinitionRemovedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelInstantiatedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelMovedInLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelRemovedFromLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelRenderedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelTargetedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelUpdatedInLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderAddedToLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderMovedInLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderRemovedFromLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderUpdatedInLayoutWorkerTask;
 import org.jasig.portal.services.stats.RecordLoginWorkerTask;
 import org.jasig.portal.services.stats.RecordLogoutWorkerTask;
 import org.jasig.portal.services.stats.RecordSessionCreatedWorkerTask;
 import org.jasig.portal.services.stats.RecordSessionDestroyedWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelDefinitionPublishedWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelDefinitionModifiedWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelDefinitionRemovedWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelAddedToLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelUpdatedInLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelMovedInLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelRemovedFromLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordFolderAddedToLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordFolderUpdatedInLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordFolderMovedInLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordFolderRemovedFromLayoutWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelInstantiatedWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelRenderedWorkerTask;
-import org.jasig.portal.services.stats.RecordChannelTargetedWorkerTask;
-import org.jasig.portal.utils.threading.ThreadPool;
+import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
+import org.jasig.portal.services.stats.StatsRecorderSettings;
+import org.jasig.portal.services.stats.StatsRecorderWorkerTask;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
+import org.jasig.portal.utils.threading.ThreadPool;
 import org.jasig.portal.utils.threading.WorkTracker;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.PropertiesManager;
 
 /**
  * Stats recorder service. Various parts of the portal call

@@ -35,13 +35,15 @@
  
 package org.jasig.portal.groups.local.searchers;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
-import org.jasig.portal.*;
-import java.sql.*;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.services.*;
-import java.util.*;
+import org.jasig.portal.services.LogService;
 
 /**
  * Searches the portal DB for people.  Used by EntitySearcherImpl

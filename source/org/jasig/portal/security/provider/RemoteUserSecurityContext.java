@@ -37,7 +37,6 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
-import java.security.MessageDigest;
 
 /**
  * Create a security context and store the value of remote user.  If not null,

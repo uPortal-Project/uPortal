@@ -45,22 +45,17 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 import java.util.Map;
+import java.util.Vector;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import org.jasig.portal.IWorkerRequestProcessor;
-import org.jasig.portal.PortalControlStructures;
+
+import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.services.LogService;
 
 /**

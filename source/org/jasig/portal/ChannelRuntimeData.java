@@ -35,16 +35,14 @@
 
 package org.jasig.portal;
 
-import javax.servlet.http.*;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
-import java.io.File;
-import java.util.Enumeration;
-import javax.servlet.ServletOutputStream;
-import java.io.IOException;
-import  org.jasig.portal.car.CarResources;
-import  org.jasig.portal.car.CarClassLoader;
+
+import org.jasig.portal.car.CarClassLoader;
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.services.LogService;
+
 import com.oreilly.servlet.multipart.Part;
 
 /**

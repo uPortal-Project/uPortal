@@ -35,10 +35,11 @@
 
 package org.jasig.portal.channels.groupsmanager.commands;
 
-import java.util.*;
-import org.jasig.portal.channels.groupsmanager.*;
-import org.w3c.dom.Element;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A Groups Manager command to release a lock on a group, return to browse mode

@@ -35,15 +35,17 @@
 
 package org.jasig.portal.utils;
 
-import java.util.Vector;
+import java.net.HttpURLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
-import java.net.HttpURLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.text.ParseException;
+import java.util.Vector;
+
 import javax.servlet.http.Cookie;
+
 import org.jasig.portal.services.LogService;
 
 /**

@@ -36,51 +36,40 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.StatsRecorder;
-import org.jasig.portal.utils.BooleanLock;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
-import org.jasig.portal.utils.SoftHashMap;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSession;
-
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
-
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.dom.DOMSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ContentHandler;
+import javax.xml.transform.sax.TransformerHandler;
 
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.UserLayoutNodeDescription;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
-
-import org.jasig.portal.layout.UserLayoutNodeDescription;
-import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
+import org.jasig.portal.utils.SoftHashMap;
+import org.jasig.portal.utils.XSLT;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.XMLReader;
 
 /**
  * A class handling holding all user state information. The class is also reponsible for

@@ -37,47 +37,34 @@
 
 package  org.jasig.portal.channels;
 
-import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.PortalException;
-import  org.jasig.portal.GeneralRenderingException;
-import  org.jasig.portal.ResourceMissingException;
-import  org.jasig.portal.ChannelRegistryManager;
-import  org.jasig.portal.channels.BaseChannel;
-import  org.jasig.portal.utils.XML;
-import  org.jasig.portal.utils.XSLT;
-import  org.jasig.portal.utils.DocumentFactory;
-import  org.jasig.portal.utils.ResourceLoader;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.services.GroupService;
-import  org.jasig.portal.services.AuthorizationService;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.GroupsException;
-import  org.jasig.portal.security.IPermissionManager;
-import  org.jasig.portal.security.IAuthorizationPrincipal;
-import  org.jasig.portal.IServant;
-import  org.jasig.portal.IChannel;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.services.EntityNameFinderService;
-import  org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
-import  org.jasig.portal.channels.permissionsmanager.CPermissionsManagerServantFactory;
-import  org.xml.sax.ContentHandler;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
-import  java.util.Date;
-import  java.util.Set;
-import  java.util.TreeSet;
-import  java.util.List;
-import  java.util.ArrayList;
-import  java.util.Map;
-import  java.util.HashMap;
-import  java.util.HashSet;
-import  java.util.Iterator;
-import  java.sql.SQLException;
-import  javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IServant;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.ContentHandler;
 
 
 /**

@@ -35,17 +35,19 @@
 
 package org.jasig.portal.webservices.ser;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.xml.namespace.QName;
+
+import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import java.util.Map;
-import java.util.HashMap;
-import javax.servlet.http.Cookie;
-import javax.xml.namespace.QName;
 
 /**
  * The CookieSerializer deserializes a Cookie.  

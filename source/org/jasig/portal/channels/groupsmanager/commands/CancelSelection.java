@@ -36,10 +36,13 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /** A select cycle could be started in Servant mode or it could be started by
  *  the AddMembers command. The AddMembers command sets the id of the parent

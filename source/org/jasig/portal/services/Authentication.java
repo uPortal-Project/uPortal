@@ -35,19 +35,21 @@
 
 package  org.jasig.portal.services;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.services.StatsRecorder;
-import org.jasig.portal.UserIdentityStoreFactory;
-import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.PropertiesManager;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Map;
+
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.security.IAdditionalDescriptor;
+import org.jasig.portal.security.IOpaqueCredentials;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPrincipal;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * Attempts to authenticate a user and retrieve attributes

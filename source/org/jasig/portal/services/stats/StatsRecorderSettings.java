@@ -35,8 +35,8 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.services.LogService;
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.services.LogService;
 
 /**
  * This class is responsible for maintaining the on/off settings

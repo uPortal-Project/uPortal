@@ -35,14 +35,11 @@
 
 package org.jasig.portal.security;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.PortalSessionManager;
-import java.util.Hashtable;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+
+import org.jasig.portal.services.LogService;
 
 /**
  * This class provides a static "factory" method that returns a security context

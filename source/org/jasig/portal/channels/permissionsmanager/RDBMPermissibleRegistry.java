@@ -38,13 +38,15 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.groups.*;
-import  java.util.*;
-import  java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.services.LogService;
 
 
 /**

@@ -37,7 +37,6 @@
 
 package org.jasig.portal.layout;
 
-import java.util.*;
 
 /**
  * <p>Title: UserLayoutFolder </p>

@@ -36,10 +36,10 @@
 package org.jasig.portal.channels.groupsmanager.commands;
 
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
-import org.jasig.portal.channels.groupsmanager.IGroupsManagerCommand;
-import org.jasig.portal.services.*;
-import org.jasig.portal.channels.groupsmanager.*;
-import org.w3c.dom.*;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerCommandFactory;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A Groups Manager command to highlight a particular element.  Also

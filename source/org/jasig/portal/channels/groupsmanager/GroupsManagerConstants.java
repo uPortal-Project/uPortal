@@ -35,8 +35,6 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.*;
-import  java.lang.*;
 
 /**
  * An interface that holds global variables uses to externalize settings from

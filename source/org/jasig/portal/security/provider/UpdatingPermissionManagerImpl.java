@@ -35,10 +35,10 @@ package org.jasig.portal.security.provider;
  *
  */
 
-import  java.util.*;
-import  org.jasig.portal.EntityTypes;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.AuthorizationException;
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IUpdatingPermissionManager;
 
 /**
  * @author Dan Ellentuck (de3@columbia.edu)

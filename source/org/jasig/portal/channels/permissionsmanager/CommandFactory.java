@@ -38,8 +38,9 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.services.*;
-import  java.util.*;
+import java.util.HashMap;
+
+import org.jasig.portal.services.LogService;
 
 
 /**

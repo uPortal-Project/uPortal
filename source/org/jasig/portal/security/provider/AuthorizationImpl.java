@@ -35,20 +35,29 @@
 
 package org.jasig.portal.security.provider;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
+
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.security.*;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IPermissionPolicy;
+import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SmartCache;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

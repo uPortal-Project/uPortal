@@ -35,55 +35,51 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Enumeration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
-import java.text.ParseException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.tidy.Tidy;
-import org.w3c.dom.Document;
-import org.xml.sax.ContentHandler;
 
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.MediaManager;
-import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.PortalEvent;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IMultithreadedMimeResponse;
+import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.IMultithreadedChannel;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DTDResolver;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.AbsoluteURLFilter;
-import org.jasig.portal.utils.CookieCutter;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.IMultithreadedMimeResponse;
+import org.jasig.portal.MediaManager;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.LocalConnectionContext;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.AbsoluteURLFilter;
+import org.jasig.portal.utils.CookieCutter;
+import org.jasig.portal.utils.DTDResolver;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.tidy.Tidy;
+import org.xml.sax.ContentHandler;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.

@@ -36,12 +36,25 @@
 
 package  org.jasig.portal.channels.UserPreferences;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.LogService;
-import  org.w3c.dom.Document;
-import  org.xml.sax.ContentHandler;
-import  java.io.File;
+import java.io.File;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.ThemeStylesheetDescription;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.services.LogService;
+import org.xml.sax.ContentHandler;
 
 /** <p>Manages User Layout, user preferences and profiles </p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com

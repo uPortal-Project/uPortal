@@ -35,15 +35,19 @@ package org.jasig.portal.services;
  *
  */
 
-import java.util.Vector;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.security.*;
+
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IAuthorizationServiceFactory;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

@@ -35,12 +35,14 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import org.jasig.portal.channels.groupsmanager.*;
-import org.jasig.portal.services.*;
-import org.jasig.portal.*;
-import org.jasig.portal.channels.permissionsmanager.*;
-import java.util.*;
-import org.jasig.portal.groups.*;
+import java.util.Enumeration;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.permissionsmanager.CPermissionsManagerServantFactory;
+import org.jasig.portal.groups.IEntityGroup;
 
 /**
  * A Groups Manager command to instantiate a permissions manager servant

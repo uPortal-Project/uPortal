@@ -34,18 +34,21 @@
 
 package org.jasig.portal.groups;
 
-import java.io.*;
-import java.util.*;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.PropertiesManager;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityLock;
+import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.groups.local.*;
-import org.jasig.portal.groups.local.searchers.*;
-import org.jasig.portal.services.*;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 
 /**
  * Reference individual, or leaf, group service.

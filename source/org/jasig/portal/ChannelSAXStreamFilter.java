@@ -36,9 +36,9 @@
 package org.jasig.portal;
 
 import org.jasig.portal.utils.SAX2FilterImpl;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import java.io.*;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Filters out startDocument and endDocument from the

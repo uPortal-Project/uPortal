@@ -36,11 +36,14 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.*;
-import  java.sql.*;
-import  org.jasig.portal.groups.*;
-import  java.util.*;
-import  org.jasig.portal.services.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.services.LogService;
 
 
 /**

@@ -35,19 +35,21 @@
 
 package org.jasig.portal.webservices.ser;
 
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.BrowserInfo;
-import org.jasig.portal.UPFileSpec;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
+import org.jasig.portal.BrowserInfo;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.UPFileSpec;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import java.util.Map;
-import java.util.HashMap;
-import javax.xml.namespace.QName;
 
 /**
  * The ChannelRuntimeDataDeserializer deserializes a ChannelRuntimeData object.  

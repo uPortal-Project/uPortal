@@ -35,16 +35,17 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.IChannel;
-import org.jasig.portal.ChannelStaticData;
+import java.io.StringWriter;
+
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
-import java.io.StringWriter;
 
 /** <p>A number guessing game which asks the user to enter a number within
  * a certain range as determined by this channel's parameters.</p>

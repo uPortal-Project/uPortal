@@ -36,8 +36,10 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.*;
-import  java.util.*;
+import java.util.HashMap;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 
 
 /**

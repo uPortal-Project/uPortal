@@ -38,24 +38,25 @@
 
 package  org.jasig.portal.jndi;
 
-import  java.util.Hashtable;
-import  java.util.Enumeration;
-import  javax.naming.Context;
-import  javax.naming.InitialContext;
-import  javax.naming.NamingException;
-import  javax.naming.NameAlreadyBoundException;
-import  javax.naming.CompositeName;
-import  javax.naming.NamingEnumeration;
-import  javax.servlet.http.HttpSession;
-import  javax.servlet.http.HttpSessionBindingListener;
-import  javax.servlet.http.HttpSessionBindingEvent;
-import  org.jasig.portal.PortalException;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.services.ExternalServices;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Node;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.naming.CompositeName;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
+import org.jasig.portal.PortalException;
+import org.jasig.portal.services.ExternalServices;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 /**

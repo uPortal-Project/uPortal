@@ -37,22 +37,16 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.groups.*;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
-import  java.util.*;
-import  java.sql.*;
-import  java.io.StringReader;
-import  java.io.StringWriter;
-import javax.xml.parsers.*;
-import java.lang.NullPointerException;
+import java.util.ArrayList;
+
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 /**

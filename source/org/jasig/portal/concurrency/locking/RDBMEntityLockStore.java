@@ -37,14 +37,17 @@ package org.jasig.portal.concurrency.locking;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
-import org.jasig.portal.concurrency.IEntityLock;
-import org.jasig.portal.concurrency.LockingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.concurrency.IEntityLock;
+import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.LogService;
 
 /**

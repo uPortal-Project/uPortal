@@ -35,34 +35,34 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.StatsRecorder;
-import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.XML;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IUpdatingPermissionManager;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.groups.IEntity;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.IEntityGroup;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
-import org.w3c.dom.Text;
-import java.util.Set;
 import java.util.Date;
 import java.util.Iterator;
-import java.sql.SQLException;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xpath.XPathAPI;
+
 import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xpath.XPathAPI;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.utils.XML;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * Manages the channel registry which is a listing of published channels

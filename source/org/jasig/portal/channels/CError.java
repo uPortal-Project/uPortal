@@ -35,33 +35,30 @@
 
 package org.jasig.portal.channels;
 
-import org.xml.sax.ContentHandler;
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.IChannel;
-import org.jasig.portal.ICacheable;
-import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.IPrivilegedChannel;
-import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.ChannelManager;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.InternalTimeoutException;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPerson;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import java.net.URL;
-import java.util.Hashtable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelManager;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 
 /**
  * Error channel (aka null channel) is designed to render in

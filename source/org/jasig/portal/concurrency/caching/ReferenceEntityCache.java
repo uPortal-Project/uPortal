@@ -36,10 +36,11 @@
 package org.jasig.portal.concurrency.caching;
 
 import java.util.Map;
+
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.concurrency.IEntityCache;
 import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityCache;
 import org.jasig.portal.services.LogService;
 /**
  * Reference implementation of IEntityCache.  Each cache holds entities of

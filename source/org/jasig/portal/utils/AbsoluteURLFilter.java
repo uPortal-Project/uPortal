@@ -36,9 +36,8 @@
 package org.jasig.portal.utils;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**

@@ -36,11 +36,12 @@
 
 package org.jasig.portal.utils;
 
-import org.jasig.portal.RDBMServices;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
 /**

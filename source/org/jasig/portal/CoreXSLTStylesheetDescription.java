@@ -35,8 +35,8 @@
 
  package org.jasig.portal;
 
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Description of core XSLT stylesheets (i.e. structure and theme transformations)

@@ -35,12 +35,15 @@
 
 package org.jasig.portal.services;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jasig.portal.EntityTypes;
-import org.jasig.portal.groups.IEntityNameFinderFactory;
+import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityNameFinder;
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.groups.IEntityNameFinderFactory;
 
 /**
  * @author Dan Ellentuck

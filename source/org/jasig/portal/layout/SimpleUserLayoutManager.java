@@ -36,30 +36,27 @@
 
 package org.jasig.portal.layout;
 
-import org.xml.sax.ContentHandler;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.UserProfile;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Vector;
-
-import  org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.dom.DocumentImpl;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
-import java.util.Random;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.ContentHandler;
 
 /**
  * An implementation of a user layout manager that uses 2.0-release store implementations.

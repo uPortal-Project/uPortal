@@ -34,11 +34,24 @@
 
 package org.jasig.portal.services;
 
-import javax.naming.Name;
-import javax.naming.CompositeName;
 import javax.naming.InvalidNameException;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.*;
+import javax.naming.Name;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.groups.CompositeEntityIdentifier;
+import org.jasig.portal.groups.CompositeServiceIdentifier;
+import org.jasig.portal.groups.GroupServiceConfiguration;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.ICompositeGroupService;
+import org.jasig.portal.groups.ICompositeGroupServiceFactory;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.IGroupService;
+import org.jasig.portal.groups.IGroupServiceFactory;
+import org.jasig.portal.groups.ILockableEntityGroup;
 
 /**
  *  Bootstrap class for the IGroupService implementation.

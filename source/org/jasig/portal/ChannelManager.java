@@ -35,51 +35,44 @@
  
 package org.jasig.portal;
 
-import org.jasig.portal.channels.CError;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.utils.SetCheckInSemaphore;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.StatsRecorder;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.WeakHashMap;
-import org.jasig.portal.utils.SoftHashMap;
-import java.util.Collections;
-import org.xml.sax.ContentHandler;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPerson;
-
+import org.jasig.portal.channels.CError;
+import org.jasig.portal.layout.LayoutEvent;
+import org.jasig.portal.layout.LayoutEventListener;
+import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.layout.UserLayoutNodeDescription;
-import org.jasig.portal.layout.LayoutEventListener;
-import org.jasig.portal.layout.LayoutEvent;
-import org.jasig.portal.layout.LayoutMoveEvent;
-
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.serialize.CachingSerializer;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SetCheckInSemaphore;
+import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
-
+import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
-import org.jasig.portal.serialize.CachingSerializer;
 
 /**
  * This class shall have the burden of squeezing content

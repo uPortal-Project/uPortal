@@ -42,10 +42,11 @@ package org.jasig.portal.security.provider;
  * @version $Revision$
  */
 
-import org.jasig.portal.RDBMServices;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
 public class RDBMAccountStore implements IAccountStore {

@@ -35,10 +35,16 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
-import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
 /**
  * In-memory store for <code>IEntityLocks</code>.

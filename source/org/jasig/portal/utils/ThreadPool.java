@@ -37,10 +37,11 @@
 package  org.jasig.portal.utils;
 
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
+import java.util.List;
+
 import org.jasig.portal.services.LogService;
 
 

@@ -38,8 +38,8 @@
 
 package  org.jasig.portal.utils;
 
-import  java.util.HashMap;
-import  java.util.Iterator;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**

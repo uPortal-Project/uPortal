@@ -36,29 +36,23 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.utils.XML;
-import org.jasig.portal.utils.PropsMatcher;
-import org.jasig.portal.services.LogService;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Hashtable;
-import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.util.Map;
-import java.util.Collections;
-
-import java.net.URL;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
+
+import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.PropsMatcher;
 
 /**
  * Multithreaded version of {@link UserPreferencesManager}.

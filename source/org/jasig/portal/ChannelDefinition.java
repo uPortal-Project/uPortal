@@ -35,10 +35,11 @@
 
 package org.jasig.portal;
 
-import java.util.Map;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Date;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

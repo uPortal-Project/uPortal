@@ -36,11 +36,12 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  java.util.*;
-import  org.jasig.portal.utils.*;
-import  java.sql.*;
+import java.util.Hashtable;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.utils.SmartCache;
 
 
 /**

@@ -35,9 +35,9 @@
 
 package org.jasig.portal.services.stats;
 
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.UserProfile;
 
 /**
  * Records the addition of a channel to a user's layout

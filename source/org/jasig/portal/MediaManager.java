@@ -36,24 +36,24 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.services.LogService;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Vector;
-import java.util.StringTokenizer;
 import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.jasig.portal.serialize.BaseMarkupSerializer;
-import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.serialize.CachingXHTMLSerializer;
 import org.jasig.portal.serialize.CachingHTMLSerializer;
-import org.jasig.portal.serialize.HTMLSerializer;
+import org.jasig.portal.serialize.CachingXHTMLSerializer;
 import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.services.LogService;
 
 
 /**

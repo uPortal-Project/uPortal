@@ -42,17 +42,14 @@
 
 package org.jasig.portal;
 
+import java.util.Enumeration;
+
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
-import java.util.Enumeration;
-
 import org.xml.sax.helpers.AttributesImpl;
-
-import org.jasig.portal.services.LogService;
 
 public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
 {

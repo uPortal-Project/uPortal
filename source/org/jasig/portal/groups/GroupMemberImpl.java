@@ -34,10 +34,14 @@
 
 package org.jasig.portal.groups;
 
-import org.jasig.portal.*;
-import org.jasig.portal.security.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
-import java.util.*;
 
 /**
  * @author Dan Ellentuck

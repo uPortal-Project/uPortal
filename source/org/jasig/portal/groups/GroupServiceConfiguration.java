@@ -34,15 +34,18 @@
 
 package org.jasig.portal.groups;
 
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
+
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.Attributes;
-import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 /**
  * Parses service descriptions found in the file found at SERVICES_XML.  The

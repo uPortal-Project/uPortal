@@ -36,6 +36,7 @@
 package org.jasig.portal.utils.threading;
 
 import java.util.Vector;
+
 import org.jasig.portal.services.LogService;
 
 

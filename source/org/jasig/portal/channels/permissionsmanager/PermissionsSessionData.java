@@ -36,13 +36,12 @@
 
 package org.jasig.portal.channels.permissionsmanager;
 
-import org.jasig.portal.IPermissible;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IPermissible;
 import org.jasig.portal.IServant;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.w3c.dom.Document;
-import java.util.HashMap;
 
 /**
  * PermissionsSessionData

@@ -35,11 +35,12 @@
 
 package org.jasig.portal;
 
+import java.util.Map;
+
 import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.services.LogService;
-import java.util.Map;
 
 /**
  * A factory class that produces <code>IChannel</code> instances.

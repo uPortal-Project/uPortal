@@ -34,9 +34,9 @@
  */
 
 package org.jasig.portal.channels.permissionsmanager.commands;
-import org.jasig.portal.channels.permissionsmanager.*;
-import org.jasig.portal.*;
-import org.jasig.portal.services.*;
+import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
+import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
+import org.jasig.portal.services.LogService;
 
 /**
  * An IPermissionCommand implementation that resets CPermissionsManager

@@ -36,7 +36,7 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.*;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * The interface for an entity property store; the EntityChannelRegistry

@@ -34,11 +34,16 @@
 
 package org.jasig.portal.groups;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.naming.Name;
-import org.jasig.portal.*;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.services.EntityCachingService;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
 
 /**

@@ -35,23 +35,24 @@
 
 package org.jasig.portal;
 
-import org.jasig.portal.utils.CounterStoreFactory;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.EntityCachingService;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.groups.IEntity;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.GroupsException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.EntityCachingService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
  * Reference implementation of IChannelRegistryStore.

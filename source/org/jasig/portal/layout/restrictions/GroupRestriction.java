@@ -36,15 +36,13 @@
 package org.jasig.portal.layout.restrictions;
 
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.CommonUtils;
-import java.util.StringTokenizer;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupService;
-import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.layout.UserLayoutNode;
 
 

@@ -36,10 +36,10 @@
 
 package  org.jasig.portal;
 
-import  java.io.InputStream;
-import  java.io.OutputStream;
-import  java.util.Map;
-import  java.io.IOException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * Internal adapter for a multithreaded channel that is also cacheable and 

@@ -38,11 +38,13 @@
 
 package  org.jasig.portal.groups;
 
-import  java.util.HashMap;
-import  java.util.Map;
-import  org.jasig.portal.services.GroupService;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.services.LogService;
 
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.

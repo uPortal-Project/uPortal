@@ -38,11 +38,14 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.utils.*;
 import java.util.HashMap;
+
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.IServant;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
 
 
 /**

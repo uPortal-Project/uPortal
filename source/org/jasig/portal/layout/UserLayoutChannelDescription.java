@@ -1,16 +1,15 @@
 package org.jasig.portal.layout;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
+
 import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import java.util.Iterator;
-
-import java.util.Map;
-import java.util.Enumeration;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Collections;
 
 
 /**

@@ -37,8 +37,8 @@
 
 package  org.jasig.portal.security;
 
-import  org.jasig.portal.PropertiesManager;
-import  org.jasig.portal.services.LogService;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.services.LogService;
 
 
 /**
