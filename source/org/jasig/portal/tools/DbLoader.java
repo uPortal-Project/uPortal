@@ -378,16 +378,19 @@ public class DbLoader
     {
       DatabaseMetaData dbmd = con.getMetaData();
       ResultSet rs = dbmd.getTypeInfo();
-
-      while (rs.next())
-      {
-        int localDataTypeCode = rs.getInt("DATA_TYPE");
-
-        if (dataTypeCode == localDataTypeCode)
+      try {
+        while (rs.next())
         {
-          try { localDataTypeName = rs.getString("TYPE_NAME"); } catch (SQLException sqle) { }
-          break;
+          int localDataTypeCode = rs.getInt("DATA_TYPE");
+
+          if (dataTypeCode == localDataTypeCode)
+          {
+            try { localDataTypeName = rs.getString("TYPE_NAME"); } catch (SQLException sqle) { }
+            break;
+          }
         }
+      } finally {
+        rs.close();
       }
 
       // If a local data type wasn't found, look in properties file
@@ -1055,6 +1058,8 @@ public class DbLoader
         }
         catch (Exception e)
         {
+          System.err.println();
+          System.err.println(insertStatement);
           e.printStackTrace();
         }
         finally
