@@ -1683,10 +1683,10 @@
         <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>1</value></column>
-        <column><name>NODE_ID</name><value>s21</value></column>
+        <column><name>NODE_ID</name><value>s22</value></column>
         <column><name>PARAM_NAME</name><value>width</value></column>
         <column><name>PARAM_TYPE</name><value>2</value></column>
-        <column><name>PARAM_VAL</name><value>70%</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>2</value></column>
@@ -1696,7 +1696,7 @@
         <column><name>NODE_ID</name><value>s25</value></column>
         <column><name>PARAM_NAME</name><value>width</value></column>
         <column><name>PARAM_TYPE</name><value>2</value></column>
-        <column><name>PARAM_VAL</name><value>30%</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>2</value></column>
