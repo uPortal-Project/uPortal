@@ -5309,6 +5309,11 @@
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.services.entityproperties.EntityProperties</value></column>
         <column><name>DESCRIPTIVE_NAME</name><value>Property Lookup Results</value></column>
       </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>7</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.security.IPermissionSet</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>IPermissions for an IAuthorizationPrincipal</value></column>
+      </row>
     </rows>
   </table>
 
