@@ -63,6 +63,7 @@ import org.jasig.portal.container.services.FactoryManagerServiceImpl;
 import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
 import org.jasig.portal.container.services.information.DynamicInformationProviderImpl;
 import org.jasig.portal.container.services.information.InformationProviderServiceImpl;
+import org.jasig.portal.container.services.information.PortalContextProviderImpl;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.services.property.PropertyManagerServiceImpl;
@@ -723,8 +724,13 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             wrappedRequest.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
             wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
 
+            HttpServletResponse wrappedResponse = new OutputStreamResponseWrapper(response);
+
             //render the portlet
-            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, response);
+            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+            
+            //Ensure all the data gets written out
+            wrappedResponse.flushBuffer();
                         
         } catch (Throwable t) {
             log.error(t, t);
