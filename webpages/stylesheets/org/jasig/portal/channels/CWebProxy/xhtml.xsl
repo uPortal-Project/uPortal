@@ -8,6 +8,7 @@
 <xsl:preserve-space elements="script/comment() script/text()"/>
  
    <xsl:param name="baseActionURL">default</xsl:param>
+   <xsl:param name="downloadActionURL" />
    <xsl:param name="cw_passThrough">default</xsl:param>
    <xsl:param name="cw_xml">default</xsl:param>
    <xsl:param name="base">
@@ -63,6 +64,17 @@
            </xsl:otherwise>
         </xsl:choose>
       </xsl:param>
+      <xsl:param name="actionURL">
+      	<xsl:choose>
+ 			<xsl:when test="(contains($action-uri, 'cw_download=') or (input[@name='cw_download']))">
+ 				<xsl:value-of select="$downloadActionURL" />
+ 			</xsl:when>     	
+      		<xsl:otherwise>
+      			<xsl:value-of select="$baseActionURL" />
+      		</xsl:otherwise>
+      	</xsl:choose>
+      </xsl:param>
+      
       <xsl:copy>
       <xsl:choose>
        <xsl:when test="$cw_passThrough='marked' and input/@name='cw_inChannelLink'">
@@ -70,10 +82,10 @@
          <xsl:attribute name="action">
            <xsl:choose>
              <xsl:when test="contains($action-uri, '?')">
-               <xsl:value-of select="concat($baseActionURL, '?', substring-after($action-uri, '?'))"/>
+               <xsl:value-of select="concat($actionURL, '?', substring-after($action-uri, '?'))"/>
              </xsl:when>
              <xsl:otherwise>
-               <xsl:value-of select="$baseActionURL"/>
+               <xsl:value-of select="$actionURL"/>
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
@@ -87,10 +99,10 @@
          <xsl:attribute name="action">
            <xsl:choose>
              <xsl:when test="contains($action-uri, '?')">
-               <xsl:value-of select="concat($baseActionURL, '?', substring-after($action-uri, '?'))"/>
+               <xsl:value-of select="concat($actionURL, '?', substring-after($action-uri, '?'))"/>
              </xsl:when>
              <xsl:otherwise>
-               <xsl:value-of select="$baseActionURL"/>
+               <xsl:value-of select="$actionURL"/>
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
@@ -101,10 +113,10 @@
          <xsl:attribute name="action">
            <xsl:choose>
              <xsl:when test="contains($action-uri, '?')">
-               <xsl:value-of select="concat($baseActionURL, '?', substring-after($action-uri, '?'))"/>
+               <xsl:value-of select="concat($actionURL, '?', substring-after($action-uri, '?'))"/>
              </xsl:when>
              <xsl:otherwise>
-               <xsl:value-of select="$baseActionURL"/>
+               <xsl:value-of select="$actionURL"/>
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
@@ -171,6 +183,16 @@
            </xsl:otherwise>
         </xsl:choose>
       </xsl:param> 
+      <xsl:param name="actionURL">
+      	<xsl:choose>
+          <xsl:when test="contains(@href, 'cw_download=')">
+                  <xsl:value-of select="$downloadActionURL" />
+          </xsl:when>     	
+          <xsl:otherwise>
+                  <xsl:value-of select="$baseActionURL" />
+          </xsl:otherwise>
+      	</xsl:choose>
+      </xsl:param> 
       <xsl:copy>
       <xsl:choose>
        <xsl:when test="$cw_passThrough='marked' and (contains(@href, '&amp;cw_inChannelLink=') or contains(@href, '?cw_inChannelLink=') )">
@@ -178,10 +200,10 @@
          <xsl:attribute name="href">
            <xsl:choose>
              <xsl:when test="string-length(normalize-space($href-uri))=0 or $href-uri=$cw_xml or $cw_xml=substring-before($href-uri, '?')">
-               <xsl:value-of select="concat($baseActionURL, '?', substring-after(@href, '?'))"/>
+               <xsl:value-of select="concat($actionURL, '?', substring-after(@href, '?'))"/>
              </xsl:when>
              <xsl:otherwise>
-                <xsl:value-of select="concat($baseActionURL, '?', substring-after(@href, '?'), '&amp;cw_xml=', substring-before($href-uri, '?'))"/>
+                <xsl:value-of select="concat($actionURL, '?', substring-after(@href, '?'), '&amp;cw_xml=', substring-before($href-uri, '?'))"/>
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
@@ -192,10 +214,10 @@
          <xsl:attribute name="href">
            <xsl:choose>
              <xsl:when test="contains($href-uri, '?')">
-               <xsl:value-of select="concat($baseActionURL, '?', substring-after($href-uri, '?'))"/>
+               <xsl:value-of select="concat($actionURL, '?', substring-after($href-uri, '?'))"/>
              </xsl:when>
              <xsl:otherwise>
-               <xsl:value-of select="$baseActionURL"/>
+               <xsl:value-of select="$actionURL"/>
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
@@ -208,20 +230,20 @@
              <xsl:when test="string-length(normalize-space(@href))=0 or $cw_xml=$href-uri or $cw_xml=substring-before($href-uri, '?')">
                <xsl:choose>
                  <xsl:when test="contains($href-uri, '?')">
-                   <xsl:value-of select="concat($baseActionURL, '?', substring-after($href-uri, '?'))"/>
+                   <xsl:value-of select="concat($actionURL, '?', substring-after($href-uri, '?'))"/>
                  </xsl:when>
                  <xsl:otherwise>
-                   <xsl:value-of select="$baseActionURL"/>
+                   <xsl:value-of select="$actionURL"/>
                  </xsl:otherwise>
                </xsl:choose>
              </xsl:when>
              <xsl:otherwise>
                <xsl:choose>
                  <xsl:when test="contains($href-uri, '?')">
-                   <xsl:value-of select="concat($baseActionURL, '?', substring-after($href-uri, '?'), '&amp;cw_xml=', substring-before($href-uri, '?'))"/>
+                   <xsl:value-of select="concat($actionURL, '?', substring-after($href-uri, '?'), '&amp;cw_xml=', substring-before($href-uri, '?'))"/>
 		 </xsl:when>
                  <xsl:otherwise>
-                   <xsl:value-of select="concat($baseActionURL, '?cw_xml=', $href-uri)"/>
+                   <xsl:value-of select="concat($actionURL, '?cw_xml=', $href-uri)"/>
                  </xsl:otherwise>
                </xsl:choose>
              </xsl:otherwise>
