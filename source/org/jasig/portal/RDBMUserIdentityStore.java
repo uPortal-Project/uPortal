@@ -90,39 +90,39 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
       try {
         String SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_USER_PROFILES  WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_USER_SS_ATTS WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_USER_SS_PARMS  WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_STRUCT_PARAM WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = '" + uPortalUID + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + SQLDelete);
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getPortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
         if (con.getMetaData().supportsTransactions())  con.commit();
@@ -183,21 +183,34 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             /* attempt to create portal data for a new user */
             int newUID;
             int templateUID;
+            int templateUSER_DFLT_USR_ID ;
+            int templateUSER_DFLT_LAY_ID;
+            int templateCURR_LAY_ID ;
+            int templateNEXT_STRUCT_ID;
+            java.sql.Timestamp templateLST_CHAN_UPDT_DT = new java.sql.Timestamp(System.currentTimeMillis());
+
             /* examine person object for role title in affiliation attribute.
             If not present return uPortalUID=-1.  */
             String templateName=(String) person.getAttribute(templateAttrName);
-            if (templateName == null || templateName=="")
-              templateUID=guestUID;
-            else {
-            /*If found select template UID from UP_ROLE.ROLE_DFLT_USR_ID
-            If no result use guest userid constant.  */
-            query = "SELECT USER_ID FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
+            if (DEBUG>0) System.err.println("template name is "+templateName);
+
+            /*Use template user to build new user
+            If no template use guest userid.  */
+            if (templateName == null || templateName=="") templateUID=guestUID;
+
+            query = "SELECT USER_ID,USER_DFLT_USR_ID, USER_DFLT_LAY_ID,CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
             if (DEBUG>0) System.err.println(query);
             LogService.log(LogService.DEBUG, "DBMUserIdentityStore::getPortalUID(): " + query);
             rset = stmt.executeQuery(query);
-            if (rset.next()) templateUID = rset.getInt("USER_ID");
-            else templateUID = guestUID;
-            }
+            if (rset.next()) {
+              templateUID = rset.getInt("USER_ID");
+              templateUSER_DFLT_USR_ID = rset.getInt("USER_DFLT_USR_ID");
+              templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
+              templateCURR_LAY_ID = rset.getInt("CURR_LAY_ID");
+              templateNEXT_STRUCT_ID = rset.getInt("NEXT_STRUCT_ID");
+              }
+            else return uPortalUID;
+
             /* get a new uid for the person */
             try {
               newUID = GenericPortalBean.getUserLayoutStore().getIncrementIntegerId("UP_USER");
@@ -210,9 +223,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             /* insert new user record in UP_USER */
             Insert = "INSERT INTO UP_USER "+
               "(USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT) "+
-              " SELECT "+newUID+", '"+ person.getAttribute("username")+ "',"+
-              "USER_DFLT_USR_ID, USER_DFLT_LAY_ID,CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT "+
-              "FROM UP_USER WHERE USER_ID="+templateUID;
+              " VALUES ("+
+                newUID+", '"+
+                person.getAttribute("username")+ "',"+
+                templateUSER_DFLT_USR_ID+", "+
+                templateUSER_DFLT_LAY_ID+", "+
+                templateCURR_LAY_ID+", "+
+                templateNEXT_STRUCT_ID+", "+
+                "'"+templateLST_CHAN_UPDT_DT+"')";
             LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
             stmt.executeUpdate(Insert);
 
