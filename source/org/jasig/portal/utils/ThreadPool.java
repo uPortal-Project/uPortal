@@ -182,7 +182,7 @@ public class ThreadPool extends ThreadGroup {
     * Handle the case when some worker crashes
     */
     public void uncaughtException(Thread t, Throwable e) {
-	log.error("Registered an uncaughted exception by thread "+t.getName(), e);
+	log.error("Registered an uncaught exception by thread "+t.getName(), e);
 	if(t instanceof ThreadPoolWorker && !(e instanceof ThreadDeath)) {
 	    ThreadPoolWorker w=(ThreadPoolWorker) t;
 	    // clean up currentReceipt if the thread didn't do it
