@@ -2,8 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">defaultView</xsl:param>>
-  <!--xsl:param name="action">selectCategories</xsl:param-->
+  <xsl:param name="action">defaultView</xsl:param>
+  <!--<xsl:param name="action">reviewChannel</xsl:param>-->
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="defaultLength">10</xsl:variable>
@@ -13,16 +13,16 @@
   <xsl:variable name="filterByID">
     <xsl:value-of select="//filterByID[1]"/>
   </xsl:variable>
-  <!--xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable-->
-  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>-->
+  <!--<xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>-->
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
   <xsl:template match="/">
     <html>
       <head>
         <title>Untitled Document</title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
         <link rel="stylesheet" href="C:\LaJolla\uPortal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\imm.css" type="text/css"/>
-      <xsl:comment></xsl:comment>
-      
+        <xsl:comment>
+        </xsl:comment>
       </head>
       <body>
         <xsl:choose>
@@ -43,6 +43,15 @@
           </xsl:when>
           <xsl:when test="$action='selectCategories'">
             <xsl:call-template name="selectCategories"/>
+          </xsl:when>
+          <xsl:when test="$action='selectRoles'">
+            <xsl:call-template name="selectRoles"/>
+          </xsl:when>
+          <xsl:when test="$action='reviewChannel'">
+            <xsl:call-template name="reviewChannel"/>
+          </xsl:when>
+          <xsl:when test="$action='customSettings'">
+            <xsl:call-template name="customSettings"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:call-template name="defaultView"/>
@@ -89,82 +98,81 @@
   </xsl:template>
   <xsl:template name="selectChannelType">
     <xsl:call-template name="workflow"/>
-
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="none"/>
       <input type="hidden" name="uPCM_capture" value="selectChannelType"/>
-    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <tr class="uportal-channel-text">
-        <td>
-          <strong>Channel Type:</strong> Select the type of channel to add by clicking a select icon in the option column</td>
-      </tr>
-      <tr>
-        <td>
-          <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
-            <tr>
-              <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
-              <td nowrap="nowrap" class="uportal-channel-table-header">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td nowrap="nowrap" class="uportal-channel-table-header">Channel Type</td>
-              <td nowrap="nowrap" class="uportal-channel-table-header">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td width="100%" class="uportal-channel-table-header">Description</td>
-            </tr>
-            <tr class="uportal-channel-text" valign="top">
-              <td nowrap="nowrap" colspan="5">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <xsl:for-each select="//selectChannelType//channelType">
-              <tr class="uportal-channel-text" valign="top">
-                <td nowrap="nowrap" align="center">
-                  <input type="radio" name="ID" value="{@ID}" checked="checked"/> </td>
-                <td nowrap="nowrap">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+      <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
+        <tr class="uportal-channel-text">
+          <td>
+            <strong>Channel Type:</strong> Select the type of channel to add by clicking a select icon in the option column</td>
+        </tr>
+        <tr>
+          <td>
+            <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
+              <tr>
+                <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
+                <td nowrap="nowrap" class="uportal-channel-table-header">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td nowrap="nowrap">
-                  <strong>
-                    <xsl:value-of select="name"/>
-                  </strong>
+                <td nowrap="nowrap" class="uportal-channel-table-header">Channel Type</td>
+                <td nowrap="nowrap" class="uportal-channel-table-header">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td nowrap="nowrap">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                </td>
-                <td width="100%">
-                  <xsl:value-of select="description"/>
-                </td>
+                <td width="100%" class="uportal-channel-table-header">Description</td>
               </tr>
               <tr class="uportal-channel-text" valign="top">
-                <td colspan="5" align="center">
+                <td nowrap="nowrap" colspan="5">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                       </td>
                     </tr>
                   </table>
                 </td>
               </tr>
-            </xsl:for-each>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/> 
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/> 
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
-      </tr>
-    </table>
+              <xsl:for-each select="//selectChannelType//channelType">
+                <tr class="uportal-channel-text" valign="top">
+                  <td nowrap="nowrap" align="center">
+                    <input type="radio" name="ID" value="{@ID}" checked="checked"/> </td>
+                  <td nowrap="nowrap">
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  </td>
+                  <td nowrap="nowrap">
+                    <strong>
+                      <xsl:value-of select="name"/>
+                    </strong>
+                  </td>
+                  <td nowrap="nowrap">
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  </td>
+                  <td width="100%">
+                    <xsl:value-of select="description"/>
+                  </td>
+                </tr>
+                <tr class="uportal-channel-text" valign="top">
+                  <td colspan="5" align="center">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                      <tr>
+                        <td>
+                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </xsl:for-each>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+        </tr>
+      </table>
     </form>
     <!-- form end -->
   </xsl:template>
@@ -499,83 +507,83 @@
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
-    <input type="hidden" name="uPCM_action" value="none"/>
-    <input type="hidden" name="uPCM_capture" value="selectGeneralSettings"/>
-    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <tr class="uportal-channel-text">
-        <td>
-          <strong>Settings [one]:</strong> Complete the Settings form below</td>
-      </tr>
-      <tr>
-        <td>
-          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
-            <tr class="uportal-channel-table-header" valign="bottom">
-              <td align="center" nowrap="nowrap">User can<br/> Modify?</td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td width="100%">General Settings</td>
-            </tr>
-            <tr class="uportal-channel-table-header">
-              <td align="center" colspan="3">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" valign="top">
-                <input type="checkbox" name="modifyName" value="checkbox"/> </td>
-              <td>
-              </td>
-              <td>
-                <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/> <input type="text" name="name" size="50" class="uportal-input-text"/></span> </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top" colspan="3">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" valign="top">
-                <input type="checkbox" name="modifyTimeout" value="checkbox"/> </td>
-              <td>
-              </td>
-              <td>
-                <span class="uportal-label">Channel Timeout:</span> <br/> <input type="text" name="timeout" size="6" class="uportal-input-text"/>milliseconds (1000 = 1 second)</td>
-            </tr>
-            <tr>
-              <td colspan="3">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/> 
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='channelDef'" class="uportal-button"/> 
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/> 
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
-      </tr>
-    </table>
+      <input type="hidden" name="uPCM_action" value="none"/>
+      <input type="hidden" name="uPCM_capture" value="selectGeneralSettings"/>
+      <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
+        <tr class="uportal-channel-text">
+          <td>
+            <strong>Settings [one]:</strong> Complete the Settings form below</td>
+        </tr>
+        <tr>
+          <td>
+            <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
+              <tr class="uportal-channel-table-header" valign="bottom">
+                <td align="center" nowrap="nowrap">User can<br/> Modify?</td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                </td>
+                <td width="100%">General Settings</td>
+              </tr>
+              <tr class="uportal-channel-table-header">
+                <td align="center" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td align="center" valign="top">
+                  <input type="checkbox" name="modifyName" value="checkbox"/> </td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/> <input type="text" name="name" size="50" class="uportal-input-text"/></span> </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td align="center" valign="top">
+                  <input type="checkbox" name="modifyTimeout" value="checkbox"/> </td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Channel Timeout:</span> <br/> <input type="text" name="timeout" size="6" class="uportal-input-text"/>milliseconds (1000 = 1 second)</td>
+              </tr>
+              <tr>
+                <td colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='channelDef'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+        </tr>
+      </table>
     </form>
     <!-- form end -->
   </xsl:template>
@@ -586,73 +594,65 @@
   <xsl:template match="channelDef" mode="dynamicSettings">
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
-    <input type="hidden" name="uPCM_action" value="changeMe"/>
-    <input type="hidden" name="uPCM_capture" value="channelDef"/>
-    <input type="hidden" name="uPCM_step" value="changeMe"/>
-    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <tr class="uportal-channel-text">
-        <td>
-          <strong>
-            <xsl:value-of select="params/step/name"/>:</strong>
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
-          <xsl:value-of select="params/step/description"/>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
-            <tr class="uportal-channel-table-header" valign="bottom">
-              <td align="center" nowrap="nowrap">User can<br/> Modify?</td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td width="100%">General Settings</td>
-            </tr>
-            <tr class="uportal-channel-table-header">
-              <td align="center" colspan="3">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <xsl:apply-templates select="params/step[ID=$stepID]"/>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" class="uportal-button"> 
-            <xsl:attribute name="onclick">
-              <xsl:choose>
-                <xsl:when test="$stepID = 1">
-                  document.workflow.uPCM_action.value='selectGeneralSettings';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'
-                </xsl:when>
-                <xsl:otherwise>
-                  document.workflow.uPCM_action.value='channelDef';document.workflow.uPCM_step.value='<xsl:value-of select="number($stepID) - 1"/>'
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:attribute>
-          </input>          
-          <input type="submit" name="uPCM_submit" value="Next &gt;" class="uportal-button"> 
-            <xsl:attribute name="onclick">
-              <xsl:choose>
-                <xsl:when test="$stepID = count(params/step)">
-                  document.workflow.uPCM_action.value='selectControls';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'
-                </xsl:when>
-                <xsl:otherwise>
-                  document.workflow.uPCM_action.value='channelDef';document.workflow.uPCM_step.value='<xsl:value-of select="number($stepID) + 1"/>'
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:attribute>
-          </input>
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/> 
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
-      </tr>
-    </table>
+      <input type="hidden" name="uPCM_action" value="changeMe"/>
+      <input type="hidden" name="uPCM_capture" value="channelDef"/>
+      <input type="hidden" name="uPCM_step" value="changeMe"/>
+      <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
+        <tr class="uportal-channel-text">
+          <td>
+            <strong>
+              <xsl:value-of select="params/step/name"/>:</strong>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+            <xsl:value-of select="params/step/description"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
+              <tr class="uportal-channel-table-header" valign="bottom">
+                <td align="center" nowrap="nowrap">User can<br/> Modify?</td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                </td>
+                <td width="100%">General Settings</td>
+              </tr>
+              <tr class="uportal-channel-table-header">
+                <td align="center" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <xsl:apply-templates select="params/step[ID=$stepID]"/>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="submit" name="uPCM_submit" value="&lt; Back" class="uportal-button">
+              <xsl:attribute name="onclick">
+                <xsl:choose>
+                  <xsl:when test="$stepID = 1">document.workflow.uPCM_action.value='selectGeneralSettings';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
+                  <xsl:otherwise>document.workflow.uPCM_action.value='channelDef';document.workflow.uPCM_step.value='<xsl:value-of select="number($stepID) - 1"/>'</xsl:otherwise>
+                </xsl:choose>
+              </xsl:attribute>
+            </input>
+            <input type="submit" name="uPCM_submit" value="Next &gt;" class="uportal-button">
+              <xsl:attribute name="onclick">
+                <xsl:choose>
+                  <xsl:when test="$stepID = count(params/step)">document.workflow.uPCM_action.value='selectControls';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
+                  <xsl:otherwise>document.workflow.uPCM_action.value='channelDef';document.workflow.uPCM_step.value='<xsl:value-of select="number($stepID) + 1"/>'</xsl:otherwise>
+                </xsl:choose>
+              </xsl:attribute>
+            </input>
+            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+        </tr>
+      </table>
     </form>
     <!-- form end -->
   </xsl:template>
@@ -915,263 +915,263 @@
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
-    <input type="hidden" name="uPCM_action" value="changeMe"/>
-    <input type="hidden" name="uPCM_capture" value="selectControls"/>
+      <input type="hidden" name="uPCM_action" value="changeMe"/>
+      <input type="hidden" name="uPCM_capture" value="selectControls"/>
 
-    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <tr class="uportal-channel-text">
-        <td>
-          <strong>Channel Controls:</strong>
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>Select channel controls in the form below</td>
-      </tr>
-      <tr>
-        <td>
-          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
-            <tr class="uportal-channel-table-header">
-              <td align="center">Select</td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td nowrap="nowrap" align="center">Channel Controls</td>
-              <td nowrap="nowrap" align="center">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td nowrap="nowrap" align="center">Icon</td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td width="100%">Description</td>
-            </tr>
-            <tr class="uportal-channel-table-header">
-              <td align="center" colspan="7">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top">
-                <input type="checkbox" name="minimizable" value="true"/> </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>
-                <strong>Minimizable</strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-              </td>
-              <td align="center">
-                <strong>
-                  <img alt="interface image" src="{$mediaPath}/min.gif" width="16" height="16"/>
-                </strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>when selected, channel controls remain but channel content does not render</td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top" colspan="7">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top">
-                <input type="checkbox" name="editable" value="true"/> </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>
-                <strong>Editable</strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/edit.gif" width="16" height="16"/>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>when selected, passes edit events</td>
-            </tr>
-            <tr>
-              <td colspan="7">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top">
-                <input type="checkbox" name="hasHelp" value="true"/> </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>
-                <strong>Has Help</strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/help.gif" width="16" height="16"/>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>when selected, passes help events</td>
-            </tr>
-            <tr>
-              <td align="center" valign="top" colspan="7">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top">
-                <input type="checkbox" name="hasAbout" value="true"/> </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>
-                <strong>Has About</strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/about.gif" width="16" height="16"/>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>when selected, passes about events</td>
-            </tr>
-            <tr>
-              <td align="center" valign="top" colspan="7">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top">
-                <input type="checkbox" name="printable" value="true"/> </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>
-                <strong>Printable</strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/print.gif" width="16" height="16"/>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>when selected, passes print events</td>
-            </tr>
-            <tr>
-              <td align="center" valign="top" colspan="7">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top">
-                <input type="checkbox" name="removable" value="true"/> </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>
-                <strong>Removable</strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/remove.gif" width="16" height="16"/>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>when selected, removes the channel from the layout</td>
-            </tr>
-            <tr>
-              <td align="center" valign="top" colspan="7">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                  <tr>
-                    <td>
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr class="uportal-channel-text">
-              <td align="center" valign="top">
-                <input type="checkbox" name="detachable" value="true"/> </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>
-                <strong>Detachable</strong>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td align="center">
-                <img alt="interface image" src="{$mediaPath}/detach.gif" width="16" height="16"/>
-              </td>
-              <td>
-                <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-              </td>
-              <td>when selected, renders the channel in a separate window</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='channelDef'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
-      </tr>
-    </table>
+      <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
+        <tr class="uportal-channel-text">
+          <td>
+            <strong>Channel Controls:</strong>
+            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>Select channel controls in the form below</td>
+        </tr>
+        <tr>
+          <td>
+            <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
+              <tr class="uportal-channel-table-header">
+                <td align="center">Select</td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                </td>
+                <td nowrap="nowrap" align="center">Channel Controls</td>
+                <td nowrap="nowrap" align="center">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                </td>
+                <td nowrap="nowrap" align="center">Icon</td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                </td>
+                <td width="100%">Description</td>
+              </tr>
+              <tr class="uportal-channel-table-header">
+                <td align="center" colspan="7">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top">
+                  <input type="checkbox" name="minimizable" value="true"/> </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>
+                  <strong>Minimizable</strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                </td>
+                <td align="center">
+                  <strong>
+                    <img alt="interface image" src="{$mediaPath}/min.gif" width="16" height="16"/>
+                  </strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>when selected, channel controls remain but channel content does not render</td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top" colspan="7">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top">
+                  <input type="checkbox" name="editable" value="true"/> </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>
+                  <strong>Editable</strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/edit.gif" width="16" height="16"/>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>when selected, passes edit events</td>
+              </tr>
+              <tr>
+                <td colspan="7">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top">
+                  <input type="checkbox" name="hasHelp" value="true"/> </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>
+                  <strong>Has Help</strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/help.gif" width="16" height="16"/>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>when selected, passes help events</td>
+              </tr>
+              <tr>
+                <td align="center" valign="top" colspan="7">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top">
+                  <input type="checkbox" name="hasAbout" value="true"/> </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>
+                  <strong>Has About</strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/about.gif" width="16" height="16"/>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>when selected, passes about events</td>
+              </tr>
+              <tr>
+                <td align="center" valign="top" colspan="7">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top">
+                  <input type="checkbox" name="printable" value="true"/> </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>
+                  <strong>Printable</strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/print.gif" width="16" height="16"/>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>when selected, passes print events</td>
+              </tr>
+              <tr>
+                <td align="center" valign="top" colspan="7">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top">
+                  <input type="checkbox" name="removable" value="true"/> </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>
+                  <strong>Removable</strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/remove.gif" width="16" height="16"/>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>when selected, removes the channel from the layout</td>
+              </tr>
+              <tr>
+                <td align="center" valign="top" colspan="7">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top">
+                  <input type="checkbox" name="detachable" value="true"/> </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>
+                  <strong>Detachable</strong>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td align="center">
+                  <img alt="interface image" src="{$mediaPath}/detach.gif" width="16" height="16"/>
+                </td>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                </td>
+                <td>when selected, renders the channel in a separate window</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='channelDef'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+        </tr>
+      </table>
     </form>
     <!-- form end -->
   </xsl:template>
@@ -1642,4 +1642,430 @@
       <!-- form end -->
     </table>
   </xsl:template>
-</xsl:stylesheet>
+
+  <xsl:template name="selectRoles">
+    <xsl:call-template name="workflow"/>
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
+      <!-- form begin -->
+
+
+
+      <tr class="uportal-channel-text">
+
+        <td>
+          <strong>Roles:</strong> Select roles which are allowed access to this channel</td>
+      </tr>
+
+
+
+      <tr>
+
+        <td>
+
+          <table width="100%" border="0" cellspacing="0" cellpadding="4" class="uportal-background-content">
+
+            <tr>
+
+              <td>
+
+                <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
+
+                  <tr>
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Select</td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">
+                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    </td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Roles</td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">
+                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    </td>
+
+
+
+                    <td width="100%" class="uportal-channel-table-header">Description</td>
+                  </tr>
+
+
+
+                  <tr class="uportal-channel-text" valign="top">
+
+                    <td nowrap="nowrap" colspan="5">
+
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                        <tr>
+
+                          <td>
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2"/>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <xsl:choose>
+                    <xsl:when test="//selectRoles//role">
+                      <xsl:for-each select="//selectRoles//role">
+
+
+                        <tr class="uportal-channel-text" valign="top">
+
+                          <td nowrap="nowrap" align="center">
+                            <input type="checkbox" name="checkbox" value="checkbox"/> </td>
+
+
+
+                          <td nowrap="nowrap">
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                          </td>
+
+
+
+                          <td nowrap="nowrap">
+                            <strong>
+                              <xsl:value-of select="name"/>
+                            </strong>
+                          </td>
+
+
+
+                          <td nowrap="nowrap">
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                          </td>
+
+
+
+                          <td width="100%">
+                            <xsl:value-of select="description"/>
+                          </td>
+                        </tr>
+
+
+
+                        <tr class="uportal-channel-text" valign="top">
+
+                          <td colspan="5" align="center">
+
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                              <tr>
+
+                                <td>
+                                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <tr class="uportal-channel-text" valign="top">
+
+                        <td colspan="5" align="left">There are no roles to display</td>
+                      </tr>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+
+
+      <tr>
+
+        <td>
+          <input type="submit" name="Submit423" value="&lt; Back" class="uportal-button"/> <input type="submit" name="Submit323" value="Next &gt;" class="uportal-button"/> <input type="submit" name="Submit535" value="Review" class="uportal-button"/> <input type="submit" name="Submit85" value="Cancel" class="uportal-button"/> </td>
+      </tr>
+      <!-- form end -->
+    </table>
+  </xsl:template>
+
+  <xsl:template name="reviewChannel">
+      <xsl:call-template name="workflow"/>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
+
+      <!-- form begin -->
+
+
+
+      <tr class="uportal-channel-text">
+
+        <td><strong>Review:</strong> Please review the settings for accuracy (click workflow icons to return to a specific settings)</td>
+
+      </tr>
+
+
+
+      <tr>
+
+        <td>
+
+          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap"><strong>Channel Type:</strong></td>
+
+
+
+              <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+
+
+
+              <td width="100%">RDF Site Summary [RSS]</td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap" colspan="3">
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                  <tr>
+
+                    <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+                  </tr>
+
+                </table>
+
+              </td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap"><strong>RSS URL:</strong></td>
+
+
+
+              <td>&nbsp;</td>
+
+
+
+              <td>http://www.stockcharts.com/rss/stockcharts.rss</td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap" colspan="3">
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                  <tr>
+
+                    <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+                  </tr>
+
+                </table>
+
+              </td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap"><strong>RSS Version:</strong></td>
+
+
+
+              <td>&nbsp;</td>
+
+
+
+              <td>0.91</td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap" colspan="3">
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                  <tr>
+
+                    <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+                  </tr>
+
+                </table>
+
+              </td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap"><strong>Channel Name:</strong></td>
+
+
+
+              <td>&nbsp;</td>
+
+
+
+              <td>StockCharts</td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap" colspan="3">
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                  <tr>
+
+                    <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+                  </tr>
+
+                </table>
+
+              </td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+
+              <td nowrap="nowrap"><strong>Selected Categories:</strong></td>
+
+
+
+              <td>&nbsp;</td>
+
+
+
+              <td><em>Applications</em> :: <em>News</em> ::<strong><span></span></strong><span>Good News</span></td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap">&nbsp;</td>
+
+
+
+              <td>&nbsp;</td>
+
+
+
+              <td><em>Applications</em> :: <em>News</em> ::<strong><span></span></strong>Bad News</td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap">&nbsp;</td>
+
+
+
+              <td>&nbsp;</td>
+
+
+
+              <td><em>Applications</em> :: <em>News</em> ::<strong><span></span></strong>Seven O'clock News</td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap" colspan="3">
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                  <tr>
+
+                    <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+                  </tr>
+
+                </table>
+
+              </td>
+
+            </tr>
+
+
+
+            <tr class="uportal-channel-text">
+
+              <td nowrap="nowrap"><strong>Selected Roles:</strong></td>
+
+
+
+              <td>&nbsp;</td>
+
+
+
+              <td>Everyone</td>
+
+            </tr>
+
+          </table>
+
+        </td>
+
+      </tr>
+
+
+
+      <tr>
+
+        <td><input type="submit" name="Submit4232" value="&lt; Back" class="uportal-button" /> <input type="submit" name="Submit5232" value="Finished" class="uportal-button" /> </td>
+
+      </tr>
+
+      <!-- form end -->
+
+    </table>
+  </xsl:template>
+
+<xsl:template name="customSettings">
+	      <xsl:call-template name="workflow"/>
+
+</xsl:template>
+</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
