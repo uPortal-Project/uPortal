@@ -685,7 +685,7 @@ public class UserInstance implements HttpSessionBindingListener {
          int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
          if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
             IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
-            nodeDesc.setName("Unnamed folder");
+            nodeDesc.setName("Unnamed");
             nodeDesc = ulm.addNode(nodeDesc,values2[0],values1[0]);
          }
         }
