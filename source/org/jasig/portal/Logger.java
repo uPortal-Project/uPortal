@@ -59,7 +59,7 @@ import  org.apache.log4j.Priority;
  * @version $Revision$
  * @deprecated Use org.jasig.portal.LogService instead
  */
-public class Logger extends GenericPortalBean {
+public class Logger {
   /**
    *  Description of the Field
    */
