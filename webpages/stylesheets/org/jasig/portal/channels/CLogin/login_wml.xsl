@@ -39,11 +39,11 @@ $Revision$
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output method="html" indent="yes"/>
   <xsl:param name="baseActionURL">default</xsl:param>
-  <xsl:param name="guest">false</xsl:param>
+  <xsl:param name="unauthenticated">false</xsl:param>
 
   <xsl:template match="login-status">
     <xsl:choose>
-      <xsl:when test="$guest='true'">
+      <xsl:when test="$unauthenticated='true'">
         <xsl:call-template name="login-form"/>
       </xsl:when>
       <xsl:otherwise>
