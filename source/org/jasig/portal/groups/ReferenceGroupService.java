@@ -55,6 +55,7 @@ public class ReferenceGroupService implements IGroupService
 
     // Key for everyone group:
     private String everyoneKey = null;
+    private String adminKey = null;
 
 /**
  * ReferenceGroupsService constructor.
@@ -81,12 +82,21 @@ public IEntityGroup findGroup(String key) throws GroupsException
     return entityFactory.newInstance(key, type);
   }
   /*
-   * Returns the group whose key is the everyone key in the security.properties file.
+   * Returns the group whose key is the everyone key in the portal.properties file.
    */
   public IEntityGroup getEveryoneGroup() throws GroupsException
   {
     return findGroup(everyoneKey);
   }
+  
+  /*
+   * Returns the group whose key is the PortalAdministrators key in the portal.properties file.
+   */
+  public IEntityGroup getPortalAdministratorsGroup() throws GroupsException
+  {
+    return findGroup(adminKey);
+  }
+  
   /**
    * @exception org.jasig.portal.groups.GroupsException.
    */
@@ -118,14 +128,21 @@ public IEntityGroup findGroup(String key) throws GroupsException
 
     try
     {
-        File secFile = ResourceLoader.getResourceAsFile(this.getClass(),"/properties/security.properties");
-        Properties secProps = new Properties();
-        secProps.load(new FileInputStream(secFile));
-        everyoneKey = secProps.getProperty("everyoneKey");
+        everyoneKey = PropertiesManager.getProperty("org.jasig.portal.groups.Everyone.key");
     }
     catch (Exception e)
     {
-        eMsg = "ReferenceGroupService.initialize(): Unable to load everyoneKey from security.properties... " + e;
+        eMsg = "ReferenceGroupService.initialize(): Unable to load everyoneKey from portal.properties... " + e;
+        LogService.instance().log(LogService.ERROR, eMsg);
+        throw new GroupsException(eMsg);
+    }
+    try
+    {
+        adminKey = PropertiesManager.getProperty("org.jasig.portal.groups.PortalAdministrators.key");
+    }
+    catch (Exception e)
+    {
+        eMsg = "ReferenceGroupService.initialize(): Unable to load adminKey from portal.properties... " + e;
         LogService.instance().log(LogService.ERROR, eMsg);
         throw new GroupsException(eMsg);
     }

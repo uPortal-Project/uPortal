@@ -87,6 +87,14 @@ public class GroupService
     {
         return instance().igetEveryoneGroup();
     }
+     /**
+     * Returns the distinguished group called "Portal Administrators".
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
+    public static IEntityGroup getPortalAdministratorsGroup() throws GroupsException
+    {
+        return instance().igetPortalAdministratorsGroup();
+    }
   /*
    * Returns a pre-existing <code>IEntityGroup</code> or null if the
    * <code>IGroupMember</code> does not exist.
@@ -114,6 +122,14 @@ public class GroupService
     protected IEntityGroup igetEveryoneGroup() throws GroupsException
     {
         return groupService.getEveryoneGroup();
+    }
+    /**
+     * Returns the distinguished group called "Portal Administrators".
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
+    protected IEntityGroup igetPortalAdministratorsGroup() throws GroupsException
+    {
+        return groupService.getPortalAdministratorsGroup();
     }
     /**
     * Returns a new <code>IEntityGroup</code> for the given Class with an unused

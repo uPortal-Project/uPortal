@@ -59,11 +59,19 @@ public interface IGroupService {
   public IEntity getEntity(String key, Class type) throws GroupsException;
 
   /*
-   * Refers to the security.properties file to get the key for the group
+   * Refers to the PropertiesManager to get the key for the group
    * Everyone and asks the group store implementation for the corresponding
    * <code>IEntityGroup</code>.
    */
   public IEntityGroup getEveryoneGroup() throws GroupsException;
+
+    /*
+   * Refers to the PropertiesManager to get the key for the group of
+   * Portal Administrators and asks the group store implementation for the corresponding
+   * <code>IEntityGroup</code>.
+   */
+  public IEntityGroup getPortalAdministratorsGroup() throws GroupsException;
+
 
   /*
    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
