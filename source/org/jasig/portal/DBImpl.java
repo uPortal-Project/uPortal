@@ -658,12 +658,13 @@ public class DBImpl implements IDBImpl
       } else {
         StringBuffer sb = new StringBuffer(sql.length() + 4);
         int startPos = 0;
-        while (primePos != -1) {
+        do {
           sb.append(sql.substring(startPos, primePos+1));
           sb.append("'");
           startPos = primePos + 1;
           primePos = sql.indexOf("'", startPos);
-        }
+        } while (primePos != -1);
+        sb.append(sql.substring(startPos));
         return sb.toString();
       }
     }
@@ -1989,23 +1990,23 @@ public class DBImpl implements IDBImpl
     try {
       Statement stmt = con.createStatement();
       try {
-	  String sQuery= "SELECT A.SS_ID FROM UP_STRUCT_SS A, UP_THEME_SS B WHERE B.MIME_TYPE='"+mimeType+"' AND B.STRUCT_SS_ID=A.SS_ID";
-	  Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
-	  ResultSet rs = stmt.executeQuery(sQuery);
-	  try {
-	      while (rs.next()) {
-		  StructureStylesheetDescription ssd=getStructureStylesheetDescription(rs.getInt("SS_ID"));
-		  if(ssd!=null) 
-		      list.put(new Integer(ssd.getId()),ssd);
-	      }
-	  } finally {
-	      rs.close();
-	  }
+          String sQuery= "SELECT A.SS_ID FROM UP_STRUCT_SS A, UP_THEME_SS B WHERE B.MIME_TYPE='"+mimeType+"' AND B.STRUCT_SS_ID=A.SS_ID";
+          Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          try {
+              while (rs.next()) {
+                  StructureStylesheetDescription ssd=getStructureStylesheetDescription(rs.getInt("SS_ID"));
+                  if(ssd!=null)
+                      list.put(new Integer(ssd.getId()),ssd);
+              }
+          } finally {
+              rs.close();
+          }
       } finally {
-	  stmt.close();
+          stmt.close();
       }
     } finally {
-	rdbmService.releaseConnection(con);
+        rdbmService.releaseConnection(con);
     }
     return list;
   }
@@ -2022,23 +2023,23 @@ public class DBImpl implements IDBImpl
     try {
       Statement stmt = con.createStatement();
       try {
-	  String sQuery= "SELECT SS_ID FROM UP_THEME_SS WHERE STRUCT_SS_ID="+structureStylesheetId;
-	  Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
-	  ResultSet rs = stmt.executeQuery(sQuery);
-	  try {
-	      while (rs.next()) {
-		  ThemeStylesheetDescription tsd=getThemeStylesheetDescription(rs.getInt("SS_ID"));
-		  if(tsd!=null) 
-		      list.put(new Integer(tsd.getId()),tsd);
-	      }
-	  } finally {
-	      rs.close();
-	  }
+          String sQuery= "SELECT SS_ID FROM UP_THEME_SS WHERE STRUCT_SS_ID="+structureStylesheetId;
+          Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          try {
+              while (rs.next()) {
+                  ThemeStylesheetDescription tsd=getThemeStylesheetDescription(rs.getInt("SS_ID"));
+                  if(tsd!=null)
+                      list.put(new Integer(tsd.getId()),tsd);
+              }
+          } finally {
+              rs.close();
+          }
       } finally {
-	  stmt.close();
+          stmt.close();
       }
     } finally {
-	rdbmService.releaseConnection(con);
+        rdbmService.releaseConnection(con);
     }
     return list;
   }
@@ -2053,38 +2054,38 @@ public class DBImpl implements IDBImpl
     try {
       Statement stmt = con.createStatement();
       try {
-	  // detele all associated theme stylesheets
-	  String sQuery = "SELECT SS_ID FROM UP_THEME_SS WHERE STRUCT_SS_ID="+stylesheetId;
-	  Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
-	  ResultSet rs = stmt.executeQuery(sQuery);
-	  try {
-	      while(rs.next()) {
-		  removeThemeStylesheetDescription(rs.getInt("SS_ID"));
-	      }
-	  } finally {
-	      rs.close();
-	  }
+          // detele all associated theme stylesheets
+          String sQuery = "SELECT SS_ID FROM UP_THEME_SS WHERE STRUCT_SS_ID="+stylesheetId;
+          Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          try {
+              while(rs.next()) {
+                  removeThemeStylesheetDescription(rs.getInt("SS_ID"));
+              }
+          } finally {
+              rs.close();
+          }
 
-	  sQuery = "DELETE FROM UP_STRUCT_SS WHERE SS_ID=" + stylesheetId;
-	  Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
-	  stmt.executeUpdate(sQuery);
-	  
-	  // delete params
-	  sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId;
-	  Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
-	  stmt.executeUpdate(sQuery);
+          sQuery = "DELETE FROM UP_STRUCT_SS WHERE SS_ID=" + stylesheetId;
+          Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
+          stmt.executeUpdate(sQuery);
 
-	  // clean up user preferences
+          // delete params
+          sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId;
+          Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
+          stmt.executeUpdate(sQuery);
 
-	  // should we do something about profiles ?
+          // clean up user preferences
 
-	commit(con);
+          // should we do something about profiles ?
+
+        commit(con);
       } catch (Exception e) {
-	  // Roll back the transaction
-	  rollback(con);
-	  throw  e;
+          // Roll back the transaction
+          rollback(con);
+          throw  e;
       } finally {
-	  stmt.close();
+          stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -2101,26 +2102,26 @@ public class DBImpl implements IDBImpl
     try {
       Statement stmt = con.createStatement();
       try {
-	  String sQuery = "DELETE FROM UP_THEME_SS WHERE SS_ID=" + stylesheetId;
-	  Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
-	  stmt.executeUpdate(sQuery);
-	  
-	  // delete params
-	  sQuery="DELETE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId;
-	  Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
-	  stmt.executeUpdate(sQuery);
+          String sQuery = "DELETE FROM UP_THEME_SS WHERE SS_ID=" + stylesheetId;
+          Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
+          stmt.executeUpdate(sQuery);
 
-	  // clean up user preferences
+          // delete params
+          sQuery="DELETE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId;
+          Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
+          stmt.executeUpdate(sQuery);
 
-	  // should we do something about profiles ?
+          // clean up user preferences
 
-	commit(con);
+          // should we do something about profiles ?
+
+        commit(con);
       } catch (Exception e) {
-	  // Roll back the transaction
-	  rollback(con);
-	  throw  e;
+          // Roll back the transaction
+          rollback(con);
+          throw  e;
       } finally {
-	  stmt.close();
+          stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -2160,24 +2161,24 @@ public class DBImpl implements IDBImpl
      * @return id or null if no stylesheet matches the name given.
      */
     public Integer getStructureStylesheetId(String ssName) throws Exception {
-	Integer id=null;
-	Connection con = rdbmService.getConnection();
-	try {
-	    setAutoCommit(con, false);
-	    Statement stmt = con.createStatement();
-	    try {
-		String sQuery = "SELECT SS_ID FROM UP_STRUCT_SS WHERE SS_NAME='"+ssName+"'";
-		ResultSet rs = stmt.executeQuery(sQuery);
-		if(rs.next()) {
-		    id=new Integer(rs.getInt("SS_ID"));
-		}
-	    } finally {
-		stmt.close();
-	    }
-	} finally {
-	    rdbmService.releaseConnection(con);
-	}
-	return id;
+        Integer id=null;
+        Connection con = rdbmService.getConnection();
+        try {
+            setAutoCommit(con, false);
+            Statement stmt = con.createStatement();
+            try {
+                String sQuery = "SELECT SS_ID FROM UP_STRUCT_SS WHERE SS_NAME='"+ssName+"'";
+                ResultSet rs = stmt.executeQuery(sQuery);
+                if(rs.next()) {
+                    id=new Integer(rs.getInt("SS_ID"));
+                }
+            } finally {
+                stmt.close();
+            }
+        } finally {
+            rdbmService.releaseConnection(con);
+        }
+        return id;
     }
 
     /**
@@ -2186,59 +2187,59 @@ public class DBImpl implements IDBImpl
      * @return id or null if no theme matches the name given.
      */
     public Integer getThemeStylesheetId(String tsName) throws Exception {
-	Integer id=null;
-	Connection con = rdbmService.getConnection();
-	try {
-	    Statement stmt = con.createStatement();
-	    try {
-		String sQuery = "SELECT SS_ID FROM UP_THEME_SS WHERE SS_NAME='"+tsName+"'";
-		ResultSet rs = stmt.executeQuery(sQuery);
-		if(rs.next()) {
-		    id=new Integer(rs.getInt("SS_ID"));
-		}
-	    } finally {
-		stmt.close();
-	    }
-	} finally {
-	    rdbmService.releaseConnection(con);
-	}
-	return id;
+        Integer id=null;
+        Connection con = rdbmService.getConnection();
+        try {
+            Statement stmt = con.createStatement();
+            try {
+                String sQuery = "SELECT SS_ID FROM UP_THEME_SS WHERE SS_NAME='"+tsName+"'";
+                ResultSet rs = stmt.executeQuery(sQuery);
+                if(rs.next()) {
+                    id=new Integer(rs.getInt("SS_ID"));
+                }
+            } finally {
+                stmt.close();
+            }
+        } finally {
+            rdbmService.releaseConnection(con);
+        }
+        return id;
     }
 
-    /** 
+    /**
      * Remove (with cleanup) a theme stylesheet param
      * @param stylesheetId id of the theme stylesheet
      * @param pName name of the parameter
      * @param con active database connection
      */
     private void removeThemeStylesheetParam(int stylesheetId,String pName, Connection con) throws java.sql.SQLException {
-	Statement stmt=con.createStatement();
-	try {
-	    String sQuery="DELETE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=1 AND PARAM_NAME='"+pName+"'";
-	    Logger.log(Logger.DEBUG,"DBImpl::removeThemeStylesheetParam() : "+sQuery);
-	    stmt.executeQuery(sQuery);
-	    // clean up user preference tables
-	} finally { 
-	    stmt.close();
-	}
+        Statement stmt=con.createStatement();
+        try {
+            String sQuery="DELETE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=1 AND PARAM_NAME='"+pName+"'";
+            Logger.log(Logger.DEBUG,"DBImpl::removeThemeStylesheetParam() : "+sQuery);
+            stmt.executeQuery(sQuery);
+            // clean up user preference tables
+        } finally {
+            stmt.close();
+        }
     }
 
-    /** 
+    /**
      * Remove (with cleanup) a theme stylesheet channel attribute
      * @param stylesheetId id of the theme stylesheet
      * @param pName name of the attribute
      * @param con active database connection
      */
     private void removeThemeChannelAttribute(int stylesheetId,String pName, Connection con) throws java.sql.SQLException {
-	Statement stmt=con.createStatement();
-	try {
-	    String sQuery="DELETE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=3 AND PARAM_NAME='"+pName+"'";
-	    Logger.log(Logger.DEBUG,"DBImpl::removeThemeChannelAttribute() : "+sQuery);
-	    stmt.executeQuery(sQuery);
-	    // clean up user preference tables
-	} finally { 
-	    stmt.close();
-	}
+        Statement stmt=con.createStatement();
+        try {
+            String sQuery="DELETE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=3 AND PARAM_NAME='"+pName+"'";
+            Logger.log(Logger.DEBUG,"DBImpl::removeThemeChannelAttribute() : "+sQuery);
+            stmt.executeQuery(sQuery);
+            // clean up user preference tables
+        } finally {
+            stmt.close();
+        }
     }
 
     /**
@@ -2249,154 +2250,154 @@ public class DBImpl implements IDBImpl
     public void updateThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
      Connection con = rdbmService.getConnection();
      try {
-	 // Set autocommit false for the connection
-	 setAutoCommit(con, false);
+         // Set autocommit false for the connection
+         setAutoCommit(con, false);
 
-	 Statement stmt = con.createStatement();
-	 try {
+         Statement stmt = con.createStatement();
+         try {
              int stylesheetId=tsd.getId();
-	     
-	     String sQuery = "UPDATE UP_THEME_SS SET SS_NAME='"+ tsd.getStylesheetName() +"',SS_URI='"+ tsd.getStylesheetURI() +"',SS_DESCRIPTION_URI='"+ tsd.getStylesheetDescriptionURI()+"',SS_DESCRIPTION_TEXT='"+tsd.getStylesheetWordDescription()+"' WHERE SS_ID="+stylesheetId;
 
-	     Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
-	     stmt.executeUpdate(sQuery);
-	     
-	     HashSet oparams=new HashSet();
-	     HashSet ocattrs=new HashSet();
+             String sQuery = "UPDATE UP_THEME_SS SET SS_NAME='"+ tsd.getStylesheetName() +"',SS_URI='"+ tsd.getStylesheetURI() +"',SS_DESCRIPTION_URI='"+ tsd.getStylesheetDescriptionURI()+"',SS_DESCRIPTION_TEXT='"+tsd.getStylesheetWordDescription()+"' WHERE SS_ID="+stylesheetId;
+
+             Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
+             stmt.executeUpdate(sQuery);
+
+             HashSet oparams=new HashSet();
+             HashSet ocattrs=new HashSet();
 
 
              // first, see what was there before
-	     
-	     sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId;
-	     Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
-	     Statement stmtOld=con.createStatement();
-	     ResultSet rsOld = stmtOld.executeQuery(sQuery);
-	     try {
-		 while(rsOld.next()) {
-		     int type=rsOld.getInt("TYPE");
-		     if(type==1) {
-			 // stylesheet param
-			 String pName=rsOld.getString("PARAM_NAME");
-			 oparams.add(pName);
-			 if(!tsd.containsParameterName(pName)) {
-			     // delete param
-			     removeThemeStylesheetParam(stylesheetId,pName,con);
-			 } else {
-			     // update param
-			     sQuery = "UPDATE UP_THEME_PARAMS SET PARAM_DEFAULT_VAL='"+tsd.getStylesheetParameterDefaultValue(pName)+"',PARAM_DESCRIPT='"+tsd.getStylesheetParameterWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=1";
-			     Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
-			     stmt.executeUpdate(sQuery);
-			 }
-		     } else if(type==2) {
-			 Logger.log(Logger.DEBUG,"DBImpl::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! DB is corrupt. (stylesheetId="+stylesheetId+" param_name=\""+rsOld.getString("PARAM_NAME")+"\" type="+rsOld.getInt("TYPE")+").");
-		     } else if(type==3) {
-			 // channel attribute
-			 String pName=rsOld.getString("PARAM_NAME");
-			 ocattrs.add(pName);
-			 if(!tsd.containsChannelAttribute(pName)) {
-			     // delete channel attribute
-			     removeThemeChannelAttribute(stylesheetId,pName,con);
-			 } else {
-			     // update channel attribute
-			     sQuery = "UPDATE UP_THEME_PARAMS SET PARAM_DEFAULT_VAL='"+tsd.getChannelAttributeDefaultValue(pName)+"',PARAM_DESCRIPT='"+tsd.getChannelAttributeWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=3";
-			     Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
-			     stmt.executeUpdate(sQuery);
-			 }
-		     } else {
-			 Logger.log(Logger.DEBUG,"DBImpl::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rsOld.getString("PARAM_NAME")+"\" type="+rsOld.getInt("TYPE")+").");
-		     } 
-		 }
-	     } finally {
-		 rsOld.close();
-		 stmtOld.close();
-	     }
 
-	     // look for new attributes/parameters
-	     // insert all stylesheet params
-	     for(Enumeration e=tsd.getStylesheetParameterNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 if(!oparams.contains(pName)) {
-		     sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ tsd.getStylesheetParameterDefaultValue(pName)+"','"+tsd.getStylesheetParameterWordDescription(pName)+"',1)";
-		     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		     stmt.executeUpdate(sQuery);
-		 }
-	     }
-	     // insert all channel attributes
-	     for(Enumeration e=tsd.getChannelAttributeNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 if(!ocattrs.contains(pName)) {
-		     sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ tsd.getChannelAttributeDefaultValue(pName)+"','"+tsd.getChannelAttributeWordDescription(pName)+"',3)";
-		     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		     stmt.executeUpdate(sQuery);
-		 }
-	     }
-	     // Commit the transaction
-	     commit(con);
-	 } catch (Exception e) {
-	     // Roll back the transaction
-	     rollback(con);
-	     throw  e;
-	 } finally {
-	     stmt.close();
-	 }
+             sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId;
+             Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
+             Statement stmtOld=con.createStatement();
+             ResultSet rsOld = stmtOld.executeQuery(sQuery);
+             try {
+                 while(rsOld.next()) {
+                     int type=rsOld.getInt("TYPE");
+                     if(type==1) {
+                         // stylesheet param
+                         String pName=rsOld.getString("PARAM_NAME");
+                         oparams.add(pName);
+                         if(!tsd.containsParameterName(pName)) {
+                             // delete param
+                             removeThemeStylesheetParam(stylesheetId,pName,con);
+                         } else {
+                             // update param
+                             sQuery = "UPDATE UP_THEME_PARAMS SET PARAM_DEFAULT_VAL='"+tsd.getStylesheetParameterDefaultValue(pName)+"',PARAM_DESCRIPT='"+tsd.getStylesheetParameterWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=1";
+                             Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
+                             stmt.executeUpdate(sQuery);
+                         }
+                     } else if(type==2) {
+                         Logger.log(Logger.DEBUG,"DBImpl::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! DB is corrupt. (stylesheetId="+stylesheetId+" param_name=\""+rsOld.getString("PARAM_NAME")+"\" type="+rsOld.getInt("TYPE")+").");
+                     } else if(type==3) {
+                         // channel attribute
+                         String pName=rsOld.getString("PARAM_NAME");
+                         ocattrs.add(pName);
+                         if(!tsd.containsChannelAttribute(pName)) {
+                             // delete channel attribute
+                             removeThemeChannelAttribute(stylesheetId,pName,con);
+                         } else {
+                             // update channel attribute
+                             sQuery = "UPDATE UP_THEME_PARAMS SET PARAM_DEFAULT_VAL='"+tsd.getChannelAttributeDefaultValue(pName)+"',PARAM_DESCRIPT='"+tsd.getChannelAttributeWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=3";
+                             Logger.log(Logger.DEBUG, "DBImpl::updateThemeStylesheetDescription() : " + sQuery);
+                             stmt.executeUpdate(sQuery);
+                         }
+                     } else {
+                         Logger.log(Logger.DEBUG,"DBImpl::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rsOld.getString("PARAM_NAME")+"\" type="+rsOld.getInt("TYPE")+").");
+                     }
+                 }
+             } finally {
+                 rsOld.close();
+                 stmtOld.close();
+             }
+
+             // look for new attributes/parameters
+             // insert all stylesheet params
+             for(Enumeration e=tsd.getStylesheetParameterNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 if(!oparams.contains(pName)) {
+                     sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ tsd.getStylesheetParameterDefaultValue(pName)+"','"+tsd.getStylesheetParameterWordDescription(pName)+"',1)";
+                     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                     stmt.executeUpdate(sQuery);
+                 }
+             }
+             // insert all channel attributes
+             for(Enumeration e=tsd.getChannelAttributeNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 if(!ocattrs.contains(pName)) {
+                     sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ tsd.getChannelAttributeDefaultValue(pName)+"','"+tsd.getChannelAttributeWordDescription(pName)+"',3)";
+                     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                     stmt.executeUpdate(sQuery);
+                 }
+             }
+             // Commit the transaction
+             commit(con);
+         } catch (Exception e) {
+             // Roll back the transaction
+             rollback(con);
+             throw  e;
+         } finally {
+             stmt.close();
+         }
      } finally {
-	 rdbmService.releaseConnection(con);
+         rdbmService.releaseConnection(con);
      }
     }
 
 
-    /** 
+    /**
      * Remove (with cleanup) a structure stylesheet param
      * @param stylesheetId id of the structure stylesheet
      * @param pName name of the parameter
      * @param con active database connection
      */
     private void removeStructureStylesheetParam(int stylesheetId,String pName, Connection con) throws java.sql.SQLException {
-	Statement stmt=con.createStatement();
-	try {
-	    String sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=1 AND PARAM_NAME='"+pName+"'";
-	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureStylesheetParam() : "+sQuery);
-	    stmt.executeQuery(sQuery);
-	    // clean up user preference tables
-	} finally { 
-	    stmt.close();
-	}
+        Statement stmt=con.createStatement();
+        try {
+            String sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=1 AND PARAM_NAME='"+pName+"'";
+            Logger.log(Logger.DEBUG,"DBImpl::removeStructureStylesheetParam() : "+sQuery);
+            stmt.executeQuery(sQuery);
+            // clean up user preference tables
+        } finally {
+            stmt.close();
+        }
     }
 
-    /** 
+    /**
      * Remove (with cleanup) a structure stylesheet folder attribute
      * @param stylesheetId id of the structure stylesheet
      * @param pName name of the attribute
      * @param con active database connection
      */
     private void removeStructureFolderAttribute(int stylesheetId,String pName, Connection con) throws java.sql.SQLException {
-	Statement stmt=con.createStatement();
-	try {
-	    String sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=2 AND PARAM_NAME='"+pName+"'";
-	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureFolderAttribute() : "+sQuery);
-	    stmt.executeQuery(sQuery);
-	    // clean up user preference tables
-	} finally { 
-	    stmt.close();
-	}
+        Statement stmt=con.createStatement();
+        try {
+            String sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=2 AND PARAM_NAME='"+pName+"'";
+            Logger.log(Logger.DEBUG,"DBImpl::removeStructureFolderAttribute() : "+sQuery);
+            stmt.executeQuery(sQuery);
+            // clean up user preference tables
+        } finally {
+            stmt.close();
+        }
     }
 
-    /** 
+    /**
      * Remove (with cleanup) a structure stylesheet channel attribute
      * @param stylesheetId id of the structure stylesheet
      * @param pName name of the attribute
      * @param con active database connection
      */
     private void removeStructureChannelAttribute(int stylesheetId,String pName, Connection con) throws java.sql.SQLException {
-	Statement stmt=con.createStatement();
-	try {
-	    String sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=3 AND PARAM_NAME='"+pName+"'";
-	    Logger.log(Logger.DEBUG,"DBImpl::removeStructureChannelAttribute() : "+sQuery);
-	    stmt.executeQuery(sQuery);
-	    // clean up user preference tables
-	} finally { 
-	    stmt.close();
-	}
+        Statement stmt=con.createStatement();
+        try {
+            String sQuery="DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId+" AND TYPE=3 AND PARAM_NAME='"+pName+"'";
+            Logger.log(Logger.DEBUG,"DBImpl::removeStructureChannelAttribute() : "+sQuery);
+            stmt.executeQuery(sQuery);
+            // clean up user preference tables
+        } finally {
+            stmt.close();
+        }
     }
 
     /**
@@ -2407,122 +2408,122 @@ public class DBImpl implements IDBImpl
     public void updateStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
      Connection con = rdbmService.getConnection();
      try {
-	 // Set autocommit false for the connection
-	 setAutoCommit(con, false);
+         // Set autocommit false for the connection
+         setAutoCommit(con, false);
 
-	 Statement stmt = con.createStatement();
-	 try {
+         Statement stmt = con.createStatement();
+         try {
              int stylesheetId=ssd.getId();
-	     
-	     String sQuery = "UPDATE UP_STRUCT_SS SET SS_NAME='"+ ssd.getStylesheetName() +"',SS_URI='"+ ssd.getStylesheetURI() +"',SS_DESCRIPTION_URI='"+ ssd.getStylesheetDescriptionURI()+"',SS_DESCRIPTION_TEXT='"+ssd.getStylesheetWordDescription()+"' WHERE SS_ID="+stylesheetId;
 
-	     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-	     stmt.executeUpdate(sQuery);
-	     
-	     HashSet oparams=new HashSet();
-	     HashSet ofattrs=new HashSet();
-	     HashSet ocattrs=new HashSet();
+             String sQuery = "UPDATE UP_STRUCT_SS SET SS_NAME='"+ ssd.getStylesheetName() +"',SS_URI='"+ ssd.getStylesheetURI() +"',SS_DESCRIPTION_URI='"+ ssd.getStylesheetDescriptionURI()+"',SS_DESCRIPTION_TEXT='"+ssd.getStylesheetWordDescription()+"' WHERE SS_ID="+stylesheetId;
+
+             Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+             stmt.executeUpdate(sQuery);
+
+             HashSet oparams=new HashSet();
+             HashSet ofattrs=new HashSet();
+             HashSet ocattrs=new HashSet();
 
 
              // first, see what was there before
-	     
-	     sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId;
-	     Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
-	     Statement stmtOld=con.createStatement();
-	     ResultSet rsOld = stmtOld.executeQuery(sQuery);
-	     try {
-		 while(rsOld.next()) {
-		     int type=rsOld.getInt("TYPE");
-		     if(type==1) {
-			 // stylesheet param
-			 String pName=rsOld.getString("PARAM_NAME");
-			 oparams.add(pName);
-			 if(!ssd.containsParameterName(pName)) {
-			     // delete param
-			     removeStructureStylesheetParam(stylesheetId,pName,con);
-			 } else {
-			     // update param
-			     sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='"+ssd.getStylesheetParameterDefaultValue(pName)+"',PARAM_DESCRIPT='"+ssd.getStylesheetParameterWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=1";
-			     Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
-			     stmt.executeUpdate(sQuery);
-			 }
-		     } else if(type==2) {
-			 // folder attribute
-			 String pName=rsOld.getString("PARAM_NAME");
-			 ofattrs.add(pName);
-			 if(!ssd.containsFolderAttribute(pName)) {
-			     // delete folder attribute
-			     removeStructureFolderAttribute(stylesheetId,pName,con);
-			 } else {
-			     // update folder attribute
-			     sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='"+ssd.getFolderAttributeDefaultValue(pName)+"',PARAM_DESCRIPT='"+ssd.getFolderAttributeWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"'AND TYPE=2";
-			     Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
-			     stmt.executeUpdate(sQuery);
-			 }
-		     } else if(type==3) {
-			 // channel attribute
-			 String pName=rsOld.getString("PARAM_NAME");
-			 ocattrs.add(pName);
-			 if(!ssd.containsChannelAttribute(pName)) {
-			     // delete channel attribute
-			     removeStructureChannelAttribute(stylesheetId,pName,con);
-			 } else {
-			     // update channel attribute
-			     sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='"+ssd.getChannelAttributeDefaultValue(pName)+"',PARAM_DESCRIPT='"+ssd.getChannelAttributeWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=3";
-			     Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
-			     stmt.executeUpdate(sQuery);
-			 }
-		     } else {
-			 Logger.log(Logger.DEBUG,"DBImpl::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rsOld.getString("PARAM_NAME")+"\" type="+rsOld.getInt("TYPE")+").");
-		     } 
-		 }
-	     } finally {
-		 rsOld.close();
-		 stmtOld.close();
-	     }
 
-	     // look for new attributes/parameters
-	     // insert all stylesheet params
-	     for(Enumeration e=ssd.getStylesheetParameterNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 if(!oparams.contains(pName)) {
-		     sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ ssd.getStylesheetParameterDefaultValue(pName)+"','"+ssd.getStylesheetParameterWordDescription(pName)+"',1)";
-		     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		     stmt.executeUpdate(sQuery);
-		 }
-	     }
+             sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId;
+             Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
+             Statement stmtOld=con.createStatement();
+             ResultSet rsOld = stmtOld.executeQuery(sQuery);
+             try {
+                 while(rsOld.next()) {
+                     int type=rsOld.getInt("TYPE");
+                     if(type==1) {
+                         // stylesheet param
+                         String pName=rsOld.getString("PARAM_NAME");
+                         oparams.add(pName);
+                         if(!ssd.containsParameterName(pName)) {
+                             // delete param
+                             removeStructureStylesheetParam(stylesheetId,pName,con);
+                         } else {
+                             // update param
+                             sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='"+ssd.getStylesheetParameterDefaultValue(pName)+"',PARAM_DESCRIPT='"+ssd.getStylesheetParameterWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=1";
+                             Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
+                             stmt.executeUpdate(sQuery);
+                         }
+                     } else if(type==2) {
+                         // folder attribute
+                         String pName=rsOld.getString("PARAM_NAME");
+                         ofattrs.add(pName);
+                         if(!ssd.containsFolderAttribute(pName)) {
+                             // delete folder attribute
+                             removeStructureFolderAttribute(stylesheetId,pName,con);
+                         } else {
+                             // update folder attribute
+                             sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='"+ssd.getFolderAttributeDefaultValue(pName)+"',PARAM_DESCRIPT='"+ssd.getFolderAttributeWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"'AND TYPE=2";
+                             Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
+                             stmt.executeUpdate(sQuery);
+                         }
+                     } else if(type==3) {
+                         // channel attribute
+                         String pName=rsOld.getString("PARAM_NAME");
+                         ocattrs.add(pName);
+                         if(!ssd.containsChannelAttribute(pName)) {
+                             // delete channel attribute
+                             removeStructureChannelAttribute(stylesheetId,pName,con);
+                         } else {
+                             // update channel attribute
+                             sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='"+ssd.getChannelAttributeDefaultValue(pName)+"',PARAM_DESCRIPT='"+ssd.getChannelAttributeWordDescription(pName)+"' WHERE SS_ID=" + stylesheetId +" AND PARAM_NAME='"+pName+"' AND TYPE=3";
+                             Logger.log(Logger.DEBUG, "DBImpl::updateStructureStylesheetDescription() : " + sQuery);
+                             stmt.executeUpdate(sQuery);
+                         }
+                     } else {
+                         Logger.log(Logger.DEBUG,"DBImpl::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rsOld.getString("PARAM_NAME")+"\" type="+rsOld.getInt("TYPE")+").");
+                     }
+                 }
+             } finally {
+                 rsOld.close();
+                 stmtOld.close();
+             }
 
-	     // insert all folder attributes
-	     for(Enumeration e=ssd.getFolderAttributeNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 if(!ofattrs.contains(pName)) {
-		     sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ ssd.getFolderAttributeDefaultValue(pName)+"','"+ssd.getFolderAttributeWordDescription(pName)+"',2)";
-		     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		     stmt.executeUpdate(sQuery);
-		 }
-	     }
+             // look for new attributes/parameters
+             // insert all stylesheet params
+             for(Enumeration e=ssd.getStylesheetParameterNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 if(!oparams.contains(pName)) {
+                     sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ ssd.getStylesheetParameterDefaultValue(pName)+"','"+ssd.getStylesheetParameterWordDescription(pName)+"',1)";
+                     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                     stmt.executeUpdate(sQuery);
+                 }
+             }
+
+             // insert all folder attributes
+             for(Enumeration e=ssd.getFolderAttributeNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 if(!ofattrs.contains(pName)) {
+                     sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ ssd.getFolderAttributeDefaultValue(pName)+"','"+ssd.getFolderAttributeWordDescription(pName)+"',2)";
+                     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                     stmt.executeUpdate(sQuery);
+                 }
+             }
 
 
-	     // insert all channel attributes
-	     for(Enumeration e=ssd.getChannelAttributeNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 if(!ocattrs.contains(pName)) {
-		     sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ ssd.getChannelAttributeDefaultValue(pName)+"','"+ssd.getChannelAttributeWordDescription(pName)+"',3)";
-		     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		     stmt.executeUpdate(sQuery);
-		 }
-	     }
-	     // Commit the transaction
-	     commit(con);
-	 } catch (Exception e) {
-	     // Roll back the transaction
-	     rollback(con);
-	     throw  e;
-	 } finally {
-	     stmt.close();
-	 }
+             // insert all channel attributes
+             for(Enumeration e=ssd.getChannelAttributeNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 if(!ocattrs.contains(pName)) {
+                     sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId +",'"+pName+"','"+ ssd.getChannelAttributeDefaultValue(pName)+"','"+ssd.getChannelAttributeWordDescription(pName)+"',3)";
+                     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                     stmt.executeUpdate(sQuery);
+                 }
+             }
+             // Commit the transaction
+             commit(con);
+         } catch (Exception e) {
+             // Roll back the transaction
+             rollback(con);
+             throw  e;
+         } finally {
+             stmt.close();
+         }
      } finally {
-	 rdbmService.releaseConnection(con);
+         rdbmService.releaseConnection(con);
      }
     }
 
@@ -2533,55 +2534,55 @@ public class DBImpl implements IDBImpl
     public Integer addStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
      Connection con = rdbmService.getConnection();
      try {
-	 // Set autocommit false for the connection
-	 setAutoCommit(con, false);
+         // Set autocommit false for the connection
+         setAutoCommit(con, false);
 
-	 Statement stmt = con.createStatement();
-	 try {
-	     // we assume that this is a new stylesheet.
-	     int id = getIncrementIntegerId("UP_STRUCT_SS");
-	     ssd.setId(id);
-	     String sQuery = "INSERT INTO UP_STRUCT_SS (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("+ id + ",'"+ ssd.getStylesheetName() +"','"+ ssd.getStylesheetURI() +"','"+ ssd.getStylesheetDescriptionURI()+"','"+ssd.getStylesheetWordDescription()+"')";
+         Statement stmt = con.createStatement();
+         try {
+             // we assume that this is a new stylesheet.
+             int id = getIncrementIntegerId("UP_STRUCT_SS");
+             ssd.setId(id);
+             String sQuery = "INSERT INTO UP_STRUCT_SS (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("+ id + ",'"+ ssd.getStylesheetName() +"','"+ ssd.getStylesheetURI() +"','"+ ssd.getStylesheetDescriptionURI()+"','"+ssd.getStylesheetWordDescription()+"')";
 
-	     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-	     stmt.executeUpdate(sQuery);
+             Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+             stmt.executeUpdate(sQuery);
 
-	     // insert all stylesheet params
-	     for(Enumeration e=ssd.getStylesheetParameterNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ ssd.getStylesheetParameterDefaultValue(pName)+"','"+ssd.getStylesheetParameterWordDescription(pName)+"',1)";
-		 Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		 stmt.executeUpdate(sQuery);
-	     }
-	     // insert all folder attributes
-	     for(Enumeration e=ssd.getFolderAttributeNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ ssd.getFolderAttributeDefaultValue(pName)+"','"+ssd.getFolderAttributeWordDescription(pName)+"',2)";
-		 Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		 stmt.executeUpdate(sQuery);
-	     }
+             // insert all stylesheet params
+             for(Enumeration e=ssd.getStylesheetParameterNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ ssd.getStylesheetParameterDefaultValue(pName)+"','"+ssd.getStylesheetParameterWordDescription(pName)+"',1)";
+                 Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                 stmt.executeUpdate(sQuery);
+             }
+             // insert all folder attributes
+             for(Enumeration e=ssd.getFolderAttributeNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ ssd.getFolderAttributeDefaultValue(pName)+"','"+ssd.getFolderAttributeWordDescription(pName)+"',2)";
+                 Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                 stmt.executeUpdate(sQuery);
+             }
 
-	     // insert all channel attributes
-	     for(Enumeration e=ssd.getChannelAttributeNames();e.hasMoreElements();) {
-		 String pName = (String)e.nextElement();
-		 sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ ssd.getChannelAttributeDefaultValue(pName)+"','"+ssd.getChannelAttributeWordDescription(pName)+"',3)";
-		 Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		 stmt.executeUpdate(sQuery);
-	     }
+             // insert all channel attributes
+             for(Enumeration e=ssd.getChannelAttributeNames();e.hasMoreElements();) {
+                 String pName = (String)e.nextElement();
+                 sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ ssd.getChannelAttributeDefaultValue(pName)+"','"+ssd.getChannelAttributeWordDescription(pName)+"',3)";
+                 Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                 stmt.executeUpdate(sQuery);
+             }
 
 
-	     // Commit the transaction
-	     commit(con);
-	     return new Integer(id);
-	 } catch (Exception e) {
-	     // Roll back the transaction
-	     rollback(con);
-	     throw  e;
-	 } finally {
-	     stmt.close();
-	 }
+             // Commit the transaction
+             commit(con);
+             return new Integer(id);
+         } catch (Exception e) {
+             // Roll back the transaction
+             rollback(con);
+             throw  e;
+         } finally {
+             stmt.close();
+         }
      } finally {
-	 rdbmService.releaseConnection(con);
+         rdbmService.releaseConnection(con);
      }
     }
 
@@ -2591,53 +2592,53 @@ public class DBImpl implements IDBImpl
      * @return structure stylesheet description
      */
     public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception {
-	StructureStylesheetDescription ssd=null;
-	Connection con = rdbmService.getConnection();
-	Statement stmt = con.createStatement();
-	try {
-	    String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT FROM UP_STRUCT_SS WHERE SS_ID="+stylesheetId;
-	    Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetDescription() : " + sQuery);
-	    ResultSet rs = stmt.executeQuery(sQuery);
-	    if(rs.next()){
-		try {
-		    ssd=new StructureStylesheetDescription();
-		    ssd.setId(stylesheetId);
-		    ssd.setStylesheetName(rs.getString("SS_NAME"));
-		    ssd.setStylesheetURI(rs.getString("SS_URI"));
-		    ssd.setStylesheetDescriptionURI(rs.getString("SS_DESCRIPTION_URI"));
-		    ssd.setStylesheetWordDescription(rs.getString("SS_DESCRIPTION_TEXT"));
-		} finally {
-		    rs.close();
-		}
-	    }
-	    // retreive stylesheet params and attributes
-	    sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId;
-	    Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetDescription() : " + sQuery);
-	    rs = stmt.executeQuery(sQuery);
-	    try {
-		while(rs.next()) {
-		    int type=rs.getInt("TYPE");
-		    if(type==1) {
-			// param
-			ssd.addStylesheetParameter(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
-		    } else if(type==2) {
-			// folder attribute
-			ssd.addFolderAttribute(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
-		    } else if(type==3) {
-			// channel attribute
-			ssd.addChannelAttribute(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
-		    } else {
-			Logger.log(Logger.DEBUG,"DBImpl::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rs.getString("PARAM_NAME")+"\" type="+rs.getInt("TYPE")+").");
-		    }
-		}
-            } finally {
-		rs.close();
+        StructureStylesheetDescription ssd=null;
+        Connection con = rdbmService.getConnection();
+        Statement stmt = con.createStatement();
+        try {
+            String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT FROM UP_STRUCT_SS WHERE SS_ID="+stylesheetId;
+            Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetDescription() : " + sQuery);
+            ResultSet rs = stmt.executeQuery(sQuery);
+            if(rs.next()){
+                try {
+                    ssd=new StructureStylesheetDescription();
+                    ssd.setId(stylesheetId);
+                    ssd.setStylesheetName(rs.getString("SS_NAME"));
+                    ssd.setStylesheetURI(rs.getString("SS_URI"));
+                    ssd.setStylesheetDescriptionURI(rs.getString("SS_DESCRIPTION_URI"));
+                    ssd.setStylesheetWordDescription(rs.getString("SS_DESCRIPTION_TEXT"));
+                } finally {
+                    rs.close();
+                }
             }
-	} finally {
+            // retreive stylesheet params and attributes
+            sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_STRUCT_PARAMS WHERE SS_ID="+stylesheetId;
+            Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetDescription() : " + sQuery);
+            rs = stmt.executeQuery(sQuery);
+            try {
+                while(rs.next()) {
+                    int type=rs.getInt("TYPE");
+                    if(type==1) {
+                        // param
+                        ssd.addStylesheetParameter(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
+                    } else if(type==2) {
+                        // folder attribute
+                        ssd.addFolderAttribute(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
+                    } else if(type==3) {
+                        // channel attribute
+                        ssd.addChannelAttribute(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
+                    } else {
+                        Logger.log(Logger.DEBUG,"DBImpl::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rs.getString("PARAM_NAME")+"\" type="+rs.getInt("TYPE")+").");
+                    }
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
             stmt.close();
-	    rdbmService.releaseConnection(con);
-	}
-	return ssd;
+            rdbmService.releaseConnection(con);
+        }
+        return ssd;
     }
 
     /**
@@ -2646,62 +2647,62 @@ public class DBImpl implements IDBImpl
      * @return theme stylesheet description
      */
     public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) throws Exception {
-	ThemeStylesheetDescription tsd=null;
-	Connection con = rdbmService.getConnection();
-	Statement stmt = con.createStatement();
-	try {
-	    String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS FROM UP_THEME_SS WHERE SS_ID="+stylesheetId;
-	    Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetDescription() : " + sQuery);
-	    ResultSet rs = stmt.executeQuery(sQuery);
-	    if(rs.next()){
-		try {
-		    tsd=new ThemeStylesheetDescription();
-		    tsd.setId(stylesheetId);
-		    tsd.setStylesheetName(rs.getString("SS_NAME"));
-		    tsd.setStylesheetURI(rs.getString("SS_URI"));
-		    tsd.setStylesheetDescriptionURI(rs.getString("SS_DESCRIPTION_URI"));
-		    tsd.setStylesheetWordDescription(rs.getString("SS_DESCRIPTION_TEXT"));
-		    tsd.setStructureStylesheetId(rs.getInt("STRUCT_SS_ID"));
-		    tsd.setSamplePictureURI(rs.getString("SAMPLE_URI"));
-		    tsd.setSampleIconURI(rs.getString("SAMPLE_ICON_URI"));
-		    tsd.setMimeType(rs.getString("MIME_TYPE"));
-		    tsd.setDeviceType(rs.getString("DEVICE_TYPE"));
-		    tsd.setSerializerName(rs.getString("SERIALIZER_NAME"));
-		    tsd.setCustomUserPreferencesManagerClass(rs.getString("UP_MODULE_CLASS"));
+        ThemeStylesheetDescription tsd=null;
+        Connection con = rdbmService.getConnection();
+        Statement stmt = con.createStatement();
+        try {
+            String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS FROM UP_THEME_SS WHERE SS_ID="+stylesheetId;
+            Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetDescription() : " + sQuery);
+            ResultSet rs = stmt.executeQuery(sQuery);
+            try {
+              if(rs.next()){
+                    tsd=new ThemeStylesheetDescription();
+                    tsd.setId(stylesheetId);
+                    tsd.setStylesheetName(rs.getString("SS_NAME"));
+                    tsd.setStylesheetURI(rs.getString("SS_URI"));
+                    tsd.setStylesheetDescriptionURI(rs.getString("SS_DESCRIPTION_URI"));
+                    tsd.setStylesheetWordDescription(rs.getString("SS_DESCRIPTION_TEXT"));
+                    tsd.setStructureStylesheetId(rs.getInt("STRUCT_SS_ID"));
+                    tsd.setSamplePictureURI(rs.getString("SAMPLE_URI"));
+                    tsd.setSampleIconURI(rs.getString("SAMPLE_ICON_URI"));
+                    tsd.setMimeType(rs.getString("MIME_TYPE"));
+                    tsd.setDeviceType(rs.getString("DEVICE_TYPE"));
+                    tsd.setSerializerName(rs.getString("SERIALIZER_NAME"));
+                    tsd.setCustomUserPreferencesManagerClass(rs.getString("UP_MODULE_CLASS"));
 
-		} finally {
-		    rs.close();
-		}
-	    }
-	    // retreive stylesheet params and attributes
-	    sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId;
-	    Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetDescription() : " + sQuery);
-	    rs = stmt.executeQuery(sQuery);
-	    try {
-		while(rs.next()) {
-		    int type=rs.getInt("TYPE");
-		    if(type==1) {
-			// param
-			tsd.addStylesheetParameter(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
-		    } else if(type==3) {
-			// channel attribute
-			tsd.addChannelAttribute(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
-		    } else if(type==2) {
-			// folder attributes are not allowed here
-			Logger.log(Logger.ERROR,"DBImpl::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! Corrupted DB entry. (stylesheetId="+stylesheetId+" param_name=\""+rs.getString("PARAM_NAME")+"\" type="+rs.getInt("TYPE")+").");
-		    }
-		    else {
-			Logger.log(Logger.ERROR,"DBImpl::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rs.getString("PARAM_NAME")+"\" type="+rs.getInt("TYPE")+").");
-		    }
-		}
+              }
             } finally {
-		rs.close();
+              rs.close();
             }
-	} finally {
+            // retreive stylesheet params and attributes
+            sQuery="SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_THEME_PARAMS WHERE SS_ID="+stylesheetId;
+            Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetDescription() : " + sQuery);
+            rs = stmt.executeQuery(sQuery);
+            try {
+                while(rs.next()) {
+                    int type=rs.getInt("TYPE");
+                    if(type==1) {
+                        // param
+                        tsd.addStylesheetParameter(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
+                    } else if(type==3) {
+                        // channel attribute
+                        tsd.addChannelAttribute(rs.getString("PARAM_NAME"),rs.getString("PARAM_DEFAULT_VAL"),rs.getString("PARAM_DESCRIPT"));
+                    } else if(type==2) {
+                        // folder attributes are not allowed here
+                        Logger.log(Logger.ERROR,"DBImpl::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! Corrupted DB entry. (stylesheetId="+stylesheetId+" param_name=\""+rs.getString("PARAM_NAME")+"\" type="+rs.getInt("TYPE")+").");
+                    }
+                    else {
+                        Logger.log(Logger.ERROR,"DBImpl::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="+stylesheetId+" param_name=\""+rs.getString("PARAM_NAME")+"\" type="+rs.getInt("TYPE")+").");
+                    }
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
             stmt.close();
-	    rdbmService.releaseConnection(con);
-	}
-	return tsd;
+            rdbmService.releaseConnection(con);
+        }
+        return tsd;
     }
 
     /**
@@ -2709,50 +2710,50 @@ public class DBImpl implements IDBImpl
      * @param tsd Stylesheet description object
      */
     public Integer addThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
-	Connection con = rdbmService.getConnection();
-	try {
-	    // Set autocommit false for the connection
-	    setAutoCommit(con, false);
+        Connection con = rdbmService.getConnection();
+        try {
+            // Set autocommit false for the connection
+            setAutoCommit(con, false);
 
-	    Statement stmt = con.createStatement();
-	    try {
-		// we assume that this is a new stylesheet.
-		int id = getIncrementIntegerId("UP_THEME_SS");
-		tsd.setId(id);
-		String sQuery = "INSERT INTO UP_THEME_SS (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_URI,SAMPLE_ICON_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS) VALUES ("+ id + ",'"+ tsd.getStylesheetName() +"','"+ tsd.getStylesheetURI() +"','"+ tsd.getStylesheetDescriptionURI()+"','"+tsd.getStylesheetWordDescription()+"',"+tsd.getStructureStylesheetId()+",'"+tsd.getSamplePictureURI()+"','"+tsd.getSampleIconURI()+"','"+tsd.getMimeType()+"','"+tsd.getDeviceType()+"','"+tsd.getSerializerName()+"','"+tsd.getCustomUserPreferencesManagerClass()+"')";
+            Statement stmt = con.createStatement();
+            try {
+                // we assume that this is a new stylesheet.
+                int id = getIncrementIntegerId("UP_THEME_SS");
+                tsd.setId(id);
+                String sQuery = "INSERT INTO UP_THEME_SS (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_URI,SAMPLE_ICON_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS) VALUES ("+ id + ",'"+ tsd.getStylesheetName() +"','"+ tsd.getStylesheetURI() +"','"+ tsd.getStylesheetDescriptionURI()+"','"+tsd.getStylesheetWordDescription()+"',"+tsd.getStructureStylesheetId()+",'"+tsd.getSamplePictureURI()+"','"+tsd.getSampleIconURI()+"','"+tsd.getMimeType()+"','"+tsd.getDeviceType()+"','"+tsd.getSerializerName()+"','"+tsd.getCustomUserPreferencesManagerClass()+"')";
 
-		Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		stmt.executeUpdate(sQuery);
+                Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                stmt.executeUpdate(sQuery);
 
-		// insert all stylesheet params
-		for(Enumeration e=tsd.getStylesheetParameterNames();e.hasMoreElements();) {
-		    String pName = (String)e.nextElement();
-		    sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ tsd.getStylesheetParameterDefaultValue(pName)+"','"+tsd.getStylesheetParameterWordDescription(pName)+"',1)";
-		    Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		    stmt.executeUpdate(sQuery);
-		}
+                // insert all stylesheet params
+                for(Enumeration e=tsd.getStylesheetParameterNames();e.hasMoreElements();) {
+                    String pName = (String)e.nextElement();
+                    sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ tsd.getStylesheetParameterDefaultValue(pName)+"','"+tsd.getStylesheetParameterWordDescription(pName)+"',1)";
+                    Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                    stmt.executeUpdate(sQuery);
+                }
 
-		// insert all channel attributes
-		for(Enumeration e=tsd.getChannelAttributeNames();e.hasMoreElements();) {
-		    String pName = (String)e.nextElement();
-		    sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ tsd.getChannelAttributeDefaultValue(pName)+"','"+tsd.getChannelAttributeWordDescription(pName)+"',3)";
-		    Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-		    stmt.executeUpdate(sQuery);
-		}
+                // insert all channel attributes
+                for(Enumeration e=tsd.getChannelAttributeNames();e.hasMoreElements();) {
+                    String pName = (String)e.nextElement();
+                    sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +",'"+pName+"','"+ tsd.getChannelAttributeDefaultValue(pName)+"','"+tsd.getChannelAttributeWordDescription(pName)+"',3)";
+                    Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+                    stmt.executeUpdate(sQuery);
+                }
 
-		// Commit the transaction
-		commit(con);
+                // Commit the transaction
+                commit(con);
                 return new Integer(id);
-	    } catch (Exception e) {
-		// Roll back the transaction
-		rollback(con);
-		throw  e;
-	    } finally {
-		stmt.close();
-	    }
-	} finally {
-	    rdbmService.releaseConnection(con);
-	}
+            } catch (Exception e) {
+                // Roll back the transaction
+                rollback(con);
+                throw  e;
+            } finally {
+                stmt.close();
+            }
+        } finally {
+            rdbmService.releaseConnection(con);
+        }
     }
 }
 
