@@ -35,6 +35,7 @@
 
 package org.jasig.portal.container.om.portlet;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.pluto.om.common.Description;
@@ -52,9 +53,11 @@ import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.portlet.PortletDefinitionCtrl;
 import org.apache.pluto.om.servlet.ServletDefinition;
 import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.PortletPreferencesStoreFactory;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
+import org.jasig.portal.services.LogService;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -168,8 +171,13 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
         this.portletClassLoader = classLoader;
     }    
 
-    public void store() throws java.io.IOException {
-        // TODO: Implement this!
+    public void store() throws IOException {
+        try {
+            PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl().setDefinitionPreferences(channelDefinition.getId(), preferences);
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
+            throw new IOException("Could not store portlet definition preferences: " + e.getMessage());
+        }
     }
     
     // Additional methods
@@ -192,6 +200,10 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
 
     public void setPreferences(PreferenceSet preferences) {
         this.preferences = preferences;
+    }
+    
+    public void loadPreferences() throws Exception {
+        //this.preferences = portletStore.loadPortletDefinitionPreferences();
     }
 
     public void setContentTypes(ContentTypeSet contentTypes) {

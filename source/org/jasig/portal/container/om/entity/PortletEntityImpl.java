@@ -37,12 +37,10 @@ package org.jasig.portal.container.om.entity;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.pluto.om.common.Description;
 import org.apache.pluto.om.common.ObjectID;
-import org.apache.pluto.om.common.Preference;
 import org.apache.pluto.om.common.PreferenceSet;
 import org.apache.pluto.om.entity.PortletApplicationEntity;
 import org.apache.pluto.om.entity.PortletEntity;
@@ -51,16 +49,15 @@ import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.om.window.PortletWindowList;
 import org.apache.pluto.om.window.PortletWindowListCtrl;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
-import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channels.portlet.CPortletAdapter;
+import org.jasig.portal.IPortletPreferencesStore;
+import org.jasig.portal.PortletPreferencesStoreFactory;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
-import org.jasig.portal.container.om.common.PreferenceImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
-import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
 import org.jasig.portal.container.om.window.PortletWindowListImpl;
+import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -75,6 +72,9 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
     private PortletDefinition portletDefinition = null;
     private PortletApplicationEntity portletApplicationEntity = null;
     private PortletWindowList portletWindows = null;
+    private IPerson person = null;
+    private IUserLayout layout = null;
+    private IUserLayoutChannelDescription channelDescription = null;
 
     // PortletEntity methods
     
@@ -118,39 +118,17 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
     }
 
     public void store() throws IOException {
-        // Persist portlet entity (preferences)
+        // portletStore.saveEntityPreferences(preferences);
         try {
-            ChannelDefinition channelDefinition = ((PortletDefinitionImpl)this.portletDefinition).getChannelDefinition();
-            
-            // Clear out preferences parameters
-            ChannelParameter[] parameters = channelDefinition.getParameters();
-            for (int i = 0; i < parameters.length; i++) {
-                ChannelParameter parameter = parameters[i];
-                if (parameter.getName().startsWith(CPortletAdapter.portletPreferenceNamePrefix)) {
-                    channelDefinition.removeParameter(parameter);
-                }
-            }
-            
-            // Persist preferences parameters
-            Iterator iter = preferences.iterator();
-            while (iter.hasNext()) {
-                Preference preference = (Preference)iter.next();
-                String name = CPortletAdapter.portletPreferenceNamePrefix + preference.getName();
-                String value = ((PreferenceImpl)preference).getFirstValue();
-                if (value != null) {
-                    channelDefinition.addParameter(name, value, "false");
-                }
-            }
-            IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-            crs.saveChannelDefinition(channelDefinition);
-            
+            IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
+            int userId = person.getID();
+            int layoutId = Integer.parseInt(layout.getId());
+            String channelDescId = channelDescription.getId();
+            portletPrefsStore.setEntityPreferences(userId, layoutId, channelDescId, preferences);
         } catch (Exception e) {
-            throw new IOException("Problem storing portlet entity " + objectId.toString() + ": " + e.getMessage());
+            LogService.log(LogService.ERROR, e);
+            throw new IOException("Could not store portlet entity preferences: " + e.getMessage());
         }
-        
-        // Save preferences as original preferences
-        originalPreferences = new PreferenceSetImpl();
-        ((PreferenceSetImpl)originalPreferences).addAll(preferences);
     }
 
     public void reset() throws IOException {
@@ -162,8 +140,25 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
 
     // Additional methods
     
+    public void setPerson(final IPerson person) {
+        this.person = person;
+    }
+    
+    public void setUserLayout(final IUserLayout layout) {
+        this.layout = layout;
+    }
+    
+    public void setChannelDescription(final IUserLayoutChannelDescription channelDescription) {
+        this.channelDescription = channelDescription;
+    }
+    
     public void setPreferences(PreferenceSet preferences) {
         this.preferences = preferences;
+    }
+    
+    public void loadPreferences() throws Exception {
+        //originalPreferences = portletStore.loadEntityPreferences();
+        reset();
     }
     
     public void addPortletWindow(PortletWindow portletWindow) {
