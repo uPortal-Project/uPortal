@@ -241,11 +241,9 @@ public class LdapServices
                                         ILdapServer newConn = new LdapConnectionImpl(name, host, port, baseDN, uidAttribute, managerDN, managerPW, protocol, factory);
                                         ldapConnections.put(name, newConn);
                                         
-                                        if (isDefaultConn && defaultConn == null) {
+                                        if (isDefaultConn) {
                                             defaultConn = newConn;
-                                        }
-                                        else if (isDefaultConn && defaultConn != null) {
-                                            log.error( "LdapServices::initConnections(): Error, multiple default connections specified. Ignoring " + name + " for default.");
+                                            log.info("LdapServices::initConnections(): Replaced '" + LDAP_PROPERTIES_FILE + "' connection with default connection '" + name + "' from '" + LDAP_XML_FILE + "'");
                                         }
                                     }
                                     catch (IllegalArgumentException iae) {
