@@ -114,6 +114,15 @@
   </db-type-mapping>
 
   <db-type-mapping>
+    <db-name>MySQL</db-name>
+    <db-version>3.23.46</db-version>
+    <driver-name>Mark Matthews&apos; MySQL Driver</driver-name>
+    <driver-version>2.0.8</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+
+  <db-type-mapping>
     <db-name>Oracle</db-name>
     <!-- Line break has to be here -->
     <db-version>Oracle8 Enterprise Edition Release 8.0.6.2.0 - Production
