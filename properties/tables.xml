@@ -335,7 +335,7 @@
     <name>UP_GROUP</name>
     <columns>
       <column> <name>GROUP_ID</name>        <type>VARCHAR</type>     <param>255</param>  </column>
-      <column> <name>CREATOR_ID</name>      <type>VARCHAR</type>     <param>30</param>  </column>
+      <column> <name>CREATOR_ID</name>      <type>VARCHAR</type>     <param>255</param>  </column>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>                        </column>
       <column> <name>GROUP_NAME</name>      <type>VARCHAR</type>     <param>255</param> </column>
       <column> <name>DESCRIPTION</name>     <type>VARCHAR</type>     <param>255</param> </column>
@@ -375,6 +375,23 @@
       <column> <name>IPERMISSIBLE_CLASS</name> <type>LONGVARCHAR</type>                    </column>
     </columns>
     <not-null>IPERMISSIBLE_CLASS</not-null>
+    <primary-key>IPERMISSIBLE_CLASS</primary-key>
+  </table>
+
+  <!-- A table that is used by CGroupsManager, distributed from the JA-SIG Clearinghouse -->
+  <table>
+    <name>UPC_GROUP_MGR</name>
+    <columns>
+      <column> <name>OWNER_ID</name> <type>VARCHAR</type>     <param>255</param>    </column>
+      <column> <name>OWNER_TYPE</name> <type>CHAR</type>     <param>1</param>    </column>
+      <column> <name>GROUP_ID</name> <type>VARCHAR</type>     <param>255</param>    </column>
+      <column> <name>ORDINAL</name> <type>INTEGER</type> </column>
+      <column> <name>EXPANDED</name> <type>CHAR</type>     <param>1</param>    </column>
+      <column> <name>DATE_CREATED</name>     <type>TIMESTAMP</type>                    </column>
+    </columns>
+    <not-null>OWNER_ID</not-null>
+    <not-null>OWNER_TYPE</not-null>
+    <not-null>GROUP_ID</not-null>
   </table>
 
 </tables>
