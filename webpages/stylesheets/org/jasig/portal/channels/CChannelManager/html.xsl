@@ -328,7 +328,7 @@
                       </td>
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=removePublishedChannel&amp;channelID={@ID}">
-                          <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove published channel - {@ID}" onclick="return confirm('You are about to remove [{@name}] as well as its role and category settings!\nAre you sure you want to do this?')"/>
+                          <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove published channel - {@ID}" onclick="return confirm('You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this?')"/>
                         </a>
                       </td>
                       <td valign="top">
