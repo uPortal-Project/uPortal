@@ -38,6 +38,7 @@ package  org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.BooleanLock;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
@@ -127,7 +128,7 @@ public class UserInstance implements HttpSessionBindingListener {
     final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
 
     IPerson person;
-
+    
     public UserInstance (IPerson person) {
         this.person=person;
 
@@ -628,8 +629,13 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
-        if(channelManager!=null)  channelManager.finishedSession();
-        if(uPreferencesManager!=null) uPreferencesManager.finishedSession(bindingEvent);
+        if(channelManager!=null)  
+            channelManager.finishedSession();
+        if(uPreferencesManager!=null) 
+            uPreferencesManager.finishedSession(bindingEvent);
+        
+        // Record the destruction of the session
+        StatsRecorder.recordSessionDestroyed(person);
     }
 
     /**
@@ -638,6 +644,8 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
      */
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
+        // Record the creation of the session
+        StatsRecorder.recordSessionCreated(person);
     }
 
     /**
