@@ -43,18 +43,18 @@ $Revision$
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="showLockUnlock">true</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
-  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <!--<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
   <!--remove for CVS-->
-  <!--<xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
+  <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--end remove-->
 
   <xsl:template match="layout">
     <!--remove for CVS-->
-    <!--        <html>
+            <html>
       <head>
         <title>uPortal 2.0</title>
         <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
-      </head>-->
+      </head>
     <!--end remove-->
 
     <xsl:call-template name="optionMenu"/>
@@ -82,7 +82,7 @@ $Revision$
     </table>
     <!--End Layout Table -->
     <!--remove for CVS-->
-    <!--</html>-->
+    </html>
     <!--end remove-->
   </xsl:template>
   <xsl:template name="tabRow">
@@ -94,6 +94,9 @@ $Revision$
             <xsl:when test="not($activeTab = position())">
               <td nowrap="nowrap" class="uportal-background-light">
                 <xsl:choose>
+                      <xsl:when test="ancestor-or-self::*[@immutable='true']">
+                      <img alt="This tab is locked" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      </xsl:when>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
                       <img alt="Click to move this tab left" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
@@ -123,6 +126,9 @@ $Revision$
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
+                      <xsl:when test="ancestor-or-self::*[@immutable='true']">
+                      <img alt="This tab is locked" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      </xsl:when>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
                           <img alt="Click to move this tab right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
@@ -186,6 +192,9 @@ $Revision$
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
+                      <xsl:when test="ancestor-or-self::*[@immutable='true']">
+                      <img alt="This tab is locked" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      </xsl:when>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
                           <img alt="Click to move this tab right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
@@ -374,6 +383,9 @@ $Revision$
               </xsl:when>
               <xsl:otherwise>
                 <xsl:choose>
+                  <xsl:when test="not(position()=1) and ancestor-or-self::*[@immutable='true']">
+                  <img alt="This column is locked" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                  </xsl:when>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
                       <img alt="Click to move this column left" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
@@ -389,6 +401,9 @@ $Revision$
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
+                      <xsl:when test="ancestor-or-self::*[@immutable='true']">
+                      <img alt="This column is locked" src="{$mediaPath}/lock.gif" width="16" height="16" border="0"/>
+                      </xsl:when>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
                           <img alt="Click to move this column right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
@@ -558,11 +573,11 @@ $Revision$
         <td>
           <table border="2" cellspacing="0" cellpadding="4" align="center">
             <tr class="uportal-background-light">
-              <td class="uportal-channel-title">
+              <td align="center" class="uportal-channel-title">
                 <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}">
-                  <xsl:if test="@name = ''">[NO CHANNEL NAME]</xsl:if>
-                  <xsl:value-of select="@name"/>
-                </a>
+                  <xsl:if test="@name = ''">No Channel Name</xsl:if>
+                  <xsl:value-of select="@name"/><br/>
+                </a><img alt="interface image" src="{$mediaPath}/transparent.gif" width="150" height="1"/>
               </td>
             </tr>
           </table>
@@ -578,6 +593,9 @@ $Revision$
               </td>
               <td>
                 <xsl:choose>
+                  <xsl:when test="not(position()=1) and ancestor-or-self::*[@immutable='true']">
+                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan03.gif" width="26" height="25" border="0"/>
+                  </xsl:when>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small">
                       <img alt="Click to move this channel up" src="{$mediaPath}/channel/chan03.gif" width="26" height="25" border="0"/>
@@ -609,7 +627,7 @@ $Revision$
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
-                    <img src="{$mediaPath}/inactive/chan07.gif" width="16" height="16"/>
+                    <img alt="This channel is locked" src="{$mediaPath}/locked/chan07.gif" width="16" height="16"/>
                   </xsl:otherwise>
                 </xsl:choose>
               </td>
@@ -620,6 +638,9 @@ $Revision$
             <tr>
               <td>
                 <xsl:choose>
+                  <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID) and ancestor-or-self::*[@immutable='true']">
+                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan09.gif" width="24" height="26" border="0"/>
+                  </xsl:when>
                   <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID)">
                     <xsl:choose>
                       <xsl:when test="parent::folder/preceding-sibling::folder[1]/channel[1]/@ID">
@@ -646,6 +667,9 @@ $Revision$
               </td>
               <td>
                 <xsl:choose>
+                  <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID) and ancestor-or-self::*[@immutable='true']">
+                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan11.gif" width="25" height="26" border="0"/>
+                  </xsl:when>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID)">
                     <xsl:choose>
                       <xsl:when test="parent::folder/following-sibling::folder[1]/channel[1]/@ID">
@@ -685,6 +709,9 @@ $Revision$
               </td>
               <td>
                 <xsl:choose>
+                  <xsl:when test="not(position()=last()) and ancestor-or-self::*[@immutable='true']">
+                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan16.gif" width="26" height="24" border="0"/>
+                  </xsl:when>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
@@ -1405,4 +1432,5 @@ $Revision$
     </table>
   </xsl:template>
 </xsl:stylesheet>
+
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
