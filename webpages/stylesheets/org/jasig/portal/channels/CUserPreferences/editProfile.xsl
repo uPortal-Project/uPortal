@@ -66,11 +66,12 @@
 
             <tr>
               <td class="uportal-text-small" colspan="4">
-                <input type="submit" name="saveSubmit" value="Save Changes" class="uportal-button" />
+		<input type="hidden" name="action" value="completeEdit"/>
+                <input type="submit" name="submitSave" value="Save Changes" class="uportal-button" />
 
                 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
-                <input type="submit" name="cancelSubmit" value="Cancel" class="uportal-button" />
+                <input type="submit" name="submitCancel" value="Cancel" class="uportal-button" />
               </td>
             </tr>
           </table>
