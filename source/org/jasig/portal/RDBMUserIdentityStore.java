@@ -58,15 +58,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     private static final int guestUID = 1;
     static int DEBUG = 0;
 
-  protected RDBMServices rdbmService = null;
-
-  /**
-   * constructor gets an rdbm service
-   */
-  public RDBMUserIdentityStore () {
-    rdbmService = new RDBMServices();
-  }
-
  /**
    * getuPortalUID -  return a unique uPortal key for a user.
    *    calls alternate signature with createPortalData set to false.
@@ -97,28 +88,41 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       	// START of Addition after bug declaration (bug id 1516)
         // Permissions delete 
       	// must be made before delete user in UP_USER
-		String SQLDelete = "DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY = "+
-		  " (SELECT USER_NAME FROM UP_USER WHERE USER_ID= " + uPortalUID + ")" +
-			" AND PRINCIPAL_TYPE =  (SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE "+
-			" WHERE ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson')";
+      	ResultSet rs = stmt.executeQuery("SELECT USER_NAME FROM UP_USER WHERE USER_ID="+uPortalUID);
+      	String name = "";
+      	if ( rs.next() )
+      	  name = rs.getString(1);
+      	rs.close();
+      	rs = stmt.executeQuery("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'");
+      	int type = -1;
+      	if ( rs.next() )
+      	  type = rs.getInt(1);
+      	rs.close();
+		String SQLDelete = "DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY='"+name+"' AND PRINCIPAL_TYPE="+type;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
         
-        // Remove from local group 
-        // Delete from DeleteUser.java and place here
-      	// must be made before delete user in UP_USER
-		SQLDelete = "DELETE FROM UP_GROUP_MEMBERSHIP "+
-			"WHERE MEMBER_KEY = (SELECT USER_NAME FROM UP_USER WHERE USER_ID= "+
-			+ uPortalUID + ") AND GROUP_ID IN " +
-			"(SELECT M.GROUP_ID " +
+        rs = stmt.executeQuery("SELECT M.GROUP_ID " +
 			"FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
 			"WHERE M.GROUP_ID = G.GROUP_ID " + 
 			"  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
 			"  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
-			"  AND  M.MEMBER_KEY = (SELECT USER_NAME FROM UP_USER WHERE USER_ID= "+
-			uPortalUID + ")   AND  M.MEMBER_IS_GROUP = 'F')";     
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-        stmt.executeUpdate(SQLDelete);
+			"  AND  M.MEMBER_KEY ='"+name+"' AND  M.MEMBER_IS_GROUP = 'F'");
+      	java.util.Vector groups = new java.util.Vector();
+      	while ( rs.next() )
+      	  groups.add(rs.getString(1));
+      	rs.close();
+        
+        // Remove from local group 
+        // Delete from DeleteUser.java and place here
+      	// must be made before delete user in UP_USER
+		java.sql.PreparedStatement ps = con.prepareStatement("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY='"+name+"' AND GROUP_ID=?");     
+        for ( int i = 0; i < groups.size(); i++ ) {
+		 String group = (String) groups.get(i);
+         ps.setString(1,group);
+		 ps.executeUpdate();
+        }
+        if ( ps != null ) ps.close();
         // END of Addition after bug declaration (bug id 1516)
         
         SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
