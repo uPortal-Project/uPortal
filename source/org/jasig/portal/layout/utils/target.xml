@@ -14,6 +14,7 @@
         <pathelement path="${jdbcDriver.jar}"/>
         <pathelement path="${poolman.jar}"/>
         <pathelement path="${jdbc20.jar}"/>
+        <pathelement path="${servlet.jar}"/>
       </classpath>
     </java>
 </target>
