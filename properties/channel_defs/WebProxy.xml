@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelDef>
+	<description>
+   	This is a channel for incorporating a dynamic HTML or XML application.
+	</description>
+	<class>org.jasig.portal.channels.CWebProxy</class>	
+	<params>
+		<step>
+			<ID>1</ID>
+			<name></name>
+			<description></description>
+			
+			<parameter modify="publish-only">
+				<name>cw_xml</name>
+				<label>Application URI</label>
+				<type base="string" input="text" display="text">
+					<length>40</length>
+					<maxlength>2000</maxlength>
+				</type>
+				<defaultValue>http://localhost:8080/examples/jsp/num/numguess.jsp</defaultValue>
+			</parameter>
+
+			<parameter modify="publish-only">
+				<name>cw_ssl</name>
+				<label>Application SSL</label>
+				<type base="string" input="text" display="text">
+					<length>40</length>
+					<maxlength>2000</maxlength>
+				</type>
+				<defaultValue>http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</defaultValue>
+			</parameter>
+
+			<parameter modify="publish-only">
+				<name>cw_tidy</name>
+				<label>Enable HTML Filter?</label>
+				<type base="string" input="single-choice" display="drop-down">
+					<restriction type="enumeration">
+						<value default="true">off</value>
+						<value>on</value>
+					</restriction>
+				</type>
+			</parameter>
+
+			<parameter modify="publish-only">
+				<name>cw_passThrough</name>
+				<label>Pass-through Type</label>
+				<type base="string" input="single-choice" display="drop-down">
+					<restriction type="enumeration">
+						<value default="true">none</value>
+						<value>marked</value>
+						<value>all</value>
+					</restriction>
+				</type>
+			</parameter>
+
+	        </step>
+    
+	</params>
+	<controls/>
+</channelDef>
