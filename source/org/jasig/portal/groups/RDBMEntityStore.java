@@ -44,7 +44,8 @@ import java.util.Iterator;
 
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference implementation for IEntityStore.
@@ -53,6 +54,9 @@ import org.jasig.portal.services.LogService;
  */
 public class RDBMEntityStore implements IEntityStore {
 private static IEntityStore singleton;
+
+private static final Log log = LogFactory.getLog(RDBMEntityStore.class);
+
 /**
  * RDBMEntityStore constructor.
  */
@@ -101,7 +105,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
         }
     catch (SQLException sqle)
     {
-        LogService.log(LogService.ERROR, sqle);
+        log.error( sqle);
         throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());
     }
     finally

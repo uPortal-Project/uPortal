@@ -46,7 +46,8 @@ import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -65,6 +66,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CInlineFrame extends BaseMultithreadedChannel implements IMultithreadedCacheable {
+    private static final Log log = LogFactory.getLog(CInlineFrame.class);
   private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
 
   /**
@@ -90,7 +92,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
     try {
       doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     } catch (ParserConfigurationException pce) {
-      LogService.log(LogService.ERROR, pce);
+      log.error( pce);
       throw new GeneralRenderingException(pce.getMessage());
     }
 

@@ -41,6 +41,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.properties.PropertiesManager;
@@ -65,6 +67,9 @@ import org.jasig.portal.security.PortalSecurityException;
  * context.
  */
 public class Authentication {
+    
+    private static final Log log = LogFactory.getLog(Authentication.class);
+    
    protected org.jasig.portal.security.IPerson m_Person = null;
    protected ISecurityContext ic = null;
 
@@ -138,7 +143,7 @@ public class Authentication {
                }
             }
             else {
-               LogService.log(LogService.WARN, "Authentication Service recieved unknown additional descriptor");
+               log.warn("Authentication Service recieved unknown additional descriptor");
             }
          }
          // Populate the person object using the PersonDirectory if applicable
@@ -186,7 +191,7 @@ public class Authentication {
                   autocreate);
             person.setID(newUID);
          } catch (AuthorizationException ae) {
-            LogService.log(LogService.ERROR, ae);
+            log.error( ae);
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
@@ -235,7 +240,7 @@ public class Authentication {
       // set in security properties. We will then use the value for root.
       username = (username != null ? username : (String)principals.get("root"));
       credential = (credential != null ? credential : (String)credentials.get("root"));
-      LogService.log(LogService.DEBUG, "Authentication::setContextParameters() username: " + username);
+      log.debug("Authentication::setContextParameters() username: " + username);
       // Retrieve and populate an instance of the principal object
       IPrincipal principalInstance = securityContext.getPrincipalInstance();
       if (username != null && !username.equals("")) {

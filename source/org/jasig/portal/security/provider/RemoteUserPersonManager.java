@@ -41,7 +41,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * When retrieving a new person, the value of the <code>REMOTEUSER</code> environment variable
@@ -53,6 +54,8 @@ import org.jasig.portal.services.LogService;
  */
 public class RemoteUserPersonManager implements IPersonManager {
 
+    private static final Log log = LogFactory.getLog(RemoteUserPersonManager.class);
+    
 	/**
 	 *  Description of the Field
 	 */
@@ -82,7 +85,7 @@ public class RemoteUserPersonManager implements IPersonManager {
 		}
 		catch (Exception e) {
 			// Log the exception
-			LogService.log(LogService.ERROR, e);
+			log.error( e);
 		}
 		// Add this person object to the user's session
 		request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);

@@ -50,7 +50,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.UserInstance;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The URLUtil class offers static helper methods for manipulating the
@@ -65,6 +66,9 @@ import org.jasig.portal.services.LogService;
  
 public class URLUtil
 {
+    
+    private static final Log log = LogFactory.getLog(URLUtil.class);
+    
     public static final int REDIRECT_URL_LIMIT =  512;    
     
     public static final String HTTP_GET_REQUEST  = "GET";
@@ -224,12 +228,12 @@ public class URLUtil
             if (qs != null && !"".equals(qs)) {
                 sb.append('?').append(buildRequestParams(req, ignoreParams));
             }
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "URLUtil::redirectGet() " +
                 "Redirecting to framework: " + sb.toString());
              res.sendRedirect(res.encodeRedirectURL(sb.toString()));
         } catch (IOException ioe) {
-            LogService.log(LogService.ERROR,
+            log.error(
                 "URLUtil::redirectGet() " +
                 "Failed redirecting to framework: " + sb.toString(), ioe);
             throw new PortalException(ioe);
@@ -281,14 +285,14 @@ public class URLUtil
             urlStr.append(thisUri.substring(0, pos));
             urlStr.append(up.getUPFile());
         } else {
-            LogService.log(LogService.ERROR,
+            log.error(
                 "URLUtil::redirectPost() " +
                 "Invalid url, no tag found: " + thisUri);
             throw new PortalException("Invalid URL, no tag found: " +
                 thisUri);
         }
     
-        LogService.log(LogService.DEBUG,
+        log.debug(
             "URLUtil::redirectPost() " +
             "Redirecting to framework: " + urlStr.toString());
         OutputStreamWriter wr = null;
@@ -325,7 +329,7 @@ public class URLUtil
             // send the results back to the original requestor
             res.getWriter().print(results.toString());
         } catch (IOException ioe) {
-            LogService.log(LogService.ERROR, ioe);
+            log.error( ioe);
             throw new PortalException(ioe);
         } finally {
 			try {
@@ -336,7 +340,7 @@ public class URLUtil
 				if (conn != null)
 					conn.disconnect();
 			} catch (IOException exception) {
-				LogService.log(LogService.ERROR,"URLUtil:redirectPost()::Unable to close Resources "+ exception);
+				log.error("URLUtil:redirectPost()::Unable to close Resources "+ exception);
 			}
 		}
     }

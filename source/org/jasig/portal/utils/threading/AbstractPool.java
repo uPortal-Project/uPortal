@@ -37,7 +37,8 @@ package org.jasig.portal.utils.threading;
 
 import java.util.Vector;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -50,6 +51,9 @@ import org.jasig.portal.services.LogService;
  */
 
 public abstract class AbstractPool implements ThreadPool {
+    
+    private static final Log log = LogFactory.getLog(AbstractPool.class);
+    
 	    protected int priority;
 	    protected boolean isDestroyed = false;
 	    private Vector busyThreads;
@@ -86,13 +90,13 @@ public abstract class AbstractPool implements ThreadPool {
          * Initialize the thread pool
          */
         private void initThreadPool() throws Exception {
-          LogService.log(LogService.DEBUG,"AbstractPool.initThreadPool() starting" );
+          log.debug("AbstractPool.initThreadPool() starting" );
           for ( int i = 0; i < minThreads; i++ ) {
              Thread thread = createNewThread();
              idleThreads.add(thread);
              thread.start();
           }
-          LogService.log(LogService.DEBUG,"AbstractPool.initThreadPool() ending" );
+          log.debug("AbstractPool.initThreadPool() ending" );
         }
 
 

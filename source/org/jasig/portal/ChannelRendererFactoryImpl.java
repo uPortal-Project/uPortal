@@ -36,7 +36,8 @@
 package org.jasig.portal;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 
 /**
@@ -53,6 +54,8 @@ public final class ChannelRendererFactoryImpl
     /** <p> Class version identifier.</p> */
     public final static String RCS_ID = "@(#) $Header$";
 
+    private static final Log log = LogFactory.getLog(ChannelRendererFactoryImpl.class);
+    
     /** <p>Thread pool per factory.</p> */
     private BoundedThreadPool mThreadPool = null;
 
@@ -110,8 +113,7 @@ public final class ChannelRendererFactoryImpl
         }
         catch( Exception x )
         {
-            LogService.log(
-                LogService.ERROR,
+            log.error(
                 "ChannelRendererFactoryImpl(" + keyBase + ") failed to find configuration parameters. Constructing with: " +
                 "threadPool_initialThreads = " + initialThreads + " " +
                 "threadPool_maxThreads = " + maxThreads + " " +

@@ -60,7 +60,8 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -85,6 +86,7 @@ import org.xml.sax.ContentHandler;
  */
 public class CError extends BaseChannel implements IPrivilegedChannel, ICacheable, ICharacterChannel
 {
+    private static final Log log = LogFactory.getLog(CError.class);
 
     // codes defining the stage at which the exception was thrown
     public static final int GENERAL_ERROR=0;
@@ -181,7 +183,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             if(chFate!=null) {
                 // a fate has been chosen
                 if(chFate.equals("retry")) {
-                    LogService.log(LogService.DEBUG,"CError:setRuntimeData() : going for retry");
+                    log.debug("CError:setRuntimeData() : going for retry");
                     // clean things up for the channel
                     ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
                     crd.clear(); // Remove parameters
@@ -198,7 +200,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                         resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a refresh attempt.");
                     }
                 } else if(chFate.equals("restart")) {
-                    LogService.log(LogService.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
+                    log.debug("CError:setRuntimeData() : going for reinstantiation");
 
                     ChannelManager cm=portcs.getChannelManager();
 
@@ -219,12 +221,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
                                 cm.setChannelInstance(str_channelSubscribeId,this);
-                                LogService.log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
+                                log.error("CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
                             }
                         }
                     } catch (Exception e) {
                         resetCError(CError.GENERAL_ERROR,e,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
-                        LogService.log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
+                        log.error("CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
                     showStackTrace=!showStackTrace;
@@ -402,9 +404,9 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             format.setIndenting(true);
             org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
             xsl.serialize (doc);
-            LogService.log(LogService.DEBUG,outString.toString());
+            log.debug(outString.toString());
         } catch (Exception e) {
-            LogService.log(LogService.DEBUG,e);
+            log.debug(e);
         }
         // end of debug block
 
@@ -422,7 +424,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             StringWriter sw=new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             sw.flush();
-            LogService.log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + sw.toString());
+            log.error( "CError::renderXML() : Things are bad. Error channel threw: " + sw.toString());
         }
     }
 
@@ -481,7 +483,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             if(chFate!=null) {
                 // a fate has been chosen
                 if(chFate.equals("retry")) {
-                    LogService.log(LogService.DEBUG,"CError:renderCharacters() : going for retry");
+                    log.debug("CError:renderCharacters() : going for retry");
                     // clean things up for the channel
                     ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
                     crd.clear(); // Remove parameters
@@ -504,7 +506,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                         resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a refresh attempt.");
                     }
                 } else if(chFate.equals("restart")) {
-                    LogService.log(LogService.DEBUG,"CError:renderCharacters() : going for reinstantiation");
+                    log.debug("CError:renderCharacters() : going for reinstantiation");
 
                     ChannelManager cm=portcs.getChannelManager();
 
@@ -531,12 +533,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
                                 cm.setChannelInstance(str_channelSubscribeId,this);
-                                LogService.log(LogService.ERROR,"CError::renderCharacters() : an error occurred during channel reinitialization. "+e);
+                                log.error("CError::renderCharacters() : an error occurred during channel reinitialization. "+e);
                             }
                         }
                     } catch (Exception e) {
                         resetCError(CError.GENERAL_ERROR,e,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
-                        LogService.log(LogService.ERROR,"CError::renderCharacters() : an error occurred during channel reinstantiation. "+e);
+                        log.error("CError::renderCharacters() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
                     showStackTrace=!showStackTrace;
@@ -549,7 +551,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
             serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);        
         } catch (Exception e) {
-            LogService.log(LogService.ERROR,"CError::renderCharacters() : unable to obtain proper markup serializer : "+e); 
+            log.error("CError::renderCharacters() : unable to obtain proper markup serializer : "+e); 
         }
 
         if(serOut==null) {

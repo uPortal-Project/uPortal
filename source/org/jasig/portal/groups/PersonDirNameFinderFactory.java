@@ -37,7 +37,8 @@
 
  import java.sql.SQLException;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Factory for creating <code>PersonDirNameFinders</code>.
@@ -46,6 +47,8 @@ import org.jasig.portal.services.LogService;
  */
 
 public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
+    private static final Log log = LogFactory.getLog(PersonDirNameFinderFactory.class);
+    
 /**
  * ReferencePersonNameFinderFactory constructor comment.
  */
@@ -63,7 +66,7 @@ public IEntityNameFinder newFinder() throws GroupsException
         { return PersonDirNameFinder.singleton(); }
     catch ( SQLException sqle )
     {
-        LogService.log (LogService.ERROR, "ReferencePersonNameFinderFactory.newFinder(): " + sqle);
+        log.error( "ReferencePersonNameFinderFactory.newFinder(): " + sqle);
         throw new GroupsException(sqle.getMessage());
     }
 }

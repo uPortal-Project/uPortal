@@ -41,7 +41,8 @@ import java.util.Map;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -56,6 +57,7 @@ import org.xml.sax.XMLReader;
  */
 public class GroupServiceConfiguration
 {
+    private static final Log log = LogFactory.getLog(GroupServiceConfiguration.class);
     // The file containing the configuration:
     private static String SERVICES_XML = "/properties/groups/compositeGroupServices.xml";
 
@@ -129,7 +131,7 @@ public GroupServiceConfiguration()
  */
 protected void debugMessage(String msg)
 {
-    LogService.log(LogService.DEBUG, "Group services: " + msg);
+    log.debug("Group services: " + msg);
 }
 /**
  *
@@ -170,7 +172,7 @@ public List getServiceDescriptors()
  */
 protected void infoMessage(String msg)
 {
-    LogService.log(LogService.INFO, "Group services: " + msg);
+    log.info( "Group services: " + msg);
 }
 /**
  *

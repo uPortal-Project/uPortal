@@ -37,7 +37,8 @@ package org.jasig.portal;
 
 import java.util.Hashtable;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -59,6 +60,9 @@ import org.xml.sax.XMLReader;
  */
 public class ChannelRenderingBuffer extends SAX2BufferImpl
 {
+    
+    private static final Log log = LogFactory.getLog(ChannelRenderingBuffer.class);
+    
   protected ChannelManager cm;
 
   // information about the current channel
@@ -153,7 +157,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
           try {
               cm.startChannelRendering(channelSubscribeId);
           } catch (PortalException pe) {
-              LogService.log(LogService.ERROR,"ChannelRenderingBuffer::endElement() : unable to start rendering channel! (channelSubscribeId=\""+channelSubscribeId+"\")");
+              log.error("ChannelRenderingBuffer::endElement() : unable to start rendering channel! (channelSubscribeId=\""+channelSubscribeId+"\")");
           }
           insideChannelElement=false;
       }

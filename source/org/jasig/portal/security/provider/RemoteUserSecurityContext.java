@@ -36,7 +36,8 @@ package org.jasig.portal.security.provider;
 
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Create a security context and store the value of remote user.  If not null,
@@ -47,6 +48,9 @@ import org.jasig.portal.services.LogService;
  */
 class RemoteUserSecurityContext extends ChainingSecurityContext
 	 implements ISecurityContext {
+    
+    private static final Log log = LogFactory.getLog(RemoteUserSecurityContext.class);
+    
 	private final static int REMOTEUSERSECURITYAUTHTYPE = 0xFF31;
 	private String remoteUser;
 
@@ -90,7 +94,7 @@ class RemoteUserSecurityContext extends ChainingSecurityContext
 			myPrincipal.setUID(remoteUser);
 			super.authenticate();
 		} else {
-			LogService.log(LogService.INFO, "Authentication failed. REMOTE_USER not set");
+			log.info( "Authentication failed. REMOTE_USER not set");
 		}
 		return;
 	}

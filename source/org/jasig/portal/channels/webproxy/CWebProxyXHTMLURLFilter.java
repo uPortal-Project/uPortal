@@ -35,7 +35,8 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
@@ -50,7 +51,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
 {
-
+    private static final Log log = LogFactory.getLog(CWebProxyXHTMLURLFilter.class);
   private SAX2BufferImpl buffer;
   private boolean insideForm = false;
   private boolean markedInputExists = false;
@@ -150,7 +151,7 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
       }
       catch (Exception e)
       {
-        LogService.log(LogService.DEBUG, "CWebProxyXHTMLFilter:: Exception: " + e);
+        log.debug("CWebProxyXHTMLFilter:: Exception: " + e);
       }
     }
     else if (insideForm)
@@ -223,7 +224,7 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
     }
     catch (SAXException e)
     {
-      LogService.log("CWebProxyXHTMLURLFilter::cannot add input element to buffer: " + e);
+      log.info("CWebProxyXHTMLURLFilter::cannot add input element to buffer: " + e);
     }
   }
 

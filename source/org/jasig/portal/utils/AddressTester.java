@@ -43,7 +43,8 @@ import java.net.URLConnection;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class checks a URL or a webserver hosting a URL. It only allows a specific time allocated for
@@ -57,6 +58,9 @@ import org.jasig.portal.services.LogService;
  */
 
 public class AddressTester {
+    
+    private static final Log log = LogFactory.getLog(AddressTester.class);
+    
     /**The timer object that takes a timerTask as a parameter when constructed*/
     private static final Timer timer = new Timer();
 
@@ -123,7 +127,7 @@ public class AddressTester {
               if (DEBUG) {
                 System.out.println("timed out on " + urlToTry);
               }
-              LogService.log(LogService.INFO,
+              log.info(
                                         "AddressTest::checkURL(): timed out on " +
                                         urlToTry);
 
@@ -132,7 +136,7 @@ public class AddressTester {
                 System.out.println(urlToTry + " generated exception: " +
                                    e.getMessage());
               }
-              LogService.log(LogService.INFO,
+              log.info(
                                         "AddressTest::checkURL(): "
                                         + urlToTry + " generated exception: " +
                                         e.getMessage());
@@ -144,7 +148,7 @@ public class AddressTester {
             if (DEBUG) {
               System.out.println("Bad URL: " + urlToTry);
             }
-            LogService.log(LogService.ERROR,
+            log.error(
                                       "AddressTest::checkURL(): Bad URL: " +
                                       urlToTry);
           }

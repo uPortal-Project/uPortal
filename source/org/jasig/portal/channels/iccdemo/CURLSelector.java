@@ -45,7 +45,8 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ICCRegistry;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -59,7 +60,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CURLSelector extends BaseChannel {
-
+    private static final Log log = LogFactory.getLog(CURLSelector.class);
     private static final String sslLocation = "urlselector.ssl";
 
     private static final String viewerFname="/portal/iccdemo/viewer";
@@ -220,16 +221,16 @@ public class CURLSelector extends BaseChannel {
             // Get the context that holds the global IDs for this user
             globalIDContext = (Context)staticData.getJNDIContext().lookup("/channel-ids");
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
+            log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         try {
             id=(String)globalIDContext.lookup(fname);
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
+            log.error( "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         return id;
     }
@@ -247,17 +248,17 @@ public class CURLSelector extends BaseChannel {
         try {
             globalObjContext = (Context)staticData.getJNDIContext().lookup("/channel-obj");
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
+            log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
 
         try {
             o=globalObjContext.lookup(channelSubscribeId);
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
+            log.error( "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         return o;        
     }

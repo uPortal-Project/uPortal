@@ -68,7 +68,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.AbsoluteURLFilter;
 import org.jasig.portal.wsrp.types.AccessDeniedFault;
 import org.jasig.portal.wsrp.types.Fault;
@@ -88,6 +89,8 @@ import org.jasig.portal.wsrp.types.UserContext;
  * @deprecated As of uPortal 2.4, the WSRP producer in uPortal is no longer being maintained. If reintroduced, it will migrate to one based on WSRP4J.
  */
 public class ChannelInstanceManager {
+    
+    private static final Log log = LogFactory.getLog(ChannelInstanceManager.class);
     
     private IChannel channel;
     private ChannelDefinition channelDef;
@@ -185,7 +188,7 @@ public class ChannelInstanceManager {
         // Begin chain: channel renderer --> URL filter --> SAX2DOM transformer
         int status = cr.outputRendering(urlFilter);      
         if (status == IChannelRenderer.RENDERING_TIMED_OUT) {
-            LogService.log(LogService.DEBUG, channelDef.getFName() + " timed out");
+            log.debug(channelDef.getFName() + " timed out");
             throw new OperationFailedFault();
         }
            
@@ -211,7 +214,7 @@ public class ChannelInstanceManager {
             // Do nothing
         }
         if (channelDef == null) {
-            LogService.log(LogService.DEBUG, "Unable to find a channel with functional name '" + portletHandle + "'");      
+            log.debug("Unable to find a channel with functional name '" + portletHandle + "'");      
             throw new InvalidHandleFault();
         }
         return channelDef;        
@@ -230,7 +233,7 @@ public class ChannelInstanceManager {
         boolean authorized = ap.canSubscribe(channelPublishId);
         if (!authorized) {
             String message = "User [" + person.getAttribute(IPerson.USERNAME) + "] is not authorized to access channel with functional name [" + channelDef.getFName() + "]";
-            LogService.log(LogService.DEBUG, message);
+            log.debug(message);
             Fault accessDeniedFault = new AccessDeniedFault();
             accessDeniedFault.setFaultString(message);
             throw accessDeniedFault;

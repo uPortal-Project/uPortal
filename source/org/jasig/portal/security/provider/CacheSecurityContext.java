@@ -39,7 +39,8 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -75,6 +76,9 @@ import org.jasig.portal.services.LogService;
  */
 class CacheSecurityContext extends ChainingSecurityContext
     implements ISecurityContext {
+    
+    private static final Log log = LogFactory.getLog(CacheSecurityContext.class);
+    
   private final int CACHESECURITYAUTHTYPE = 0xFF03;
   private byte[] cachedcredentials;
 
@@ -97,7 +101,7 @@ class CacheSecurityContext extends ChainingSecurityContext
           first_name = acct[1];
           last_name = acct[2];
           this.myPrincipal.FullName = first_name + " " + last_name;
-          LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+          log.info( "User " + this.myPrincipal.UID + " is authenticated");
           // Save our credentials so that the parent's authenticate()
           // method doesn't blow them away.
           this.cachedcredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
@@ -105,15 +109,15 @@ class CacheSecurityContext extends ChainingSecurityContext
           this.isauth = true;
         }
         else
-          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
+          log.info( "No such user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        LogService.log(LogService.ERROR, ep);
+        log.error( ep);
         throw  (ep);
       }
     }
     else
-      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+      log.error( "Principal or OpaqueCredentials not initialized prior to authenticate");
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
     return;

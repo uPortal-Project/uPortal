@@ -41,7 +41,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,6 +53,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public class ChannelDefinition implements IBasicEntity {
+    private static final Log log = LogFactory.getLog(ChannelDefinition.class);
   private int id;
   private String chanFName;
   private String chanName;
@@ -240,7 +242,7 @@ public class ChannelDefinition implements IBasicEntity {
       msg.append("ChannelDefinition::getBase() : ");
       msg.append("Document does not implement IPortalDocument, ");
       msg.append("so element caching cannot be performed.");
-      LogService.log(LogService.ERROR, msg.toString());
+      log.error( msg.toString());
     }
 
     channel.setAttribute("ID", idTag);

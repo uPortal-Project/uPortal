@@ -50,7 +50,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.services.Authentication;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.CommonUtils;
 
@@ -65,6 +66,7 @@ import org.jasig.portal.utils.CommonUtils;
  * represent the principal and credential for each security context.
  */
 public class LoginServlet extends HttpServlet {
+    private static final Log log = LogFactory.getLog(LoginServlet.class);
   private static final String redirectString;
   private static HashMap credentialTokens;
   private static HashMap principalTokens;
@@ -94,9 +96,9 @@ public class LoginServlet extends HttpServlet {
             }
          }
       } catch(PortalException pe) {
-          LogService.log(LogService.ERROR,"LoginServlet::static "+pe);
+          log.error("LoginServlet::static "+pe);
       } catch(IOException ioe) {
-          LogService.log(LogService.ERROR,"LoginServlet::static "+ioe);
+          log.error("LoginServlet::static "+ioe);
       }
       redirectString=upFile;
       credentialTokens=cHash;
@@ -145,7 +147,7 @@ public class LoginServlet extends HttpServlet {
       m_authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
-      LogService.log(LogService.ERROR, e);
+      log.error( e);
       // Reset everything
       request.getSession(false).invalidate();
       // Add the authentication failure

@@ -37,7 +37,8 @@ package org.jasig.portal.groups.filesystem;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntitySearcherFactory;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Returns <code>IEntityGroupStore</code> and <code>IEntityStore</code>
@@ -48,6 +49,7 @@ import org.jasig.portal.services.LogService;
  */
 
 public class FileSystemEntitySearcherFactory implements IEntitySearcherFactory {
+    private static final Log log = LogFactory.getLog(FileSystemEntitySearcherFactory.class);
 /**
  * FileSytemEntitySearcherFactory constructor.
  */
@@ -67,7 +69,7 @@ public IEntitySearcher newEntitySearcher() throws GroupsException
         { return getGroupStore(); }
     catch ( Exception ex )
     {
-        LogService.log (LogService.ERROR, "FileSystemEntitySearcherFactory.newEntitySearcher(): " + ex);
+        log.error( "FileSystemEntitySearcherFactory.newEntitySearcher(): " + ex);
         throw new GroupsException(ex.getMessage());
     }
 }

@@ -43,7 +43,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>IPersons</code>.
@@ -52,6 +53,8 @@ import org.jasig.portal.services.LogService;
  */
 public class ReferencePersonNameFinder implements IEntityNameFinder
 {
+    private static final Log log = LogFactory.getLog(ReferencePersonNameFinder.class);
+    
     // Singleton instance:
     private static IEntityNameFinder singleton;
 
@@ -92,7 +95,7 @@ private Map getDirectoryNames() throws java.sql.SQLException
             stmnt = conn.createStatement();
 
             String sql = getSelectDirectoryNamesSql();
-            LogService.log (LogService.DEBUG, "ReferencePersonNameFinder.getDirectoryNames(): " + sql);
+            log.debug( "ReferencePersonNameFinder.getDirectoryNames(): " + sql);
 
                 ResultSet rs = stmnt.executeQuery(sql);
             while (rs.next())
@@ -111,7 +114,7 @@ private Map getDirectoryNames() throws java.sql.SQLException
     }
     catch (SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 
@@ -182,7 +185,7 @@ private Map getUserNames() throws java.sql.SQLException
             stmnt = conn.createStatement();
 
             String sql = getSelectUserNamesSql();
-            LogService.log (LogService.DEBUG, "ReferencePersonNameFinder.getUserNames(): " + sql);
+            log.debug( "ReferencePersonNameFinder.getUserNames(): " + sql);
 
             ResultSet rs = stmnt.executeQuery(sql);
             while (rs.next())
@@ -197,7 +200,7 @@ private Map getUserNames() throws java.sql.SQLException
     }
     catch (SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 

@@ -38,7 +38,8 @@ package org.jasig.portal.security.provider;
 
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>This is an implementation of a SecurityContext that merely checks to see
@@ -52,6 +53,9 @@ import org.jasig.portal.services.LogService;
  */
 class TrustSecurityContext extends ChainingSecurityContext
     implements ISecurityContext {
+    
+    private static final Log log = LogFactory.getLog(TrustSecurityContext.class);
+    
   private final int TRUSTSECURITYAUTHTYPE = 0xFF01;
 
 
@@ -75,20 +79,20 @@ class TrustSecurityContext extends ChainingSecurityContext
           first_name = acct[1];
           last_name = acct[2];
           this.myPrincipal.FullName = first_name + " " + last_name;
-          LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+          log.info( "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
         }
         else {
-            LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
+            log.info( "No such user: " + this.myPrincipal.UID);
         }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        LogService.log(LogService.ERROR, ep);
+        log.error( ep);
         throw  (ep);
       }
     }
     else {
-        LogService.log(LogService.ERROR, "Principal not initialized prior to authenticate");
+        log.error( "Principal not initialized prior to authenticate");
     }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();

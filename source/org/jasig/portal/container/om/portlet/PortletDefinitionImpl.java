@@ -58,7 +58,8 @@ import org.jasig.portal.PortletPreferencesStoreFactory;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -66,7 +67,7 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class PortletDefinitionImpl implements PortletDefinition, PortletDefinitionCtrl {
-
+    private static final Log log = LogFactory.getLog(PortletDefinitionImpl.class);
     private ObjectID objectId = null;
     private String className = null;
     private String name = null;
@@ -177,7 +178,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
             IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
             portletPrefsStore.setDefinitionPreferences(channelDefinition.getId(), preferences);
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             throw new IOException("Could not store portlet definition preferences: " + e.getMessage());
         }
     }
@@ -211,7 +212,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
             
             ((PreferenceSetImpl)preferences).addAll(publishPreferences);
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             throw new IOException("Could not load portlet definition preferences: " + e.getMessage());
         }
     }

@@ -43,7 +43,8 @@ import java.sql.SQLException;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A reference implementation for the counter store
@@ -54,6 +55,8 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class RDBMCounterStore implements ICounterStore {
+    
+    private static final Log log = LogFactory.getLog(RDBMCounterStore.class);
     
     /**
      * Creates a new counter with an initial value of 0. Does not check to
@@ -75,12 +78,12 @@ public class RDBMCounterStore implements ICounterStore {
             createCounterPstmt = con.prepareStatement(createCounterInsert);
             createCounterPstmt.setString(1, counterName);
             
-            LogService.log(LogService.DEBUG, "RDBMCounterStore::createCounter(" + counterName + "): " + createCounterInsert);
+            log.debug("RDBMCounterStore::createCounter(" + counterName + "): " + createCounterInsert);
             int updateCount = createCounterPstmt.executeUpdate();
             
             if (updateCount <= 0) {
                 PortalException pe = new PortalException("RDBMCounterStore::createCounter(): An error occured while creating the counter named: " + counterName + ".\nNo rows were created.");
-                LogService.log(LogService.ERROR, pe); 
+                log.error( pe); 
                 throw pe;
             }
             
@@ -90,7 +93,7 @@ public class RDBMCounterStore implements ICounterStore {
             RDBMServices.rollback(con);
             
             PortalException pe = new PortalException("RDBMCounterStore::createCounter(): An error occured while creating the counter named: " + counterName, sqle);
-            LogService.log(LogService.ERROR, pe); 
+            log.error( pe); 
             throw pe;
         } 
         finally {
@@ -124,12 +127,12 @@ public class RDBMCounterStore implements ICounterStore {
             setCounterPstmt.setInt(1, value);
             setCounterPstmt.setString(2, counterName);
             
-            LogService.log(LogService.DEBUG, "RDBMCounterStore::setCounter(" + counterName + ", " + value + "): " + setCounterUpdate);
+            log.debug("RDBMCounterStore::setCounter(" + counterName + ", " + value + "): " + setCounterUpdate);
             int updateCount = setCounterPstmt.executeUpdate();
             
             if (updateCount <= 0) {
                 PortalException pe = new PortalException("RDBMCounterStore::setCounter(): An error occured while setting the counter named: " + counterName + ".\nNo rows were updated.");
-                LogService.log(LogService.ERROR, pe); 
+                log.error( pe); 
                 throw pe;
             }            
             
@@ -139,7 +142,7 @@ public class RDBMCounterStore implements ICounterStore {
             RDBMServices.rollback(con);
             
             PortalException pe = new PortalException("RDBMCounterStore::createCounter(): An error occured while creating the counter named: " + counterName, sqle);
-            LogService.log(LogService.ERROR, pe); 
+            log.error( pe); 
             throw pe;
             
         }
@@ -182,7 +185,7 @@ public class RDBMCounterStore implements ICounterStore {
             
             for (int i = 0; i < 25; i++) 
             {
-                LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(" + counterName + "): " + getCounterQuery);
+                log.debug("RDBMCounterStore::getIncrementInteger(" + counterName + "): " + getCounterQuery);
                 rs = getCounterPstmt.executeQuery();
                 
                 if (!rs.next()) {
@@ -206,7 +209,7 @@ public class RDBMCounterStore implements ICounterStore {
                 updateCounterPstmt.setInt(1, nextId);
                 updateCounterPstmt.setInt(3, origId);
                 
-                LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(" + counterName + ", " + nextId + ", " + origId + "): " + updateCounterQuery);
+                log.debug("RDBMCounterStore::getIncrementInteger(" + counterName + ", " + nextId + ", " + origId + "): " + updateCounterQuery);
                 int rowsUpdated = updateCounterPstmt.executeUpdate();
                 
                 if (rowsUpdated > 0) { 
@@ -220,7 +223,7 @@ public class RDBMCounterStore implements ICounterStore {
         } 
         catch (SQLException sqle) {
             PortalException pe = new PortalException("RDBMCounterStore::getIncrementInteger(): An error occured while updating the counter, name: " + counterName, sqle);
-            LogService.log(LogService.ERROR, pe);
+            log.error( pe);
             throw pe;
         } 
         finally {
@@ -232,7 +235,7 @@ public class RDBMCounterStore implements ICounterStore {
         }
         
         PortalException pe = new PortalException("RDBMCounterStore::getIncrementInteger(): Unable to increment counter for " + counterName);
-        LogService.log(LogService.ERROR, pe);
+        log.error( pe);
         throw pe;
     }
 

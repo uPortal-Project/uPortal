@@ -43,7 +43,8 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Searches the portal DB for channels.  Used by EntitySearcherImpl
@@ -54,6 +55,7 @@ import org.jasig.portal.services.LogService;
 
 
 public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
+    private static final Log log = LogFactory.getLog(RDBMChannelDefSearcher.class);
   private static final String is_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME=? or CHAN_TITLE=?)";
   private static final String partial_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME like ? or CHAN_TITLE like ?)";
   private Class chanDef;
@@ -63,7 +65,7 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
       chanDef = Class.forName("org.jasig.portal.ChannelDefinition");
     }
     catch(Exception e){
-      LogService.log(LogService.ERROR,e); 
+      log.error(e); 
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -105,8 +107,8 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
             }
             ps.close();
         } catch (Exception e) {
-            LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            LogService.log(LogService.ERROR, e);
+            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            log.error( e);
         } finally {
             RDBMServices.releaseConnection(conn);
         }

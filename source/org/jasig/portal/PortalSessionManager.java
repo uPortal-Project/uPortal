@@ -56,7 +56,8 @@ import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 
 
@@ -67,6 +68,8 @@ import org.jasig.portal.utils.ResourceLoader;
  */
 public class PortalSessionManager extends HttpServlet {
 
+    private static final Log log = LogFactory.getLog(PortalSessionManager.class);
+    
   public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
   public static final String IDEMPOTENT_URL_TAG="idempotent";
 
@@ -104,7 +107,7 @@ public class PortalSessionManager extends HttpServlet {
   }
 
   static {
-    LogService.log(LogService.INFO, "uPortal started");
+    log.info( "uPortal started");
   }
 
   /**
@@ -141,14 +144,14 @@ public class PortalSessionManager extends HttpServlet {
             URLConnection conn = url.openConnection();
             conn.setDefaultUseCaches(false);
          } catch (Exception e) {
-            LogService.log(LogService.WARN, "PortalSessionManager.init(): Caught Exception trying to disable URL Caching");
+            log.warn("PortalSessionManager.init(): Caught Exception trying to disable URL Caching");
          }
       }
 
       // Log orderly shutdown time
       Runtime.getRuntime().addShutdownHook(new Thread("uPortal shutdown hook") {
           public void run() {
-            LogService.log(LogService.INFO, "uPortal stopped");
+            log.info( "uPortal stopped");
           }
         });
 
@@ -220,7 +223,7 @@ public class PortalSessionManager extends HttpServlet {
                     requestTags.remove(tag);
                 }
 
-                LogService.log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
+                log.debug("PortalSessionManager::doGet() : request verified: "+request_verified);
             }
 
             try {
@@ -241,10 +244,10 @@ public class PortalSessionManager extends HttpServlet {
                 } else {
                     // generate and register a new tag
                     String newTag=Long.toHexString(randomGenerator.nextLong());
-                    LogService.log(LogService.DEBUG,"PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+session.getId());
+                    log.debug("PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+session.getId());
                     // no need to check for duplicates :) we'd have to wait a lifetime of a universe for this time happen
                     if(!requestTags.add(newTag)) {
-                        LogService.log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
+                        log.error("PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
                     }
                     
                     RequestParamWrapper wrappedRequest = new RequestParamWrapper(req,request_verified);

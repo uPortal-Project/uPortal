@@ -41,7 +41,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.utils.SoftHashMap;
 
@@ -55,6 +56,9 @@ import org.jasig.portal.utils.SoftHashMap;
  */
 public class PersonDirPropertyFinder
         implements IEntityPropertyFinder {
+    
+    private static final Log log = LogFactory.getLog(PersonDirPropertyFinder.class);
+    
     private Class person = org.jasig.portal.security.IPerson.class;
     private PersonDirectory pd;
     private SoftHashMap cache;
@@ -100,7 +104,7 @@ public class PersonDirPropertyFinder
             try {
                 ht = pd.getUserDirectoryInformation(entityID.getKey());
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, e);
+                log.error( e);
             }
             cache.put(entityID.getKey(), ht);
         }

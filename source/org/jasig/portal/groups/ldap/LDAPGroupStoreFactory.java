@@ -38,7 +38,8 @@ import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IEntityGroupStoreFactory;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Returns an instance of the ldap <code>IEntityGroupStore</code>.
@@ -47,6 +48,7 @@ import org.jasig.portal.services.LogService;
  */
 
 public class LDAPGroupStoreFactory implements IEntityGroupStoreFactory {
+    private static final Log log = LogFactory.getLog(LDAPGroupStoreFactory.class);
     protected static LDAPGroupStore groupStore;
 /**
  * ReferenceGroupServiceFactory constructor.
@@ -93,7 +95,7 @@ public IEntityGroupStore newInstance() throws GroupsException
         { return getGroupStore(); }
     catch ( Exception ex )
     {
-        LogService.log (LogService.ERROR, "LdapEntityGroupStoreFactory.newInstance(): " + ex);
+        log.error( "LdapEntityGroupStoreFactory.newInstance(): " + ex);
         throw new GroupsException(ex.getMessage());
     }
 }

@@ -52,7 +52,8 @@ import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.security.IConfigurableSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -76,6 +77,9 @@ import org.jasig.portal.services.LogService;
  */
 public class SimpleLdapSecurityContext extends ChainingSecurityContext
     implements IConfigurableSecurityContext {
+    
+    private static final Log log = LogFactory.getLog(SimpleLdapSecurityContext.class);
+    
   // Attributes that we're interested in.
   public static final int ATTR_UID = 0;
   public static final int ATTR_FIRSTNAME = ATTR_UID + 1;
@@ -144,7 +148,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       
       user.append(ldapConn.getUidAttribute()).append("=");
       user.append(this.myPrincipal.UID).append(")");
-      LogService.log(LogService.DEBUG,
+      log.debug(
                      "SimpleLdapSecurityContext: Looking for " +
                      user.toString());
       conn = ldapConn.getConnection();
@@ -159,7 +163,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
         results = conn.search(ldapConn.getBaseDN(), user.toString(), searchCtls);
         if (results != null) {
           if (!results.hasMore())
-            LogService.log(LogService.ERROR,
+            log.error(
                            "SimpleLdapSecurityContext: user not found , " +
                            this.myPrincipal.UID);
           Vector entries = new Vector();
@@ -181,14 +185,14 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
             
             String attrSearch = "(" + ldapConn.getUidAttribute() + "=*)";
-            LogService.log(LogService.DEBUG,
+            log.debug(
                            "SimpleLdapSecurityContext: Looking in " +
                            dnBuffer.toString() + " for " + attrSearch);
             conn.search(dnBuffer.toString(), attrSearch, searchCtls);
  
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            LogService.log(LogService.DEBUG,
+            log.debug(
                            "SimpleLdapSecurityContext: User " +
                            this.myPrincipal.UID + " (" +
                            this.myPrincipal.FullName + ") is authenticated");
@@ -199,14 +203,14 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
           } // while (results != null && results.hasMore())
         }
         else {
-          LogService.log(LogService.ERROR,
+          log.error(
                          "SimpleLdapSecurityContext: No such user: " +
                          this.myPrincipal.UID);
         }
       } catch (AuthenticationException ae) {
-        LogService.log(LogService.INFO,"SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
+        log.info("SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
       } catch (Exception e) {
-        LogService.log(LogService.ERROR,
+        log.error(
                        "SimpleLdapSecurityContext: LDAP Error with user: " +
                        this.myPrincipal.UID + "; " + e);
         throw new PortalSecurityException("SimpleLdapSecurityContext: LDAP Error" + e + " with user: " + this.myPrincipal.UID);
@@ -215,7 +219,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       }
     }
     else {
-      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+      log.error( "Principal or OpaqueCredentials not initialized prior to authenticate");
     }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();

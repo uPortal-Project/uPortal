@@ -47,7 +47,8 @@ import javax.servlet.http.HttpSessionBindingListener;
 
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.StatsRecorder;
 
 /**
@@ -56,6 +57,9 @@ import org.jasig.portal.services.StatsRecorder;
  * @version $Revision$
  */
 public class GuestUserInstance extends UserInstance implements HttpSessionBindingListener {
+    
+    private static final Log log = LogFactory.getLog(GuestUserInstance.class);
+    
     // state class
     private class IState {
         private ChannelManager channelManager;
@@ -102,7 +106,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     public void unbindSession(String sessionId) {
         IState state=(IState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.log(LogService.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            log.error("GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return;
         }
         state.channelManager.finishedSession();
@@ -118,7 +122,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
         this.unbindSession(bindingEvent.getSession().getId());
-        LogService.log(LogService.DEBUG,"GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
+        log.debug("GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
 
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
@@ -130,7 +134,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
      */
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
-        LogService.log(LogService.DEBUG,"GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
+        log.debug("GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
 
         // Record the creation of the session
         StatsRecorder.recordSessionCreated(person);
@@ -145,7 +149,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
         String sessionId=req.getSession(false).getId();
         IState state=(IState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.log(LogService.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            log.error("GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return;
         }
         // instantiate user layout manager and check to see if the profile mapping has been established
@@ -176,7 +180,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                 throw pe;
             } catch (Throwable t) {
                 // something went wrong trying to show CSelectSystemProfileChannel
-                LogService.log(LogService.ERROR,"GuestUserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
+                log.error("GuestUserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
                 throw new PortalException("CSelectSystemProfileChannel.render() threw: "+t);
             }
             // don't go any further!

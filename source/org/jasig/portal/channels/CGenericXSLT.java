@@ -62,7 +62,8 @@ import org.jasig.portal.Version;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.LocalConnectionContext;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -109,6 +110,7 @@ import org.xml.sax.ContentHandler;
  */
 public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCacheable
 {
+    private static final Log log = LogFactory.getLog(CGenericXSLT.class);
   // state table
   Map stateTable;
   static final String systemCacheId="org.jasig.portal.channels.CGenericXSLT"; // to prepend to the system-wide cache key
@@ -176,7 +178,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
       catch (Exception e)
       {
-        LogService.log(LogService.ERROR, "CGenericXSLT: Cannot initialize ILocalConnectionContext: " + e);
+        log.error( "CGenericXSLT: Cannot initialize ILocalConnectionContext: " + e);
       }
     }
 
@@ -188,7 +190,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     CState state = (CState)stateTable.get(uid);
 
     if (state == null)
-      LogService.log(LogService.ERROR,"CGenericXSLT:setRuntimeData() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.error("CGenericXSLT:setRuntimeData() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     else
     {
       // because of the portal rendering model, there is no reason to synchronize on state
@@ -241,7 +243,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
-      LogService.log(LogService.ERROR,"CGenericXSLT:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.error("CGenericXSLT:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     }
     return rp;
   }
@@ -251,10 +253,10 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     CState state=(CState)stateTable.get(uid);
 
     if (state == null)
-      LogService.log(LogService.ERROR,"CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.error("CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     else
     {
-      LogService.log(LogService.DEBUG,"CGenericXSLT::renderXML() : state = " + state.toString() );
+      log.debug("CGenericXSLT::renderXML() : state = " + state.toString() );
 
       String xml;
       Document xmlDoc;
@@ -284,7 +286,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+            log.error( "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
           }
         }
         inputStream = urlConnect.getInputStream();
@@ -342,7 +344,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (state == null)
     {
-      LogService.log(LogService.ERROR,"CGenericXSLT:generateKey() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.error("CGenericXSLT:generateKey() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
       return null;
     }
     else
@@ -364,7 +366,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (state == null)
     {
-      LogService.log(LogService.ERROR,"CGenericXSLT:isCacheValid() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.error("CGenericXSLT:isCacheValid() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
       return false;
     }
     else

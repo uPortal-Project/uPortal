@@ -42,13 +42,17 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Manages the storage of an IPerson object in a user's session.
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  */
 public class SimplePersonManager implements IPersonManager {
+    
+    private static final Log log = LogFactory.getLog(SimplePersonManager.class);
+    
   /**
    * Retrieve an IPerson object for the incoming request
    * @param request the servlet request object
@@ -66,7 +70,7 @@ public class SimplePersonManager implements IPersonManager {
         person = PersonFactory.createGuestPerson();
       } catch (Exception e) {
         // Log the exception
-        LogService.log(LogService.ERROR, e);
+        log.error( e);
       }
       // Add this person object to the user's session
       if (person != null && session != null)

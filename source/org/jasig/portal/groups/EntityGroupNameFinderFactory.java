@@ -38,7 +38,8 @@
 
 package  org.jasig.portal.groups;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -48,7 +49,7 @@ import org.jasig.portal.services.LogService;
  */
 public class EntityGroupNameFinderFactory
         implements IEntityNameFinderFactory {
-
+    private static final Log log = LogFactory.getLog(EntityGroupNameFinderFactory.class);
     public EntityGroupNameFinderFactory () {
     }
 
@@ -56,7 +57,7 @@ public class EntityGroupNameFinderFactory
         try {
             return  EntityGroupNameFinder.singleton();
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, "EntityGroupNameFinderFactory.newFinder(): "
+            log.error( "EntityGroupNameFinderFactory.newFinder(): "
                     + e);
             throw new GroupsException(e.getMessage());
         }

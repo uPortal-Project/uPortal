@@ -48,7 +48,8 @@ import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 
 
@@ -61,7 +62,8 @@ import org.w3c.dom.Element;
  */
 public class AssignPermissions
         implements IPermissionCommand {
-
+    private static final Log log = LogFactory.getLog(AssignPermissions.class);
+    
     /** Creates new AssignPermissions */
     public AssignPermissions () {
     }
@@ -72,7 +74,7 @@ public class AssignPermissions
      */
     public void execute (PermissionsSessionData session) throws Exception {
         
-            LogService.log(LogService.DEBUG, "PermissionsManager->AssignPermissions processing");
+            log.debug("PermissionsManager->AssignPermissions processing");
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap owners = new HashMap();
@@ -90,7 +92,7 @@ public class AssignPermissions
                     ph.activity = split3.substring(0, split3.indexOf("|"));
                     ph.target = split3.substring(split3.indexOf("|") + 1);
                     ph.type = session.runtimeData.getParameter(key);
-                    LogService.log(LogService.DEBUG, "Processing "
+                    log.debug("Processing "
                             + ph.type + " permission o=" + ph.owner + " p="
                             + ph.principal + " a=" + ph.activity + " t=" +
                             ph.target);
@@ -106,11 +108,11 @@ public class AssignPermissions
                 IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(owner);
                 ArrayList phs = (ArrayList)owners.get(owner);
                 IPermission[] ipsd = pHolder2DeleteArray(upm, phs);
-                LogService.log(LogService.DEBUG, "removing " + String.valueOf(ipsd.length)
+                log.debug("removing " + String.valueOf(ipsd.length)
                         + " old permissions");
                 upm.removePermissions(ipsd);
                 IPermission[] ipsa = pHolder2AddArray(upm, phs);
-                LogService.log(LogService.DEBUG, "adding " + String.valueOf(ipsa.length)
+                log.debug("adding " + String.valueOf(ipsa.length)
                         + " new permissions");
                 upm.addPermissions(ipsa);
             }
@@ -139,7 +141,7 @@ public class AssignPermissions
                 p.setTarget(ph.target);
                 rlist.add(p);
             } catch (Exception e) {
-                LogService.log(LogService.ERROR,e);
+                log.error(e);
             }
         }
         return  (IPermission[])rlist.toArray(new IPermission[0]);
@@ -164,7 +166,7 @@ public class AssignPermissions
                     rlist.add(p);
                 }
             } catch (Exception e) {
-                LogService.log(LogService.ERROR,e);
+                log.error(e);
             }
         }
         return  (IPermission[])rlist.toArray(new IPermission[0]);

@@ -43,7 +43,8 @@ import java.sql.Timestamp;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.EntityPropertyRegistry;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -54,6 +55,9 @@ import org.jasig.portal.services.LogService;
  */
 public class RDBMPropertyStore
       implements IEntityPropertyStore {
+    
+    private static final Log log = LogFactory.getLog(RDBMPropertyStore.class);
+    
    protected static Class propsType = null;
    protected final static String TABLE_NAME = "UP_ENTITY_PROP";
    protected final static String TYPE_COL = "ENTITY_TYPE_ID";
@@ -76,8 +80,8 @@ public class RDBMPropertyStore
             propsType = Class.forName("org.jasig.portal.services.entityproperties.EntityProperties");
          }
       } catch (Exception e) {
-         LogService.log(LogService.ERROR, "RDBMPropertyStore.Constructor Unable to create propstype");
-         LogService.log(LogService.ERROR, e);
+         log.error( "RDBMPropertyStore.Constructor Unable to create propstype");
+         log.error( e);
       }   
    }
 
@@ -117,9 +121,9 @@ public class RDBMPropertyStore
          ps.close();
          clearCache(entityID);
       } catch (Exception e) {
-         LogService.log(LogService.ERROR, "RDBMPropertyStore.storeProperty "
+         log.error( "RDBMPropertyStore.storeProperty "
                                           + ps);
-         LogService.log(LogService.ERROR, e);
+         log.error( e);
       } finally {
          this.releaseConnection(conn);
       }
@@ -140,9 +144,9 @@ public class RDBMPropertyStore
          ps.close();
          clearCache(entityID);
       } catch (Exception e) {
-         LogService.log(LogService.ERROR, "RDBMPropertyStore.unStoreProperty "
+         log.error( "RDBMPropertyStore.unStoreProperty "
                                           + ps);
-         LogService.log(LogService.ERROR, e);
+         log.error( e);
       } finally {
          this.releaseConnection(conn);
       }
@@ -176,8 +180,8 @@ public class RDBMPropertyStore
             rs.close();
             ps.close();
          } catch (Exception e) {
-            LogService.log(LogService.ERROR, "RDBMPropertyStore.getPropertyNames: " + ps);
-            LogService.log(LogService.ERROR, e);
+            log.error( "RDBMPropertyStore.getPropertyNames: " + ps);
+            log.error( e);
          } finally {
             this.releaseConnection(conn);
          }

@@ -78,7 +78,8 @@ import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CommonUtils;
 
 
@@ -94,6 +95,8 @@ import org.jasig.portal.utils.CommonUtils;
 
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
 
+    private static final Log log = LogFactory.getLog(AggregatedUserLayoutStore.class);
+    
   private static final int LOST_FOLDER_ID = -1;
   private static final String NODE_SEPARATOR = "-";
 
@@ -187,7 +190,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           // see if the parameter was already there
           String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
@@ -200,7 +203,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                 + "," + profileId + "," + stylesheetId + ",1,'" + pName + "','" + ssup.getParameterValue(pName) + "')";
           }
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // write out folder attributes
@@ -214,7 +217,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=2";
-              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -228,7 +231,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     + userId + "," + profileId + "," + stylesheetId + ",1," + folderId + ",'" + pName + "',2,'" + pValue
                     + "')";
               }
-              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -244,7 +247,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
-              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -258,7 +261,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     + userId + "," + profileId + "," + stylesheetId + ",1," + channelId + ",'" + pName + "',3,'" + pValue
                     + "')";
               }
-              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -292,7 +295,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           // see if the parameter was already there
           String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
@@ -305,7 +308,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                 + "," + profileId + "," + stylesheetId + ",2,'" + pName + "','" + tsup.getParameterValue(pName) + "')";
           }
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // write out channel attributes
@@ -319,7 +322,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
-              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -333,7 +336,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     + userId + "," + profileId + "," + stylesheetId + ",2," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
                     + "')";
               }
-              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -395,7 +398,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       } else {
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::addUserLayoutNode(): " + subSelectString);
+        log.debug("AggregatedUserLayoutStore::addUserLayoutNode(): " + subSelectString);
         rs = stmt.executeQuery(subSelectString);
         try {
           if ( rs.next() )  	
@@ -406,7 +409,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
           // Make sure the next struct id is set in case the user adds a channel
           String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::addUserLayoutNode(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::addUserLayoutNode(): " + sQuery);
 
           rs = stmt.executeQuery(sQuery);
           try {
@@ -488,7 +491,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      } catch (Exception e) {
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           LogService.log(LogService.ERROR, sqle.toString() );
+           log.error( sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
          throw new PortalException(errorMessage);
@@ -823,7 +826,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //        int layoutId=profile.getLayoutId();
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        //LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
+        //log.debug("RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
         int layoutId = -1;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
@@ -869,7 +872,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      } catch (Exception e) {
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           LogService.log(LogService.ERROR, sqle.toString() );
+           log.error( sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
          throw new PortalException(errorMessage);
@@ -1192,7 +1195,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //        int layoutId=profile.getLayoutId();
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::deleteUserLayoutNode(): " + subSelectString);
+        log.debug("AggregatedUserLayoutStore::deleteUserLayoutNode(): " + subSelectString);
         int layoutId = -1;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
@@ -1333,7 +1336,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      } catch (Exception e) {
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           LogService.log(LogService.ERROR, sqle.toString() );
+           log.error( sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
          throw new PortalException(errorMessage);
@@ -1389,7 +1392,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	  rs.close();	
 
       sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
-      LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
+      log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
       String firstNodeId = layout.getLayoutFolder(layout.getRootId()).getFirstChildNodeId();
       rs = stmt.executeQuery(sQuery);
       if ( !rs.next() ) {
@@ -1398,7 +1401,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       } else {
          sQuery = "UPDATE UP_USER_LAYOUT_AGGR SET INIT_NODE_ID="+firstNodeId+" WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId;
         }
-      LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
+      log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
       stmt.executeUpdate(sQuery);
       if ( rs != null ) rs.close();
 
@@ -1476,7 +1479,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         e.printStackTrace();
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           LogService.log(LogService.ERROR, sqle.toString() );
+           log.error( sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
          throw new PortalException(errorMessage);
@@ -1635,7 +1638,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         e.printStackTrace();
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           LogService.log(LogService.ERROR, sqle.toString() );
+           log.error( sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
          throw new PortalException(errorMessage);
@@ -1698,7 +1701,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				e.printStackTrace();
 				String errorMessage = e.getMessage();
 				try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-				   LogService.log(LogService.ERROR, sqle.toString() );
+				   log.error( sqle.toString() );
 				   errorMessage += ":" + sqle.getMessage();
 				}
 				 throw new PortalException(errorMessage);
@@ -1785,7 +1788,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //        int layoutId=profile.getLayoutId();
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + subSelectString);
+        log.debug("AggregatedUserLayoutStore::getUserLayout(): " + subSelectString);
         int layoutId = -1;
         rs = stmt.executeQuery(subSelectString);
         try {
@@ -1800,7 +1803,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
        if (layoutId < 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
             if ( rs.next() ) {
@@ -1813,7 +1816,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
           // Make sure the next struct id is set in case the user adds a channel
           sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
           int nextStructId = 0;
           rs = stmt.executeQuery(sQuery);
           try {
@@ -1823,11 +1826,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             rs.close();
           }
           sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
           sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
           sQuery = " SELECT "+realUserId+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
@@ -1846,7 +1849,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               rs.getInt("PARAM_TYPE")+"," +
               "'"+rs.getString("PARAM_VAL")+"')";
 
-           LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + Insert);
+           log.debug("AggregatedUserLayoutStore::getUserLayout(): " + Insert);
            insertStmt.executeUpdate(Insert);
           }
 
@@ -1869,7 +1872,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         int firstStructId = -1;
         String sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-        LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
+        log.debug("AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           if ( rs.next() )
@@ -1900,7 +1903,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
         sqlLayout += " ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId;
 
-        LogService.log(LogService.DEBUG, sqlLayout);
+        log.debug(sqlLayout);
 
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
@@ -1912,7 +1915,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
         sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
 
-        LogService.log(LogService.DEBUG, sqlFragment);
+        log.debug(sqlFragment);
 
         // The hashtable object containing the fragment nodes that are next to the user layout nodes
         Hashtable fragmentNodes = new Hashtable();
@@ -2204,7 +2207,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
           String paramSql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + paramSql);
+          log.debug("AggregatedUserLayoutStore::getUserLayout(): " + paramSql);
 
           // Adding this to prevent the error "closed statement" in Oracle
           Statement st = con.createStatement();
@@ -2365,7 +2368,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
           long stopTime = System.currentTimeMillis();
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
+          log.debug("AggregatedUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
 
       } finally {
@@ -2374,7 +2377,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       }
     } catch ( Exception e ) {
          e.printStackTrace();
-         LogService.log(LogService.ERROR,e);
+         log.error(e);
          throw new PortalException(e);
       } finally {
           RDBMServices.releaseConnection(con);
@@ -2505,7 +2508,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_OWNER_FRAGMENT UOF WHERE ";
         }
         sqlFragment += " UF.FRAGMENT_ID=UOF.FRAGMENT_ID AND UOF.FRAGMENT_ID=?";
-        LogService.log(LogService.DEBUG, sqlFragment);
+        log.debug(sqlFragment);
         PreparedStatement psFragment = con.prepareStatement(sqlFragment);
         psFragment.setInt(1,fragmentId);
 
@@ -2745,7 +2748,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
           String sql = "SELECT NODE_ID, PARAM_NAME, PARAM_VALUE FROM UP_FRAGMENT_PARAM WHERE FRAGMENT_ID=" + fragmentId +
             " AND NODE_ID IN (" + structParms.toString() + ") ORDER BY NODE_ID";
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getFragment(): " + sql);
+          log.debug("AggregatedUserLayoutStore::getFragment(): " + sql);
 
           // Adding this to prevent the error "closed statement" in Oracle
           Statement st = con.createStatement();
@@ -2781,13 +2784,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           if ( stmt != null ) stmt.close();
 
           long stopTime = System.currentTimeMillis();
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getFragment(): The fragment took " +
+          log.debug("AggregatedUserLayoutStore::getFragment(): The fragment took " +
             (stopTime - startTime) + " milliseconds to create");
 
 
     } catch ( Exception e ) {
          e.printStackTrace();
-         LogService.log(LogService.ERROR,e);
+         log.error(e);
          throw new PortalException(e);
       } finally {
           RDBMServices.releaseConnection(con);
@@ -2877,14 +2880,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='UP_FRAGMENT'";
         for (int i = 0; i < attemptsNumber; i++) {
          try {
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getNextFragmentId(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::getNextFragmentId(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           int currentId = 0;
           rs.next();
           currentId = rs.getInt(1);
           if ( rs != null ) rs.close();
             String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+(currentId + 1)+" WHERE SEQUENCE_NAME='UP_FRAGMENT'";
-            LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getNextFragmentId(): " + sUpdate);
+            log.debug("AggregatedUserLayoutStore::getNextFragmentId(): " + sUpdate);
             stmt.executeUpdate(sUpdate);
             RDBMServices.commit(con);
             return new String (  (currentId + 1) + "" );
@@ -2919,7 +2922,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+          log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
@@ -2932,7 +2935,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // get user defined defaults
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2956,7 +2959,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // get user preferences
         sQuery = "SELECT PARAM_TYPE, PARAM_NAME, PARAM_VAL, ULS.NODE_ID, CHAN_ID FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT_AGGR ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND UUSA.STRUCT_ID = ULS.NODE_ID AND UUSA.USER_ID = ULS.USER_ID";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2974,13 +2977,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             }
             if (param_type == 1) {
               // stylesheet param
-              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
+              log.error( "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString(2) + "\", param_type=" + Integer.toString(param_type));
             }
             else if (param_type == 2) {
               // folder attribute
-              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() :  folder attribute specified for the theme stylesheet! UP_SS_USER_ATTS corrupt. (userId="
+              log.error( "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() :  folder attribute specified for the theme stylesheet! UP_SS_USER_ATTS corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString(2) + "\", param_type=" + Integer.toString(param_type));
             }
@@ -2990,7 +2993,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             }
             else {
               // unknown param type
-              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
+              log.error( "AggregatedUserLayoutStore::getThemeStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString(2) + "\", param_type=" + Integer.toString(param_type));
             }
@@ -3019,7 +3022,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // get user defined defaults
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
             profileId;
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + subSelectString);
+        log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + subSelectString);
         int layoutId;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
@@ -3034,7 +3037,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+          log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
@@ -3046,7 +3049,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -3074,7 +3077,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // get user preferences
         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.NODE_ID, CHAN_ID FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT_AGGR ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.NODE_ID AND UUSA.USER_ID = ULS.USER_ID";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -3092,7 +3095,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
             if (param_type == 1) {
               // stylesheet param
-              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
+              log.error( "AggregatedUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + temp1 + "\", param_type=" + Integer.toString(param_type));
             }
@@ -3106,7 +3109,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             }
             else {
               // unknown param type
-              LogService.log(LogService.ERROR, "AggregatedUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
+              log.error( "AggregatedUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + temp1 + "\", param_type=" + Integer.toString(param_type));
             }

@@ -35,7 +35,8 @@
 package org.jasig.portal;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Locates and creates an implementation of IPortletPreferencesStore as specified by
@@ -47,6 +48,8 @@ import org.jasig.portal.services.LogService;
  */
 public class PortletPreferencesStoreFactory {
 
+    private static final Log log = LogFactory.getLog(PortletPreferencesStoreFactory.class);
+    
     private static IPortletPreferencesStore portletPreferencesStoreImpl = null;
 
     private static final String DEFAULT_CLASS_NAME = "org.jasig.portal.RDBMPortletPreferencesStore";
@@ -59,7 +62,7 @@ public class PortletPreferencesStoreFactory {
         } catch (Exception e ) {}
     
         if (className == null || className.length() == 0 )
-            LogService.log(LogService.ERROR, "PortletPreferencesStoreFactory: org.jasig.portal.PortletPreferencesStoreFactory.implementation must be specified in portal.properties");
+            log.error( "PortletPreferencesStoreFactory: org.jasig.portal.PortletPreferencesStoreFactory.implementation must be specified in portal.properties");
     }
 
     /**
@@ -71,12 +74,12 @@ public class PortletPreferencesStoreFactory {
         try {
             return getPortletPreferencesImpl( className );
         } catch ( PortalException pe ) {
-            LogService.log(LogService.ERROR, "PortletPreferencesStoreFactory: Could not load " + className, pe);
+            log.error( "PortletPreferencesStoreFactory: Could not load " + className, pe);
             
             try {
                 return getPortletPreferencesImpl( DEFAULT_CLASS_NAME );
             } catch ( PortalException pe1 ) {
-                LogService.log(LogService.ERROR, "PortletPreferencesStoreFactory: Could not load " + DEFAULT_CLASS_NAME, pe1);
+                log.error( "PortletPreferencesStoreFactory: Could not load " + DEFAULT_CLASS_NAME, pe1);
                 return null;
             }
         }
@@ -99,7 +102,7 @@ public class PortletPreferencesStoreFactory {
           }
           return portletPreferencesStoreImpl;
       } catch (Exception e) {
-          LogService.log(LogService.ERROR, "PortletPreferencesStoreFactory: Could not instantiate " + className, e);
+          log.error( "PortletPreferencesStoreFactory: Could not instantiate " + className, e);
           throw new PortalException(e.getMessage());  
       }
     }

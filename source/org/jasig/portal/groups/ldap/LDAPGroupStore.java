@@ -63,7 +63,8 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SmartCache;
 import org.w3c.dom.Document;
@@ -78,6 +79,7 @@ import org.w3c.dom.Text;
  * @version $Revision$
  */
 public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
+    private static final Log log = LogFactory.getLog(LDAPGroupStore.class);
   protected String url;
   protected String logonid;
   protected String logonpassword;
@@ -311,8 +313,8 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
           try {
             userlist = context.search(usercontext,filter,sc);
           } catch (NamingException nex) {
-            LogService.log(LogService.ERROR,"LDAPGroupStore: Unable to perform filter "+filter);
-            LogService.log(LogService.ERROR,nex);
+            log.error("LDAPGroupStore: Unable to perform filter "+filter);
+            log.error(nex);
           }
           processLdapResults(userlist,keys);
           break;
@@ -323,8 +325,8 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
           try {
             userlist2 = context2.search(usercontext,attributes,new String[] {keyfield});
           } catch (NamingException nex) {
-            LogService.log(LogService.ERROR,"LDAPGroupStore: Unable to perform attribute search");
-            LogService.log(LogService.ERROR,nex);
+            log.error("LDAPGroupStore: Unable to perform attribute search");
+            log.error(nex);
           }
           processLdapResults(userlist2,keys);
           break;
@@ -448,8 +450,8 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       }
     }
     catch(NamingException nex){
-        LogService.log(LogService.ERROR,"LDAPGroupStore: error processing results");
-       LogService.log(LogService.ERROR,nex);
+        log.error("LDAPGroupStore: error processing results");
+       log.error(nex);
     }
     finally{
       try{results.close();}catch(Exception e){}
@@ -482,8 +484,8 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       try {
         context = new InitialDirContext(jndienv);
       } catch (NamingException nex) {
-        LogService.log(LogService.ERROR,"LDAPGroupStore: unable to get context");
-        LogService.log(LogService.ERROR,nex);
+        log.error("LDAPGroupStore: unable to get context");
+        log.error(nex);
       }
       contexts.put("context",context);
     }
@@ -656,8 +658,8 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     try {
       userlist = context.search(usercontext,query,sc);
     } catch (NamingException nex) {
-      LogService.log(LogService.ERROR,"LDAPGroupStore: Unable to perform filter "+query);
-      LogService.log(LogService.ERROR,nex);
+      log.error("LDAPGroupStore: Unable to perform filter "+query);
+      log.error(nex);
     }
     ArrayList keys = new ArrayList();
     processLdapResults(userlist,keys);

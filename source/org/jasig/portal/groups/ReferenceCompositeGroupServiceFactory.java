@@ -33,7 +33,8 @@
  */
 package org.jasig.portal.groups;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Creates an instance of the reference <code>ICompositeGroupService</code>.
@@ -42,6 +43,8 @@ import org.jasig.portal.services.LogService;
  */
 
 public class ReferenceCompositeGroupServiceFactory implements ICompositeGroupServiceFactory {
+    private static final Log log = LogFactory.getLog(ReferenceCompositeGroupServiceFactory.class);
+    
 /**
  * ReferenceGroupServiceFactory constructor.
  */
@@ -64,7 +67,7 @@ throws GroupsException
     }
     catch ( Exception ex )
     {
-        LogService.log (LogService.ERROR, "ReferenceCompositeGroupServiceFactory.newGroupService(): " + ex);
+        log.error( "ReferenceCompositeGroupServiceFactory.newGroupService(): " + ex);
         throw new GroupsException(ex.getMessage());
     }
 }

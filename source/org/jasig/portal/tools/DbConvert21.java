@@ -40,7 +40,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Adjusts stored layouts in 2.1 database to work in 2.2+.
@@ -49,6 +50,8 @@ import org.jasig.portal.services.LogService;
  */
 public class DbConvert21 {
 
+    private static final Log log = LogFactory.getLog(DbConvert21.class);
+    
    public static void main(String[] args) {
 
 	Statement stmt = null;
@@ -97,7 +100,7 @@ public class DbConvert21 {
 					updateSsUri = "UPDATE UP_SS_STRUCT set SS_URI = '"+newSsUri+"' "+
 						"where SS_ID = "+ssId;
 					ssModifyStmt.execute(updateSsUri);
-					LogService.log(LogService.DEBUG,"DbConvert21 update: "+updateSsUri);
+					log.debug("DbConvert21 update: "+updateSsUri);
 				}
 				ssDescUri = rset.getString(3);
 				if (ssDescUri.startsWith("stylesheets/")) {
@@ -105,7 +108,7 @@ public class DbConvert21 {
 					updateSsUri = "UPDATE UP_SS_STRUCT set SS_DESCRIPTION_URI = '"+newSsUri+"' "+
 						"where SS_ID = "+ssId;
 					ssModifyStmt.execute(updateSsUri);
-					LogService.log(LogService.DEBUG,"DbConvert21 update: "+updateSsUri);
+					log.debug("DbConvert21 update: "+updateSsUri);
 				}
 			}
 			rset = stmt.executeQuery("SELECT SS_ID, SS_URI, SS_DESCRIPTION_URI FROM UP_SS_THEME ");
@@ -117,7 +120,7 @@ public class DbConvert21 {
 					updateSsUri = "UPDATE UP_SS_THEME set SS_URI = '"+newSsUri+"' "+ 
 						"where SS_ID = "+ssId;
 					ssModifyStmt.execute(updateSsUri);
-					LogService.log(LogService.DEBUG,"DbConvert21 update: "+updateSsUri);
+					log.debug("DbConvert21 update: "+updateSsUri);
 				}
 				ssDescUri = rset.getString(3);
 				if (ssDescUri.startsWith("stylesheets/")) {
@@ -125,7 +128,7 @@ public class DbConvert21 {
 					updateSsUri = "UPDATE UP_SS_THEME set SS_DESCRIPTION_URI = '"+newSsUri+"' "+
 						"where SS_ID = "+ssId;
 					ssModifyStmt.execute(updateSsUri);
-					LogService.log(LogService.DEBUG,"DbConvert21 update: "+updateSsUri);
+					log.debug("DbConvert21 update: "+updateSsUri);
 				}
 				
 			}
@@ -174,12 +177,12 @@ public class DbConvert21 {
 						", 'Root Folder', 'root',	'N', 'Y')" ;
 					modifyStmt.execute(insertString);
 					// DEBUG
-					LogService.log(LogService.DEBUG, "DbConvert inserted: " + insertString);
+					log.debug("DbConvert inserted: " + insertString);
 					
 					String updateString = "UPDATE UP_USER_LAYOUT set INIT_STRUCT_ID="+new_struct_id+
 					" where user_id="+user_id + " and layout_id=" + layout_id;
 					modifyStmt.execute(updateString);
-					LogService.log(LogService.DEBUG, "DbConvert updated layout: " + updateString);
+					log.debug("DbConvert updated layout: " + updateString);
 					
 					testStructStmt.clearParameters();
 					testStructStmt.setInt(1,user_id);
@@ -189,10 +192,10 @@ public class DbConvert21 {
 						updateString = "UPDATE UP_USER set NEXT_STRUCT_ID = " + newNext +
 						" where user_id="+user_id ;
 						modifyStmt.execute(updateString);
-						LogService.log(LogService.DEBUG, "DbConvert updated next struct id : " + updateString);
+						log.debug("DbConvert updated next struct id : " + updateString);
 					}
 					
-					LogService.log(LogService.DEBUG, "DbConvert updated: " + updateString);
+					log.debug("DbConvert updated: " + updateString);
 					updateCount++;
 					}				
 				}

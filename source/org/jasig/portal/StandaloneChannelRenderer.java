@@ -50,7 +50,8 @@ import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
 
@@ -65,6 +66,9 @@ import org.jasig.portal.utils.XSLT;
 public class StandaloneChannelRenderer 
     extends BaseChannel
 {
+    
+    private static final Log log = LogFactory.getLog(StandaloneChannelRenderer.class);
+    
     private StylesheetSet set;
     private MediaManager mediaM;
     private String channelName;
@@ -192,7 +196,7 @@ public class StandaloneChannelRenderer
         UPFileSpec upfs=new UPFileSpec(req);
         String channelTarget = upfs.getTargetNodeId();
 
-        LogService.log(LogService.DEBUG,"StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
+        log.debug("StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
         Enumeration en = req.getParameterNames();
         if (en != null) {
             while (en.hasMoreElements()) {
@@ -216,7 +220,7 @@ public class StandaloneChannelRenderer
         try {
             rd.setUPFile(new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null));
         } catch (Exception e) {
-            LogService.log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
+            log.debug("StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
         }
 
         return rd;

@@ -58,7 +58,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -74,6 +75,8 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CChannelManager extends BaseChannel {
+    private static final Log log = LogFactory.getLog(CChannelManager.class);
+    
     protected static final String sslLocation = "CChannelManager/CChannelManager.ssl";
     protected static final Document emptyDoc = DocumentFactory.getNewDocument();
     protected short state;
@@ -223,9 +226,9 @@ public class CChannelManager extends BaseChannel {
                 }
                 ((IChannel)groupServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, e);
+                log.error( e);
             }
-            LogService.log(LogService.DEBUG, "CChannelManager.getGroupServant():  created new servant");
+            log.debug("CChannelManager.getGroupServant():  created new servant");
         }
         return  groupServant;
     }
@@ -251,9 +254,9 @@ public class CChannelManager extends BaseChannel {
                 }
                 ((IChannel)categoryServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, e);
+                log.error( e);
             }
-            LogService.log(LogService.DEBUG, "CChannelManager.getCategoryServant():  created new servant");
+            log.debug("CChannelManager.getCategoryServant():  created new servant");
         }
         return  categoryServant;
     }
@@ -613,7 +616,7 @@ public class CChannelManager extends BaseChannel {
                     selectedGroupsE.appendChild(selectedGroupE);
                 }
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, e);
+                log.error( e);
             }
             el.appendChild(selectedGroupsE);
         }
@@ -637,7 +640,7 @@ public class CChannelManager extends BaseChannel {
                     selectedCategoriesE.appendChild(selectedCategoryE);
                 }
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, e);
+                log.error( e);
             }
             userSettingsE.appendChild(selectedCategoriesE);
         }

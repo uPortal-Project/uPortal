@@ -44,7 +44,8 @@ import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -65,6 +66,7 @@ import org.xml.sax.ContentHandler;
  */
 public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICacheable
 {
+    private static final Log log = LogFactory.getLog(CSecureInfo.class);
     protected String str_channelSubscribeId=null;
     protected IChannel the_channel=null;
     
@@ -132,9 +134,9 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
             format.setIndenting(true);
             org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
             xsl.serialize (doc);
-            LogService.log(LogService.DEBUG,outString.toString());
+            log.debug(outString.toString());
         } catch (Exception e) {
-            LogService.log(LogService.DEBUG,e);
+            log.debug(e);
         }
         // end of debug block
 
@@ -149,7 +151,7 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
             StringWriter sw=new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             sw.flush();
-            LogService.log(LogService.ERROR, "CSecureInfo::renderXML() : Things are bad. Secure info channel threw: " + sw.toString());
+            log.error( "CSecureInfo::renderXML() : Things are bad. Secure info channel threw: " + sw.toString());
         }        
     }
 

@@ -43,7 +43,8 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Searches the portal DB for people.  Used by EntitySearcherImpl
@@ -54,7 +55,7 @@ import org.jasig.portal.services.LogService;
 
 
 public class RDBMPersonSearcher  implements ITypedEntitySearcher{
-
+    private static final Log log = LogFactory.getLog(RDBMPersonSearcher.class);
   private static final String user_is_search="select USER_NAME from UP_USER where USER_NAME=?";
   private static final String user_partial_search="select USER_NAME from UP_USER where USER_NAME like ?";
   private static final String person_partial_search="select USER_NAME from UP_PERSON_DIR where (FIRST_NAME like ? or LAST_NAME like ?)";
@@ -66,7 +67,7 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
       personDef = Class.forName("org.jasig.portal.security.IPerson");
     }
     catch(Exception e){
-      LogService.log(LogService.ERROR,e); 
+      log.error(e); 
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -129,8 +130,8 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
                 ar.add(new EntityIdentifier(uprs.getString(1),personDef));
             }
         } catch (Exception e) {
-            LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            LogService.log(LogService.ERROR, e);
+            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            log.error( e);
         } finally {
             RDBMServices.closeResultSet(rs); 
             RDBMServices.closeResultSet(urs); 

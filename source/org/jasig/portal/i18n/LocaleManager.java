@@ -42,7 +42,8 @@ import java.util.StringTokenizer;
 
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
@@ -69,6 +70,8 @@ import org.w3c.dom.Element;
  */
 public class LocaleManager  {
 
+    private static final Log log = LogFactory.getLog(LocaleManager.class);
+    
     private IPerson person;
     private static boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
     private static Locale jvmLocale;
@@ -89,7 +92,7 @@ public class LocaleManager  {
             try {
                 userLocales = LocaleStoreFactory.getLocaleStoreImpl().getUserLocales(person);
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, e);
+                log.error( e);
             }
         }
     }

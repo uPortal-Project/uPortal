@@ -40,7 +40,8 @@ import java.util.Date;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.SequenceGenerator;
 /**
  * Reference implementation of <code>IEntityCache</code> that is meant
@@ -65,6 +66,7 @@ import org.jasig.portal.services.SequenceGenerator;
  */
 public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
 {
+    private static final Log log = LogFactory.getLog(ReferenceInvalidatingEntityCache.class);
     private static RDBMCachedEntityInvalidationStore invalidationStore;
     private long lastUpdateMillis = 0;
     private long clockTolerance = 5000;
@@ -264,7 +266,7 @@ public void removeInvalidEntities()
     }
     catch (Exception ex)
     {
-        LogService.log(LogService.ERROR,
+        log.error(
             "ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + ex.getMessage());
     }
 
@@ -306,7 +308,7 @@ private void initializeCacheID() throws CachingException
     }
     catch (Exception ex)
     {
-        LogService.log(LogService.ERROR,
+        log.error(
             "ReferenceInvalidatingEntityCache.initializeCacheID(): " + ex.getMessage());
         throw new CachingException(ex.getMessage());
     }

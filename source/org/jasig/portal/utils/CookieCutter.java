@@ -46,7 +46,8 @@ import java.util.Vector;
 
 import javax.servlet.http.Cookie;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * CookieCutter is a utility class which stores, sends and 
@@ -58,6 +59,9 @@ import org.jasig.portal.services.LogService;
  */
 public class CookieCutter 
 {
+    
+    private static final Log log = LogFactory.getLog(CookieCutter.class);
+    
   private Vector cookies;
   private boolean supportSetCookie2;
 
@@ -201,7 +205,7 @@ public class CookieCutter
            }
            catch(ParseException e)
            {
-             LogService.log(LogService.WARN, "CookieCutter: Cannot process Set Cookie header: " + e.getMessage());
+             log.warn("CookieCutter: Cannot process Set Cookie header: " + e.getMessage());
            }
          }
        }
@@ -234,7 +238,7 @@ public class CookieCutter
        }
        else
        {
-          LogService.log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
+          log.debug("CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie
@@ -349,7 +353,7 @@ public class CookieCutter
        }
        else
        {
-          LogService.log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
+          log.debug("CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie

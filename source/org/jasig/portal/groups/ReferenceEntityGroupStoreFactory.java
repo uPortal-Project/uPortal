@@ -34,7 +34,8 @@
 
 package org.jasig.portal.groups;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Creates an instance of the reference <code>IEntityGroupStore</code>.
@@ -43,6 +44,9 @@ import org.jasig.portal.services.LogService;
  */
 
 public class ReferenceEntityGroupStoreFactory implements IEntityGroupStoreFactory {
+    
+    private static final Log log = LogFactory.getLog(ReferenceEntityGroupStoreFactory.class);
+    
 /**
  * ReferenceGroupServiceFactory constructor.
  */
@@ -79,7 +83,7 @@ public IEntityGroupStore newInstance() throws GroupsException
         { return new RDBMEntityGroupStore(); }
     catch ( Exception ex )
     {
-        LogService.log (LogService.ERROR, "ReferenceEntityGroupStoreFactory.newInstance(): " + ex);
+        log.error( "ReferenceEntityGroupStoreFactory.newInstance(): " + ex);
         throw new GroupsException(ex.getMessage());
     }
 }

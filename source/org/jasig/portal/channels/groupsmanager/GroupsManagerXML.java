@@ -59,7 +59,8 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.EntityPropertyRegistry;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,6 +74,7 @@ import org.w3c.dom.NodeList;
  */
 public class GroupsManagerXML
       implements GroupsManagerConstants {
+    private static final Log log = LogFactory.getLog(GroupsManagerXML.class);
    private static int UID = 0;
 
    /**
@@ -327,7 +329,7 @@ public class GroupsManagerXML
          }
          if (elems.size() != 1) {
             if (elems.size() > 1) {
-               LogService.log(LogService.ERROR, "GroupsManagerXML::getElementById:  More than one element found for Id: "
+               log.error( "GroupsManagerXML::getElementById:  More than one element found for Id: "
                      + id);
             }
          }

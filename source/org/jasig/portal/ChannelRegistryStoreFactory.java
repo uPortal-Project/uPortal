@@ -37,7 +37,8 @@
 package org.jasig.portal;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Produces an implementation of IChannelRegistryStore
@@ -45,6 +46,9 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class ChannelRegistryStoreFactory {
+    
+    private static final Log log = LogFactory.getLog(ChannelRegistryStoreFactory.class);
+    
   private static IChannelRegistryStore channelRegistryStoreImpl = null;
 
   static {
@@ -52,12 +56,12 @@ public class ChannelRegistryStoreFactory {
     String className = PropertiesManager.getProperty("org.jasig.portal.ChannelRegistryStoreFactory.implementation");
     // Fail if this is not found
     if (className == null)
-      LogService.log(LogService.ERROR, "ChannelRegistryStoreFactory: org.jasig.portal.ChannelRegistryStoreFactory.implementation must be specified in portal.properties");
+      log.error( "ChannelRegistryStoreFactory: org.jasig.portal.ChannelRegistryStoreFactory.implementation must be specified in portal.properties");
     try {
       // Create an instance of the IChannelRegistryStore as specified in portal.properties
       channelRegistryStoreImpl = (IChannelRegistryStore)Class.forName(className).newInstance();
     } catch (Exception e) {
-      LogService.log(LogService.ERROR, "ChannelRegistryStoreFactory: Could not instantiate " + className, e);
+      log.error( "ChannelRegistryStoreFactory: Could not instantiate " + className, e);
     }
   }
 

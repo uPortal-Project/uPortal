@@ -63,6 +63,8 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.ldap.ILdapServer;
@@ -90,6 +92,8 @@ import org.w3c.dom.NodeList;
  */
 public class PersonDirectory {
 
+    private static final Log log = LogFactory.getLog(PersonDirectory.class);
+    
   static Vector sources = null; // List of PersonDirInfo objects
   static Hashtable drivers = new Hashtable(); // Registered JDBC drivers
   public static HashSet propertynames = new HashSet();
@@ -257,7 +261,7 @@ public class PersonDirectory {
               }
             }
           } else {
-            LogService.log(LogService.ERROR,"PersonDirectory::getParameters(): Unrecognized tag "+tagname+" in PersonDirs.xml");
+            log.error("PersonDirectory::getParameters(): Unrecognized tag "+tagname+" in PersonDirs.xml");
           }
         }
         for (int ii=0;ii<pdi.attributealiases.length;ii++) {
@@ -270,7 +274,7 @@ public class PersonDirectory {
     catch(Exception e)
     {
       sources = null;
-      LogService.log(LogService.WARN,"PersonDirectory::getParameters(): properties/PersonDirs.xml is not available, directory searching disabled.");
+      log.warn("PersonDirectory::getParameters(): properties/PersonDirs.xml is not available, directory searching disabled.", e);
       return false;
     }
     return true;
@@ -342,7 +346,7 @@ public class PersonDirectory {
             fromLdapServices = true;
         }
         
-        LogService.log(LogService.DEBUG,"PersonDirectory::processLdapDir(): Looking in "+pdi.LdapRefName+
+        log.debug("PersonDirectory::processLdapDir(): Looking in "+pdi.LdapRefName+
           " for person attributes of "+username);
       }
     
@@ -454,7 +458,7 @@ public class PersonDirectory {
       if (pdi.ResRefName!=null && pdi.ResRefName.length()>0) {
           RDBMServices rdbmServices = new RDBMServices();
           conn = RDBMServices.getConnection(pdi.ResRefName);
-          LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.ResRefName+
+          log.debug("PersonDirectory::processJdbcDir(): Looking in "+pdi.ResRefName+
             " for person attributes of "+username);
         }
 
@@ -471,13 +475,13 @@ public class PersonDirectory {
             } catch (Exception driverproblem) {
               pdi.disabled=true;
               pdi.logged=true;
-              LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Cannot register driver class "+pdi.driver);
+              log.error("PersonDirectory::processJdbcDir(): Cannot register driver class "+pdi.driver);
               return;
             }
           }
         }
       conn = DriverManager.getConnection(pdi.url,pdi.logonid,pdi.logonpassword);
-      LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.url+
+      log.debug("PersonDirectory::processJdbcDir(): Looking in "+pdi.url+
         " for person attributes of "+username);
       }
 
@@ -532,7 +536,7 @@ public class PersonDirectory {
       // If database down or can't logon, ignore this data source
       // It is not clear that we want to disable the source, since the
       // database may be temporarily down.
-      LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error ", e);
+      log.error("PersonDirectory::processJdbcDir(): Error ", e);
     } finally {
         if (rs!=null) try {rs.close();} catch (Exception e) {}
         if (stmt!=null) try {stmt.close();} catch (Exception e) {}
@@ -554,7 +558,7 @@ public class PersonDirectory {
       try {
         person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person));
       } catch (Exception e) {
-        LogService.log(LogService.ERROR, e);
+        log.error( e);
       }
       instance().getUserDirectoryInformation(uid, person);
     }

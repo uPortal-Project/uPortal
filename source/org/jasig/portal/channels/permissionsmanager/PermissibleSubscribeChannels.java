@@ -44,7 +44,8 @@ import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.services.EntityNameFinderService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -59,6 +60,7 @@ import org.w3c.dom.NodeList;
  */
 public class PermissibleSubscribeChannels
         implements IPermissible {
+    private static final Log log = LogFactory.getLog(PermissibleSubscribeChannels.class);
     protected HashMap activities = new HashMap();
     protected HashMap targets = new HashMap();
 
@@ -80,7 +82,7 @@ public class PermissibleSubscribeChannels
                 targets.put("CHAN_ID." + chanID, chanf.getName(chanID));
             }
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
     }
 

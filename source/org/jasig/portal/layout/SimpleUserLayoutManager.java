@@ -54,7 +54,8 @@ import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.IPortalDocument;
 import org.jasig.portal.utils.XSLT;
@@ -70,6 +71,8 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class SimpleUserLayoutManager implements IUserLayoutManager {
+    private static final Log log = LogFactory.getLog(SimpleUserLayoutManager.class);
+    
     protected final IPerson owner;
     protected final UserProfile profile;
     protected IUserLayoutStore store=null;
@@ -323,7 +326,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 msg.append("SimpleUserLayoutManager::addNode() : ");
                 msg.append("User Layout does not implement IPortalDocument, ");
                 msg.append("so element caching cannot be performed.");
-                LogService.log(LogService.ERROR, msg.toString());
+                log.error( msg.toString());
             }
 
             this.updateCacheKey();
@@ -434,7 +437,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
        rootNodeId = rootNode.getAttribute("ID");
       }
      } catch ( Exception e ) {
-         LogService.log(LogService.ERROR, e);
+         log.error( e);
        }
        return rootNodeId;
     }
@@ -478,7 +481,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                         msg.append("User Layout does not implement ");
                         msg.append("IPortalDocument, ");
                         msg.append("so element caching cannot be performed.");
-                        LogService.log(LogService.ERROR, msg.toString());
+                        log.error( msg.toString());
                     }
 
                     // inform the listeners
@@ -523,7 +526,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                         msg.append("User Layout does not implement ");
                         msg.append("IPortalDocument, ");
                         msg.append("so element caching cannot be performed.");
-                        LogService.log(LogService.ERROR, msg.toString());
+                        log.error( msg.toString());
                     }
 
                     // inform the listeners
@@ -730,7 +733,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 return null;
             }
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, "SimpleUserLayoutManager::getSubcribeId() : encountered the following exception, while trying to identify subscribe channel id for the fname=\""+fname+"\" : "+e);
+            log.error( "SimpleUserLayoutManager::getSubcribeId() : encountered the following exception, while trying to identify subscribe channel id for the fname=\""+fname+"\" : "+e);
             e.printStackTrace();
             return null;
         }

@@ -45,7 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 
@@ -57,6 +58,8 @@ import org.jasig.portal.services.LogService;
  */
 public class UserInstanceManager {
 
+    private static final Log log = LogFactory.getLog(UserInstanceManager.class);
+    
     // a table to keep guestUserInstance objects
     static Hashtable guestUserInstances=new Hashtable();
 
@@ -71,7 +74,7 @@ public class UserInstanceManager {
       // Retrieve the person object that is associated with the request
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
     } catch (Exception e) {
-      LogService.log(LogService.ERROR, "UserInstanceManager: Unable to retrieve IPerson!", e);
+      log.error( "UserInstanceManager: Unable to retrieve IPerson!", e);
       throw  (new PortalSecurityException("Could not retrieve IPerson"));
     }
     // Return the UserInstance object if it's in the session

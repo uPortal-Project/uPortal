@@ -41,7 +41,8 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A finder implementation to provide a , delimited list of containing groups
@@ -52,6 +53,9 @@ import org.jasig.portal.services.LogService;
  */
 
 public class ContainingGroupsFinder implements IEntityPropertyFinder {
+    
+    private static final Log log = LogFactory.getLog(ContainingGroupsFinder.class);
+    
   protected final static String[] names = new String[] {"Containing Groups"};
   public ContainingGroupsFinder() {
   }
@@ -78,7 +82,7 @@ public class ContainingGroupsFinder implements IEntityPropertyFinder {
       r = buf.toString();
     }
     catch(Exception e){
-       LogService.log(LogService.ERROR,e);
+       log.error(e);
     }
     return r;
   }

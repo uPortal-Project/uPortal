@@ -42,7 +42,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.AddressTester;
 import org.jasig.portal.utils.CommonUtils;
 
@@ -66,6 +67,8 @@ import org.jasig.portal.utils.CommonUtils;
 
 public class ProxyWriter {
 
+    private static final Log log = LogFactory.getLog(ProxyWriter.class);
+    
     /**
      * True if allow rewriting certain elements for proxying.
      */
@@ -159,7 +162,7 @@ public class ProxyWriter {
                   int responseCode = tester.getResponseCode();
                   if (responseCode != HttpURLConnection.HTTP_MOVED_PERM &&
                       responseCode != HttpURLConnection.HTTP_MOVED_TEMP) {
-                    LogService.log(LogService.DEBUG,
+                    log.debug(
                       "ProxyWriter::capture3XXCodes(): could not get deeper in getting the image.");
                     return work_value;
                   }
@@ -179,7 +182,7 @@ public class ProxyWriter {
             return value;
 
          } catch(Exception e) {
-             LogService.log(LogService.ERROR,"ProxyWriter::catpture3XXCodes():Failed to rewrite the value: " + e.getMessage());
+             log.error("ProxyWriter::catpture3XXCodes():Failed to rewrite the value: " + e.getMessage());
              return value;
          }
     }
@@ -203,7 +206,7 @@ public class ProxyWriter {
                 AddressTester tester = new AddressTester(scriptUri);
                 try {
                   if (!tester.URLAvailable()){
-                    LogService.log(LogService.ERROR,"ProxyWriter::rewrite(): The adress " + scriptUri + " is not available. ");
+                    log.error("ProxyWriter::rewrite(): The adress " + scriptUri + " is not available. ");
                     return scriptUri;
                   }
                   HttpURLConnection httpUrlConnect = (HttpURLConnection) tester.getConnection();
@@ -226,7 +229,7 @@ public class ProxyWriter {
                   tester.disconnect();
                 }
               } catch(Exception e) {
-                 LogService.log(LogService.ERROR,
+                 log.error(
                                 "ProxyWriter::rewrite():Failed to rewrite the file for: " +
                                 scriptUri + " " + e.getMessage());
                  outputFile.delete();
@@ -237,7 +240,7 @@ public class ProxyWriter {
              AddressTester tester = new AddressTester(newScriptPath);
              try {
                if (!tester.URLAvailable()) {
-                 LogService.log(LogService.ERROR,
+                 log.error(
                                 "ProxyWriter::rewrite(): The file  " + filePath +
                                 " is written but cannot be reached at " +
                                 newScriptPath);
@@ -251,7 +254,7 @@ public class ProxyWriter {
              }
 
          } catch(Exception e) {
-             LogService.log(LogService.ERROR,"ProxyWriter::rewrite():Failed to read the file at : "  + filePath + " " + e.getMessage());
+             log.error("ProxyWriter::rewrite():Failed to read the file at : "  + filePath + " " + e.getMessage());
              return scriptUri;
           }
     }
@@ -296,7 +299,7 @@ public class ProxyWriter {
         }
       } catch(Exception e) {
 
-        LogService.log(LogService.ERROR,"ProxyWriter::processLine():Failed to process a line : "  + line + " " + e.getMessage());
+        log.error("ProxyWriter::processLine():Failed to process a line : "  + line + " " + e.getMessage());
         throw e;
        }
     }

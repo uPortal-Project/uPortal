@@ -41,7 +41,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.jasig.portal.car.CarResources;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.oreilly.servlet.multipart.Part;
 
@@ -52,6 +53,9 @@ import com.oreilly.servlet.multipart.Part;
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
+    
+    private static final Log log = LogFactory.getLog(ChannelRuntimeData.class);
+    
     private BrowserInfo binfo=null;
     private Locale[] locales = null;
     private UPFileSpec channelUPFile;
@@ -286,7 +290,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
                 url=channelUPFile.getUPFile();
             }
         } catch (Exception e) {
-            LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
+            log.error("ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
         }
         return url;
     }
@@ -304,7 +308,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         try {
             url=getBaseWorkerURL(worker,false);
         } catch (Exception e) {
-            LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+            log.error("ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
         return url;
     }

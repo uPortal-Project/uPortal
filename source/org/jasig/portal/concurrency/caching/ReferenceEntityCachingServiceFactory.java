@@ -38,7 +38,8 @@ package org.jasig.portal.concurrency.caching;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCachingService;
 import org.jasig.portal.concurrency.IEntityCachingServiceFactory;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Creates an instance of <code>IEntityCachingService</code>.
@@ -47,6 +48,7 @@ import org.jasig.portal.services.LogService;
  */
 
 public class ReferenceEntityCachingServiceFactory implements IEntityCachingServiceFactory {
+    private static final Log log = LogFactory.getLog(ReferenceEntityCachingServiceFactory.class);
 /**
  * ReferenceEntityLockServiceFactory constructor.
  */
@@ -64,7 +66,7 @@ public IEntityCachingService newCachingService() throws CachingException
         { return ReferenceEntityCachingService.singleton(); }
     catch ( CachingException ce )
     {
-        LogService.log(LogService.ERROR, "ReferenceEntityLockServiceFactory.newCachingService(): " + ce);
+        log.error( "ReferenceEntityLockServiceFactory.newCachingService(): " + ce);
         throw ce;
     }
 }

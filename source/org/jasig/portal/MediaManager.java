@@ -54,7 +54,8 @@ import org.jasig.portal.serialize.CachingHTMLSerializer;
 import org.jasig.portal.serialize.CachingXHTMLSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -67,6 +68,9 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class MediaManager {
+    
+    private static final Log log = LogFactory.getLog(MediaManager.class);
+    
   protected OrderedProps mediaProps = null;
   protected OrderedProps mimeProps = null;
   protected OrderedProps serializerProps = null;
@@ -121,7 +125,7 @@ public class MediaManager {
         }
       }
     } catch (IOException ioe) {
-      LogService.log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
+      log.error( "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -146,7 +150,7 @@ public class MediaManager {
         }
       }
     } catch (IOException ioe) {
-      LogService.log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
+      log.error( "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -171,7 +175,7 @@ public class MediaManager {
         }
       }
     } catch (IOException ioe) {
-      LogService.log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
+      log.error( "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -303,7 +307,7 @@ public class MediaManager {
       return getSerializerByName(serializerName, out);
     }
     else {
-      LogService.log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
+      log.error( "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
       return  null;
     }
   }
@@ -381,7 +385,7 @@ public class MediaManager {
         return  getSerializer(mediaProps.getValue(ua), out);
     }
     else {
-      LogService.log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
+      log.error( "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
       return  null;
     }
   }

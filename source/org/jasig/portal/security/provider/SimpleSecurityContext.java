@@ -39,7 +39,8 @@ import java.security.MessageDigest;
 
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -50,6 +51,8 @@ import org.jasig.portal.services.LogService;
  */
 public class SimpleSecurityContext extends ChainingSecurityContext
     implements ISecurityContext {
+    private static final Log log = LogFactory.getLog(SimpleSecurityContext.class);
+    
   private final int SIMPLESECURITYAUTHTYPE = 0xFF02;
 
 
@@ -78,14 +81,14 @@ public class SimpleSecurityContext extends ChainingSecurityContext
           last_name = acct[2];
           md5_passwd = acct[0];
           if (!md5_passwd.substring(0, 5).equals("(MD5)")) {
-            LogService.log(LogService.ERROR, "Password not an MD5 hash: " + md5_passwd.substring(0, 5));
+            log.error( "Password not an MD5 hash: " + md5_passwd.substring(0, 5));
             return;
           }
           String txthash = md5_passwd.substring(5);
           byte[] whole, salt = new byte[8], compare = new byte[16], dgx;
           whole = decode(txthash);
           if (whole.length != 24) {
-            LogService.log(LogService.INFO, "Invalid MD5 hash value");
+            log.info( "Invalid MD5 hash value");
             return;
           }
           System.arraycopy(whole, 0, salt, 0, 8);
@@ -100,25 +103,25 @@ public class SimpleSecurityContext extends ChainingSecurityContext
               same = false;
           if (same) {
             this.myPrincipal.FullName = first_name + " " + last_name;
-            LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+            log.info( "User " + this.myPrincipal.UID + " is authenticated");
             this.isauth = true;
           }
           else
-            LogService.log(LogService.INFO, "MD5 Password Invalid");
+            log.info( "MD5 Password Invalid");
         }
         else {
-            LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
+            log.info( "No such user: " + this.myPrincipal.UID);
         }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        LogService.log(LogService.ERROR, e);
+        log.error( e);
         throw  (ep);
       }
     }
     // If the principal and/or credential are missing, the context authentication
     // simply fails. It should not be construed that this is an error.
     else {
-        LogService.log(LogService.INFO, "Principal or OpaqueCredentials not initialized prior to authenticate");
+        log.info( "Principal or OpaqueCredentials not initialized prior to authenticate");
     }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();

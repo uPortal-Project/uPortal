@@ -37,7 +37,8 @@
 package org.jasig.portal;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Produces an implementation of IUserIdentityStore
@@ -45,6 +46,9 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class UserIdentityStoreFactory {
+    
+    private static final Log log = LogFactory.getLog(UserIdentityStoreFactory.class);
+    
   private static IUserIdentityStore UserIdentityStoreImpl = null;
 
   static {
@@ -52,12 +56,12 @@ public class UserIdentityStoreFactory {
     String className = PropertiesManager.getProperty("org.jasig.portal.UserIdentityStoreFactory.implementation");
     // Fail if this is not found
     if (className == null)
-      LogService.log(LogService.ERROR, "UserIdentityStoreFactory: org.jasig.portal.UserIdentityStoreFactory.implementation must be specified in portal.properties");
+      log.error( "UserIdentityStoreFactory: org.jasig.portal.UserIdentityStoreFactory.implementation must be specified in portal.properties");
     try {
       // Create an instance of the IUserIdentityStore as specified in portal.properties
       UserIdentityStoreImpl = (IUserIdentityStore)Class.forName(className).newInstance();
     } catch (Exception e) {
-      LogService.log(LogService.ERROR, "UserIdentityStoreFactory: Could not instantiate " + className, e);
+      log.error( "UserIdentityStoreFactory: Could not instantiate " + className, e);
     }
   }
 

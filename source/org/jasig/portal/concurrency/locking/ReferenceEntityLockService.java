@@ -42,13 +42,16 @@ import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
 import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 /**
  * @author Dan Ellentuck
  * @version $Revision$
  */
 public class ReferenceEntityLockService implements IEntityLockService
 {
+    private static final Log log = LogFactory.getLog(ReferenceEntityLockService.class);
+    
     // Singleton instance:
     private static IEntityLockService singleton = null;
 
@@ -179,7 +182,7 @@ private void initialize() throws LockingException
     catch ( Exception e )
     {
         eMsg = "ReferenceEntityLockingService.initialize(): Failed to instantiate entity lock store. " + e;
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new LockingException(eMsg);
     }
 

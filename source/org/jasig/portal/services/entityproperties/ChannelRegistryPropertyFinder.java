@@ -39,7 +39,8 @@ package  org.jasig.portal.services.entityproperties;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -51,6 +52,9 @@ import org.jasig.portal.services.LogService;
  */
 public class ChannelRegistryPropertyFinder
         implements IEntityPropertyFinder {
+    
+    private static final Log log = LogFactory.getLog(ChannelRegistryPropertyFinder.class);
+    
    protected static String[] names;
    protected static Class chan = null;
    protected static boolean INITIALIZED = false;
@@ -74,8 +78,8 @@ public class ChannelRegistryPropertyFinder
       try {
          chan = Class.forName("org.jasig.portal.ChannelDefinition");
       } catch (Exception e) {
-         LogService.log(LogService.ERROR, "ChannelRegistryPropertyFinder - static:");
-         LogService.log(LogService.ERROR, e);
+         log.error( "ChannelRegistryPropertyFinder - static:");
+         log.error( e);
       }
       INITIALIZED = true;
    }
@@ -114,8 +118,8 @@ public class ChannelRegistryPropertyFinder
                   r = String.valueOf(cd.isSecure());
                 }                
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :");
-                LogService.log(LogService.ERROR, e);
+                log.error( "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :");
+                log.error( e);
             }
         }
         return  r;

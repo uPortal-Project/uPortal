@@ -53,7 +53,8 @@ import org.jasig.portal.layout.restrictions.RestrictionTypes;
 import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.GuidGenerator;
@@ -74,6 +75,8 @@ import org.xml.sax.ContentHandler;
  */
 public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
+    private static final Log log = LogFactory.getLog(AggregatedLayoutManager.class);
+    
   private AggregatedUserLayoutStore layoutStore;
   private AggregatedLayout layout;
   private UserProfile userProfile;
@@ -277,7 +280,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     ALNode node = getLayoutNode(nodeId);
     if ( node != null && nodeId != null ) {
      if ( !moveNodeToLostFolder(nodeId) )
-      LogService.log(LogService.INFO, "Unable to move the pushed fragment with ID="+node.getFragmentId()+" to the lost folder");
+      log.info( "Unable to move the pushed fragment with ID="+node.getFragmentId()+" to the lost folder");
     }
   }
  }
@@ -1094,7 +1097,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
                 updateCacheKey();
             }
         } catch ( Exception e ) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             throw new PortalException(e.getMessage());
         }
     }
@@ -1402,7 +1405,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
        // Checking restrictions
        if ( !canDeleteNode(nodeId) ) {
-           LogService.log(LogService.DEBUG, "The node with ID = '" + nodeId + "' cannot be deleted");
+           log.debug("The node with ID = '" + nodeId + "' cannot be deleted");
            return false;
        }
        

@@ -43,9 +43,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
 
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -58,6 +59,9 @@ import com.oreilly.servlet.multipart.ParamPart;
  * @version $Revision$
  */
 public class RequestParamWrapper extends HttpServletRequestWrapper {
+    
+    private static final Log log = LogFactory.getLog(RequestParamWrapper.class);
+    
     protected Hashtable parameters;
     protected boolean request_verified;
     private static int sizeLimit = -1;
@@ -151,7 +155,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
             try {
                 source.setCharacterEncoding("UTF-8");
             } catch (UnsupportedEncodingException uee) {
-                LogService.log(LogService.ERROR, "PortalSessionManager.RequestParamWrapper(): unable to set UTF-8 character encoding! " + uee);
+                log.error("PortalSessionManager.RequestParamWrapper(): unable to set UTF-8 character encoding! ", uee);
             }
             Enumeration en = source.getParameterNames();
             if (en != null) {

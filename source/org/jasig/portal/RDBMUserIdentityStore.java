@@ -47,7 +47,8 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
@@ -56,6 +57,8 @@ import org.jasig.portal.utils.CounterStoreFactory;
  */
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
+    private static final Log log = LogFactory.getLog(RDBMUserIdentityStore.class);
+    
   //*********************************************************************
   // Constants
     private static final String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
@@ -108,7 +111,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       rs.close();
       rs = null;
       String SQLDelete = "DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY='"+name+"' AND PRINCIPAL_TYPE="+type;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       rs = stmt.executeQuery("SELECT M.GROUP_ID " +
@@ -136,76 +139,76 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       // END of Addition after bug declaration (bug id 1516)
         
       SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);        
         
       SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);        
         
       SQLDelete = "DELETE FROM UP_USER_LAYOUT    WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
         
       SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       // START of Addition after bug declaration (bug id 1516)
       SQLDelete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_USER_PROFILE_MDATA WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_USER_PROFILE_LOCALE WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_USER_LAYOUT_AGGR WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
       SQLDelete = "DELETE FROM UP_USER_LAYOUT_MDATA WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
         
       SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_AGGR  WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
         
       SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_MDATA  WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);              
         
       SQLDelete = "DELETE FROM UP_LAYOUT_RESTRICTIONS  WHERE USER_ID = " + uPortalUID;
-      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
+      log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);      
       // END of Addition after bug declaration (bug id 1516)
         
@@ -221,12 +224,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     catch (SQLException se) {
       try {
-      	LogService.log(LogService.ERROR, "RDBMUserIdentityStore::removePortalUID(): " + se);
+      	log.error( "RDBMUserIdentityStore::removePortalUID(): " + se);
         if (RDBMServices.supportsTransactions)
           con.rollback();
       }
       catch (SQLException e) {
-      	LogService.log(LogService.ERROR, "RDBMUserIdentityStore::removePortalUID(): " + e);
+      	log.error( "RDBMUserIdentityStore::removePortalUID(): " + e);
       }
         if (DEBUG>0) {
          System.err.println("SQLException: " + se.getMessage());
@@ -301,7 +304,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
            }
 
        } catch (Exception e) {
-           LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID()", e);
+           log.error( "RDBMUserIdentityStore::getPortalUID()", e);
            throw new AuthorizationException(e.getMessage(), e);
        }
      
@@ -313,7 +316,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       if (RDBMServices.supportsTransactions)
         connection.commit();
     } catch (Exception e) {
-      LogService.log(LogService.ERROR, "RDBMUserIdentityStore::commit(): " + e);
+      log.error( "RDBMUserIdentityStore::commit(): " + e);
     }
   }
 
@@ -322,7 +325,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       if (RDBMServices.supportsTransactions)
         connection.rollback();
     } catch (Exception e) {
-      LogService.log(LogService.ERROR, "RDBMUserIdentityStore::rollback(): " + e);
+      log.error( "RDBMUserIdentityStore::rollback(): " + e);
     }
   }
   
@@ -349,7 +352,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               
               ResultSet rs = null;
               try {
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(userName=" + userName + "): " + query);
+                  log.debug("RDBMUserIdentityStore::getPortalUID(userName=" + userName + "): " + query);
                   rs = pstmt.executeQuery();
                   if (rs.next()) {
                       portalUser = new PortalUser();
@@ -401,7 +404,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               
               ResultSet rs = null;
               try {
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getTemplateUser(templateUserName=" + templateUserName + "): " + query);
+                  log.debug("RDBMUserIdentityStore::getTemplateUser(templateUserName=" + templateUserName + "): " + query);
                   rs = pstmt.executeQuery();
                   if (rs.next()) {
                       templateUser = new TemplateUser();
@@ -440,7 +443,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               
               ResultSet rs = null;
               try {
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getTemplateUser(userId=" + userId + "): " + query);
+                  log.debug("RDBMUserIdentityStore::getTemplateUser(userId=" + userId + "): " + query);
                   rs = pstmt.executeQuery();
                   if (rs.next()) {
                       userHasSavedLayout = true;
@@ -505,7 +508,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               insertStmt.setInt(2, templateUser.getDefaultLayoutId());
               insertStmt.setInt(3, userId);
               
-              LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(): " + update);
+              log.debug("RDBMUserIdentityStore::addNewUser(): " + update);
               insertStmt.executeUpdate();
               insertStmt.close();
                               
@@ -521,7 +524,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "WHERE USER_ID=?";
                   deleteStmt = con.prepareStatement(delete);
                   deleteStmt.setInt(1, userId);
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
+                  log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
                   deleteStmt.executeUpdate();
                   deleteStmt.close();
 
@@ -531,7 +534,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "WHERE USER_ID=?"; 
                   queryStmt = con.prepareStatement(query);
                   queryStmt.setInt(1, templateUser.getUserId());
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
+                  log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
                   
                   while (rs.next()) {
@@ -547,7 +550,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       insertStmt.setString(2, userParamName);
                       insertStmt.setString(3, userParamValue);
                       
-                      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
+                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
                       insertStmt.executeUpdate();                       
                   }
                   rs.close();
@@ -561,7 +564,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "WHERE USER_ID=?";
                   deleteStmt = con.prepareStatement(delete);
                   deleteStmt.setInt(1, userId);
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
+                  log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
                   deleteStmt.executeUpdate();
                   deleteStmt.close();
                   
@@ -571,7 +574,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
                   queryStmt.setInt(1, templateUser.getUserId());
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
+                  log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
                   
                   while (rs.next()) {
@@ -589,7 +592,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       insertStmt.setString(3, profileName);
                       insertStmt.setString(4, description);
                       
-                      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
+                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
                       insertStmt.executeUpdate();                      
                   }
                   rs.close();
@@ -603,7 +606,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "WHERE USER_ID=?";
                   deleteStmt = con.prepareStatement(delete);
                   deleteStmt.setInt(1, userId);
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
+                  log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
                   deleteStmt.executeUpdate();                  
                   deleteStmt.close();
                                     
@@ -612,7 +615,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "FROM UP_USER_UA_MAP WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
                   queryStmt.setInt(1, templateUser.getUserId());
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
+                  log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
                   
                   while (rs.next()) {
@@ -628,7 +631,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       insertStmt.setString(2, userAgent);
                       insertStmt.setString(3, profileId);
                       
-                      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
+                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
                       insertStmt.executeUpdate();  
                   }
                   rs.close();
@@ -699,7 +702,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               insertStmt.setInt(3, templateUser.getUserId());
               insertStmt.setInt(4, templateUser.getDefaultLayoutId());
               
-              LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_NAME=" + userName + ", USER_DFLT_USR_ID=" + templateUser.getUserId() + ", USER_DFLT_LAY_ID=" + templateUser.getDefaultLayoutId() + "): " + insert);
+              log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_NAME=" + userName + ", USER_DFLT_USR_ID=" + templateUser.getUserId() + ", USER_DFLT_LAY_ID=" + templateUser.getDefaultLayoutId() + "): " + insert);
               insertStmt.executeUpdate();
               insertStmt.close();
               insertStmt = null;
@@ -716,7 +719,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
                   queryStmt.setInt(1, templateUser.getUserId());
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
+                  log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
                   
                   while (rs.next()) {
@@ -732,7 +735,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       insertStmt.setString(2, userParamName);
                       insertStmt.setString(3, userParamValue);
                       
-                      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
+                      log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
                       insertStmt.executeUpdate();                        
                   }
                   rs.close();
@@ -751,7 +754,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
                   queryStmt.setInt(1, templateUser.getUserId());
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
+                  log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
                   
                   while (rs.next()) {
@@ -769,7 +772,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       insertStmt.setString(3, profileName);
                       insertStmt.setString(4, description);
                       
-                      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
+                      log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
                       insertStmt.executeUpdate();                      
                   }
                   rs.close();
@@ -786,7 +789,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "FROM UP_USER_UA_MAP WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
                   queryStmt.setInt(1, templateUser.getUserId());
-                  LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
+                  log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
                   
                   while (rs.next()) {
@@ -802,7 +805,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       insertStmt.setString(2, userAgent);
                       insertStmt.setString(3, profileId);
                       
-                      LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
+                      log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
                       insertStmt.executeUpdate();  
                   }
                   rs.close();

@@ -46,7 +46,8 @@ import org.jasig.portal.IMultithreadedMimeResponse;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
@@ -66,6 +67,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CPersonAttributes extends BaseMultithreadedChannel implements IMultithreadedMimeResponse {
+  private static final Log log = LogFactory.getLog(CPersonAttributes.class);
   private static final String sslLocation = "CPersonAttributes/CPersonAttributes.ssl";
 
   public void renderXML (ContentHandler out, String uid) throws PortalException {
@@ -93,8 +95,8 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
       if (person.getAttributeValues(attName) != null) {
         Object[] values = person.getAttributeValues(attName);
         for (int i = 0; i < values.length; i++) {
-           LogService.log(LogService.DEBUG, "type of value["+i+"] is ...");
-           LogService.log(LogService.DEBUG, values[i].getClass().getName());
+           log.debug("type of value["+i+"] is ...");
+           log.debug(values[i].getClass().getName());
            String value = values[i].toString();
            Element valueE = doc.createElement("value");
            valueE.appendChild(doc.createTextNode(value));
@@ -219,7 +221,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
      * @param e
      */
     public void reportDownloadError(Exception e) {
-      LogService.log(LogService.ERROR, "CPersonAttributes::reportDownloadError(): " + e.getMessage());
+      log.error( "CPersonAttributes::reportDownloadError(): " + e.getMessage());
     }
 
 }

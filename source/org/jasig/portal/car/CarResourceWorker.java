@@ -53,7 +53,8 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.RequestParamWrapper;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Class to handle incoming portal requests with specified worker of
@@ -77,7 +78,7 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class CarResourceWorker implements IWorkerRequestProcessor {
-
+    private static final Log log = LogFactory.getLog(CarResourceWorker.class);
     private static CarResources resources = CarResources.getInstance();
     public final static String RCS_ID = "@(#) $Header$";
 
@@ -138,7 +139,7 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
 				if (out != null)
 					out.close();
 			} catch (IOException ioe) {
-				LogService.log(LogService.ERROR,
+				log.error(
 						"CarResourceWorker::processWorkerDispatch() could not close IO Stream"
 								+ ioe);
 			}

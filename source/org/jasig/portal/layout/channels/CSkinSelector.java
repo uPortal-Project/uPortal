@@ -48,7 +48,8 @@ import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 
@@ -59,6 +60,8 @@ import org.xml.sax.ContentHandler;
  */
   public class CSkinSelector extends BaseChannel implements IPrivileged {
 
+      private static final Log log = LogFactory.getLog(CSkinSelector.class);
+      
     private static final String SKINS_PATH = "media/org/jasig/portal/layout/AL_TabColumn/integratedModes";
     private static final String sslLocation = "/org/jasig/portal/channels/CSkinSelector/CSkinSelector.ssl";
     private PortalControlStructures controlStructures;
@@ -125,7 +128,7 @@ import org.xml.sax.ContentHandler;
 				if (xmlStream != null)
 					xmlStream.close();
 			} catch (IOException ioe) {
-				LogService.log(LogService.ERROR,"CSkinSelector:renderXML():: Can not close InputStream "+ ioe);
+				log.error("CSkinSelector:renderXML():: Can not close InputStream "+ ioe);
 			}
 		}
 	}

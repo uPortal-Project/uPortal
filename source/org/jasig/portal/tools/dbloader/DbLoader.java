@@ -65,7 +65,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.oro.text.perl.Perl5Util;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -122,6 +123,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DbLoader
 {
+    
+    private static final Log log = LogFactory.getLog(DbLoader.class);
+    
   private static URL propertiesURL;
   private static URL tablesURL;
   private static URL dataURL;
@@ -1093,7 +1097,7 @@ public class DbLoader
             try {
                charBuff = new StringBuffer(SequenceGenerator.instance().getNext(sequenceId));
             } catch (Exception e) {
-               LogService.log(LogService.ERROR, e);
+               log.error( e);
                throw new SAXException("Error generating next ID in sequence: "+e.getMessage());
             }
             sequences.put(name, charBuff);

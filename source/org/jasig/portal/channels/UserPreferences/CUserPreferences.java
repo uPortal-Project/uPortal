@@ -53,7 +53,8 @@ import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.ContentHandler;
 
 /** 
@@ -64,6 +65,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CUserPreferences implements IPrivilegedChannel {
+    private static final Log log = LogFactory.getLog(CUserPreferences.class);
   IUserPreferencesManager upm;
   ChannelRuntimeData runtimeData = null;
   ChannelStaticData staticData = null;
@@ -149,11 +151,11 @@ public class CUserPreferences implements IPrivilegedChannel {
                 managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
                 ((BaseState)managePreferences).setContext(this);
             } else {
-                LogService.log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
+                log.error("CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
                 managePreferences = new GPreferencesState(this);
             }
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             managePreferences = new GPreferencesState(this);
         }
     }

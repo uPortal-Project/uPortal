@@ -46,7 +46,8 @@ import java.util.HashMap;
 
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -57,6 +58,7 @@ import org.jasig.portal.services.LogService;
  * ignore them if they are not found
  */
 public class RDBMPermissibleRegistry {
+    private static final Log log = LogFactory.getLog(RDBMPermissibleRegistry.class);
     private static RDBMPermissibleRegistry _instance;
     private HashMap owners = new HashMap();
     private static final String findPermissibles = "SELECT IPERMISSIBLE_CLASS FROM UPC_PERM_MGR";
@@ -72,7 +74,7 @@ public class RDBMPermissibleRegistry {
      * put your documentation comment here
      */
     private void init () {
-        LogService.log(LogService.DEBUG, "PermissibleRegistryRDBM.init():: setting up registry");
+        log.debug("PermissibleRegistryRDBM.init():: setting up registry");
         Connection conn = null;
         Statement st = null;
         ResultSet rs = null;
@@ -86,13 +88,13 @@ public class RDBMPermissibleRegistry {
                     Class newowner = Class.forName(classname);
                     owners.put(classname, newowner);
                 } catch (Exception e) {
-                    LogService.log(LogService.DEBUG, "PermissibleRegistryRDBM(): Could not instantiate IPermissible "
+                    log.debug("PermissibleRegistryRDBM(): Could not instantiate IPermissible "
                             + e);
                     unregister(classname);
                 }
             }
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         } finally {
             RDBMServices.closeResultSet(rs); 
             RDBMServices.closeStatement(st); 
@@ -135,7 +137,7 @@ public class RDBMPermissibleRegistry {
             prms.add(ip);
           }
           catch (Exception e){
-            LogService.log(LogService.DEBUG,"RDBMPermissibleRegistry.igetAllPermissible(): Unable to instantiate IPermissible "+e);
+            log.debug("RDBMPermissibleRegistry.igetAllPermissible(): Unable to instantiate IPermissible "+e);
           }
         }
         return  (IPermissible[])prms.toArray(new IPermissible[prms.size()]);
@@ -163,7 +165,7 @@ public class RDBMPermissibleRegistry {
      * @param classname
      */
     protected void iregisterPermissible (String classname) {
-        LogService.log(LogService.DEBUG, "PermissibleRegistryRDBM.registerpermissible():: processing "
+        log.debug("PermissibleRegistryRDBM.registerpermissible():: processing "
                 + classname);
         if (!owners.containsKey(classname)) {
             try {
@@ -177,13 +179,13 @@ public class RDBMPermissibleRegistry {
                             + "')");
                     owners.put(classname, Class.forName(classname));
                 } catch (Exception e) {
-                    LogService.log(LogService.ERROR, e);
+                    log.error( e);
                 } finally {
                     RDBMServices.closeStatement(st);
                     releaseConnection(conn);
                 }
             } catch (Throwable th) {
-                LogService.log(LogService.DEBUG, "PermissibleRegistryRDBM.registerPermissible(): error while registering "
+                log.debug("PermissibleRegistryRDBM.registerPermissible(): error while registering "
                         + classname + " : " + th);
             }
         }
@@ -203,7 +205,7 @@ public class RDBMPermissibleRegistry {
                     + permissibleClass + "'");
             owners.remove(permissibleClass);
         } catch (Exception e) {
-            LogService.log(LogService.DEBUG, e);
+            log.debug(e);
         } finally {
             RDBMServices.closeStatement(st);
             releaseConnection(conn);

@@ -57,7 +57,8 @@ import org.jasig.portal.container.om.window.PortletWindowListImpl;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -65,7 +66,7 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Serializable {
-
+    private static final Log log = LogFactory.getLog(PortletEntityImpl.class);
     private ObjectID objectId = null;
     private PreferenceSet originalPreferences = null;
     private PreferenceSet preferences = null;
@@ -130,7 +131,7 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             ((PreferenceSetImpl)originalPreferences).addAll(preferences);
             
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             throw new IOException("Could not store portlet entity preferences: " + e.getMessage());
         }
     }
@@ -173,7 +174,7 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             originalPreferences = new PreferenceSetImpl();   
             ((PreferenceSetImpl)originalPreferences).addAll(preferences);            
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             throw new IOException("Could not load portlet entity preferences: " + e.getMessage());
         }
     }
@@ -188,7 +189,7 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             
             portletPrefsStore.deletePortletPreferencesByInstance(userId, layoutId, channelDescId);
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             throw new IOException("Could not delete portlet entity preferences: " + e.getMessage());
         }    
     }

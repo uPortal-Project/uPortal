@@ -4,7 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This type is a place to centralize the portal's sql transaction code.
@@ -12,6 +13,7 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class SqlTransaction {
+    private static final Log log = LogFactory.getLog(SqlTransaction.class);
 /**
  * SqlTransaction constructor comment.
  */
@@ -30,7 +32,7 @@ public static void begin(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		LogService.log(LogService.ERROR, sqle);
+		log.error( sqle);
 		throw sqle;
 	}
 }
@@ -48,7 +50,7 @@ public static void commit(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		LogService.log(LogService.ERROR, sqle);
+		log.error( sqle);
 		throw sqle;
 	}
 }
@@ -60,7 +62,7 @@ protected static void logNoTransactionWarning()
 	String msg = "You are running the portal on a database that does not support transactions.  " +
 				 "This is not a supported production environment for uPortal.  " +
 				 "Sooner or later, your database will become corrupt.";
-	LogService.log(LogService.WARN, msg);
+	log.warn(msg);
 }
 /**
  * @param conn java.sql.Connection
@@ -75,7 +77,7 @@ public static void rollback(Connection conn) throws java.sql.SQLException
 	}
 	catch (SQLException sqle)
 	{
-		LogService.log(LogService.ERROR, sqle);
+		log.error( sqle);
 		throw sqle;
 	}
 }
@@ -92,7 +94,7 @@ public static void setAutoCommit(Connection conn, boolean newValue) throws java.
 	}
 	catch (SQLException sqle)
 	{
-		LogService.log(LogService.ERROR, sqle);
+		log.error( sqle);
 		throw sqle;
 	}
 }

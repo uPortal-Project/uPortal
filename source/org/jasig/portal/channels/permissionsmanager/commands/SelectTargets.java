@@ -39,7 +39,8 @@ import java.util.HashMap;
 
 import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
 import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -52,13 +53,14 @@ import org.w3c.dom.NodeList;
  */
 
 public class SelectTargets implements IPermissionCommand {
-
+    private static final Log log = LogFactory.getLog(SelectTargets.class);
+    
     /** Creates new SelectTargets */
     public SelectTargets() {
     }
 
     public void execute(PermissionsSessionData session) throws Exception{
-            LogService.log(LogService.DEBUG,"PermissionsManager->Selecttargets processing");
+            log.debug("PermissionsManager->Selecttargets processing");
             boolean foundOne = false;
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();

@@ -44,7 +44,8 @@ import java.util.Map;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.
@@ -53,6 +54,9 @@ import org.jasig.portal.services.LogService;
  */
 public class ReferenceChannelNameFinder
         implements IEntityNameFinder {
+    
+    private static final Log log = LogFactory.getLog(ReferenceChannelNameFinder.class);
+    
     private static IEntityNameFinder _instance = null;
     private Class type = null;
 
@@ -60,7 +64,7 @@ public class ReferenceChannelNameFinder
         try {
             type = Class.forName("org.jasig.portal.ChannelDefinition");
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
     }
 

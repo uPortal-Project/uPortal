@@ -57,9 +57,14 @@ import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import javax.activation.DataSource;
 import com.oreilly.servlet.multipart.FilePart;
-import org.jasig.portal.services.LogService;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class MultipartDataSource implements DataSource {
+    
+    private static final Log log = LogFactory.getLog(MultipartDataSource.class);
+    
   java.io.File tempfile;
   ByteArrayOutputStream buff = null;
   String contentType = null;
@@ -78,7 +83,7 @@ public class MultipartDataSource implements DataSource {
         out.close();
     }
     catch(IOException ioe){
-        LogService.log(LogService.ERROR,"MultipartDataSource unable to create temp file: "+ioe.getMessage());
+        log.error("MultipartDataSource unable to create temp file: "+ioe.getMessage());
         if(tempfile!=null){
             try{
                 tempfile.delete();

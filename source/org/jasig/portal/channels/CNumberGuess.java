@@ -46,7 +46,8 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 
@@ -57,6 +58,7 @@ import org.xml.sax.ContentHandler;
  */
 public class CNumberGuess implements IChannel
 {
+    private static final Log log = LogFactory.getLog(CNumberGuess.class);
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
 
@@ -119,7 +121,7 @@ public class CNumberGuess implements IChannel
       iMinNum = 0;
       iMaxNum = 100;
 
-      LogService.log(LogService.WARN, "CNumberGuess::setStaticData() : either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
+      log.warn("CNumberGuess::setStaticData() : either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
     }
    }
 

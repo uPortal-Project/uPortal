@@ -49,7 +49,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.wsrp.Constants;
 import org.jasig.portal.wsrp.intf.WSRP_v1_ServiceDescription_PortType;
 import org.jasig.portal.wsrp.types.CookieProtocol;
@@ -84,6 +85,8 @@ import org.jasig.portal.wsrp.types.holders.StringArrayHolder;
  */
 public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_ServiceDescription_PortType {
 
+    private static final Log log = LogFactory.getLog(WSRP_v1_ServiceDescription_Binding_SOAPImpl.class);
+    
     public void getServiceDescription(RegistrationContext registrationContext, String[] desiredLocales, BooleanHolder requiresRegistration, PortletDescriptionArrayHolder offeredPortlets, ItemDescriptionArrayHolder userCategoryDescriptions, ItemDescriptionArrayHolder customUserProfileItemDescriptions, ItemDescriptionArrayHolder customWindowStateDescriptions, ItemDescriptionArrayHolder customModeDescriptions, CookieProtocolHolder requiresInitCookie, ModelDescriptionHolder registrationPropertyDescription, StringArrayHolder locales, ResourceListHolder resourceList, ExtensionArrayHolder extensions) throws RemoteException, InvalidRegistrationFault, OperationFailedFault {
     
         // Initialize return values
@@ -127,7 +130,7 @@ public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_Serv
             }
             offeredPortlets.value = (PortletDescription[])portletDescriptionList.toArray(new PortletDescription[0]);
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         
         // User category descriptions
@@ -149,7 +152,7 @@ public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_Serv
             }
             userCategoryDescriptions.value = (ItemDescription[])userCategoryDescriptionList.toArray(new ItemDescription[0]);
         } catch (PortalException pe) {
-            LogService.log(LogService.ERROR, pe);
+            log.error( pe);
         }
         
         // Custom user profile item descriptions

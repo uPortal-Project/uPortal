@@ -37,6 +37,8 @@ package org.jasig.portal.services;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.CompositeEntityIdentifier;
@@ -65,6 +67,9 @@ import org.jasig.portal.security.IPerson;
 
 public class GroupService implements IGroupConstants
 {
+    
+    private static final Log log = LogFactory.getLog(GroupService.class);
+    
     // Singleton instance of the bootstrap class:
     private static GroupService instance = null;
 
@@ -115,7 +120,7 @@ public class GroupService implements IGroupConstants
         try 
             { instance().ifinishedSession(person); }
         catch (GroupsException ge)
-            { LogService.log(LogService.ERROR, ge); }
+            { log.error( ge); }
     }
     /*
     * Returns the <code>ICompositeGroupService</code> implementation in use.
@@ -340,7 +345,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
       if ( factoryName == null )
       {
           eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
-          LogService.log(LogService.ERROR, eMsg);
+          log.error( eMsg);
           throw new GroupsException(eMsg);
       }
 
@@ -353,7 +358,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
       catch (Exception e)
       {
           eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-          LogService.log(LogService.ERROR, eMsg);
+          log.error( eMsg);
           throw new GroupsException(eMsg);
       }
     }
@@ -371,7 +376,7 @@ private void initializeCompositeService() throws GroupsException
         if ( factoryName == null )
         {
             eMsg = "GroupService.initialize(): No entry for CompositeServiceFactory in configuration";
-            LogService.log(LogService.ERROR, eMsg);
+            log.error( eMsg);
             throw new GroupsException(eMsg);
         }
 
@@ -382,7 +387,7 @@ private void initializeCompositeService() throws GroupsException
     catch (Exception e)
     {
         eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new GroupsException(eMsg);
     }
 }

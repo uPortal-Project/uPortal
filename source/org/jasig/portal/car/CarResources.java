@@ -58,7 +58,8 @@ import javax.servlet.ServletContext;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -69,7 +70,7 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class CarResources {
-
+    private static final Log log = LogFactory.getLog(CarResources.class);
     private static CarResources instance = new CarResources();
     private static CarClassLoader loader = new CarClassLoader( PortalSessionManager.class.getClassLoader() );
 
@@ -133,7 +134,7 @@ public class CarResources {
 	    PrintWriter p = new PrintWriter( sw );
 	    e.printStackTrace( p );
 	    p.flush();
-	    LogService.log( LogService.ERROR,
+	    log.error(
 				       "An Exception occurred while loading " +
 				       "channel archives. Any channels " +
 				       "deployed via CARs will not be " +
@@ -173,7 +174,7 @@ public class CarResources {
 
         if ( carDirRealPath == null )
         {
-            LogService.log( LogService.ERROR,
+            log.error(
                                        "Channel Archives will not be " +
                                        " loaded. Unable to aquire the real " +
 				       "path to '" + WELL_KNOWN_DIR +
@@ -192,7 +193,7 @@ public class CarResources {
        
         if ( ! carDir.exists() )
         {
-            LogService.log( LogService.INFO,
+            log.info(
                                        "Channel Archives can not be " +
                                        " loaded. CAR directory '" +
                                        carDirRealPath + "' does not exist." );
@@ -221,7 +222,7 @@ public class CarResources {
         }
         catch( RuntimeException re )
         {
-            LogService.log( LogService.INFO,
+            log.info(
                                        "CAR directory property '" +
 				       CAR_DIR_PROP_NAME +
 				       "' not specified. Defaulting to " +
@@ -232,7 +233,7 @@ public class CarResources {
 
         if ( ! carDir.exists() )
         {
-            LogService.log( LogService.ERROR,
+            log.error(
                                        "CAR directory '" + carDirPath +
 				       "' specified by property '" +
 				       CAR_DIR_PROP_NAME +
@@ -259,7 +260,7 @@ public class CarResources {
 	if ( carDir != null )
 	{    
 	    scanDir( carDir );
-	    LogService.log( LogService.INFO,
+	    log.info(
 				       "Channel Archives Loaded: " +
 				       carsByPath.size() +
 				       " from '" + this.carDirPath + "'" );
@@ -301,7 +302,7 @@ public class CarResources {
         }
         catch( IOException ioe )
         {
-            LogService.log( LogService.ERROR,
+            log.error(
                                        "CAR " + getCarPath( car ) +
                                        " could not be loaded. Details: " +
                                        ( ioe.getMessage() != null ?
@@ -587,7 +588,7 @@ public class CarResources {
         if ( buff.toString().length() > 0 )
             entry = buff.toString();
 
-        LogService.log( LogService.DEBUG,
+        log.debug(
                         "CarResources replace() - returned entry is: " +
                                    entry );
         return entry;
@@ -620,7 +621,7 @@ public class CarResources {
             String delim = "/";
             StringBuffer sb = new StringBuffer();
 
-            LogService.log( LogService.DEBUG,
+            log.debug(
                                        "CarResources resolveRegExpr() - " +
                                        " Parsing resource name: " + entry );
 
@@ -634,7 +635,7 @@ public class CarResources {
                 // up a directory
                 String token = st.nextToken();
 
-                LogService.log( LogService.DEBUG,
+                log.debug(
                                            "CarResources resolveRegExpr() - " +
                                            "Token is now: " + token );
 
@@ -646,7 +647,7 @@ public class CarResources {
                 {
                     String childToken = st1.nextToken();
 
-                    LogService.log( LogService.DEBUG,
+                    log.debug(
                                                "CarResources resolveRegExpr() - " +
                                                "Child token is: " + childToken );
 
@@ -675,7 +676,7 @@ public class CarResources {
             entry = sb.toString();
         }
 
-        LogService.log( LogService.DEBUG,
+        log.debug(
                                    "CarResources resolveRegExpr() - " +
                                    "resolved entry is: " + entry );
         return entry;

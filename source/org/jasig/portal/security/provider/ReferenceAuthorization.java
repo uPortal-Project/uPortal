@@ -46,7 +46,8 @@ import java.util.Vector;
 import org.jasig.portal.security.IAuthorization;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SmartCache;
 
 
@@ -56,6 +57,9 @@ import org.jasig.portal.utils.SmartCache;
  * @deprecated As of uPortal 2.0, replaced by {@link AuthorizationImpl}
  */
 public class ReferenceAuthorization implements IAuthorization {
+    
+    private static final Log log = LogFactory.getLog(ReferenceAuthorization.class);
+    
   // Clear the caches every 10 seconds
   protected static SmartCache userRolesCache = new SmartCache(300);
   protected static SmartCache chanRolesCache = new SmartCache(300);
@@ -69,15 +73,15 @@ public class ReferenceAuthorization implements IAuthorization {
       securityProps.load(stream);
       s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
       } catch (IOException e) {
-        LogService.log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
+        log.error( new PortalSecurityException(e.getMessage()));
       } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
+      log.error( e);
     } finally {
 			try {
 				if (stream != null)
 					stream.close();
 			} catch (IOException exception) {
-				LogService.log(LogService.ERROR,"ReferenceAuthorization:static::unable to close InputStream "+ exception);
+				log.error("ReferenceAuthorization:static::unable to close InputStream "+ exception);
 			}
 		}
   }

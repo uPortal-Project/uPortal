@@ -50,7 +50,8 @@ import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SAX2FilterImpl;
@@ -76,6 +77,8 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
+    private static final Log log = LogFactory.getLog(TransientUserLayoutManagerWrapper.class);
+    
     // transient folder's subscribe id <'f'older><'t'ransient><id>
     public final static String TRANSIENT_FOLDER_ID="ft1";
     // channel subscription prefix  <'c'hannel><'t'ransient><'f'older>
@@ -173,7 +176,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             ulnd = man.getNode(nodeId);
         } catch( PortalException pe ) {
             // not found in layout...
-            LogService.log(LogService.DEBUG,
+            log.debug(
                            "Node '" + nodeId + "' is not in layout, " +
                            "checking for a transient node...");
         }
@@ -335,7 +338,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         if ( null == chanDef ){
             String fname = getFname(subId);
 
-            LogService.log(LogService.DEBUG,"TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
+            log.debug("TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
                            "attempting to get a channel definition using functional name: " + fname );
             try{
                 chanDef = ChannelRegistryStoreFactory.
@@ -392,7 +395,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                     mChanMap.put(subId,chanDef);
                 }
             } catch (Exception e) {
-                LogService.log(LogService.ERROR,"TransientUserLayoutManagerWrapper::getSubscribeId() : an exception encountered while trying to obtain ChannelDefinition for fname \""+fname+"\" : "+e);
+                log.error("TransientUserLayoutManagerWrapper::getSubscribeId() : an exception encountered while trying to obtain ChannelDefinition for fname \""+fname+"\" : "+e);
                 subId=null;
             }
         }
@@ -601,7 +604,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                     }
                     catch( Exception e )
                     {
-                        LogService.log(LogService.ERROR,
+                        log.error(
                                        "Could not obtain channel definition " +
                                        "from database for subscribe id: " +
                                        subscribeId + " - error is: " + e.getMessage() );

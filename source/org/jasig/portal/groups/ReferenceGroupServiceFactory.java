@@ -36,7 +36,8 @@
 
 package org.jasig.portal.groups;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Creates the reference implemetation of <code>IGroupService</code>.
@@ -45,6 +46,9 @@ import org.jasig.portal.services.LogService;
  */
 
 public class ReferenceGroupServiceFactory implements IGroupServiceFactory {
+    
+    private static final Log log = LogFactory.getLog(ReferenceGroupServiceFactory.class);
+    
 /**
  * ReferenceGroupServiceFactory constructor.
  */
@@ -62,7 +66,7 @@ public IGroupService newGroupService() throws GroupsException
         { return ReferenceGroupService.singleton(); }
     catch ( GroupsException ge )
     {
-        LogService.log (LogService.ERROR, "ReferenceGroupServiceFactory.newGroupService(): " + ge);
+        log.error( "ReferenceGroupServiceFactory.newGroupService(): " + ge);
         throw new GroupsException(ge.getMessage());
     }
 }

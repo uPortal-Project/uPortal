@@ -36,7 +36,8 @@
 
 package  org.jasig.portal.utils;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -44,6 +45,9 @@ import org.jasig.portal.services.LogService;
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  */
 public class ThreadPoolWorker extends Thread {
+    
+    private static final Log log = LogFactory.getLog(ThreadPoolWorker.class);
+    
     private static int nextWorkerID = 0;
 
     private ThreadPool pool;
@@ -77,7 +81,7 @@ public class ThreadPoolWorker extends Thread {
     public synchronized ThreadPoolReceipt process(Runnable target) throws InterruptedException {
         // construct a receipt
         if(currentReceipt!=null)
-          LogService.log(LogService.ERROR,"ThreadPoolWorker::process() : trying to use a working worker !!! This should never happen.");
+          log.error("ThreadPoolWorker::process() : trying to use a working worker !!! This should never happen.");
         ThreadPoolReceipt returnReceipt=currentReceipt=new ThreadPoolReceipt(this);
 	taskQueue.enqueue(target);
         return returnReceipt;

@@ -41,7 +41,8 @@ import java.util.HashMap;
 
 import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
 import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -56,20 +57,21 @@ import org.w3c.dom.NodeList;
 
 public class SelectActivities
         implements IPermissionCommand {
-
+    private static final Log log = LogFactory.getLog(SelectActivities.class);
+    
     /** Creates new SelectActivities */
     public SelectActivities () {
     }
 
     public void execute (PermissionsSessionData session) throws Exception{
-            LogService.log(LogService.DEBUG,"PermissionsManager->SelectActivities processing");
+            log.debug("PermissionsManager->SelectActivities processing");
             boolean foundOne = false;
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap ownerActs = new HashMap();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
-                LogService.log("checking key " + key);
+                log.info("checking key " + key);
                 if (key.indexOf("activity//") == 0) {
                     String split1 = key.substring(10);
                     String owner = split1.substring(0, split1.indexOf("|"));

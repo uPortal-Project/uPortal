@@ -43,7 +43,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class provides a static "factory" method that returns a security context
@@ -71,6 +72,8 @@ import org.jasig.portal.services.LogService;
  */
 
 public class InitialSecurityContextFactory {
+    
+    private static final Log log = LogFactory.getLog(InitialSecurityContextFactory.class);
     private static final String CONTEXT_PROPERTY_PREFIX = "securityContextProperty";
     
     /**
@@ -96,7 +99,7 @@ public class InitialSecurityContextFactory {
                 //Initial contexts must have names that are not compound
                 if (ctx.indexOf('.') != -1) {
                     PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
-                    LogService.log(LogService.ERROR,ep);
+                    log.error(ep);
                     throw(ep);
                 }
                 
@@ -129,7 +132,7 @@ public class InitialSecurityContextFactory {
                 }
                 catch (IOException e) {
                   PortalSecurityException ep = new PortalSecurityException(e.getMessage());
-                  LogService.log(LogService.ERROR,ep);
+                  log.error(ep);
                   throw(ep);
                 } 
                 finally {
@@ -140,7 +143,7 @@ public class InitialSecurityContextFactory {
                         }
                     }
                     catch (IOException ioe) {
-                        LogService.log(LogService.ERROR, "InitialSecurityContextFactory:getInitialContext::unable to close InputStream ", ioe);
+                        log.error( "InitialSecurityContextFactory:getInitialContext::unable to close InputStream ", ioe);
                     }
                 }
                 
@@ -148,7 +151,7 @@ public class InitialSecurityContextFactory {
                 String factoryName = pr.getProperty(ctx);
                 if (factoryName == null) {
                     PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
-                    LogService.log(LogService.ERROR,ep);
+                    log.error(ep);
                     throw(ep);
                 }
                 
@@ -160,7 +163,7 @@ public class InitialSecurityContextFactory {
                 }
                 catch (Exception e) {
                     PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryName);
-                    LogService.log(LogService.ERROR, "Failed to instantiate " + factoryName, e);
+                    log.error( "Failed to instantiate " + factoryName, e);
                     throw(ep);
                 }
                 
@@ -204,8 +207,8 @@ public class InitialSecurityContextFactory {
                             String errorMsg = "(Subcontext) Failed to instantiate " + sfactoryname;
                             PortalSecurityException ep = new PortalSecurityException(errorMsg);
                             ep.setRecordedException(e);
-                            LogService.log(LogService.ERROR, errorMsg);
-                            LogService.log(LogService.ERROR, e);
+                            log.error( errorMsg);
+                            log.error( e);
                             throw ep;
                         }
                     }
@@ -264,7 +267,7 @@ public class InitialSecurityContextFactory {
                             }
                         }
                         catch (Exception e) {
-                            LogService.log(LogService.WARN, "Error parsing security context property from security.properties: " + candidate, e);
+                            log.warn("Error parsing security context property from security.properties: " + candidate, e);
                         }
                     }
                 }
@@ -302,7 +305,7 @@ public class InitialSecurityContextFactory {
             String errorMsg = "Error while creating ISecurityContext chain.";
             PortalSecurityException ep = new PortalSecurityException(errorMsg);
             ep.setRecordedException(npe);
-            LogService.log(LogService.ERROR, ep);
+            log.error( ep);
             throw ep;
         }
     }

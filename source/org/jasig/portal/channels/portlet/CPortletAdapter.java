@@ -94,7 +94,8 @@ import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
 
@@ -119,7 +120,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable, IMultithreadedDirectResponse {
-
+    private static final Log log = LogFactory.getLog(CPortletAdapter.class);
     protected static Map channelStateMap;
     private static boolean portletContainerInitialized;
     private static PortletContainer portletContainer;
@@ -178,7 +179,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         
         } catch (Exception e) {
             String message = "Initialization of the portlet container failed.";
-            LogService.log(LogService.ERROR, message, e);
+            log.error( message, e);
             throw new PortalException(message, e);
         }
     }
@@ -263,7 +264,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             
         } catch (Exception e) {
             String message = "Initialization of the portlet container failed.";
-            LogService.log(LogService.ERROR, message, e);
+            log.error( message, e);
             throw new PortalException(message, e);
         } finally {
             PortletContainerServices.release();
@@ -546,7 +547,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         
         } catch (Throwable t) {
             t.printStackTrace();
-            LogService.log(LogService.ERROR, t);
+            log.error( t);
             throw new PortalException(t.getMessage());
         } finally {
             PortletContainerServices.release();
@@ -654,7 +655,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         
         } catch (Throwable t) {
             t.printStackTrace();
-            LogService.log(LogService.ERROR, t);
+            log.error( t);
         } finally {
             PortletContainerServices.release();
         }

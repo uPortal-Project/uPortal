@@ -50,7 +50,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.ContentHandler;
@@ -67,6 +68,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @version $Revision$
  */
 public class StylesheetSet extends SAX2FilterImpl {
+    
+    private static final Log log = LogFactory.getLog(StylesheetSet.class);
+    
   // Default URI for the media properties file
   protected static final String m_defaultMediaPropsUri = "/properties/media.properties";
   protected static Hashtable m_mediaPropsCache = new Hashtable(5);
@@ -110,7 +114,7 @@ public class StylesheetSet extends SAX2FilterImpl {
             }
         } catch (SAXException se) {
             // Log the exception
-            LogService.log(LogService.ERROR, se);
+            log.error( se);
             throw new GeneralRenderingException("StylesheetSet(uri) : Unable to instantiate SAX Reader. Please check your library installation.");
         }
     }
@@ -309,7 +313,7 @@ public class StylesheetSet extends SAX2FilterImpl {
       if (media_table == null) {
         return  null;
       }
-      LogService.log(LogService.DEBUG, "media=\"" + media + "\"");
+      log.debug("media=\"" + media + "\"");
       StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
       if (sd == null) {
         Enumeration sls = media_table.elements();
@@ -329,7 +333,7 @@ public class StylesheetSet extends SAX2FilterImpl {
 
   protected StylesheetDescription getStylesheetDescription(String media) throws GeneralRenderingException {
     if (media == null) {
-        LogService.log(LogService.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
+        log.error( "StylesheetSet::getStylesheetDescription() : media argument is null");
         throw  (new GeneralRenderingException("StylesheetSet.getStylesheetDescription(): Null media argument passed in"));
     }
     // search for a non-alternate stylesheet for a particular media
@@ -365,7 +369,7 @@ public class StylesheetSet extends SAX2FilterImpl {
      * @exception PortalException if an error occurs
      */
     public Source getStylesheet(String title, HttpServletRequest req) throws PortalException {
-        //	LogService.log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+        //	log.debug("getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
         return  getStylesheet(title, getMedia(req));
     }
 
@@ -395,7 +399,7 @@ public class StylesheetSet extends SAX2FilterImpl {
      * @exception GeneralRenderingException if an error occurs
      */
   public Source getStylesheetByMedia(String media) throws GeneralRenderingException {
-    //	LogService.log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	log.debug("getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd = getStylesheetDescription(media);
     if (sd != null) {
       return  new StreamSource(sd.getURI());

@@ -41,7 +41,8 @@ package  org.jasig.portal.channels.permissionsmanager;
 import java.util.HashMap;
 
 import org.jasig.portal.IPermissible;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -53,6 +54,7 @@ import org.jasig.portal.services.LogService;
  */
 public class PermissiblePublishChannels
         implements IPermissible {
+    private static final Log log = LogFactory.getLog(PermissiblePublishChannels.class);
     protected HashMap activities = new HashMap();
     protected HashMap targets = new HashMap();
 
@@ -64,7 +66,7 @@ public class PermissiblePublishChannels
             activities.put("PUBLISH", "Publish a Channel");
             targets.put("CHAN_ID.*", "This uPortal installation");
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
     }
 

@@ -37,10 +37,14 @@ package org.jasig.portal;
 
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletResponse;
-import org.jasig.portal.services.LogService;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ExceptionHelper {
 
+    private static final Log log = LogFactory.getLog(ExceptionHelper.class);
+    
     // List of strings to match in traceback for various containers
 	// This array must be expanded as additional Application Server
 	// containers become better known
@@ -184,7 +188,7 @@ public class ExceptionHelper {
     	}
     	
         String logmsg = errorInfo(eid, parm, ex);
-        LogService.log(LogService.ERROR, logmsg);
+        log.error( logmsg);
     }
 
     /**

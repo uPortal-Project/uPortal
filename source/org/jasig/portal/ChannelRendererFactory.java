@@ -38,7 +38,8 @@ package org.jasig.portal;
 import java.lang.reflect.Constructor;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>The <code>ChannelRendererFactory</code> creates
@@ -60,6 +61,9 @@ public final class ChannelRendererFactory
     /** <p> Class version identifier.</p> */
     public final static String RCS_ID = "@(#) $Header$";
 
+    
+    private static final Log log = LogFactory.getLog(ChannelRendererFactory.class);
+    
     /**
      * <p>Creates a new instance of a channel renderer factory object. This
      * factory looks for the property <code>keyBase + ".factoryClassName"</code>
@@ -86,8 +90,7 @@ public final class ChannelRendererFactory
                 keyBase + ".ChannelRendererFactory.className"
                 );
 
-            LogService.log(
-                LogService.DEBUG,
+            log.debug(
                 "ChannelRendererFactory::newInstance(" + keyBase + ") : about to construct channel renderer factory: " + factoryClassName
                 );
 
@@ -102,16 +105,14 @@ public final class ChannelRendererFactory
                 );
 
             // Log the success.
-            LogService.log(
-                LogService.DEBUG,
+            log.debug(
                 "ChannelRendererFactory::newInstance(" + keyBase + ") : constructed channel renderer factory: " + factoryClassName
                 );
         }
         catch( Exception x )
         {
             // Log the failure.
-            LogService.log(
-                LogService.ERROR,
+            log.error(
                 "ChannelRendererFactory::newInstance(" + keyBase + ") : failed to construct factory: " + factoryClassName,
                 x
                 );

@@ -51,7 +51,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -69,6 +70,8 @@ import org.xml.sax.SAXException;
 
 public class ResourceLoader {
 
+    private static final Log log = LogFactory.getLog(ResourceLoader.class);
+    
   private static DocumentBuilderFactory f;
   static {
     f = DocumentBuilderFactory.newInstance();
@@ -82,8 +85,7 @@ public class ResourceLoader {
       System.setProperty("java.protocol.handler.pkgs",handler);
     }
     catch(Exception e){
-      LogService.log(LogService.ERROR,"Unable to set HTTPS Protocol handler:"); 
-      LogService.log(LogService.ERROR,e);
+      log.error("Unable to set HTTPS Protocol handler", e); 
     }
   }
 

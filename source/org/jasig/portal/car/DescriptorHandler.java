@@ -49,7 +49,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -67,7 +68,8 @@ class DescriptorHandler
     extends DefaultHandler
 {
     public final static String RCS_ID = "@(#) $Header$";
-
+    private static final Log log = LogFactory.getLog(DescriptorHandler.class);
+    
     // variables that act as recipients of descriptor data when pre-loading is
     // specified
     private Properties workers = null;
@@ -277,7 +279,7 @@ class DescriptorHandler
         }
         catch( ZipException ze )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "The zip entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -285,7 +287,7 @@ class DescriptorHandler
         }
         catch( IOException ioe )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -293,7 +295,7 @@ class DescriptorHandler
         }
         catch( SecurityException se )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -302,7 +304,7 @@ class DescriptorHandler
         }
         catch( FactoryConfigurationError fce )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -311,7 +313,7 @@ class DescriptorHandler
         }
         catch( ParserConfigurationException pce )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -320,7 +322,7 @@ class DescriptorHandler
         }
         catch( SAXException sxe )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -335,7 +337,7 @@ class DescriptorHandler
         }
         catch( RuntimeException re )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -344,7 +346,7 @@ class DescriptorHandler
         }
         catch( IOException ioe )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -352,7 +354,7 @@ class DescriptorHandler
         }
         catch( SAXException sxe )
         {
-            LogService.log( LogService.DEBUG,
+            log.debug(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -366,7 +368,7 @@ class DescriptorHandler
 			    is.close();
 			} 
 			catch (IOException ioe) {
-				LogService.log(LogService.ERROR,
+				log.error(
 						"::Unable to close inputStream " + ioe);
 			}
 		}
@@ -376,7 +378,7 @@ class DescriptorHandler
     public void error(SAXParseException exception)
         throws SAXException
     {
-        LogService.log( LogService.DEBUG,
+        log.debug(
                         "A non-fatal parsing error occurred while parsing " +
                         CarResources.DEPLOYMENT_DESCRIPTOR +
                         " in " + jarFile.getName() + ". Details: " +
@@ -392,7 +394,7 @@ class DescriptorHandler
     public void warning(SAXParseException exception)
         throws SAXException
     {
-        LogService.log( LogService.DEBUG,
+        log.debug(
                         "A parsing warning occurred while parsing " +
                         CarResources.DEPLOYMENT_DESCRIPTOR +
                         " in " + jarFile.getName() + ". Details: " +
@@ -543,7 +545,7 @@ class DescriptorHandler
         
                 if ( handlerClass == null )
                 {
-                    LogService.log( LogService.ERROR,
+                    log.error(
                                     "Ignoring invalid extension while " +
                                     "processing deployment descriptor for " + 
                                     jarFile.getName() +
@@ -563,7 +565,7 @@ class DescriptorHandler
                 }
                 catch( ClassNotFoundException clfe )
                 {
-                    LogService.log( LogService.ERROR,
+                    log.error(
                                     "Specified contentHandler class " +
                                     handlerClass +
                                     " not found. Ignoring extension block " +
@@ -577,7 +579,7 @@ class DescriptorHandler
                 }
                 catch( Exception e )
                 {
-                    LogService.log( LogService.ERROR,
+                    log.error(
                                     "Unable to create specified " +
                                     "contentHandler class " + handlerClass +
                                     " for extension block" + 
@@ -592,7 +594,7 @@ class DescriptorHandler
                 }
                 catch( ClassCastException cce )
                 {
-                    LogService.log( LogService.ERROR,
+                    log.error(
                                     "Specified contentHandler class " +
                                     handlerClass +
                                     " for extension in deployment " +

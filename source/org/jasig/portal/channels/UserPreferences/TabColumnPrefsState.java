@@ -77,7 +77,8 @@ import org.jasig.portal.layout.UserLayoutFolderDescription;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
@@ -97,6 +98,7 @@ import org.xml.sax.ContentHandler;
  */
 public class TabColumnPrefsState extends BaseState
 {
+    private static final Log log = LogFactory.getLog(TabColumnPrefsState.class);
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
   private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl";
@@ -219,7 +221,7 @@ public class TabColumnPrefsState extends BaseState
     if (this.internalState != null)
       this.internalState.renderXML(out);
     else
-      LogService.log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
+      log.error( "TabColumnPrefsState::renderXML() : No internal state!");
   }
 
   // Helper methods...
@@ -252,7 +254,7 @@ public class TabColumnPrefsState extends BaseState
     }
     catch (Exception e)
     {
-      LogService.log(LogService.ERROR, "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
+      log.error( "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
     }
 
     return activeTab;
@@ -335,7 +337,7 @@ public class TabColumnPrefsState extends BaseState
             this.newColumnId = null;
           }
       } catch (Exception e){
-          LogService.log(LogService.DEBUG, "removeNewColumn failed to find new column with id " + this.newColumnId);
+          log.debug("removeNewColumn failed to find new column with id " + this.newColumnId);
       }
   }
   
@@ -397,7 +399,7 @@ public class TabColumnPrefsState extends BaseState
       if (widthIsValid)
         ssup.setFolderAttributeValue(folderId, "width", newWidth);
       else
-        LogService.log(LogService.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
+        log.debug("User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
 
     }
 
@@ -696,7 +698,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageSetActiveTab;
           }
@@ -713,7 +715,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageRenameTab;
           }
@@ -739,7 +741,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageMoveTab;
           }
@@ -765,7 +767,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageAddTab;
           }
@@ -781,7 +783,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageDeleteTab;
           }
@@ -797,7 +799,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageLockTab;
           }
@@ -813,7 +815,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageUnlockTab;
           }
@@ -845,7 +847,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageChangeColumnWidths;
           }
@@ -875,7 +877,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageMoveColumn;
           }
@@ -894,7 +896,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageNewColumn;
           }
@@ -917,7 +919,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageDeleteColumn;
           }
@@ -969,7 +971,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageMoveChannel;
           }
@@ -985,7 +987,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             action = "error";
             errorMessage = errorMessageDeleteChannel;
           }
@@ -1068,14 +1070,14 @@ public class TabColumnPrefsState extends BaseState
 
           // Debug piece to print out the recorded pre-structure transformation XML
           if (printXMLToLog) {
-            LogService.log(LogService.DEBUG, "TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
+            log.debug("TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
           }
 
         } else {
-          LogService.log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
+          log.error( "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
         }
       } catch (Exception e) {
-        LogService.log(LogService.ERROR, e);
+        log.error( e);
         throw new GeneralRenderingException(e.getMessage());
       }
     }
@@ -1159,7 +1161,7 @@ public class TabColumnPrefsState extends BaseState
 					if (xmlStream != null)
 						xmlStream.close();
 				} catch (IOException exception) {
-					LogService.log(LogService.ERROR,"TabColumnPrefsState:renderXML()::unalbe to close InputStream "+ exception);
+					log.error("TabColumnPrefsState:renderXML()::unalbe to close InputStream "+ exception);
 				}
 			}
     }

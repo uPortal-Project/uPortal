@@ -42,7 +42,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class provides access to the entity types used by <code>IEntityGroups</code>.
@@ -58,7 +59,7 @@ import org.jasig.portal.services.LogService;
  * @deprecated As of uPortal 2.1, replaced by {@link org.jasig.portal.EntityTypes}
  */
 public class EntityTypes {
-
+    private static final Log log = LogFactory.getLog(EntityTypes.class);
     private static EntityTypes singleton;
 
     // Caches for entityType classes.
@@ -197,7 +198,7 @@ private void initialize()
             { stmnt.close(); }
     }
     catch (Exception ex)
-        { LogService.log (LogService.ERROR, ex); }
+        { log.error( ex); }
     finally
         { RDBMServices.releaseConnection(conn); }
 }

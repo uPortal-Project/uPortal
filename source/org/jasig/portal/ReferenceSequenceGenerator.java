@@ -41,13 +41,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Random;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 /**
  * @author Dan Ellentuck
  * @version $Revision$
  */
 public class ReferenceSequenceGenerator implements ISequenceGenerator
 {
+    
+    private static final Log log = LogFactory.getLog(ReferenceSequenceGenerator.class);
+    
     /*
      * Private exception identifies problem incrementing counter likely
      * because of concurrent access.
@@ -108,8 +112,7 @@ private void createCounter (String tableName, Connection conn) throws SQLExcepti
         stmt = conn.createStatement();
         String sql = getCreateCounterSql(tableName);
 
-        LogService.log
-            (LogService.DEBUG, "ReferenceSequenceGenerator.createCounter: " + sql);
+        log.debug("ReferenceSequenceGenerator.createCounter: " + sql);
 
         int rc = stmt.executeUpdate(getCreateCounterSql(tableName));
         if (rc != 1)
@@ -118,8 +121,7 @@ private void createCounter (String tableName, Connection conn) throws SQLExcepti
     }
     catch ( SQLException sqle )
     {
-        LogService.log
-            (LogService.ERROR, "ReferenceSequenceGenerator::createCounter(): " + sqle.getMessage());
+        log.error("ReferenceSequenceGenerator::createCounter()", sqle);
         throw sqle;
     }
     finally
@@ -165,7 +167,7 @@ throws SQLException
         try
         {
             ps.setString(1, tableName);
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "ReferenceSequenceGenerator.getNextInt(): " + ps + " (" + tableName + ")");
             rs = ps.executeQuery();
             int currentInt = ( rs.next() ) ? rs.getInt(VALUE_COLUMN) : NO_COUNTER_VALUE;
@@ -233,8 +235,7 @@ public synchronized int getNextInt(String tableName) throws Exception
 
     catch ( SQLException sqle )
     {
-        LogService.log
-            (LogService.ERROR, "ReferenceSequenceGenerator.getNextInt(): " + sqle.getMessage());
+        log.error("ReferenceSequenceGenerator.getNextInt()", sqle);
         throw sqle;
     }
 
@@ -332,7 +333,7 @@ throws SQLException
             ps.setInt(1, nextCounterValue);
             ps.setString(2, tableName);
             ps.setInt(3, currentCounterValue);
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "ReferenceSequenceGenerator.primIncrementCounter(): " + ps +
                   "(" + nextCounterValue + ", " + tableName + ", " + currentCounterValue + ")");
             int rc = ps.executeUpdate();
@@ -341,7 +342,7 @@ throws SQLException
         }
         catch (SQLException sqle)
         {
-            LogService.log(LogService.ERROR,
+            log.error(
                 "ReferenceSequenceGenerator.primIncrementCounter(): " + sqle.getMessage());
             throw sqle;
         }
@@ -370,8 +371,7 @@ public synchronized void setCounter (String tableName, int newCounterValue) thro
 
     catch ( SQLException sqle )
     {
-        LogService.log
-            (LogService.ERROR, "ReferenceSequenceGenerator::setCounter(): " + sqle.getMessage());
+        log.error("ReferenceSequenceGenerator::setCounter()", sqle);
         throw sqle;
     }
 
@@ -397,7 +397,7 @@ throws SQLException
         {
             ps.setInt(1, newCounterValue);
             ps.setString(2, tableName);
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "ReferenceSequenceGenerator.setCounter(): " + ps + "(" + newCounterValue + ", " + tableName + ")");
             int rc = ps.executeUpdate();
             if (rc != 1)
@@ -405,7 +405,7 @@ throws SQLException
          }
         catch (SQLException sqle)
         {
-            LogService.log(LogService.ERROR, sqle.getMessage());
+            log.error( sqle);
             throw sqle;
         }
     }

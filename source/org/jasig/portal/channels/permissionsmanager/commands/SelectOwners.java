@@ -39,7 +39,8 @@ import java.util.Enumeration;
 
 import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
 import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -52,20 +53,22 @@ import org.w3c.dom.NodeList;
  */
 
 public class SelectOwners implements IPermissionCommand {
-
+    private static final Log log = LogFactory.getLog(SelectOwners.class);
+    
+    
     /** Creates new SelectOwners */
     public SelectOwners() {
     }
 
     public void execute(PermissionsSessionData session) {
-            LogService.log(LogService.DEBUG,"PermissionsManager->SelectOwners processing");
+            log.debug("PermissionsManager->SelectOwners processing");
             boolean foundOne = false;
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();
             ArrayList ownerkeys = new ArrayList();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
-                LogService.log("checking key " + key);
+                log.info("checking key " + key);
                 if (key.indexOf("owner//") == 0) {
                     String owner = key.substring(7);
                     ownerkeys.add(owner);

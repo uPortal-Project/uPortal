@@ -35,7 +35,8 @@
 package org.jasig.portal.i18n;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Produces an implementation of ILocaleStore
@@ -44,6 +45,8 @@ import org.jasig.portal.services.LogService;
  */
 public class LocaleStoreFactory {
 
+    private static final Log log = LogFactory.getLog(LocaleStoreFactory.class);
+    
     private static ILocaleStore localeStoreImpl = null;
 
     static {
@@ -51,12 +54,12 @@ public class LocaleStoreFactory {
       String className = PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleStoreFactory.implementation");
       // Fail if this is not found
       if (className == null)
-        LogService.log(LogService.ERROR, "LocaleStoreFactory: org.jasig.portal.i18n.LocaleStoreFactory.implementation must be specified in portal.properties");
+        log.error( "LocaleStoreFactory: org.jasig.portal.i18n.LocaleStoreFactory.implementation must be specified in portal.properties");
       try {
         // Create an instance of the ILocaleStore as specified in portal.properties
         localeStoreImpl = (ILocaleStore)Class.forName(className).newInstance();
       } catch (Exception e) {
-        LogService.log(LogService.ERROR, "LocaleStoreFactory: Could not instantiate " + className, e);
+        log.error( "LocaleStoreFactory: Could not instantiate " + className, e);
       }
     }
 

@@ -42,7 +42,8 @@ import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -52,6 +53,9 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class ThreadPool extends ThreadGroup {
+    
+    private static final Log log = LogFactory.getLog(ThreadPool.class);
+    
     BlockingStack idleWorkers;
     List workers;
     ResourceLimits limits;
@@ -209,7 +213,7 @@ public class ThreadPool extends ThreadGroup {
     * Handle the case when some worker crashes
     */
     public void uncaughtException(Thread t, Throwable e) {
-	LogService.log(LogService.ERROR,"Registered an uncaughted exception by thread "+t.getName(), e);
+	log.error("Registered an uncaughted exception by thread "+t.getName(), e);
 	if(t instanceof ThreadPoolWorker && !(e instanceof ThreadDeath)) {
 	    ThreadPoolWorker w=(ThreadPoolWorker) t;
 	    // clean up currentReceipt if the thread didn't do it

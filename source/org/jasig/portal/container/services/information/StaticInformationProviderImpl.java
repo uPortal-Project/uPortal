@@ -52,7 +52,8 @@ import org.jasig.portal.container.binding.PortletApplicationUnmarshaller;
 import org.jasig.portal.container.binding.WebApplicationUnmarshaller;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionListImpl;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of Apache Pluto StaticInformationProvider.
@@ -65,7 +66,7 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class StaticInformationProviderImpl implements StaticInformationProvider {
-    
+    private static final Log log = LogFactory.getLog(StaticInformationProviderImpl.class);
     private ServletConfig servletConfig = null;
     private Properties properties = null;
     private static PortletApplicationDefinitionListImpl portletApplicationDefinitionList = null;
@@ -140,7 +141,7 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
                             String contextName = resolveUri(files1[i].getName());
                             
                             String xmlFile = null;
-                            LogService.log(LogService.INFO, "Found portlet application " + contextName);
+                            log.info( "Found portlet application " + contextName);
 
                             try {
                                 // Parse the web.xml file --> WebApplicationDefinition
@@ -158,7 +159,7 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
                                 // Add this PortletApplicationDefinition to the list
                                 portletApplicationDefinitionList.add(portletApplicationDefinition.getId().toString(), portletApplicationDefinition);
                             } catch (Exception e) {
-                                LogService.log(LogService.ERROR, "Unable to parse " + xmlFile + " for context '" + contextName + "'", e);
+                                log.error( "Unable to parse " + xmlFile + " for context '" + contextName + "'", e);
                             }
                         }
                     }

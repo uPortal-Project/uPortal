@@ -49,7 +49,8 @@ import org.jasig.portal.groups.local.searchers.RDBMPersonSearcher;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference group service.
@@ -59,6 +60,9 @@ import org.jasig.portal.services.LogService;
  */
 public class ReferenceGroupService implements ILockableGroupService
 {
+    private static final Log log = LogFactory.getLog(ReferenceGroupService.class);
+    
+    
     // Singleton instance:
     protected static IGroupService singleton = null;
 
@@ -345,7 +349,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
       if ( groupFactoryName == null )
       {
           eMsg = "ReferenceGroupService.initialize(): EntityGroupStoreImpl not specified in portal.properties";
-          LogService.log(LogService.ERROR, eMsg);
+          log.error( eMsg);
           throw new GroupsException(eMsg);
       }
 
@@ -356,7 +360,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
       catch (Exception e)
       {
           eMsg = "ReferenceGroupService.initialize(): Failed to instantiate " + groupFactoryName + " " + e;
-          LogService.log(LogService.ERROR, eMsg);
+          log.error( eMsg);
           throw new GroupsException(eMsg);
       }
 

@@ -51,7 +51,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
@@ -73,6 +74,9 @@ import org.w3c.dom.Text;
  * @version $Revision$
  */
 public class ChannelRegistryManager {
+    
+    private static final Log log = LogFactory.getLog(ChannelRegistryManager.class);
+    
   protected static final IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
 
   // Cache timeout properties
@@ -115,7 +119,7 @@ public class ChannelRegistryManager {
 
       if (channelRegistry != null) {
         channelRegistryCache.put(CHANNEL_REGISTRY_CACHE_KEY, channelRegistry);
-        LogService.log(LogService.INFO, "Caching channel registry.");
+        log.info( "Caching channel registry.");
       }
     }
 
@@ -246,7 +250,7 @@ public class ChannelRegistryManager {
         channelE.setAttribute("name", channelDef.getName(locale));
         channelE.setAttribute("title", channelDef.getTitle(locale));
         channelE.setAttribute("locale", locale);
-        LogService.log(LogService.DEBUG, "ChannelRegistryManager::getChannelXML: locale=" + locale);
+        log.debug("ChannelRegistryManager::getChannelXML: locale=" + locale);
     }  else {
         channelE.setAttribute("name", channelDef.getName());
         channelE.setAttribute("title", channelDef.getTitle());
@@ -458,12 +462,12 @@ public class ChannelRegistryManager {
       newChannel = false;
       ID = Integer.parseInt(channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId);
       channelDef = crs.getChannelDefinition(ID);
-      LogService.log(LogService.DEBUG, "Attempting to modify channel " + ID + "...");
+      log.debug("Attempting to modify channel " + ID + "...");
     }
     else {
       channelDef = crs.newChannelDefinition();
       ID = channelDef.getId();
-      LogService.log(LogService.DEBUG, "Attempting to publish new channel " + ID + "...");
+      log.debug("Attempting to publish new channel " + ID + "...");
     }
 
     // Add channel
@@ -513,7 +517,7 @@ public class ChannelRegistryManager {
     }
     upm.addPermissions(permissions);
 
-    LogService.log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
+    log.info( "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
 
     // Record that a channel has been published or modified
     if (newChannel)
@@ -559,7 +563,7 @@ public class ChannelRegistryManager {
       if (channelTypes != null)
       {
         channelTypesCache.put(CHANNEL_TYPES_CACHE_KEY, channelTypes);
-        LogService.log(LogService.INFO, "Caching channel types.");
+        log.info( "Caching channel types.");
       }
     }
 
@@ -621,7 +625,7 @@ public class ChannelRegistryManager {
 
       if (cpd != null) {
         cpdCache.put(CPD_CACHE_KEY + chanTypeID, cpd);
-        LogService.log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
+        log.info( "Caching CPD for channel type " + chanTypeID);
       }
     }
 

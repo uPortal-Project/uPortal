@@ -41,7 +41,8 @@ import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCache;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference implementation of IEntityCache.  Each cache holds entities of
@@ -56,6 +57,7 @@ import org.jasig.portal.services.LogService;
  */
 public class ReferenceEntityCache implements IEntityCache
 {
+    private static final Log log = LogFactory.getLog(ReferenceEntityCache.class);
     protected Map cache;
     protected Class entityType;
     protected String simpleTypeName;
@@ -148,7 +150,7 @@ public void clearCache()
 void debug(String msg)
 {
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-    LogService.log(LogService.DEBUG, ts + " : " + msg);
+    log.debug(ts + " : " + msg);
 }
 
 /**

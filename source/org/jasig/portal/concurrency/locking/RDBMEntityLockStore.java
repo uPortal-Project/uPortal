@@ -48,7 +48,8 @@ import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * RDBMS-based store for <code>IEntityLocks</code>.
@@ -56,6 +57,7 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class RDBMEntityLockStore implements IEntityLockStore {
+    private static final Log log = LogFactory.getLog(RDBMEntityLockStore.class);
     private static IEntityLockStore singleton;
 
     // Constants for the LOCK table:
@@ -142,7 +144,7 @@ public void deleteAll() throws LockingException
     try
     {
         String sql = "DELETE FROM " + LOCK_TABLE;
-        LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteAll(): " + sql);
+        log.debug("RDBMEntityLockStore.deleteAll(): " + sql);
 
         conn = RDBMServices.getConnection();
         try
@@ -150,7 +152,7 @@ public void deleteAll() throws LockingException
             stmnt = conn.createStatement();
             int rc = stmnt.executeUpdate(sql);
             String msg = "Deleted " + rc + " locks.";
-            LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteAll(): " + msg);
+            log.debug("RDBMEntityLockStore.deleteAll(): " + msg);
         }
         finally
             { if ( stmnt != null ) stmnt.close(); }
@@ -394,14 +396,14 @@ throws SQLException, LockingException
             ps.setTimestamp(4, ts);          // lock expiration
             ps.setString(5, owner);          // lock owner
 
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "RDBMEntityLockStore.primAdd(): " + ps);
 
             int rc = ps.executeUpdate();
             if ( rc != 1 )
             {
                 String errString = "Problem adding " + lock;
-                LogService.log (LogService.ERROR, errString);
+                log.error( errString);
                 throw new LockingException(errString);
             }
         }
@@ -410,7 +412,7 @@ throws SQLException, LockingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }
@@ -440,18 +442,18 @@ private void primDelete(IEntityLock lock, Connection conn) throws LockingExcepti
             ps.setInt(4, lockType)   ;        // lock type
             ps.setString(5, owner);           // lock owner
 
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "RDBMEntityLockStore.primDelete(): " + ps);
 
             int rc = ps.executeUpdate();
-            LogService.log(LogService.DEBUG, "RDBMEntityLockStore.primDelete(): deleted " + rc + " lock(s).");
+            log.debug("RDBMEntityLockStore.primDelete(): deleted " + rc + " lock(s).");
         }
         finally
             { if ( ps != null ) ps.close(); }
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }
@@ -488,14 +490,14 @@ throws LockingException, SQLException
 
     String sql = buff.toString();
 
-    LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteExpired(): " + sql);
+    log.debug("RDBMEntityLockStore.deleteExpired(): " + sql);
 
     try
     {
         stmnt = conn.createStatement();
         int rc = stmnt.executeUpdate(sql);
         String msg = "Deleted " + rc + " expired locks.";
-        LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteExpired(): " + msg);
+        log.debug("RDBMEntityLockStore.deleteExpired(): " + msg);
     }
 
     catch (SQLException sqle)
@@ -516,7 +518,7 @@ private IEntityLock[] primSelect(String sql) throws LockingException
     ResultSet rs = null;
     List locks = new ArrayList();
 
-    LogService.log(LogService.DEBUG, "RDBMEntityLockStore.primSelect(): " + sql);
+    log.debug("RDBMEntityLockStore.primSelect(): " + sql);
 
     try
     {
@@ -538,7 +540,7 @@ private IEntityLock[] primSelect(String sql) throws LockingException
     }
     catch (SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw new LockingException("Problem retrieving EntityLocks " + sqle.getMessage());
     }
     finally
@@ -580,14 +582,14 @@ throws SQLException, LockingException
             ps.setTimestamp(6, oldTs);  // old expiration
             ps.setInt(7, oldLockType);  // old lock type;
 
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "RDBMEntityLockStore.primUpdate(): " + ps);
 
             int rc = ps.executeUpdate();
             if ( rc != 1 )
             {
                 String errString = "Problem updating " + lock;
-                LogService.log (LogService.ERROR, errString);
+                log.error( errString);
                 throw new LockingException(errString);
             }
         }
@@ -596,7 +598,7 @@ throws SQLException, LockingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }

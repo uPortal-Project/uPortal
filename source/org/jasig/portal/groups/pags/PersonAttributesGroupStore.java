@@ -61,7 +61,8 @@ import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.PersonDirectory;
 
 /**
@@ -73,6 +74,7 @@ import org.jasig.portal.services.PersonDirectory;
  * @version $Revision$
  */
 public class PersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
+    private static final Log log = LogFactory.getLog(PersonAttributesGroupStore.class);
    private Properties props;
    private Map groupDefinitions;
    private Map groups;
@@ -89,7 +91,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          initGroups(); 
       } catch ( Exception e ) {
          String errorMsg = "PersonAttributeGroupStore.init(): " + "Problem initializing groups: " + e.getMessage();
-         LogService.log(LogService.ERROR, e);
+         log.error( e);
          throw new RuntimeException(errorMsg);
       }
    }

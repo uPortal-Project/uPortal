@@ -45,7 +45,8 @@ import java.security.PrivilegedExceptionAction;
 import java.security.SecureClassLoader;
 import java.util.StringTokenizer;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Loads classes and resources from installed CARs via the CarResources class.
@@ -61,6 +62,8 @@ public class CarClassLoader
 {
     public final static String RCS_ID = "@(#) $Header$";
 
+    private static final Log log = LogFactory.getLog(CarClassLoader.class);
+    
     /**
        Create a CarClassLoader. This method has package scope so that
        CarResources can instantiate it and hold the single instance to be
@@ -132,7 +135,7 @@ public class CarClassLoader
 						    in.close();
                         }
 					} catch (IOException ioe) {
-						LogService.log(LogService.ERROR,
+						log.error(
 								"CarClassLoader::findClass() Could not close inputStream "
 										+ ioe);
 					}

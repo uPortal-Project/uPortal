@@ -38,7 +38,8 @@ package org.jasig.portal.concurrency.locking;
 import org.jasig.portal.concurrency.IEntityLockService;
 import org.jasig.portal.concurrency.IEntityLockServiceFactory;
 import org.jasig.portal.concurrency.LockingException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Creates the reference implemetation of <code>IEntityLockService</code>.
@@ -47,6 +48,7 @@ import org.jasig.portal.services.LogService;
  */
 
 public class ReferenceEntityLockServiceFactory implements IEntityLockServiceFactory {
+    private static final Log log = LogFactory.getLog(ReferenceEntityLockServiceFactory.class);
 /**
  * ReferenceEntityLockServiceFactory constructor.
  */
@@ -64,7 +66,7 @@ public IEntityLockService newLockService() throws LockingException
         { return ReferenceEntityLockService.singleton(); }
     catch ( LockingException le )
     {
-        LogService.log(LogService.ERROR, "ReferenceEntityLockServiceFactory.newLockService(): " + le);
+        log.error( "ReferenceEntityLockServiceFactory.newLockService(): " + le);
         throw new LockingException(le.getMessage());
     }
 }

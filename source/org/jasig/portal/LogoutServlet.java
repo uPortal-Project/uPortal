@@ -49,7 +49,8 @@ import javax.servlet.http.HttpSession;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PersonManagerFactory;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.ResourceLoader;
 
@@ -62,6 +63,9 @@ import org.jasig.portal.utils.ResourceLoader;
  * @version $Revision$
  */
 public class LogoutServlet extends HttpServlet {
+    
+    private static final Log log = LogFactory.getLog(LogoutServlet.class);
+    
    private static boolean INITIALIZED = false;
    private static String DEFAULT_REDIRECT;
    private static HashMap REDIRECT_MAP;
@@ -91,19 +95,19 @@ public class LogoutServlet extends HttpServlet {
                if (propName.startsWith("logoutRedirect.")) {
                   key = propName.substring(15);
                   key = (key.startsWith("root.") ? key.substring(5) : key);
-                  LogService.log(LogService.DEBUG, "LogoutServlet::initializer()" +
+                  log.debug("LogoutServlet::initializer()" +
                      " Redirect key = " + key);
-                  LogService.log(LogService.DEBUG, "LogoutServlet::initializer()" +
+                  log.debug("LogoutServlet::initializer()" +
                      " Redirect value = " + propValue);
                   rdHash.put(key, propValue);
                }
             }
          } catch (PortalException pe) {
-            LogService.log(LogService.ERROR, "LogoutServlet::static " + pe);
-            LogService.log(LogService.ERROR, pe);
+            log.error( "LogoutServlet::static " + pe);
+            log.error( pe);
          } catch (IOException ioe) {
-            LogService.log(LogService.ERROR, "LogoutServlet::static " + ioe);
-            LogService.log(LogService.ERROR, ioe);
+            log.error( "LogoutServlet::static " + ioe);
+            log.error( ioe);
          }
          REDIRECT_MAP = rdHash;
          DEFAULT_REDIRECT = upFile;
@@ -132,7 +136,7 @@ public class LogoutServlet extends HttpServlet {
                 StatsRecorder.recordLogout(person);
             }
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         
         // Clear out the existing session for the user
@@ -178,7 +182,7 @@ public class LogoutServlet extends HttpServlet {
          // Retrieve the security context for the user
          ISecurityContext securityContext = person.getSecurityContext();
          if (securityContext.isAuthenticated()) {
-            LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+            log.debug("LogoutServlet::getRedirectionUrl()" +
                " Looking for redirect string for the root context");
             redirect = (String)REDIRECT_MAP.get("root");
             if (redirect != null && !redirect.equals("")) {
@@ -188,18 +192,18 @@ public class LogoutServlet extends HttpServlet {
          Enumeration subCtxNames = securityContext.getSubContextNames();
          while (subCtxNames.hasMoreElements()) {
             String subCtxName = (String)subCtxNames.nextElement();
-            LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl() " +
+            log.debug("LogoutServlet::getRedirectionUrl() " +
                " subCtxName = " + subCtxName);
             // strip off "root." part of name
             ISecurityContext sc = securityContext.getSubContext(subCtxName);
-            LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+            log.debug("LogoutServlet::getRedirectionUrl()" +
                " subCtxName isAuth = " + sc.isAuthenticated());
             if (sc.isAuthenticated()) {
-               LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+               log.debug("LogoutServlet::getRedirectionUrl()" +
                   " Looking for redirect string for subCtxName = " + subCtxName);
                redirect = (String)REDIRECT_MAP.get(subCtxName);
                if (redirect != null && !redirect.equals("")) {
-                  LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+                  log.debug("LogoutServlet::getRedirectionUrl()" +
                      " subCtxName redirect = " + redirect);
                   break;
                }
@@ -207,13 +211,13 @@ public class LogoutServlet extends HttpServlet {
          }
       } catch (Exception e) {
          // Log the exception
-         LogService.log(LogService.ERROR, "LogoutServlet::getRedirectionUrl() Error: " + e);
-         LogService.log(LogService.ERROR, e);
+         log.error( "LogoutServlet::getRedirectionUrl() Error: " + e);
+         log.error( e);
       }
       if (redirect == null) {
          redirect = defaultRedirect;
       }
-      LogService.log(LogService.DEBUG, "LogoutServlet::getRedirectionUrl()" +
+      log.debug("LogoutServlet::getRedirectionUrl()" +
          " redirectionURL = " + redirect);
       return  redirect;
    }

@@ -48,7 +48,8 @@ import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * RDBMS-based store for <code>CachedEntityInvalidations</code>.
@@ -58,6 +59,7 @@ import org.jasig.portal.services.LogService;
  * @see org.jasig.portal.concurrency.IEntityCache
  */
 public class RDBMCachedEntityInvalidationStore {
+    private static final Log log = LogFactory.getLog(RDBMCachedEntityInvalidationStore.class);
     private static RDBMCachedEntityInvalidationStore singleton;
 
     // Constants for the underlying table:
@@ -129,7 +131,7 @@ public void deleteAll() throws CachingException
     try
     {
         String sql = "DELETE FROM " + ENTITY_INVALIDATION_TABLE;
-        LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
+        log.debug("RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
 
         conn = RDBMServices.getConnection();
         try
@@ -137,7 +139,7 @@ public void deleteAll() throws CachingException
             stmnt = conn.createStatement();
             int rc = stmnt.executeUpdate(sql);
             String msg = "Deleted " + rc + " rows.";
-            LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
+            log.debug("RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
         }
         finally
             { if ( stmnt != null ) stmnt.close(); }
@@ -340,7 +342,7 @@ throws SQLException, CachingException
             ps.setTimestamp(3, ts);          // invalidation time
             ps.setInt(4, cacheID);           // entity cache ID
 
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "RDBMInvalidCacheableEntityStore.primAdd(): " + ps +
                   " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
@@ -348,7 +350,7 @@ throws SQLException, CachingException
             if ( rc != 1 )
             {
                 String errString = "Problem adding " + ent;
-                LogService.log(LogService.ERROR, errString);
+                log.error( errString);
                 throw new CachingException(errString);
             }
         }
@@ -357,7 +359,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log(LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }
@@ -381,11 +383,11 @@ throws CachingException, SQLException
         {
             ps.setTimestamp(1, ts);
 
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "RDBMInvalidCacheableEntityStore.primDeleteBefore(): " + ps + " (" + ts + ")");
 
             int rc = ps.executeUpdate();
-            LogService.log(LogService.DEBUG, "Rows deleted: " + rc);
+            log.debug("Rows deleted: " + rc);
         }
         finally
             { if ( ps != null ) ps.close(); }
@@ -393,7 +395,7 @@ throws CachingException, SQLException
 
     catch (java.sql.SQLException sqle)
     {
-        LogService.log(LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }
@@ -409,7 +411,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     ResultSet rs = null;
     List entities = new ArrayList();
 
-    LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
+    log.debug("RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
 
     try
     {
@@ -430,7 +432,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     }
     catch (SQLException sqle)
     {
-        LogService.log(LogService.ERROR, sqle);
+        log.error( sqle);
         throw new CachingException("Problem retrieving Invalid Entities " + sqle.getMessage());
     }
 
@@ -460,7 +462,7 @@ throws SQLException, CachingException
             ps.setInt(3, typeID.intValue());  // entity type
             ps.setString(4, key);             // entity key
 
-            LogService.log(LogService.DEBUG,
+            log.debug(
                 "RDBMInvalidCacheableEntityStore.primUpdate(): " + ps +
                                   " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
@@ -468,7 +470,7 @@ throws SQLException, CachingException
             if ( rc != 1 )
             {
                 String errString = "Problem updating " + ent;
-                LogService.log(LogService.ERROR, errString);
+                log.error( errString);
                 throw new CachingException(errString);
             }
         }
@@ -477,7 +479,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log(LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }

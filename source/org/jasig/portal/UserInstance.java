@@ -53,6 +53,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IALFolderDescription;
@@ -68,7 +70,6 @@ import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.ResourceLoader;
@@ -89,6 +90,9 @@ import org.xml.sax.XMLReader;
  * @version $Revision$
  */
 public class UserInstance implements HttpSessionBindingListener {
+    
+    private static final Log log = LogFactory.getLog(UserInstance.class);
+    
     public static final int guestUserId = 1;
 
     // To debug structure and/or theme transformations, set these to true
@@ -185,7 +189,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 throw new PortalException(pe);
             } catch (Throwable t) {
                 // something went wrong trying to show CSelectSystemProfileChannel
-                LogService.log(LogService.ERROR,"UserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
+                log.error("UserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
                 throw new PortalException("CSelectSystemProfileChannel.render() threw: "+t);
             }
             // don't go any further!
@@ -282,7 +286,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     try {
                         processUserLayoutParameters(req,channelManager);
                     } catch (PortalException pe) {
-                        LogService.log(LogService.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
+                        log.error("UserInstance.renderState(): processUserLayoutParameters() threw an exception - ", pe);
                     }
 
 
@@ -325,13 +329,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 URLUtil.redirect(req, res, newRootNodeId,
                                     true, skipParams, CHARACTER_SET);
                             } catch (PortalException pe) {
-                                StringBuffer sb = new StringBuffer(128);
-                                sb.append("UserInstance::renderState() : ");
-                                sb.append("PortalException occurred while ");
-                                sb.append("redirecting.");
-                                sb.append(pe.toString());
-                                LogService.log(LogService.ERROR,
-                                    sb.toString(), pe);
+                                log.error("UserInstance::renderState() : PortalException occurred while redirecting", pe);
                             }
                             return;
                         }
@@ -388,7 +386,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
                             if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
                                 ccache_exists=true;
-                                LogService.log(LogService.DEBUG,"UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
+                                log.debug("UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
                                 // start channel threads
                                 for(int i=0;i<cCache.channelIds.size();i++) {
                                     String channelSubscribeId=(String) cCache.channelIds.get(i);
@@ -396,10 +394,10 @@ public class UserInstance implements HttpSessionBindingListener {
                                         try {
                                             channelManager.startChannelRendering(channelSubscribeId);
                                         } catch (PortalException e) {
-                                            LogService.log(LogService.ERROR,"UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getRecordedException().toString());
+                                            log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getRecordedException().toString());
                                         }
                                     } else {
-                                        LogService.log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
+                                        log.error("UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
                                     }
                                 }
                                 channelManager.commitToRenderingChannelSet();
@@ -407,8 +405,8 @@ public class UserInstance implements HttpSessionBindingListener {
                                 // go through the output loop
                                 int ccsize=cCache.systemBuffers.size();
                                 if(cCache.channelIds.size()!=ccsize-1) {
-                                    LogService.log(LogService.ERROR,"UserInstance::renderState() : channelIds character cache has invalid size !");
-                                    LogService.log(LogService.ERROR,"UserInstance::renderState() : ccache cotnains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
+                                    log.error("UserInstance::renderState() : channelIds character cache has invalid size !  " +
+                                            "UserInstance::renderState() : ccache cotnains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
 
                                 }
                                 CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
@@ -441,7 +439,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) this.systemCache.get(cacheKey);
                             if(cachedBuffer!=null) {
                                 // replay the buffer to channel incorporation filter
-                                LogService.log(LogService.DEBUG,"UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
+                                log.debug("UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
                                 // attach rendering buffer downstream of the cached buffer
                                 ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader)cachedBuffer,channelManager,ccaching);
                                 // attach channel incorporation filter downstream of the channel rendering buffer
@@ -484,7 +482,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
                             String pValue = (String)supTable.get(pName);
-                            LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
+                            log.debug("UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
                             sst.setParameter(pName, pValue);
                         }
 
@@ -534,7 +532,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         // Debug piece to print out the recorded pre-structure transformation XML
                         if (logXMLBeforeStructureTransformation) {
-                            LogService.log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
+                            log.debug("UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
                         }
 
                         // prepare for the theme transformation
@@ -547,7 +545,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
                             String pValue = (String)tupTable.get(pName);
-                            LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
+                            log.debug("UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
                         }
                         tst.setParameter("uP_productAndVersion", Version.getProductAndVersion());
@@ -580,7 +578,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                             systemCache.put(cacheKey,newCache);
                             newCache.setOutputAtDocumentEnd(true);
-                            LogService.log(LogService.DEBUG,"UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
+                            log.debug("UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
                         } else {
                             // attach channel incorporation filter downstream of the theme transformer
                             tsth.setResult(new SAXResult(cif));
@@ -592,7 +590,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         // Debug piece to print out the recorded pre-theme transformation XML
                         if (logXMLBeforeThemeTransformation) {
-                            LogService.log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the theme transformation :\n\n" + dbwr2.toString() + "\n\n");
+                            log.debug("UserInstance::renderState() : XML incoming to the theme transformation :\n\n" + dbwr2.toString() + "\n\n");
                         }
 
 
@@ -602,11 +600,11 @@ public class UserInstance implements HttpSessionBindingListener {
                             ce.systemBuffers=cif.getSystemCCacheBlocks();
                             ce.channelIds=cif.getChannelIdBlocks();
                             if(ce.systemBuffers==null || ce.channelIds==null) {
-                                LogService.log(LogService.ERROR,"UserInstance::renderState() : CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
+                                log.error("UserInstance::renderState() : CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
                             } else {
                                 // record cache
                                 systemCharacterCache.put(cacheKey,ce);
-                                LogService.log(LogService.DEBUG,"UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
+                                log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
 
                                 /*
                                   LogService.log(LogService.DEBUG,"Printing transformation cache system blocks:");
@@ -685,7 +683,7 @@ public class UserInstance implements HttpSessionBindingListener {
         if ( !(ulm instanceof IAggregatedUserLayoutManager) )
           ulm.saveUserLayout();    
        } catch ( Exception e ) {
-		  LogService.log(LogService.ERROR, "UserInstance::valueUnbound(): Error occured while saving the user layout "+e);    
+		  log.error("UserInstance::valueUnbound(): Error occured while saving the user layout ", e);    
          }
      } 
         // Record the destruction of the session
@@ -738,8 +736,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 themePrefs.putParameterValue("authorizedChannelPublisher", "true");
             }
         } catch (Exception e) {
-        	e.printStackTrace();
-            LogService.log(LogService.ERROR, e);
+            log.error(e);
         }
         
         String[] values;
@@ -931,7 +928,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             try {
                                 UserInstance.workerProperties=ResourceLoader.getResourceAsProperties(UserInstance.class, WORKER_PROPERTIES_FILE_NAME);
                             } catch (IOException ioe) {
-                                LogService.log(LogService.ERROR, "UserInstance::processWorkerDispatch() : Unable to load worker.properties file. "+ioe);
+                                log.error("UserInstance::processWorkerDispatch() : Unable to load worker.properties file. ", ioe);
                             }
                             // now add in component archive declared workers
                             CarResources cRes = CarResources.getInstance();

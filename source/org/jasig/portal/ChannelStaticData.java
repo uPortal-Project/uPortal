@@ -8,7 +8,8 @@ import javax.naming.Context;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -19,6 +20,8 @@ import org.jasig.portal.services.LogService;
  */
 public class ChannelStaticData extends Hashtable {
 
+    private static final Log log = LogFactory.getLog(ChannelStaticData.class);
+    
   private long m_timeout = java.lang.Long.MAX_VALUE;
   // Cache a reference to the portal's JNDI context
   private Context m_portalContext = null;
@@ -58,7 +61,7 @@ public class ChannelStaticData extends Hashtable {
     }
     catch (AuthorizationException ae)
     {
-        LogService.log(LogService.ERROR, "Could not get authorization service: " + ae);
+        log.error( "Could not get authorization service: " + ae);
     }
     return ap;
   }

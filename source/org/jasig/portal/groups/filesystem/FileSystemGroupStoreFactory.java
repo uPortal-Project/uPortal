@@ -40,7 +40,8 @@ import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IEntityGroupStoreFactory;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IEntityStoreFactory;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Returns <code>IEntityGroupStore</code> and <code>IEntityStore</code>
@@ -52,6 +53,7 @@ import org.jasig.portal.services.LogService;
 
 public class FileSystemGroupStoreFactory implements IEntityGroupStoreFactory,
 IEntityStoreFactory {
+    private static final Log log = LogFactory.getLog(FileSystemGroupStoreFactory.class);
 /**
  * ReferenceGroupServiceFactory constructor.
  */
@@ -76,7 +78,7 @@ public IEntityStore newEntityStore() throws GroupsException
         { return getGroupStore(); }
     catch ( Exception ex )
     {
-        LogService.log (LogService.ERROR, "FileSystemGroupStoreFactory.newEntityStore(): " + ex);
+        log.error( "FileSystemGroupStoreFactory.newEntityStore(): " + ex);
         throw new GroupsException(ex.getMessage());
     }
 }
@@ -107,7 +109,7 @@ throws GroupsException
     }
     catch ( Exception ex )
     {
-        LogService.log (LogService.ERROR, "FileSystemGroupStoreFactory.newGroupStore(): " + ex);
+        log.error( "FileSystemGroupStoreFactory.newGroupStore(): " + ex);
         throw new GroupsException(ex.getMessage());
     }
 }

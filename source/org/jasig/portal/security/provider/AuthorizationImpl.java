@@ -61,7 +61,8 @@ import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -70,6 +71,8 @@ import org.jasig.portal.services.LogService;
  */
 public class AuthorizationImpl implements IAuthorizationService {
 
+    private static final Log log = LogFactory.getLog(AuthorizationImpl.class);
+    
     protected IPermissionStore permissionStore;
     protected IPermissionPolicy defaultPermissionPolicy;
     protected Map principalCache = new HashMap(100);
@@ -346,13 +349,13 @@ throws GroupsException
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
-    LogService.log (LogService.DEBUG,
+    log.debug(
        "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " +
        principal.toString());
 
     IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
-    LogService.log (LogService.DEBUG,
+    log.debug(
        "AuthorizationImpl.getGroupMemberForPrincipal(): got group member " + gm);
 
     return gm;
@@ -552,14 +555,14 @@ private void initialize() throws AuthorizationException
     if ( factoryName == null )
     {
         eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new AuthorizationException(eMsg);
     }
 
     if ( policyName == null )
     {
         eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new AuthorizationException(eMsg);
     }
 
@@ -570,7 +573,7 @@ private void initialize() throws AuthorizationException
     catch (Exception e)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... " + e.getMessage();
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new AuthorizationException(eMsg);
     }
 
@@ -581,7 +584,7 @@ private void initialize() throws AuthorizationException
     catch (Exception e)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... " + e.getMessage();
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new AuthorizationException(eMsg);
     }
 
@@ -592,7 +595,7 @@ private void initialize() throws AuthorizationException
     catch (ClassNotFoundException cnfe)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem initializing service. " + cnfe.getMessage();
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new AuthorizationException(eMsg);
     }
 }
@@ -674,7 +677,7 @@ throws GroupsException
     String key = groupMember.getKey();
     Class type = groupMember.getType();
 
-    LogService.log (LogService.DEBUG,
+    log.debug(
        "AuthorizationImpl.newPrincipal(): for " + type + "(" + key + ")");
 
     return newPrincipal(key, type);
@@ -740,7 +743,7 @@ private IPermission[] primGetPermissionsForPrincipal
     String target)
 throws AuthorizationException
 {
-        LogService.log (LogService.DEBUG,
+        log.debug(
           "AuthorizationImpl.primGetPermissionsForPrincipal(): " + 
           "Principal: " + principal + " owner: " + owner +
           " activity: " + activity + " target: " + target);
@@ -760,7 +763,7 @@ throws AuthorizationException
             { al.add(perms[i]); }
     }
     
-    LogService.log (LogService.DEBUG,
+    log.debug(
       "AuthorizationImpl.primGetPermissionsForPrincipal(): " + 
       "# permissions retrieved: " + al.size());
 

@@ -38,6 +38,8 @@ package org.jasig.portal.services;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
@@ -56,6 +58,9 @@ import org.jasig.portal.security.PortalSecurityException;
  */
 public class AuthorizationService
 {
+    
+    private static final Log log = LogFactory.getLog(AuthorizationService.class);
+    
   private static AuthorizationService m_instance;
   protected IAuthorizationService m_authorization = null;
   protected static String s_factoryName = null;
@@ -71,23 +76,23 @@ public class AuthorizationService
 		secprops.close();
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
-        LogService.log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
+        log.error( new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
       }
       else {
         try {
           m_Factory = (IAuthorizationServiceFactory)Class.forName(s_factoryName).newInstance();
         } catch (Exception e) {
-          LogService.log(LogService.ERROR, new PortalSecurityException("Failed to instantiate " + s_factoryName));
+          log.error( new PortalSecurityException("Failed to instantiate " + s_factoryName));
         }
       }
     } catch (IOException e) {
-      LogService.log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
+      log.error( new PortalSecurityException(e.getMessage()));
     } finally {
 			try {
 				if (secprops != null)
 					secprops.close();
 			} catch (IOException ioe) {
-				LogService.log(LogService.ERROR, new PortalSecurityException(
+				log.error( new PortalSecurityException(
 						ioe.getMessage()));
 			}
 		}

@@ -1,5 +1,7 @@
 package org.jasig.portal.services;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ISequenceGenerator;
 import org.jasig.portal.ISequenceGeneratorFactory;
 import org.jasig.portal.PortalException;
@@ -11,6 +13,8 @@ import org.jasig.portal.properties.PropertiesManager;
  */
 public class SequenceGenerator 
 {
+    private static final Log log = LogFactory.getLog(SequenceGenerator.class);
+    
     protected ISequenceGenerator m_sequenceGenerator = null;
     private static SequenceGenerator m_instance;
     protected static String s_factoryName = PropertiesManager.getProperty("org.jasig.portal.SequenceGeneratorFactory.implementation");
@@ -20,7 +24,7 @@ public class SequenceGenerator
         // Look for our factory and instantiate an instance.
         if (s_factoryName == null) 
         {
-  	        LogService.log(LogService.ERROR, new PortalException
+  	        log.error( new PortalException
   			("Sequence Provider not specified or incorrect in portal.properties"));
         } 
         else 
@@ -31,7 +35,7 @@ public class SequenceGenerator
             } 
             catch (Exception e) 
             {
-                LogService.log(LogService.ERROR, new PortalException
+                log.error( new PortalException
                 ("Failed to instantiate " + s_factoryName));
             }
         }

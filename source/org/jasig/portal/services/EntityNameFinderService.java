@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityNameFinder;
@@ -51,6 +53,9 @@ import org.jasig.portal.properties.PropertiesManager;
  */
 public class EntityNameFinderService
 {
+    
+    private static final Log log = LogFactory.getLog(EntityNameFinderService.class);
+    
   private static EntityNameFinderService m_instance;
   private Map nameFinders = null;
   private static boolean initialized = false;
@@ -105,7 +110,7 @@ private synchronized void initialize()
             {
                 String dMsg = "EntityNameFinderService.initialize(): " +
                     "could not find property for " + type.getName() + " factory.";
-                LogService.log( LogService.DEBUG, dMsg );
+                log.debug( dMsg );
             }
             if ( factoryName != null )
             {
@@ -119,7 +124,7 @@ private synchronized void initialize()
                 {
                     String eMsg = "EntityNameFinderService.initialize(): " +
                         "Could not instantiate finder for " + type.getName() + ": ";
-                    LogService.log( LogService.ERROR, eMsg + e.getMessage() );
+                    log.error( eMsg + e.getMessage() );
                 }
             }
         }

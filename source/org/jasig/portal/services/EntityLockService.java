@@ -35,6 +35,8 @@
 
 package org.jasig.portal.services;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
@@ -90,6 +92,9 @@ import org.jasig.portal.properties.PropertiesManager;
 
 public class EntityLockService
 {
+    
+    private static final Log log = LogFactory.getLog(EntityLockService.class);
+    
     // Singleton instance of the bootstrap class:
     private static EntityLockService instance = null;
     // The lock service:
@@ -112,7 +117,7 @@ private void initialize() throws LockingException
     if ( factoryName == null )
     {
         eMsg = "EntityLockService.initialize(): No entry for org.jasig.portal.concurrency.IEntityLockServiceFactory in portal.properties.";
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new LockingException(eMsg);
     }
 
@@ -125,7 +130,7 @@ private void initialize() throws LockingException
     catch (Exception e)
     {
         eMsg = "EntityLockService.initialize(): Problem creating entity lock service... " + e.getMessage();
-        LogService.log(LogService.ERROR, eMsg);
+        log.error( eMsg);
         throw new LockingException(eMsg);
     }
 }

@@ -35,6 +35,8 @@
 
 package org.jasig.portal.services;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.car.CarResources;
@@ -82,6 +84,7 @@ import org.jasig.portal.utils.threading.WorkTracker;
  * @version $Revision$
  */
 public class StatsRecorder {
+    private static final Log log = LogFactory.getLog(StatsRecorder.class);
   protected static StatsRecorder statsRecorderInstance;
   protected StatsRecorderSettings statsRecorderSettings;
   protected IStatsRecorder statsRecorder;
@@ -99,7 +102,7 @@ public class StatsRecorder {
           statsRecorderFactoryName = PropertiesManager.getProperty("org.jasig.portal.services.stats.StatsRecorderFactory.implementation");
           statsRecorderFactory = (IStatsRecorderFactory)CarResources.getInstance().getClassLoader().loadClass(statsRecorderFactoryName).newInstance();
       } catch (Exception e) {
-          LogService.log(LogService.ERROR, "Unable to instantiate stats recorder '" + statsRecorderFactoryName  + "'. Continuing with DoNothingStatsRecorder.", e);
+          log.error( "Unable to instantiate stats recorder '" + statsRecorderFactoryName  + "'. Continuing with DoNothingStatsRecorder.", e);
           statsRecorderFactory = new DoNothingStatsRecorderFactory();          
       }
       try {
@@ -115,7 +118,7 @@ public class StatsRecorder {
           int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
           threadPool = new BoundedThreadPool(initialThreads, maxThreads, threadPriority);
       } catch (Exception e) {
-          LogService.log(LogService.ERROR, e);
+          log.error( e);
       }
   }  
   

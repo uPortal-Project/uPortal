@@ -47,7 +47,8 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.security.Permission;
 import org.jasig.portal.security.PermissionManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -56,6 +57,8 @@ import org.jasig.portal.services.LogService;
  */
 public class ReferencePermissionManager extends PermissionManager {
 
+    private static final Log log = LogFactory.getLog(ReferencePermissionManager.class);
+    
   /**
    * This constructor ensures that the PermissionManager will be created with an owner specified
    * @param owner
@@ -114,14 +117,14 @@ public class ReferencePermissionManager extends PermissionManager {
       updateStatement.append(")");
       Statement statement = connection.createStatement();
       try {
-        LogService.log(LogService.DEBUG, "ReferencePermissionManager::setPermission() :" + updateStatement.toString());
+        log.debug("ReferencePermissionManager::setPermission() :" + updateStatement.toString());
         statement.executeUpdate(updateStatement.toString());
       } finally {
         statement.close();
       }
     } catch (Exception e) {
       // Log the exception
-      LogService.log(LogService.ERROR, e);
+      log.error( e);
     } finally {
       RDBMServices.releaseConnection(connection);
     }
@@ -186,7 +189,7 @@ public class ReferencePermissionManager extends PermissionManager {
       try {
 
         // DEBUG
-        LogService.log(LogService.DEBUG, "ReferencePermissionManager::getPermissions() :" + queryString.toString());
+        log.debug("ReferencePermissionManager::getPermissions() :" + queryString.toString());
 
         // Execute the query
         ResultSet rs = statement.executeQuery(queryString.toString());

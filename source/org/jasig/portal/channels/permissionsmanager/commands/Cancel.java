@@ -36,7 +36,8 @@
 package org.jasig.portal.channels.permissionsmanager.commands;
 import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
 import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An IPermissionCommand implementation that resets CPermissionsManager
@@ -47,7 +48,8 @@ import org.jasig.portal.services.LogService;
  */
 
 public class Cancel implements IPermissionCommand {
-
+    private static final Log log = LogFactory.getLog(Cancel.class);
+    
     /** Creates new StartOver */
     public Cancel() {
     }
@@ -71,7 +73,7 @@ public class Cancel implements IPermissionCommand {
         session.isFinished=true;
         session.view = null;
         //sd.setParameter("prmFinished","true");
-        LogService.log(LogService.DEBUG,"PermissionsManager.Cancel complete");
+        log.debug("PermissionsManager.Cancel complete");
     }
 
 }

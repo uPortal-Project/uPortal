@@ -47,7 +47,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Provides file download capability for the portal.
@@ -56,6 +57,9 @@ import org.jasig.portal.services.LogService;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  */
 public class DownloadDispatchWorker implements IWorkerRequestProcessor {
+    
+    private static final Log log = LogFactory.getLog(DownloadDispatchWorker.class);
+    
     public void processWorkerDispatch(PortalControlStructures pcs) throws PortalException {
         HttpServletRequest req=pcs.getHttpServletRequest();
         HttpServletResponse res=pcs.getHttpServletResponse();
@@ -156,7 +160,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                             if (out != null) 
                                 out.close();
                         } catch (IOException ioe) {
-                            LogService.log(LogService.ERROR, "DownloadDispatchWorker:processWorkerDispatch unable to close IOStream "+ ioe);
+                            log.error( "DownloadDispatchWorker:processWorkerDispatch unable to close IOStream "+ ioe);
                         }
                     }
                 } else if (ch instanceof org.jasig.portal.IDirectResponse) {
@@ -167,13 +171,13 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                     
                     dirResp.setResponse(res);                    
                 } else {
-                    LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
+                    log.error( "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
                 }
             } else {
-                LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to obtain instance a channel. instanceId=\""+channelTarget+"\".");
+                log.error( "DownloadDispatchWorker::processWorkerDispatch(): unable to obtain instance a channel. instanceId=\""+channelTarget+"\".");
             }
         } else {
-            LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to determine instance Id of the target channel. requestURL=\""+pcs.getHttpServletRequest().getRequestURI()+"\".");
+            log.error( "DownloadDispatchWorker::processWorkerDispatch(): unable to determine instance Id of the target channel. requestURL=\""+pcs.getHttpServletRequest().getRequestURI()+"\".");
         }
     }
 }

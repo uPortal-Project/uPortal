@@ -50,7 +50,8 @@ import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference individual, or leaf, group service.
@@ -61,6 +62,9 @@ import org.jasig.portal.services.LogService;
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
 implements IIndividualGroupService, ILockableGroupService
 {
+    
+    private static final Log log = LogFactory.getLog(ReferenceIndividualGroupService.class);
+    
     // Describes the attributes of this service.  See compositeGroupServices.xml.
     protected ComponentGroupServiceDescriptor serviceDescriptor;
 
@@ -159,7 +163,7 @@ throws GroupsException
             }
             catch (LockingException le)
             {
-                LogService.log(LogService.ERROR,
+                log.error(
                     "ReferenceIndividualGroupService.removeDeletedGroupFromContainingGroups(): " +
                     "Problem unlocking parent group: " + le.getMessage());
             }
@@ -505,7 +509,7 @@ private void initialize() throws GroupsException
 {
     String eMsg = null;
     String svcName = getServiceDescriptor().getName();
-    LogService.log(LogService.DEBUG, "Service descriptor attributes: " + svcName);
+    log.debug("Service descriptor attributes: " + svcName);
 
     // print service descriptor attributes:
     for (Iterator i=getServiceDescriptor().keySet().iterator(); i.hasNext();)
@@ -513,7 +517,7 @@ private void initialize() throws GroupsException
         String descriptorKey = (String)i.next();
         Object descriptorValue = getServiceDescriptor().get(descriptorKey);
         if ( descriptorValue != null )
-            { LogService.log(LogService.DEBUG, "  " + descriptorKey + " : " + descriptorValue); }
+            { log.debug("  " + descriptorKey + " : " + descriptorValue); }
     }
 
     String groupStoreFactoryName = getServiceDescriptor().getGroupStoreFactoryName();
@@ -523,7 +527,7 @@ private void initialize() throws GroupsException
     if ( groupStoreFactoryName == null )
     {
         eMsg = "ReferenceGroupService.initialize(): (" + svcName + ") No Group Store factory specified in service descriptor.";
-        LogService.log(LogService.INFO, eMsg);
+        log.info( eMsg);
     }
 
     else
@@ -536,7 +540,7 @@ private void initialize() throws GroupsException
         catch (Exception e)
         {
             eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate group store (" + svcName +"): " + e;
-            LogService.log(LogService.ERROR, eMsg);
+            log.error( eMsg);
             throw new GroupsException(eMsg);
         }
     }
@@ -544,7 +548,7 @@ private void initialize() throws GroupsException
     if ( entityStoreFactoryName == null )
     {
         eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Store Factory specified in service descriptor (" + svcName + ")";
-        LogService.log(LogService.INFO, eMsg);
+        log.info( eMsg);
     }
 
     else
@@ -557,7 +561,7 @@ private void initialize() throws GroupsException
         catch (Exception e)
         {
             eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity store " + e;
-            LogService.log(LogService.ERROR, eMsg);
+            log.error( eMsg);
             throw new GroupsException(eMsg);
         }
     }
@@ -565,7 +569,7 @@ private void initialize() throws GroupsException
     if ( entitySearcherFactoryName == null )
     {
         eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Searcher Factory specified in service descriptor.";
-        LogService.log(LogService.INFO, eMsg);
+        log.info( eMsg);
     }
 
     else
@@ -578,7 +582,7 @@ private void initialize() throws GroupsException
         catch (Exception e)
         {
             eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity searcher " + e;
-            LogService.log(LogService.ERROR, eMsg);
+            log.error( eMsg);
             throw new GroupsException(eMsg);
         }
     }

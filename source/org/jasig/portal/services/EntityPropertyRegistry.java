@@ -36,6 +36,8 @@
 
 package  org.jasig.portal.services;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.entityproperties.EntityProperties;
@@ -61,6 +63,9 @@ import org.w3c.dom.NodeList;
  * finder can choose the method of caching if caching is appropriate.
  */
 public class EntityPropertyRegistry {
+    
+    private static final Log log = LogFactory.getLog(EntityPropertyRegistry.class);
+    
     protected static EntityPropertyRegistry _instance;
     protected IEntityPropertyStore store;
     protected int storePrecedence;
@@ -113,8 +118,8 @@ public class EntityPropertyRegistry {
                 _instance.init();
             } catch (Exception e) {
                 _instance = null;
-                LogService.log(LogService.ERROR, "Could not initialize EntityPropertyRegistry");
-                LogService.log(LogService.ERROR, e);
+                log.error( "Could not initialize EntityPropertyRegistry");
+                log.error( e);
             }
         }
         return  _instance;
@@ -173,10 +178,10 @@ public class EntityPropertyRegistry {
       try {
          EntityCachingService.instance().remove(propsType, getPropKey(entityID));
       } catch (CachingException e) {
-         LogService.log(LogService.ERROR, e);
+         log.error( e);
          Exception ee = e.getRecordedException();
          if (ee != null) {
-            LogService.log(LogService.ERROR, ee);
+            log.error( ee);
          }
       }
    }
@@ -185,10 +190,10 @@ public class EntityPropertyRegistry {
       try {
          EntityCachingService.instance().add(ep);
       } catch (CachingException e) {
-         LogService.log(LogService.ERROR, e);
+         log.error( e);
          Exception ee = e.getRecordedException();
          if (ee != null) {
-            LogService.log(LogService.ERROR, ee);
+            log.error( ee);
          }
       }
    }
@@ -199,10 +204,10 @@ public class EntityPropertyRegistry {
          ep = (EntityProperties) EntityCachingService.instance().get(propsType,
                                                                      entityID.getKey());
       } catch (CachingException e) {
-         LogService.log(LogService.ERROR, e);
+         log.error( e);
          Exception ee = e.getRecordedException();
          if (ee != null) {
-            LogService.log(LogService.ERROR, ee);
+            log.error( ee);
          }
       }
       return ep;

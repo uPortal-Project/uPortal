@@ -48,7 +48,8 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.xpath.XPathAPI;
 import org.jasig.portal.ldap.ILdapServer;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,6 +69,8 @@ import org.w3c.dom.Text;
  */
 public class LdapServices
 {  
+    private static final Log log = LogFactory.getLog(LdapServices.class);
+    
     private static final String PROPERTIES_PATH = "/properties/";
     private static final String LDAP_PROPERTIES_FILE = PROPERTIES_PATH + "ldap.properties";
     private static final String LDAP_XML_FILE = PROPERTIES_PATH + "ldap.xml";
@@ -145,16 +148,16 @@ public class LdapServices
                             ldapProps.getProperty("ldap.factory"));
                     }
                     catch (IllegalArgumentException iae) {
-                        LogService.log(LogService.INFO, "Invalid data in " + LDAP_PROPERTIES_FILE, iae);
+                        log.info( "Invalid data in " + LDAP_PROPERTIES_FILE, iae);
                     }
                 }
                 else {
-                    LogService.log(LogService.INFO, "LdapServices::initConnections(): " + LDAP_PROPERTIES_FILE + " was not found, all ldap connections will be loaded from " + LDAP_XML_FILE);
+                    log.info( "LdapServices::initConnections(): " + LDAP_PROPERTIES_FILE + " was not found, all ldap connections will be loaded from " + LDAP_XML_FILE);
                 }
             }
             catch(Exception e)
             {
-                LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error while loading default ldap connection from " + LDAP_PROPERTIES_FILE, e);
+                log.error( "LdapServices::initConnections(): Error while loading default ldap connection from " + LDAP_PROPERTIES_FILE, e);
             }
             finally
             {
@@ -165,7 +168,7 @@ public class LdapServices
                 }
                 catch(IOException ioe)
                 {
-                    LogService.log(LogService.ERROR, "LdapServices::initConnections(): Unable to close " + LDAP_PROPERTIES_FILE + " InputStream " + ioe);
+                    log.error( "LdapServices::initConnections(): Unable to close " + LDAP_PROPERTIES_FILE + " InputStream " + ioe);
                 }
             }
             
@@ -178,7 +181,7 @@ public class LdapServices
                 config = ResourceLoader.getResourceAsDocument(LdapServices.class, LDAP_XML_FILE);
             } 
             catch (Exception e) {
-                LogService.log(LogService.ERROR, "LdapServices::initConnections(): Could not create Document from " + LDAP_XML_FILE, e);
+                log.error( "LdapServices::initConnections(): Could not create Document from " + LDAP_XML_FILE, e);
             }
             
             if (config != null){
@@ -266,29 +269,29 @@ public class LdapServices
                                             defaultConn = newConn;
                                         }
                                         else if (isDefaultConn && defaultConn != null) {
-                                            LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error, multiple default connections specified. Ignoring " + name + " for default.");
+                                            log.error( "LdapServices::initConnections(): Error, multiple default connections specified. Ignoring " + name + " for default.");
                                         }
                                     }
                                     catch (IllegalArgumentException iae) {
-                                        LogService.log(LogService.INFO, "Invalid data for server " + name + " in " + LDAP_XML_FILE, iae);
+                                        log.info( "Invalid data for server " + name + " in " + LDAP_XML_FILE, iae);
                                     }                                    
                                 }
                                 else {
-                                    LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error creating ILdapServer, no name specified.");
+                                    log.error( "LdapServices::initConnections(): Error creating ILdapServer, no name specified.");
                                 }
                             }
                         }
                         catch (Exception e) {
-                            LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error creating ILdapServer from node: " + connElement.getNodeName(), e);
+                            log.error( "LdapServices::initConnections(): Error creating ILdapServer from node: " + connElement.getNodeName(), e);
                         }
                     }
                 }
                 catch (TransformerException te) {
-                    LogService.log(LogService.ERROR, "LdapServices::initConnections(): Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, te);
+                    log.error( "LdapServices::initConnections(): Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, te);
                 }
             }
             else {
-                LogService.log(LogService.ERROR, "LdapServices::initConnections(): No document was loaded from " + LDAP_XML_FILE);                
+                log.error( "LdapServices::initConnections(): No document was loaded from " + LDAP_XML_FILE);                
             }
             
             
@@ -296,7 +299,7 @@ public class LdapServices
             //Make sure a default connection was created.
             if (defaultConn == null) {
                 RuntimeException re = new IllegalStateException("No default connection was created during initialization.");
-                LogService.log(LogService.ERROR, "LdapServices::initConnections():", re);
+                log.error( "LdapServices::initConnections():", re);
                 throw re;
             }            
             
@@ -347,14 +350,14 @@ public class LdapServices
             this.ldapManagerProtocol = checkNull(managerProtocol, "");
             this.ldapInitCtxFactory = checkNull(initialContextFactory, "com.sun.jndi.ldap.LdapCtxFactory");
             
-            LogService.log(LogService.DEBUG, "LdapServices: Creating LDAP Connection: " + this.ldapName);
-            LogService.log(LogService.DEBUG, "\thost = " + this.ldapHost);
-            LogService.log(LogService.DEBUG, "\tport = " + this.ldapPort);
-            LogService.log(LogService.DEBUG, "\tbaseDN = " + this.ldapBaseDn);
-            LogService.log(LogService.DEBUG, "\tuidAttribute = " + this.ldapUidAttribute);
-            LogService.log(LogService.DEBUG, "\tmanagerDN = " + this.ldapManagerDn);
-            LogService.log(LogService.DEBUG, "\tmanagerPW = " + this.ldapManagerPw);
-            LogService.log(LogService.DEBUG, "\tprotocol = " + this.ldapManagerProtocol);            
+            log.debug("LdapServices: Creating LDAP Connection: " + this.ldapName);
+            log.debug("\thost = " + this.ldapHost);
+            log.debug("\tport = " + this.ldapPort);
+            log.debug("\tbaseDN = " + this.ldapBaseDn);
+            log.debug("\tuidAttribute = " + this.ldapUidAttribute);
+            log.debug("\tmanagerDN = " + this.ldapManagerDn);
+            log.debug("\tmanagerPW = " + this.ldapManagerPw);
+            log.debug("\tprotocol = " + this.ldapManagerProtocol);            
         }
         
         
@@ -386,7 +389,7 @@ public class LdapServices
                 conn = new InitialDirContext(env);
             }
             catch ( Exception e ) {
-                LogService.log(LogService.ERROR, "LdapServices::LdapConnectionImpl::getConnection(): Error creating the LDAP Connection.", e);
+                log.error( "LdapServices::LdapConnectionImpl::getConnection(): Error creating the LDAP Connection.", e);
             }
      
             return conn;
@@ -408,7 +411,7 @@ public class LdapServices
                 conn.close();
             }
             catch (Exception e) {
-                LogService.log(LogService.DEBUG, "LdapServices::LdapConnectionImpl::getConnection(): Error closing the LDAP Connection.", e);
+                log.debug("LdapServices::LdapConnectionImpl::getConnection(): Error closing the LDAP Connection.", e);
             }
         }       
     }

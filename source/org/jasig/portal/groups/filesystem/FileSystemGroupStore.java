@@ -65,7 +65,8 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is an <code>IEntityGroupStore</code> that uses the native file
@@ -143,6 +144,7 @@ import org.jasig.portal.services.LogService;
 public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore,
 IEntitySearcher
 {
+    private static final Log log = LogFactory.getLog(FileSystemGroupStore.class);
     // File system constants for unix/windows compatibility:
     protected static char FORWARD_SLASH = '/';
     protected static char BACK_SLASH = '\\';
@@ -240,7 +242,7 @@ private IEntityGroup find(File file) throws GroupsException
  */
 public IEntityGroup find(String key) throws GroupsException
 {
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + ".find(): group key: " + key);
 
     String path = getFilePathFromKey(key);
@@ -252,7 +254,7 @@ public IEntityGroup find(String key) throws GroupsException
 
     if ( groupHolder == null || (groupHolder.getLastModified() != f.lastModified()) )
     {
-        LogService.log(LogService.DEBUG,
+        log.debug(
           DEBUG_CLASS_NAME + ".find(): retrieving group from file system for " + path);
 
         IEntityGroup group = newInstance(f);
@@ -270,7 +272,7 @@ public IEntityGroup find(String key) throws GroupsException
 protected Iterator findContainingGroups(IEntity ent) throws GroupsException
 {
 
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + ".findContainingGroups(): for " + ent);
 
     List groups = new ArrayList();
@@ -303,7 +305,7 @@ protected Iterator findContainingGroups(IEntity ent) throws GroupsException
 protected Iterator findContainingGroups(IEntityGroup group) throws GroupsException
 {
 
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + ".findContainingGroups(): for " + group);
 
     List groups = new ArrayList();
@@ -356,7 +358,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
  */
 public java.util.Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 {
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + ".findEntitiesForGroup(): retrieving entities for group " + group);
 
     Collection entities = null;
@@ -475,7 +477,7 @@ protected Class getDefaultEntityType() {
  */
 protected Collection getEntitiesFromFile(File idFile) throws GroupsException
 {
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + "getEntitiesFromFile(): for " + idFile.getPath());
 
     Collection ids = null;
@@ -495,7 +497,7 @@ protected Collection getEntitiesFromFile(File idFile) throws GroupsException
         entities.add(GroupService.getEntity(key, type));
     }
 
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + "getEntitiesFromFile(): Retrieved " + entities.size() + " entities");
 
     return entities;
@@ -506,12 +508,12 @@ protected Collection getEntitiesFromFile(File idFile) throws GroupsException
  */
 protected Collection getEntityIdsFromFile(File idFile) throws IOException, FileNotFoundException
 {
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + "getEntityIdsFromFile(): Reading " + idFile.getPath());
 
     Collection ids = getIdsFromFile(idFile, false);
 
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + "getEntityIdsFromFile(): Retrieved " + ids.size() + " IDs");
 
     return ids;
@@ -553,7 +555,7 @@ protected File getFile(IEntityGroup group)
  */
 protected String getFilePathFromKey(String key)
 {
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + ".getFilePathFromKey(): for key: " + key);
         
     String groupKey = useSubstitutePeriod 
@@ -562,7 +564,7 @@ protected String getFilePathFromKey(String key)
 
     String fullKey = getGroupsRootPath() + groupKey;
 
-     LogService.log(LogService.DEBUG,
+     log.debug(
         DEBUG_CLASS_NAME + ".getFilePathFromKey(): full key: " + fullKey);
 
     return conformSeparatorChars(fullKey);
@@ -589,12 +591,12 @@ protected char getGoodSeparator() {
  */
 protected Collection getGroupIdsFromFile(File idFile) throws IOException, FileNotFoundException
 {
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + "getGroupIdsFromFile(): Reading " + idFile.getPath());
 
     Collection ids = getIdsFromFile(idFile, true);
 
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + "getGroupIdsFromFile(): Retrieved " + ids.size() + " IDs");
 
     return ids;
@@ -773,7 +775,7 @@ throws GroupsException
     List ids = new ArrayList();
     File baseDir = getFileRoot(leafType);
 
-    LogService.log(LogService.DEBUG,
+    log.debug(
         DEBUG_CLASS_NAME + "searchForGroups(): " + query + " method: " +
         searchMethod + " type: " + leafType);
 
@@ -817,7 +819,7 @@ throws GroupsException
         }
     }
 
-    LogService.log(LogService.DEBUG, DEBUG_CLASS_NAME +
+    log.debug(DEBUG_CLASS_NAME +
       ".searchForGroups(): found " + ids.size() + " files.");
 
     return (EntityIdentifier[]) ids.toArray(new EntityIdentifier[ids.size()]);

@@ -42,7 +42,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -52,6 +53,7 @@ import org.jasig.portal.services.LogService;
  */
 public class EntityGroupNameFinder
         implements IEntityNameFinder {
+    private static final Log log = LogFactory.getLog(EntityGroupNameFinder.class);
     private static IEntityNameFinder _instance = null;
     private Class type = null;
 
@@ -59,7 +61,7 @@ public class EntityGroupNameFinder
         try {
             type = Class.forName("org.jasig.portal.groups.IEntityGroup");
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
     }
 

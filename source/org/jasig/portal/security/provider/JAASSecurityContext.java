@@ -39,6 +39,8 @@ import java.io.*;
 
 import javax.security.auth.login.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.*;
 import org.jasig.portal.services.*;
 
@@ -53,6 +55,8 @@ import org.jasig.portal.services.*;
 
 class JAASSecurityContext extends ChainingSecurityContext implements ISecurityContext, Serializable {
 
+    private static final Log log = LogFactory.getLog(JAASSecurityContext.class);
+    
   private final int JAASSECURITYAUTHTYPE = 0xFF05;
   private IAdditionalDescriptor additionalDescriptor;
 
@@ -90,15 +94,15 @@ class JAASSecurityContext extends ChainingSecurityContext implements ISecurityCo
 
           // the above will throw an exception if authentication does not succeed
 
-          LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+          log.info( "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
 
       } catch (LoginException e) {
-        LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + ": invalid password");
-        LogService.log(LogService.DEBUG,"LoginException: " + e.getMessage());
+        log.info( "User " + this.myPrincipal.UID + ": invalid password");
+        log.debug("LoginException: " + e.getMessage());
       }
     } else {
-      LogService.log (LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+      log.error( "Principal or OpaqueCredentials not initialized prior to authenticate");
     }
 
     // authenticate all subcontexts.

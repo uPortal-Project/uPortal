@@ -44,7 +44,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.SequenceGenerator;
 
 /**
@@ -62,6 +63,8 @@ import org.jasig.portal.services.SequenceGenerator;
  */
 public class EntityTypes {
 
+    private static final Log log = LogFactory.getLog(EntityTypes.class);
+    
     private static EntityTypes singleton;
 
     // Caches for EntityType instances.
@@ -160,7 +163,7 @@ throws java.lang.Exception
                     if ( getEntityTypesByType().get(newType) == null )
                     {
                         String errString = "Attempt to add entity type failed: " + ex.getMessage();
-                        LogService.log (LogService.ERROR, errString);
+                        log.error( errString);
                         throw ex;
                     }
                 }  // end catch
@@ -203,7 +206,7 @@ private void deleteEntityType(EntityType et) throws SQLException
             ps.setInt(1, et.getTypeId().intValue());
             ps.setString(2, et.getType().getName());
 
-            LogService.log(LogService.DEBUG, "EntityTypes.deleteEntityType(): " + ps + "(" +
+            log.debug("EntityTypes.deleteEntityType(): " + ps + "(" +
               et.getTypeId() + ", " + et.getType() + ")" );
 
             int rc = ps.executeUpdate();
@@ -211,7 +214,7 @@ private void deleteEntityType(EntityType et) throws SQLException
             if ( rc != 1 )
             {
                 String errString = "Problem deleting type " + et;
-                LogService.log (LogService.ERROR, errString);
+                log.error( errString);
                 throw new SQLException(errString);
             }
         }
@@ -229,7 +232,7 @@ private void deleteEntityType(EntityType et) throws SQLException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }
@@ -422,7 +425,7 @@ private void initialize()
             { stmnt.close(); }
     }
     catch (Exception ex)
-        { LogService.log (LogService.ERROR, ex); }
+        { log.error( ex); }
     finally
         { RDBMServices.releaseConnection(conn); }
 }
@@ -454,7 +457,7 @@ private void insertEntityType(EntityType et) throws SQLException
             ps.setString(2, et.getType().getName());
             ps.setString(3, et.getDescriptiveName());
 
-            LogService.log(LogService.DEBUG, "EntityTypes.insertEntityType(): " + ps + "(" +
+            log.debug("EntityTypes.insertEntityType(): " + ps + "(" +
               et.getTypeId() + ", " + et.getType() + ", " + et.getDescriptiveName() + ")" );
 
             int rc = ps.executeUpdate();
@@ -462,7 +465,7 @@ private void insertEntityType(EntityType et) throws SQLException
             if ( rc != 1 )
             {
                 String errString = "Problem adding entity type " + et;
-                LogService.log (LogService.ERROR, errString);
+                log.error( errString);
                 throw new SQLException(errString);
             }
         }
@@ -480,7 +483,7 @@ private void insertEntityType(EntityType et) throws SQLException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }
@@ -576,7 +579,7 @@ private void updateEntityType(EntityType et) throws SQLException
             ps.setString(1, et.getDescriptiveName());
             ps.setInt(2, et.getTypeId().intValue());
 
-            LogService.log(LogService.DEBUG, "EntityTypes.updateEntityType(): " + ps + "(" +
+            log.debug("EntityTypes.updateEntityType(): " + ps + "(" +
               et.getType() + ", " + et.getDescriptiveName() + ", " + et.getTypeId() + ")" );
 
             int rc = ps.executeUpdate();
@@ -584,7 +587,7 @@ private void updateEntityType(EntityType et) throws SQLException
             if ( rc != 1 )
             {
                 String errString = "Problem updating type " + et;
-                LogService.log (LogService.ERROR, errString);
+                log.error( errString);
                 throw new SQLException(errString);
             }
         }
@@ -602,7 +605,7 @@ private void updateEntityType(EntityType et) throws SQLException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw sqle;
     }
 }

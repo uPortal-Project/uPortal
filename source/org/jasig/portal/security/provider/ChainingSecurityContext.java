@@ -46,7 +46,8 @@ import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>This is the basic abstract class for all security contexts that should
@@ -60,6 +61,8 @@ import org.jasig.portal.services.LogService;
  */
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
+    private static final Log log = LogFactory.getLog(ChainingSecurityContext.class);
+    
   protected static boolean stopWhenAuthenticated = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated");
   protected boolean isauth = false;
   protected Vector mySubContexts;
@@ -108,7 +111,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
         sctx.authenticate();
       } catch (Exception ex) {
       	error = true;
-        LogService.log(LogService.ERROR, ex);
+        log.error( ex);
       }
       // Stop attempting to authenticate if authenticated and if the property flag is set
       if(stopWhenAuthenticated && sctx.isAuthenticated()) {
@@ -161,7 +164,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       }
     }
     PortalSecurityException ep = new PortalSecurityException("No such subcontext: " + name);
-    LogService.log(LogService.DEBUG,ep);
+    log.debug(ep);
     return(null);
   }
 
@@ -203,7 +206,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     if(doesSubContextExist(name))
     {
       PortalSecurityException ep = new PortalSecurityException("Subcontext already exists: " + name);
-      LogService.log(LogService.ERROR,ep);
+      log.error(ep);
       throw(ep);
     }
     else

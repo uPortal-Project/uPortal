@@ -41,7 +41,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Proxy embedded content such as images for portal sessions.
@@ -56,6 +57,8 @@ import org.jasig.portal.services.LogService;
  */
 public class HttpProxyServlet extends HttpServlet {
 
+    private static final Log log = LogFactory.getLog(HttpProxyServlet.class);
+    
 /**
  * Returns content retreived from location following context (Path Info)
  * If no content found returns 404
@@ -73,10 +76,10 @@ public class HttpProxyServlet extends HttpServlet {
 	// Ensures requests come from pages in the portal
 	if (null!=checkReferer){
 		String referer = request.getHeader("Referer");
-		LogService.log(LogService.DEBUG,"HttpProxyServlet: HTTP Referer: " + referer);
+		log.debug("HttpProxyServlet: HTTP Referer: " + referer);
 		if (null!=referer && !referer.startsWith(checkReferer)) {
 			// log referrer 
-			LogService.log(LogService.WARN,"HttpProxyServlet: bad Referer: " + referer);
+			log.warn("HttpProxyServlet: bad Referer: " + referer);
 			response.setStatus(404);
 			return;
 		}
@@ -84,7 +87,7 @@ public class HttpProxyServlet extends HttpServlet {
 	
 	if (request.getSession(false)==null) {
 		// log referrer in debugging mode
-		LogService.log(LogService.WARN,"HttpProxyServlet: no session");
+		log.warn("HttpProxyServlet: no session");
 		response.setStatus(404);
 		return;		
 	}

@@ -39,7 +39,8 @@ import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -58,7 +59,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CHeader extends BaseChannel implements ICacheable {
-  
+    private static final Log log = LogFactory.getLog(CHeader.class);
   private static final String sslLocation = "CHeader/CHeader.ssl";
 
   /**
@@ -71,7 +72,7 @@ public class CHeader extends BaseChannel implements ICacheable {
             // Let the authorization service decide:
             canPublish = staticData.getAuthorizationPrincipal().canPublish();      
     } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
+      log.error( e);
       // Deny the user publish access if anything went wrong
     }
     return canPublish;
@@ -90,7 +91,7 @@ public class CHeader extends BaseChannel implements ICacheable {
       return formatter.format(currentTime);
     }
     catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
+      log.error( e);
     }
 
     return "&nbsp;";

@@ -40,7 +40,8 @@ import java.util.Map;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A factory class that produces <code>IChannel</code> instances.
@@ -50,6 +51,8 @@ import org.jasig.portal.services.LogService;
  */
 public class ChannelFactory {
 
+    private static final Log log = LogFactory.getLog(ChannelFactory.class);
+    
     // table of multithreaded channels
     public static final java.util.Hashtable staticChannels=new java.util.Hashtable();
     
@@ -80,7 +83,7 @@ public class ChannelFactory {
             try {
                 return instantiateChannel(channelSubscribeId,channelPublishId, className,timeOut,channel.getParameterMap(),sessionId);
             } catch (Exception ex) {
-                LogService.log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
+                log.error("ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
                 return null;
             }
         } else return null;

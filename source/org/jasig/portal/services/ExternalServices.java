@@ -48,6 +48,8 @@ import javax.naming.Context;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.utils.ResourceLoader;
@@ -67,6 +69,9 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class ExternalServices {
+    
+    private static final Log log = LogFactory.getLog(ExternalServices.class);
+    
   private ServiceHandler svcHandler;
   private Context servicesContext;
 
@@ -122,7 +127,7 @@ public class ExternalServices {
             try{
                 svcDescriptor.close(); //do not need to check for null.
            } catch(IOException exception) {
-                LogService.log(LogService.ERROR, "ExternalServices:startServices()::could not close InputStream "+ exception);   
+                log.error( "ExternalServices:startServices()::could not close InputStream "+ exception);   
             }
          }
       }
@@ -140,7 +145,7 @@ public class ExternalServices {
    */
   protected void outputMessage(String msg) {
     System.out.println("External services: " + msg);
-    LogService.log(LogService.INFO, "External services: " + msg);
+    log.info( "External services: " + msg);
   }
 
   /**

@@ -49,7 +49,8 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference implementation of IPermissionStore.  Performs CRUD operations
@@ -59,6 +60,8 @@ import org.jasig.portal.services.LogService;
  */
 public class RDBMPermissionImpl implements IPermissionStore {
 
+    private static final Log log = LogFactory.getLog(RDBMPermissionImpl.class);
+    
     private static RDBMPermissionImpl singleton;
 
     // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
@@ -106,7 +109,7 @@ public void add(IPermission[] perms) throws AuthorizationException
         }
         catch (Exception ex)
         {
-            LogService.log (LogService.ERROR, ex);
+            log.error( ex);
             throw new AuthorizationException(ex.getMessage());
         }
     }
@@ -130,7 +133,7 @@ public void add(IPermission perm) throws AuthorizationException
         try
         {
             primAdd(perm, ps);
-            LogService.log(LogService.DEBUG, "RDBMPermissionImpl.add(): " + ps);
+            log.debug("RDBMPermissionImpl.add(): " + ps);
             rc = ps.executeUpdate();
             if ( rc != 1 )
                 { throw new AuthorizationException("Problem adding Permission " + perm); }
@@ -140,7 +143,7 @@ public void add(IPermission perm) throws AuthorizationException
     }
     catch (Exception ex)
     {
-        LogService.log(LogService.ERROR, ex.getMessage());
+        log.error( ex.getMessage());
         throw new AuthorizationException("Problem adding Permission " + perm);
     }
     finally
@@ -161,7 +164,7 @@ public void delete(IPermission[] perms) throws AuthorizationException
         }
         catch (Exception ex)
         {
-            LogService.log (LogService.ERROR, ex);
+            log.error( ex);
             throw new AuthorizationException(ex.getMessage());
         }
     }
@@ -187,7 +190,7 @@ public void delete(IPermission perm) throws AuthorizationException
     }
     catch (Exception ex)
     {
-        LogService.log(LogService.ERROR, ex.getMessage());
+        log.error( ex.getMessage());
         throw new AuthorizationException("Problem deleting Permission " + perm);
     }
     finally
@@ -214,7 +217,7 @@ public boolean existsInDatabase(IPermission perm) throws AuthorizationException,
             ps.setString(3, getPrincipalKey(perm));
             ps.setString(4, perm.getActivity());
             ps.setString(5, perm.getTarget());
-            LogService.log(LogService.DEBUG, "RDBMPermissionImpl.existsInDatabase(): " + ps);
+            log.debug("RDBMPermissionImpl.existsInDatabase(): " + ps);
             ResultSet rs = ps.executeQuery();
             try {
               return ( rs.next() );
@@ -227,7 +230,7 @@ public boolean existsInDatabase(IPermission perm) throws AuthorizationException,
     }
     catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, ex);
+        log.error( ex);
         throw new AuthorizationException("RDBMPermissionImpl.existsInDatabase(): " + ex);
     }
     finally
@@ -470,13 +473,13 @@ private void primAdd(IPermission[] perms) throws Exception
             for ( int i=0; i<perms.length; i++ )
             {
                 primAdd(perms[i], ps);
-                LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primAdd(): " + ps);
+                log.debug("RDBMPermissionImpl.primAdd(): " + ps);
                 rc = ps.executeUpdate();
 
                 if ( rc != 1 )
                 {
                     String errMsg = "Problem adding " + perms[i] + " RC: " + rc;
-                    LogService.log (LogService.ERROR, errMsg);
+                    log.error( errMsg);
                     RDBMServices.rollback(conn);
                     throw new AuthorizationException(errMsg);
                 }
@@ -490,7 +493,7 @@ private void primAdd(IPermission[] perms) throws Exception
     }
     catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, ex);
+        log.error( ex);
         RDBMServices.rollback(conn);
         throw ex;
     }
@@ -570,7 +573,7 @@ private void primDelete(IPermission[] perms) throws Exception
     }
     catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, ex);
+        log.error( ex);
         RDBMServices.rollback(conn);
         throw ex;
     }
@@ -597,7 +600,7 @@ private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) thro
     ps.setString(3, getPrincipalKey(perm));
     ps.setString(4, perm.getActivity());
     ps.setString(5, perm.getTarget());
-    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primDelete(): " + ps);
+    log.debug("RDBMPermissionImpl.primDelete(): " + ps);
 
     return ps.executeUpdate();
 }
@@ -630,7 +633,7 @@ private void primUpdate(IPermission[] perms) throws Exception
     }
     catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, ex);
+        log.error( ex);
         RDBMServices.rollback(conn);
         throw ex;
     }
@@ -683,7 +686,7 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
     ps.setString(6, getPrincipalKey(perm));
     ps.setString(7, perm.getActivity());
     ps.setString(8, perm.getTarget());
-    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primUpdate(): " + ps);
+    log.debug("RDBMPermissionImpl.primUpdate(): " + ps);
 
 
     return ps.executeUpdate();
@@ -764,7 +767,7 @@ throws AuthorizationException
             sqlQuery.append("' ");
         }
 
-    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.select(): " + sqlQuery.toString());
+    log.debug("RDBMPermissionImpl.select(): " + sqlQuery.toString());
 
     try
     {
@@ -786,7 +789,7 @@ throws AuthorizationException
     }
     catch (SQLException sqle)
     {
-        LogService.log (LogService.ERROR, sqle);
+        log.error( sqle);
         throw new AuthorizationException("Problem retrieving Permissions " + sqle.getMessage());
     }
     finally
@@ -818,7 +821,7 @@ public void update(IPermission[] perms) throws AuthorizationException
         }
         catch (Exception ex)
         {
-            LogService.log (LogService.ERROR, ex);
+            log.error( ex);
             throw new AuthorizationException(ex.getMessage());
         }
     }
@@ -836,7 +839,7 @@ public void update(IPermission perm) throws AuthorizationException
     {
         conn = RDBMServices.getConnection();
         String sQuery = getUpdatePermissionSql();
-        LogService.log(LogService.DEBUG, "RDBMPermissionImpl.update(): " + sQuery);
+        log.debug("RDBMPermissionImpl.update(): " + sQuery);
         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sQuery);
         try
             { primUpdate(perm, ps); }
@@ -845,7 +848,7 @@ public void update(IPermission perm) throws AuthorizationException
     }
     catch (Exception ex)
     {
-        LogService.log(LogService.ERROR, ex.getMessage());
+        log.error( ex.getMessage());
         throw new AuthorizationException("Problem updating Permission " + perm);
     }
     finally

@@ -43,7 +43,8 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ICCRegistry;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -58,6 +59,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CViewer extends BaseChannel {
+    private static final Log log = LogFactory.getLog(CViewer.class);
     private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
     private static final String historyFname="/portal/iccdemo/history";
 
@@ -74,18 +76,18 @@ public class CViewer extends BaseChannel {
         try {
             globalObjContext = (Context)staticData.getJNDIContext().lookup("/channel-obj");
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CHistory.getUserXML(): Could not find subcontext /channel-obj in JNDI");
+            log.error( "CHistory.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
 
         // bind new ViewerURL object
         try {
             globalObjContext.bind(staticData.getChannelSubscribeId(),new ViewerURL(this));
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CHistory.getUserXML(): Could not bind channel object for channel id="+staticData.getChannelSubscribeId());
+            log.error( "CHistory.getUserXML(): Could not bind channel object for channel id="+staticData.getChannelSubscribeId());
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
 
         // regsiter history channel
@@ -203,16 +205,16 @@ public class CViewer extends BaseChannel {
             // Get the context that holds the global IDs for this user
             globalIDContext = (Context)staticData.getJNDIContext().lookup("/channel-ids");
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
+            log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         try {
             id=(String)globalIDContext.lookup(fname);
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
+            log.error( "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         return id;
     }
@@ -230,17 +232,17 @@ public class CViewer extends BaseChannel {
         try {
             globalObjContext = (Context)staticData.getJNDIContext().lookup("/channel-obj");
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
+            log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
 
         try {
             o=globalObjContext.lookup(channelSubscribeId);
         } catch (NotContextException nce) {
-            LogService.log(LogService.ERROR, "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
+            log.error( "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
         } catch (NamingException e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
         }
         return o;        
     }

@@ -42,7 +42,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
@@ -53,6 +54,9 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class DocumentFactory {
+    
+    private static final Log log = LogFactory.getLog(DocumentFactory.class);
+    
     protected static DocumentFactory _instance;
     protected static final LocalDocumentBuilder localDocBuilder = new LocalDocumentBuilder();
     protected DocumentBuilderFactory dbFactory = null;
@@ -71,8 +75,8 @@ public class DocumentFactory {
             dbFactory.setNamespaceAware(true);
             dbFactory.setValidating(false);
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, "DocumentFactory: unable to initialize DocumentBuilderFactory");
-            LogService.log(LogService.ERROR, e);
+            log.error( "DocumentFactory: unable to initialize DocumentBuilderFactory");
+            log.error( e);
         }
     }
 
@@ -87,7 +91,7 @@ public class DocumentFactory {
             String className = PropertiesManager.getProperty("org.jasig.portal.utils.IPortalDocument.implementation");
             doc = (IPortalDocument)Class.forName(className).newInstance();
         } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
+            log.error( e);
             throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new " + "IPortalDocument: " + e.getMessage());
         }
         return doc;
@@ -126,7 +130,7 @@ public class DocumentFactory {
             try {
                 r = instance().dbFactory.newDocumentBuilder();
             } catch (Exception e) {
-                LogService.log(LogService.ERROR, e);
+                log.error( e);
             }
             return r;
         }

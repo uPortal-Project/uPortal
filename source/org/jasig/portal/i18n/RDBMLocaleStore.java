@@ -44,7 +44,8 @@ import java.util.Locale;
 
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Database implementation of locale storage interface.
@@ -53,6 +54,8 @@ import org.jasig.portal.services.LogService;
  */
 public class RDBMLocaleStore implements ILocaleStore {
 
+    private static final Log log = LogFactory.getLog(RDBMLocaleStore.class);
+    
     public Locale[] getUserLocales(IPerson person) throws Exception {
         List localeList = new ArrayList();
         Connection con = RDBMServices.getConnection();
@@ -62,7 +65,7 @@ public class RDBMLocaleStore implements ILocaleStore {
             try {
                 pstmt.clearParameters();
                 pstmt.setInt(1, person.getID());
-                LogService.log(LogService.DEBUG, query);
+                log.debug(query);
                 ResultSet rs = pstmt.executeQuery();
                 try {
                     while (rs.next()) {
@@ -91,7 +94,7 @@ public class RDBMLocaleStore implements ILocaleStore {
             try {
                 pstmt.clearParameters();
                 pstmt.setInt(1, person.getID());
-                LogService.log(LogService.DEBUG, delete);
+                log.debug(delete);
                 pstmt.executeUpdate();
 
             } finally {
@@ -106,7 +109,7 @@ public class RDBMLocaleStore implements ILocaleStore {
                     pstmt.setInt(1, person.getID());
                     pstmt.setString(2, locales[i].toString());
                     pstmt.setInt(3, i);
-                    LogService.log(LogService.DEBUG, insert);
+                    log.debug(insert);
                     pstmt.executeUpdate();
                 } 
 

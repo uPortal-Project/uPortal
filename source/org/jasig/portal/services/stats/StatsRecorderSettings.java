@@ -36,7 +36,8 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is responsible for maintaining the on/off settings
@@ -51,6 +52,8 @@ import org.jasig.portal.services.LogService;
  */
 public class StatsRecorderSettings {
   
+    private static final Log log = LogFactory.getLog(StatsRecorderSettings.class);
+    
   // Types of portal events that StatsRecorder can record
   public static final int RECORD_LOGIN = 0;
   public static final int RECORD_LOGOUT = 1;
@@ -121,7 +124,7 @@ public class StatsRecorderSettings {
       recordChannelTargeted = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelTargeted");
       
 		} catch (Exception e) {
-			LogService.log(LogService.ERROR, e);
+			log.error( e);
 		}
   }  
   

@@ -66,7 +66,8 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
@@ -87,6 +88,9 @@ import org.w3c.dom.NodeList;
  * @version $Revision$
  */
 public class ChannelPublisher {
+    
+    private static final Log log = LogFactory.getLog(ChannelPublisher.class);
+    
   private static final String FRAMEWORK_OWNER = "UP_FRAMEWORK";
   private static final String SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
   private static final String GRANT_PERMISSION_TYPE = "GRANT";
@@ -178,7 +182,7 @@ public class ChannelPublisher {
                           System.out.println ("Done!");              
                         } catch (Exception e) {
                           System.out.println ("FAILED!");
-                          LogService.log(LogService.ERROR, "Exception occurred while publishing " +files[j].getName()+" channel. "+e);
+                          log.error( "Exception occurred while publishing " +files[j].getName()+" channel. "+e);
                         }
                   }
                 }
@@ -187,7 +191,7 @@ public class ChannelPublisher {
         } catch (Exception e) {
            // Need to revisit this and handle the error!
           System.out.println ("Exception occurred in main method. "+e+". Please see portal.log for details");
-          LogService.log(LogService.ERROR, "main() :: Exception occurred in main method."+e);
+          log.error( "main() :: Exception occurred in main method."+e);
           e.printStackTrace();
         }
     
@@ -258,7 +262,7 @@ public class ChannelPublisher {
           crs.approveChannelDefinition(ci.chanDef, systemUser, new Date());
 
         } catch (Exception e) {
-          LogService.log(LogService.ERROR, "publishChannel() :: Exception while attempting to publish channel to database. Channel name = "+ci.chanDef.getName());
+          log.error( "publishChannel() :: Exception while attempting to publish channel to database. Channel name = "+ci.chanDef.getName());
           throw e;
         }
 
@@ -271,7 +275,7 @@ public class ChannelPublisher {
           domParser = dbf.newDocumentBuilder();
           domParser.setEntityResolver(new ChannelDefDtdResolver());
         } catch (Exception e) {
-          LogService.log(LogService.ERROR, "setupDomParser() :: creating Dom Parser. "+e);
+          log.error( "setupDomParser() :: creating Dom Parser. "+e);
           throw e;
         }
   }
@@ -425,8 +429,8 @@ public class ChannelPublisher {
                 ci.chanDef.setPublishDate(new Date());
           }
         } catch (Exception e) {
-          LogService.log(LogService.ERROR, "getChannelInfo() :: Exception reading channel definition file: " + chanDefFile);
-          LogService.log(LogService.ERROR, e);
+          log.error( "getChannelInfo() :: Exception reading channel definition file: " + chanDefFile);
+          log.error( e);
           throw e;
         } finally {
         	if(is != null)
@@ -478,7 +482,7 @@ public class ChannelPublisher {
               RDBMServices.PreparedStatement pstmt = new RDBMServices.PreparedStatement(con, query);
               try {
                   pstmt.clearParameters();
-                  LogService.log(LogService.DEBUG, query);
+                  log.debug(query);
                   ResultSet rs = pstmt.executeQuery();
                   try {
                       while (rs.next()) {
@@ -493,8 +497,8 @@ public class ChannelPublisher {
                   pstmt.close();
               }
           } catch (Exception e) {
-              LogService.log(LogService.ERROR, "Problem loading channel types from UP_CHAN_TYPE");
-              LogService.log(LogService.ERROR, e);
+              log.error( "Problem loading channel types from UP_CHAN_TYPE");
+              log.error( e);
           } finally {
               RDBMServices.releaseConnection(con);
           }  
