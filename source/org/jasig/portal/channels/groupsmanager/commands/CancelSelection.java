@@ -79,9 +79,9 @@ public class CancelSelection extends GroupsManagerCommand {
       clearSelected(sessionData);
       if (getParentId(staticData) != null) {
          // came from the edit screen, so go back
-         runtimeData.setParameter("grpMode", "browse");
-         runtimeData.setParameter("grpView", "edit");
-         runtimeData.setParameter("grpViewId", getParentId(staticData));
+         sessionData.mode = EDIT_MODE;
+         sessionData.highlightedGroupID = getParentId(staticData);
+         sessionData.rootViewGroupID="0";
          staticData.remove("groupParentId");
       }
       else {
