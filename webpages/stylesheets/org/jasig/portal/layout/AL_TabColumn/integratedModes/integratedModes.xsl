@@ -79,6 +79,7 @@ Version $Revision$
 				<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"/>
 				<META HTTP-EQUIV="pragma" CONTENT="no-cache"/>
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
+				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}_portlet.css"/>
 				<script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
 			</head>
 			<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" class="uportal-background-content">
@@ -101,6 +102,7 @@ Version $Revision$
 			<head>
 				<title>uPortal 2.1+</title>
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
+				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}_portlet.css"/>
 				<xsl:call-template name="scripts"/>
 			</head>
 			<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
