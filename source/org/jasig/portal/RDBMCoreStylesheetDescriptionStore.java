@@ -38,12 +38,13 @@
 
 package  org.jasig.portal;
 
-import  java.util.Hashtable;
-import  java.util.Vector;
-import  java.util.Enumeration;
-import  org.w3c.dom.*;
-import  org.apache.xerces.parsers.*;
-import  org.apache.xml.serialize.*;
+import org.jasig.portal.services.LogService;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.Enumeration;
+import org.w3c.dom.*;
+import org.apache.xerces.parsers.*;
+import org.apache.xml.serialize.*;
 
 
 /**
@@ -56,14 +57,14 @@ public class RDBMCoreStylesheetDescriptionStore
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Hashtable getMimeTypeList () {
     Hashtable list = new Hashtable();
     try {
       GenericPortalBean.getUserLayoutStore().getMimeTypeList(list);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
     return  list;
   }
@@ -71,14 +72,14 @@ public class RDBMCoreStylesheetDescriptionStore
   /**
    * functions that allow one to browse available core stylesheets in various ways
    * @param mimeType
-   * @return 
+   * @return
    */
   public Hashtable getStructureStylesheetList (String mimeType) {
     Hashtable list = null;
     try {
       list = GenericPortalBean.getUserLayoutStore().getStructureStylesheetList(mimeType);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
     return  list;
   }
@@ -86,14 +87,14 @@ public class RDBMCoreStylesheetDescriptionStore
   /**
    * put your documentation comment here
    * @param structureStylesheetId
-   * @return 
+   * @return
    */
   public Hashtable getThemeStylesheetList (int structureStylesheetId) {
     Hashtable list = null;
     try {
       list = GenericPortalBean.getUserLayoutStore().getThemeStylesheetList(structureStylesheetId);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
     return  list;
   }
@@ -116,12 +117,12 @@ public class RDBMCoreStylesheetDescriptionStore
    Document stylesheetDescriptionXML=parser.getDocument();
    String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
    String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
-   Logger.log(Logger.DEBUG,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : stylesheet name = "+xmlStylesheetName);
-   Logger.log(Logger.DEBUG,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : stylesheet description = "+xmlStylesheetDescriptionText);
+   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : stylesheet name = "+xmlStylesheetName);
+   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : stylesheet description = "+xmlStylesheetDescriptionText);
    if(!xmlStylesheetName.equals(dbStylesheetName))
-   Logger.log(Logger.ERROR,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : Structure stage stylesheet name from database (\""+dbStylesheetName+"\") differs from the name in the SDF XML (\""+xmlStylesheetName+"\")!!! Please fix.");
+   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : Structure stage stylesheet name from database (\""+dbStylesheetName+"\") differs from the name in the SDF XML (\""+xmlStylesheetName+"\")!!! Please fix.");
    if(!xmlStylesheetDescriptionText.equals(dbStylesheetDescriptionText))
-   Logger.log(Logger.ERROR,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : Structure stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
+   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getStructureStylesheetDescription() : Structure stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
    fssd.setStylesheetName(xmlStylesheetName);
    fssd.setStylesheetURI(dbURI);
    fssd.setStylesheetDescriptionURI(dbDescriptionURI);
@@ -131,7 +132,7 @@ public class RDBMCoreStylesheetDescriptionStore
    this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
    this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
    } catch (Exception e) {
-   Logger.log(Logger.ERROR,e);
+   LogService.instance().log(LogService.ERROR,e);
    }
    return fssd;
    }
@@ -141,7 +142,7 @@ public class RDBMCoreStylesheetDescriptionStore
     try {
       fssd = GenericPortalBean.getUserLayoutStore().getStructureStylesheetDescription(stylesheetId);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
     return  fssd;
   }
@@ -149,14 +150,14 @@ public class RDBMCoreStylesheetDescriptionStore
   /**
    * put your documentation comment here
    * @param stylesheetId
-   * @return 
+   * @return
    */
   public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) {
     ThemeStylesheetDescription fssd = null;
     try {
       fssd = GenericPortalBean.getUserLayoutStore().getThemeStylesheetDescription(stylesheetId);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
     return  fssd;
   }
@@ -175,22 +176,22 @@ public class RDBMCoreStylesheetDescriptionStore
    DOMParser parser=new DOMParser();
    parser.parse(UtilitiesBean.fixURI(dbDescriptionURI));
    Document stylesheetDescriptionXML=parser.getDocument();
-   Logger.log(Logger.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : stylesheet name = "+this.getName(stylesheetDescriptionXML));
-   Logger.log(Logger.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : stylesheet description = "+this.getDescription(stylesheetDescriptionXML));
+   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : stylesheet name = "+this.getName(stylesheetDescriptionXML));
+   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : stylesheet description = "+this.getDescription(stylesheetDescriptionXML));
    String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
    String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
    if(!xmlStylesheetName.equals(dbStylesheetName))
-   Logger.log(Logger.ERROR,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : Theme stage stylesheet name from database (\""+dbStylesheetName+"\") differs from the name in the SDF XML (\""+xmlStylesheetName+"\")!!! Please fix.");
+   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : Theme stage stylesheet name from database (\""+dbStylesheetName+"\") differs from the name in the SDF XML (\""+xmlStylesheetName+"\")!!! Please fix.");
    if(!xmlStylesheetDescriptionText.equals(dbStylesheetDescriptionText))
-   Logger.log(Logger.ERROR,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : Theme stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
+   LogService.instance().log(LogService.ERROR,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : Theme stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
    sssd.setStylesheetName(xmlStylesheetName);
    sssd.setStylesheetURI(dbURI);
    sssd.setStylesheetDescriptionURI(dbDescriptionURI);
    sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
    sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimeType"));
-   Logger.log(Logger.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
+   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
    sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
-   Logger.log(Logger.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
+   LogService.instance().log(LogService.DEBUG,"RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
    sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML,"UPManagerClass"));
    sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML,"samplePictureURI"));
    sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML,"sampleIconURI"));
@@ -199,7 +200,7 @@ public class RDBMCoreStylesheetDescriptionStore
    this.populateParameterTable(stylesheetDescriptionXML,sssd);
    this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
    } catch (Exception e) {
-   Logger.log(Logger.ERROR,e);
+   LogService.instance().log(LogService.ERROR,e);
    }
    return sssd;
    }
@@ -208,7 +209,7 @@ public class RDBMCoreStylesheetDescriptionStore
     try {
       GenericPortalBean.getUserLayoutStore().removeStructureStylesheetDescription(stylesheetId);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -220,7 +221,7 @@ public class RDBMCoreStylesheetDescriptionStore
     try {
       GenericPortalBean.getUserLayoutStore().removeThemeStylesheetDescription(stylesheetId);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -229,7 +230,7 @@ public class RDBMCoreStylesheetDescriptionStore
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @param stylesheetId
-   * @return 
+   * @return
    */
   public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
@@ -255,10 +256,10 @@ public class RDBMCoreStylesheetDescriptionStore
       sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
       sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
       sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""
           + sssd.getMimeType() + "\"");
       sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""
           + sssd.getSerializerName() + "\"");
       sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
       sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
@@ -269,7 +270,7 @@ public class RDBMCoreStylesheetDescriptionStore
       this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
       GenericPortalBean.getUserLayoutStore().updateThemeStylesheetDescription(sssd);
     } catch (Exception e) {
-      Logger.log(Logger.DEBUG, e);
+      LogService.instance().log(LogService.DEBUG, e);
       return  false;
     }
     return  true;
@@ -280,7 +281,7 @@ public class RDBMCoreStylesheetDescriptionStore
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @param stylesheetId
-   * @return 
+   * @return
    */
   public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
@@ -302,7 +303,7 @@ public class RDBMCoreStylesheetDescriptionStore
       // now write out the database record
       GenericPortalBean.getUserLayoutStore().updateStructureStylesheetDescription(fssd);
     } catch (Exception e) {
-      Logger.log(Logger.DEBUG, e);
+      LogService.instance().log(LogService.DEBUG, e);
       return  false;
     }
     return  true;
@@ -312,7 +313,7 @@ public class RDBMCoreStylesheetDescriptionStore
    * put your documentation comment here
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
-   * @return 
+   * @return
    */
   public Integer addStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
     // need to read in the description file to obtain information such as name, word description and media list
@@ -336,7 +337,7 @@ public class RDBMCoreStylesheetDescriptionStore
       //GenericPortalBean.getUserLayoutStore().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
       return  GenericPortalBean.getUserLayoutStore().addStructureStylesheetDescription(fssd);
     } catch (Exception e) {
-      Logger.log(Logger.DEBUG, e);
+      LogService.instance().log(LogService.DEBUG, e);
     }
     return  null;
   }
@@ -345,7 +346,7 @@ public class RDBMCoreStylesheetDescriptionStore
    * put your documentation comment here
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
-   * @return 
+   * @return
    */
   public Integer addThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
     // need to read iN the description file to obtain information such as name, word description and mime type list
@@ -353,9 +354,9 @@ public class RDBMCoreStylesheetDescriptionStore
       DOMParser parser = new DOMParser();
       parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
       Document stylesheetDescriptionXML = parser.getDocument();
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = "
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = "
           + this.getName(stylesheetDescriptionXML));
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet description = "
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet description = "
           + this.getDescription(stylesheetDescriptionXML));
       String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
       // should thrown an exception
@@ -375,10 +376,10 @@ public class RDBMCoreStylesheetDescriptionStore
       sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
       sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
       sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""
           + sssd.getMimeType() + "\"");
       sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""
           + sssd.getSerializerName() + "\"");
       sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
       sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
@@ -390,7 +391,7 @@ public class RDBMCoreStylesheetDescriptionStore
       //            GenericPortalBean.getUserLayoutStore().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
       return  GenericPortalBean.getUserLayoutStore().addThemeStylesheetDescription(sssd);
     } catch (Exception e) {
-      Logger.log(Logger.DEBUG, e);
+      LogService.instance().log(LogService.DEBUG, e);
     }
     return  null;
   }
@@ -402,16 +403,16 @@ public class RDBMCoreStylesheetDescriptionStore
     for (int i = names.getLength() - 1; i >= 0; i--) {
       name = names.item(i);
       if (name.getParentNode().getLocalName().equals("stylesheetdescription"))
-        break; 
-      else 
+        break;
+      else
         name = null;
     }
     if (name != null) {
       return  this.getTextChildNodeValue(name);
       ;
-    } 
+    }
     else {
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
       return  null;
     }
   }
@@ -420,7 +421,7 @@ public class RDBMCoreStylesheetDescriptionStore
    * put your documentation comment here
    * @param descr
    * @param elementName
-   * @return 
+   * @return
    */
   private String getRootElementTextValue (Document descr, String elementName) {
     NodeList names = descr.getElementsByTagName(elementName);
@@ -428,16 +429,16 @@ public class RDBMCoreStylesheetDescriptionStore
     for (int i = names.getLength() - 1; i >= 0; i--) {
       name = names.item(i);
       if (name.getParentNode().getLocalName().equals("stylesheetdescription"))
-        break; 
-      else 
+        break;
+      else
         name = null;
     }
     if (name != null) {
       return  this.getTextChildNodeValue(name);
       ;
-    } 
+    }
     else {
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::getRootElementTextValue() : no \"" + elementName + "\" element was found under the \"stylesheetdescription\" node!");
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getRootElementTextValue() : no \"" + elementName + "\" element was found under the \"stylesheetdescription\" node!");
       return  null;
     }
   }
@@ -445,7 +446,7 @@ public class RDBMCoreStylesheetDescriptionStore
   /**
    * put your documentation comment here
    * @param descr
-   * @return 
+   * @return
    */
   private String getDescription (Document descr) {
     NodeList descriptions = descr.getElementsByTagName("description");
@@ -453,15 +454,15 @@ public class RDBMCoreStylesheetDescriptionStore
     for (int i = descriptions.getLength() - 1; i >= 0; i--) {
       description = descriptions.item(i);
       if (description.getParentNode().getLocalName().equals("stylesheetdescription"))
-        break; 
-      else 
+        break;
+      else
         description = null;
     }
     if (description != null) {
       return  this.getTextChildNodeValue(description);
-    } 
+    }
     else {
-      Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::getName() : no \"description\" element was found under the \"stylesheetdescription\" node!");
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getName() : no \"description\" element was found under the \"stylesheetdescription\" node!");
       return  null;
     }
   }
@@ -477,8 +478,8 @@ public class RDBMCoreStylesheetDescriptionStore
     for (int i = parametersNodes.getLength() - 1; i >= 0; i--) {
       parametersNode = parametersNodes.item(i);
       if (parametersNode.getParentNode().getLocalName().equals("stylesheetdescription"))
-        break; 
-      else 
+        break;
+      else
         parametersNode = null;
     }
     if (parametersNode != null) {
@@ -497,13 +498,13 @@ public class RDBMCoreStylesheetDescriptionStore
             if (pchild.getNodeType() == Node.ELEMENT_NODE) {
               if (pchild.getLocalName().equals("defaultvalue")) {
                 defaultvalue = this.getTextChildNodeValue(pchild);
-              } 
+              }
               else if (pchild.getLocalName().equals("description")) {
                 description = this.getTextChildNodeValue(pchild);
               }
             }
           }
-          Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateParameterTable() : adding a stylesheet parameter : (\""
+          LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateParameterTable() : adding a stylesheet parameter : (\""
               + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
           csd.addStylesheetParameter(name, defaultvalue, description);
         }
@@ -523,8 +524,8 @@ public class RDBMCoreStylesheetDescriptionStore
     for (int i = folderattributesNodes.getLength() - 1; i >= 0; i--) {
       folderattributesNode = folderattributesNodes.item(i);
       if (folderattributesNode.getParentNode().getLocalName().equals("stylesheetdescription"))
-        break; 
-      else 
+        break;
+      else
         folderattributesNode = null;
     }
     if (folderattributesNode != null) {
@@ -543,13 +544,13 @@ public class RDBMCoreStylesheetDescriptionStore
             if (pchild.getNodeType() == Node.ELEMENT_NODE) {
               if (pchild.getLocalName().equals("defaultvalue")) {
                 defaultvalue = this.getTextChildNodeValue(pchild);
-              } 
+              }
               else if (pchild.getLocalName().equals("description")) {
                 description = this.getTextChildNodeValue(pchild);
               }
             }
           }
-          Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateFolderAttributeTable() : adding a stylesheet folder attribute : (\""
+          LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateFolderAttributeTable() : adding a stylesheet folder attribute : (\""
               + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
           cxsd.addFolderAttribute(name, defaultvalue, description);
         }
@@ -568,8 +569,8 @@ public class RDBMCoreStylesheetDescriptionStore
     for (int i = channelattributesNodes.getLength() - 1; i >= 0; i--) {
       channelattributesNode = channelattributesNodes.item(i);
       if (channelattributesNode.getParentNode().getLocalName().equals("stylesheetdescription"))
-        break; 
-      else 
+        break;
+      else
         channelattributesNode = null;
     }
     if (channelattributesNode != null) {
@@ -588,13 +589,13 @@ public class RDBMCoreStylesheetDescriptionStore
             if (pchild.getNodeType() == Node.ELEMENT_NODE) {
               if (pchild.getLocalName().equals("defaultvalue")) {
                 defaultvalue = this.getTextChildNodeValue(pchild);
-              } 
+              }
               else if (pchild.getLocalName().equals("description")) {
                 description = this.getTextChildNodeValue(pchild);
               }
             }
           }
-          Logger.log(Logger.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateChannelAttributeTable() : adding a stylesheet channel attribute : (\""
+          LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateChannelAttributeTable() : adding a stylesheet channel attribute : (\""
               + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
           cxsd.addChannelAttribute(name, defaultvalue, description);
         }
@@ -606,20 +607,20 @@ public class RDBMCoreStylesheetDescriptionStore
    * put your documentation comment here
    * @param descr
    * @param elementName
-   * @return 
+   * @return
    */
   private Vector getVectorOfSimpleTextElementValues (Document descr, String elementName) {
     Vector v = new Vector();
     // find "stylesheetdescription" node, take the first one
     Element stylesheetdescriptionElement = (Element)(descr.getElementsByTagName("stylesheetdescription")).item(0);
     if (stylesheetdescriptionElement == null) {
-      Logger.log(Logger.ERROR, "Could not obtain <stylesheetdescription> element");
+      LogService.instance().log(LogService.ERROR, "Could not obtain <stylesheetdescription> element");
       return  null;
     }
     NodeList elements = stylesheetdescriptionElement.getElementsByTagName(elementName);
     for (int i = elements.getLength() - 1; i >= 0; i--) {
       v.add(this.getTextChildNodeValue(elements.item(i)));
-      //	    Logger.log(Logger.DEBUG,"adding "+this.getTextChildNodeValue(elements.item(i))+" to the \""+elementName+"\" vector.");
+      //	    LogService.instance().log(LogService.DEBUG,"adding "+this.getTextChildNodeValue(elements.item(i))+" to the \""+elementName+"\" vector.");
     }
     return  v;
   }
@@ -627,7 +628,7 @@ public class RDBMCoreStylesheetDescriptionStore
   /**
    * put your documentation comment here
    * @param node
-   * @return 
+   * @return
    */
   private String getTextChildNodeValue (Node node) {
     if (node == null)

@@ -37,6 +37,7 @@ package org.jasig.portal;
 
 import org.xml.sax.*;
 import org.jasig.portal.utils.*;
+import org.jasig.portal.services.LogService;
 import java.util.Map;
 import org.jasig.portal.PropertiesManager;
 
@@ -61,15 +62,15 @@ public class ChannelRenderer
     protected ChannelRuntimeData rd;
     protected Map channelCache;
     protected Map cacheTables;
-    
+
     protected boolean rendering;
     protected boolean donerendering;
-    
+
     protected Thread workerThread;
     protected ThreadPoolReceipt workerReceipt;
 
     protected Worker worker;
-    
+
     protected long startTime;
     protected long timeOut = java.lang.Long.MAX_VALUE;
 
@@ -150,7 +151,7 @@ public class ChannelRenderer
 	try {
 	    workerReceipt=tp.execute(worker);
 	} catch (InterruptedException ie) {
-	    Logger.log(Logger.ERROR,"ChannelRenderer::startRendering() : interupted while waiting for a rendering thread!");
+	    LogService.instance().log(LogService.ERROR,"ChannelRenderer::startRendering() : interupted while waiting for a rendering thread!");
 	}
     } else {
 	workerThread = new Thread (this.worker);
@@ -193,21 +194,21 @@ public class ChannelRenderer
     }
     catch (InterruptedException e)
     {
-      Logger.log (Logger.DEBUG, "ChannelRenderer::outputRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
+      LogService.instance().log(LogService.DEBUG, "ChannelRenderer::outputRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
     }
 
     // by this point, if the job is not done, we have to kill it.
     // peterk: would be nice to put it on a "death row" instead of
     // stop()ing it instantly. (sorry for the analogy). That way
     // we could try poking it with interrupt() a few times, give it
-    // a low priority and see if it can come back up. stop() can 
+    // a low priority and see if it can come back up. stop() can
     // leave the system in an unstable state :(
     if(POOL_THREADS) {
 	synchronized(workerReceipt) {
 	    if(!workerReceipt.isJobdone()) {
 		workerReceipt.killJob();
 		abandoned=true;
-		Logger.log(Logger.DEBUG,"ChannelRenderer::outputRendering() : killed.");
+		LogService.instance().log(LogService.DEBUG,"ChannelRenderer::outputRendering() : killed.");
 	    } else {
 		abandoned=!workerReceipt.isJobsuccessful();
 	    }
@@ -221,8 +222,8 @@ public class ChannelRenderer
 	}
     }
 
-    
-    if (!abandoned && worker.done ()) 
+
+    if (!abandoned && worker.done ())
     {
 	SAX2BufferImpl buffer;
       if (worker.successful() && ((buffer=worker.getBuffer())!=null))
@@ -236,7 +237,7 @@ public class ChannelRenderer
         }
         catch (SAXException e) {
             // worst case scenario: partial content output :(
-            Logger.log (Logger.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
+            LogService.instance().log(LogService.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
             throw e;
         }
       } else if(worker.successful() && ccacheable && worker.cbuffer!=null){
@@ -255,7 +256,7 @@ public class ChannelRenderer
   }
 
     /**
-     * Requests renderer to complete rendering and return status. 
+     * Requests renderer to complete rendering and return status.
      * This does exactly the same things as outputRendering except for the
      * actual stream output.
      *
@@ -283,21 +284,21 @@ public class ChannelRenderer
     }
     catch (InterruptedException e)
     {
-      Logger.log (Logger.DEBUG, "ChannelRenderer::completeRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
+      LogService.instance().log(LogService.DEBUG, "ChannelRenderer::completeRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
     }
 
     // by this point, if the job is not done, we have to kill it.
     // peterk: would be nice to put it on a "death row" instead of
     // stop()ing it instantly. (sorry for the analogy). That way
     // we could try poking it with interrupt() a few times, give it
-    // a low priority and see if it can come back up. stop() can 
+    // a low priority and see if it can come back up. stop() can
     // leave the system in an unstable state :(
     if(POOL_THREADS) {
 	synchronized(workerReceipt) {
 	    if(!workerReceipt.isJobdone()) {
 		workerReceipt.killJob();
 		abandoned=true;
-		Logger.log(Logger.DEBUG,"ChannelRenderer::completeRendering() : killed.");
+		LogService.instance().log(LogService.DEBUG,"ChannelRenderer::completeRendering() : killed.");
 	    } else {
 		abandoned=!workerReceipt.isJobsuccessful();
 	    }
@@ -311,8 +312,8 @@ public class ChannelRenderer
 	}
     }
 
-    
-    if (!abandoned && worker.done ()) 
+
+    if (!abandoned && worker.done ())
     {
 	SAX2BufferImpl buffer;
       if (worker.successful() && (((buffer=worker.getBuffer())!=null) || (ccacheable && worker.cbuffer!=null))) {
@@ -351,7 +352,7 @@ public class ChannelRenderer
         if(worker!=null) {
             return worker.getCharacters();
         } else {
-            Logger.log(Logger.DEBUG,"ChannelRenderer::getCharacters() : worker is null already !");
+            LogService.instance().log(LogService.DEBUG,"ChannelRenderer::getCharacters() : worker is null already !");
             return null;
         }
     }
@@ -365,7 +366,7 @@ public class ChannelRenderer
             worker.setCharacterCache(chars);
         }
     }
-    
+
     /**
      * I am not really sure if this will take care of the runaway rendering threads.
      * The alternative is kill them explicitly in ChannelManager.
@@ -413,7 +414,7 @@ public class ChannelRenderer
             try {
                 if(rd!=null)
                     channel.setRuntimeData(rd);
-		
+
 		if(CACHE_CHANNELS) {
 		    // try to obtain rendering from cache
 		    if(channel instanceof ICacheable ) {
@@ -428,17 +429,17 @@ public class ChannelRenderer
 					// use it
                                         if(ccacheable && (entry.buffer instanceof String)) {
                                             cbuffer=(String)entry.buffer;
-                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached character content based on a key \""+key.getKey()+"\"");
+                                            LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached character content based on a key \""+key.getKey()+"\"");
                                         } else if(entry.buffer instanceof SAX2BufferImpl) {
                                             buffer=(SAX2BufferImpl) entry.buffer;
-                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
+                                            LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
                                         }
 				    } else {
 					// remove it
 					systemCache.remove(key.getKey());
-					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
+					LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
 				    }
-				} 
+				}
 			    } else {
 				// by default we assume INSTANCE_KEY_SCOPE
 				ChannelCacheEntry entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
@@ -449,19 +450,19 @@ public class ChannelRenderer
 					// use it
                                         if(ccacheable && (entry.buffer instanceof String)) {
                                             cbuffer=(String)entry.buffer;
-                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached character content based on a key \""+key.getKey()+"\"");
+                                            LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached character content based on a key \""+key.getKey()+"\"");
 
                                         } else if(entry.buffer instanceof SAX2BufferImpl) {
                                             buffer=(SAX2BufferImpl) entry.buffer;
-                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
+                                            LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
                                         }
 				    } else {
 					// remove it
 					getChannelCache().remove(key.getKey());
-					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
+					LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
 				    }
 				}
-			    } 
+			    }
 			}
 
                         // check if need to render
@@ -471,15 +472,15 @@ public class ChannelRenderer
                                 buffer = new SAX2BufferImpl ();
                                 buffer.startBuffering();
                                 channel.renderXML (buffer);
-                                
+
                                 // save cache
                                 if(key!=null) {
                                     if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
                                         systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-                                        Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
+                                        LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
                                     } else {
                                         getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-                                        Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
+                                        LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
                                     }
                                 }
                             }
@@ -517,7 +518,7 @@ public class ChannelRenderer
             if(ccacheable) {
                 return this.cbuffer;
             } else {
-                Logger.log(Logger.ERROR,"ChannelRenderer.Worker::getCharacters() : attempting to obtain character data while character caching is not enabled !");
+                LogService.instance().log(LogService.ERROR,"ChannelRenderer.Worker::getCharacters() : attempting to obtain character data while character caching is not enabled !");
                 return null;
             }
         }
@@ -534,12 +535,12 @@ public class ChannelRenderer
                 if(channel instanceof ICacheable ) {
                     ChannelCacheKey key=((ICacheable)channel).generateKey();
                     if(key!=null) {
-                        Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : called on a key \""+key.getKey()+"\"");
+                        LogService.instance().log(LogService.DEBUG,"ChannelRenderer::setCharacterCache() : called on a key \""+key.getKey()+"\"");
                         ChannelCacheEntry entry=null;
                         if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
                             entry=(ChannelCacheEntry)systemCache.get(key.getKey());
                             if(entry==null) {
-                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
+                                LogService.instance().log(LogService.DEBUG,"ChannelRenderer::setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
                                 entry=new ChannelCacheEntry(chars,key.getKeyValidity());
                             } else {
                                 entry.buffer=chars;
@@ -549,7 +550,7 @@ public class ChannelRenderer
                             // by default we assume INSTANCE_KEY_SCOPE
                             entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
                             if(entry==null) {
-                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
+                                LogService.instance().log(LogService.DEBUG,"ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
                                 entry=new ChannelCacheEntry(chars,key.getKeyValidity());
                             } else {
                                 entry.buffer=chars;
@@ -557,9 +558,9 @@ public class ChannelRenderer
                             getChannelCache().put(key.getKey(),entry);
                         }
                     } else {
-                        Logger.log(Logger.WARN,"ChannelRenderer::setCharacterCache() : channel cache key is null !");
+                        LogService.instance().log(LogService.WARN,"ChannelRenderer::setCharacterCache() : channel cache key is null !");
                     }
-                } 
+                }
             }
         }
 
