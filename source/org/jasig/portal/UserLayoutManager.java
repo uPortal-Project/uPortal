@@ -518,6 +518,133 @@ public class UserLayoutManager {
     }
     return  null;
   }
+
+    // utility methods for operating on user layout
+    /**
+     * Determines if the node or any of it's parents are marked
+     * as "unremovable". 
+     * @param node the node to be tested
+     */
+    public boolean isUnremovable(Node node) {
+	if(getUnremovableParent(node)!=null) return true;
+	else return false;
+    }
+
+    /**
+     * Determines if the node or any of it's parents are marked as immutables
+     * @param node the node to be tested
+     * @param root the root node of the layout tree
+     */
+    public boolean isImmutable(Node node){
+	if(getImmutableParent(node)!=null) return true;
+	else return false;
+    }
+    
+    /**
+     * Returns first parent of the node (or the node itself) that's marked
+     * as "unremovable". Note that if the node itself is marked as 
+     * "unremovable", the method will return the node itself.
+     * @param node node from which to move up the tree
+     */
+    public Node getUnremovableParent(Node node) {
+	if(node==null) return null;
+	if(node.getNodeType()==Node.ELEMENT_NODE) {
+	    String r=((Element)node).getAttribute("unremovable");
+	    if(r!=null) {
+		if(r.equals("true")) return node;
+	    }
+	}
+	return getUnremovableParent(node.getParentNode());
+    }
+
+    /**
+     * Returns first parent of the node (or the node itself) that's marked
+     * as "immutable". Note that if the node itself is marked as 
+     * "ummutable", the method will return the node itself.
+     * @param node node from which to move up the tree
+     */
+    public Node getImmutableParent(Node node) {
+	if(node==null) return null;
+	if(node.getNodeType()==Node.ELEMENT_NODE) {
+	    String r=((Element)node).getAttribute("immutable");
+	    if(r!=null) {
+		if(r.equals("true")) return node;
+	    }
+	}
+	return getUnremovableParent(node.getParentNode());
+    }
+
+
+
+    /**
+     * Removes a channel or a folder from the userLayout structure
+     * @param node the node to be removed
+     * @return removal has been successfull
+     */
+    public boolean deleteNode(Node node) {
+	// first of all check if this is an Element node
+	if(node==null || node.getNodeType()!=Node.ELEMENT_NODE) return false;
+	// check if the node is removable
+	if(isUnremovable(node)) return false;
+	// see if any of the parent nodes marked as immutable
+	if(isImmutable(node.getParentNode())) return false;
+	// all checks out, delete the node
+	if(node.getParentNode()!=null)
+	    (node.getParentNode()).removeChild(node);
+	return true;
+    }
+
+    /**
+     * Checks if a particular node is a descendent of some other node.
+     * Note that if both ancestor and node point at the same node, true 
+     * will be returned.
+     * @param node the node to be checked
+     * @param ancestor potential ancestor
+     * @return true if node is an descendent of ancestor
+     */
+    private boolean isDescendentOf(Node ancestor, Node node) {
+	if(node==null) return false;
+	if(node==ancestor) return true;
+	else return isDescendentOf(ancestor,node.getParentNode());
+    }
+	
+    /**
+     * Moves node from one location in the userLayout tree to another
+     * @param node the node to be moved
+     * @param target the node to which it should be appended.
+     * @param sibiling a sibiling before which the node should be inserted under the target node (can be null)
+     * @return move has been successfull
+     */
+    public boolean moveNode(Node node,Node target,Node sibiling) {
+	// make sure this is an element node
+	if(node==null || node.getNodeType()!=Node.ELEMENT_NODE) return false;
+	if(target==null || target.getNodeType()!=Node.ELEMENT_NODE) return false;
+
+	// source node checks
+	// see if the source is a descendent of an immutable node
+	if(isImmutable(node.getParentNode())) return false;
+	// see if the source is a descendent of some unremovable node
+	Node unrp=getUnremovableParent(node.getParentNode());
+	if(unrp!=null) {
+	    // make sure the target node is a descendent of the same unremovable
+	    // node as well.
+	    if(!isDescendentOf(unrp,target)) return false;
+	}
+
+	// target node checks
+	// check if the target is unremovable or immutable
+	if(isUnremovable(target) || isImmutable(target)) return false;
+
+	// everything checks out, do the move
+	if(sibiling!=null && sibiling.getParentNode()==target) {
+	    target.insertBefore(node,sibiling);
+	} else {
+	    target.appendChild(node);
+	}
+	return true;
+    }
+
+    
 }
 
 
