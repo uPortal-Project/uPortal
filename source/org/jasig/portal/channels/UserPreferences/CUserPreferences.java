@@ -49,15 +49,14 @@ import  java.io.File;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CUserPreferences
-    implements IPrivilegedChannel {
+public class CUserPreferences implements IPrivilegedChannel {
   UserLayoutManager ulm;
   ChannelRuntimeData runtimeData = null;
+  ChannelStaticData staticData = null;
   StylesheetSet set = null;
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir();
-  String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal"
-      + fs + "channels" + fs + "CUserPreferences";
+  String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CUserPreferences";
   private UserPreferences up = null;
   private Document userLayoutXML = null;
   private int mode;
@@ -67,6 +66,7 @@ public class CUserPreferences
   IPrivilegedChannel managePreferences = null;
   IPrivilegedChannel manageProfiles = null;
   protected IUserPreferencesStore updb;
+  protected ThemeStylesheetDescription tsd;
   private PortalControlStructures pcs;
 
   /**
@@ -76,10 +76,11 @@ public class CUserPreferences
     this.runtimeData = new ChannelRuntimeData();
     this.set = new StylesheetSet(stylesheetDir + fs + "CUserPreferences.ssl");
     this.set.setMediaProps(portalBaseDir + fs + "properties" + fs + "media.properties");
-    // initial state should be manage preferences
+
     manageProfiles = new ManageProfilesState(this);
-    managePreferences = new GPreferencesState(this);
-    internalState = managePreferences;
+    //managePreferences = new GPreferencesState(this);
+    //internalState = managePreferences;
+
   }
 
   /**
@@ -126,7 +127,24 @@ public class CUserPreferences
       up = ulm.getUserPreferencesCopy();
     // instantiate the browse state here
     this.pcs = pcs;
+
+    if (internalState == null)
+    {
+      try {
+        String cupmClass = getThemeStylesheetDescription().getCustomUserPreferencesManagerClass();
+        managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
+        ((BaseState)managePreferences).setContext(this);
+      } catch (Exception e) {
+        Logger.log(Logger.ERROR, e);
+        managePreferences = new GPreferencesState(this);
+      }
+    }
+
+    // Initial state should be manage preferences
+    internalState = managePreferences;
+
     internalState.setPortalControlStructures(pcs);
+    internalState.setStaticData(staticData);
   }
 
   /** Returns channel runtime properties
@@ -149,7 +167,7 @@ public class CUserPreferences
    * @param sd static channel data
    */
   public void setStaticData (ChannelStaticData sd) throws PortalException {
-    internalState.setStaticData(sd);
+    this.staticData = sd;
   }
 
   /** CUserPreferences listens for an HttpRequestParameter "userPreferencesAction"
@@ -230,6 +248,19 @@ public class CUserPreferences
       up = upStore.getUserPreferences(getUserLayoutManager().getPerson().getID(), profile);
       up.synchronizeWithUserLayoutXML(GenericPortalBean.getUserLayoutStore().getUserLayout(getUserLayoutManager().getPerson().getID(), getCurrentUserPreferences().getProfile().getProfileId()));
       return up;
+  }
+
+  protected ThemeStylesheetDescription getThemeStylesheetDescription()
+  {
+    if (tsd == null) {
+      ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
+      tsd = RdbmServices.getCoreStylesheetDescriptionImpl().getThemeStylesheetDescription(tsup.getStylesheetId());
+      if (tsd == null) {
+        Logger.log(Logger.ERROR, "CUserPreferences::getThemeStylesheetDescription() : theme stylesheet description for a stylesheet \""
+            + tsup.getStylesheetId() + "\" is null");
+      }
+    }
+    return  tsd;
   }
 }
 
