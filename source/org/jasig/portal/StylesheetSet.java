@@ -101,7 +101,8 @@ public class StylesheetSet extends SAX2FilterImpl {
             throw new GeneralRenderingException("StylesheetSet(uri) : Unable to parse stylesheet set (.ssl) file. URL=\""+url+"\", exception message: "+se.getMessage());
         }
     } catch (SAXException se) {
-        se.printStackTrace();
+        // Log the exception
+        LogService.log(LogService.ERROR, se);
         throw new GeneralRenderingException("StylesheetSet(uri) : Unable to instantiate SAX Reader. Please check your library installation.");
     }
   }
