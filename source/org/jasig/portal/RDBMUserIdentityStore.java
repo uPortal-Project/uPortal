@@ -291,13 +291,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         try{
           IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
           IGroupMember template = GroupService.getEntity(templateName, Class.forName("org.jasig.portal.security.IPerson"));
-          java.util.Iterator templateGroups =  template.getContainingGroups();
+          java.util.Iterator templateGroups = template.getContainingGroups();
           while (templateGroups.hasNext())
           {
-              IEntityGroup eg = (IEntityGroup) templateGroups.next();
+            IEntityGroup eg = (IEntityGroup)templateGroups.next();
+            if (eg.isEditable()) {
               eg.addMember(me);
               eg.updateMembers();
-
+            }
           }      // end while()
         }        // end try
         catch (Exception e) {
