@@ -113,7 +113,7 @@ public class LayoutBean extends GenericPortalBean
    * @param the servlet response object
    * @param the JspWriter object
    */
-  public void writeBodyTag (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  public void writeBodyStyle (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
     try 
     {    
@@ -121,7 +121,11 @@ public class LayoutBean extends GenericPortalBean
       ILayout layout = (ILayout) layoutXml.getRoot ();
       String sBgColor = layout.getAttribute ("bgcolor");
       String sFgColor = layout.getAttribute ("fgcolor");
-      out.println ("<body bgcolor=\"" + sBgColor + "\" text=\"" + sFgColor + "\">");
+      //out.println ("<body bgcolor=\"" + sBgColor + "\" text=\"" + sFgColor + "\">");
+      out.println ("<style type=\"text/css\">");
+      out.println ("<!-- body { color: " + sFgColor + "; background: " + sBgColor + "; } -->");
+      out.println ("</style>");
+
     }
     catch (Exception e)
     {

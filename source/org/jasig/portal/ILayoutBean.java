@@ -9,7 +9,7 @@ import com.objectspace.xml.*;
 public interface ILayoutBean
 {
   // Page generation
-  public void writeBodyTag (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+  public void writeBodyStyle (HttpServletRequest req, HttpServletResponse res, JspWriter out);
   public void writeTabs (HttpServletRequest req, HttpServletResponse res, JspWriter out);
   public void writeChannels (HttpServletRequest req, HttpServletResponse res, JspWriter out);
   public void writePersonalizeLayoutPage (HttpServletRequest req, HttpServletResponse res, JspWriter out);
