@@ -7,7 +7,7 @@
   <xsl:template match="channel">
     <html>
     <head>
-      <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/{$skin}.css" />
+      <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css" />
     </head>
     <body>
      <xsl:copy-of select="child::*"/>
