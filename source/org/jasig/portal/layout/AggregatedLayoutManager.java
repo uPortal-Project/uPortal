@@ -973,11 +973,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
            Node paramNameNode = attributes.getNamedItem("name");
            String paramName = (paramNameNode!=null)?paramNameNode.getFirstChild().getNodeValue():null;
            Node paramValueNode = attributes.getNamedItem("value");
-           String paramValue = (paramValueNode!=null && paramValueNode.getFirstChild()!=null)?paramValueNode.getFirstChild().getNodeValue():"";
+           String paramValue = (paramValueNode!=null)?paramValueNode.getFirstChild().getNodeValue():null;
            Node overParamNode = attributes.getNamedItem("override");
-           String overParam = (overParamNode!=null)?overParamNode.getFirstChild().getNodeValue():null;
+           String overParam = (overParamNode!=null)?overParamNode.getFirstChild().getNodeValue():"yes";
 
-           if ( paramName != null ) {
+           if ( paramName != null && paramValue != null ) {
             channelDesc.setParameterValue(paramName, paramValue);
             channelDesc.setParameterOverride(paramName, "yes".equalsIgnoreCase(overParam)?true:false);
            }
