@@ -184,12 +184,15 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
           XSLT.transform(out, media, xml, sslUri, runtimeData);
       }
     }
-    catch (Exception e)
+    catch (org.xml.sax.SAXException e)
     {
-      StringWriter sw = new StringWriter();
-      e.printStackTrace(new PrintWriter(sw));
-      sw.flush();
-      throw new GeneralRenderingException(sw.toString());
+
+      throw new GeneralRenderingException("problem performing the transformation");
+    } catch (IOException i) {
+	StringWriter sw = new StringWriter();
+	i.printStackTrace(new PrintWriter(sw));
+	sw.flush();
+	throw new GeneralRenderingException(sw.toString());
     }
   }
 }
