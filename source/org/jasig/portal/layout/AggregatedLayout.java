@@ -191,10 +191,10 @@ public class AggregatedLayout implements IAggregatedLayout {
 
    private void createFragmentList(Document document, Node rootNode) throws PortalException {
      try {
-      Element alternateLayouts = document.createElement("alternateLayouts");
+      Element alternateLayouts = document.createElement("fragments");
       if ( fragments != null ) {
        for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
-        Element alternate = document.createElement("alternate");
+        Element alternate = document.createElement("fragment");
         String key = (String) fragEnum.nextElement();
         alternate.setAttribute("ID",key);
         alternate.setAttribute("name",(String) fragments.get(key));
@@ -209,18 +209,18 @@ public class AggregatedLayout implements IAggregatedLayout {
 
    private void createFragmentList(ContentHandler contentHandler) throws PortalException {
      try {
-       contentHandler.startElement("","alternateLayouts","alternateLayouts",new AttributesImpl());
+       contentHandler.startElement("","fragments","fragments",new AttributesImpl());
       if ( fragments != null ) {
        for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
         AttributesImpl attributes = new AttributesImpl();
         String key = (String) fragEnum.nextElement();
         attributes.addAttribute("","ID","ID","CDATA",key);
         attributes.addAttribute("","name","name","CDATA",(String) fragments.get(key));
-        contentHandler.startElement("","alternate","alternate",attributes);
-        contentHandler.endElement("","alternate","alternate");
+        contentHandler.startElement("","fragment","fragment",attributes);
+        contentHandler.endElement("","fragment","fragment");
        }
       }
-       contentHandler.endElement("","alternateLayouts","alternateLayouts");
+       contentHandler.endElement("","fragments","fragments");
      } catch ( SAXException saxe ) {
          throw new PortalException(saxe.getMessage());
        }
