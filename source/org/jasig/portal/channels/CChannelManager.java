@@ -215,7 +215,7 @@ public class CChannelManager extends BaseChannel {
             xslt.setStylesheetParameter("action", "selectGroupsButtons");
             xslt.transform();
         }
-    }
+     }
 
     /**
      * put your documentation comment here
@@ -281,9 +281,10 @@ public class CChannelManager extends BaseChannel {
     }
 
     /**
-     * put your documentation comment here
+     * Make sure that the step ID is always a valid one
+     * or else set it to "1" 
      * @param stepID
-     * @return
+     * @return the fixed step ID
      */
     private String fixStepID (String stepID) {
         if (stepID == null) {
@@ -300,7 +301,8 @@ public class CChannelManager extends BaseChannel {
     }
 
     /**
-     * put your documentation comment here
+     * Collect the appropriate request parameters for a particular
+     * screen in this channel's workflow.
      */
     protected void doCapture () {
         stepID = runtimeData.getParameter("uPCM_step");
@@ -347,6 +349,13 @@ public class CChannelManager extends BaseChannel {
                     String name = runtimeData.getParameter("name");
                     if (name != null)
                         name = name.trim();
+                    // The name prefix appears when there are arbitrary parameters
+                    // that need the prefix to differentiate the arbitrary ones
+                    // from the non-arbitrary ones.  For example, applet parameters
+                    // in CApplet get prefixed with "APPLET."
+                    String namePrefix = runtimeData.getParameter("uPCM_namePrefix");
+                    if (namePrefix != null)
+                        name = namePrefix + name;
                     if (subAction.equals("addParameter")) {
                         String value = runtimeData.getParameter("value");
                         if (value != null)
