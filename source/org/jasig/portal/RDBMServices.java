@@ -45,7 +45,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.sql.DriverManager;
+import java.sql.Driver;
 
 /**
  * Provides relational database access and helper methods.
@@ -60,7 +60,8 @@ public class RDBMServices {
   private static String sJdbcDriver = null;
   private static String sJdbcUrl = null;
   private static String sJdbcUser = null;
-  private static String sJdbcPassword = null;
+  private static final Properties jdbcDriverProps = new Properties();
+  private static Driver jdbcDriver;
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";      // reduce noise in log file
 
@@ -208,7 +209,9 @@ public class RDBMServices {
         sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
         sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
         sJdbcUser = jdbcProps.getProperty("jdbcUser");
-        sJdbcPassword = jdbcProps.getProperty("jdbcPassword");
+        jdbcDriverProps.put("user", sJdbcUser);
+        jdbcDriverProps.put("password", jdbcProps.getProperty("jdbcPassword"));
+        jdbcDriver = (java.sql.Driver)Class.forName(sJdbcDriver).newInstance();
         bPropsLoaded = true;
       }
   }
@@ -221,23 +224,13 @@ public class RDBMServices {
     Connection conn = null;
     for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
       try {
-        Class.forName(sJdbcDriver).newInstance();
-        conn = DriverManager.getConnection(sJdbcUrl, sJdbcUser, sJdbcPassword);
+        conn = jdbcDriver.connect(sJdbcUrl, jdbcDriverProps);
         // Make sure autocommit is set to true
         if (conn != null && !conn.getAutoCommit()) {
           conn.rollback();
           conn.setAutoCommit(true);
         }
         prevErrorMsg = "";
-      } catch (ClassNotFoundException cnfe) {
-        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " was not found, please check the rdbm.properties file and your classpath.");
-        return null;
-      } catch (InstantiationException ie) {
-        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the rdbm.properties file.");
-        return null;
-      } catch (IllegalAccessException iae) {
-        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the rdbm.properties file.");
-        return null;
       } catch (SQLException SQLe) {
         String errMsg = SQLe.getMessage();
         if (!errMsg.equals(prevErrorMsg)) {                     // Only need to see one instance of this error
