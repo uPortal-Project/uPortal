@@ -11,21 +11,24 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.layout.*;
 
 import java.io.*;
-import java.util.Iterator;
+import java.util.Enumeration;
 import java.util.List;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-
+ 
 import org.jasig.portal.utils.XML;
 
 
-public class SimpleUserLayoutManagerTest extends TestCase {
+public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEventListener {
     Document sampleUserLayout=null;
     IUserLayoutStore uls=null;
     IPerson p=null;
     SimpleUserLayoutManager man=null;
     protected final static String SAMPLE_LAYOUT_FILENAME="userLayout.sample";
+
+    boolean nodeAdded, nodeDeleted, nodeMoved, nodeUpdated, layoutSaved, layoutLoaded;
+    LayoutEvent lastEvent;
 
     public SimpleUserLayoutManagerTest(String s) {
         super(s);
@@ -36,21 +39,29 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         // read in the layout DOM
         // note that we really do need to have a DOM structure here in order to introduce
         // persistent changes on the level of userLayout.
+
         //org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
-        org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
+        javax.xml.parsers.DocumentBuilderFactory pf=javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        pf.setValidating(true);
+        javax.xml.parsers.DocumentBuilder parser=pf.newDocumentBuilder();
+        //org.apache.xerces.jaxp.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
+        //parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
         parser.setEntityResolver(er);
-        // set parser features
-        parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-            
-        parser.parse (new org.xml.sax.InputSource(this.getClass().getResourceAsStream(SAMPLE_LAYOUT_FILENAME)));
-        this.sampleUserLayout=parser.getDocument();
+        parser.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
+        this.sampleUserLayout=parser.parse (new org.xml.sax.InputSource(this.getClass().getResourceAsStream(SAMPLE_LAYOUT_FILENAME)));
 
         p=new org.jasig.portal.security.provider.PersonImpl();
 
         assertTrue(sampleUserLayout!=null);
         uls=new SingleDocumentUserLayoutStoreMock(sampleUserLayout);
         man=new SimpleUserLayoutManager(p,new UserProfile(),uls);
+
+        // clear event-related markers
+        nodeAdded=nodeDeleted=nodeMoved=nodeUpdated=layoutSaved=layoutLoaded=false;
+        lastEvent=null;
+        man.addLayoutEventListener(this);
         man.loadUserLayout();
+
     }
 
     protected class UserLayoutDTDResolver implements EntityResolver {
@@ -68,7 +79,13 @@ public class SimpleUserLayoutManagerTest extends TestCase {
             
             if (systemId != null) {
                 if (dtdName != null && systemId.indexOf(dtdName) != -1) {
-                    inStream = this.getClass().getResourceAsStream(dtdName);
+                    try {
+                        Class testClass=Class.forName("org.jasig.portal.layout.SimpleUserLayoutManagerTest");
+                        inStream = testClass.getResourceAsStream(dtdName);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
                 }
                 inSrc = new InputSource(inStream);
             }
@@ -78,6 +95,11 @@ public class SimpleUserLayoutManagerTest extends TestCase {
     }
 
     public void testGetNode() throws Exception {
+
+        // test load event
+        {
+            assertTrue("layoutLoad event receive",layoutLoaded);
+        }
 
         // get a folder
         {
@@ -165,8 +187,12 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         // do a get
         UserLayoutNodeDescription gnode=man.getNode(nchan.getId());
         assertEquals("comparing the original and getNode() result: ",nchan,gnode);
-        assertEquals("parentId is the specified attachment point",man.getParentId(nchan.getId()),parentId);
-        assertEquals("siblingId is the specified next sibling",man.getNextSiblingId(nchan.getId()),siblingId);
+        assertEquals("parentId is the specified attachment point",parentId,man.getParentId(nchan.getId()));
+        assertEquals("siblingId is the specified next sibling",siblingId,man.getNextSiblingId(nchan.getId()));
+
+        assertTrue("nodeAdded event received",nodeAdded);
+        assertTrue("LayoutEvent is not null",lastEvent!=null);
+        assertEquals("LayoutEvent nodeId",nchan.getId(),lastEvent.getNodeDescription().getId());
 
     }
 
@@ -193,7 +219,11 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         // do a get
         UserLayoutNodeDescription gnode=man.getNode(nfold.getId());
         assertEquals("comparing the original and getNode() result: ",nfold,gnode);
-        assertEquals("parentId is the specified attachment point",man.getParentId(nfold.getId()),parentId);
+        assertEquals("parentId is the specified attachment point",parentId,man.getParentId(nfold.getId()));
+
+        assertTrue("nodeAdded event received",nodeAdded);
+        assertTrue("LayoutEvent is not null",lastEvent!=null);
+        assertEquals("LayoutEvent nodeId",nfold.getId(),lastEvent.getNodeDescription().getId());
     }
 
     public void testCanMove() throws Exception {
@@ -209,6 +239,9 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         // try moving from an immutable folder
         nodeId="n6"; targetId="s10";
         assertTrue("Can channel \""+nodeId+"\" (from the immutable folder) be moved to folder \""+targetId+"\"",!man.canMoveNode(nodeId,targetId,null));
+
+
+
     }
 
     public void testCanDelete() throws Exception {
@@ -221,6 +254,7 @@ public class SimpleUserLayoutManagerTest extends TestCase {
 
     public void testDelete() throws Exception {
         String nodeId="s1";
+        String parentId="root";
         man.deleteNode(nodeId);
 
         boolean exception=false;
@@ -232,16 +266,32 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         
         assertTrue("Thrown an exception when looking for a deleted node or returned a node with no parent.",exception || man.getParentId(nodeId)==null);
 
+        assertTrue("nodeDeleted event received",nodeDeleted);
+        assertTrue("LayoutEvent is not null",lastEvent!=null);
+        assertTrue("LayoutMoveEvent was received",lastEvent instanceof LayoutMoveEvent);
+        LayoutMoveEvent lme=(LayoutMoveEvent) lastEvent;
+        assertEquals("LayoutMoveEvent nodeId",nodeId,lme.getNodeDescription().getId());
+        assertEquals("LayoutMoveEvent oldParentNodeId",parentId,lme.getOldParentNodeId());
+
     }
     
     public void testMoveChannel() throws Exception {
         // try moving a channel
         String nodeId="n8";
+        String parentId="s7";
         String targetId="s10";
         assertTrue("Can channel \""+nodeId+"\" be moved to folder \""+targetId+"\"",man.canMoveNode(nodeId,targetId,null));
         man.moveNode(nodeId,targetId,null);
         assertEquals("New channel attachment point",man.getParentId(nodeId),targetId);
         assertEquals("Next siblingId",man.getNextSiblingId(nodeId),null);
+
+        assertTrue("nodeMoved event received",nodeMoved);
+        assertTrue("LayoutEvent is not null",lastEvent!=null);
+        assertTrue("LayoutMoveEvent was received",lastEvent instanceof LayoutMoveEvent);
+        LayoutMoveEvent lme=(LayoutMoveEvent) lastEvent;
+        assertEquals("LayoutMoveEvent nodeId",nodeId,lme.getNodeDescription().getId());
+        assertEquals("LayoutMoveEvent oldParentNodeId",parentId,lme.getOldParentNodeId());
+
     }
 
     public void testMoveUnderRootNode() throws Exception {
@@ -270,6 +320,11 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         UserLayoutChannelDescription rchan=(UserLayoutChannelDescription) man.getNode(channelId);
         assertEquals("Comparing node used to update with the update result: ",chan,rchan);
 
+        assertTrue("nodeUpdated event received",nodeUpdated);
+        assertTrue("LayoutEvent is not null",lastEvent!=null);
+        assertEquals("LayoutEvent nodeId",channelId,lastEvent.getNodeDescription().getId());
+
+
     }
 
     public void testUpdateFolder() throws Exception {
@@ -289,6 +344,10 @@ public class SimpleUserLayoutManagerTest extends TestCase {
 
         List nchildren=man.getChildIds(folderId);
         assertEquals("Comparing child Ids of an updated folder: ",ochildren,nchildren);
+
+        assertTrue("nodeUpdated event received",nodeUpdated);
+        assertTrue("LayoutEvent is not null",lastEvent!=null);
+        assertEquals("LayoutEvent nodeId",folderId,lastEvent.getNodeDescription().getId());
 
     }
 
@@ -333,13 +392,13 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         assertEquals(message+"channel description",one.getDescription(),two.getDescription());
 
         // compare parameter content
-        for(Iterator i=one.getParameterNames().iterator();i.hasNext();) {
-            String pName=(String)i.next();
+        for(Enumeration e=one.getParameterNames();e.hasMoreElements();) {
+            String pName=(String)e.nextElement();
             assertEquals("channel parameter \""+pName+"\"",one.getParameterValue(pName),two.getParameterValue(pName));
         }
         // other way around
-        for(Iterator i=two.getParameterNames().iterator();i.hasNext();) {
-            assertTrue("contains parameter",one.containsParameter((String)i.next()));
+        for(Enumeration e=two.getParameterNames();e.hasMoreElements();) {
+            assertTrue("contains parameter",one.containsParameter((String)e.nextElement()));
         }
 
     }
@@ -350,6 +409,50 @@ public class SimpleUserLayoutManagerTest extends TestCase {
 
     public void testsGetFolderDescription() throws Exception {
         
+    }
+
+    public void channelAdded(LayoutEvent ev) {
+        lastEvent=ev;
+        nodeAdded=true;
+    }
+
+    public void channelUpdated(LayoutEvent ev) {
+        lastEvent=ev;
+        nodeUpdated=true;
+    }
+
+    public void channelMoved(LayoutMoveEvent ev) {
+        lastEvent=ev;
+        nodeMoved=true;
+    }
+
+    public void channelDeleted(LayoutMoveEvent ev) {
+        lastEvent=ev;
+        nodeDeleted=true;
+    }
+
+    public void folderAdded(LayoutEvent ev){
+        lastEvent=ev;
+        nodeAdded=true;
+    }
+    public void folderUpdated(LayoutEvent ev) {
+        lastEvent=ev;
+        nodeUpdated=true;
+    }
+    public void folderMoved(LayoutMoveEvent ev){
+        lastEvent=ev;
+        nodeMoved=true;
+    }
+    public void folderDeleted(LayoutMoveEvent ev){
+        lastEvent=ev;
+        nodeDeleted=true;
+    }
+
+    public void layoutLoaded() {
+        layoutLoaded=true;
+    }
+    public void layoutSaved() {
+        layoutSaved=true;
     }
 
 }
