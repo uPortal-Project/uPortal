@@ -46,7 +46,7 @@ import org.apache.xalan.xslt.*;
 import java.net.*;
 import org.xml.sax.helpers.*;
 
-/** 
+/**
  * A tool for managing a collection of stylesheets.
  * StylesheetSet allows you to instansiate a list
  * of stylesheets in memory and select one according
@@ -63,13 +63,13 @@ public class StylesheetSet extends SAXFilterImpl
   {
     title_table=new Hashtable ();
   }
- 
+
   public StylesheetSet (DocumentHandler dt)
   {
-    this (); 
+    this ();
     this.setDocumentHandler (dt);
   }
-  
+
   public StylesheetSet (String uri)
   {
     try
@@ -80,7 +80,7 @@ public class StylesheetSet extends SAXFilterImpl
       URL url=expandSystemId (uri);
       if (url!=null)  parser.parse (new org.xml.sax.InputSource (url.openStream ()));
       this.title_table=dummy.getTitleTable ();
-    } 
+    }
     catch (Exception e)
     {
       Logger.log (Logger.ERROR,"SytlesheetSet::StylesheetSet(uri) : Exception occurred while opening stylesheet list uri : " + uri + ". "+ e);
@@ -90,19 +90,19 @@ public class StylesheetSet extends SAXFilterImpl
   public XSLTInputSource getStylesheet (String title)
   {
     Hashtable media_table= (Hashtable) title_table.get (title);
-    
+
     if (media_table==null) return null;
     StylesheetDescription sd=null;
-    
-    if (media_table.isEmpty ()) 
+
+    if (media_table.isEmpty ())
       return null;
-    
+
     for (Enumeration e = media_table.elements () ; e.hasMoreElements () ;)
     {
       if (sd==null)
-      { 
-        sd= (StylesheetDescription) e.nextElement ();  
-      } 
+      {
+        sd= (StylesheetDescription) e.nextElement ();
+      }
       else
       {
         StylesheetDescription tsd= (StylesheetDescription) e.nextElement ();
@@ -120,28 +120,28 @@ public class StylesheetSet extends SAXFilterImpl
     // browse through all titles to find a non-alternate
     // stylesheet
     StylesheetDescription sd=null;
-    
+
     for (Enumeration e = title_table.elements (); e.hasMoreElements ();)
     {
       Hashtable media_table = (Hashtable) e.nextElement ();
-      
+
       if (!media_table.isEmpty ())
       {
         for (Enumeration f = media_table.elements () ; f.hasMoreElements () ;)
         {
           if (sd==null)
-          { 
-            sd= (StylesheetDescription) f.nextElement ();  
-          } 
+          {
+            sd= (StylesheetDescription) f.nextElement ();
+          }
           else
           {
             StylesheetDescription tsd= (StylesheetDescription) f.nextElement ();
-            
-            if (!tsd.getAlternate ()) 
+
+            if (!tsd.getAlternate ())
               sd=tsd;
           }
-          
-          if (!sd.getAlternate ()) 
+
+          if (!sd.getAlternate ())
             break;
         }
       }
@@ -153,51 +153,80 @@ public class StylesheetSet extends SAXFilterImpl
   public XSLTInputSource getStylesheet (String title, String media)
   {
     Hashtable media_table= (Hashtable)title_table.get (title);
-    
-    if (media_table==null) 
+
+    if (media_table==null)
       return null;
-    
+
     StylesheetDescription sd= (StylesheetDescription) media_table.get (media);
-    
+
     if (sd==null)
     {
       Enumeration sls=media_table.elements ();
-      
+
       if (sls.hasMoreElements ())
         sd = (StylesheetDescription) sls.nextElement ();
     }
 
-    if (sd==null) 
+    if (sd==null)
       return null;
 
     return (new XSLTInputSource (sd.getURI ()));
+  }
+
+  /**
+   * Returns the URI of the stylesheet matching the title and media
+   * @param title
+   * @param media
+   * @return the stylesheet URI
+   */
+  public String getStylesheetURI (String title, String media)
+  {
+    Hashtable media_table = (Hashtable)title_table.get(title);
+
+    if (media_table == null)
+      return null;
+
+    StylesheetDescription sd = (StylesheetDescription) media_table.get (media);
+
+    if (sd == null)
+    {
+      Enumeration sls = media_table.elements ();
+
+      if (sls.hasMoreElements())
+        sd = (StylesheetDescription) sls.nextElement ();
+    }
+
+    if (sd == null)
+      return null;
+
+    return sd.getURI ();
   }
 
   protected StylesheetDescription getStylesheetDescription (String media)
   {
     // search for a non-alternate stylesheet for a particular media
     StylesheetDescription sd=null;
-    
+
     for (Enumeration e = title_table.elements (); e.hasMoreElements ();)
     {
       Hashtable media_table = (Hashtable) e.nextElement ();
       StylesheetDescription tsd= (StylesheetDescription) media_table.get (media);
-      
+
       if (tsd!=null)
       {
-        if (sd==null) 
+        if (sd==null)
           sd=tsd;
-        
+
         if (!tsd.getAlternate ())
-        { 
-          sd=tsd; 
-          break; 
+        {
+          sd=tsd;
+          break;
         }
-      } 
+      }
       else
       {
         Enumeration sls=media_table.elements ();
-        
+
         if (sls.hasMoreElements ())
           sd = (StylesheetDescription) sls.nextElement ();
       }
@@ -215,10 +244,10 @@ public class StylesheetSet extends SAXFilterImpl
   {
     //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("user-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd=getStylesheetDescription (getMedia (req));
-    
-    if (sd!=null) 
+
+    if (sd!=null)
       return new XSLTInputSource (sd.getURI ());
-    else 
+    else
       return null;
   }
 
@@ -227,14 +256,14 @@ public class StylesheetSet extends SAXFilterImpl
   {
     // see if the title is already in the hashtable
     Hashtable media_table= (Hashtable) title_table.get (sd.getTitle ());
-    
+
     if (media_table==null)
     {
       media_table=new Hashtable ();
       media_table.put (sd.getMedia (), sd);
       title_table.put (sd.getTitle (), media_table);
-    } 
-    else 
+    }
+    else
       media_table.put (sd.getMedia (),sd);
   }
 
@@ -245,7 +274,7 @@ public class StylesheetSet extends SAXFilterImpl
       StylesheetDescription sd=new StylesheetDescription (data);
       this.addStyleSheet (sd);
     }
-    
+
     // pass on the stylesheet instruction
     if (outDocumentHandler != null)
     {
@@ -258,16 +287,16 @@ public class StylesheetSet extends SAXFilterImpl
 
   {
     String CURRENTDIR= System.getProperty ("user.dir")+System.getProperty ("file.separator");
-    
+
     if (uri == null) uri="file://" + CURRENTDIR + "media.properties";
-    
+
     try
     {
       URL url=expandSystemId (uri);
-      
-      if (url!=null)  
+
+      if (url!=null)
         props=new OrderedProps (url.openStream ());
-    } 
+    }
     catch (IOException ioe1)
     {
       Logger.log (Logger.ERROR,"SytlesheetSet::setMediaProps : Exception occurred while media properties file: " + uri + ". "+ ioe1);
@@ -275,18 +304,18 @@ public class StylesheetSet extends SAXFilterImpl
   }
 
   public Hashtable getTitleTable ()
-  { 
-    return title_table; 
+  {
+    return title_table;
   }
 
   protected String getMedia (HttpServletRequest req)
   {
-    if (props==null) 
+    if (props==null)
       this.setMediaProps ((String) null);
 
-    if (props!=null) 
+    if (props!=null)
       return props.getValue (req.getHeader ("user-Agent"));
-    
+
     return (String) null;
   }
 
@@ -302,7 +331,7 @@ public class StylesheetSet extends SAXFilterImpl
     try
     {
       URL url = new URL (id);
-      
+
       if (url != null)
         return url;
     }
@@ -317,11 +346,11 @@ public class StylesheetSet extends SAXFilterImpl
     // normalize base
     URL base = null;
     URL url = null;
-    
+
     try
     {
       String dir;
-      
+
       try
       {
         dir = fixURI (System.getProperty ("user.dir"));
@@ -330,12 +359,12 @@ public class StylesheetSet extends SAXFilterImpl
       {
         dir = "";
       }
-      
+
       if (!dir.endsWith ("/"))
       {
         dir = dir + "/";
       }
-      
+
       base = new URL ("file", "", dir);
 
       // expand id
@@ -364,11 +393,11 @@ public class StylesheetSet extends SAXFilterImpl
     if (str.length () >= 2)
     {
       char ch1 = str.charAt (1);
-      
+
       if (ch1 == ':')
       {
         char ch0 = Character.toUpperCase (str.charAt (0));
-        
+
         if (ch0 >= 'A' && ch0 <= 'Z')
         {
           str = "/" + str;
@@ -406,10 +435,10 @@ public class StylesheetSet extends SAXFilterImpl
       while ( (currentLine = input.readLine ()) != null)
       {
         currentTokens = new StringTokenizer (currentLine, "=\t\r\n");
-        
-        if (currentTokens.hasMoreTokens ()) 
+
+        if (currentTokens.hasMoreTokens ())
           Key = currentTokens.nextToken ().trim ();
-        
+
         if ( (Key != null) && !Key.startsWith ("#") && currentTokens.hasMoreTokens ())
         {
           String temp[] = new String[2];
@@ -429,11 +458,11 @@ public class StylesheetSet extends SAXFilterImpl
     String getValue (String s)
     {
       int i, j = attVec.size ();
-      
+
       for (i = 0; i < j; i++)
       {
         String temp[] = (String[]) attVec.elementAt (i);
-        
+
         if (s.indexOf (temp[0]) > -1)
           return temp[1];
       }
