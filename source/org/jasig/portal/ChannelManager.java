@@ -46,6 +46,7 @@ import  java.util.Enumeration;
 import  java.util.Map;
 import  java.util.WeakHashMap;
 import  org.jasig.portal.utils.SoftHashMap;
+import  org.jasig.portal.security.provider.ReferencePermissionManager;
 import  java.util.Collections;
 import  org.xml.sax.*;
 import  org.w3c.dom.*;
