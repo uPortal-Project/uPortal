@@ -317,6 +317,24 @@
         <name>Roles</name>
         <roles>
           <role>
+            <name>Everyone</name>
+            <description>Description for Everyone</description>
+          </role>
+          <role>
+            <name>Portal Administrator</name>
+            <description>Description for Portal Administrator</description>
+          </role>
+          <role>
+            <name>Channel Publisher</name>
+            <description>Description for Channel Publisher</description>
+          </role>
+          <role>
+            <name>Channel Developer</name>
+            <description>Description for Channel Developer</description>
+          </role>
+          <role>
+            <name>Student</name>
+            <description>Description for Channel Student</description>
           </role>
         </roles>
       </step>
