@@ -214,6 +214,7 @@ public class CHeader extends BaseChannel
     StringBuffer sbKey = new StringBuffer(1024);
     // guest pages are cached system-wide
     k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+    sbKey.append("org.jasig.portal.CHeader: ");
     sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
     sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
     sbKey.append("stylesheetURI:");
