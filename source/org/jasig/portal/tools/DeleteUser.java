@@ -39,18 +39,17 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
-import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.RDBMEntityGroupStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.services.GroupService;
 
 /**
  * Title:        Delete Portal User
@@ -138,24 +137,43 @@ public class DeleteUser {
       return;
   }
 
-  public static void removeUserFromLocalGroups(String userName) throws Exception
-  {
-      /* Only remove user from groups in the local service (the portal db). */
-      Class gmType = Class.forName("org.jasig.portal.security.IPerson");
-      IGroupMember user = new EntityImpl(userName, gmType);
-      IEntityGroupStore groupStore = new RDBMEntityGroupStore();
-      java.util.Iterator userGroups =  groupStore.findContainingGroups(user);
-      System.out.println("DeleteUser.main() for " + userName + ": removing group memberships.");
-      while (userGroups.hasNext())
-      {
-          IEntityGroup eg = (IEntityGroup) userGroups.next();
-          System.out.println( ">>Removing user from group " + eg.getName() );
-          eg.removeMember(user);
-          groupStore.updateMembers(eg);
-      }
-  }
-
-  public static void deleteBookmarks(int uid) throws SQLException
+  /**
+   * This method was always kind of funky, and maybe it still is.  It 
+   * used to go directly to the local group store to get memberships 
+   * for a user rather than through the group service.  For a number
+   * of reasons, including the fact that groups are cached in the JVM,
+   * the current group service design tries to frustrate that sort of
+   * guerilla activity by making you use the service facade.  In this 
+   * version, we get ALL of the user's memberships and remove the user 
+   * from those groups that are updatable, which will typically be the 
+   * groups from the local service.  The method is synchronized to 
+   * reduce the likelihood of concurrent updates to the same group, but 
+   * that only works if this program runs in the same process as the 
+   * portal, and not, e.g., as an ant task.  
+   * 
+   * @param userName String - the IPerson.USERNAME of the ex-user.
+   * @throws Exception
+   */
+    public synchronized static void removeUserFromLocalGroups(String userName) throws Exception
+    {
+        Class gmType = Class.forName("org.jasig.portal.security.IPerson");
+        IGroupMember user = GroupService.getGroupMember(userName, gmType);
+      
+        System.out.println("DeleteUser.removeUserFromLocalGroups() for " + userName + ": removing group memberships.");
+      
+        for (Iterator groups = user.getContainingGroups(); groups.hasNext();)
+        {
+            IEntityGroup eg = (IEntityGroup) groups.next();
+            if ( eg.isEditable() )
+            {
+                System.out.println( ">>Removing user from group " + eg.getName() );
+                eg.removeMember(user);
+                eg.updateMembers();
+            }
+        }
+    }
+    
+      public static void deleteBookmarks(int uid) throws SQLException
   {
       DatabaseMetaData metadata = null;
       Connection con = null;
