@@ -160,14 +160,6 @@
           #
           # Modify this localbuild.properties file to suit your environment
           #
-          # directory in which javadocs are generated
-          # comment docdest to suppress javadoc target
-          #docdest=./docs
-          #docdest=/usr/local/home/wbrooks/box/html/portal-1/docs
-
-          # and of course the classpath, comment-out to use your environment CLASSPATH
-          classpath=./build/dist/WEB-INF/classes:lib/activation.jar:lib/jaxp.jar:lib/log4j-core.jar:lib/w3c.jar:lib/cos.jar:lib/jndi.jar:lib/mail.jar:lib/xalan.jar:lib/dxml.jar:lib/ldap.jar:lib/oromatcher11.jar:lib/xerces.jar:lib/hsql.jar:ldapbp.jar:lib/parser.jar:lib/xml4j.jar:.
-          
           # sql properties for running scripts and populating the database
           # comment the dbdriver to suppress sql target
           dbdriver=org.hsql.jdbcDriver
@@ -178,10 +170,11 @@
           # Web application server directory for deploying the packaged portal 
           webapps=/usr/local/home/wbrooks/tomcat/webapps
 
-       you shouldn't have to edit the classpath above, but you'll have
-       to change the dbdriver, dburl and dblogin properties to reflect
-       your situation. Also, the webapps property should point to the
-       place you're going to deploy the completed web application.
+       notice that we are not setting classpath above, ant will automatically add
+       every .jar file you put in the lib/ directory in the previous step to the 
+       CLASSPATH. You will have to change the dbdriver, dburl and dblogin 
+       properties to reflect your situation. Also, the webapps property should
+       point to the place you're going to deploy the completed web application.
 
     Step 6: Create the uPortal .war file
 
