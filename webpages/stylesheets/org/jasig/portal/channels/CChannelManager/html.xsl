@@ -265,6 +265,8 @@
               <xsl:with-param name="i" select="1"/>
             </xsl:call-template>
           </td>
+          <form method="post" action="{$baseActionURL}">
+          <input type="hidden" name="uPCM_action" value="filterByCategory"/>
           <td width="100%" class="uportal-background-med">Filter by category:<xsl:for-each select="//*[@ID = $filterByID]">
           <xsl:for-each select="ancestor::category">
           <a class="uportal-navigation-category-selected"><xsl:attribute name="href">
@@ -284,6 +286,7 @@
                   </xsl:attribute>No Filter</option></select>
               <input type="submit" name="uPCM_submit" value="go" class="uportal-input-text"/></xsl:for-each>
           </td>
+          </form>
       </tr>
       <tr>
         <td colspan="2">
@@ -316,7 +319,7 @@
                   <xsl:sort select="@name"/>
                   <xsl:if test="(position() &gt; (//recordsPerPage * //currentPage)-//recordsPerPage) and (position() &lt;= //recordsPerPage * //currentPage)">
                     <tr class="uportal-channel-text" valign="top">
-                
+
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Edit settings for {@ID}"/>
@@ -873,7 +876,7 @@
 </xsl:otherwise>
 
 </xsl:choose>
-      
+
 
                 <xsl:choose>
                   <xsl:when test="@display">
@@ -2354,7 +2357,7 @@ Detachable<br/>
 
 
 
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectCategory&amp;uPCM_capture=reviewChannel">Selected Categories:</a></strong></td>
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">Selected Categories:</a></strong></td>
 
 
 
@@ -2362,7 +2365,7 @@ Detachable<br/>
 
 
 
-        <td ><a href="{$baseActionURL}?uPCM_action=selectCategory&amp;uPCM_capture=reviewChannel">
+        <td ><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">
 
         <xsl:for-each select="//registry//category[@ID = //selectedCategory]">
 <img alt="interface image" src="{$mediaPath}/category.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
