@@ -70,14 +70,14 @@ public abstract class BaseMultithreadedChannel implements IMultithreadedChannel 
     private PortalEvent portalEvent = null;
     private Map channelData = new HashMap();
 
-    protected ChannelStaticData getStaticData() { return this.staticData; }
-    protected ChannelRuntimeData getRuntimeData() { return this.runtimeData; }
-    protected PortalEvent getPortalEvent() { return this.portalEvent; }
-    protected Map getChannelData() { return this.channelData; }
-    protected void setStaticData(ChannelStaticData sd) { this.staticData = sd; }
-    protected void setRuntimeData(ChannelRuntimeData rd) { this.runtimeData = rd; }
-    protected void setPortalEvent(PortalEvent ev) { this.portalEvent = ev; }
-    protected void setChannelData(Map cd) { this.channelData = cd; }
+    public ChannelStaticData getStaticData() { return this.staticData; }
+    public ChannelRuntimeData getRuntimeData() { return this.runtimeData; }
+    public PortalEvent getPortalEvent() { return this.portalEvent; }
+    public Map getChannelData() { return this.channelData; }
+    public void setStaticData(ChannelStaticData sd) { this.staticData = sd; }
+    public void setRuntimeData(ChannelRuntimeData rd) { this.runtimeData = rd; }
+    public void setPortalEvent(PortalEvent ev) { this.portalEvent = ev; }
+    public void setChannelData(Map cd) { this.channelData = cd; }
   }
 
   static {
