@@ -57,8 +57,8 @@
     -->
 
     <!-- JDBC Properties -->
-    <driver>org.hsql.jdbcDriver</driver>
-    <url>jdbc:HypersonicSQL:hsql://localhost:8887</url>
+    <driver>org.hsqldb.jdbcDriver</driver>
+    <url>jdbc:hsqldb:hsql://localhost:8887</url>
     <logonid>sa</logonid>
     <logonpassword></logonpassword>
     <uidquery>SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
