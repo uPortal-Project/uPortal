@@ -83,6 +83,17 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     }
   }
 
+
+  /**
+   * Create a new ChannelType object.
+   * @return channelType, the new channel type
+   * @throws java.lang.Exception
+   */
+  public ChannelType newChannelType() throws Exception {
+    int nextChanTypeId = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHAN_TYPE");
+    return new ChannelType(nextChanTypeId);
+  }
+
   /**
    * Get the channel type associated with a particular identifier.
    * @param channelTypeId, the channel type identifier
@@ -106,7 +117,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             String descr = rs.getString("TYPE_DESCR");
             String cpdUri = rs.getString("TYPE_DEF_URI");
 
-            channelType = new ChannelType(channelTypeId, javaClass, name, descr, cpdUri);
+            channelType = new ChannelType(channelTypeId);
+            channelType.setJavaClass(javaClass);
+            channelType.setName(name);
+            channelType.setDescription(descr);
+            channelType.setCpdUri(cpdUri);
           }
         } finally {
           rs.close();
@@ -144,7 +159,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             String descr = rs.getString(4);
             String cpdUri = rs.getString(5);
 
-            ChannelType channelType = new ChannelType(channelTypeId, javaClass, name, descr, cpdUri);
+            ChannelType channelType = new ChannelType(channelTypeId);
+            channelType.setJavaClass(javaClass);
+            channelType.setName(name);
+            channelType.setDescription(descr);
+            channelType.setCpdUri(cpdUri);
             channelTypesList.add(channelType);
           }
           channelTypes = (ChannelType[])channelTypesList.toArray(new ChannelType[0]);
@@ -161,49 +180,93 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
   /**
-   * Registers a new channel type.
+   * Persists a channel type.
    * @param chanType a channel type
    * @throws java.sql.SQLException
    */
-  public void addChannelType(ChannelType chanType) throws SQLException {
+  public void saveChannelType(ChannelType chanType) throws SQLException {
     Connection con = null;
 
-    try {
-      int nextID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHAN_TYPE");
-      String javaClass = chanType.getJavaClass();
-      String name = chanType.getName();
-      String descr = chanType.getDescription();
-      String cpdUri = chanType.getCpdUri();
-
-      con = RDBMServices.getConnection();
-
-      // Set autocommit false for the connection
-      RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
+    // Check if channel type exists.  If it doesn't exist, do an insert.
+    // Otherwise, do an update.
+    ChannelType chanTypeInStore = getChannelType(chanType.getId());
+    if (chanTypeInStore == null) {
       try {
-        // Insert channel type.
-        String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
-         "'" + nextID + "', " +
-         "'" + javaClass + "', " +
-         "'" + name + "', " +
-         "'" + descr + "', " +
-         "'" + cpdUri + "')";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelType(): " + insert);
-        int rows = stmt.executeUpdate(insert);
+        int chanTypeId = chanType.getId();
+        String javaClass = chanType.getJavaClass();
+        String name = chanType.getName();
+        String descr = chanType.getDescription();
+        String cpdUri = chanType.getCpdUri();
 
-        // Commit the transaction
-        RDBMServices.commit(con);
-      } catch (SQLException sqle) {
-        // Roll back the transaction
-        RDBMServices.rollback(con);
-        throw sqle;
+        con = RDBMServices.getConnection();
+
+        // Set autocommit false for the connection
+        RDBMServices.setAutoCommit(con, false);
+        Statement stmt = con.createStatement();
+        try {
+          // Insert channel type.
+          String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
+           "'" + chanTypeId + "', " +
+           "'" + javaClass + "', " +
+           "'" + name + "', " +
+           "'" + descr + "', " +
+           "'" + cpdUri + "')";
+          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelType(): " + insert);
+          int rows = stmt.executeUpdate(insert);
+
+          // Commit the transaction
+          RDBMServices.commit(con);
+        } catch (SQLException sqle) {
+          // Roll back the transaction
+          RDBMServices.rollback(con);
+          throw sqle;
+        } finally {
+            stmt.close();
+        }
+      } catch (Exception e) {
+        throw new SQLException(e.getMessage());
       } finally {
-          stmt.close();
+        RDBMServices.releaseConnection(con);
       }
-    } catch (Exception e) {
-      throw new SQLException(e.getMessage());
-    } finally {
-      RDBMServices.releaseConnection(con);
+    } else {
+      // The channel type exists, so do an update
+      try {
+        int chanTypeId = chanType.getId();
+        String javaClass = chanType.getJavaClass();
+        String name = chanType.getName();
+        String descr = chanType.getDescription();
+        String cpdUri = chanType.getCpdUri();
+
+        con = RDBMServices.getConnection();
+
+        // Set autocommit false for the connection
+        RDBMServices.setAutoCommit(con, false);
+        Statement stmt = con.createStatement();
+        try {
+          // Update channel type.
+          String update = "UPDATE UP_CHAN_TYPE SET " +
+           "TYPE='" + javaClass + "', " +
+           "TYPE_NAME='" + name + "', " +
+           "TYPE_DESCR='" + descr + "', " +
+           "TYPE_DEF_URI='" + cpdUri + "' " +
+           "WHERE TYPE_ID=" + chanTypeId;
+          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.saveChannelType(): " + update);
+          int rows = stmt.executeUpdate(update);
+
+          // Commit the transaction
+          RDBMServices.commit(con);
+        } catch (SQLException sqle) {
+          // Roll back the transaction
+          RDBMServices.rollback(con);
+          throw sqle;
+        } finally {
+            stmt.close();
+        }
+      } catch (Exception e) {
+        throw new SQLException(e.getMessage());
+      } finally {
+        RDBMServices.releaseConnection(con);
+      }
     }
   }
 

@@ -47,10 +47,17 @@ import java.util.Date;
 public interface IChannelRegistryStore {
 
   /**
+   * Creates a new channel type.
+   * @return channelType, the new channel type
+   * @throws java.lang.Exception
+   */
+  public ChannelType newChannelType() throws Exception;
+
+  /**
    * Get the channel type associated with a particular identifier.
    * @param channelTypeId, the channel type identifier
    * @return channelType, the channel type
-   * @throws java.sql.SQLException
+   * @throws java.lang.Exception
    */
   public ChannelType getChannelType(int channelTypeId) throws Exception;
 
@@ -62,17 +69,17 @@ public interface IChannelRegistryStore {
   public ChannelType[] getChannelTypes() throws Exception;
 
   /**
-   * Registers a channel type.
+   * Persists a channel type.
    * @param chanType a channel type
    * @throws java.lang.Exception
    */
-  public void addChannelType(ChannelType chanType) throws Exception;
+  public void saveChannelType(ChannelType chanType) throws Exception;
 
   /**
    * Deletes a channel type.  The deletion will only succeed if no existing
    * channels reference the channel type.
    * @param chanType a channel type
-   * @throws java.sql.SQLException
+   * @throws java.lang.Exception
    */
   public void deleteChannelType(ChannelType chanType) throws Exception;
 
@@ -124,7 +131,7 @@ public interface IChannelRegistryStore {
    * Associates a channel definition with a category.
    * @param channelDef, the channel definition
    * @param category, the channel category to which to associate the channel definition
-   * @throws org.jasig.portal.PortalException
+   * @throws java.lang.Exception
    */
   public void addChannelToCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
 
@@ -132,7 +139,7 @@ public interface IChannelRegistryStore {
    * Disassociates a channel definition from a category.
    * @param channelDef, the channel definition
    * @param category, the channel category from which to disassociate the channel definition
-   * @throws org.jasig.portal.PortalException
+   * @throws java.lang.Exception
    */
   public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
 
