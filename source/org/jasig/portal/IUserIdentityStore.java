@@ -49,7 +49,7 @@ public interface IUserIdentityStore {
    * @return  uPortalUID number
    * @throws Authorization exception if no user is found.
    */
-  public int getuPortalUID(IPerson person) throws AuthorizationException;
+  public int getPortalUID(IPerson person) throws AuthorizationException;
     /**
    *
    * getuPortalUID
@@ -59,8 +59,8 @@ public interface IUserIdentityStore {
    * @throws Authorization exception if createPortalData is false and no user is found
    *  or if a sql error is encountered
    */
-  public int getuPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
+  public int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
 
-  public void removeuPortalUID(int uPortalUID) throws Exception;
+  public void removePortalUID(int uPortalUID) throws Exception;
 
 }
