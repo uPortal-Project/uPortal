@@ -73,6 +73,11 @@ public interface IGroupsManagerWrapper {
     * @return Element
     */
    public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc);
+   /**
+    * Removes an element from the SmartCache
+    * @param aKey
+    */
+   public void removeCachedElement (Object aKey);
 }
 
 
