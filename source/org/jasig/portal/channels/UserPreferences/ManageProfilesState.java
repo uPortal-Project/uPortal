@@ -103,7 +103,9 @@ class ManageProfilesState extends BaseState {
 			userProfileList=null;
 		    }
 		} else if(action.equals("map")) {
-		    //		    this.getUserPreferencesDB().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(),"user-agent-header",Integer.parseInt(profileId));
+		    this.getUserPreferencesDB().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(),this.runtimeData.getBrowserInfo().getUserAgent(),Integer.parseInt(profileId));
+		    // let userLayoutManager know that the current profile has changed : everything must be reloaded
+		    
 		}
 	    }
 		
