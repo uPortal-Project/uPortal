@@ -169,7 +169,9 @@ public class CUserPreferences implements IPrivilegedChannel {
    */
   public void receiveEvent(PortalEvent ev) {
     // no events for this channel
-    internalState.receiveEvent(ev);
+    if (internalState != null) {
+      internalState.receiveEvent(ev);
+    }
   }
 
   /** Receive static channel data from the portal
