@@ -39,6 +39,7 @@ import java.io.*;
 import java.util.*;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.EntityTypes;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.GroupsException;
@@ -159,6 +160,18 @@ public class NodeGroupService implements IGroupService {
       else
         gm = getEntity(key, type);
       return gm;
+    }
+
+    /**
+     * Returns an <code>IGroupMember</code> representing either a group or a
+     * portal entity, based on the <code>EntityIdentifier</code>, which
+     * refers to the UNDERLYING entity for the <code>IGroupMember</code>.
+     */
+    public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
+    throws GroupsException
+    {
+      return getGroupMember(underlyingEntityIdentifier.getKey(),
+          underlyingEntityIdentifier.getType());
     }
 
      /**

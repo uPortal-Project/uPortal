@@ -112,6 +112,18 @@ public class GroupService implements IGroupConstants
         return instance().igetGroupMember(key, type);
     }
 
+    /**
+     * Returns an <code>IGroupMember</code> representing either a group or a
+     * portal entity, based on the <code>EntityIdentifier</code>, which
+     * refers to the UNDERLYING entity for the <code>IGroupMember</code>.
+     */
+    public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
+    throws GroupsException
+    {
+      return getGroupMember(underlyingEntityIdentifier.getKey(),
+          underlyingEntityIdentifier.getType());
+    }
+
     /*
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.

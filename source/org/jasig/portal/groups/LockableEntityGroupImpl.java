@@ -77,6 +77,24 @@ protected ILockableGroupService getLockableGroupService() throws GroupsException
     return (ILockableGroupService) super.getGroupService();
 }
 /**
+ *
+ */
+private void primUpdate(boolean renewLock) throws GroupsException
+{
+    getLockableGroupService().updateGroup(this, renewLock);
+    primUpdateMembers();
+    clearPendingUpdates();
+}
+/**
+ *
+ */
+private void primUpdateMembers(boolean renewLock) throws GroupsException
+{
+    getLockableGroupService().updateGroupMembers(this, renewLock);
+    primUpdateMembers();
+    clearPendingUpdates();
+}
+/**
  * @param lock org.jasig.portal.concurrency.IEntityLock
  */
 public void setLock(IEntityLock newLock)
@@ -94,18 +112,27 @@ public String toString()
  */
 public void update() throws GroupsException
 {
-    getLockableGroupService().updateGroup(this);
-    primUpdateMembers();
-    clearPendingUpdates();
-
+    primUpdate(false);
+}
+/**
+ *
+ */
+public void updateAndRenewLock() throws GroupsException
+{
+    primUpdate(true);
 }
 /**
  *
  */
 public void updateMembers() throws GroupsException
 {
-    getLockableGroupService().updateGroupMembers(this);
-    primUpdateMembers();
-    clearPendingUpdates();
+    primUpdateMembers(false);
+}
+/**
+ *
+ */
+public void updateMembersAndRenewLock() throws GroupsException
+{
+    primUpdateMembers(true);
 }
 }

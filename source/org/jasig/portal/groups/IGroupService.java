@@ -36,6 +36,7 @@
 package org.jasig.portal.groups;
 
 import java.util.Iterator;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * Defines an api for discovering an entry point into the groups system,
@@ -81,6 +82,14 @@ public interface IGroupService {
    * an <code>IEntity</code>.
    */
   public IGroupMember getGroupMember(String key, Class type) throws GroupsException;
+
+  /**
+   * Returns an <code>IGroupMember</code> representing either a group or a
+   * portal entity, based on the <code>EntityIdentifier</code>, which
+   * refers to the UNDERLYING entity for the <code>IGroupMember</code>.
+   */
+  public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
+  throws GroupsException;
 
   /**
    * Returns a new <code>IEntityGroup</code> for the given Class with an unused

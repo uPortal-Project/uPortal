@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +35,8 @@
 package org.jasig.portal.groups;
 
 /**
- * Extends IGroupService with methods for finding and maintaining
- * <code>ILockableEntityGroups</code>.
+ * Extends IGroupService with methods for finding and maintaining 
+ * <code>ILockableEntityGroups</code>.  
  *
  * @author Dan Ellentuck
  * @version $Revision$
@@ -55,7 +54,7 @@ public interface ILockableGroupService extends IGroupService {
    * @param key String - the group key.
    * @param owner String - the lock owner.
    */
-  public ILockableEntityGroup findGroupWithLock(String key, String owner)
+  public ILockableEntityGroup findGroupWithLock(String key, String owner) 
   throws GroupsException;
   /**
    * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
@@ -65,14 +64,28 @@ public interface ILockableGroupService extends IGroupService {
    * @param owner String - the lock owner.
    * @param durationSecs int - the duration of the lock in seconds.
    */
-  public ILockableEntityGroup findGroupWithLock(String key, String owner, int durationSecs)
+  public ILockableEntityGroup findGroupWithLock(String key, String owner, int durationSecs) 
   throws GroupsException;
   /**
    * Commits the updated <code>ILockableEntityGroup</code> to the store.
    */
-  public void updateGroup(ILockableEntityGroup group) throws GroupsException;
+  public void updateGroup(ILockableEntityGroup group) 
+  throws GroupsException;
   /**
    * Commits the updated <code>ILockableEntityGroup</code> to the store.
    */
-  public void updateGroupMembers(ILockableEntityGroup group) throws GroupsException;
+  public void updateGroupMembers(ILockableEntityGroup group) 
+  throws GroupsException;
+  /**
+   * Commits the updated <code>ILockableEntityGroup</code> to the store and
+   * renews the lock.
+   */
+  public void updateGroup(ILockableEntityGroup group, boolean renewLock) 
+  throws GroupsException;
+  /**
+   * Commits the updated <code>ILockableEntityGroup</code> to the store and 
+   * renews the lock.
+   */
+  public void updateGroupMembers(ILockableEntityGroup group, boolean renewLock) 
+  throws GroupsException;
 }

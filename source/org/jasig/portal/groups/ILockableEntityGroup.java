@@ -32,13 +32,13 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-
+ 
 package org.jasig.portal.groups;
 
 import org.jasig.portal.concurrency.IEntityLock;
 
  /**
- * Defines an <code>IEntityGroup</code> that can be locked for update.
+ * Defines an <code>IEntityGroup</code> that can be locked for update.   
  * <p>
  * @author Dan Ellentuck
  * @version $Revision$
@@ -51,6 +51,16 @@ public interface ILockableEntityGroup extends IEntityGroup {
 public IEntityLock getLock();
 /**
  * @param lock org.jasig.portal.concurrency.IEntityLock
-  */
+ */
 public void setLock(IEntityLock lock);
+
+/**
+ * Updates the group and its members and renews the lock.
+ */
+public void updateAndRenewLock() throws GroupsException;
+
+/**
+ * Updates the members and renews the lock.
+ */
+public void updateMembersAndRenewLock() throws GroupsException;
 }

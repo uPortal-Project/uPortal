@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +38,7 @@ import java.io.*;
 import java.util.*;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
@@ -91,7 +91,7 @@ public void deleteGroup(IEntityGroup group) throws GroupsException
     if ( cacheInUse() )
     {
         try
-            { EntityCachingService.instance().remove(group.getEntityIdentifier()); }
+            { removeGroupFromCache(group); }
         catch (CachingException ce)
             { throw new GroupsException("Problem deleting group " + group.getKey() + " : " + ce.getMessage()); }
     }
@@ -262,6 +262,17 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
 }
     /**
      * Returns an <code>IGroupMember</code> representing either a group or a
+     * portal entity, based on the <code>EntityIdentifier</code>, which
+     * refers to the UNDERLYING entity for the <code>IGroupMember</code>.
+     */
+    public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
+    throws GroupsException
+    {
+      return getGroupMember(underlyingEntityIdentifier.getKey(),
+          underlyingEntityIdentifier.getType());
+    }
+    /**
+     * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity.  If the parm <code>type</code> is the group type,
      * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
      * an <code>IEntity</code>.
@@ -341,6 +352,13 @@ public IEntityGroup newGroup(Class type) throws GroupsException
         throw new GroupsException("ReferenceGroupService.newGroup(): " + e.getMessage());
     }
 }
+/**
+ *
+ */
+protected void removeGroupFromCache(IEntityGroup group) throws CachingException
+{
+    EntityCachingService.instance().remove(group.getEntityIdentifier());
+}
     /**
      * @return org.jasig.portal.groups.IGroupService
      * @exception org.jasig.portal.groups.GroupsException
@@ -360,7 +378,7 @@ public void updateGroup(IEntityGroup group) throws GroupsException
     if ( cacheInUse() )
     {
         try
-            { EntityCachingService.instance().update(group); }
+            { updateGroupInCache(group); }
         catch (CachingException ce)
             { throw new GroupsException("Problem updating group " + group.getKey() + " : " + ce.getMessage()); }
     }
@@ -372,20 +390,48 @@ public void updateGroup(IEntityGroup group) throws GroupsException
  */
 public void updateGroup(ILockableEntityGroup group) throws GroupsException
 {
+    updateGroup(group, false);
+}
+/**
+ * Updates the <code>ILockableEntityGroup</code> in the store and removes
+ * it from the cache.
+ * @param group ILockableEntityGroup
+ */
+public void updateGroup(ILockableEntityGroup group, boolean renewLock)
+throws GroupsException
+{
     try
     {
-        if ( group.getLock().isValid() )
+        if ( ! group.getLock().isValid() )
+           { throw new GroupsException("Could not update group " + group.getKey() +
+                " has invalid lock."); }
+
+        if ( ! renewLock )
         {
-            updateGroup( (IEntityGroup)group );
+            updateGroup((IEntityGroup)group);
             group.getLock().release();
         }
         else
-            { throw new GroupsException("Could not update group " + group.getKey() +
-                " has invalid lock."); }
+        {
+            getGroupStore().update(group);
+            if ( cacheInUse)
+                { removeGroupFromCache(group); }
+            group.getLock().renew();
+        }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
                 " : " + le.getMessage()); }
+    catch (CachingException ce)
+        { throw new GroupsException("Problem updating group " + group.getKey() +
+                " : " + ce.getMessage()); }
+}
+/**
+ *
+ */
+protected void updateGroupInCache(IEntityGroup group) throws CachingException
+{
+    EntityCachingService.instance().update(group);
 }
 /**
  * Updates the cache and the store with the updated <code>IEntityGroup</code>.
@@ -408,19 +454,40 @@ public void updateGroupMembers(IEntityGroup group) throws GroupsException
  */
 public void updateGroupMembers(ILockableEntityGroup group) throws GroupsException
 {
+    updateGroupMembers(group, false);
+}
+/**
+ * Updates the <code>ILockableEntityGroup</code> in the store and removes
+ * it from the cache.
+ * @param group ILockableEntityGroup
+ */
+public void updateGroupMembers(ILockableEntityGroup group, boolean renewLock)
+throws GroupsException
+{
     try
     {
-        if ( group.getLock().isValid() )
+        if ( ! group.getLock().isValid() )
+           { throw new GroupsException("Could not update group " + group.getKey() +
+                " has invalid lock."); }
+
+        if ( ! renewLock )
         {
-            updateGroupMembers( (IEntityGroup)group );
+            updateGroupMembers((IEntityGroup)group);
             group.getLock().release();
         }
         else
-            { throw new GroupsException("Could not update group " + group.getKey() +
-                " has invalid lock."); }
+        {
+            getGroupStore().updateMembers(group);
+            if ( cacheInUse)
+                { removeGroupFromCache(group); }
+            group.getLock().renew();
+        }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
                 " : " + le.getMessage()); }
+    catch (CachingException ce)
+        { throw new GroupsException("Problem updating group " + group.getKey() +
+                " : " + ce.getMessage()); }
 }
 }
