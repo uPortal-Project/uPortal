@@ -1,5 +1,3 @@
-package org.jasig.portal;
-
 /**
  * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
@@ -34,12 +32,15 @@ package org.jasig.portal;
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+ 
+package org.jasig.portal;
 
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.naming.Context;
@@ -325,8 +326,6 @@ public class ChannelManager implements LayoutEventListener {
                                     if(characterContent!=null) {
                                         // save compiled character cache
                                         cr.setCharacterCache(characterContent);
-                                        //LogService.log(LogService.DEBUG,"------ channel "+channelSubscribeId+" character block (compiled):");
-                                        // LogService.log(LogService.DEBUG,characterContent);
                                     } else {
                                         LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : character caching serializer returned NULL character cache for channel \""+channelSubscribeId+"\" !");
                                     }
@@ -378,6 +377,17 @@ public class ChannelManager implements LayoutEventListener {
                     return;
                 }
             }
+            
+            // Obtain the channel description
+            UserLayoutChannelDescription channelDesc = null;
+            try {
+              channelDesc = (UserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelSubscribeId);
+            } catch (PortalException pe) {
+              // Do nothing
+            }
+            
+            // Tell the StatsRecorder that this channel has rendered
+            StatsRecorder.recordChannelRendered(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
         } else {
             handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unsuccessfull rendering","unsuccessfull rendering",false);
             return;
@@ -570,10 +580,10 @@ public class ChannelManager implements LayoutEventListener {
         }
         // get channel information from the user layout manager
         UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
-        if(channel!=null) {
+        if(channel!=null)
             return instantiateChannel(channel);
-            //LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+channel.getClassName()+"\". "+ex);
-        } else return null;
+        else 
+            return null;
     }
 
     private IChannel instantiateChannel(UserLayoutChannelDescription cd) throws PortalException {
@@ -586,31 +596,23 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
-            ch=ChannelFactory.instantiateLayoutChannel(cd,this.pcs.getHttpServletRequest().getSession(false).getId());
-            // construct a ChannelStaticData object
+          
+            // Instantiate the channel and notify the StatsRecorder
+            ch = ChannelFactory.instantiateLayoutChannel(cd,this.pcs.getHttpServletRequest().getSession(false).getId());
+            StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
+
+            // Create and stuff the channel static data
             ChannelStaticData sd = new ChannelStaticData();
             sd.setChannelSubscribeId(channelSubscribeId);
             sd.setTimeout(cd.getTimeout());
             sd.setParameters(cd.getParameterMap());
-            // Set the Id of the channel that exists in UP_CHANNELS
-            try {
-                UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(cd.getChannelSubscribeId());
-                if(channel!=null) {
-                    sd.setChannelPublishId(channel.getChannelPublishId());
-                }
-            } catch (Exception e) {};
-
-            // Set the PermissionManager for this channel (no longer necessary)
-            // sd.setPermissionManager(new ReferencePermissionManager("CHAN_ID." + ulm.getChannelSubscribeId(channelSubscribeId)));
-
-            // get person object from UsreLayoutManager
             sd.setPerson(upm.getPerson());
-
             sd.setJNDIContext(channelContext);
             sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
+            sd.setChannelPublishId(cd.getChannelPublishId());
 
             ch.setStaticData(sd);
-
+   
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
@@ -659,7 +661,18 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         if(channelTarget!=null) {
-            // process parametersy
+            // Obtain the channel description
+            UserLayoutChannelDescription channelDesc = null;
+            try {
+              channelDesc = (UserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelTarget);
+            } catch (PortalException pe) {
+              // Do nothing
+            }          
+          
+            // Tell StatsRecorder that a user has interacted with the channel
+            StatsRecorder.recordChannelTargeted(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
+            
+            // process parameters
             Enumeration en = req.getParameterNames();
             if (en != null) {
                 if(en.hasMoreElements()) {
