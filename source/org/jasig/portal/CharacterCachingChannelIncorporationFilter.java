@@ -175,6 +175,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                     // save the old cache state
                     try {
                         if(ser.stopCaching()) {
+                            //                            Logger.log(Logger.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following system character entry: \n"+ser.getCache());
                             systemCCacheBlocks.add(ser.getCache());
                         } else {
                             Logger.log(Logger.ERROR,"CharacterCachingChannelIncorporationFilter::startElement() : unable to reset cache state ! Serializer was not caching when it should've been !");
@@ -227,12 +228,13 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
                                     
                                     // output channel buffer
                                     SAX2BufferImpl buffer=(SAX2BufferImpl) o;
-                                    buffer.setParent(this);
+                                    buffer.setAllHandlers(this.contentHandler);
                                     buffer.outputBuffer();
                                     
                                     // save the old cache state
                                     if(ser.stopCaching()) {
                                         try {
+                                            //                                            Logger.log(Logger.DEBUG,"CharacterCachingChannelIncorporationFilter::endElement() : obtained the following channel character entry: \n"+ser.getCache());
                                             cm.setChannelCharacterCache(channelID,ser.getCache());
                                         } catch (UnsupportedEncodingException e) {
                                             Logger.log(Logger.ERROR,"CharacterCachingChannelIncorporationFilter::endElement() : unable to obtain character cache, invalid encoding specified ! "+e);
