@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="skinsPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:param>
   <xsl:param name="currentSkin">java</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
 
@@ -72,7 +73,7 @@
       </td>
       <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td>
-        <img height="90" alt="{skin-name} thumbnail" src="{$mediaPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
+        <img height="90" alt="{skin-name} thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
       </td>
       <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td class="uportal-channel-table-header">
@@ -107,6 +108,3 @@
     </tr>
   </xsl:template>
 </xsl:stylesheet>
-
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->
