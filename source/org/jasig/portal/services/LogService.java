@@ -109,13 +109,8 @@ public final class LogService {
     if (bInitialized) {
       return;
     }
-    String sPortalBaseDir = org.jasig.portal.PortalSessionManager.getPortalBaseDir();
-    if (sPortalBaseDir == null) {
-      System.err.println("Portal base directory is not yet set. Will log to console until it gets set.");
-      return;
-    }
     try {
-      PropertyConfigurator.configureAndWatch(sPortalBaseDir + "/properties/Logger.properties");
+      PropertyConfigurator.configureAndWatch(LogService.class.getResource("/properties/Logger.properties").getFile());
     } catch (Exception e) {
       e.printStackTrace();
     }
