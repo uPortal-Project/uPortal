@@ -1188,19 +1188,16 @@ public class DBImpl
    */
     public synchronized int getIncrementIntegerId(String tableName) throws Exception {
         Connection con=null;
-        int id = 0;
+        int id;
         try {
             con=rdbmService.getConnection();
             Statement stmt = con.createStatement ();
-            String str_id=null;
 
             String sQuery = "SELECT ID FROM UP_COUNTERS WHERE TABLE_NAME='" + tableName + "'";
             Logger.log (Logger.DEBUG, sQuery);
             ResultSet rs = stmt.executeQuery (sQuery);
-            if (rs.next ()) {
-                    id = rs.getInt ("ID");
-            }
-            id= Integer.parseInt(str_id)+1;
+            rs.next ();
+            id = rs.getInt ("ID") + 1;
             sQuery = "UPDATE UP_COUNTERS SET ID="+id+"WHERE TABLE_NAME='" + tableName + "'";
             stmt.executeUpdate(sQuery);
         } finally {
