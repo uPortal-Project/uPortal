@@ -39,13 +39,11 @@ import org.xml.sax.ContentHandler;
 import java.util.*;
 import java.io.*;
 import java.net.*;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.text.ParseException;
-import javax.servlet.http.Cookie;
 import javax.xml.parsers.*;
 import org.w3c.tidy.*;
 import org.w3c.dom.Document;
+import org.jasig.portal.utils.CookieCutter;
 import org.jasig.portal.*;
 import org.jasig.portal.utils.*;
 import org.jasig.portal.services.LogService;
@@ -173,8 +171,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private long cacheDefaultTimeout;
     private long cacheTimeout;
     private ChannelRuntimeData runtimeData;
-    private Vector cookies;
-    private boolean supportSetCookie2;
+    private CookieCutter cookieCutter;
     private URLConnection connHolder;
 
     public ChannelState ()
@@ -188,8 +185,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.CWebProxy.cache_default_mode");
       cacheDefaultScope = PropertiesManager.getProperty("org.jasig.portal.channels.CWebProxy.cache_default_scope");
       runtimeData = null;
-      cookies = new Vector();
-      supportSetCookie2 = false;
+      cookieCutter = new CookieCutter();
     }
   }
 
@@ -655,540 +651,88 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
   
       if (protocol.equals("http") || protocol.equals("https"))
       {
-        //HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
         if (domain != null && path != null)
-          urlConnect = (URLConnection) sendAndStoreCookies(((HttpURLConnection) urlConnect), domain, path, port, state);
-        //urlConnect = (URLConnection) httpUrlConnect;
+        {
+          HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
+          httpUrlConnect.setInstanceFollowRedirects(false);
+
+          //send any headers to proxied application
+          if(state.cookieCutter.cookiesExist())
+            state.cookieCutter.sendCookieHeader(httpUrlConnect, domain, path, port);
+
+          // added 5/13/2002 by ASV - print post data
+          if (state.runtimeData.getHttpRequestMethod().equals("POST")){
+            if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
+              httpUrlConnect.setRequestMethod("POST");
+              httpUrlConnect.setAllowUserInteraction(false);
+              httpUrlConnect.setDoOutput(true);
+              PrintWriter post = new PrintWriter(httpUrlConnect.getOutputStream());
+              post.print(state.reqParameters);
+              post.flush();
+              post.close();
+              state.reqParameters=null;
+            }
+          }
+
+          state.cookieCutter.storeCookieHeader(httpUrlConnect, domain, path, port);
+
+          int status = httpUrlConnect.getResponseCode();
+          String location = httpUrlConnect.getHeaderField("Location");
+          switch (status)
+          {
+            case HttpURLConnection.HTTP_NOT_FOUND:
+              throw new ResourceMissingException
+                (httpUrlConnect.getURL().toExternalForm(),
+                  "", "HTTP Status-Code 404: Not Found");
+            case HttpURLConnection.HTTP_FORBIDDEN:
+              throw new ResourceMissingException
+                (httpUrlConnect.getURL().toExternalForm(),
+                  "", "HTTP Status-Code 403: Forbidden");
+            case HttpURLConnection.HTTP_INTERNAL_ERROR:
+              throw new ResourceMissingException
+                (httpUrlConnect.getURL().toExternalForm(),
+                  "", "HTTP Status-Code 500: Internal Server Error");
+            case HttpURLConnection.HTTP_NO_CONTENT:
+              throw new ResourceMissingException
+                (httpUrlConnect.getURL().toExternalForm(),
+                  "", "HTTP Status-Code 204: No Content");
+            /*
+             * Note: these cases apply to http status codes 302 and 303
+             * this will handle automatic redirection to a new GET URL
+             */
+            case HttpURLConnection.HTTP_MOVED_TEMP:
+              httpUrlConnect.disconnect();
+              httpUrlConnect = (HttpURLConnection) getConnection(location,state);
+              break;
+            case HttpURLConnection.HTTP_SEE_OTHER:
+              httpUrlConnect.disconnect();
+              httpUrlConnect = (HttpURLConnection) getConnection(location,state);
+              break; 
+            /*
+             * Note: this cases apply to http status code 301
+             * it will handle the automatic redirection of GET requests.
+             * The spec calls for a POST redirect to be verified manually by the user
+             * Rather than bypass this security restriction, we will throw an exception 
+             */
+            case HttpURLConnection.HTTP_MOVED_PERM:
+              if (state.runtimeData.getHttpRequestMethod().equals("GET")){
+                httpUrlConnect.disconnect();
+                httpUrlConnect = (HttpURLConnection) getConnection(location,state);
+              }
+              else {
+                throw new ResourceMissingException
+                  (httpUrlConnect.getURL().toExternalForm(),
+                    "", "HTTP Status-Code 301: POST Redirection currently not supported");
+              }
+              break;
+            default:
+              break;
+          }
+          
+          return (URLConnection) httpUrlConnect;
+        }
       }
       return urlConnect;
-  }
-
-   /**
-    * Sends any cookies in the cookie vector as a request header and stores
-    * any incoming cookies in the cookie vector (according to rfc 2109,
-    * 2965 &amp; netscape)
-    *
-    * @param httpUrlConnect The HttpURLConnection handling the URL connection
-    * @param domain The domain value for the Cookie to be sent
-    * @param path The path value for the Cookie to be sent
-    * @param port The port value for the Cookie to be sent
-    */
-  private HttpURLConnection sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port, ChannelState state) throws Exception
-  {
-    httpUrlConnect.setInstanceFollowRedirects(false);
-    // send appropriate cookies to origin server from cookie vector
-    if (state.cookies.size() > 0)
-      sendCookieHeader(httpUrlConnect, domain, path, port, state.cookies);
-
-    // added 5/13/2002 by ASV - print post data
-    if (state.runtimeData.getHttpRequestMethod().equals("POST")){
-        if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
-          httpUrlConnect.setRequestMethod("POST");
-          httpUrlConnect.setAllowUserInteraction(false);
-          httpUrlConnect.setDoOutput(true);
-          PrintWriter post = new PrintWriter(httpUrlConnect.getOutputStream());
-          post.print(state.reqParameters);
-          post.flush();
-          post.close(); 
-          state.reqParameters=null;
-        }
-    }
-
-
-    // store any cookies sent by the channel in the cookie vector
-    int index = 1;
-    String header;
-    while ( (header=httpUrlConnect.getHeaderFieldKey(index)) != null )
-    {
-       if (state.supportSetCookie2)
-       {
-         if (header.equalsIgnoreCase("set-cookie2"))
-            processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port, state.cookies);
-       }
-       else
-       {
-         if (header.equalsIgnoreCase("set-cookie2"))
-         {
-           state.supportSetCookie2 = true;
-           processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port, state.cookies);
-         }
-         else if (header.equalsIgnoreCase("set-cookie"))
-         {
-           processSetCookieHeader(httpUrlConnect.getHeaderField(index), domain, path, port, state.cookies);
-         }
-       }
-       index++;
-    }
-    
-    int status = httpUrlConnect.getResponseCode();
-    String location = httpUrlConnect.getHeaderField("Location");
-    switch (status)
-    {
-       case HttpURLConnection.HTTP_NOT_FOUND:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 404: Not Found");
-       case HttpURLConnection.HTTP_FORBIDDEN:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 403: Forbidden");
-       case HttpURLConnection.HTTP_INTERNAL_ERROR:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 500: Internal Server Error");
-       case HttpURLConnection.HTTP_NO_CONTENT:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 204: No Content");
-      /*
-      * Note: these cases apply to http status codes 302 and 303
-      * this will handle automatic redirection to a new GET URL
-      */
-        case HttpURLConnection.HTTP_MOVED_TEMP:
-          httpUrlConnect.disconnect();
-          httpUrlConnect = (HttpURLConnection) getConnection(location,state);
-          break;
-        case HttpURLConnection.HTTP_SEE_OTHER:
-          httpUrlConnect.disconnect();
-          httpUrlConnect = (HttpURLConnection) getConnection(location,state);
-          break;
-      /*
-      * Note: this cases apply to http status code 301
-      * it will handle the automatic redirection of GET requests.
-      * The spec calls for a POST redirect to be verified manually by the user
-      * Rather than bypass this security restriction, we will throw an exception
-      */
-        case HttpURLConnection.HTTP_MOVED_PERM:
-          if (state.runtimeData.getHttpRequestMethod().equals("GET")){
-            httpUrlConnect.disconnect();
-            httpUrlConnect = (HttpURLConnection) getConnection(location,state);
-          }
-          else {
-            throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 301: POST Redirection currently not supported");
-          }
-          break;
-       default:
-         break;
-    }
-    return httpUrlConnect;
-  }
-
-  /**
-   * Sends a cookie header to origin server according to the Netscape
-   * specification.
-   *
-   * @param httpUrlConnect The HttpURLConnection handling this URL connection
-   * @param domain The domain value of the cookie
-   * @param path The path value of the cookie
-   * @param port The port value of the cookie
-   */
-  private void sendCookieHeader(HttpURLConnection httpUrlConnect, String domain, String path, String port, Vector cookies)
-  {
-     Vector cookiesToSend = new Vector();
-     WebProxyCookie cookie;
-     String cport = "";
-     boolean portOk = true;
-     for (int index=0; index<cookies.size(); index++)
-     {
-        cookie = (WebProxyCookie) cookies.elementAt(index);
-        boolean isExpired;
-        Date current = new Date();
-        Date cookieExpiryDate = cookie.getExpiryDate();
-        if (cookieExpiryDate != null)
-           isExpired = cookieExpiryDate.before(current);
-        else
-           isExpired = false;
-        if (cookie.isPortSet())
-        {
-           cport = cookie.getPort();
-           portOk = false;
-        }
-        if ( !cport.equals("") )
-        {
-           if (cport.indexOf(port) != -1)
-             portOk = true;
-        }
-        if ( domain.endsWith(cookie.getDomain()) && path.startsWith(cookie.getPath()) && portOk && !isExpired )
-          cookiesToSend.addElement(cookie);
-     }
-     if (cookiesToSend.size()>0)
-     {
-       //put the cookies in the correct order to send to origin server
-       Vector cookiesInOrder= new Vector();
-       WebProxyCookie c1;
-       WebProxyCookie c2;
-       boolean flag;
-       outerloop:
-       for (int i=0; i<cookiesToSend.size(); i++)
-       {
-         c1 = (WebProxyCookie) cookiesToSend.elementAt(i);
-         flag = false;
-         if (cookiesInOrder.size()==0)
-           cookiesInOrder.addElement(c1);
-         else
-         {
-           for (int index=0; index<cookiesInOrder.size(); index++)
-           {
-             c2 = (WebProxyCookie) cookiesInOrder.elementAt(index);
-             if ( c1.getPath().length() >= c2.getPath().length() )
-             {
-               cookiesInOrder.insertElementAt(c1, index);
-               flag = true;
-               continue outerloop;
-             }
-           }
-           if (!flag)
-             cookiesInOrder.addElement(c1);
-         }
-       }
-       //send the cookie header
-       // **NOTE** This is NOT the syntax of the cookie header according
-       // to rfc 2965. Tested under Apache's Tomcat, the servlet engine
-       // treats the cookie attributes as separate cookies.
-       // This is the syntax according to the Netscape Cookie Specification.
-       String headerValue = "";
-       WebProxyCookie c;
-       for (int i=0; i<cookiesInOrder.size(); i++)
-       {
-         c = (WebProxyCookie) cookiesInOrder.elementAt(i);
-         if (i == 0)
-           headerValue = c.getName() + "=" +c.getValue();
-         else
-           headerValue = headerValue + "; " + c.getName() + "=" +c.getValue();
-       }
-       if ( !headerValue.equals("") )
-       {
-         httpUrlConnect.setRequestProperty("Cookie", headerValue);
-       }
-     }
-  }
-
-  /**
-   * Processes the Cookie2 header.
-   *
-   * @param headerVal The value of the header
-   * @param domain The domain value of the cookie
-   * @param path The path value of the cookie
-   * @param port The port value of the cookie
-   */
-  private void processSetCookie2Header (String headerVal, String domain, String path, String port, Vector cookies)
-  {
-     StringTokenizer headerValue = new StringTokenizer(headerVal, ",");
-     StringTokenizer cookieValue;
-     WebProxyCookie cookie;
-     String token;
-     while (headerValue.hasMoreTokens())
-     {
-       cookieValue = new StringTokenizer(headerValue.nextToken(), ";");
-       token = cookieValue.nextToken();
-       if ( token.indexOf("=") != -1)
-       {
-          cookie = new WebProxyCookie ( token.substring(0, token.indexOf("=")),
-                                token.substring(token.indexOf("=")+1).trim() );
-       }
-       else
-       {
-          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
-          cookie = null;
-       }
-       // set max-age, path and domain of cookie
-       if (cookie != null)
-       {
-          boolean ageSet = false;
-          boolean domainSet = false;
-          boolean pathSet = false;
-          boolean portSet = false;
-          while( cookieValue.hasMoreTokens() )
-          {
-            token = cookieValue.nextToken();
-            if ( (!ageSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("max-age") )
-            {
-               cookie.setMaxAge(Integer.parseInt(token.substring(token.indexOf("=")+1).trim()) );
-               ageSet = true;
-            }
-            if ( (!domainSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("domain") )
-            {
-               cookie.setDomain(token.substring(token.indexOf("=")+1).trim());
-               domainSet = true;
-               cookie.domainIsSet();
-            }
-            if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
-            {
-               cookie.setPath(token.substring(token.indexOf("=")+1).trim());
-               pathSet = true;
-               cookie.pathIsSet();
-            }
-            if ( !portSet && ((token.indexOf("Port") != -1 || token.indexOf("PORT") != -1)
-                                                           || token.indexOf("port") != -1) )
-            {
-               if (token.indexOf("=")==-1)
-                 cookie.setPort(port);
-               else
-                 cookie.setPort(token.substring(token.indexOf("=")+1).trim());
-               portSet = true;
-               cookie.portIsSet();
-            }
-          }
-          if (!domainSet)
-          {
-             cookie.setDomain(domain);
-          }
-          if (!pathSet)
-          {
-             cookie.setPath(path);
-          }
-          // set the version attribute
-          cookie.setVersion(1);
-          // checks to see if this cookie should replace one already stored
-          for (int index = 0; index < cookies.size(); index++)
-          {
-             WebProxyCookie old = (WebProxyCookie) cookies.elementAt(index);
-             if ( cookie.getName().equals(old.getName()) )
-             {
-                String newPath = cookie.getPath();
-                String newDomain = cookie.getDomain();
-                String oldPath = old.getPath();
-                String oldDomain = old.getDomain();
-                if (newDomain.equalsIgnoreCase(oldDomain) && newPath.equals(oldPath))
-                     cookies.removeElement(old);
-             }
-          }
-          // handles the max-age cookie attribute (according to rfc 2965)
-          int expires = cookie.getMaxAge();
-          if (expires < 0)
-          {
-            // cookie persists until browser shutdown so add cookie to
-            // cookie vector
-            cookies.addElement(cookie);
-          }
-          else if (expires == 0)
-          {
-            // cookie is to be discarded immediately, do not store
-          }
-          else
-          {
-            // add the cookie to the cookie vector and then
-            // set the expiry date for the cookie
-            Date d = new Date();
-            cookie.setExpiryDate(new Date((long) d.getTime()+(expires*1000)) );
-            cookies.addElement(cookie);
-          }
-      }
-    }
-  }
-
-  /**
-   * Processes the Cookie header.
-   *
-   * @param headerVal The value of the header
-   * @param domain The domain value of the cookie
-   * @param path The path value of the cookie
-   * @param port The port value of the cookie
-   */
-  private void processSetCookieHeader (String headerVal, String domain, String path, String port, Vector cookies)
-  throws ParseException
-  {
-     StringTokenizer cookieValue;
-     String token;
-     WebProxyCookie cookie;
-     if ( ( (headerVal.indexOf("Expires=") != -1)
-              || (headerVal.indexOf("expires=") != -1) )
-              || (headerVal.indexOf("EXPIRES=") != -1) )
-     {
-       // there is only one cookie (old netscape spec)
-       cookieValue = new StringTokenizer(headerVal, ";");
-       token = cookieValue.nextToken();
-       if ( token.indexOf("=") != -1)
-       {
-          cookie = new WebProxyCookie ( token.substring(0, token.indexOf("=")), token.substring(token.indexOf("=")+1).trim() );
-       }
-       else
-       {
-          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
-          cookie = null;
-       }
-       // set max-age, path and domain of cookie
-       if (cookie != null)
-       {
-         boolean ageSet = false;
-         boolean domainSet = false;
-         boolean pathSet = false;
-         while( cookieValue.hasMoreTokens() )
-         {
-           token = cookieValue.nextToken();
-           if ( (!ageSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("expires") )
-           {
-              SimpleDateFormat f = new SimpleDateFormat("EEE, d-MMM-yyyy HH:mm:ss z", Locale.ENGLISH);
-	      f.setTimeZone(TimeZone.getTimeZone("GMT"));
-              f.setLenient(true);
-              Date date = f.parse( token.substring(token.indexOf("=")+1).trim());
-              Date current = new Date();
-              if (date!=null)
-              {
-                //set max-age for cookie
-                long l;
-                if (date.before(current))
-                   //accounts for the case where max age is 0 and cookie
-                   //should be discarded immediately
-                   l = 0;
-                else
-                   l = date.getTime() - current.getTime();
-                int exp = (int) l / 1000;
-                cookie.setMaxAge(exp);
-                ageSet = true;
-              }
-           }
-           if ( (!domainSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("domain") )
-           {
-              cookie.setDomain(token.substring(token.indexOf("=")+1).trim());
-              domainSet = true;
-           }
-           if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
-           {
-              cookie.setPath(token.substring(token.indexOf("=")+1).trim());
-              pathSet = true;
-           }
-         }
-         if (!domainSet)
-         {
-            cookie.setDomain(domain);
-         }
-         if (!pathSet)
-         {
-            cookie.setPath(path);
-         }
-         // sets the version attribute of the cookie
-         cookie.setVersion(0);
-         // checks to see if this cookie should replace one already stored
-         for (int index = 0; index < cookies.size(); index++)
-         {
-            WebProxyCookie old = (WebProxyCookie) cookies.elementAt(index);
-            if ( cookie.getName().equals(old.getName()) )
-            {
-               String newPath = cookie.getPath();
-               String newDomain = cookie.getDomain();
-               String oldPath = old.getPath();
-               String oldDomain = old.getDomain();
-               if ( newDomain.equalsIgnoreCase(oldDomain) && newPath.equals(oldPath) )
-                  cookies.removeElement(old);
-            }
-         }
-         // handles the max-age cookie attribute (according to rfc 2965)
-         int expires = cookie.getMaxAge();
-         if (expires < 0)
-         {
-           // cookie persists until browser shutdown so add cookie to
-           // cookie vector
-           cookies.addElement(cookie);
-         }
-         else if (expires == 0)
-         {
-           // cookie is to be discarded immediately, do not store
-         }
-         else
-         {
-           // add the cookie to the cookie vector and then
-           // set the expiry date for the cookie
-           Date d = new Date();
-           cookie.setExpiryDate( new Date((long)d.getTime()+(expires*1000) ) );
-           cookies.addElement(cookie);
-         }
-       }
-     }
-     else
-     {
-       // can treat according to RCF 2965
-       processSetCookie2Header(headerVal, domain, path, port, cookies);
-     }
-  }
-
-  /**
-   * This class is used by CWebProxy to store cookie information.
-   * WebProxyCookie extends javax.servlet.http.Cookie
-   * and contains methods to query the cookie's attribute status.
-   *
-   */
-  private class WebProxyCookie extends Cookie
-  {
-
-     protected String port = null;
-     protected boolean pathSet = false;
-     protected boolean domainSet = false;
-     protected boolean portSet = false;
-     protected Date expiryDate = null;
-
-     public WebProxyCookie(String name, String value)
-     {
-       super(name, value);
-     }
-
-     public void setExpiryDate(Date expiryDate)
-     {
-       this.expiryDate = expiryDate;
-     }
-
-     public Date getExpiryDate()
-     {
-       return expiryDate;
-     }
-
-     public String getPath()
-     {
-       String path = super.getPath();
-       if (path.startsWith("\"") && path.endsWith("\""))
-         path = path.substring(1, path.length()-1);
-       return path;
-     }
-
-     public String getValue()
-     {
-       String value = super.getValue();
-       if (value.startsWith("\"") && value.endsWith("\""))
-         value = value.substring(1, value.length()-1);
-       return value;
-     }
-
-     public void pathIsSet()
-     {
-       pathSet = true;
-     }
-
-     public void domainIsSet()
-     {
-       domainSet = true;
-     }
-
-     public void portIsSet()
-     {
-       portSet = true;
-     }
-
-     public void setPort(String port)
-     {
-       this.port = port;
-     }
-
-     public String getPort()
-     {
-       return port;
-     }
-
-     public boolean isPathSet()
-     {
-       return pathSet;
-     }
-
-     public boolean isDomainSet()
-     {
-       return domainSet;
-     }
-
-     public boolean isPortSet()
-     {
-       return portSet;
-     }
   }
 
   public ChannelCacheKey generateKey(String uid)
