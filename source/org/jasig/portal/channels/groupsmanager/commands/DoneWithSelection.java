@@ -86,16 +86,6 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Start");
-      String oldCommand = runtimeData.getParameter("grpCommand");
-      // First: gather the selected items
-      GroupsManagerCommandFactory cf = GroupsManagerCommandFactory.instance();
-      String theCommand = "Select";
-      runtimeData.setParameter("grpCommand", theCommand);
-      IGroupsManagerCommand c = cf.get(theCommand);
-      if (c != null) {
-         c.execute(sessionData);
-      }
-      runtimeData.setParameter("grpCommand", oldCommand);
       String parentId = null;
       boolean hasParentId = hasParentId(staticData);
       try {
@@ -124,8 +114,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
          }
          // check if selections were made
          if (gmCollection.size() <1) {
-            cmdResponse = runtimeData.getParameter("commandResponse") + "\n No groups or people were selected! ";
-            runtimeData.setParameter("commandResponse", cmdResponse);
+            sessionData.feedback = sessionData.feedback + "\n No groups or people were selected! ";
             return;
          }
 
@@ -144,15 +133,15 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             }
             /** @todo refactor: */
             if (parentIsInitialGroupContext(staticData)) {
-               addChildrenToContext(gmCollection, runtimeData, parentElem, xmlDoc);
+               addChildrenToContext(gmCollection, sessionData, parentElem, xmlDoc);
             }
             else {
-               addChildrenToGroup(gmCollection, runtimeData, parentElem, xmlDoc);
+               addChildrenToGroup(gmCollection, sessionData, parentElem, xmlDoc);
             }
             clearSelected(sessionData);
-            runtimeData.setParameter("grpMode", "browse");
-            runtimeData.setParameter("grpView", "edit");
-            runtimeData.setParameter("grpViewId", parentId);
+            sessionData.mode=EDIT_MODE;
+            sessionData.highlightedGroupID = parentId;
+            sessionData.rootViewGroupID="0";
             staticData.remove("groupParentId");
          }
          else {
@@ -163,7 +152,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             }
          }
       } catch (Exception e) {
-         Utility.logMessage("ERROR", "DoneWithSelection Error: " + runtimeData.getParameter("commandResponse")
+         Utility.logMessage("ERROR", "DoneWithSelection Error: " + sessionData.feedback
                + "/n" + e);
       }
    }
@@ -210,8 +199,9 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
     * @param parentElem
     * @param xmlDoc
     */
-   public void addChildrenToGroup (Vector gmCollection, ChannelRuntimeData runtimeData,
+   public void addChildrenToGroup (Vector gmCollection, CGroupsManagerSessionData sessionData,
       Element parentElem, Document xmlDoc) {
+      ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Element parent;
       IEntityGroup parentGroup = null;
       IGroupMember childGm = null;
@@ -248,9 +238,8 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
          } catch (GroupsException ge) {
             // We let groups catch any error for the adds (ie. group member is already in the parent group).
             // Processing subsequent adds is allowed to continue.
-            String cmdResponse = runtimeData.getParameter("commandResponse") + "\n Unable to add : "
+            sessionData.feedback = sessionData.feedback + "\n Unable to add : "
                   + childName + " to: " + parentName;
-            runtimeData.setParameter("commandResponse", cmdResponse);
          }
       }
    }
@@ -262,13 +251,14 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
     * @param parentElem
     * @param xmlDoc
     */
-   public void addChildrenToContext (Vector gmCollection, ChannelRuntimeData runtimeData,
+   public void addChildrenToContext (Vector gmCollection, CGroupsManagerSessionData sessionData,
          Element parentElem, Document xmlDoc) {
+          ChannelRuntimeData runtimeData = sessionData.runtimeData;
       // Considerations:
       // The parent element is myGroups and there is only one.
       String childName = "";
       IGroupMember childGm = null;
-      String userID = runtimeData.getParameter("username");
+      String userID = getUserID(sessionData);
       String ownerType = "p";
       int ordinal = 1;
       boolean expanded = false;
@@ -305,9 +295,8 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
                parentElem.appendChild((Node)childElem);
                parentElem.setAttribute("hasMembers", "true");
             } catch (Exception e) {
-               String cmdResponse = runtimeData.getParameter("commandResponse") + "\n Unable to add : "
+               sessionData.feedback = sessionData.feedback + "\n Unable to add : "
                      + childName;
-               runtimeData.setParameter("commandResponse", cmdResponse);
             }
          }
       }
