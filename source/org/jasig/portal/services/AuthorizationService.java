@@ -82,11 +82,19 @@ public class AuthorizationService
       }
     } catch (IOException e) {
       LogService.log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
-    }
+    } finally {
+			try {
+				if (secprops != null)
+					secprops.close();
+			} catch (IOException ioe) {
+				LogService.log(LogService.ERROR, new PortalSecurityException(
+						ioe.getMessage()));
+			}
+		}
   }
 
   /**
-   *
+   *  
    */
   private AuthorizationService () throws AuthorizationException
   {
