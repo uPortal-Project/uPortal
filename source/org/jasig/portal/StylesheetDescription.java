@@ -179,41 +179,44 @@ public class StylesheetDescription
   { 
     b_alternate=alternate; 
   }
-}
 
-/**
- * Parses a processing instruction's (PI) attributes for easy retrieval.
- */
-class PIAttributes
-{
-  private Hashtable piAttributes = null;
-
-  PIAttributes (String data)
-  {
-    piAttributes = new Hashtable ();
-    StringTokenizer tokenizer = new StringTokenizer (data, "=\"");
-    while (tokenizer.hasMoreTokens ())
+    /**
+     * Parses a processing instruction's (PI) attributes for easy retrieval.
+     */
+    class PIAttributes
     {
-      piAttributes.put (tokenizer.nextToken ().trim (), tokenizer.nextToken ().trim ());
+	private Hashtable piAttributes = null;
+	
+	PIAttributes (String data)
+	{
+	    piAttributes = new Hashtable ();
+	    StringTokenizer tokenizer = new StringTokenizer (data, "=\"");
+	    while (tokenizer.hasMoreTokens ())
+		{
+		    piAttributes.put (tokenizer.nextToken ().trim (), tokenizer.nextToken ().trim ());
+		}
+	}
+	
+	/**
+	 * Constructor.
+	 * @param pi The processing instruction whose attributes are to be parsed
+	 */
+	PIAttributes (ProcessingInstruction pi)
+	{
+	    this (pi.getNodeValue ());
+	}
+	
+	/**
+	 * Returns value of specified attribute.
+	 *  @param name Attribute name
+	 *  @return Attribute value, or null if the attribute name does not exist
+	 */
+	String getAttribute (String name)
+	{
+	    return (String) piAttributes.get (name);
+	}
     }
-  }
 
-  /**
-   * Constructor.
-   * @param pi The processing instruction whose attributes are to be parsed
-   */
-  PIAttributes (ProcessingInstruction pi)
-  {
-    this (pi.getNodeValue ());
-  }
-
-  /**
-   * Returns value of specified attribute.
-   *  @param name Attribute name
-   *  @return Attribute value, or null if the attribute name does not exist
-   */
-  String getAttribute (String name)
-  {
-    return (String) piAttributes.get (name);
-  }
 }
+
+
