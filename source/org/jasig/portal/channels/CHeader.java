@@ -1,39 +1,3 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
-
 package org.jasig.portal.channels;
 
 import java.net.URL;
@@ -43,8 +7,9 @@ import javax.naming.InitialContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.NotContextException;
-import org.jasig.portal.security.Permission;
-import org.jasig.portal.security.PermissionManager;
+// import org.jasig.portal.security.Permission;
+// import org.jasig.portal.security.PermissionManager;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ChannelCacheKey;
@@ -78,23 +43,78 @@ public class CHeader extends BaseChannel
   private static final String sslLocation = "CHeader/CHeader.ssl";
 
   /**
-   * Render method.
-   * @param out
-   * @exception PortalException
+   * Checks user permissions to see if the user is authorized to publish channels
+   * @return
    */
-  public void renderXML (ContentHandler out) throws PortalException {
-    // Perform the transformation
-    XSLT xslt = new XSLT(this);
-    xslt.setXML(getUserXML());
-    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
-    xslt.setTarget(out);
-    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-    if (staticData.getPerson().isGuest()) {
-      xslt.setStylesheetParameter("guest", "true");
+  private boolean canUserPublish () {
+    // Get the current user ID
+    int userID = staticData.getPerson().getID();
+    // Check the cache for the answer
+    if (m_canUserPublishResponses.get("USER_ID." + userID) != null) {
+      // Return the answer if it's in the cache
+      if (((Boolean)m_canUserPublishResponses.get("USER_ID." + userID)).booleanValue()) {
+        return  (true);
+      }
+      else {
+        return  (false);
+      }
     }
-    xslt.transform();
+    // Get a reference to an IAuthorizationPrincipal (was PermissionManager for this channel).
+    IAuthorizationPrincipal ap = staticData.getAuthorizationPrincipal();
+    try {
+	    // Let the authorization service decide:
+	    boolean hasPermission = ap.canPublish(); 
+        // Cache the result
+        m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(hasPermission));
+        return  (hasPermission);
+        
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
+      // Deny the user publish access if anything went wrong
+      return  (false);
+    }
   }
+  /**
+   * put your documentation comment here
+   * @return
+   */
+  public ChannelCacheKey generateKey () {
+    ChannelCacheKey k = new ChannelCacheKey();
+    StringBuffer sbKey = new StringBuffer(1024);
+    // guest pages are cached system-wide
+    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+    sbKey.append("org.jasig.portal.CHeader: ");
+    sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+    sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
+    sbKey.append("stylesheetURI:");
+    try {
+      String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
+      sbKey.append(XSLT.getStylesheetURI(sslUri, runtimeData.getBrowserInfo()));
+    } catch (Exception e) {
+      sbKey.append("not defined");
+    }
+    k.setKey(sbKey.toString());
+    k.setKeyValidity(new Long(System.currentTimeMillis()));
+    return  k;
+  }
+  /**
+   * Gets the current date/time with specified format
+   * @param format the format string
+   * @return a formatted date and time string
+   */
+  public static String getDate(String format) {
+    try {
+      // Format the current time.
+      java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat(format);
+      java.util.Date currentTime = new java.util.Date();
+      return formatter.format(currentTime);
+    }
+    catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
+    }
 
+    return "&nbsp;";
+  }
   /**
    * Returns the DOM object associated with the user
    * NOTE: This should be made more effecient through caching
@@ -158,93 +178,6 @@ public class CHeader extends BaseChannel
     doc.appendChild(headerEl);
     return  (doc);
   }
-
-  /**
-   * Checks user permissions to see if the user is authorized to publish channels
-   * @return
-   */
-  private boolean canUserPublish () {
-    // Get the current user ID
-    int userID = staticData.getPerson().getID();
-    // Check the cache for the answer
-    if (m_canUserPublishResponses.get("USER_ID." + userID) != null) {
-      // Return the answer if it's in the cache
-      if (((Boolean)m_canUserPublishResponses.get("USER_ID." + userID)).booleanValue()) {
-        return  (true);
-      }
-      else {
-        return  (false);
-      }
-    }
-    // Get a reference to the PermissionManager for this channel
-    PermissionManager pm = staticData.getPermissionManager();
-    try {
-      // Check to see if the user or all user's are specifically denied access
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH",
-          "*", "DENY").length > 0) {
-        // Cache the result
-        m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(false));
-        return  (false);
-      }
-      // Check to see if the user or all users are granted permission by default
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH",
-          "*", "GRANT").length > 0) {
-        // Cache the result
-        m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(true));
-        return  (true);
-      }
-      // Since no permission exist for this user we will return true by default
-      return  (true);
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      // Deny the user publish access if anything went wrong
-      return  (false);
-    }
-  }
-
-  /**
-   * Gets the current date/time with specified format
-   * @param format the format string
-   * @return a formatted date and time string
-   */
-  public static String getDate(String format) {
-    try {
-      // Format the current time.
-      java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat(format);
-      java.util.Date currentTime = new java.util.Date();
-      return formatter.format(currentTime);
-    }
-    catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-    }
-
-    return "&nbsp;";
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   */
-  public ChannelCacheKey generateKey () {
-    ChannelCacheKey k = new ChannelCacheKey();
-    StringBuffer sbKey = new StringBuffer(1024);
-    // guest pages are cached system-wide
-    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
-    sbKey.append("org.jasig.portal.CHeader: ");
-    sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
-    sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
-    sbKey.append("stylesheetURI:");
-    try {
-      String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
-      sbKey.append(XSLT.getStylesheetURI(sslUri, runtimeData.getBrowserInfo()));
-    } catch (Exception e) {
-      sbKey.append("not defined");
-    }
-    k.setKey(sbKey.toString());
-    k.setKeyValidity(new Long(System.currentTimeMillis()));
-    return  k;
-  }
-
   /**
    * put your documentation comment here
    * @param validity
@@ -262,7 +195,21 @@ public class CHeader extends BaseChannel
     }
     return  false;
   }
+  /**
+   * Render method.
+   * @param out
+   * @exception PortalException
+   */
+  public void renderXML (ContentHandler out) throws PortalException {
+    // Perform the transformation
+    XSLT xslt = new XSLT(this);
+    xslt.setXML(getUserXML());
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    if (staticData.getPerson().isGuest()) {
+      xslt.setStylesheetParameter("guest", "true");
+    }
+    xslt.transform();
+  }
 }
-
-
-
