@@ -1,0 +1,10 @@
+<!-- tables.dtd -->
+<!-- Use to validate tables.xml that is used with DbLoader -->
+
+<!ELEMENT tables (table+) >
+<!ELEMENT table (name, columns, primary-key*) >
+<!ELEMENT columns (column+)>
+<!ELEMENT column (name, type)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT primary-key (#PCDATA)>
