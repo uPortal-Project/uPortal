@@ -42,6 +42,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.GroupsException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -459,11 +460,53 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Permanently deletes a channel definition from the store.
+   * All references to this channel definition are also deleted.
    * @param channelDef the channel definition
    * @throws java.sql.SQLException
+   * @throws org.jasig.portal.groups.GroupsException
    */
-  public void deleteChannelDefinition(ChannelDefinition channelDef) throws SQLException {
-    throw new SQLException("not implemented yet");
+  public void deleteChannelDefinition(ChannelDefinition channelDef) throws SQLException, GroupsException {
+    Connection con = RDBMServices.getConnection();
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        int channelPublishId = channelDef.getId();
+
+        // Delete from UP_CHANNEL
+        String delete = "DELETE FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        stmt.executeUpdate(delete);
+
+        // Delete from UP_CHANNEL_PARAM
+        delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        stmt.executeUpdate(delete);
+
+        // Delete from UP_PERMISSION
+        delete = "DELETE FROM UP_PERMISSION WHERE OWNER='CHAN_ID." + channelPublishId + "' OR TARGET='CHAN_ID." + channelPublishId + "'";
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        stmt.executeUpdate(delete);
+
+        // Delete from UPC_KEYWORD
+        delete = "DELETE FROM UPC_KEYWORD WHERE CHAN_ID=" + channelPublishId;
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        stmt.executeUpdate(delete);
+
+        // Dissassociate from parent categories (delete from UP_GROUP_MEMBERSHIP)
+        IEntity channelDefEntity = GroupService.getEntity(String.valueOf(channelPublishId), ChannelDefinition.class);
+        Iterator iter = channelDefEntity.getContainingGroups();
+        while (iter.hasNext()) {
+          IEntityGroup parentGroup = (IEntityGroup)iter.next();
+          parentGroup.removeMember(channelDefEntity);
+          parentGroup.updateMembers();
+        }
+
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
   }
 
   /**
@@ -476,7 +519,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws java.sql.SQLException
    */
   public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws SQLException {
-   Connection con = RDBMServices.getConnection();
+    Connection con = RDBMServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -484,7 +527,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String update = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
         ", CHAN_APVL_DT = " + RDBMServices.sqlTimeStamp(approveDate) +
         " WHERE CHAN_ID = " + channelPublishId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannel(): " + update);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannelDefinition(): " + update);
         stmt.executeUpdate(update);
       } finally {
         stmt.close();
