@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<properties xmlns="http://www.jasig.org/uPortal/database/properties">
+
+  <!-- Location of tables.xml file -->
+  <tables-uri>properties/tables.xml</tables-uri>
+
+  <!-- Location of data.xml file -->  
+  <data-uri>properties/data.xml</data-uri>
+
+  <!-- DbLoader will be able to dump DROP, CREATE, and INSERT statements to a file.
+       This feature is coming soon.  For now, you can ignore these 3 properties. -->
+       
+  <create-script>no</create-script>
+  <script-uri>scripts/dbloader.script</script-uri>
+  <statement-terminator>;</statement-terminator>
+  
+  <!-- Mappings for cases where database metadata is incomplete.
+       "db-name", "db-version", "driver-name", and "driver-version"
+       must match the values returned by
+       java.sql.Connection.getMetaData().getDatabaseProductName(),
+       java.sql.Connection.getMetaData().getDatabaseProductVersion(),       
+       java.sql.Connection.getMetaData().getDriverName(), and      
+       java.sql.Connection.getMetaData().getDriverVersion() -->
+       
+  <db-type-mapping>
+    <db-name>HypersonicSQL</db-name>
+    <db-version>1.4</db-version>
+    <driver-name>HypersonicSQL Driver</driver-name>
+    <driver-version>1.4</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>LONGVARCHAR</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+  
+  <db-type-mapping>
+    <db-name>InstantDB</db-name>
+    <db-version>Version 3.26</db-version>
+    <driver-name>InstantDB JDBC Driver</driver-name>
+    <driver-version>Version 3.26</driver-version>    
+    <type><generic>LONGVARCHAR</generic><local>BINARY</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+  
+  <db-type-mapping>
+    <db-name>Microsoft SQL Server</db-name>
+    <db-version>07.00.0699</db-version>
+    <driver-name>JDBC-ODBC Bridge (SQLSRV32.DLL)</driver-name>
+    <driver-version>2.0001 (03.70.0820)</driver-version>    
+    <type><generic>INTEGER</generic><local>INTEGER</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>   
+</properties>
+

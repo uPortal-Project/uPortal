@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+
+<tables xmlns="http://www.jasig.org/uPortal/database/tables">
+
+  <table>
+    <name>PORTAL_USERS</name>
+    <columns>
+      <column><name>ID</name><type>INTEGER</type></column>
+      <column><name>USER_NAME</name><type>VARCHAR</type><param>15</param></column>
+      <column><name>FIRST_NAME</name><type>VARCHAR</type><param>15</param></column>
+      <column><name>LAST_NAME</name><type>VARCHAR</type><param>15</param></column>
+      <column><name>USER_LAYOUT_XML</name><type>LONGVARCHAR</type></column>        
+    </columns>
+    <primary-key>ID</primary-key>    
+  </table>
+  
+  <table>
+    <name>PORTAL_SHADOW</name>
+    <columns>
+      <column><name>USER_NAME</name><type>VARCHAR</type><param>64</param></column>
+      <column><name>PASSWORD</name><type>VARCHAR</type><param>64</param></column>
+    </columns>  
+  </table>
+  
+  <table>
+    <name>PORTAL_CHANNELS</name>
+    <columns>
+      <column><name>ID</name><type>INTEGER</type></column>
+      <column><name>CHANNEL_REG</name><type>LONGVARCHAR</type></column>
+    </columns>
+    <primary-key>ID</primary-key>    
+  </table>
+
+  <table>
+    <name>USER_PREFERENCES_TABLE</name>
+    <columns>
+      <column><name>USER_NAME</name><type>VARCHAR</type><param>15</param></column>
+      <column><name>MEDIA</name><type>VARCHAR</type><param>15</param></column>
+      <column><name>STRUCTURE_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>THEME_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>CSS_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>       
+    </columns>
+  </table>
+
+  <table>
+    <name>USER_STYLESHEET_PREFERENCES_TABLE</name>
+    <columns>
+      <column><name>USER_NAME</name><type>VARCHAR</type><param>15</param></column>
+      <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>USER_PREFERENCES_XML</name><type>LONGVARCHAR</type></column>       
+    </columns>
+  </table>
+
+  <table>
+    <name>STRUCTURE_STYLESHEET_DESCRIPTION_TABLE</name>
+    <columns>
+      <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>STYLESHEET_URI</name><type>LONGVARCHAR</type></column>
+      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>LONGVARCHAR</type></column>
+      <column><name>STYLESHEET_DESCRIPTION_TEXT</name><type>LONGVARCHAR</type></column>       
+    </columns>
+    <primary-key>STYLESHEET_NAME</primary-key>    
+  </table>
+
+  <table>
+    <name>THEME_STYLESHEET_DESCRIPTION_TABLE</name>
+    <columns>
+      <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>STYLESHEET_URI</name><type>LONGVARCHAR</type></column>
+      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>LONGVARCHAR</type></column>
+      <column><name>STYLESHEET_DESCRIPTION_TEXT</name><type>LONGVARCHAR</type></column>       
+    </columns>
+    <primary-key>STYLESHEET_NAME</primary-key>    
+  </table>
+
+  <table>
+    <name>CSS_STYLESHEET_DESCRIPTION_TABLE</name>
+    <columns>
+      <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>STYLESHEET_URI</name><type>LONGVARCHAR</type></column>
+      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>LONGVARCHAR</type></column>
+      <column><name>STYLESHEET_DESCRIPTION_TEXT</name><type>LONGVARCHAR</type></column>       
+    </columns>
+    <primary-key>STYLESHEET_NAME</primary-key>    
+  </table>
+
+  <table>
+    <name>STRUCTURE_TRANSFORMATION_STYLESHEET_MEDIA_MAPPING</name>
+    <columns>
+      <column><name>MEDIA</name><type>VARCHAR</type><param>15</param></column>
+      <column><name>STRUCTURE_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>     
+    </columns>   
+  </table>
+
+  <table>
+    <name>THEME_TRANSFORMATION_STYLESHEET_MAPPING</name>
+    <columns>
+      <column><name>THEME_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>STRUCTURE_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>     
+    </columns>  
+  </table>
+
+  <table>
+    <name>CSS_STYLESHEET_MAPPING</name>
+    <columns>
+      <column><name>CSS_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
+      <column><name>THEME_STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>     
+    </columns>  
+  </table>
+
+  <table>
+    <name>PORTAL_BOOKMARKS</name>
+    <columns>
+      <column><name>ID</name><type>INTEGER</type></column>
+      <column><name>PORTAL_USER_ID</name><type>INTEGER</type></column>
+      <column><name>BOOKMARK_XML</name><type>LONGVARCHAR</type></column>       
+    </columns>
+    <primary-key>ID</primary-key>
+  </table>
+
+</tables>
+
+
