@@ -153,7 +153,7 @@ public class RegisterStylesheet {
 
 
     private static void printHelp() {
-        System.out.println("Usage: registerStylesheet -(s|t) [-(u|d)] [stylesheetURI] [stylesheetDescriptionURI] [stylesheetId]");
+        System.out.println("Usage: RegisterStylesheet -(s|t) [-(u|d)] [stylesheetURI] [stylesheetDescriptionURI] [stylesheetId]");
         System.out.println("The stylesheetId must be specified for update and delete operations.");
         System.out.println("The URIs must be specified for add and update operations.");
         System.out.println("The CLASSPATH environment variable should be set up to include\n"+
@@ -169,7 +169,7 @@ public class RegisterStylesheet {
         System.out.println("\t-s : process structure stylesheet (either \"-t\" or \"-s\" are required on the command line)");
         System.out.println("\t-t : process theme stylesheet (either \"-t\" or \"-s\" are required on the command line)");
         System.out.println("\t-u : update stylesheet definition");
-        System.out.println("\t-u : remove stylesheet");
+        System.out.println("\t-d : delete stylesheet definition");
         System.exit(0);
     }
 }
