@@ -21,8 +21,8 @@
     <html>
       <head>
         <title>uPortal 2.0</title>
-		<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT">
-		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+	<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"></META>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache"></META>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
       </head>
