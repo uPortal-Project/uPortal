@@ -35,10 +35,21 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.*;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IMultithreadedCacheable;
+import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /** <p>A simple channel which renders an image along with an optional
  * caption and subcaption.</p>
@@ -56,69 +67,73 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CImage extends BaseChannel
+public class CImage extends BaseMultithreadedChannel implements IMultithreadedCacheable
 {
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CImage/CImage.ssl");
 
-  private String sImageUri = null;
-  private String sImageWidth = null;
-  private String sImageHeight = null;
-  private String sImageBorder = null;
-  private String sImageLink = null;
-  private String sCaption = null;
-  private String sSubCaption = null;
-
-  /**
-   * Receive static channel data from the portal
-   * @param sd static channel data
-   */
-  public void setStaticData (ChannelStaticData sd)
-  {
-    sImageUri = sd.getParameter ("img-uri");
-    sImageWidth = sd.getParameter ("img-width");
-    sImageHeight = sd.getParameter ("img-height");
-    sImageBorder = sd.getParameter ("img-border");
-    sImageLink = sd.getParameter ("img-link");
-    sCaption = sd.getParameter ("caption");
-    sSubCaption = sd.getParameter ("subcaption");
-  }
-
   /**
    * Output channel content to the portal
-   * @param out a sax document handler
+   * @param out a sax content handler
+   * @param uid a unique ID used to identify the state of the channel
    * @throws org.jasig.portal.PortalException
    */
-  public void renderXML (ContentHandler out) throws PortalException
+  public void renderXML (ContentHandler out, String uid) throws PortalException
   {
-    StringBuffer sb = new StringBuffer(1024);
-    sb.append("<?xml version='1.0'?>\n");
-    sb.append("<content>\n");
-    sb.append("  <image src=\"" + sImageUri + "\" ");
+    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+    ChannelStaticData staticData = channelState.getStaticData();
+    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
 
-    if (exists (sImageWidth))
-      sb.append("         width=\"" + sImageWidth + "\" ");
+    // Get the static data
+    String sImageUri = staticData.getParameter ("img-uri");
+    String sImageWidth = staticData.getParameter ("img-width");
+    String sImageHeight = staticData.getParameter ("img-height");
+    String sImageBorder = staticData.getParameter ("img-border");
+    String sImageLink = staticData.getParameter ("img-link");
+    String sCaption = staticData.getParameter ("caption");
+    String sSubCaption = staticData.getParameter ("subcaption");
 
-    if (exists (sImageHeight))
-      sb.append("         height=\"" + sImageHeight + "\" ");
+    Document doc = null;
+    try {
+      doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+    } catch (ParserConfigurationException pce) {
+      LogService.log(LogService.ERROR, pce);
+      throw new GeneralRenderingException(pce.getMessage());
+    }
 
-    if (exists (sImageBorder))
-      sb.append("         border=\"" + sImageBorder + "\"");
+    // Create XML doc
+    Element contentE = doc.createElement("content");
 
-    if (exists (sImageLink))
-      sb.append("         link=\"" + sImageLink + "\"");
+    // Add image tag src, width, height, border, and link
+    Element imageE = doc.createElement("image");
+    imageE.setAttribute("src", sImageUri);
+    if (exists(sImageWidth))
+      imageE.setAttribute("width", sImageWidth);
+    if (exists(sImageWidth))
+      imageE.setAttribute("height", sImageHeight);
+    if (exists(sImageWidth))
+      imageE.setAttribute("border", sImageBorder);
+    if (exists(sImageWidth))
+      imageE.setAttribute("link", sImageLink);
+    contentE.appendChild(imageE);
 
-    sb.append("  />\n");
+    // Add a caption if it is specified
+    if (exists(sCaption)) {
+      Element captionE = doc.createElement("caption");
+      captionE.appendChild(doc.createTextNode(sCaption));
+      contentE.appendChild(captionE);
+    }
 
-    if (exists (sCaption))
-      sb.append("  <caption>" + sCaption + "</caption>\n");
+    // Add a subcaption if it is specified
+    if (exists(sSubCaption)) {
+      Element subcaptionE = doc.createElement("subcaption");
+      subcaptionE.appendChild(doc.createTextNode(sSubCaption));
+      contentE.appendChild(subcaptionE);
+    }
 
-    if (exists (sSubCaption))
-      sb.append("  <subcaption>" + sSubCaption + "</subcaption>\n");
-
-    sb.append("</content>\n");
+    doc.appendChild(contentE);
 
     XSLT xslt = new XSLT();
-    xslt.setXML(sb.toString());
+    xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
@@ -128,5 +143,19 @@ public class CImage extends BaseChannel
   private static boolean exists (String s)
   {
     return (s != null && s.length () > 0);
+  }
+
+  // IMultithreadedCachable methods...
+
+  public ChannelCacheKey generateKey(String uid) {
+    ChannelCacheKey key = new ChannelCacheKey();
+    key.setKey("org.jasig.portal.channels.CImage");
+    key.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+    key.setKeyValidity(null);
+    return key;
+  }
+
+  public boolean isCacheValid(Object validity, String uid) {
+    return true;
   }
 }
