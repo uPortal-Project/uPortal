@@ -39,7 +39,6 @@
 package  org.jasig.portal.channels;
 
 import  org.jasig.portal.channels.BaseChannel;
-import  org.jasig.portal.IXMLChannel;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.ChannelRuntimeProperties;
@@ -47,10 +46,10 @@ import  org.jasig.portal.StylesheetSet;
 import  org.jasig.portal.ChannelStaticData;
 import  org.jasig.portal.GenericPortalBean;
 import  org.jasig.portal.PortalException;
-import  org.jasig.portal.Logger;
 import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.ResourceMissingException;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
@@ -61,10 +60,6 @@ import  org.apache.xerces.parsers.SAXParser;
 import  org.apache.xerces.dom.DocumentImpl;
 import  org.apache.xml.serialize.XMLSerializer;
 import  org.apache.xml.serialize.OutputFormat;
-import  org.apache.xalan.xslt.XSLTInputSource;
-import  org.apache.xalan.xslt.XSLTResultTarget;
-import  org.apache.xalan.xslt.XSLTProcessor;
-import  org.apache.xalan.xslt.XSLTProcessorFactory;
 import  org.xml.sax.InputSource;
 import  org.xml.sax.DocumentHandler;
 import  org.xml.sax.EntityResolver;
@@ -78,9 +73,8 @@ import  java.util.Hashtable;
 import  java.util.Enumeration;
 import  java.net.URL;
 
-
 /**
- * 
+ * Bookmarks channel
  * @author Peter Kharchenko
  * @author Steven Toth
  * @author Bernie Durfee
@@ -155,7 +149,7 @@ public class CBookmarks extends BaseChannel {
       // Cache the bookmarks DOM locally
       m_bookmarksXML = (DocumentImpl)domParser.getDocument();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       // Release the database connection
       if (connection != null) {
@@ -189,22 +183,22 @@ public class CBookmarks extends BaseChannel {
         inputXML = "<?xml version=\"1.0\"?>" + "<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">"
             + "<xbel>" + "  <title>Default Bookmarks</title>" + "  <info>" + "    <metadata owner=\'" + staticData.getPerson().getID()
             + "\'/>" + "  </info>" + "</xbel>";
-        Logger.log(Logger.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
+        LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
       }
       // Now add a row to the database for the user
       String insert = "INSERT INTO UPC_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) VALUES (" + staticData.getPerson().getID()
           + ",'" + inputXML + "')";
-      //Logger.log(Logger.DEBUG, insert);
+      //LogService.instance().log(LogService.DEBUG, insert);
       connection.createStatement().executeUpdate(insert);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       if (connection != null) {
         releaseConnection(connection);
       }
       if (inputXML == null) {
         // ...or else just start with an empty set of bookmarks
-        Logger.log(Logger.ERROR, "CBookmarks.getDefaultBookmarks() - Could not retrieve default bookmark xml, using blank xml.");
+        LogService.instance().log(LogService.ERROR, "CBookmarks.getDefaultBookmarks() - Could not retrieve default bookmark xml, using blank xml.");
         inputXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xbel></xbel>";
       }
     }
@@ -230,7 +224,7 @@ public class CBookmarks extends BaseChannel {
           + staticData.getPerson().getID();
       connection.createStatement().executeUpdate(update);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     } finally {
       releaseConnection(connection);
     }
@@ -488,7 +482,7 @@ public class CBookmarks extends BaseChannel {
           break;
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -533,7 +527,7 @@ public class CBookmarks extends BaseChannel {
   private void renderAddNodeXML (DocumentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
-      Logger.log(Logger.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
       renderViewModeXML(out);
     } 
     else if (m_activeNodeType.equals("bookmark")) {
@@ -545,7 +539,7 @@ public class CBookmarks extends BaseChannel {
       transformXML(out, "add_node", getBookmarkXML(), parameters);
     } 
     else {
-      Logger.log(Logger.ERROR, "CBookmarks.renderAddNodeXML: Unknown active node type - " + m_activeNodeType);
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
     }
   }
@@ -570,7 +564,7 @@ public class CBookmarks extends BaseChannel {
   private void renderDeleteNodeXML (DocumentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
-      Logger.log(Logger.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
       renderViewModeXML(out);
     } 
     else if (m_activeNodeType.equals("bookmark")) {
@@ -582,7 +576,7 @@ public class CBookmarks extends BaseChannel {
       transformXML(out, "delete_node", getBookmarkXML(), parameters);
     } 
     else {
-      Logger.log(Logger.ERROR, "CBookmarks.renderDeleteNodeXML: Unknown active node type - " + m_activeNodeType);
+      LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: Unknown active node type - " + m_activeNodeType);
       renderViewModeXML(out);
     }
   }
@@ -664,7 +658,7 @@ public class CBookmarks extends BaseChannel {
       RdbmServices rdbmServices = new RdbmServices();
       return  (rdbmServices.getConnection());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -678,7 +672,7 @@ public class CBookmarks extends BaseChannel {
       RdbmServices rdbmServices = new RdbmServices();
       rdbmServices.releaseConnection(connection);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 }
