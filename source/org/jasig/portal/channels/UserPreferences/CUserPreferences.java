@@ -36,14 +36,10 @@
 package org.jasig.portal.channels.UserPreferences;
 
 import org.jasig.portal.*;
-import org.jasig.portal.security.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import org.w3c.dom.*;
-import org.apache.xalan.xslt.*;
+import org.w3c.dom.Document;
 import org.xml.sax.DocumentHandler;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+
 /** <p>Manages User Layout, user preferences and profiles </p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
@@ -153,9 +149,9 @@ public class CUserPreferences implements IPrivilegedChannel
         String action = runtimeData.getParameter ("userPreferencesAction");
         if(action!=null) {
             Integer profileId=null;
-	    try {
-		profileId=new Integer(runtimeData.getParameter("profileId"));
-	    } catch (NumberFormatException nfe) {};
+            try {
+                profileId=new Integer(runtimeData.getParameter("profileId"));
+            } catch (NumberFormatException nfe) {};
 
             boolean systemProfile=false;
             if(profileId!=null) {
