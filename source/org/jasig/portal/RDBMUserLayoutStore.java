@@ -824,7 +824,6 @@ public class RDBMUserLayoutStore
       }
       // Commit the transaction
       commit(con);
-      approveChannel(id, 0, rightNow);
     } catch (Exception e) {
       rollback(con);
       throw  e;

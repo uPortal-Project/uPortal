@@ -344,6 +344,12 @@ public class CPublisher
     doc.appendChild(chan);
     chanReg.addChannel(nextID, staticData.getPerson().getID(), chanName, doc, catID);
     storeChanRoles(nextID);
+    try {
+      chanReg.approveChannel(nextID, staticData.getPerson().getID(),
+        new java.sql.Timestamp(System.currentTimeMillis()));
+    } catch (Exception exc) {
+      Logger.log(Logger.ERROR, exc);
+    }
   }
 
   /**
