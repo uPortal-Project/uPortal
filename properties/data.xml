@@ -16,7 +16,7 @@
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_CHAN_TYPE</value></column>
         <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
-      </row>            
+      </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_USER</value></column>
         <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
@@ -1470,260 +1470,6 @@
   </table>
 
   <table>
-    <name>UP_CATEGORY</name>
-    <rows>
-      <row>
-        <column><name>CAT_ID</name><value>0</value></column>
-        <column><name>CAT_TITLE</name><value>Applications</value></column>
-        <column><name>CAT_DESC</name><value>Applications</value></column>
-        <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
-        <column><name>NEXT_CAT_ID</name><value>1</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-        <row>
-          <column><name>CAT_ID</name><value>1</value></column>
-          <column><name>CAT_TITLE</name><value>Development</value></column>
-          <column><name>CAT_DESC</name><value>Development</value></column>
-          <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
-          <column><name>NEXT_CAT_ID</name><value>10</value></column>
-          <column><name>PRIOR_CAT_ID</name><value>0</value></column>
-          <column><name>FST_CHLD_CAT_ID</name><value>2</value></column>
-        </row>
-        <row>
-          <column><name>CAT_ID</name><value>2</value></column>
-          <column><name>CAT_TITLE</name><value>uPortal</value></column>
-          <column><name>CAT_DESC</name><value>uPortal-related</value></column>
-          <column><name>PARENT_CAT_ID</name><value>1</value></column>
-          <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
-          <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-          <column><name>FST_CHLD_CAT_ID</name><value>3</value></column>
-        </row>
-      <row>
-        <column><name>CAT_ID</name><value>3</value></column>
-        <column><name>CAT_TITLE</name><value>Channel Types</value></column>
-        <column><name>CAT_DESC</name><value>Java classes implementing the IChannel interface</value></column>
-        <column><name>PARENT_CAT_ID</name><value>2</value></column>
-        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>4</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>4</value></column>
-        <column><name>CAT_TITLE</name><value>CWebProxy</value></column>
-        <column><name>CAT_DESC</name><value>Serves as HTTP Proxy to HTML or XHTML web pages</value></column>
-        <column><name>PARENT_CAT_ID</name><value>3</value></column>
-        <column><name>NEXT_CAT_ID</name><value>5</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>5</value></column>
-        <column><name>CAT_TITLE</name><value>CApplet</value></column>
-        <column><name>CAT_DESC</name><value>Renders a java applet</value></column>
-        <column><name>PARENT_CAT_ID</name><value>3</value></column>
-        <column><name>NEXT_CAT_ID</name><value>6</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>4</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>6</value></column>
-        <column><name>CAT_TITLE</name><value>CGenericXSLT</value></column>
-        <column><name>CAT_DESC</name><value>Performs XSLT transformations</value></column>
-        <column><name>PARENT_CAT_ID</name><value>3</value></column>
-        <column><name>NEXT_CAT_ID</name><value>8</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>5</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>7</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>7</value></column>
-        <column><name>CAT_TITLE</name><value>RSS</value></column>
-        <column><name>CAT_DESC</name><value>Rich Site Summary, an XML standard for content feeds</value></column>
-        <column><name>PARENT_CAT_ID</name><value>6</value></column>
-        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>8</value></column>
-        <column><name>CAT_TITLE</name><value>CImage</value></column>
-        <column><name>CAT_DESC</name><value>Renders an image with an optional cation and subcaption.</value></column>
-        <column><name>PARENT_CAT_ID</name><value>3</value></column>
-        <column><name>NEXT_CAT_ID</name><value>9</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>6</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>9</value></column>
-        <column><name>CAT_TITLE</name><value>CInlineFrame</value></column>
-        <column><name>CAT_DESC</name><value>Renders a web page inside an inline frame.  Only use for IE 5 and Netscape 6 and higher.</value></column>
-        <column><name>PARENT_CAT_ID</name><value>3</value></column>
-        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>8</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>10</value></column>
-        <column><name>CAT_TITLE</name><value>News</value></column>
-        <column><name>CAT_DESC</name><value>News</value></column>
-        <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
-        <column><name>NEXT_CAT_ID</name><value>12</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>11</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>11</value></column>
-        <column><name>CAT_TITLE</name><value>Business</value></column>
-        <column><name>CAT_DESC</name><value>Business or company news</value></column>
-        <column><name>PARENT_CAT_ID</name><value>10</value></column>
-        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>12</value></column>
-        <column><name>CAT_TITLE</name><value>Entertainment</value></column>
-        <column><name>CAT_DESC</name><value>Entertainment</value></column>
-        <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
-        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>10</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>13</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>13</value></column>
-        <column><name>CAT_TITLE</name><value>Games</value></column>
-        <column><name>CAT_DESC</name><value>Games</value></column>
-        <column><name>PARENT_CAT_ID</name><value>12</value></column>
-        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
-        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
-        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_CAT_CHAN</name>
-    <rows>
-      <row>
-        <column><name>CAT_ID</name><value>0</value></column>
-        <column><name>CHAN_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>4</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>16</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>20</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>2</value></column>
-        <column><name>CHAN_ID</name><value>15</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>2</value></column>
-        <column><name>CHAN_ID</name><value>7</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>2</value></column>
-        <column><name>CHAN_ID</name><value>8</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>2</value></column>
-        <column><name>CHAN_ID</name><value>5</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>4</value></column>
-        <column><name>CHAN_ID</name><value>17</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>4</value></column>
-        <column><name>CHAN_ID</name><value>18</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>5</value></column>
-        <column><name>CHAN_ID</name><value>9</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>6</value></column>
-        <column><name>CHAN_ID</name><value>15</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>6</value></column>
-        <column><name>CHAN_ID</name><value>20</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>7</value></column>
-        <column><name>CHAN_ID</name><value>5</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>7</value></column>
-        <column><name>CHAN_ID</name><value>6</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>7</value></column>
-        <column><name>CHAN_ID</name><value>7</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>7</value></column>
-        <column><name>CHAN_ID</name><value>11</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>7</value></column>
-        <column><name>CHAN_ID</name><value>12</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>7</value></column>
-        <column><name>CHAN_ID</name><value>13</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>8</value></column>
-        <column><name>CHAN_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>9</value></column>
-        <column><name>CHAN_ID</name><value>8</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>10</value></column>
-        <column><name>CHAN_ID</name><value>12</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>11</value></column>
-        <column><name>CHAN_ID</name><value>6</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>11</value></column>
-        <column><name>CHAN_ID</name><value>13</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>12</value></column>
-        <column><name>CHAN_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>12</value></column>
-        <column><name>CHAN_ID</name><value>11</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>13</value></column>
-        <column><name>CHAN_ID</name><value>9</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>13</value></column>
-        <column><name>CHAN_ID</name><value>14</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>2</value></column>
-        <column><name>CHAN_ID</name><value>22</value></column>
-      </row>
-    </rows>
-  </table>
-
-  <table>
     <name>UP_USER_PROFILE</name>
     <rows>
       <row>
@@ -1735,7 +1481,7 @@
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
       </row>
-      
+
       <row>
         <column><name>USER_ID</name><value>0</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
@@ -1745,7 +1491,7 @@
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>2</value></column>
       </row>
-            
+
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -2302,6 +2048,10 @@
         <column><name>ENTITY_TYPE_ID</name><value>3</value></column>
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntityGroup</value></column>
       </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.ChannelDefinition</value></column>
+      </row>
     </rows>
   </table>
 
@@ -2309,6 +2059,8 @@
   <table>
     <name>UP_GROUP</name>
     <rows>
+
+    <!-- IPerson groups -->
      <row>
         <column><name>GROUP_ID</name><value>0</value></column>
         <column><name>CREATOR_ID</name><value>0</value></column>
@@ -2413,6 +2165,114 @@
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Portal Administrators</value></column>
         <column><name>DESCRIPTION</name><value>A group of system administrators with superuser capabilities</value></column>
+      </row>
+
+      <!-- ChannelDefinition groups -->
+
+      <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>All categories</value></column>
+        <column><name>DESCRIPTION</name><value>All channel categories</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_ID</name><value>51</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Applications</value></column>
+        <column><name>DESCRIPTION</name><value>Applications</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Development</value></column>
+        <column><name>DESCRIPTION</name><value>Development</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>uPortal</value></column>
+        <column><name>DESCRIPTION</name><value>uPortal-related</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Channel Types</value></column>
+        <column><name>DESCRIPTION</name><value>Java classes implementing the IChannel interface</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>55</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CWebProxy</value></column>
+        <column><name>DESCRIPTION</name><value>Serves as HTTP Proxy to HTML or XHTML web pages</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>56</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CApplet</value></column>
+        <column><name>DESCRIPTION</name><value>Renders a hava applet</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CGenericXSLT</value></column>
+        <column><name>DESCRIPTION</name><value>Performs XSLT transformations</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>RSS</value></column>
+        <column><name>DESCRIPTION</name><value>Rich Site Summary, an XML standard for content feeds</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>59</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CImage</value></column>
+        <column><name>DESCRIPTION</name><value>Renders and image with an optional caption and subcaption</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>60</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>CInlineFrame</value></column>
+        <column><name>DESCRIPTION</name><value>Renders a web page inside and inline frame. Only use for IE 5 and Netscape 6 and higher.</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>61</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>News</value></column>
+        <column><name>DESCRIPTION</name><value>News</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>62</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Business</value></column>
+        <column><name>DESCRIPTION</name><value>Business or company news</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Entertainment</value></column>
+        <column><name>DESCRIPTION</name><value>Entertainment</value></column>
+      </row>
+       <row>
+        <column><name>GROUP_ID</name><value>64</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
+        <column><name>GROUP_NAME</name><value>Games</value></column>
+        <column><name>DESCRIPTION</name><value>Games</value></column>
       </row>
     </rows>
   </table>
@@ -2527,8 +2387,225 @@
         <column><name>MEMBER_KEY</name><value>6</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
-     
+
      -->
+
+     <!-- Channel categories -->
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>51</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>52</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>53</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>54</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>55</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>56</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>57</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>MEMBER_KEY</name><value>58</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>59</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>54</value></column>
+        <column><name>MEMBER_KEY</name><value>60</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>61</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>60</value></column>
+        <column><name>MEMBER_KEY</name><value>62</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>50</value></column>
+        <column><name>MEMBER_KEY</name><value>63</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>MEMBER_KEY</name><value>64</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>59</value></column>
+        <column><name>MEMBER_KEY</name><value>1</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>51</value></column>
+        <column><name>MEMBER_KEY</name><value>3</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>4</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>5</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>62</value></column>
+        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>60</value></column>
+        <column><name>MEMBER_KEY</name><value>8</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>8</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>56</value></column>
+        <column><name>MEMBER_KEY</name><value>9</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>64</value></column>
+        <column><name>MEMBER_KEY</name><value>9</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>11</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>63</value></column>
+        <column><name>MEMBER_KEY</name><value>11</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>61</value></column>
+        <column><name>MEMBER_KEY</name><value>12</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>12</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>58</value></column>
+        <column><name>MEMBER_KEY</name><value>13</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>62</value></column>
+        <column><name>MEMBER_KEY</name><value>13</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>64</value></column>
+        <column><name>MEMBER_KEY</name><value>14</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>15</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>MEMBER_KEY</name><value>15</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>16</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>55</value></column>
+        <column><name>MEMBER_KEY</name><value>17</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>55</value></column>
+        <column><name>MEMBER_KEY</name><value>18</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_KEY</name><value>20</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>57</value></column>
+        <column><name>MEMBER_KEY</name><value>20</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>53</value></column>
+        <column><name>MEMBER_KEY</name><value>22</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
     </rows>
   </table>
 
