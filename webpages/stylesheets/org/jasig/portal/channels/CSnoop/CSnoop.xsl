@@ -1,80 +1,80 @@
-<?xml version='1.0'?>
+<?xml version='1.0' encoding='utf-8' ?><xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"><xsl:output indent="yes"/>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-<xsl:output indent="yes"/>
 
 <xsl:template match="/">
-  <table width="100%" cellspacing="0" cellpadding="4" border="0">
-    <tr><td colspan="2" class="uportal-background-med"><span class="uportal-channel-table-caption">Request Info</span></td></tr>
+  <table width="100%" cellspacing="0" cellpadding="2" border="0">
+    <tr><td colspan="2" class="uportal-background-med">
+	<span class="uportal-channel-table-caption">Request Info</span></td></tr>
     <xsl:apply-templates select="request-info"/>
-    <tr><td colspan="2" class="uportal-background-med"><span class="uportal-channel-table-caption">HTTP Header Info</span></td></tr>
+    <tr><td colspan="2" class="uportal-background-med">
+	<span class="uportal-channel-table-caption">HTTP Header Info</span></td></tr>
     <xsl:apply-templates select="request-info/headers"/>   
   </table>
 </xsl:template>
 
 <xsl:template match="request-info">
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Request Method: </p></td>
-    <td class="uportal-channel-table-row-odd"><xsl:value-of select="request-method"/></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request Method: </p></td>
+    <td width="100%" class="uportal-channel-table-row-odd"><xsl:value-of select="request-method"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Request URI: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request URI: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="request-uri"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Request Protocol: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request Protocol: </p></td>
     <td class="uportal-channel-table-row-odd"><xsl:value-of select="request-protocol"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Servlet Path: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Servlet Path: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="servlet-path"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Path Info: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Path Info: </p></td>
     <td class="uportal-channel-table-row-odd"><xsl:value-of select="path-info"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Path Translated: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Path Translated: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="path-translated"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Query String: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Query String: </p></td>
     <td class="uportal-channel-table-row-odd"><xsl:value-of select="query-string"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Content Length: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Content Length: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="content-length"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Content Type: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Content Type: </p></td>
     <td class="uportal-channel-table-row-odd"><xsl:value-of select="content-type"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Server Name: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Server Name: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="server-name"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Server Port: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Server Port: </p></td>
     <td class="uportal-channel-table-row-odd"><xsl:value-of select="server-port"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Remote User: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Remote User: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="remote-user"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Request Address: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request Address: </p></td>
     <td class="uportal-channel-table-row-odd"><xsl:value-of select="remote-address"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Remote Host: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Remote Host: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="remote-host"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Authorization Scheme: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Authorization Scheme: </p></td>
     <td class="uportal-channel-table-row-odd"><xsl:value-of select="authorization-scheme"/></td>
   </tr>
   <tr>
-    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-text">Local: </p></td>
+    <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Local: </p></td>
     <td class="uportal-channel-table-row-even"><xsl:value-of select="locale"/></td>
   </tr>
 </xsl:template>
@@ -88,7 +88,7 @@
     <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
       <!-- The choose block here fixes a spelling error in the HTTP headers.
            'Referer' should be changed to 'Referrer' -->
-      <p class="uportal-channel-text">
+      <p class="uportal-channel-table-row-even">
       <xsl:choose>
         <xsl:when test="@name = 'Referer'">
           Referrer: 
@@ -112,3 +112,8 @@
 </xsl:template> 
 
 </xsl:stylesheet>
+<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
+<metaInformation>
+<scenarios/>
+</metaInformation>
+-->
