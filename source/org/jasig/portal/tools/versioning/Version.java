@@ -152,8 +152,8 @@ public class Version
      * functional names of the objects are equal and the version numbers 
      * within this class are equal to those of the passed in version object.
      * 
-     * @param v
-     * @return
+     * @param obj a Version object to be compared to this one
+     * @return boolean true if the above conditions are met
      */
     public boolean equals(Object obj)
     {
@@ -170,8 +170,8 @@ public class Version
      * that represented by the passed in version object. The functional name
      * is not queried for this evaluation. Only version numbers are compared.
      * 
-     * @param v
-     * @return
+     * @param v the version to be compared with this version
+     * @return boolean true if this version is equal to the passed in version
      */
     public boolean equalTo(Version v)
     {
@@ -185,8 +185,8 @@ public class Version
      * that represented by the passed in version object. The functional name
      * is not queried for this evaluation. Only version numbers are compared.
      * 
-     * @param v
-     * @return
+     * @param v the version to be compared with this version
+     * @return boolean true if this version is less than to the passed in version
      */
     public boolean lessThan(Version v)
     {
@@ -202,8 +202,8 @@ public class Version
      * that represented by the passed in version object. The functional name
      * is not queried for this evaluation. Only version numbers are compared.
      * 
-     * @param v
-     * @return
+     * @param v the version to be compared with this version
+     * @return boolean true if this version is greater than to the passed in version
      */
     public boolean greaterThan(Version v)
     {

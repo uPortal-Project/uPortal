@@ -831,9 +831,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Creates a new channel category with the specified values.
-   * @param name, the name of the category 
-   * @param description, the name of the description 
-   * @param creatorId, the id of the creator or system 
+   * @param name the name of the category 
+   * @param description the name of the description 
+   * @param creatorId the id of the creator or system 
    * @return channelCategory the new channel category
    * @throws java.lang.Exception
    */

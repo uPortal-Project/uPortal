@@ -216,8 +216,8 @@ public class ChannelPublisher
      * represented by the passed in filename and returns the resultant 
      * ChannelDefinition object.
      * 
-     * @param ci
-     * @return
+     * @param filename the name of a file containing the channel XML definition
+     * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
      */
     public ChannelDefinition publishChannel(String filename) throws Exception
@@ -230,8 +230,8 @@ public class ChannelPublisher
      * Publishes the channel represented by the XML accessed via the passed in 
      * InputStream object and returns the resultant ChannelDefinition object.
      * 
-     * @param ci
-     * @return
+     * @param is and InputStream containing the channel XML definition
+     * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
      */
     public ChannelDefinition publishChannel(InputStream is) throws Exception
