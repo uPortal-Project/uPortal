@@ -299,7 +299,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         rElement = userLayout.getElementById(newDetachId);
                         if (rElement != null) {
                             // valid new detach id was specified. need to redirect
-                            res.sendRedirect(PortalSessionManager.RENDER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+newDetachId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
+                            res.sendRedirect(PortalSessionManager.DETACH_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+newDetachId+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
                             return;
                         }
                     }
@@ -317,7 +317,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     if (detachMode) {
                         LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : entering detach mode for nodeId=\"" + detachId + "\".");
-                        uPElement = PortalSessionManager.RENDER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+detachId;
+                        uPElement = PortalSessionManager.DETACH_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+detachId;
                     }
                     // inform channel manager about the new uPElement value
                     channelManager.setUPElement(uPElement);
