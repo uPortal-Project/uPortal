@@ -54,7 +54,7 @@ public class SpringBeanCheck
                 
             
             PortalApplicationContextFacade.getPortalApplicationContext().getBean(this.beanName, Class.forName(this.requiredBeanTypeClassName));
-            return CheckResult.createSuccess("Bean with name [" + this.beanName + "] was present and of class [" + requiredBeanTypeClassName + "]");
+            return CheckResult.createSuccess("Bean with name [" + this.beanName + "] was present and of class [" + this.requiredBeanTypeClassName + "]");
             
             
             
