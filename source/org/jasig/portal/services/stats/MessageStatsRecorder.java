@@ -210,6 +210,45 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
     outputMessage(fixMsg(msg));                 
   } 
   
+  public void recordChannelInstantiated(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    String msg = "Channel [" +
+                 channelDesc.getName() + ", " + 
+                 channelDesc.getChannelPublishId() + ", " +
+                 channelDesc.getChannelSubscribeId() + "] " +
+                 "was instantiated in layout " + profile.getLayoutId() + " " + 
+                 "by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    outputMessage(fixMsg(msg));                 
+  }   
+
+  public void recordChannelRendered(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    String msg = "Channel [" +
+                 channelDesc.getName() + ", " + 
+                 channelDesc.getChannelPublishId() + ", " +
+                 channelDesc.getChannelSubscribeId() + "] " +
+                 "was rendered in layout " + profile.getLayoutId() + " " + 
+                 "by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    outputMessage(fixMsg(msg));                 
+  }
+
+  public void recordChannelTargeted(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    String msg = "Channel [" +
+                 channelDesc.getName() + ", " + 
+                 channelDesc.getChannelPublishId() + ", " +
+                 channelDesc.getChannelSubscribeId() + "] " +
+                 "was targeted in layout " + profile.getLayoutId() + " " + 
+                 "by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    outputMessage(fixMsg(msg));                 
+  }
+  
   /**
    * Outputs the message formulated according
    * to the stat being recorded.  Subclasses

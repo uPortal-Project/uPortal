@@ -54,6 +54,9 @@ import org.jasig.portal.services.stats.RecordFolderAddedToLayoutWorkerTask;
 import org.jasig.portal.services.stats.RecordFolderUpdatedInLayoutWorkerTask;
 import org.jasig.portal.services.stats.RecordFolderMovedInLayoutWorkerTask;
 import org.jasig.portal.services.stats.RecordFolderRemovedFromLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelInstantiatedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelRenderedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelTargetedWorkerTask;
 import org.jasig.portal.utils.threading.ThreadPool;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.jasig.portal.utils.threading.WorkTracker;
@@ -289,4 +292,42 @@ public class StatsRecorder {
     task.setStatsRecorder(instance().statsRecorder);
     WorkTracker workTracker = instance().threadPool.execute(task);
   }  
+  
+  /**
+   * Record that a channel is being instantiated
+   * @param person, the person for whom the channel is instantiated
+   * @param profile, the profile of the layout for whom the channel is instantiated
+   * @param channelDesc, the channel being instantiated
+   */
+  public static void recordChannelInstantiated(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    StatsRecorderWorkerTask task = new RecordChannelInstantiatedWorkerTask(person, profile, channelDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }  
+  
+  /**
+   * Record that a channel is being rendered
+   * @param person, the person for whom the channel is rendered
+   * @param profile, the profile of the layout for whom the channel is rendered
+   * @param channelDesc, the channel being rendered
+   */
+  public static void recordChannelRendered(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    StatsRecorderWorkerTask task = new RecordChannelRenderedWorkerTask(person, profile, channelDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }  
+
+  /**
+   * Record that a channel is being targeted.  In other words,
+   * the user is interacting with the channel via either a 
+   * hyperlink or form submission.
+   * @param person, the person interacting with the channel
+   * @param profile, the profile of the layout in which the channel resides
+   * @param channelDesc, the channel being targeted
+   */
+  public static void recordChannelTargeted(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    StatsRecorderWorkerTask task = new RecordChannelTargetedWorkerTask(person, profile, channelDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }   
 }

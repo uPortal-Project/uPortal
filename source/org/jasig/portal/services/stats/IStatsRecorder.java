@@ -166,4 +166,29 @@ public interface IStatsRecorder {
    * @param folderDesc, the folder being removed from a user layout
    */
   public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);      
+
+  /**
+   * Called when a channel is being instantiated
+   * @param person, the person instantiating the channel
+   * @param profile, the profile of the layout in which this channel is instantiated
+   * @param channelDesc, the channel being instantiated
+   */
+  public void recordChannelInstantiated(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+
+  /**
+   * Called when a channel is being rendered
+   * @param person, the person rendering the channel
+   * @param profile, the profile of the layout in which this channel is rendered
+   * @param channelDesc, the channel being rendered
+   */
+  public void recordChannelRendered(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+ 
+  /**
+   * Called when a channel is being targeted
+   * @param person, the person interacting with the channel
+   * @param profile, the profile of the layout in which this channel resides
+   * @param channelDesc, the channel being targeted
+   */
+  public void recordChannelTargeted(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+ 
 }
