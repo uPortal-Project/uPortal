@@ -316,25 +316,25 @@ public class LayoutBean
       String[] values;
       if((values=req.getParameterValues("uP_help_target"))!=null) {
           for(int i=0;i<values.length;i++) {
-              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
+              channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.HELP_BUTTON_EVENT));
           }
       }
 
       if((values=req.getParameterValues("uP_about_target"))!=null) {
           for(int i=0;i<values.length;i++) {
-              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.ABOUT_BUTTON_EVENT));
+              channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.ABOUT_BUTTON_EVENT));
           }
       }
 
       if((values=req.getParameterValues("uP_edit_target"))!=null) {
           for(int i=0;i<values.length;i++) {
-              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
+              channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.EDIT_BUTTON_EVENT));
           }
       }
 
       if((values=req.getParameterValues("uP_detach_target"))!=null) {
           for(int i=0;i<values.length;i++) {
-              channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.DETACH_BUTTON_EVENT));
+              channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.DETACH_BUTTON_EVENT));
           }
       }
 

@@ -40,7 +40,7 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.LayoutEvent;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.PortalControlStructures;
@@ -109,7 +109,7 @@ public class CSnoop implements IPrivilegedChannel
    * Processes layout-level events coming from the portal
    * @param ev a portal layout event
    */
-  public void receiveEvent (LayoutEvent ev)
+  public void receiveEvent (PortalEvent ev)
   {
     // no events for this channel
   }

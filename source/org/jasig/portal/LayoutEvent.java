@@ -46,24 +46,38 @@ package org.jasig.portal;
  * </ul>
  * @version $Revision$
  */
-public class LayoutEvent
+public class PortalEvent
 {
-  public static final int EDIT_BUTTON_EVENT = 0;
-  public static final int HELP_BUTTON_EVENT = 1;
-  public static final int DETACH_BUTTON_EVENT = 2;
-  public static final int ABOUT_BUTTON_EVENT = 3;
+    // framework-generated events
+  public static final int RENDERING_DONE = 0;
+  public static final int SESSION_DONE = 1;
+  public static final int UNSUBSCRIBE = 2;
+  public static final int LOAD_HIGH = 3;
+  public static final int MEMORY_LOW = 4;
+
+    // layout-generated events
+  public static final int EDIT_BUTTON_EVENT = 5;
+  public static final int HELP_BUTTON_EVENT = 6;
+  public static final int DETACH_BUTTON_EVENT = 7;
+  public static final int ABOUT_BUTTON_EVENT = 8;
+
 
   private static final String [] eventName =
   {
-    "editButtonEvent",
-    "helpButtonEvent",
-    "detachButtonEvent",
-    "minimizeButtonEvent"
+      "renderingDone",
+      "sessionDone",
+      "unsubscribe",
+      "loadHigh",
+      "memoryLow",
+      "editButtonEvent",
+      "helpButtonEvent",
+      "detachButtonEvent",
+      "minimizeButtonEvent"
   };
 
   private int event;
 
-  public LayoutEvent (int ev)
+  public PortalEvent (int ev)
   { 
     event = ev; 
   }

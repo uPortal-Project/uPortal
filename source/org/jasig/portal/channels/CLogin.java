@@ -86,7 +86,7 @@ public class CLogin implements IPrivilegedChannel
     return new ChannelRuntimeProperties();
   }
 
-  public void receiveEvent(LayoutEvent ev)
+  public void receiveEvent(PortalEvent ev)
   {
   }
 

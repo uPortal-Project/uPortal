@@ -114,7 +114,7 @@ public class CSubscriber implements IPrivilegedChannel
   /** Receive any events from the layout
    * @param ev layout event
    */
-  public void receiveEvent (LayoutEvent ev)
+  public void receiveEvent (PortalEvent ev)
   {
     // no events for this channel
   }

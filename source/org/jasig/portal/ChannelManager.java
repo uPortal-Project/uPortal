@@ -413,16 +413,16 @@ public class ChannelManager {
     /**
      * passes Layout-level event to a channel
      * @param channel ID
-     * @param LayoutEvent object
+     * @param PortalEvent object
      */
-    public void passLayoutEvent (String chanID, LayoutEvent le) {
+    public void passPortalEvent (String chanID, PortalEvent le) {
         IChannel ch= (IChannel) channelTable.get (chanID);
 
         if (ch != null) {
             ch.receiveEvent (le);
         }
         else
-            Logger.log (Logger.ERROR, "ChannelManager::passLayoutEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + chanID + "\")");
+            Logger.log (Logger.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + chanID + "\")");
     }
 
     /**

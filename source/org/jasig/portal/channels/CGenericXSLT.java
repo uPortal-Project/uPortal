@@ -143,7 +143,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     media = runtimeData.getMedia();
   }
 
-  public void receiveEvent (LayoutEvent ev)
+  public void receiveEvent (PortalEvent ev)
   {
     // No events to process here
   }

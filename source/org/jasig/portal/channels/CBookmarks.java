@@ -111,7 +111,7 @@ public class CBookmarks implements IChannel
 
 
   // process Layout-level events comping from the portal
-  public void receiveEvent (LayoutEvent ev)
+  public void receiveEvent (PortalEvent ev)
   {
     if (ev.getEventNumber ()==ev.EDIT_BUTTON_EVENT)
     editMode=true;

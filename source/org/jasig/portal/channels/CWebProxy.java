@@ -190,7 +190,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
   }
 
-  public void receiveEvent (LayoutEvent ev)
+  public void receiveEvent (PortalEvent ev)
   {
     // No events to process here
   }

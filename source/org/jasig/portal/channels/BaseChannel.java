@@ -29,7 +29,7 @@ public class BaseChannel implements IChannel
         return new ChannelRuntimeProperties ();
     }
 
-    public void receiveEvent (LayoutEvent ev)
+    public void receiveEvent (PortalEvent ev)
     {
 
     }

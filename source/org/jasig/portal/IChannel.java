@@ -69,10 +69,10 @@ public interface IChannel
   /**
    * Passes an outside event to a channel.
    * Events should normally come from the LayoutBean.
-   * @param ev LayoutEvent object
-   * @see LayoutEvent
+   * @param ev PortalEvent object
+   * @see PortalEvent
    */
-  public void receiveEvent (LayoutEvent ev);
+  public void receiveEvent (PortalEvent ev);
 
   // following section allows channel to pass parameter/settings information to the portal
 
