@@ -37,12 +37,16 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.*;
+import org.jasig.portal.services.Authorization;
+import org.jasig.portal.security.*;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
-import  org.apache.xerces.dom.*;
+import org.apache.xerces.dom.*;
 import org.xml.sax.DocumentHandler;
+import java.net.URL;
 import java.io.*;
 import java.util.*;
+import java.sql.*;
 
 /**
  * Provides methods associated with subscribing to a channel.
@@ -59,6 +63,9 @@ public class CPublisher implements IPrivilegedChannel
   private ChannelRuntimeData runtimeData = null;
   private StylesheetSet set = null;
   private ChannelRegistryImpl chanReg = null;
+  private RdbmServices rdbmService = new RdbmServices ();
+  private Connection con = null;
+  private String media;
 
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
@@ -139,7 +146,8 @@ public class CPublisher implements IPrivilegedChannel
 
   /** Receive static channel data from the portal
    * @param sd static channel data
-   */
+   * @throws PortalException generic portal exception
+ */
   public void setStaticData(final org.jasig.portal.ChannelStaticData sd) throws org.jasig.portal.PortalException
   {
     this.staticData = sd;
@@ -148,11 +156,12 @@ public class CPublisher implements IPrivilegedChannel
   /** Receives channel runtime data from the portal and processes actions
    * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
-   */
+   * @throws PortalException generic portal exception
+ */
   public void setRuntimeData(final org.jasig.portal.ChannelRuntimeData rd) throws org.jasig.portal.PortalException
   {
     this.runtimeData = rd;
-
+    media = runtimeData.getMedia();
     //catID = runtimeData.getParameter("catID");
     String role = "student"; //need to get from current user
     chanReg = new ChannelRegistryImpl();
@@ -182,7 +191,8 @@ public class CPublisher implements IPrivilegedChannel
 
   /** Output channel content to the portal
    * @param out a sax document handler
-   */
+   * @throws PortalException generic portal exception
+ */
   public void renderXML(final org.xml.sax.DocumentHandler out) throws org.jasig.portal.PortalException
   {
     try
@@ -190,13 +200,16 @@ public class CPublisher implements IPrivilegedChannel
       switch (mode)
       {
         case CHOOSE:
-          processXML ("main", out);
+          processXML ("main",channelDecl, out);
           break;
         case PUBLISH:
-          processXML ("main", out);
+          processXML ("main",channelDecl, out);
+          break;
+        case CATS:
+          processXML("main", chanReg.getCategoryXML(null), out);
           break;
         default:
-          processXML ("main", out);
+          processXML ("main",channelTypes, out);
           break;
       }
     }
@@ -206,40 +219,27 @@ public class CPublisher implements IPrivilegedChannel
     }
   }
 
-  private void processXML (String stylesheetName, DocumentHandler out) throws org.xml.sax.SAXException
+  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException
   {
-    XSLTInputSource xmlSource = null;
-
-    switch (mode)
-      {
-        case CHOOSE:
-            xmlSource = new XSLTInputSource(channelDecl);
-        case PUBLISH:
-          xmlSource = new XSLTInputSource (channelDecl);
-          break;
-        case CATS:
-            xmlSource = new XSLTInputSource(chanReg.getCategoryXML(null));
-            break;
-        default:
-          xmlSource = new XSLTInputSource (channelTypes);
-          break;
-      }
-
-    XSLTInputSource xslSource = runtimeData.getStylesheet(stylesheetName, set);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
-    if (xslSource != null)
+    String xsl = set.getStylesheetURI(stylesheetName, media);
+      
+    try{
+    if (xsl != null)
     {
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-      processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));
-      processor.setStylesheetParam("currentStep", processor.createXString (currentStep));
-      processor.setStylesheetParam("specialStep", processor.createXString (specialStep));
-      processor.setStylesheetParam("numSteps", processor.createXString (Integer.toString(newNumSteps)));
-      processor.setStylesheetParam("modified", processor.createXBoolean (modified));
-      processor.process (xmlSource, xslSource, xmlResult);
+      Hashtable ssParams = new Hashtable();
+      ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
+      ssParams.put("currentStep", currentStep);
+      ssParams.put("specialStep", specialStep);
+      ssParams.put("numSteps", Integer.toString(newNumSteps));
+      ssParams.put("modified", new Boolean(modified));
+      XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
     }
     else
-      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CPublisher: unable to find a stylesheet for rendering");
+      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
+    }
+    catch(Exception e){
+        Logger.log(Logger.ERROR, e);
+    }
   }
 
   private void prepareChoose ()
@@ -363,7 +363,68 @@ public class CPublisher implements IPrivilegedChannel
     modified = false;
   }
 
+/** Method for setting the portal control structures that a privledged channel has access to
+ * @param p1 a handle to the PortalControlStructures
+ * @throws PortalException a generic portal exception
+ */  
   public void setPortalControlStructures(final org.jasig.portal.PortalControlStructures p1) throws org.jasig.portal.PortalException {
   }
+  
+/** Method for approving a channel by setting the <CODE>APPROVED</CODE> field to 1
+ */
+  public void approveChannel() {
+    
+    String sChanId = runtimeData.getParameter("CHAN_ID");
 
+    try
+    {
+      this.con = this.rdbmService.getConnection ();
+      Statement stmt = con.createStatement();
+
+      String sUpdate = "UPDATE UP_CHANNELS SET APPROVED = 1 WHERE CHAN_ID = " + sChanId;
+
+      int iUpdated = stmt.executeUpdate(sUpdate);
+
+      Logger.log(Logger.DEBUG, "Approving channel ID: " + sChanId + ". Updated " + iUpdated + " rows.");
+
+      stmt.close();
+    }
+    catch (Exception e)
+    {
+      Logger.log(Logger.ERROR, e);
+    }
+    finally
+    {
+      rdbmService.releaseConnection(con);
+    }
+
+  }
+  
+  private Document getRoles()
+  {
+    Document roleDoc = null;
+    try
+    {
+      Authorization authorization = new Authorization();
+
+      Vector vRoles = authorization.getAllRoles();
+
+      roleDoc = new DocumentImpl();
+      Element root = roleDoc.createElement("roles");
+      Element role = null;
+      for(int i = 0; i < vRoles.size(); i++)
+      {
+        role = roleDoc.createElement("role");
+        role.setAttribute("name", ((IRole)vRoles.elementAt(i)).getRoleTitle());
+        root.appendChild(role);
+      }
+      roleDoc.appendChild(root);
+    }
+    catch(Exception e)
+    {
+      Logger.log(Logger.ERROR, e);
+    }
+    return roleDoc;
+  }
+  
 }
