@@ -453,8 +453,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       try {
         context = new InitialDirContext(jndienv);
       } catch (NamingException nex) {
-        log.error("LDAPGroupStore: unable to get context");
-        log.error(nex);
+        log.error("LDAPGroupStore: unable to get context", nex);
       }
       contexts.put("context",context);
     }
