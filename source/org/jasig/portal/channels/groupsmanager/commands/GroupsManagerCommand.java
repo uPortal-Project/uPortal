@@ -46,7 +46,6 @@ public abstract class GroupsManagerCommand
     * @param sessionData
     */
    protected void clearSelected (CGroupsManagerSessionData sessionData) {
-      ChannelStaticData staticData = sessionData.staticData;
       Element rootElem = getXmlDoc(sessionData).getDocumentElement();
       NodeList nGroupList = rootElem.getElementsByTagName(GROUP_TAGNAME);
       NodeList nPersonList = rootElem.getElementsByTagName(ENTITY_TAGNAME);

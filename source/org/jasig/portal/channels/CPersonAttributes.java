@@ -201,7 +201,6 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
         // the jpegPhoto attribute.
 
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        ChannelStaticData staticData = channelState.getStaticData();
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
         String payloadName;
         if ("jpegPhoto".equals(runtimeData.getParameter("attribute")))
