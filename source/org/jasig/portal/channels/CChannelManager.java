@@ -928,12 +928,14 @@ public class CChannelManager extends BaseChannel {
     }
 
     protected class ChannelDefinition {
+        private static final String DEFAULT_TIMEOUT = "5000";
+        
         protected String ID;
         protected String typeID;
         protected String name;
         protected String description;
         protected String title;
-        protected String timeout;
+        protected String timeout = DEFAULT_TIMEOUT;
         protected String fname;
         protected String javaClass;
         protected String editable;
@@ -1022,8 +1024,31 @@ public class CChannelManager extends BaseChannel {
             this.title = title;
         }
 
+        /**
+         * Set the channel timeout, which is a String representation of a number
+         * of milliseconds the channel should be allowed to try to render before being
+         * replaced with the Error channel.
+         * This setter checks its argument and does nothing but log the irregularity
+         * in the case where the argument does not represent a positive number of
+         * milliseconds.
+         * @param timeout a String representing a positive number of milliseconds
+         */
         protected void setTimeout (String timeout) {
-            this.timeout = timeout;
+            if (timeout != null && !"".equals(timeout)) {
+                try {
+                    int timeoutInt = Integer.parseInt(timeout);
+                    if (timeoutInt > 0) {
+                        this.timeout = timeout;
+                    } else {
+                        log.warn("There was an attempt to set a channel timeout to [" + 
+                                timeout + "] but we blocked it because you can't have a negative timeout.");
+                    }
+
+                } catch (Throwable t) {
+                    log.warn("There was an attempt to set a channel timeout to [" + 
+                            timeout + "] but we blocked it because it was invalid.");
+                }
+            }
         }
 
         protected void setJavaClass (String javaClass) {
