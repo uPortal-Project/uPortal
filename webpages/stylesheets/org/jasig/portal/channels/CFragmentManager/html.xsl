@@ -288,7 +288,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-content">
                         <tr>
                             <td class="uportal-channel-strong" align="left" valign="top">
-                                <form name="fragment_form" action="{$baseActionURL}" method="post">
+                                <form name="fragment_save_form" action="{$baseActionURL}" method="post">
                                     <!-- Open Contents of info table -->
                                     <table cellspacing="0" cellpadding="5" width="100%" border="0" class="uportal-background-content">
                                         <tr align="left" valign="top">
@@ -406,6 +406,7 @@ Version $Revision$
                                         <tr align="left" valign="top">
                                             <td colspan="3">
                                                 <input type="hidden" name="uPcFM_action" value="save"/>
+                                                <input type="hidden" name="uPcFM_selectedID" value="{$uPcFM_selectedID}"/>
                                                 <input name="fragment_submit" type="submit" class="uportal-button" value="Submit properties"/>
                                             </td>
                                         </tr>
@@ -582,8 +583,7 @@ Version $Revision$
                                         <!-- TR On only with New Fragments -->
                                         <tr align="left" valign="top">
                                             <td colspan="3">
-                                                <input type="hidden" name="uPcFM_action" value="save"/>
-                                                <input type="hidden" name="uPcFM_selectedID" value="{$uPcFM_selectedID}"/>
+                                                <input type="hidden" name="uPcFM_action" value="save_new"/>
                                                 <input name="fragment_submit" type="submit" class="uportal-button" value="Submit properties"/>
                                             </td>
                                         </tr>

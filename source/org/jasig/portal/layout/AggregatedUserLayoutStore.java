@@ -2584,11 +2584,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               //ALNode node = (ALNode) layout.get(structId+"");
               ALNode node;
               String childIdStr = null;
-              if ( childId > 0 ) {
+              if ( chanId <= 0 ) {
                 node = new ALFolder();
                 IALFolderDescription folderDesc = new ALFolderDescription();
                 // If children exist in the folder
-                ((ALFolder)node).setFirstChildNodeId(childId+"");
+                ((ALFolder)node).setFirstChildNodeId(childId>0?childId+"":null);
                 String type = rs.getString(8);
                 int intType;
                 if ( "header".equalsIgnoreCase(type))
@@ -2603,7 +2603,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               } else {
                  node = new ALChannel();
                  ALChannelDescription channelDesc = new ALChannelDescription();
-                 channelDesc.setChannelPublishId(rs.getString(6));
+                 channelDesc.setChannelPublishId(chanId+"");
                  nodeDesc = channelDesc;
                 }
 

@@ -1122,14 +1122,20 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 ALFolder rootFolder = ALFolder.createRootFolder();
 			
 			 // Creating the fragment root node
-		     ALFolderDescription nodeDesc = (ALFolderDescription) createNodeDescription(IUserLayoutNodeDescription.FOLDER);
+		     ALFolderDescription nodeDesc = new ALFolderDescription();
+		     
+		     // Setting the root fragment ID = 1
+		     nodeDesc.setId("1");
 			 nodeDesc.setName(fragmentRootName);
+			 nodeDesc.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
 			 // Setting the fragment ID
 			 nodeDesc.setFragmentId(newFragmentId);
-			 ALNode fragmentRoot = ALNode.createALNode(nodeDesc);
+			 
+			 //Creating a new folder with the folder description
+			 ALFolder fragmentRoot = new ALFolder(nodeDesc);
 			 
 			 //Updating the DB and getting the node ID for the new node
-			 fragmentRoot = layoutStore.addUserLayoutNode(person,userProfile,fragmentRoot);
+			 //fragmentRoot = layoutStore.addUserLayoutNode(person,userProfile,fragmentRoot);
 			 
 			 // Setting the link between the layout root and the fragment root
 			 fragmentRoot.setParentNodeId(rootFolder.getId());

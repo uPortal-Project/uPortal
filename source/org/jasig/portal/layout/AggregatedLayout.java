@@ -404,7 +404,7 @@ public class AggregatedLayout implements IAggregatedLayout {
                for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
                	
                  // if necessary we add marking nodes
-                 if ( layoutManager != null ) {
+                 if ( layoutManager != null ) {	
                   if ( !node.getNodeDescription().isHidden() && !getLayoutNode(nextNodeId).getNodeDescription().isHidden() ) {
                     IALNodeDescription nodeDesc = layoutManager.getNodeBeingMoved();
                     String moveTargetsNodeId = ( nodeDesc != null ) ? nodeDesc.getId() : null;

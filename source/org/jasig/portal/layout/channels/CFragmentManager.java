@@ -80,6 +80,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	private String createFolder( ALFragment fragment ) throws PortalException {
 		IUserLayoutNodeDescription folderDesc = alm.createNodeDescription(IUserLayoutNodeDescription.FOLDER);
 		folderDesc.setName("Fragment column");
+		//System.out.println ( "fragment root ID="+getFragmentRootId(fragment.getId()));
+		//System.out.println ( "fragment root type="+fragment.getNode(getFragmentRootId(fragment.getId())).getNodeType());
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
@@ -87,13 +89,13 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = CommonUtils.nvl(runtimeData.getParameter("uPcFM_action"));
 		
-				if (action.equals("new")) {
+				if (action.equals("save_new")) {
 					String fragmentName = runtimeData.getParameter("fragment_name");
 					String funcName = runtimeData.getParameter("fragment_fname");
 					String fragmentDesc = runtimeData.getParameter("fragment_desc");
 					String fragmentType = runtimeData.getParameter("fragment_type");
 					String fragmentFolder = runtimeData.getParameter("fragment_add_folder");
-					boolean isPushedFragment = ("true".equals(fragmentType))?true:false;
+					boolean isPushedFragment = ("pushed".equals(fragmentType))?true:false;
 					fragmentId = alm.createFragment(CommonUtils.nvl(funcName),CommonUtils.nvl(fragmentDesc),CommonUtils.nvl(fragmentName));
 					ALFragment newFragment = (ALFragment) alm.getFragment(fragmentId);
 					if ( newFragment != null ) { 
@@ -117,7 +119,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					String fragmentName = runtimeData.getParameter("fragment_name");
 					String fragmentDesc = runtimeData.getParameter("fragment_desc");
 					String fragmentType = runtimeData.getParameter("fragment_type");
-					boolean isPushedFragment = ("true".equals(fragmentType))?true:false;
+					boolean isPushedFragment = ("pushed".equals(fragmentType))?true:false;
 					ALFragment fragment = (ALFragment) fragments.get(fragmentId);
 				    if ( fragment != null ) { 
 					   if ( isPushedFragment ) 
@@ -130,7 +132,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					   ALNode fragmentRoot = fragment.getNode(fragmentRootId);
 					   fragmentRoot.getNodeDescription().setName(fragmentName);
 					   // Saving the changes in the database  
-					   alm.saveFragment(fragment);							
+					   alm.saveFragment(fragment);					
 					}     
 				} else if (action.equals("delete")) {
 					if (CommonUtils.parseInt(fragmentId) > 0) {
