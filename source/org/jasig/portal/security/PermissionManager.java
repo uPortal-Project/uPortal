@@ -43,6 +43,7 @@ import  org.jasig.portal.AuthorizationException;
 
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
+ * @deprecated As of uPortal 2.0, replaced by {@link IPermissionManager}
  */
 public abstract class PermissionManager {
   protected String m_owner = null;
