@@ -958,6 +958,28 @@ public class RDBMUserLayoutStore
           sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
+
+          /* insert row(s) into up_ss_user_atts */
+          sQuery = "DELETE UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          stmt.executeUpdate(sQuery);
+
+          String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
+            " SELECT "+realUserId+", USUA.PROFILE_ID, USUA.SS_ID, USUA.SS_TYPE, USUA.STRUCT_ID, USUA.PARAM_NAME, USUA.PARAM_TYPE, USUA.PARAM_VAL "+
+            " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+userId;
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+          stmt.executeUpdate(Insert);
+
+          /* insert row(s) into up_ss_user_parm */
+          sQuery = "DELETE UP_SS_USER_PARM WHERE USER_ID=" + realUserId;
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          stmt.executeUpdate(sQuery);
+          Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+            " SELECT "+realUserId+", USUP.PROFILE_ID, USUP.SS_ID, USUP.SS_TYPE, USUP.PARAM_NAME, USUP.PARAM_VAL "+
+            " FROM UP_SS_USER_PARM USUP WHERE USUP.USER_ID="+userId;
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+          stmt.executeUpdate(Insert);
+
           commit(con); // Make sure it appears in the store
         }
 
@@ -1193,26 +1215,6 @@ public class RDBMUserLayoutStore
               sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
               stmt.executeQuery(sQuery);
-
-              /**
-               *  Let's hope that the default user data hasn't changed since we loaded the layout
-               */
-
-              /* insert row(s) into up_ss_user_atts */
-              String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
-                " SELECT "+userId+", USUA.PROFILE_ID, USUA.SS_ID, USUA.SS_TYPE, USUA.STRUCT_ID, USUA.PARAM_NAME, USUA.PARAM_TYPE, USUA.PARAM_VAL "+
-                " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+defaultUserId;
-              LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
-              stmt.executeUpdate(Insert);
-
-              /* insert row(s) into up_ss_user_parm */
-              Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
-                " SELECT "+userId+", USUP.PROFILE_ID, USUP.SS_ID, USUP.SS_TYPE, USUP.PARAM_NAME, USUP.PARAM_VAL "+
-                " FROM UP_SS_USER_PARM USUP WHERE USER_ID="+defaultUserId;
-              LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
-              stmt.executeUpdate(Insert);
-
-
             }
             long stopTime = System.currentTimeMillis();
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " +
