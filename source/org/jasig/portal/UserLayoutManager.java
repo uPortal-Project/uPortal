@@ -336,10 +336,15 @@ public class UserLayoutManager {
    * Resets both user layout and user preferences.
    * Note that if any of the two are "null", old values will be used.
    */
-  public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws Exception {
+  public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
     if (newLayout != null) {
       uLayoutXML = newLayout;
-      GenericPortalBean.getDbImplObject().setUserLayout(person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+      try {
+        GenericPortalBean.getDbImplObject().setUserLayout(person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+      } catch (Exception e) {
+        Logger.log(Logger.ERROR, e);
+        throw new GeneralRenderingException(e.getMessage());
+      }
     }
     if (newPreferences != null) {
       IUserPreferencesDB updb = new UserPreferencesDBImpl();
