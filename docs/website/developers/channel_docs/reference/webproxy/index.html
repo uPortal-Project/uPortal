@@ -422,6 +422,12 @@
       <li>Caution must be used with URLs leaving out a required
       trailing slash ("/").</li>
 
+      <li>Due to the way CWebProxy functions within the uPortal 
+      framework, CWebProxy cannot connect to URLs that contain ampersands
+      unless the ampersands are within the query string.  For example,
+      CWebProxy can connect to http://www.whatever.com/?a=1&amp;b=2, 
+      however, it cannot connect to http://www.this&amp;this.com/.</li>
+
     </ul>
 
     <h3>Scripts</h3>
