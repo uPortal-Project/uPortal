@@ -55,8 +55,8 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     public UserPreferences getUserPreferences(int userId, UserProfile profile) {
         int profileId=profile.getProfileId();
         UserPreferences up=new UserPreferences(profile);
-        up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(userId,profileId,profile.getStructureStylesheetName()));
-        up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(userId,profileId,profile.getThemeStylesheetName()));
+        up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(userId,profileId,profile.getStructureStylesheetId()));
+        up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(userId,profileId,profile.getThemeStylesheetId()));
         return up;
     }
 
@@ -186,23 +186,23 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         // store profile
         UserProfile profile=up.getProfile();
         this.updateUserProfile(userId,profile);
-
         this.setStructureStylesheetUserPreferences(userId,profile.getProfileId(),up.getStructureStylesheetUserPreferences());
         this.setThemeStylesheetUserPreferences(userId,profile.getProfileId(),up.getThemeStylesheetUserPreferences());
+
     }
 
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,String stylesheetName) {
+    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,int stylesheetId) {
         try {
-            return GenericPortalBean.getDbImplObject().getStructureStylesheetUserPreferences(userId, profileId, stylesheetName);
+            return GenericPortalBean.getDbImplObject().getStructureStylesheetUserPreferences(userId, profileId, stylesheetId);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
         return null;
     }
 
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,String stylesheetName) {
+    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,int stylesheetId) {
         try {
-            return GenericPortalBean.getDbImplObject().getThemeStylesheetUserPreferences(userId, profileId, stylesheetName);
+            return GenericPortalBean.getDbImplObject().getThemeStylesheetUserPreferences(userId, profileId, stylesheetId);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }

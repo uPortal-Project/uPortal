@@ -46,6 +46,7 @@ import java.util.Enumeration;
  */
 
 public class CoreStylesheetDescription {
+    protected int stylesheetId=-1;
     protected String stylesheetName;
     protected String stylesheetWordDescription;
     protected String stylesheetURI;
@@ -57,6 +58,10 @@ public class CoreStylesheetDescription {
     public CoreStylesheetDescription() {
         parameterTable=new Hashtable();
     }
+
+
+    public int getId() { return this.stylesheetId; }
+    public void setId(int id) { this.stylesheetId=id; }
 
     public String getStylesheetName() { return stylesheetName; }
     public void setStylesheetName(String name) { stylesheetName=name; }

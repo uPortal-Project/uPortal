@@ -45,24 +45,34 @@ import java.util.Vector;
 
 public class ThemeStylesheetDescription extends CoreXSLTStylesheetDescription {
     // vector holds the list of first stage stylesheets that can be used with the current stylesheet
-    protected Vector structureStylesheets;
+    protected int structureStylesheetId;
     protected String mimeType;
+    protected String samplePictureURI;
+    protected String sampleIconURI;
+    protected String deviceType;
     protected String serializerName;
     protected String customUPClassLocator;
 
 
-    public Vector getStructureStylesheetList() { return structureStylesheets; }
-    public void setStructureStylesheetList(Vector list) {
-        structureStylesheets=list;
-    }
+    public int getStructureStylesheetId() { return structureStylesheetId; }
+    public void setStructureStylesheetId(int ssid) { structureStylesheetId=ssid; }
 
     public String getMimeType() { return this.mimeType; }
     public void setMimeType(String type) { this.mimeType=type; }
 
+    public String getDeviceType() { return this.deviceType; }
+    public void setDeviceType(String type) { this.deviceType=type; }
+
+    public String getSamplePictureURI() { return this.samplePictureURI; }
+    public void setSamplePictureURI(String uri) { this.samplePictureURI=uri; }
+
+    public String getSampleIconURI() { return this.sampleIconURI; }
+    public void setSampleIconURI(String uri) { this.sampleIconURI=uri; }
+
     public String getSerializerName() { return this.serializerName; }
     public void setSerializerName(String name) { this.serializerName=name; }
 
-    public String getCustomUserPreferencesManager() { return customUPClassLocator; }
-    public void setCustomUserPreferencesManager(String classLocator) { customUPClassLocator=classLocator; }
+    public String getCustomUserPreferencesManagerClass() { return customUPClassLocator; }
+    public void setCustomUserPreferencesManagerClass(String classLocator) { customUPClassLocator=classLocator; }
 
 }

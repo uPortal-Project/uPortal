@@ -56,8 +56,8 @@ public interface IDBImpl {
   public UserProfile getUserProfileById(int userId, int profileId) throws Exception;
   public Hashtable getUserProfileList(int userId) throws Exception;
   public void setUserProfile(int userId,UserProfile profile) throws Exception;
-  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,String stylesheetName) throws Exception;
-  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,String stylesheetName) throws Exception;
+  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,int stylesheetId) throws Exception;
+  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,int stylesheetId) throws Exception;
   public void setStructureStylesheetUserPreferences(int userId,int profileId, StructureStylesheetUserPreferences fsup) throws Exception;
   public void setThemeStylesheetUserPreferences(int userId, int profileId, ThemeStylesheetUserPreferences ssup) throws Exception;
   public void updateUserProfile(int userId,UserProfile profile) throws Exception;
@@ -72,15 +72,21 @@ public interface IDBImpl {
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;
 
   /* CoreStylesheetDescription */
+    public Integer getStructureStylesheetId(String ssName) throws Exception;
+    public Integer getThemeStylesheetId(String tsName) throws Exception;
+    public Integer addThemeStylesheetDescription(ThemeStylesheetDescription tsd) throws Exception;
+    public Integer addStructureStylesheetDescription(StructureStylesheetDescription ssd) throws Exception;
+    public ThemeStylesheetDescription getThemeStylesheetDescription(int id) throws Exception;
+    public StructureStylesheetDescription getStructureStylesheetDescription(int stylesheetId) throws Exception;
+    public void updateStructureStylesheetDescription(StructureStylesheetDescription ssd) throws Exception;
+    public void updateThemeStylesheetDescription(ThemeStylesheetDescription tsd) throws Exception;
+    public void removeStructureStylesheetDescription(int stylesheetId) throws Exception;
+    public void removeThemeStylesheetDescription(int stylesheetId) throws Exception;
+    public Hashtable getStructureStylesheetList(String mimeType) throws Exception;
+    public Hashtable getThemeStylesheetList(int structureStylesheetId) throws Exception;
   public void getMimeTypeList(Hashtable list) throws Exception;
-  public void getStructureStylesheetList(String mimeType, Hashtable list) throws Exception;
-  public void getThemeStylesheetList(String structureStylesheetName, Hashtable list) throws Exception;
-  public String[] getStructureStylesheetDescription(String stylesheetName) throws Exception;
-  public String[] getThemeStylesheetDescription(String stylesheetName) throws Exception;
-  public void removeStructureStylesheetDescription(String stylesheetName) throws Exception;
-  public void removeThemeStylesheetDescription(String stylesheetName) throws Exception;
-  public void addStructureStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText) throws Exception;
-  public void addThemeStylesheetDescription(String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI, String xmlStylesheetDescriptionText, String mimeType, Enumeration enum) throws Exception;
+
+
 
   /* ReferenceAuthorization */
   public boolean isUserInRole(int userId, String role) throws Exception;

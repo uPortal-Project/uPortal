@@ -45,7 +45,7 @@ import java.util.*;
  */
 
 public class StylesheetUserPreferences {
-    String name;
+    int id;
     protected Hashtable parameters;
 
     public StylesheetUserPreferences() {
@@ -53,12 +53,15 @@ public class StylesheetUserPreferences {
     }
 
     public StylesheetUserPreferences(StylesheetUserPreferences sup) {
-        this.name=sup.name;
+        this.id=sup.id;
         this.parameters=new Hashtable(sup.parameters);
     }
 
-    public String getStylesheetName() { return name; }
-    public void setStylesheetName(String n) { name=n; }
+    /*    public String getStylesheetName() { return name; }
+	  public void setStylesheetName(String n) { name=n; }*/
+
+    public int getStylesheetId() { return id; }
+    public void setStylesheetId(int n) { id=n; }
 
     public String getParameterValue(String parameterName) {
         return (String) parameters.get(parameterName);

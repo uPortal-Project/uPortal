@@ -67,21 +67,19 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 
     // functions that allow one to browse available core stylesheets in various ways
     public Hashtable getStructureStylesheetList(String mimeType) {
-        Hashtable list=new Hashtable();
-
+        Hashtable list=null;
         try {
-          GenericPortalBean.getDbImplObject().getStructureStylesheetList(mimeType, list);
+	    list=GenericPortalBean.getDbImplObject().getStructureStylesheetList(mimeType);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
         return list;
     }
 
-    public Hashtable getThemeStylesheetList(String structureStylesheetName) {
-        Hashtable list=new Hashtable();
-
+    public Hashtable getThemeStylesheetList(int structureStylesheetId) {
+        Hashtable list=null;
         try {
-          GenericPortalBean.getDbImplObject().getThemeStylesheetList(structureStylesheetName, list);
+	    list=GenericPortalBean.getDbImplObject().getThemeStylesheetList(structureStylesheetId);
         } catch (Exception e) {
           Logger.log(Logger.ERROR,e);
         }
@@ -90,6 +88,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 
     // functions that allow access to the entire CoreStylesheetDescription object.
     // These functions are used when working with the stylesheet, and not for browsing purposes.
+    /*
     public StructureStylesheetDescription getStructureStylesheetDescription(String stylesheetName) {
         StructureStylesheetDescription fssd=null;
         try {
@@ -105,12 +104,12 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                 parser.parse(UtilitiesBean.fixURI(dbDescriptionURI));
                 Document stylesheetDescriptionXML=parser.getDocument();
 
-                Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : stylesheet name = "+this.getName(stylesheetDescriptionXML));
-                Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : stylesheet description = "+this.getDescription(stylesheetDescriptionXML));
-
 
                 String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
                 String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
+
+                Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : stylesheet name = "+xmlStylesheetName);
+                Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : stylesheet description = "+xmlStylesheetDescriptionText);
 
                 if(!xmlStylesheetName.equals(dbStylesheetName))
                     Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : Structure stage stylesheet name from database (\""+dbStylesheetName+"\") differs from the name in the SDF XML (\""+xmlStylesheetName+"\")!!! Please fix.");
@@ -133,7 +132,28 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         }
         return fssd;
     }
+    */
+    public StructureStylesheetDescription getStructureStylesheetDescription(int stylesheetId) {
+        StructureStylesheetDescription fssd=null;
+        try {
+          fssd=GenericPortalBean.getDbImplObject().getStructureStylesheetDescription(stylesheetId);
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        }
+        return fssd;
+    }
+    public ThemeStylesheetDescription getThemeStylesheetDescription(int stylesheetId) {
+        ThemeStylesheetDescription fssd=null;
+        try {
+          fssd=GenericPortalBean.getDbImplObject().getThemeStylesheetDescription(stylesheetId);
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        }
+        return fssd;
+    }
 
+
+    /*
     public ThemeStylesheetDescription getThemeStylesheetDescription(String stylesheetName) {
         ThemeStylesheetDescription sssd=null;
         try {
@@ -170,12 +190,15 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                 Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
                 sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
                 Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
-                sssd.setCustomUserPreferencesManager(this.getRootElementTextValue(stylesheetDescriptionXML,"upmanager"));
+                sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML,"UPManagerClass"));
+                sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML,"samplePictureURI"));
+                sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML,"sampleIconURI"));
+                sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML,"deviceType"));
 
                 // populate parameter and attriute tables
                 this.populateParameterTable(stylesheetDescriptionXML,sssd);
                 this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
-                sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
+
 
 
         } catch (Exception e) {
@@ -183,60 +206,136 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         }
         return sssd;
     }
+    */
 
-
-    public void removeStructureStylesheetDescription(String stylesheetName){
+    public void removeStructureStylesheetDescription(int stylesheetId){
         try {
-          GenericPortalBean.getDbImplObject().removeStructureStylesheetDescription(stylesheetName);
+          GenericPortalBean.getDbImplObject().removeStructureStylesheetDescription(stylesheetId);
 
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
     }
-    public void removeThemeStylesheetDescription(String stylesheetName){
+    public void removeThemeStylesheetDescription(int stylesheetId){
         try {
-          GenericPortalBean.getDbImplObject().removeThemeStylesheetDescription(stylesheetName);
+          GenericPortalBean.getDbImplObject().removeThemeStylesheetDescription(stylesheetId);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
     }
 
-    public void addStructureStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI){
+   public boolean updateThemeStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI,int stylesheetId) {
+        try {
+            DOMParser parser=new DOMParser();
+            parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
+            Document stylesheetDescriptionXML=parser.getDocument();
+
+	    String ssName=this.getRootElementTextValue(stylesheetDescriptionXML,"parentStructureStylesheet");
+
+	    // should thrown an exception
+	    if(ssName==null) return false;
+
+	    // determine id of the parent structure stylesheet
+	    Integer ssId=GenericPortalBean.getDbImplObject().getStructureStylesheetId(ssName);
+
+	    // stylesheet not found, should thrown an exception here
+	    if(ssId==null) return false;
+
+            ThemeStylesheetDescription sssd=new ThemeStylesheetDescription();
+	    sssd.setId(stylesheetId);
+	    sssd.setStructureStylesheetId(ssId.intValue());
+
+            String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
+            String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
+
+            sssd.setStylesheetName(xmlStylesheetName);
+            sssd.setStylesheetURI(stylesheetURI);
+            sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
+            sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+	    sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimeType"));
+	    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
+	    sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
+	    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
+	    sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML,"userPreferencesModuleClass"));
+	    sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML,"samplePictureURI"));
+	    sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML,"sampleIconURI"));
+	    sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML,"deviceType"));
+
+	    // populate parameter and attriute tables
+	    this.populateParameterTable(stylesheetDescriptionXML,sssd);
+	    this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
+
+	    GenericPortalBean.getDbImplObject().updateThemeStylesheetDescription(sssd);
+        } catch (Exception e) {
+            Logger.log(Logger.DEBUG,e); return false;
+        }
+	return true;
+    }
+
+    public boolean updateStructureStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI,int stylesheetId) {
+        try {
+            DOMParser parser=new DOMParser();
+            parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
+            Document stylesheetDescriptionXML=parser.getDocument();
+	    
+            StructureStylesheetDescription fssd=new StructureStylesheetDescription();
+            String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
+            String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
+	    
+	    fssd.setId(stylesheetId);
+            fssd.setStylesheetName(xmlStylesheetName);
+            fssd.setStylesheetURI(stylesheetURI);
+            fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
+            fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+	    
+            // populate parameter and attriute tables
+            this.populateParameterTable(stylesheetDescriptionXML,fssd);
+            this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
+            this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
+            // now write out the database record
+	    
+            GenericPortalBean.getDbImplObject().updateStructureStylesheetDescription(fssd);
+
+        } catch (Exception e) {
+            Logger.log(Logger.DEBUG,e); return false;
+        }
+        return true;
+    }
+
+    public Integer addStructureStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI){
         // need to read in the description file to obtain information such as name, word description and media list
         try {
             DOMParser parser=new DOMParser();
             parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
             Document stylesheetDescriptionXML=parser.getDocument();
 
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addStructureStylesheetDescription() : stylesheet name = "+this.getName(stylesheetDescriptionXML));
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addStructureStylesheetDescription() : stylesheet description = "+this.getDescription(stylesheetDescriptionXML));
-
             StructureStylesheetDescription fssd=new StructureStylesheetDescription();
             String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
             String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
 
             fssd.setStylesheetName(xmlStylesheetName);
+            fssd.setStylesheetURI(stylesheetURI);
+            fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
             fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
 
             // populate parameter and attriute tables
-            //            this.populateParameterTable(stylesheetDescriptionXML,fssd);
-            //            this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
-            //            this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
-            //            fssd.setStylesheetMediaList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"media"));
-
-
+            this.populateParameterTable(stylesheetDescriptionXML,fssd);
+            this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
+            this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
             // now write out the database record
 
             // first the basic record
-            GenericPortalBean.getDbImplObject().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
+            //GenericPortalBean.getDbImplObject().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
+            return GenericPortalBean.getDbImplObject().addStructureStylesheetDescription(fssd);
 
         } catch (Exception e) {
             Logger.log(Logger.DEBUG,e);
         }
+        return null;
     }
 
-    public void addThemeStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI){
-        // need to read in the description file to obtain information such as name, word description and mime type list
+    public Integer addThemeStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI){
+        // need to read iN the description file to obtain information such as name, word description and mime type list
         try {
             DOMParser parser=new DOMParser();
             parser.parse(UtilitiesBean.fixURI(stylesheetDescriptionURI));
@@ -245,25 +344,46 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
             Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addThemeStylesheetDescription() : stylesheet name = "+this.getName(stylesheetDescriptionXML));
             Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addThemeStylesheetDescription() : stylesheet description = "+this.getDescription(stylesheetDescriptionXML));
 
+	    String ssName=this.getRootElementTextValue(stylesheetDescriptionXML,"parentStructureStylesheet");
+
+	    // should thrown an exception
+	    if(ssName==null) return null;
+
+	    // determine id of the parent structure stylesheet
+	    Integer ssId=GenericPortalBean.getDbImplObject().getStructureStylesheetId(ssName);
+
+	    // stylesheet not found, should thrown an exception here
+	    if(ssId==null) return null;
+
             ThemeStylesheetDescription sssd=new ThemeStylesheetDescription();
+	    sssd.setStructureStylesheetId(ssId.intValue());
+
             String xmlStylesheetName=this.getName(stylesheetDescriptionXML);
             String xmlStylesheetDescriptionText=this.getDescription(stylesheetDescriptionXML);
 
             sssd.setStylesheetName(xmlStylesheetName);
+            sssd.setStylesheetURI(stylesheetURI);
+            sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
             sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-            sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
+	    sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimeType"));
+	    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
+	    sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
+	    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
+	    sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML,"userPreferencesModuleClass"));
+	    sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML,"samplePictureURI"));
+	    sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML,"sampleIconURI"));
+	    sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML,"deviceType"));
 
-            // populate parameter and attribute tables
-            //this.populateParameterTable(stylesheetDescriptionXML,sssd);
-            //this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
-            //sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
-            //sssd.setMimeTypeList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"mimetype"));
+	    // populate parameter and attriute tables
+	    this.populateParameterTable(stylesheetDescriptionXML,sssd);
+	    this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
 
-            GenericPortalBean.getDbImplObject().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI,
-                xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
+//            GenericPortalBean.getDbImplObject().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
+	    return GenericPortalBean.getDbImplObject().addThemeStylesheetDescription(sssd);
         } catch (Exception e) {
             Logger.log(Logger.DEBUG,e);
         }
+        return null;
     }
 
 

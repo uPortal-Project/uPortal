@@ -57,9 +57,18 @@ public interface ICoreStylesheetDescriptionDB {
      *
      * @param structureStylesheetName name of the structure stylehsset
      * @return Returns a hashtable mapping theme stylesheet names to an array (String[])
-     * containing two strings: stylesheet description and the mime type
+     * containing five string elements:
+     * <ol>
+     *  <li>stylesheet description text</li>
+     *  <li>mime type specified by the stylesheet</li>
+     *  <li>device type code specified by the stylesheet</li>
+     *  <li>sample image uri specified</li>
+     *  <li>sample image icon uri specified</li>
+     * </ol>
+     * stylesheet description and the mime type
      */
-    public Hashtable getThemeStylesheetList(String structureStylesheetName);
+    public Hashtable getThemeStylesheetList(int structureStylesheetId);
+
     /** Obtains a list of mime types available on the installation
      *
      * @return Returns a hasbtale mapping mime type strings to their word
@@ -71,41 +80,62 @@ public interface ICoreStylesheetDescriptionDB {
     // These functions are used when working with the stylesheet, and not for browsing purposes.
     /** Obtains a complete description of the structure stylesheet
      *
-     * @param stylesheetName name of the structure stylesheet
+     * @param stylesheetId id of the structure stylesheet
      * @return a description of the structure stylesheet
      */
-    public StructureStylesheetDescription getStructureStylesheetDescription(String stylesheetName);
+    public StructureStylesheetDescription getStructureStylesheetDescription(int stylesheetId);
     /** Obtains a complete description of a theme stylesheet
      *
-     * @param stylesheetName name of a theme stylesheet
+     * @param stylesheetId id of a theme stylesheet
      * @return a description of a theme stylesheet
      */
-    public ThemeStylesheetDescription getThemeStylesheetDescription(String stylesheetName);
+    public ThemeStylesheetDescription getThemeStylesheetDescription(int stylesheetId);
 
     // functions that allow to manage core stylesheet description collection
     /** removes stylesheet description
      *
-     * @param stylesheetName name of the stylesheet
+     * @param stylesheetId id of the stylesheet
      */
-    public void removeStructureStylesheetDescription(String stylesheetName);
+    public void removeStructureStylesheetDescription(int stylesheetId);
     /** Removes theme stylesheet
      *
-     * @param stylesheetName name of the stylesheet
+     * @param stylesheetId id of the stylesheet
      */
-    public void removeThemeStylesheetDescription(String stylesheetName);
+    public void removeThemeStylesheetDescription(int stylesheetId);
+
     /** Registers new structure stylesheet with the portal database
      *
-     * @param stylesheetDescriptionURI Location of the stylesheet description
-     *     XML file
+     * @param stylesheetDescriptionURI Location of the stylesheet description XML file
      * @param stylesheetURI Location of the actual stylesshet XML file
+     * @return id assigned to the stylesheet or null if the operation failed
      */
-    public void addStructureStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI);
+    public Integer addStructureStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI);
+
+    /**
+     * Updates an existing structure stylesheet description.
+     * @param stylesheetDescriptionURI Location of the stylesheet description XML file
+     * @param stylesheetURI Location of the actual stylesshet XML file
+     * @param stylesheetId the id of the existing stylesheet description
+     * @return true if the update successful
+     */
+    public boolean updateStructureStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI,int stylesheetId);
+
+    /**
+     * Updates an existing theme stylesheet description.
+     * @param stylesheetDescriptionURI Location of the stylesheet description XML file
+     * @param stylesheetURI Location of the actual stylesshet XML file
+     * @param stylesheetId the id of the existing stylesheet description
+     * @return true if the update successful
+     */
+    public boolean updateThemeStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI,int stylesheetId);
+
     /** Registers a new theme stylesheet with the portal databases
      *
      * @param stylesheetDescriptionURI Location of the stylesheet description
      *     XML file
      * @param stylesheetURI Location of the actual stylesheet XML file
+     * @return id assigned to the stylesheet or null if the operation failed
      */
-    public void addThemeStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI);
+    public Integer addThemeStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI);
 
 }

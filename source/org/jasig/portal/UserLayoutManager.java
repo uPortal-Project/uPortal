@@ -314,7 +314,7 @@ public class UserLayoutManager {
     ICoreStylesheetDescriptionDB csddb = new CoreStylesheetDescriptionDBImpl();
     // clean up
     StructureStylesheetUserPreferences fsup = complete_up.getStructureStylesheetUserPreferences();
-    StructureStylesheetDescription fssd = csddb.getStructureStylesheetDescription(fsup.getStylesheetName());
+    StructureStylesheetDescription fssd = csddb.getStructureStylesheetDescription(fsup.getStylesheetId());
     if (fssd == null) {
     // assign a default stylesheet instead
     }
@@ -322,7 +322,7 @@ public class UserLayoutManager {
       fsup.synchronizeWithDescription(fssd);
     }
     ThemeStylesheetUserPreferences ssup = complete_up.getThemeStylesheetUserPreferences();
-    ThemeStylesheetDescription sssd = csddb.getThemeStylesheetDescription(ssup.getStylesheetName());
+    ThemeStylesheetDescription sssd = csddb.getThemeStylesheetDescription(ssup.getStylesheetId());
     if (sssd == null) {
     // assign a default stylesheet instead
     }
@@ -405,7 +405,7 @@ public class UserLayoutManager {
   private ThemeStylesheetDescription getThemeStylesheetDescription () {
     if (this.tsd == null) {
       ICoreStylesheetDescriptionDB csddb = new CoreStylesheetDescriptionDBImpl();
-      tsd = csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetName());
+      tsd = csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetId());
     }
     return  tsd;
   }
@@ -417,7 +417,7 @@ public class UserLayoutManager {
   private StructureStylesheetDescription getStructureStylesheetDescription () {
     if (this.ssd == null) {
       ICoreStylesheetDescriptionDB csddb = new CoreStylesheetDescriptionDBImpl();
-      ssd = csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetName());
+      ssd = csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetId());
     }
     return  ssd;
   }
@@ -522,7 +522,7 @@ public class UserLayoutManager {
     // utility methods for operating on user layout
     /**
      * Determines if the node or any of it's parents are marked
-     * as "unremovable". 
+     * as "unremovable".
      * @param node the node to be tested
      */
     public boolean isUnremovable(Node node) {
@@ -539,10 +539,10 @@ public class UserLayoutManager {
 	if(getImmutableParent(node)!=null) return true;
 	else return false;
     }
-    
+
     /**
      * Returns first parent of the node (or the node itself) that's marked
-     * as "unremovable". Note that if the node itself is marked as 
+     * as "unremovable". Note that if the node itself is marked as
      * "unremovable", the method will return the node itself.
      * @param node node from which to move up the tree
      */
@@ -559,7 +559,7 @@ public class UserLayoutManager {
 
     /**
      * Returns first parent of the node (or the node itself) that's marked
-     * as "immutable". Note that if the node itself is marked as 
+     * as "immutable". Note that if the node itself is marked as
      * "ummutable", the method will return the node itself.
      * @param node node from which to move up the tree
      */
@@ -596,7 +596,7 @@ public class UserLayoutManager {
 
     /**
      * Checks if a particular node is a descendent of some other node.
-     * Note that if both ancestor and node point at the same node, true 
+     * Note that if both ancestor and node point at the same node, true
      * will be returned.
      * @param node the node to be checked
      * @param ancestor potential ancestor
@@ -607,7 +607,7 @@ public class UserLayoutManager {
 	if(node==ancestor) return true;
 	else return isDescendentOf(ancestor,node.getParentNode());
     }
-	
+
     /**
      * Moves node from one location in the userLayout tree to another
      * @param node the node to be moved
@@ -644,7 +644,7 @@ public class UserLayoutManager {
 	return true;
     }
 
-    
+
 }
 
 

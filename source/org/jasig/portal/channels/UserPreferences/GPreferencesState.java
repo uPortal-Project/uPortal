@@ -141,9 +141,9 @@ class GPreferencesState extends BaseState {
     public ThemeStylesheetDescription getThemeStylesheetDescription() {
         if(tsd==null) {
             ThemeStylesheetUserPreferences ssup=up.getThemeStylesheetUserPreferences();
-            tsd=this.getCoreStylesheetDescriptionDB().getThemeStylesheetDescription(ssup.getStylesheetName());
+            tsd=this.getCoreStylesheetDescriptionDB().getThemeStylesheetDescription(ssup.getStylesheetId());
             if(tsd==null) {
-                Logger.log(Logger.ERROR,"CUserPreferences::setRuntimeData() : theme stylesheet description for a stylesheet \""+ssup.getStylesheetName()+"\" is null");
+                Logger.log(Logger.ERROR,"CUserPreferences::setRuntimeData() : theme stylesheet description for a stylesheet \""+ssup.getStylesheetId()+"\" is null");
             }
         }
         return tsd;
@@ -153,9 +153,9 @@ class GPreferencesState extends BaseState {
         if(ssd==null) {
             ICoreStylesheetDescriptionDB csddb=new CoreStylesheetDescriptionDBImpl();
             StructureStylesheetUserPreferences fsup=this.getUserPreferences().getStructureStylesheetUserPreferences();
-            ssd=this.getCoreStylesheetDescriptionDB().getStructureStylesheetDescription(fsup.getStylesheetName());
+            ssd=this.getCoreStylesheetDescriptionDB().getStructureStylesheetDescription(fsup.getStylesheetId());
             if(ssd==null) {
-                Logger.log(Logger.ERROR,"CUserPreferences::setRuntimeData() : structure stylesheet description for a stylesheet \""+fsup.getStylesheetName()+"\" is null");
+                Logger.log(Logger.ERROR,"CUserPreferences::setRuntimeData() : structure stylesheet description for a stylesheet \""+fsup.getStylesheetId()+"\" is null");
             }
         }
         return ssd;
