@@ -6,6 +6,7 @@
 package org.jasig.portal.layout.al;
 
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
+import org.jasig.portal.layout.al.common.node.INodeDescription;
 
 /**
  * An extension of the layout node interface that includes
@@ -21,5 +22,9 @@ public interface IALNode extends ILayoutNode, IALNodeDescription {
      * Gets the priority value for this node.
      */
     public int getPriority();
+    
+    public void setNodeDescription( INodeDescription nodeDescription );
+    
+    public INodeDescription getNodeDescription();
     
 }

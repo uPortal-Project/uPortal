@@ -308,8 +308,6 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
   public boolean checkUpdateRestrictions(INodeDescription nodeDescription, INodeId nodeId ) throws PortalException {
   	   
-        IALNodeDescription nodeDesc=(IALNodeDescription) nodeDescription;
-        
         if ( nodeId == null ) return false;
         
         IALNode node = (IALNode) layout.getNode(nodeId);
@@ -336,10 +334,10 @@ public class ALRestrictionManager implements IALRestrictionManager {
         }
 
        // if a new node description doesn't contain any restrictions the old restrictions will be used
-        if ( nodeDesc.getRestrictions() == null )
-          nodeDesc.setRestrictions(node.getRestrictions());
+        if ( ((IALNodeDescription)nodeDescription).getRestrictions() == null )
+        	((IALNodeDescription)nodeDescription).setRestrictions(node.getRestrictions());
         
-        Collection restrictions = nodeDesc.getRestrictions();
+        Collection restrictions = ((IALNodeDescription)nodeDescription).getRestrictions();
         // Setting the new node description to the node
         node.setNodeDescription(nodeDescription);
 
