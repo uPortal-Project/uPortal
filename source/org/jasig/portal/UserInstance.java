@@ -69,10 +69,10 @@ import javax.xml.transform.dom.DOMSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ContentHandler;
 
-import org.apache.xml.serialize.BaseMarkupSerializer;
-import org.apache.xml.serialize.CachingSerializer;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.serialize.CachingSerializer;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
 
 
 /**
@@ -391,8 +391,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                     // output channel buffer
                                     if(o instanceof SAX2BufferImpl) {
                                         SAX2BufferImpl b=(SAX2BufferImpl) o;
-                                        b.setAllHandlers(markupSerializer);
-                                        b.outputBuffer();
+                                        b.outputBuffer(markupSerializer);
                                     }
 
                                     // save the old cache state
@@ -438,7 +437,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         // attach channel incorporation filter downstream of the channel rendering buffer
                         cif.setParent(crb);
                         crb.setOutputAtDocumentEnd(true);
-                        cachedBuffer.outputBuffer();
+                        cachedBuffer.outputBuffer((ContentHandler)crb);
 
                         output_produced=true;
                     }
