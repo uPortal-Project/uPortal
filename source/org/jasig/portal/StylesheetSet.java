@@ -39,15 +39,20 @@
 package  org.jasig.portal;
 
 import org.jasig.portal.services.LogService;
-import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.*;
-import java.util.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import java.net.URL;
 import java.net.MalformedURLException;
-import org.xml.sax.helpers.*;
 
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.utils.ResourceLoader;
