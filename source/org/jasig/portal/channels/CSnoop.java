@@ -36,6 +36,7 @@
 package org.jasig.portal.channels;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,6 +69,7 @@ public class CSnoop implements IPrivilegedChannel {
   private ChannelRuntimeData runtimeData;
 
   private static final String sslLocation = "CSnoop/CSnoop.ssl";
+  private static final String bundleLocation = "/org/jasig/portal/channels/CSnoop/CSnoop";
 
   /**
    * No-argument constructor for CSnoop.
@@ -247,9 +249,11 @@ public class CSnoop implements IPrivilegedChannel {
     snooperE.appendChild(channelRuntimeDataE);
     
     doc.appendChild(snooperE);
-    
+
+    ResourceBundle l18n = ResourceBundle.getBundle(bundleLocation,runtimeData.getLocales()[0]);
     // Now perform the transformation
-    XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
+    XSLT xslt = XSLT.getTransformer(this);
+    xslt.setResourceBundle(l18n);
     xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
