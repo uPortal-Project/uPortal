@@ -1557,6 +1557,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>20</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>90</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
           </row>
           <!-- User Preferences -->
           <row>
@@ -1564,6 +1565,7 @@
             <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
             <column><name>CHAN_ID</name><value>92</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
           </row>
        <!-- CWebProxy Examples -->
        <row>
