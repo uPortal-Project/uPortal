@@ -1,0 +1,393 @@
+<?xml version="1.0"?>
+
+<!-- Author:   John Laker                                                          -->
+<!-- Author:   Bill Brooks                                                         -->
+<!-- Creation: Sat Feb 24 01:08:44 PST 2001                                        -->
+<!-- Filename: build.xml                                                           -->
+<!-- Version:  $Revision$                                                -->
+<!-- Language: XML 1.0 / Ant 1.2 DTD                                               -->
+<!-- Copyright: (c)2000, 2001 JA-SIG                                               -->
+<!--                                                                               -->
+<!-- Abstract: Ant 1.2 build control file, makes a .war file from uPortal sources  -->
+
+<!--
+ - Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ -
+ - Redistribution and use in source and binary forms, with or without
+ - modification, are permitted provided that the following conditions
+ - are met:
+ -
+ - 1. Redistributions of source code must retain the above copyright
+ -    notice, this list of conditions and the following disclaimer.
+ -
+ - 2. Redistributions in binary form must reproduce the above copyright
+ -    notice, this list of conditions and the following disclaimer in
+ -    the documentation and/or other materials provided with the
+ -    distribution.
+ -
+ - 3. Redistributions of any form whatsoever must retain the following
+ -    acknowledgment:
+ -    "This product includes software developed by the JA-SIG Collaborative
+ -    (http://www.jasig.org/)."
+ -
+ - THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ - EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ - IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ - PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ - ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ - SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ - NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ - LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ - HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ - STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ - ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ - OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+
+<!-- 
+    =======================================================================
+	       NOTES ON USING THIS BUILD CONTROL FILE.
+
+    If you have Ant 1.2 or later installed, you can use this build
+    control file to construct a .war file from the uPortal 1.x
+    sources. The most important thing to note is that this file will
+    *not* work with the 'quick start' releases of uPortal assembled by
+    Yale University (e.g., destin.zip). This file will *only* work
+    with a source tree checked out from the uPortal CVS repository.
+    
+    You do not have to use this file to get started with destin.zip or
+    any other 'quick start' release. Use this file only if you wish to
+    build a .war file for deploying the uPortal code with your chosen
+    JSP1.1 and Servlets 2.2-compatible application server. 
+
+		  ASSUMPTIONS I WILL MAKE ABOUT YOU
+
+    In the instructions that follow, I'm going to assume you have
+    substantial experience developing server-side Java
+    applications. I'm going to assume you have recently checked out
+    the uPortal sources from the uPortal CVS repository. I'm going to
+    assume you already have Ant 1.2 or later installed. I'm also going
+    to assume that you have this file in the root directory of the
+    uPortal sources ('portal').
+
+    Ant makes builds portable, so this file will work on all platforms
+    that have a JVM. I'm going to show commands entered at the UNIX
+    shell prompt, but if you're working on Windows, Mac OS, or some
+    other operating system, translate commands and directory pathnames
+    accordingly. You shouldn't have to change anything in this file
+    regardless of platform.
+
+	    BUILDING A .war FILE FROM uPORTAL 1.x SOURCES
+
+    Step 1: create/edit the necessary properties files
+
+       'cd' into the properties directory and create a file in that
+       directory called "layout.properties" that contains the
+       following lines:
+ 
+         # layout.properties
+         pathToLayoutDtd=http://localhost:80386/uPortal/dtd/
+
+       ...of course, you should change the port number to whatever
+       port your application server is actually listening on.
+
+       edit the file in the same directory named "rdbm.properties" and
+       set the jdbcDriver, jdbcUrl, jdbcUser, and jdbcPassword
+       properties to whatever is appropriate for your installation.
+
+    Step 2: create some subdirectories
+
+       You'll have to now create some subdirectories to hold files
+       important for the construction and deployment of the .war file
+       we want to end up with:
+
+          3:33am foo.yourcampus.edu ~/sandbox/portal>mkdir conf
+          3:33am foo.yourcampus.edu ~/sandbox/portal>mkdir lib
+   
+    Step 3: create a web application descriptor file
+ 
+       'cd' into the 'conf' directory you just created and create a
+       file that looks like this:
+
+          <?xml version="1.0" encoding="ISO-8859-1"?>
+
+          <!DOCTYPE web-app
+            PUBLIC 
+           "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+           "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
+           <web-app>
+              <context-param>
+                 <param-name>portalBaseDir</param-name>
+                    <param-value>/usr/local/home/wbrooks/tomcat/webapps/uPortal/
+                    </param-value>
+              </context-param>
+           </web-app>
+
+       Make sure you change the entry in <param-value> to point to the
+       actual location where your uPortal web application will end
+       up. 
+
+       An aside: one very common problem that manifests itself after
+       you deploy uPortal to your application server originates with
+       this file. If this file becomes corrupt, the app server will
+       typically refuse to run the portal, issuing an error such as
+       "org.xml.sax.SAXParseException: XML declaration may only begin
+       entities".
+
+    Step 4: Gather the required .jar files and place them in the lib
+    directory:
+
+       'cd' into the newly-created 'lib' directory and place the
+       following .jar files in it:
+
+          activation.jar    jaxp.jar     log4j-core.jar   w3c.jar
+          cos.jar           jndi.jar     mail.jar         xalan.jar
+          dxml.jar          ldap.jar     oromatcher11.jar xerces.jar
+          hsql.jar          ldapbp.jar   parser.jar       xml4j.jar
+
+       traveling around the Internet and finding all of these can be
+       tedious, which is one of the reasons why Yale makes the 'quick
+       start' releases available. Once you have all of these in place,
+       you can proceed to the next step.
+
+    Step 5: Create a build properties file:
+
+       in the root directory ('portal'), create a file named
+       'localbuild.properties'. It should look like this:
+
+          #
+          # Modify this localbuild.properties file to suit your environment
+          #
+          # directory in which javadocs are generated
+          # comment docdest to suppress javadoc target
+          #docdest=./docs
+          #docdest=/usr/local/home/wbrooks/box/html/portal-1/docs
+
+          # and of course the classpath, comment-out to use your environment CLASSPATH
+          classpath=./build/dist/WEB-INF/classes:lib/activation.jar:lib/jaxp.jar:lib/log4j-core.jar:lib/w3c.jar:lib/cos.jar:lib/jndi.jar:lib/mail.jar:lib/xalan.jar:lib/dxml.jar:lib/ldap.jar:lib/oromatcher11.jar:lib/xerces.jar:lib/hsql.jar:ldapbp.jar:lib/parser.jar:lib/xml4j.jar:.
+          
+          # sql properties for running scripts and populating the database
+          # comment the dbdriver to suppress sql target
+          dbdriver=org.hsql.jdbcDriver
+          dburl=jdbc:HypersonicSQL:build/dist/database/portal
+          dblogin=sa
+          dbpass=
+
+          # Web application server directory for deploying the packaged portal 
+          webapps=/usr/local/home/wbrooks/tomcat/webapps
+
+       you shouldn't have to edit the classpath above, but you'll have
+       to change the dbdriver, dburl and dblogin properties to reflect
+       your situation. Also, the webapps property should point to the
+       place you're going to deploy the completed web application.
+
+    Step 6: Create the uPortal .war file
+
+       Now you can invoke ant to create the .war file. Tell ant to
+       execute the 'dist' target to create a .war file:
+
+          3:33am foo.yourcampus.edu ~/sandbox/portal>ant dist
+
+       there will be *lots* of output from this command. Eventually
+       you'll get output like this:
+
+          dist:
+          [jar] Building jar: /home/wbrooks/sandbox/portal/build/dist/uPortal.war
+
+          BUILD SUCCESSFUL
+
+          Total time: 6 seconds
+
+       Six seconds is what it takes to build the uPortal .war file on
+       my desktop machine, a single 300Mhz CPU Ultra 10 running JDK
+       1.2.2 on Solaris 2.7. On your machine it should be much faster. 
+
+    Step 7: Create the uPortal database
+
+       Now you'll invoke Ant to create the database tables for
+       uPortal:
+
+          3:33am foo.yourcampus.edu ~/sandbox/portal>ant db
+
+       there will be *lots* of output from this command. Eventually
+       you'll get output like this:
+
+          [sql] 91 of 91 SQL statements executed successfully
+
+          BUILD SUCCESSFUL
+
+          Total time: 3 seconds
+
+    Step 8: Deploy the completed .war file
+
+       Now you can deploy the .war file to your application server's
+       root. Since you previously set the location of this directory
+       in your localbuild.properties file, Ant knows were to put the
+       completed .war file:
+
+          3:33am foo.yourcampus.edu ~/sandbox/portal>ant install
+
+       there should only be a few lines of output from this
+       command. Eventually you'll get output like this:
+
+          install:
+          [copy] Copying 1 file to /home/wbrooks/tomcat/webapps
+
+          BUILD SUCCESSFUL
+
+          Total time: 2 seconds
+
+    Step 9: You're done! 
+
+       Now you can start your application server or servlet engine in
+       the way described in your vendor's documentation. Using tomcat,
+       for example, you can run the script 'start.sh' in the
+       tomcat/bin directory.
+
+       Open the URL corresponding to your application server and web
+       application and log into the portal. To get rid of the
+       temporary directory Ant created to construct the .war file, you
+       can invoke this build file's 'clean' task:
+
+          3:45am foo.yourcampus.edu ~/sandbox/portal>ant clean
+
+       Congratulations on building uPortal from source!
+
+    ======================================================================= 
+-->
+
+
+<project name="portal" default="all" basedir=".">
+
+   <property file="localbuild.properties"/>
+
+   <property name="build" value="build"/>
+   <property name="classsrc" value="./source"/>
+   <property name="conf" value="./conf"/>
+   <property name="dist" value="dist"/>
+   <property name="htmlsrc" value="./webpages"/>
+   <property name="lib" value="lib/"/>
+   <property name="lib" value="logs/"/>
+   <property name="props" value="properties/"/>
+   <property name="scripts" value="./scripts/Oracle 8i" />
+
+<!-- 
+    =======================================================================
+    Actual Ant target definitions. 
+    ======================================================================= 
+-->
+
+   <target name="all" depends="classes,db"/>
+   <!-- these targets will be used once a directory structure is decided on -->
+   <!-- <target name="all" depends="classes,html,support,javadoc,db"/> -->
+
+   <target name="prepare">
+      <!-- Create the build directory structure used by compile -->
+      <mkdir dir="${build}"/>
+      <mkdir dir="${build}/${dist}" />
+      <mkdir dir="${build}/${dist}/database" />
+      <mkdir dir="${build}/${dist}/logs" />
+      <mkdir dir="${build}/${dist}/WEB-INF/lib" />
+      <mkdir dir="${build}/${dist}/WEB-INF/classes" />
+   </target>
+
+
+   <target name="stage" depends="prepare">
+
+      <!-- Copy the web application descriptor file to the proper location  -->
+      <copy file="${conf}/web.xml" todir="${build}/${dist}/WEB-INF/" />
+
+      <!-- Copy web and java server pages into the build directory structure  -->
+      <copy todir="${build}/${dist}">
+         <fileset dir="${htmlsrc}">
+            <include name="**/*.jsp" />
+            <include name="applets/" />
+            <include name="dtd/" />
+            <include name="help/" />
+            <include name="images/" />
+            <include name="JavaScript/" />
+            <include name="stylesheets/" />
+            <include name="rss/" />
+         </fileset>
+
+         <!-- don't forget the properties files, although this copies them to a  -->
+         <!-- web-accessible location. Shouldn't do that...  -->
+         <fileset dir=".">
+            <include name="${props}" /> 
+            <!--
+            <exclude name="${props}/rdbm.properties"/>
+            -->
+         </fileset>
+      </copy>
+
+      <!-- copy database stuff  -->
+
+
+      <!-- Copy 3rd party .jar files into the build directory structure  -->
+      <copy todir="${build}/${dist}/WEB-INF/lib">
+         <fileset dir="${lib}">
+            <include name="**/*.jar" />
+            <!--
+            <include name="classes12.zip" />
+            -->
+         </fileset>
+      </copy>
+
+   </target>
+
+   <target name="classes" depends="stage">
+      <echo message="Compiling classes to ${build}/${dist}/WEB-INF/classes"/>
+      <echo message="using CLASSPATH ${classpath}"/>
+      <javac srcdir="${classsrc}" 
+         destdir="${build}/${dist}/WEB-INF/classes"
+         classpath="${classpath}"
+         excludes="**/*.bak"
+         deprecation="on" 
+         debug="on"
+      />
+   </target>
+
+   <target name="dist" depends="classes">
+   <!-- make a .war file we can place into the server's webapps directory  -->
+      <jar jarfile="${build}/${dist}/uPortal.war" 
+        basedir="${build}/${dist}"
+      />
+   </target>
+
+   <target name="db" if="dbdriver">
+      <echo message="Running database scripts on ${dburl}"/>
+      <sql
+        classpath="${classpath}"
+        driver="${dbdriver}"
+        url="${dburl}"
+        userid="${dblogin}"
+        password="${dbpass}"
+        onerror="continue">
+        <transaction  src="${scripts}/dropTables.script" />
+        <transaction  src="${scripts}/createTables.script" />
+        <transaction  src="${scripts}/populateTables.script" />
+      </sql>
+   </target>
+	
+   <target name="install" depends="dist" if="webapps">
+      <copy file="${build}/${dist}/uPortal.war" todir="${webapps}" />
+   </target>
+
+   <target name="clean">
+      <!-- Delete the ${build} directory tree -->
+      <echo message="Doing a clean on build directory"/>
+      <delete dir="${build}"/>
+   </target>
+
+   <target name="spotless" depends="clean">
+      <!-- Delete the ${build} directory tree -->
+      <echo message="Removing deployed web application"/>
+      <delete file="${webapps}/uPortal.war"/>
+      <delete dir="${webapps}/uPortal"/>
+   </target>
+
+</project>
+
+
