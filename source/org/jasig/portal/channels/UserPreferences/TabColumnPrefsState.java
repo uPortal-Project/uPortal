@@ -40,17 +40,17 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IUserLayoutManager;
 import org.jasig.portal.UserLayoutManager;
 import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.IUserPreferencesStore;
-import org.jasig.portal.RDBMUserPreferencesStore;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.StylesheetSet;
 import org.w3c.dom.Document;
@@ -76,7 +76,9 @@ final class TabColumnPrefsState extends BaseState
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/tab-column/tab-column.ssl");
   private Document userLayout;
   private UserPreferences userPrefs;
-  private IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
+  private UserProfile editedUserProfile;
+  private static IUserLayoutStore ulStore = RdbmServices.getUserLayoutStoreImpl();
+  private static IUserPreferencesStore upStore = RdbmServices.getUserPreferencesStoreImpl();
   private StylesheetSet set;
   private static SmartCache channelRegistryCache = new SmartCache(60); // One minute
 
@@ -122,25 +124,27 @@ final class TabColumnPrefsState extends BaseState
   }
 
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
-    {
-        this.runtimeData = rd;
+  {
+    this.runtimeData = rd;
 
-        // see if a top-level action has been given
-        String action=rd.getParameter("action");
-        if(action!=null && action.equals("manageSkins")) {
-            // switch the internal state
-            internalState=new SelectSkinsState(this);
-            internalState.setStaticData(staticData);
-        } else if(action!=null && action.equals("managePreferences")) {
-            internalState=new DefaultState(this);
-            internalState.setStaticData(staticData);
-        }
-        this.internalState.setRuntimeData(rd);
+    // see if a top-level action has been given
+    String action=rd.getParameter("action");
+    if(action!=null && action.equals("manageSkins")) {
+        // switch the internal state
+        internalState=new SelectSkinsState(this);
+        internalState.setStaticData(staticData);
+    } else if(action!=null && action.equals("managePreferences")) {
+        internalState=new DefaultState(this);
+        internalState.setStaticData(staticData);
+    }
+    this.internalState.setRuntimeData(rd);
 
     try
     {
+      // The profile the user is currently viewing or modifying...
+      editedUserProfile = context.getEditedUserProfile();
       userLayout = getUserLayout();
-      userPrefs = context.getCurrentUserPreferences();
+      userPrefs = context.getUserPreferencesFromStore(editedUserProfile);
     }
     catch (Exception e)
     {
@@ -155,30 +159,23 @@ final class TabColumnPrefsState extends BaseState
     else
       LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
   }
-
+  
   // Helper methods...
 
   private final Document getUserLayout() throws Exception
   {
-    // Get the profile currently being used
     IUserLayoutManager ulm = context.getUserLayoutManager();
-    int currentProfileId = ulm.getCurrentProfile().getProfileId();
-
-    // Get the profile associated with the layout currently being modified
-    UserPreferences currentUserPrefs = context.getCurrentUserPreferences();
-    int editedProfileId = currentUserPrefs.getProfile().getProfileId();
-
     // If the we are editing the current profile, get a copy of the current user layout,
     // otherwise get it from the database or other persistant storage
     Document userLayout = null;
-    if (currentProfileId == editedProfileId)
+    if (modifyingCurrentProfile())
       userLayout = ulm.getUserLayoutCopy();
     else
-      userLayout = GenericPortalBean.getUserLayoutStore().getUserLayout(ulm.getPerson().getID(), editedProfileId);
+      userLayout = ulStore.getUserLayout(ulm.getPerson().getID(), context.getCurrentUserPreferences().getProfile().getProfileId());
 
     return userLayout;
   }
-
+  
   private final Document getChannelRegistry()
   {
     Document channelRegistry = (Document)channelRegistryCache.get("channelRegistry");
@@ -216,6 +213,8 @@ final class TabColumnPrefsState extends BaseState
 
   private final void setActiveTab(String activeTab) throws Exception
   {
+    // Must get from store because the one in memory is comtaminated with stylesheet params
+    // that shouldn't get persisted
     //UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
     //StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
     StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
@@ -223,7 +222,7 @@ final class TabColumnPrefsState extends BaseState
 
     // Persist structure stylesheet user preferences
     int userId = staticData.getPerson().getID();
-    int profileId = context.getCurrentUserPreferences().getProfile().getProfileId();
+    int profileId = editedUserProfile.getProfileId();
     upStore.setStructureStylesheetUserPreferences(userId, profileId, ssup);
   }
 
@@ -298,6 +297,10 @@ final class TabColumnPrefsState extends BaseState
 
   private final void changeColumnWidths(HashMap columnWidths) throws Exception
   {
+    // Must get from store because the one in memory is comtaminated with stylesheet params
+    // that shouldn't get persisted
+    //UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
+    //StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
     StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
     java.util.Set sColWidths = columnWidths.keySet();
     java.util.Iterator iterator = sColWidths.iterator();
@@ -325,9 +328,7 @@ final class TabColumnPrefsState extends BaseState
     }
 
     // Persist structure stylesheet user preferences
-    int userId = staticData.getPerson().getID();
-    int profileId = context.getCurrentUserPreferences().getProfile().getProfileId();
-    upStore.setStructureStylesheetUserPreferences(userId, profileId, ssup);
+    saveUserPreferences();
   }
 
   /**
@@ -444,7 +445,7 @@ final class TabColumnPrefsState extends BaseState
     
     Document channelRegistry = getChannelRegistry();
 	  Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
-    String instanceId = GenericPortalBean.getUserLayoutStore().getNextStructChannelId(staticData.getPerson().getID());
+    String instanceId = ulStore.getNextStructChannelId(staticData.getPerson().getID());
     newChannel.setAttribute("ID", instanceId);
     
     Element destinationElement = userLayout.getElementById(destinationElementId);
@@ -525,7 +526,7 @@ final class TabColumnPrefsState extends BaseState
    */
   private final Element createFolder (String name) throws Exception
   {
-    String ID = String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID()));
+    String ID = String.valueOf(ulStore.getNextStructFolderId(staticData.getPerson().getID()));
     Element layout = userLayout.getDocumentElement();
     Document doc = layout.getOwnerDocument();
     Element folder = doc.createElement("folder");
@@ -545,18 +546,31 @@ final class TabColumnPrefsState extends BaseState
 
   private void saveLayout () throws PortalException
   {
-    // Persist user preferences
+    // Persist user layout
+    // Needs to check if we're modifying the current layout!
     IUserLayoutManager ulm = context.getUserLayoutManager();
     ulm.setNewUserLayoutAndUserPreferences(userLayout, null);
   }
 
   private void saveUserPreferences () throws PortalException
   {
-    // Persist user preferences
     IUserLayoutManager ulm = context.getUserLayoutManager();
-    ulm.setNewUserLayoutAndUserPreferences(null, userPrefs);
+    if (modifyingCurrentProfile())
+      ulm.setNewUserLayoutAndUserPreferences(null, userPrefs);
+    else
+      upStore.putUserPreferences(staticData.getPerson().getID(), userPrefs);
   }
 
+  private boolean modifyingCurrentProfile () throws PortalException
+  {
+    // If the we are editing the current profile, return true, otherwise false
+    boolean b = context.getUserLayoutManager().getCurrentProfile().equals(editedUserProfile);
+    System.out.println("editingCurrentProfile="+b);
+    System.out.println("current="+context.getUserLayoutManager().getCurrentProfile().getProfileId());
+    System.out.println("edited="+editedUserProfile.getProfileId());
+    return context.getUserLayoutManager().getCurrentProfile().equals(editedUserProfile);
+  }  
+  
   /**
    * A sub-state of TabColumnPrefsState for visualizing the user layout
    * in tab-column form.
@@ -956,11 +970,13 @@ final class TabColumnPrefsState extends BaseState
                   // reset state
                   BaseState df=new DefaultState(context);
                   df.setStaticData(staticData);
+                  df.setRuntimeData(runtimeData);
                   context.setState(df);
               } else if (runtimeData.getParameter("submitCancel")!=null) {
                   // return to the default state
                   BaseState df=new DefaultState(context);
                   df.setStaticData(staticData);
+                  df.setRuntimeData(runtimeData);
                   context.setState(df);
               }
           }
