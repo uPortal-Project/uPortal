@@ -344,8 +344,8 @@ public class ChannelPublisher {
                   ci.chanDef.setIsSecure((value != null && value.equals("Y")) ? true : false);                
                 else if (tagname.equals("categories")) {
                   NodeList anodes = pele.getElementsByTagName("category");
+                  ci.categories = new ChannelCategory[anodes.getLength()];
                   if (anodes.getLength() != 0) {
-                        ci.categories = new ChannelCategory[anodes.getLength()];
                         for (int j=0; j < anodes.getLength(); j++) {
                           Element anode = (Element)anodes.item(j);
                           String catString = XML.getElementText(anode);
@@ -361,8 +361,8 @@ public class ChannelPublisher {
                   }
                 } else if (tagname.equals("groups")) {
                   NodeList anodes = pele.getElementsByTagName("group");
+                  ci.groups = new IGroupMember[anodes.getLength()];
                   if (anodes.getLength() != 0) {
-                        ci.groups = new IGroupMember[anodes.getLength()];
                         for (int j=0; j < anodes.getLength(); j++) {
                           Element anode = (Element) anodes.item(j);
                           String groupStr = XML.getElementText(anode);
