@@ -6,12 +6,13 @@
   <xsl:param name="action">defaultView</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMsg">no parameter passed</xsl:param>
+  <xsl:param name="stylesheetCacheSize">0</xsl:param>
+	
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
   <xsl:variable name="defaultTextRows">10</xsl:variable>
-  <xsl:param name="stylesheetCacheSize">0</xsl:param>
 
 
 
