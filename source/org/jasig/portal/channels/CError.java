@@ -81,7 +81,6 @@ public class CError extends BaseChannel implements IPrivilegedChannel
 
 
     public CError() {
-        channelName="Error Channel";
         set = new StylesheetSet (stylesheetDir + "CError.ssl");
         set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
     }
