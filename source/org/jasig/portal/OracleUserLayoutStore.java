@@ -50,7 +50,8 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT " + tableName + "_SEQ.NEXTVAL FROM DUAL";
-        log.debug("OracleUserLayoutStore::getIncrementInteger(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("OracleUserLayoutStore::getIncrementInteger(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           rs.next();            // If this doesn't work then the database is munged up
