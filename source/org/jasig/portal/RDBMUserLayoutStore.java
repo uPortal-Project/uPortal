@@ -67,7 +67,7 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.ResourceLoader;
-
+import org.jasig.portal.RDBMServices;
 /**
  * SQL implementation for the 2.x relational database model
  * @author George Lindholm
@@ -1694,24 +1694,25 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           if (rs.next()) {
             int structId = rs.getInt(1);
             // Result Set returns 0 by default if structId was null
-            /*if (rs.wasNull()) {
+            // Except if you are using poolman 2.0.4 in which case you get -1 back
+            if (rs.wasNull()) {
               structId = 0;
-            }*/
+            }
             readLayout: while (true) {
               if (DEBUG > 1) System.err.println("Found layout structureID " + structId);
 
               int nextId = rs.getInt(2);
-              /*if (rs.wasNull()) {
+              if (rs.wasNull()) {
                 nextId = 0;
-              }*/
+              }
               int childId = rs.getInt(3);
-              /*if (rs.wasNull()) {
+              if (rs.wasNull()) {
                 childId = 0;
-              }*/
+              }
               int chanId = rs.getInt(4);
-              /*if (rs.wasNull()) {
+              if (rs.wasNull()) {
                 chanId = 0;
-              }*/
+              }
               ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
               layoutStructure.put(new Integer(structId), ls);
               lastStructId = structId;
@@ -1731,9 +1732,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                     break readLayout;
                   }
                   structId = rs.getInt(1);
-                  /*if (rs.wasNull()) {
+                  if (rs.wasNull()) {
                     structId = 0;
-                  }*/
+                  }
                 } while (structId == lastStructId);
               } else { // Do second SELECT later on for structure parameters
                 if (ls.isChannel()) {
@@ -1742,9 +1743,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 }
                 if (rs.next()) {
                   structId = rs.getInt(1);
-                  /*if (rs.wasNull()) {
+                  if (rs.wasNull()) {
                     structId = 0;
-                  }*/
+                  }
                 } else {
                   break readLayout;
                 }
