@@ -37,62 +37,46 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.*" %>
 <%@ page import="org.jasig.portal.security.*" %>
-<%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="auth" class="org.jasig.portal.services.Authentication" />
-
 <jsp:useBean id="JNDIManager" class="org.jasig.portal.jndi.JNDIManager" />
 
 <%
-String sUserName = request.getParameter("userName");
-String sPassword = request.getParameter("password");
+session.invalidate();
+session = request.getSession(true);
+
+String userName = request.getParameter("userName");
+String password = request.getParameter("password");
 String baseActionURL = request.getParameter("baseActionURL");
 String redirectString = "render.uP";
 boolean bAuthorized = false;
 
-try {
-  bAuthorized = auth.authenticate (sUserName, sPassword);
+if (userName != null && password != null)
+{
+  try
+  {
+    bAuthorized = auth.authenticate (userName, password);
   }
-  catch (PortalSecurityException pse) {
+  catch (PortalSecurityException pse)
+  {
     session.setAttribute ("up_authorizationError", "true");
   }
-session.setAttribute("up_authorizationAttempted", "true");
+  session.setAttribute("up_authorizationAttempted", "true");
 
-if(bAuthorized)
-{
-  /*
-    Tomcat 3.1 has a bug (http://jakarta.apache.org/bugs/show_bug.cgi?id=55)
-    which prevents you from invalidating the session and then
-    creating it again.  So in the meantime, well just
-    clear out the session attributes to indicate a logoff/logon
-
-    And Resin has problems when the attributes are removed while
-    iterating over the Enumeration, hence some slightly funky code
-   */
-
-  // Clear out session attributes
-  java.util.Enumeration e = session.getAttributeNames ();
-  Vector remove = new Vector();
-  while (e.hasMoreElements ())
+  if(bAuthorized)
   {
-    remove.add((String) e.nextElement ());
+    // Get the Person object and put it in the session
+    IPerson person = auth.getPerson ();
+    session.setAttribute ("up_person", person);
+
+    // Get the SecurityContext and put it in the session
+    ISecurityContext SecurityContext = auth.getSecurityContext();
+    session.setAttribute ("up_SecurityContext", SecurityContext);
   }
-  for (Iterator it=remove.iterator(); it.hasNext() ;)
+  else
   {
-      session.removeAttribute ((String) it.next());
+    redirectString = baseActionURL + "?userName=" + userName;
   }
-
-  // Get the Person object and put it in the session
-  IPerson person = auth.getPerson ();
-  session.setAttribute ("up_person", person);
-
-  // Get the SecurityContext and put it in the session
-  ISecurityContext SecurityContext = auth.getSecurityContext();
-  session.setAttribute ("up_SecurityContext", SecurityContext);
-}
-else
-{
-  redirectString = baseActionURL + "?userName=" + sUserName;
 }
 
 response.sendRedirect(redirectString);
