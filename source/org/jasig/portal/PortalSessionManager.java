@@ -77,6 +77,7 @@ public class PortalSessionManager extends HttpServlet {
       if (sc == null) {
         throw  new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
+
       // Get the portal base directory
       String sPortalBaseDir = sc.getInitParameter("portalBaseDir");
       // Make sure the directory is a properly formatted string
@@ -101,7 +102,11 @@ public class PortalSessionManager extends HttpServlet {
       JNDIManager.initializePortalContext();
       // Flag that the portal has been initialized
       initialized = true;
-      
+
+      // Get the SAX implementation
+      if (System.getProperty("org.xml.sax.driver") == null)
+        System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
+
       // Set the UserLayoutStoreImpl
       try {
         // Should obtain implementation in a better way!
@@ -133,7 +138,7 @@ public class PortalSessionManager extends HttpServlet {
     ServletContext sc = this.getServletContext();
     HttpSession session = req.getSession();
     if (session != null) {
-      //		Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
+      // LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
       String redirectBase = null;
       RequestParamWrapper myReq = new RequestParamWrapper(req);
       myReq.setBaseRequest(req);
@@ -143,7 +148,7 @@ public class PortalSessionManager extends HttpServlet {
         // initial request, requeres forwarding
         session.setAttribute("forwarded", new Boolean(true));
         // forward
-        //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+        // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
         //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
         res.sendRedirect(req.getContextPath() + redirectBase);
       }
@@ -153,14 +158,14 @@ public class PortalSessionManager extends HttpServlet {
         if (forwarded != null)
           session.removeAttribute("forwarded");
         // proceed with rendering
-        //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");
+        //		    LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");
         // look if the UserInstance object is already in the session, otherwise
         // make a new one
         UserInstance layout = (UserInstance)session.getAttribute("UserInstance");
         if (layout == null) {
           layout = UserInstanceFactory.getUserInstance(myReq);
           session.setAttribute("UserInstance", layout);
-          //			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new UserInstance");
+          // LogService.instance().log(LogService.DEBUG,"PortalSessionManager;:doGet() : instantiating new UserInstance");
         }
         RequestParamWrapper oreqp = null;
         if (forwarded != null && forwarded.booleanValue())
@@ -300,7 +305,7 @@ public class PortalSessionManager extends HttpServlet {
             }
           }
         } catch (Exception e) {
-          Logger.log(Logger.ERROR, e);
+          LogService.instance().log(LogService.ERROR, e);
         }
       }
       Enumeration en = source.getParameterNames();
@@ -371,365 +376,182 @@ public class PortalSessionManager extends HttpServlet {
       return  (Object[])this.parameters.get(name);
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getPathInfo () {
       return  pathInfo;
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getPathTranslated () {
       return  pathTranslated;
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getContextPath () {
       return  contextPath;
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getQueryString () {
       return  queryString;
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getServletPath () {
       return  servletPath;
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getRequestURI () {
       return  requestURI;
     }
 
     // pass through methods
+
     public String getAuthType () {
       return  req.getAuthType();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public Cookie[] getCookies () {
       return  req.getCookies();
     }
 
-    /**
-     * put your documentation comment here
-     * @param name
-     * @return
-     */
     public long getDateHeader (String name) {
       return  req.getDateHeader(name);
     }
 
-    /**
-     * put your documentation comment here
-     * @param name
-     * @return
-     */
     public String getHeader (String name) {
       return  req.getHeader(name);
     }
 
-    /**
-     * put your documentation comment here
-     * @param name
-     * @return
-     */
     public Enumeration getHeaders (String name) {
       return  req.getHeaders(name);
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public Enumeration getHeaderNames () {
       return  req.getHeaderNames();
     }
 
-    /**
-     * put your documentation comment here
-     * @param name
-     * @return
-     */
     public int getIntHeader (String name) {
       return  req.getIntHeader(name);
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getMethod () {
       return  req.getMethod();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getRemoteUser () {
       return  req.getRemoteUser();
     }
 
-    /**
-     * put your documentation comment here
-     * @param role
-     * @return
-     */
     public boolean isUserInRole (String role) {
       return  req.isUserInRole(role);
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public java.security.Principal getUserPrincipal () {
       return  req.getUserPrincipal();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getRequestedSessionId () {
       return  req.getRequestedSessionId();
     }
 
-    /**
-     * put your documentation comment here
-     * @param create
-     * @return
-     */
     public HttpSession getSession (boolean create) {
       return  req.getSession(create);
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public HttpSession getSession () {
       return  req.getSession();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public boolean isRequestedSessionIdValid () {
       return  req.isRequestedSessionIdValid();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public boolean isRequestedSessionIdFromCookie () {
       return  req.isRequestedSessionIdFromCookie();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public boolean isRequestedSessionIdFromURL () {
       return  req.isRequestedSessionIdFromURL();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public boolean isRequestedSessionIdFromUrl () {
-      return  req.isRequestedSessionIdFromUrl();
+      return  req.isRequestedSessionIdFromURL();
     }
 
-    /**
-     * put your documentation comment here
-     * @param name
-     * @return
-     */
     public Object getAttribute (String name) {
       return  req.getAttribute(name);
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public Enumeration getAttributeNames () {
       return  req.getAttributeNames();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getCharacterEncoding () {
       return  req.getCharacterEncoding();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public int getContentLength () {
       return  req.getContentLength();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getContentType () {
       return  req.getContentType();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     * @exception IOException
-     */
     public ServletInputStream getInputStream () throws IOException {
       return  req.getInputStream();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getProtocol () {
       return  req.getProtocol();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getScheme () {
       return  req.getScheme();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getServerName () {
       return  req.getServerName();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public int getServerPort () {
       return  req.getServerPort();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     * @exception IOException
-     */
     public BufferedReader getReader () throws IOException {
       return  req.getReader();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getRemoteAddr () {
       return  req.getRemoteAddr();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public String getRemoteHost () {
       return  req.getRemoteHost();
     }
 
-    /**
-     * put your documentation comment here
-     * @param name
-     * @param o
-     */
     public void setAttribute (String name, Object o) {
       req.setAttribute(name, o);
     }
 
-    /**
-     * put your documentation comment here
-     * @param name
-     */
     public void removeAttribute (String name) {
       req.removeAttribute(name);
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public Locale getLocale () {
       return  req.getLocale();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public Enumeration getLocales () {
       return  req.getLocales();
     }
 
-    /**
-     * put your documentation comment here
-     * @return
-     */
     public boolean isSecure () {
       return  req.isSecure();
     }
 
-    /**
-     * put your documentation comment here
-     * @param path
-     * @return
-     */
     public RequestDispatcher getRequestDispatcher (String path) {
       return  req.getRequestDispatcher(path);
     }
 
-    /**
-     * put your documentation comment here
-     * @param path
-     * @return
-     */
     public String getRealPath (String path) {
-      return  req.getRealPath(path);
+      throw new RuntimeException("HttpServletRequest.getRealPath(String path) is deprectated!  Use ServletContext.getRealPath(String path) instead.");
     }
   }
 }
