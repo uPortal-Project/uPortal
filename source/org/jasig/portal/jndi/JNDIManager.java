@@ -45,7 +45,6 @@ import javax.naming.CompositeName;
 
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.UserLayoutDBImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 
