@@ -78,7 +78,9 @@ public class StylesheetSet extends SAXFilterImpl
       StylesheetSet dummy=new StylesheetSet ();
       parser.setDocumentHandler (dummy);
       URL url=expandSystemId (uri);
-      if (url!=null)  parser.parse (new org.xml.sax.InputSource (url.openStream ()));
+      java.io.InputStream is=url.openStream();
+      if (url!=null)  parser.parse (new org.xml.sax.InputSource (is));
+      is.close();
       this.title_table=dummy.getTitleTable ();
     }
     catch (Exception e)
