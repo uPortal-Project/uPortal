@@ -47,6 +47,7 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.security.*;
 import org.xml.sax.ContentHandler;
@@ -122,7 +123,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   public void renderXML (ContentHandler out) throws PortalException
   {
     String fullName = (String)staticData.getPerson().getFullName();
-    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Document doc = DocumentFactory.getNewDocument();
 
     // Create <login-status> element
     Element loginStatusElement = doc.createElement("login-status");
