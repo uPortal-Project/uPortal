@@ -2487,6 +2487,7 @@ Detachable<br/>
         <td ><a href="{$baseActionURL}?uPCM_action=selectCategory&amp;uPCM_capture=reviewChannel">
         
         <xsl:for-each select="//registry//category[@ID = //selectedCategory]">
+<img alt="interface image" src="{$mediaPath}/category.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
             <xsl:for-each select="ancestor-or-self::category">
 
                           <xsl:choose>
@@ -2498,7 +2499,7 @@ Detachable<br/>
                               <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>::<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
 
                             <xsl:otherwise>
-                              <strong>[<xsl:value-of select="@name"/>]</strong>
+                              <strong><xsl:value-of select="@name"/></strong>
                             </xsl:otherwise>
                           </xsl:choose>
                         </xsl:for-each><br/>
