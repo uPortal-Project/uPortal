@@ -1403,7 +1403,7 @@ $Revision$
                       </xsl:for-each>
 
                       <td width="100%">
-                        <input type="radio" name="method_ID" value="appendAfter_{/layout/folder[not(@type='header' or @type='footer') and @hidden='false' and position() = last()]/@ID}" />
+                        <input type="radio" name="method_ID" value="appendAfter_{/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = last()]/@ID}" />
                       </td>
                     </tr>
                   </table>
