@@ -1618,11 +1618,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		 
 		 if ( !isOwner && !isNewFragment )
 		  throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
+		  
+	  ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
+	  String fragmentRootId = rootNode.getFirstChildNodeId();	  
 
       // Check if the fragment is new
       if ( isNewFragment ) {
-      	ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
-      	String fragmentRootId = rootNode.getFirstChildNodeId();
+      	
 		String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+	
 		"VALUES (?,?,?,?,?,?)";
 		PreparedStatement ps = con.prepareStatement(sqlInsert);
@@ -1639,13 +1641,17 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      	ps.close();
       } else {
 		 	 
-		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
+		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=?,FRAGMENT_ROOT_ID=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
 		 PreparedStatement ps = con.prepareStatement(sqlUpdate);
 		 ps.setString(1,layout.getName());
 		 ps.setString(2,layout.getDescription());
 		 ps.setString(3,(layout.isPushedFragment())?"Y":"N");
-		 ps.setInt(4,userId);
-		 ps.setInt(5,CommonUtils.parseInt(fragmentId));
+		 if ( fragmentRootId != null )
+		  ps.setInt(4,CommonUtils.parseInt(fragmentRootId));
+	     else
+		  ps.setNull(4,Types.INTEGER); 
+		 ps.setInt(5,userId);
+		 ps.setInt(6,CommonUtils.parseInt(fragmentId));
 		 ps.executeUpdate();
 		 ps.close();
         }  
