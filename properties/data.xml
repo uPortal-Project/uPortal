@@ -2398,4 +2398,46 @@
     </rows>
   </table>
 
+  <table>
+    <name>UP_SKINS</name>
+    <rows>
+      <row>
+        <column><name>SKIN_ID</name><value>0</value></column>
+		<column><name>SKIN_NAME</name><value>Java</value></column>
+        <column><name>SKIN_DESCRIPTION</name><value>Sun's Java color scheme</value></column>
+		<column><name>THUMBNAIL_FILE_LOCATION</name><value>java_thumb.gif</value></column>
+		<column><name>FOLDER_NAME</name><value>java</value></column>
+      </row>
+      <row>
+        <column><name>SKIN_ID</name><value>1</value></column>
+		<column><name>SKIN_NAME</name><value>UOSM</value></column>
+        <column><name>SKIN_DESCRIPTION</name><value>University of Santa Maria's colors (ask Justin about the admissions policy)</value></column>
+		<column><name>THUMBNAIL_FILE_LOCATION</name><value>uosm_thumb.gif</value></column>
+		<column><name>FOLDER_NAME</name><value>uosm</value></column>
+      </row>
+      <row>
+        <column><name>SKIN_ID</name><value>2</value></column>
+		<column><name>SKIN_NAME</name><value>VSAC</value></column>
+        <column><name>SKIN_DESCRIPTION</name><value>VSAC color scheme</value></column>
+		<column><name>THUMBNAIL_FILE_LOCATION</name><value>vsac_thumb.gif</value></column>
+		<column><name>FOLDER_NAME</name><value>vsac</value></column>
+      </row>
+      <row>
+        <column><name>SKIN_ID</name><value>3</value></column>
+		<column><name>SKIN_NAME</name><value>IM and M</value></column>
+        <column><name>SKIN_DESCRIPTION</name><value>Instructional Media and Magic color scheme</value></column>
+		<column><name>THUMBNAIL_FILE_LOCATION</name><value>imm_thumb.gif</value></column>
+		<column><name>FOLDER_NAME</name><value>imm</value></column>
+      </row>
+      <row>
+        <column><name>SKIN_ID</name><value>4</value></column>
+		<column><name>SKIN_NAME</name><value>Matrix</value></column>
+        <column><name>SKIN_DESCRIPTION</name><value>Skin based on the movie "Matrix"</value></column>
+		<column><name>THUMBNAIL_FILE_LOCATION</name><value>matrix_thumb.gif</value></column>
+		<column><name>FOLDER_NAME</name><value>matrix</value></column>
+      </row>
+    </rows>
+  </table>
+
+
 </data>
