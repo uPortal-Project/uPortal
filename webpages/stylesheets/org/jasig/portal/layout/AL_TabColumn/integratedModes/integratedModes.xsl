@@ -176,7 +176,7 @@ Version $Revision$
                                     </xsl:choose>
                                 </xsl:if>
                                 <td>
-                                    <a href="Logout" class="uportal-navigation-category">
+                                    <a href="Logout?uP_sparam=lastSessionTabID&amp;lastSessionTabID=$focusedTabID" class="uportal-navigation-category">
                                         <img src="{$mediaPathIcons}/logout.gif" width="24" height="24" alt="Logout" title="Logout" border="0"/>
                                     </a>
                                 </td>
@@ -1575,7 +1575,7 @@ Version $Revision$
                         <xsl:if test="fragments and $fragmentAuthor='true'">
                             <!-- <br/> -->
                             <span> |<xsl:text>&#160;</xsl:text> </span>
-                            <a href="{$baseActionURL}?uP_fname=fragment-manager&amp;uPcFM_action=default&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Fragments</a>
+                            <a href="{$baseActionURL}?uP_fname=fragment-manager&amp;uPcFM_action=default&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=lastSessionTabID&amp;lastSessionTabID=$focusedTabID">Fragments</a>
                             <!-- <form name="selectFragments" method="post" action="{$baseActionURL}"> Manage:<select name="uP_fragment_ID" class="uportal-input-text uportal-background-content"> -->
                                     <!-- This test wil need to be modified when multiple layouts are allowed -->
                                     <!-- <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')"> -->
