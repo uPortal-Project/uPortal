@@ -77,7 +77,7 @@ public class ProxyPortlet extends org.apache.wsrp4j.consumer.portlet.impl.ProxyP
         mgmtUrl = (String)preferences.get(ConsumerConstants.WSRP_PORTLET_MGMT_URL);
         String producerId = markupUrl + serviceDescUrl + regUrl + mgmtUrl;
         portletKey = new PortletKeyImpl(portletHandle, producerId);
-        System.out.println("portletKey=" + portletKey);
+        //System.out.println("portletKey=" + portletKey);
         return portletKey;
     }
 
@@ -92,7 +92,7 @@ public class ProxyPortlet extends org.apache.wsrp4j.consumer.portlet.impl.ProxyP
             producer = new ProducerImpl(producerID, markupUrl, serviceDescUrl, regUrl, mgmtUrl, regData);
             producerRegistry.addProducer(producer);
         }
-        System.out.println("returning producer=" + producer.toString());
+        //System.out.println("returning producer=" + producer.toString());
         return producer;
 
     }
