@@ -97,6 +97,29 @@ public class UtilitiesBean extends GenericPortalBean
   }
 
   /**
+   * Gets the current date/time with specified format
+   * @param format the format string
+   * @return a formatted date and time string
+   */
+  public static String getDate (String format)
+  {
+    try
+    {
+      // Format the current time.
+      SimpleDateFormat formatter = new SimpleDateFormat (format);
+      java.util.Date currentTime = new java.util.Date();
+      return formatter.format(currentTime);
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+
+    return "&nbsp;";
+  }
+
+
+  /**
    * Allows the hrefs in each .ssl file to be entered in one
    * of 3 ways:
    * 1) http://...
