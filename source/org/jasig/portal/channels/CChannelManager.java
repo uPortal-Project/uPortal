@@ -46,6 +46,7 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.Authorization;
+import org.jasig.portal.security.IAuthorization.RoleAuthorization;
 import org.jasig.portal.security.IPerson;
 import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
@@ -232,8 +233,6 @@ public class CChannelManager extends BaseChannel {
         }
       // Channel controls
       } else if (capture.equals("selectControls")) {
-        String minimizable = runtimeData.getParameter("minimizable");
-        channelDef.setMinimizable(minimizable != null ? "true" : "false");
         String editable = runtimeData.getParameter("editable");
         channelDef.setEditable(editable != null ? "true" : "false");
         String hasHelp = runtimeData.getParameter("hasHelp");
@@ -242,8 +241,6 @@ public class CChannelManager extends BaseChannel {
         channelDef.setHasAbout(hasAbout != null ? "true" : "false");
         String printable = runtimeData.getParameter("printable");
         channelDef.setPrintable(printable != null ? "true" : "false");
-        String detachable = runtimeData.getParameter("detachable");
-        channelDef.setDetachable(detachable != null ? "true" : "false");
       // Categories
       } else if (capture.equals("selectCategories")) {
         String selectedCategory = runtimeData.getParameter("selectedCategory");
@@ -262,7 +259,7 @@ public class CChannelManager extends BaseChannel {
         roleSettings.removeRoles();
         if (roles != null) {
           for (int i = 0; i < roles.length; i++) {
-            org.jasig.portal.security.IAuthorization.RoleAuthorization ra = new org.jasig.portal.security.IAuthorization.RoleAuthorization(roles[i], true, new Date());
+            RoleAuthorization ra = new RoleAuthorization(roles[i], true, new Date());
             roleSettings.addSelectedRole(ra);
           }
         }
@@ -328,7 +325,7 @@ public class CChannelManager extends BaseChannel {
 
         // Add controlsSection
         WorkflowSection controlsSection = new WorkflowSection("selectControls");
-        if (channelDef.getMinimizable() == null) // if one is null, they are all null
+        if (channelDef.getEditable() == null) // if one is null, they are all null
           channelDef.resetChannelControls();
         WorkflowStep step = new WorkflowStep("1", "Channel Controls");
         step.addDataElement(channelDef.toXML());
@@ -415,8 +412,7 @@ public class CChannelManager extends BaseChannel {
           ChannelRegistryManager.publishChannel(channelE, catIDs, roles, person);
         } catch (Exception e) {
           // need to revisit this and handle the error!
-          e.printStackTrace();
-          throw new GeneralRenderingException(e.getMessage());
+          throw new PortalException(e);
         }
 
       } else if (action.equals("selectModifyChannel")) {
@@ -447,7 +443,19 @@ public class CChannelManager extends BaseChannel {
 
         // Set the roles
         int channelID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
-        roleSettings.setRoles(new TreeSet(new Authorization().getChannelRoles(channelID)));
+        // This is a hack because the Roles vector used to contain Strings and now
+        // it needs to contain org.jasig.portal.security.IAuthorization.RoleAuthorization classes
+        // This should go away anyway when we switch to groups/permissions!
+        Set roleSet = new TreeSet(new Authorization().getChannelRoles(channelID));
+        Iterator iter = roleSet.iterator();
+        while (iter.hasNext()) {
+          // Replace each role string with its RoleAuthorization equivalent
+          String role = (String)iter.next();
+          roleSet.remove(role);
+          roleSet.add(new RoleAuthorization(role, true, new Date()));
+        }
+        roleSettings.setRoles(roleSet);
+
 
         // Set the categories
         Set categories = new TreeSet();
@@ -762,12 +770,10 @@ public class CChannelManager extends BaseChannel {
     protected String timeout;
     protected String fname;
     protected String javaClass;
-    protected String minimizable;
     protected String editable;
     protected String hasHelp;
     protected String hasAbout;
     protected String printable;
-    protected String detachable;
     protected Map parameters;
 
     protected class Parameter {
@@ -794,12 +800,10 @@ public class CChannelManager extends BaseChannel {
     }
 
     protected String getTypeID() { return typeID; }
-    protected String getMinimizable() { return minimizable; }
     protected String getEditable() { return editable; }
     protected String getHasHelp() { return hasHelp; }
     protected String getHasAbout() { return hasAbout; }
     protected String getPrintable() { return printable; }
-    protected String getDetachable() { return detachable; }
 
     protected void setTypeID(String typeID) { this.typeID = typeID; }
     protected void setName(String name) { this.name = name; }
@@ -807,12 +811,10 @@ public class CChannelManager extends BaseChannel {
     protected void setTitle(String title) { this.title = title; }
     protected void setTimeout(String timeout) { this.timeout = timeout; }
     protected void setJavaClass(String javaClass) { this.javaClass = javaClass; }
-    protected void setMinimizable(String minimizable) { this.minimizable = minimizable; }
     protected void setEditable(String editable) { this.editable = editable; }
     protected void setHasHelp(String hasHelp) { this.hasHelp = hasHelp; }
     protected void setHasAbout(String hasAbout) { this.hasAbout = hasAbout; }
     protected void setPrintable(String printable) { this.printable = printable; }
-    protected void setDetachable(String detachable) { this.detachable = detachable; }
 
     private void setAttribute(Element e, String attName, String attVal) {
       // Only set the attribute if it has a non-null value
@@ -840,12 +842,10 @@ public class CChannelManager extends BaseChannel {
           for (Node n1 = cpdDoc.getDocumentElement().getFirstChild(); n1 != null; n1 = n1.getNextSibling()) {
             if (n1.getNodeType() == Node.ELEMENT_NODE && n1.getNodeName().equals("defaultControls")) {
               Element defaultControls = (Element)n1;
-              minimizable = defaultControls.getAttribute("minimizable");
               editable = defaultControls.getAttribute("editable");
               hasHelp = defaultControls.getAttribute("hasHelp");
               hasAbout = defaultControls.getAttribute("hasAbout");
               printable = defaultControls.getAttribute("printable");
-              detachable = defaultControls.getAttribute("detachable");
             }
           }
         }
@@ -863,12 +863,10 @@ public class CChannelManager extends BaseChannel {
       timeout = channelE.getAttribute("timeout");
       fname = channelE.getAttribute("fname");
       javaClass = channelE.getAttribute("class");
-      minimizable = channelE.getAttribute("minimizable");
       editable = channelE.getAttribute("editable");
       hasHelp = channelE.getAttribute("hasHelp");
       hasAbout = channelE.getAttribute("hasAbout");
       printable = channelE.getAttribute("printable");
-      detachable = channelE.getAttribute("detachable");
 
       for (Node n = channelE.getFirstChild(); n != null; n = n.getNextSibling()) {
         if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("parameter")) {
@@ -891,10 +889,8 @@ public class CChannelManager extends BaseChannel {
       setAttribute(channelE, "fname", fname);
       setAttribute(channelE, "class", javaClass);
       setAttribute(channelE, "timeout", timeout);
-      setAttribute(channelE, "minimizable", minimizable);
       setAttribute(channelE, "editable", editable);
       setAttribute(channelE, "printable", printable);
-      setAttribute(channelE, "detachable", detachable);
       setAttribute(channelE, "hasAbout", hasAbout);
       setAttribute(channelE, "hasHelp", hasHelp);
 
@@ -970,7 +966,7 @@ public class CChannelManager extends BaseChannel {
         Iterator iter = selectedRoles.iterator();
         while (iter.hasNext()) {
           Element selectedRoleE = emptyDoc.createElement("selectedRole");
-          org.jasig.portal.security.IAuthorization.RoleAuthorization ra= (org.jasig.portal.security.IAuthorization.RoleAuthorization) iter.next();
+          org.jasig.portal.security.IAuthorization.RoleAuthorization ra = (org.jasig.portal.security.IAuthorization.RoleAuthorization)iter.next();
           selectedRoleE.appendChild(emptyDoc.createTextNode(ra.getRoleName()));
           selectedRolesE.appendChild(selectedRoleE);
         }
