@@ -17,6 +17,8 @@ public interface ILayoutBean
   // Helper methods
   public IXml getLayoutXml (HttpServletRequest req, String sUserName);
   public void setLayoutXml (String sUserName, IXml layoutXml);
+  public IXml getDefaultLayoutXml (HttpServletRequest req, String sUserName);
+  public ITab[] getTabs (HttpServletRequest req);
   public ITab getTab (HttpServletRequest req, int iTab);
   public IColumn getColumn (HttpServletRequest req, int iTab, int iCol);
   public org.jasig.portal.layout.IChannel getChannel (HttpServletRequest req, int iTab, int iCol, int iChan);
@@ -38,11 +40,14 @@ public interface ILayoutBean
   public void removeColumn (HttpServletRequest req);
   public void moveColumnRight (HttpServletRequest req);
   public void moveColumnLeft (HttpServletRequest req);
+  public void setColumnWidth (HttpServletRequest req);
   
   // Channels
   public void minimizeChannel (HttpServletRequest req);
   public void maximizeChannel (HttpServletRequest req);
   public void removeChannel (HttpServletRequest req);
+  public void moveChannelLeft (HttpServletRequest req);
+  public void moveChannelRight (HttpServletRequest req);
   public void moveChannelUp (HttpServletRequest req);
   public void moveChannelDown (HttpServletRequest req);
   
