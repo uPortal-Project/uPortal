@@ -44,10 +44,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
@@ -174,7 +172,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @throws Authorization exception if createPortalData is false and no user is found
    *  or if a sql error is encountered
    */
-   public int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+   public synchronized int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
     int uPortalUID=-1;
     // Get a connection to the database
     Connection con = rdbmService.getConnection();
@@ -299,24 +297,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           while (templateGroups.hasNext())
           {
               IEntityGroup eg = (IEntityGroup) templateGroups.next();
-              ILockableEntityGroup leg = null;
-
-              boolean locked=false;
-              for (int i=0; i<25 && !locked; i++)
-              {
-                  try
-                  { 
-                      leg = GroupService.findLockableGroup(eg.getKey(), "UP_FRAMEWORK");
-                      locked=true;
-                  }
-                  catch (GroupsException ge)  // Some other process has the lock.
-                  {
-                      Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 2 * 1000)); // Retry in up to 2 seconds 
-                  }
-              }
-
-              leg.addMember(me);
-              leg.updateMembers();
+              eg.addMember(me);
+              eg.updateMembers();
 
           }      // end while()
         }        // end try

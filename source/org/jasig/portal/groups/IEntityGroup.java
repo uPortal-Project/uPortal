@@ -118,7 +118,7 @@ public interface IEntityGroup extends IGroupMember
  * membership from the data store.
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-  public void removeMember(IGroupMember gm);
+  public void removeMember(IGroupMember gm) throws GroupsException;
 /**
  * @param userID String (required)
  */

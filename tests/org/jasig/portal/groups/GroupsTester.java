@@ -1,17 +1,22 @@
 package org.jasig.portal.groups;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
-import java.util.*;
-import junit.framework.*;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Random;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.concurrency.caching.*;
 
 /**
  * Tests the groups framework (a start).
@@ -25,7 +30,7 @@ public class GroupsTester extends TestCase {
     private IEntity[] testEntities;
     private String[] testEntityKeys;
     private int numTestEntities = 0;
-
+    private Random random = new Random();
 
     private class TestEntity implements IBasicEntity
     {
@@ -49,6 +54,50 @@ public class GroupsTester extends TestCase {
             return "TestEntity(" + getEntityIdentifier().getKey() + ")";
         }
     }
+    
+    private class GroupsReadTester implements Runnable 
+    {
+        protected IEntityGroup group = null;
+        protected int numTests = 0;
+        protected String testerID = null;
+        protected String printID = null;
+    
+        protected GroupsReadTester(String id, IEntityGroup g, int tests) 
+        {
+            super();
+            group = g;
+            numTests = tests;
+            testerID = id;
+        }
+        public void run() {
+            printID = "Tester " + testerID;
+            print(printID + " starting.");
+
+            for (int i=0; i<numTests; i++) 
+            {
+              // print(printID + " running test # " + (i+1));
+                try { runTest(); }
+                catch (GroupsException ge) {} 
+                int sleepMillis = random.nextInt(20);
+              // print(printID + " will now sleep for " + sleepMillis + " ms.");
+                try { Thread.sleep(sleepMillis); }
+                catch (Exception ex) {}
+            }
+        }
+        private void runTest() throws GroupsException {
+            int numMembers = 0, numEntities = 0, numContainingGroups = 0;
+            Iterator itr = null;
+            for (itr = group.getMembers(); itr.hasNext(); itr.next() )
+                { numMembers++; }
+            for (itr = group.getEntities(); itr.hasNext(); itr.next() )
+                { numEntities++; }
+            for (itr = group.getContainingGroups(); itr.hasNext(); itr.next() )
+                { numContainingGroups++; }
+//          print (printID + " members: " + numMembers + " entities: " + numEntities + " containing groups: " + numContainingGroups);
+        }
+    } 
+
+    
 /**
  * EntityLockTester constructor comment.
  */
@@ -64,7 +113,7 @@ protected void addTestEntityType()
         org.jasig.portal.EntityTypes.singleton().
             addEntityType(TEST_ENTITY_CLASS, "Test Entity Type");
     }
-    catch (Exception ex) { print("EntityCacheTester.addTestEntityType(): " + ex.getMessage());}
+    catch (Exception ex) { print("GroupsTester.addTestEntityType(): " + ex.getMessage());}
  }
 /**
  * 
@@ -118,7 +167,7 @@ protected void deleteTestGroups()
  */
 private IEntityGroup findGroup(String key) throws GroupsException
 {
-    IEntityGroup group = getService().findGroup(key);
+    IEntityGroup group = GroupService.findGroup(key);
     return group;
 }
 /**
@@ -127,7 +176,7 @@ private IEntityGroup findGroup(String key) throws GroupsException
 private ILockableEntityGroup findLockableGroup(String key) throws GroupsException
 {
 	String owner = "de3";
-    ILockableEntityGroup group = getService().findLockableGroup(key, owner);
+    ILockableEntityGroup group = GroupService.findLockableGroup(key, owner);
     return group;
 }
 /**
@@ -169,14 +218,14 @@ private RDBMEntityGroupStore getGroupStore() throws GroupsException
  */
 private IEntity getNewEntity(String key) throws GroupsException
 {
-    return 	getService().getEntity(key, TEST_ENTITY_CLASS);
+    return 	GroupService.getEntity(key, TEST_ENTITY_CLASS);
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
  */
 private IEntityGroup getNewGroup() throws GroupsException
 {
-    IEntityGroup group = getService().newGroup(TEST_ENTITY_CLASS);
+    IEntityGroup group = GroupService.newGroup(TEST_ENTITY_CLASS);
     group.setName("name_" + group.getKey());
     group.setCreatorID("de3");
     return group;
@@ -262,7 +311,6 @@ protected void setUp()
     // Entities and their keys:
     testEntityKeys = new String[numTestEntities];
     testEntities = new IEntity[numTestEntities];
-    java.util.Random random = new java.util.Random();
     for (int i=0; i<numTestEntities; i++)
     {
         testEntityKeys[i] = (getRandomString(random, 3) + i);
@@ -271,7 +319,7 @@ protected void setUp()
 
 
     }
-    catch (Exception ex) { print("EntityCacheTester.setUp(): " + ex.getMessage());}
+    catch (Exception ex) { print("GroupsTester.setUp(): " + ex.getMessage());}
  }
 /**
  * @return junit.framework.Test
@@ -290,6 +338,7 @@ public static junit.framework.Test suite() {
   suite.addTest(new GroupsTester("testContains"));
   suite.addTest(new GroupsTester("testDeleteChildGroup"));
   suite.addTest(new GroupsTester("testMixLockableAndNonLockableGroups"));
+  suite.addTest(new GroupsTester("testConcurrentAccess")); 
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -310,7 +359,7 @@ protected void tearDown()
         clearGroupCache();
 
     }
-    catch (Exception ex) { print("EntityCacheTester.tearDown(): " + ex.getMessage());}
+    catch (Exception ex) { print("GroupTester.tearDown(): " + ex.getMessage());}
 }
 /**
  */
@@ -331,7 +380,7 @@ public void testAddAndDeleteGroups() throws Exception
 
     print("Now retrieving group just created from the store.");
     String key = newGroup.getKey();
-    IEntityGroup retrievedGroup = getService().findGroup(key);
+    IEntityGroup retrievedGroup = GroupService.findGroup(key);
 
     msg = "Testing retrieved group.";
     print(msg);
@@ -341,7 +390,7 @@ public void testAddAndDeleteGroups() throws Exception
     retrievedGroup.delete();
 
     print("Attempting to retrieve deleted group from the store.");
-    retrievedGroup = getService().findGroup(key);
+    retrievedGroup = GroupService.findGroup(key);
     assertNull(msg, retrievedGroup);
 
     print(CR + "***** LEAVING GroupsTester.testAddAndDeleteGroups() *****" + CR);
@@ -657,8 +706,8 @@ public void testGroupMemberUpdate() throws Exception
 
     msg = "Retrieving " + parent + " and " + child + " from db.";
     print(msg);
-    IEntityGroup retrievedParent = getService().findGroup(parentKey);
-    IEntityGroup retrievedChild = getService().findGroup(childKey);
+    IEntityGroup retrievedParent = GroupService.findGroup(parentKey);
+    IEntityGroup retrievedChild = GroupService.findGroup(childKey);
     assertEquals(msg, parent, retrievedParent);
     assertEquals(msg, child, retrievedChild);
 
@@ -700,7 +749,7 @@ public void testGroupMemberUpdate() throws Exception
 
     msg = "Re-Retrieving " + retrievedChild + " from db.";
     print(msg);
-    IEntityGroup reRetrievedChild = getService().findGroup(childKey);
+    IEntityGroup reRetrievedChild = GroupService.findGroup(childKey);
     assertEquals(msg, retrievedChild, reRetrievedChild);
 
     // re-RetrievedChild should have (numAddedEntities - numDeletedEntities + 1) members.
@@ -715,8 +764,8 @@ public void testGroupMemberUpdate() throws Exception
     retrievedParent.delete();
     reRetrievedChild.delete();
 
-    IEntityGroup deletedParent = getService().findGroup(parentKey);
-    IEntityGroup deletedChild = getService().findGroup(childKey);
+    IEntityGroup deletedParent = GroupService.findGroup(parentKey);
+    IEntityGroup deletedChild = GroupService.findGroup(childKey);
     assertNull(msg, deletedParent);
     assertNull(msg, deletedChild);
 
@@ -741,7 +790,7 @@ public void testGroupMemberValidation() throws Exception
 
     IEntity entity1 = getNewEntity("child");
     IEntity entity2 = getNewEntity("child");
-    IEntity ipersonEntity = getService().getEntity("00000", IPERSON_CLASS);
+    IEntity ipersonEntity = GroupService.getEntity("00000", IPERSON_CLASS);
 
 
     msg = "Adding " + child + " to " + parent;
@@ -1195,7 +1244,7 @@ public void testUpdateMembersVisibility() throws Exception
     msg = "Getting child entity thru the service (should be cached copy).";
     print(msg);
     EntityIdentifier entID = testEntities[totNumEntities].getUnderlyingEntityIdentifier();
-    IGroupMember ent = getService().getGroupMember(entID);
+    IGroupMember ent = GroupService.getGroupMember(entID);
     msg = "Checking child entity for membership in child group.";
     print(msg);
     testValue = ent.isMemberOf(childGroup);
@@ -1291,4 +1340,83 @@ public void testMixLockableAndNonLockableGroups() throws Exception
     print(CR + "***** LEAVING GroupsTester.testMixLockableAndNonLockableGroups() *****" + CR);
 
 }
+/**
+ */
+public void testConcurrentAccess() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testConcurrentAccess() *****" + CR);
+
+    String msg = null;
+    Class type = TEST_ENTITY_CLASS;
+    int totNumGroups = 3;
+    int numContainingGroups = totNumGroups - 1;
+    IEntityGroup[] groups = new IEntityGroup[totNumGroups];
+    int idx = 0;
+    int numReadTests = 50;
+    int numThreads = 10;
+
+    msg = "Creating " + totNumGroups + " new groups.";
+    print(msg);
+    for (idx=0; idx<totNumGroups; idx++)
+    {
+        groups[idx] = getNewGroup();
+        groups[idx].update();
+        assertNotNull(msg, groups[idx]);
+        groups[idx].update();
+    }
+
+    IEntityGroup child = groups[0];
+    msg = "Adding parents to child group " + child.getName();
+    print(msg);
+    for (idx=1; idx<totNumGroups; idx++)
+    {
+        IEntityGroup parent =  groups[idx];
+        parent.addMember(child);
+        groups[idx].update();
+    }
+
+    print("Starting testing Threads.");
+    Thread[] testers = new Thread[numThreads];
+    for (idx=0; idx<numThreads; idx++)
+    {
+        String id = "" + idx;
+        GroupsReadTester grt = new GroupsReadTester(id, child, numReadTests);
+        testers[idx] = new Thread(grt); 
+        testers[idx].start();
+    }
+    
+    msg = "Adding members to " + child;
+    print(msg);
+    for (idx=0; idx<numTestEntities; idx++)
+    {
+        IEntity childEntity = testEntities[idx];
+        child.addMember(childEntity);
+        if ( idx % 10 == 0 )  // update once for every 10 adds
+            { child.update(); } 
+        assertTrue(msg,child.contains(childEntity));
+//      print("added entity # " + (idx + 1) + " to " + child);
+    }
+    
+    msg = "Updating " + child;
+    print(msg);
+    child.update();
+
+    msg = "Removing members from " + child;
+    print(msg);
+    for (idx=0; idx<numTestEntities; idx++)
+    {
+        IEntity childEntity = testEntities[idx];
+        child.removeMember(childEntity);
+        assertTrue(msg,! child.contains(childEntity));
+    }
+
+    msg = "Updating " + child;
+    print(msg);
+    child.update();
+    
+    Thread.sleep(numReadTests * 20);  // let them die.
+
+    print(CR + "***** LEAVING GroupsTester.testConcurrentAccess() *****" + CR);
+}
+
 }
