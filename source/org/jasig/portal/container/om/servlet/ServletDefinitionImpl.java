@@ -47,12 +47,15 @@ import org.apache.pluto.om.common.DisplayName;
 import org.apache.pluto.om.common.DisplayNameSet;
 import org.apache.pluto.om.common.ObjectID;
 import org.apache.pluto.om.common.ParameterSet;
+import org.apache.pluto.om.common.SecurityRoleRefSet;
 import org.apache.pluto.om.servlet.ServletDefinition;
 import org.apache.pluto.om.servlet.ServletDefinitionCtrl;
 import org.apache.pluto.om.servlet.WebApplicationDefinition;
 import org.jasig.portal.container.om.common.DescriptionSetImpl;
 import org.jasig.portal.container.om.common.DisplayNameSetImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
+import org.jasig.portal.container.om.common.ParameterSetImpl;
+import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -67,6 +70,7 @@ public class ServletDefinitionImpl implements ServletDefinition, ServletDefiniti
     private DescriptionSet descriptions = null;
     private String servletClass = null;
     private ParameterSet parameters = null;
+    private SecurityRoleRefSet initSecurityRoleRefs = null;
     private WebApplicationDefinition webApplicationDefinition = null;
     private long available = 0;
     
@@ -75,6 +79,8 @@ public class ServletDefinitionImpl implements ServletDefinition, ServletDefiniti
     public ServletDefinitionImpl() {
         displayNames = new DisplayNameSetImpl();
         descriptions = new DescriptionSetImpl();
+        parameters = new ParameterSetImpl();
+        initSecurityRoleRefs = new SecurityRoleRefSetImpl();
     }
     
     public ServletDefinitionImpl(String servletName, String servletClass) {
@@ -173,8 +179,20 @@ public class ServletDefinitionImpl implements ServletDefinition, ServletDefiniti
     
     // Additional methods
     
+    public ServletMappingImpl getServletMapping() {
+        return this.servletMapping;
+    }
+    
     public void setServletMapping(String servletName, String urlPattern) {
         this.servletMapping = new ServletMappingImpl(servletName, urlPattern);
+    }
+    
+    public SecurityRoleRefSet getSecurityRoleRefs() {
+        return this.initSecurityRoleRefs;
+    }
+    
+    public void setSecurityRoleRefs(SecurityRoleRefSet initSecurityRoleRefs) {
+        this.initSecurityRoleRefs = initSecurityRoleRefs;
     }
 
 }
