@@ -13,37 +13,68 @@
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
 
   <xsl:template match="/">
-    
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
-          <td><strong>Channel Settings: </strong> The channel you have selected has settings which may be modified.</td>
+          <td>
+            <strong>Channel Settings:</strong> The channel you have selected has settings which may be modified.</td>
         </tr>
         <tr>
           <td>
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
-              <tr class="uportal-channel-table-header" valign="bottom">
-                <td align="center" nowrap="nowrap">
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
 
-
-                <td width="100%">Channel Settings</td>
-              </tr>
-              <tr class="uportal-channel-table-header">
-                <td align="center" colspan="4">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                    <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+              <xsl:choose>
+                <xsl:when test="not(/userPrefParams/channelDef)">
+                  <tr class="uportal-channel-table-header" valign="bottom">
+                    <td width="100%">Custom Channel Settings</td>
+                  </tr>
+                  <tr class="uportal-channel-table-header">
+                    <td align="center">
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                        <tr>
+                          <td>
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <xsl:for-each select="/userPrefParams/paramNames/paramName">
+                    <tr class="uportal-channel-table-header" valign="bottom">
+                      <td width="100%">
+                        <span class="uportal-label">
+                          <xsl:value-of select="."/>:</span><br/>
+                          <input type="text" name="{.}" size="40" class="uportal-input-text"/>
+                        
                       </td>
                     </tr>
-                  </table>
-                </td>
-              </tr>
+                  </xsl:for-each>
+                </xsl:when>
+                <xsl:otherwise>
 
-              <xsl:apply-templates select="//parameter[child::name=/userPrefParams/paramNames/paramName]"/>
+                  <tr class="uportal-channel-table-header" valign="bottom">
+                    <td align="center" nowrap="nowrap">
+                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
 
+
+                    <td width="100%">Channel Settings</td>
+                  </tr>
+                  <tr class="uportal-channel-table-header">
+                    <td align="center" colspan="4">
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                        <tr>
+                          <td>
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <xsl:apply-templates select="//parameter[child::name=/userPrefParams/paramNames/paramName]"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </table>
           </td>
         </tr>
@@ -55,43 +86,17 @@
         </tr>
       </table>
     </form>
-
   </xsl:template>
 
-  
+
   <xsl:template match="parameter">
 
-      <xsl:choose>
-        <xsl:when test="type/@display != 'hidden'">
-          <tr>
-            <td align="center" valign="top">
-              <xsl:call-template name="help"/>
-            </td>
-            <xsl:choose>
-              <xsl:when test="type/@input='text'">
-                <xsl:call-template name="text"/>
-              </xsl:when>
-              <xsl:when test="type/@input='single-choice'">
-                <xsl:call-template name="single-choice"/>
-              </xsl:when>
-              <xsl:when test="type/@input='multi-choice'">
-                <xsl:call-template name="multi-choice"/>
-              </xsl:when>
-            </xsl:choose>
-          </tr>
-          <tr class="uportal-channel-table-header">
-            <td align="center" colspan="4">
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                <tr>
-                  <td>
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </xsl:when>
-        <xsl:otherwise>
+    <xsl:choose>
+      <xsl:when test="type/@display != 'hidden'">
+        <tr>
+          <td align="center" valign="top">
+            <xsl:call-template name="help"/>
+          </td>
           <xsl:choose>
             <xsl:when test="type/@input='text'">
               <xsl:call-template name="text"/>
@@ -103,15 +108,37 @@
               <xsl:call-template name="multi-choice"/>
             </xsl:when>
           </xsl:choose>
-        </xsl:otherwise>
-      </xsl:choose>
-
+        </tr>
+        <tr class="uportal-channel-table-header">
+          <td align="center" colspan="4">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+              <tr>
+                <td>
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="type/@input='text'">
+            <xsl:call-template name="text"/>
+          </xsl:when>
+          <xsl:when test="type/@input='single-choice'">
+            <xsl:call-template name="single-choice"/>
+          </xsl:when>
+          <xsl:when test="type/@input='multi-choice'">
+            <xsl:call-template name="multi-choice"/>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
-  
   <!-- displays checkbox for publisher to allow subscribe time modification-->
   <xsl:template name="subscribe">
   </xsl:template>
-  
   <!-- display all the input fields with a base type of 'single-choice'-->
   <xsl:template name="single-choice">
     <xsl:choose>
@@ -211,7 +238,6 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
   <!-- display all the input fields with a base type of 'multi-choice'-->
   <xsl:template name="multi-choice">
     <xsl:choose>
@@ -290,7 +316,6 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
   <!-- display all the input fields with a base type of 'text'-->
   <xsl:template name="text">
     <!-- since length and maxlength are not required test existence and use defaults if needed -->
@@ -384,7 +409,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template match="label">
     <span class="uportal-label">
       <xsl:value-of select="."/>:</span>
@@ -408,5 +433,4 @@
       <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a>
   </xsl:template>
-  
-</xsl:stylesheet>
+</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
