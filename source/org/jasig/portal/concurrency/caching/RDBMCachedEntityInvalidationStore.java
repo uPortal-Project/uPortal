@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,6 +70,10 @@ public class RDBMCachedEntityInvalidationStore {
     private static String allTableColumns;
     private static String addSql;
     private static String updateSql;
+
+    // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
+    private static boolean timestampHasMillis;
+
 /**
  * RDBMEntityGroupStore constructor.
  */
@@ -550,9 +554,10 @@ private static java.lang.String sqlQuote(Object o)
  */
 private static long getTimestampMillis(Timestamp ts)
 {
-    long tsMillis = ts.getTime();
-    long tsNanos = ts.getNanos() / 1000000;
-    return (tsMillis + tsNanos);
+   if ( timestampHasMillis )
+        { return ts.getTime(); }
+    else
+        { return (ts.getTime() + ts.getNanos() / 1000000); }
 }
 
 /**
@@ -562,6 +567,9 @@ private void initialize() throws CachingException
 {
     Date anHourAgo = new Date( System.currentTimeMillis() - 60 * 60 * 1000 );
     deleteBefore(anHourAgo);
+    Date testDate = new Date();
+    Timestamp testTimestamp = new Timestamp(testDate.getTime());
+    timestampHasMillis = (testDate.getTime() == testTimestamp.getTime());
 }
 
 /**
