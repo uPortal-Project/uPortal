@@ -45,7 +45,7 @@ import java.sql.*;
 
 /**
  * Provides database access
- * @author Ken Weiner
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class RdbmServices extends GenericPortalBean
@@ -61,6 +61,7 @@ public class RdbmServices extends GenericPortalBean
   {
     loadProps ();
   }
+
   /**
    * Constructor which loades JDBC parameters from property file
    * upon first invocation
@@ -99,7 +100,7 @@ public class RdbmServices extends GenericPortalBean
   public static Connection getConnection ()
   {
     Connection conn = null;
-    
+
     for ( int i = 0 ; i < RETRY_COUNT && conn == null ; ++i )
     {
       try
@@ -136,5 +137,23 @@ public class RdbmServices extends GenericPortalBean
     {
       Logger.log (Logger.ERROR, e);
     }
+  }
+
+  /**
+   * Get the JDBC driver
+   * @return the JDBC driver
+   */
+  public static String getJdbcDriver ()
+  {
+    return sJdbcDriver;
+  }
+
+  /**
+   * Get the JDBC connection URL
+   * @return the JDBC connection URL
+   */
+  public static String getJdbcUrl ()
+  {
+    return sJdbcUrl;
   }
 }
