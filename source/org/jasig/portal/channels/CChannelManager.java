@@ -43,7 +43,7 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.factories.DocumentFactory;
+import org.jasig.portal.utils.DocumentFactory;
 import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
@@ -68,12 +68,13 @@ public class CChannelManager extends BaseChannel {
   protected static final short DEFAULT_STATE = 0;
   protected static final short CHANNEL_TYPE_STATE = 1;
   protected static final short GENERAL_SETTINGS_STATE = 2;
-  protected static final short CHANNEL_DEF_STATE = 3;
-  protected static final short CHANNEL_CONTROLS_STATE = 4;
-  protected static final short CHANNEL_CATEGORIES_STATE = 5;
-  protected static final short CHANNEL_ROLES_STATE = 6;
-  protected static final short CHANNEL_REVIEW_STATE = 7;
-  protected static final short MODIFY_CHANNEL_STATE = 8;
+  protected static final short CUSTOM_SETTINGS_STATE = 3;
+  protected static final short CHANNEL_DEF_STATE = 4;
+  protected static final short CHANNEL_CONTROLS_STATE = 5;
+  protected static final short CHANNEL_CATEGORIES_STATE = 6;
+  protected static final short CHANNEL_ROLES_STATE = 7;
+  protected static final short CHANNEL_REVIEW_STATE = 8;
+  protected static final short MODIFY_CHANNEL_STATE = 9;
   protected String action;
   protected String stepID;
   protected Document channelManagerDoc;
@@ -111,6 +112,9 @@ public class CChannelManager extends BaseChannel {
       case GENERAL_SETTINGS_STATE:
         action = "selectGeneralSettings";
         break;
+      case CUSTOM_SETTINGS_STATE:
+        action = "customSettings";
+        break;
       case CHANNEL_DEF_STATE:
         action = "channelDef";
         xslt.setStylesheetParameter("stepID", fixStepID(stepID));
@@ -142,7 +146,7 @@ public class CChannelManager extends BaseChannel {
 
     // Remove this!!!
     try {
-      if (true) {
+      if (false) {
         System.out.println("-----------------------------------------------");
         System.out.println("baseActionURL=" + runtimeData.getBaseActionURL());
         System.out.println("action=" + action);
@@ -176,8 +180,12 @@ public class CChannelManager extends BaseChannel {
       // Channel types
       if (capture.equals("selectChannelType")) {
         String typeID = runtimeData.getParameter("ID");
-        if (typeID != null)
-          channelDef.setTypeID(typeID);
+        if (typeID != null) {
+          if (!typeID.equals(channelDef.getTypeID())) {
+            channelDef.setTypeID(typeID);
+            channelDef.removeParameters();
+          }
+        }
         else
           action = "selectChannelType";
       // General Settings (name and timeout)
@@ -188,6 +196,20 @@ public class CChannelManager extends BaseChannel {
           channelDef.setName(name);
         if (timeout != null)
           channelDef.setTimeout(timeout);
+      // Custom parameters
+      } else if (capture.equals("customSettings")) {
+        String subAction = runtimeData.getParameter("uPCM_subAction");
+        if (subAction != null) {
+          String name = runtimeData.getParameter("name");
+          if (subAction.equals("addParameter")) {
+            String value = runtimeData.getParameter("value");
+            String override = runtimeData.getParameter("override");
+            channelDef.addParameter(name, value, (override != null ? "yes" : "no"));
+          }
+          else if (subAction.equals("deleteParameter")) {
+            channelDef.removeParameter(name);
+          }
+        }
       // CPD parameters
       } else if (capture.equals("channelDef")) {
         Iterator iter = ((java.util.Hashtable)runtimeData).keySet().iterator();
@@ -230,8 +252,10 @@ public class CChannelManager extends BaseChannel {
       // Roles
       } else if (capture.equals("selectRoles")) {
         String[] roles = runtimeData.getParameterValues("selectedRoles");
-        for (int i = 0; i < roles.length; i++) {
-          roleSettings.addSelectedRole(roles[i]);
+        if (roles != null) {
+          for (int i = 0; i < roles.length; i++) {
+            roleSettings.addSelectedRole(roles[i]);
+          }
         }
       }
     }
@@ -250,11 +274,18 @@ public class CChannelManager extends BaseChannel {
         chanTypeSection.addStep(step);
         workflow.setChannelTypesSection(chanTypeSection);
 
-        // Add CPD document if channel is "generic"
+        // Add CPD document if channel is "generic", otherwise custom settings
         String channelTypeID = channelDef.getTypeID();
-        if (channelTypeID != null && !channelTypeID.equals("-1")) {
-          CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-          workflow.setCPDSection(cpdSection);
+        if (channelTypeID != null) {
+          if (channelTypeID.equals("-1")) {
+            WorkflowSection csSection = new WorkflowSection("customSettings");
+            step = new WorkflowStep("1", "Channel Parameters");
+            csSection.addStep(step);
+            workflow.setChannelParamsSection(csSection);
+          } else {
+            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+            workflow.setChannelParamsSection(cpdSection);
+          }
         }
 
         channelManagerDoc = workflow.toXML();
@@ -271,21 +302,40 @@ public class CChannelManager extends BaseChannel {
         step.addDataElement(channelDef.toXML());
         gsSection.addStep(step);
 
-        // Add CPD document
-        CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getTypeID());
-        workflow.setCPDSection(section);
+        // Add CPD document if channel is "generic", otherwise custom settings
+        String channelTypeID = channelDef.getTypeID();
+        if (channelTypeID != null) {
+          if (channelTypeID.equals("-1")) {
+            WorkflowSection csSection = new WorkflowSection("customSettings");
+            step = new WorkflowStep("1", "Channel Parameters");
+            csSection.addStep(step);
+            workflow.setChannelParamsSection(csSection);
+          } else {
+            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+            workflow.setChannelParamsSection(cpdSection);
+          }
+        }
 
         channelManagerDoc = workflow.toXML();
 
-      } else if (action.equals("channelDef")) {
+      } else if (action.equals("channelParams") || action.equals("customSettings") || action.equals("channelDef")) {
 
-        state = CHANNEL_DEF_STATE;
         Workflow workflow = new Workflow();
 
-        // Add CPD document
-        CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-        cpdSection.addToStep(channelDef.toXML(), fixStepID(stepID));
-        workflow.setCPDSection(cpdSection);
+        // Add CPD document if channel is "generic", otherwise custom settings
+        if (channelDef.getTypeID().equals("-1")) {
+          state = CUSTOM_SETTINGS_STATE;
+          WorkflowSection csSection = new WorkflowSection("customSettings");
+          WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
+          step.addDataElement(channelDef.toXML());
+          csSection.addStep(step);
+          workflow.setChannelParamsSection(csSection);
+        } else {
+          state = CHANNEL_DEF_STATE;
+          CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+          cpdSection.addToStep(channelDef.toXML(), fixStepID(stepID));
+          workflow.setChannelParamsSection(cpdSection);
+        }
 
         channelManagerDoc = workflow.toXML();
 
@@ -294,9 +344,19 @@ public class CChannelManager extends BaseChannel {
         state = CHANNEL_CONTROLS_STATE;
         Workflow workflow = new Workflow();
 
-        // Add CPD document
-        CPDWorkflowSection section = new CPDWorkflowSection(channelDef.getTypeID());
-        workflow.setCPDSection(section);
+        // Add CPD document if channel is "generic", otherwise custom settings
+        String channelTypeID = channelDef.getTypeID();
+        if (channelTypeID != null) {
+          if (channelTypeID.equals("-1")) {
+            WorkflowSection csSection = new WorkflowSection("customSettings");
+            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
+            csSection.addStep(step);
+            workflow.setChannelParamsSection(csSection);
+          } else {
+            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+            workflow.setChannelParamsSection(cpdSection);
+          }
+        }
 
         // Add controlsSection
         WorkflowSection controlsSection = new WorkflowSection("selectControls");
@@ -314,9 +374,19 @@ public class CChannelManager extends BaseChannel {
         state = CHANNEL_CATEGORIES_STATE;
         Workflow workflow = new Workflow();
 
-        // Add CPD document
-        CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-        workflow.setCPDSection(cpdSection);
+        // Add CPD document if channel is "generic", otherwise custom settings
+        String channelTypeID = channelDef.getTypeID();
+        if (channelTypeID != null) {
+          if (channelTypeID.equals("-1")) {
+            WorkflowSection csSection = new WorkflowSection("customSettings");
+            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
+            csSection.addStep(step);
+            workflow.setChannelParamsSection(csSection);
+          } else {
+            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+            workflow.setChannelParamsSection(cpdSection);
+          }
+        }
 
         // Add channel registry
         WorkflowSection catSection = new WorkflowSection("selectCategories");
@@ -334,9 +404,19 @@ public class CChannelManager extends BaseChannel {
         state = CHANNEL_ROLES_STATE;
         Workflow workflow = new Workflow();
 
-        // Add CPD document
-        CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-        workflow.setCPDSection(cpdSection);
+        // Add CPD document if channel is "generic", otherwise custom settings
+        String channelTypeID = channelDef.getTypeID();
+        if (channelTypeID != null) {
+          if (channelTypeID.equals("-1")) {
+            WorkflowSection csSection = new WorkflowSection("customSettings");
+            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
+            csSection.addStep(step);
+            workflow.setChannelParamsSection(csSection);
+          } else {
+            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+            workflow.setChannelParamsSection(cpdSection);
+          }
+        }
 
         // Add roles
         WorkflowSection roleSection = new WorkflowSection("selectRoles");
@@ -353,6 +433,20 @@ public class CChannelManager extends BaseChannel {
 
         state = CHANNEL_REVIEW_STATE;
         Workflow workflow = new Workflow();
+
+        // Add CPD document if channel is "generic", otherwise custom settings
+        String channelTypeID = channelDef.getTypeID();
+        if (channelTypeID != null) {
+          if (channelTypeID.equals("-1")) {
+            WorkflowSection csSection = new WorkflowSection("customSettings");
+            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
+            csSection.addStep(step);
+            workflow.setChannelParamsSection(csSection);
+          } else {
+            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+            workflow.setChannelParamsSection(cpdSection);
+          }
+        }
 
         WorkflowSection reviewSection = new WorkflowSection("reviewChannel");
         workflow.setReviewSection(reviewSection);
@@ -398,6 +492,9 @@ public class CChannelManager extends BaseChannel {
     if (action == null || action.equals("cancel")) {
       state = DEFAULT_STATE;
       channelManagerDoc = emptyDoc;
+      channelDef = new ChannelDefinition();
+      categorySettings = new CategorySettings();
+      roleSettings = new RoleSettings();
     }
   }
 
@@ -568,7 +665,7 @@ public class CChannelManager extends BaseChannel {
   protected class Workflow {
     protected WorkflowSection channelTypesSection;
     protected WorkflowSection generalSettingsSection;
-    protected WorkflowSection cpdSection;
+    protected WorkflowSection channelParamsSection;
     protected WorkflowSection controlsSection;
     protected WorkflowSection categoriesSection;
     protected WorkflowSection rolesSection;
@@ -576,7 +673,7 @@ public class CChannelManager extends BaseChannel {
 
     protected void setChannelTypesSection(WorkflowSection channelTypesSection) { this.channelTypesSection = channelTypesSection; }
     protected void setGeneralSettingsSection(WorkflowSection generalSettingsSection) { this.generalSettingsSection = generalSettingsSection; }
-    protected void setCPDSection(WorkflowSection cpdSection) { this.cpdSection = cpdSection; }
+    protected void setChannelParamsSection(WorkflowSection channelParamsSection) { this.channelParamsSection = channelParamsSection; }
     protected void setControlsSection(WorkflowSection controlsSection) { this.controlsSection = controlsSection; }
     protected void setCategoriesSection(WorkflowSection categoriesSection) { this.categoriesSection = categoriesSection; }
     protected void setRolesSection(WorkflowSection rolesSection) { this.rolesSection = rolesSection; }
@@ -594,8 +691,8 @@ public class CChannelManager extends BaseChannel {
       addSection(generalSettingsSection, "selectGeneralSettings", "General Settings", channelManagerE);
 
       // This should only happen in the first state during the publishing of a new channel
-      if (cpdSection != null)
-        channelManagerE.appendChild(cpdSection.toXML(doc));
+      if (channelParamsSection != null)
+        channelManagerE.appendChild(channelParamsSection.toXML(doc));
 
       addSection(controlsSection, "selectControls", "Channel Controls", channelManagerE);
       addSection(categoriesSection, "selectCategories", "Categories", channelManagerE);
@@ -792,6 +889,14 @@ public class CChannelManager extends BaseChannel {
 
     protected void addParameter(String name, String value, String modType) {
       parameters.put(name, new Parameter(name, value, modType));
+    }
+
+    protected void removeParameter(String name) {
+      parameters.remove(name);
+    }
+
+    protected void removeParameters() {
+      parameters = new HashMap();
     }
 
     protected void resetChannelControls() {
