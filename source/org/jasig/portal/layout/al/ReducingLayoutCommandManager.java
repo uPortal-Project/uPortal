@@ -8,10 +8,8 @@ package org.jasig.portal.layout.al;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayout;
-import org.jasig.portal.layout.al.common.ILayoutCommand;
-import org.jasig.portal.layout.al.common.ILayoutCommandManager;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
@@ -24,43 +22,51 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
  */
-public class ReducingLayoutCommandManager implements ILayoutCommandManager {
+public class ReducingLayoutCommandManager implements IAggregatedLayoutCommandManager {
     List commands;
-    ILayout layoutManager;
+    IAggregatedLayout layoutManager;
     
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#clearCommands()
+     * @see org.jasig.portal.layout.al.IAggregatedLayoutCommandManager#clearCommands()
      */
     public void clearCommands() {
         commands.clear();
     }
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#executeLayoutCommands(org.jasig.portal.layout.al.ILayout)
+     * @see org.jasig.portal.layout.al.IAggregatedLayoutCommandManager#executeLayoutCommands(org.jasig.portal.layout.al.ILayout)
      */
     public void executeLayoutCommands() throws PortalException {
-        List successfulCommands=new ArrayList();
-        for (Iterator iter = this.commands.iterator(); iter.hasNext();) {
+        // make a copy of the commands list before executing anything,
+        // because commands will be propagated back to the command manager
+        // during the execution process.
+        List existingCommands=new ArrayList(commands);
+        // clear commands stack
+        commands.clear();
+        // execute commands
+        for (Iterator iter = existingCommands.iterator(); iter.hasNext();) {
             ILayoutCommand command = (ILayoutCommand) iter.next();
-            if(command.execute(this.layoutManager)) {
-                successfulCommands.add(command);
-            }
+            command.execute(this.layoutManager);
         }
-        // replace existing command list with the set of successfull commands
-        this.commands=successfulCommands;
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#recordAddCommand(org.jasig.portal.layout.node.IUserLayoutNodeDescription, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
+     * @see org.jasig.portal.layout.al.IAggregatedLayoutCommandManager#recordAddCommand(org.jasig.portal.layout.node.IUserLayoutNodeDescription, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
      */
     public ILayoutNode addNode(INode nodeId, INodeId parentId, INodeId nextId) {
-        // reduction rules: add operation is always done on a new node, so there
-        // are should not be any commands to reduce
-        commands.add(new AddCommand(nodeId,parentId,nextId));
+        // TODO: should throw some kind of an exception here. This method should never be called.
         return null;
     }
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#recordMoveCommand(org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
+     * @see org.jasig.portal.layout.al.IAggregatedLayoutManagerCommands#addFragment(org.jasig.portal.layout.al.IFragmentId, org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public ILayoutNode addFragment(IFragmentId fragmentId, INodeId parentId, INodeId nextId) throws PortalException {
+        commands.add(new AddFragmentCommand(fragmentId,parentId,nextId));
+        return null;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.IAggregatedLayoutCommandManager#recordMoveCommand(org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
      */
     public boolean moveNode(INodeId nodeId, INodeId parentId, INodeId nextId) {
         commands.add(new MoveCommand(nodeId,parentId,nextId));
@@ -74,7 +80,7 @@ public class ReducingLayoutCommandManager implements ILayoutCommandManager {
         return true;
     }
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#recordDeleteCommand(org.jasig.portal.layout.node.INodeId)
+     * @see org.jasig.portal.layout.al.IAggregatedLayoutCommandManager#recordDeleteCommand(org.jasig.portal.layout.node.INodeId)
      */
     public boolean deleteNode(INodeId nodeId) {
         // reduction rules: reduce all commands involving that node id, unless
@@ -87,17 +93,17 @@ public class ReducingLayoutCommandManager implements ILayoutCommandManager {
     /**
      * @return Returns the layoutManager.
      */
-    public ILayout getLayoutManager() {
+    public IAggregatedLayout getLayoutManager() {
         return layoutManager;
     }
     /**
      * @param layoutManager The layoutManager to set.
      */
-    public void setLayoutManager(ILayout layoutManager) {
+    public void setLayoutManager(IAggregatedLayout layoutManager) {
         this.layoutManager = layoutManager;
     }
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#notifyCentralDeleteNode(org.jasig.portal.layout.al.common.node.INodeId)
+     * @see org.jasig.portal.layout.al.IAggregatedLayoutCommandManager#notifyCentralDeleteNode(org.jasig.portal.layout.al.common.node.INodeId)
      */
     public void notifyCentralDeleteNode(INodeId nodeId) {
         // TODO Auto-generated method stub
