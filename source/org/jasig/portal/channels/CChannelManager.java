@@ -83,9 +83,9 @@ public class CChannelManager extends BaseChannel {
   protected String stepID;
   protected Document channelManagerDoc;
   protected ChannelDefinition channelDef = new ChannelDefinition();
-  protected UserSettings userSettings = new UserSettings();
   protected CategorySettings categorySettings = new CategorySettings();
   protected RoleSettings roleSettings = new RoleSettings();
+  protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
 
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
     runtimeData = rd;
@@ -423,26 +423,25 @@ public class CChannelManager extends BaseChannel {
         }
 
       } else if (action.equals("selectModifyChannel")) {
-
         state = MODIFY_CHANNEL_STATE;
-        channelManagerDoc = getChannelManagerDoc(userSettings);
+        channelManagerDoc = getChannelManagerDoc(modChanSettings);
       } else if (action.equals("changePage")) {
         String newPage = runtimeData.getParameter("newPage");
         if (newPage != null) {
-          userSettings.setCurrentPage(newPage);
-          channelManagerDoc = getChannelManagerDoc(userSettings);
+          modChanSettings.setCurrentPage(newPage);
+          channelManagerDoc = getChannelManagerDoc(modChanSettings);
         }
       } else if (action.equals("changeRecordsPerPage")) {
         String recordsPerPage = runtimeData.getParameter("recordsPerPage");
         if (recordsPerPage != null) {
-          userSettings.setRecordsPerPage(recordsPerPage);
-          channelManagerDoc = getChannelManagerDoc(userSettings);
+          modChanSettings.setRecordsPerPage(recordsPerPage);
+          channelManagerDoc = getChannelManagerDoc(modChanSettings);
         }
       } else if (action.equals("filterByCategory")) {
         String filterByID = runtimeData.getParameter("newCategory");
         if (filterByID != null) {
-          userSettings.setFilterByID(filterByID);
-          channelManagerDoc = getChannelManagerDoc(userSettings);
+          modChanSettings.setFilterByID(filterByID);
+          channelManagerDoc = getChannelManagerDoc(modChanSettings);
         }
       } else if (action.equals("editChannelSettings")) {
         String chanID = runtimeData.getParameter("channelID");
@@ -464,6 +463,16 @@ public class CChannelManager extends BaseChannel {
 
         action = "reviewChannel";
         doAction();
+      } else if (action.equals("removePublishedChannel")) {
+        String channelID = runtimeData.getParameter("channelID");
+        if (channelID != null) {
+          try {
+            ChannelRegistryManager.removeChannel(channelID);
+          } catch (Exception e) {
+            throw new GeneralRenderingException(e.getMessage());
+          }
+        }
+        channelManagerDoc = getChannelManagerDoc(modChanSettings);
       }
     }
 
@@ -476,7 +485,7 @@ public class CChannelManager extends BaseChannel {
     }
   }
 
-  protected Document getChannelManagerDoc(UserSettings userSettings) throws PortalException {
+  protected Document getChannelManagerDoc(ModifyChannelSettings modChanSettings) throws PortalException {
     Document channelManagerDoc = DocumentFactory.getNewDocument();
 
     // Add the top level <manageChannels> to the document
@@ -495,24 +504,24 @@ public class CChannelManager extends BaseChannel {
     channelManager.appendChild(channelRegistry);
 
     // Add a <userSettings> fragment to <manageChannels>
-    appendUserSettings(channelManager, userSettings);
+    appendModifyChannelSettings(channelManager, modChanSettings);
 
     return channelManagerDoc;
   }
 
-  protected static void appendUserSettings(Element channelManager, UserSettings userSettings) {
+  protected static void appendModifyChannelSettings(Element channelManager, ModifyChannelSettings modChanSettings) {
     Document doc = channelManager.getOwnerDocument();
     Element userSettingsE = doc.createElement("userSettings");
     Element modifyView = doc.createElement("modifyView");
     userSettingsE.appendChild(modifyView);
     Element recordsPerPageE = doc.createElement("recordsPerPage");
-    recordsPerPageE.appendChild(doc.createTextNode(userSettings.getRecordsPerPage()));
+    recordsPerPageE.appendChild(doc.createTextNode(modChanSettings.getRecordsPerPage()));
     modifyView.appendChild(recordsPerPageE);
     Element currentPageE = doc.createElement("currentPage");
-    currentPageE.appendChild(doc.createTextNode(userSettings.getCurrentPage()));
+    currentPageE.appendChild(doc.createTextNode(modChanSettings.getCurrentPage()));
     modifyView.appendChild(currentPageE);
     Element filterByIDE = doc.createElement("filterByID");
-    filterByIDE.appendChild(doc.createTextNode(userSettings.getFilterByID()));
+    filterByIDE.appendChild(doc.createTextNode(modChanSettings.getFilterByID()));
     modifyView.appendChild(filterByIDE);
     channelManager.appendChild(userSettingsE);
   }
@@ -612,12 +621,12 @@ public class CChannelManager extends BaseChannel {
   /**
    * Keeps track of page settings for MODIFY_CHANNEL_STATE
    */
-  protected class UserSettings {
+  protected class ModifyChannelSettings {
     private String recordsPerPage;
     private String currentPage;
     private String filterByID;
 
-    protected UserSettings() {
+    protected ModifyChannelSettings() {
       recordsPerPage = "5";
       currentPage = "1";
       filterByID = "-1";
