@@ -36,6 +36,7 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -372,12 +373,21 @@ class ManageProfilesState extends BaseState {
 
     public CEditProfile(ManageProfilesState context) {
       // load the mimetype image properties file
+      java.io.InputStream in = null;
       try {
-        java.io.InputStream in = PortalSessionManager.getResourceAsStream(mimeImagesPropsFile);
+        in = PortalSessionManager.getResourceAsStream(mimeImagesPropsFile);
         mimeImagesProps.load(in);
-        in.close();
       } catch (Exception e) {
         LogService.log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at " + mimeImagesPropsFile);
+      } finally {
+          try {
+              if (in != null) 
+                  in.close();
+          } catch (IOException ioe) {
+              LogService.log(LogService.ERROR,
+                      "ManageProfilesState:CEditProfile::unable to close InputStream "
+                              + ioe);
+          }
       }
       this.context = context;
     }
