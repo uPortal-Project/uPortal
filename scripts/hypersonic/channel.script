@@ -1,0 +1,72 @@
+DROP TABLE PORTAL_CHANNELS;
+
+CREATE TABLE PORTAL_CHANNELS (
+	ID INTEGER IDENTITY,
+	TITLE VARCHAR(256) null,
+	APPROVED INTEGER null,
+	CAT_ID INTEGER null,
+	CHANNEL_XML LONGVARCHAR not null
+	);
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('Salon.com', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
+      </channel>') ;
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('ABC News Applet', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ABC News" name="name"/>
+        <parameter value="starwave.news.affiliate.Megaticker.class" name="code"/>
+        <parameter value="http://webapp.abcnews.com/java/" name="codeBase"/>
+        <parameter value="MegaTicker.jar" name="archive"/>
+        <parameter value="141" name="width"/>
+        <parameter value="409" name="height"/>
+        <parameter value="cabbase>MegaTicker.cab^station>KABC" name="params"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('Search', '<channel minimized="false" class="org.jasig.portal.channels.CSearch">
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('DE Weather', '<channel minimized="false" class="org.jasig.portal.channels.CWeather">
+        <parameter value="DE" name="state"/>
+        <parameter value="Newark" name="city"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('JA-SIG Portal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('Our Bookmarks ;-)', '<channel minimized="false" class="org.jasig.portal.channels.CBookmarks">
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('ESPN Scoreboard', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="ESPN Scoreboard" name="name"/>
+        <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
+        <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
+        <parameter value="ScorePost.zip" name="archive"/>
+        <parameter value="128" name="width"/>
+        <parameter value="182" name="height"/>
+        <parameter value="cabbase>ScorePost.cab^bgcolor>#336699^text>#FFFFFF^data>/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat^ad data>/ad/scorepost/nhl.txt^target>_top^delay>3500^data time>30000^inactive data time>300000" name="params"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('Funky Clock', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="Clock" name="name"/>
+        <parameter value="Clock3D.class" name="code"/>
+        <parameter value="./" name="codeBase"/>
+        <parameter value="" name="archive"/>
+        <parameter value="200" name="width"/>
+        <parameter value="200" name="height"/>
+        <parameter value="fps>18^a1>12500^pixd>29^pixangle>5^radius>26^roty>-4^rotx>0^rotz>0.401^irotx>0^iroty>0^irotz>0^style>1^color>#00FF66^bgcolor>#000000^12hour>0" name="params"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (title, channel_xml)
+VALUES ('UD Homepage', '<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+        <parameter value="Yahoo" name="name"/>
+        <parameter value="http://www.udel.edu" name="url"/>
+      </channel>');
