@@ -204,13 +204,13 @@ Version $Revision$
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_deleteID={$uPcFM_selectedID}&amp;uPcFM_selectedID=noSelectedID">
+                                        <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_selectedID={$uPcFM_selectedID}">
                                             <img src="{$mediaPath}/delete.gif" alt="delete" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
                                         <span class="uportal-label">
-                                            <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_deleteID={$uPcFM_selectedID}&amp;uPcFM_selectedID=noSelectedID" class="uportal-channel-subtitle-reversed">Delete fragment</a>
+                                            <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_selectedID={$uPcFM_selectedID}" class="uportal-channel-subtitle-reversed">Delete fragment</a>
                                         </span>
                                     </td>
                                 </tr>
