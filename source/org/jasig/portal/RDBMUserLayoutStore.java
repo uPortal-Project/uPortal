@@ -297,7 +297,7 @@ public class RDBMUserLayoutStore
       nextStructId = rs.getInt("NEXT_STRUCT_ID");
       chldStructId = rs.getInt("CHLD_STRUCT_ID");
       chanId = rs.getInt("CHAN_ID");
-      structure = createLayoutStructure(rs, chanId, userId, stmt, doc);
+      structure = createLayoutStructure(rs, chanId, userId, con, doc);
     } finally {
       rs.close();
     }
@@ -408,13 +408,13 @@ public class RDBMUserLayoutStore
    * @return
    * @exception java.sql.SQLException
    */
-  protected final Element createLayoutStructure (ResultSet rs, int chanId, int userId, Statement stmt, DocumentImpl doc) throws java.sql.SQLException {
+  protected final Element createLayoutStructure (ResultSet rs, int chanId, int userId, Connection con, DocumentImpl doc) throws java.sql.SQLException {
     String idTag = rs.getString("STRUCT_ID");
     Element returnNode=null;
     if (chanId != 0) {          // Channel
 
       /* See if we have access to the channel */
-      if (!channelInUserRole(chanId, userId, stmt.getConnection())) {
+      if (!channelInUserRole(chanId, userId, con)) {
 
         /* No access to channel. Replace it with the error channel and a suitable message */
 
@@ -426,7 +426,7 @@ public class RDBMUserLayoutStore
 
       }
 
-      returnNode = createChannelNode(stmt.getConnection(), doc, chanId, channelPrefix + idTag);
+      returnNode = createChannelNode(con, doc, chanId, channelPrefix + idTag);
 
     }
     else {      // Folder
