@@ -1525,6 +1525,12 @@ public class RDBMUserLayoutStore
       }
       // Commit the transaction
       commit(con);
+      synchronized (channelLock) {
+        if (channelCache.remove(new Integer(id)) != null) {
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): flushed channel "
+            + id + " from cache");
+        }
+      }
     } catch (SQLException sqle) {
       rollback(con);
       throw  sqle;
