@@ -36,7 +36,6 @@
 package org.jasig.portal.container.services.information;
 
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
