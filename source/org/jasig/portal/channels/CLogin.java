@@ -140,7 +140,7 @@ public class CLogin implements IPrivilegedChannel
       failureElement.setAttribute("attemptedUserName", attemptedUserName);
       loginStatusElement.appendChild(failureElement);
     }
-    else
+    else if (fullName != null)
     {
       // Create <full-name> element under <header>
       Element fullNameElement = doc.createElement("full-name");
@@ -157,7 +157,7 @@ public class CLogin implements IPrivilegedChannel
 
     try
     {
-      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, "login", media);
+      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, media);
     }
     catch (Exception e)
     {
