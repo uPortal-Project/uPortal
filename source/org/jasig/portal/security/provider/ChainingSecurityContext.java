@@ -36,7 +36,7 @@
 package org.jasig.portal.security.provider;
 
 import org.jasig.portal.security.*;
-import org.jasig.portal.Logger;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.RdbmServices;
 import java.util.*;
 
@@ -141,7 +141,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
            return entry.getCtx();
     }
     PortalSecurityException ep=new PortalSecurityException("No such subcontext: " + name);
-    Logger.log(Logger.ERROR,ep);
+    LogService.log(LogService.DEBUG,ep);
     return null;
   }
 
@@ -169,7 +169,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     throws PortalSecurityException {
     if (getSubContext(name) != null){
       PortalSecurityException ep=new PortalSecurityException("Subcontext already exists: " + name);
-      Logger.log(Logger.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
       }
     else
