@@ -232,8 +232,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 
                                     // output channel buffer
                                     SAX2BufferImpl buffer=(SAX2BufferImpl) o;
-                                    buffer.setAllHandlers(this.contentHandler);
-                                    buffer.outputBuffer();
+                                    buffer.outputBuffer(this.contentHandler);
 
                                     // save the old cache state
                                     if(ser.stopCaching()) {

@@ -88,7 +88,7 @@
 -->
 
   <property name="app.name"      value="uPortal"/>
-  <property name="app.version"   value="2.1"/>
+  <property name="app.version"   value="2.0"/>
   <property name="build.home"    value="build"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
@@ -137,12 +137,12 @@
 
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
                        into HTML, text, or other XML document types.
-                       Version: 2.3.1
+                       Version: 2.2.0
                        URL: http://xml.apache.org/xalan-j/
 
-  xercesImpl.jar       Xerces2 is the next generation of high performance,
+  xerces.jar           Xerces2 is the next generation of high performance,
                        fully compliant XML parsers in the Apache Xerces family.
-                       Be sure to use the version of XercesImpl that comes with
+                       Be sure to use the version of Xerces that comes with
                        the Xalan you are using.
                        Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xerces2-j/
@@ -153,12 +153,6 @@
                        the Xalan you are using.
                        Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xalan-j/
-
-  bsf.jar              Bean scripting framework (BSF) used by the CWebProxy channel.
-                       Be sure to use the version of BSF that comes with
-                       the Xalan you are using.
-                       Version: (depends on Xalan version)
-                       URL: http://oss.software.ibm.com/developerworks/projects/bsf/
 
   tidy.jar             Turns HTML into well formed XHTML. There is a problem with
                        the current release that shows up when uPortal is deployed
@@ -184,8 +178,7 @@
 
   jaas.jar             The Java Authentication and Authorization Service (JAAS)
                        is a Java package that enables services to authenticate
-                       and enforce access controls upon users.  This is only
-                       needed for JDK's less than 1.4.  It is included with JDK 1.4.
+                       and enforce access controls upon users.
                        Version: 1.0
                        URL: http://java.sun.com/products/jaas/
 
@@ -197,7 +190,7 @@
 
   oro.jar              A set of text-processing Java classes that provide Perl5
                        compatible regular expressions.
-                       Version: 2.0.5
+                       Version: 2.0.4
                        URL: http://jakarta.apache.org/oro/
 
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
@@ -215,9 +208,8 @@
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
-  <property name="xercesImpl.jar" value="(set this in build.properties!)"/>
+  <property name="xerces.jar" value="(set this in build.properties!)"/>
   <property name="xml-apis.jar" value="(set this in build.properties!)"/>
-  <property name="bsf.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
   <property name="tyrex.jar" value="(set this in build.properties!)"/>
   <property name="activation.jar" value="(set this in build.properties!)"/>
@@ -246,9 +238,8 @@
 
     <!-- Include all JAR files that will be included in /WEB-INF/lib -->
     <pathelement location="${xalan.jar}"/>
-    <pathelement location="${xercesImpl.jar}"/>
+    <pathelement location="${xerces.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
-    <pathelement location="${bsf.jar}"/>
     <pathelement location="${tidy.jar}"/>
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${activation.jar}"/>
@@ -365,9 +356,8 @@
     <!-- Copy external dependencies as required -->
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xalan.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${xercesImpl.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${xerces.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${bsf.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
@@ -490,7 +480,7 @@
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
@@ -520,7 +510,7 @@
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
@@ -586,8 +576,7 @@
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -628,8 +617,7 @@
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -671,8 +659,7 @@
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -710,8 +697,7 @@
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xerces.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>

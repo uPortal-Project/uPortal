@@ -2,18 +2,12 @@ control_panel
 build
 dist
 localbuild.properties.in
-logs
 scripts
 hsql
-defaultroot
-bak
-work
 .cvspass
 jBuilderBackups
 *.jpx*
-classes
 doc
-docs
 01-logs
 02-logs
 03-logs
@@ -35,9 +29,7 @@ portal.jpx
 08-portal.log
 09-portal.log
 10-portal.log
-Servlet.library
 portal-clean.jpx
-portal.log
 external portal libs.library
 uPortal20.jpx
 .DS_Store

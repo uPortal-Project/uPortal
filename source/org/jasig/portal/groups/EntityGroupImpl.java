@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,6 +115,10 @@ private void checkIfAlreadyMember(IGroupMember gm) throws GroupsException
  */
 private void checkProspectiveMember(IGroupMember gm) throws GroupsException
 {
+    if ( gm.equals(this) )
+    {
+        throw new GroupsException("Attempt to add " + gm + " to itself.");
+    }
     checkIfAlreadyMember(gm);
     checkProspectiveMemberEntityType(gm);
 
@@ -144,6 +148,14 @@ protected void checkProspectiveMemberGroupName(String newName) throws GroupsExce
 {
     if ( this.getMemberGroupNamed(newName) != null )
         throw new GroupsException(this + " already contains a group named " + newName + ".");
+}
+/**
+ * Clear out caches for pending adds and deletes of group members.
+ */
+private void clearPendingUpdates()
+{
+    addedMembers = null;
+    removedMembers = null;
 }
 /**
  * Checks if <code>GroupMember</code> gm is a member of this.
@@ -253,12 +265,6 @@ public java.util.Iterator getAllEntities() throws GroupsException
 public java.util.Iterator getAllMembers() throws GroupsException
 {
     return primGetAllMembers(new HashSet()).iterator();
-}
-/**
- * @return java.lang.String
- */
-protected String getCacheKey() {
-    return getName();
 }
 /**
  * @return java.lang.String
@@ -586,6 +592,7 @@ public void update() throws GroupsException
         { getFactory().update(this); }
     catch (Exception ex)
         { throw new GroupsException(ex.toString()); }
+    clearPendingUpdates();
 }
 /**
  * Delegate to the factory.
@@ -596,7 +603,6 @@ public void updateMembers() throws GroupsException
         { getFactory().updateMembers(this); }
     catch (Exception ex)
         { throw new GroupsException("Problem updating memberships for " + this + " " + ex); }
-    addedMembers = null;
-    removedMembers = null;
+    clearPendingUpdates();
 }
 }

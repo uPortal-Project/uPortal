@@ -254,8 +254,7 @@ public class ChannelRenderer
         // unplug the buffer :)
         try
         {
-            buffer.setAllHandlers(out);
-            buffer.outputBuffer();
+            buffer.outputBuffer(out);
             return RENDERING_SUCCESSFUL;
         }
         catch (SAXException e) {

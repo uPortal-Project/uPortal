@@ -195,7 +195,7 @@ public class ChannelDefinition {
    * Describes a channel definition parameter
    * A channel can have zero or more parameters.
    */
-  protected class ChannelParameter {
+  public class ChannelParameter {
     String name;
     String value;
     boolean override;

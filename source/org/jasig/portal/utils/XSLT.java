@@ -89,7 +89,7 @@ import org.w3c.dom.Node;
  * the transformation.  XSLT uses this instance to locate resources relative
  * to the classpath.</p>
  * <p>Typical usage:</p>
- * <p><code>
+ * <p><code><pre>
  * XSLT xslt = new XSLT(this);
  * xslt.setXML("myXMLDoc.xml");
  * xslt.setSSL("myChannel.ssl", "aTitle", runtimeData.getBrowserInfo());
@@ -97,7 +97,7 @@ import org.w3c.dom.Node;
  * xslt.setStylesheetParameter("param1Name", "param1Value");
  * xslt.setStylesheetParameter("param2Name", "param2Value");
  * xslt.transform();
- * </code></p>
+ * </pre></code></p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
