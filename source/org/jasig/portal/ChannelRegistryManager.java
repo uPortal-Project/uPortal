@@ -57,6 +57,7 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.XML;
+import org.jasig.portal.utils.CommonUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -186,9 +187,10 @@ public class ChannelRegistryManager {
         processGroupsRecursively(memberGroup, categoryE);
       } else {
         IEntity channelDefMember = (IEntity)member;
-        int channelPublishId = Integer.parseInt(channelDefMember.getKey());
-        ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
-        if (channelDef != null) {
+        int channelPublishId = CommonUtils.parseInt(channelDefMember.getKey());
+        if ( channelPublishId > 0 ) {
+         ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
+         if (channelDef != null) {
           // Make sure channel is approved
           Date approvalDate = channelDef.getApprovalDate();
           if (approvalDate != null && approvalDate.before(now)) {
@@ -196,6 +198,7 @@ public class ChannelRegistryManager {
             channelDefE = (Element)registryDoc.importNode(channelDefE, true);
             parentGroup.appendChild(channelDefE);
           }
+         }
         }
       }
     }
