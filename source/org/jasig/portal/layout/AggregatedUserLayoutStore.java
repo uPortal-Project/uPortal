@@ -60,6 +60,7 @@ import java.util.Vector;
 
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.channels.CError;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
@@ -2803,7 +2804,27 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(publishId));
 
-               if ( channelDef != null ) {
+               if ( channelDef == null || !channelApproved(channelDef.getApprovalDate()) ) {
+                 // Create an error channel if channel is missing or not approved
+				 ChannelDefinition cd = new ChannelDefinition(Integer.parseInt(publishId));
+				 cd.setTitle("Missing channel");
+				 cd.setName("Missing channel");
+				 cd.setTimeout(20000);
+				 cd.setJavaClass(CError.class.getName());
+				 cd.setEditable(false);
+				 cd.setHasAbout(false);
+				 cd.setHasHelp(false);
+				 String missingChannel = "Unknown";
+				 if (channelDef != null) {
+				   missingChannel = channelDef.getName();
+				 }
+				
+				 String errMsg = "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.";
+				 cd.addParameter("CErrorChanId",publishId,String.valueOf(false));
+				 cd.addParameter("CErrorMessage",errMsg,String.valueOf(false));
+				 cd.addParameter("CErrorErrorId",CError.CHANNEL_MISSING_EXCEPTION+"",String.valueOf(false));
+				 channelDef = cd;
+               }	
 
                  channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
                  channelDesc.setClassName(channelDef.getJavaClass());
@@ -2828,7 +2849,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                  channelDesc.setTimeout(channelDef.getTimeout());
                  channelDesc.setTitle(channelDef.getTitle());
 
-               }
               }
   	} catch ( Exception e ) {
   		throw new PortalException(e);        
