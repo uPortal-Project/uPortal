@@ -48,8 +48,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.PortletContainerImpl;
+import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.om.portlet.PortletDefinition;
+import org.apache.pluto.services.information.InformationProviderAccess;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
@@ -58,13 +59,13 @@ import org.jasig.portal.IMultithreadedPrivileged;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.container.PortletContainerImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.container.services.FactoryManagerServiceImpl;
 import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
 import org.jasig.portal.container.services.information.InformationProviderServiceImpl;
-import org.jasig.portal.container.services.information.StaticInformationProviderImpl;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.container.servlet.StoredServletResponseImpl;
@@ -87,6 +88,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     private static boolean portletContainerInitialized;
     private static PortletContainer portletContainer;
     private static ServletConfig servletConfig;
+    
+    private static final String uniqueContainerName = "pluto-in-uPortal";
     
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
@@ -121,8 +124,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             environment.addContainerService(factorManagerService);
             environment.addContainerService(informationProviderService);
 
-            portletContainer = new PortletContainerImpl();
-            portletContainer.init("pluto-in-uPortal", servletConfig, environment, new Properties());
+            portletContainer = new PortletContainerImpl(uniqueContainerName);
+            portletContainer.init(uniqueContainerName, servletConfig, environment, new Properties());
             
             portletContainerInitialized = true;
         
@@ -146,6 +149,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     initPortletContainer(uid);
                 }        
             }
+            
+            PortletContainerServices.prepare(uniqueContainerName);
 
             // Get the portlet definition Id which must be specified as a publish
             // parameter.  The form of the Id is <portlet-context-name>.<portlet-name>
@@ -154,12 +159,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 throw new PortalException("Missing publish parameter '" + portletDefinitionIdParamName + "'");
             }
             
-            // I need to figure out why I can't use this line.
-            // When I try it, I get an error saying that the prepare method of
-            // PortletContainerServices was never called, even though it is called
-            // in the initializtion procedure of this channel.
-            //PortletDefinition portletDefinition = InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));                
-            PortletDefinition portletDefinition = new StaticInformationProviderImpl().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));                
+            PortletDefinition portletDefinition = InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));                
                     
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(sd.getChannelPublishId());
@@ -169,6 +169,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             PortletWindowImpl portletWindow = new PortletWindowImpl();
             portletWindow.setId(sd.getChannelSubscribeId());
             portletWindow.setPortletEntity(portletEntity);
+            portletWindow.setChannelRuntimeData(rd);
             
             cd.setPortletWindow(portletWindow);
                 
@@ -181,6 +182,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             String message = "Initialization of the portlet container failed.";
             LogService.log(LogService.ERROR, message, e);
             throw new PortalException(message, e);
+        } finally {
+            PortletContainerServices.release();
         }
     }
 
@@ -303,7 +306,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
      * This is called from both renderXML() and renderCharacters().
      * @param uid a unique ID used to identify the state of the channel
      */
-    private String getMarkup(String uid) {
+    private synchronized String getMarkup(String uid) {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelRuntimeData rd = channelState.getRuntimeData();
         ChannelStaticData sd = channelState.getStaticData();
@@ -320,9 +323,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
             
             // Process action if there is something to process
-            System.out.println("Rendering portlet window " + cd.getPortletWindow().getId());
             if (rd.getParameters().size() > 0) {     
-                System.out.println("Processing action on portlet window " + cd.getPortletWindow().getId());
                 portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             }
             
