@@ -254,10 +254,12 @@ public class RDBMServices {
               bPropsLoaded = true;
           }
       } catch (Exception e) {
+      	// if using jndi then don't throw an exception here
+      	if (!getDatasourceFromJndi)
           // let caller handle situation where no proerties file is found.
           // When getting datasource from jndi properties file is optional
           // and would be used as a fallback only
-          throw new RuntimeException(e.getMessage());
+      	  throw new RuntimeException(e.getMessage());
       } finally {
           if(inStream != null)
               inStream.close();        	
