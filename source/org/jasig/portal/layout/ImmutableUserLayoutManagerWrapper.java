@@ -126,4 +126,11 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     public int getLayoutId() {
         return man.getLayoutId();
     }
+
+    public boolean addLayoutEventListener(LayoutEventListener l){
+        return false;
+    }
+    public boolean removeLayoutEventListener(LayoutEventListener l){
+        return false;
+    };
 }

@@ -212,6 +212,24 @@ public interface IUserLayoutManager {
     public String getCacheKey() throws PortalException;
 
 
+    /**
+     * Register a layout event listener
+     *
+     * @param l a <code>LayoutEventListener</code> object
+     * @return a <code>boolean</code> success status 
+     */
+    public boolean addLayoutEventListener(LayoutEventListener l);
+
+    
+    /**
+     * Remove a registered layout event listener.
+     *
+     * @param l a <code>LayoutEventListener</code> object
+     * @return a <code>boolean</code> success status
+     */
+    public boolean removeLayoutEventListener(LayoutEventListener l);
+
+
     //  This method should be removed whenever it becomes possible
     public Document getUserLayoutDOM() throws PortalException;
 

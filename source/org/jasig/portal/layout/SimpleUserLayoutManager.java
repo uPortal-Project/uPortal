@@ -1,3 +1,39 @@
+/**
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+
 package org.jasig.portal.layout;
 
 import org.xml.sax.ContentHandler;
@@ -17,6 +53,8 @@ import javax.xml.transform.dom.DOMSource;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Vector;
 
 import  org.apache.xerces.dom.DocumentImpl;
@@ -33,6 +71,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected final IPerson owner;
     protected final UserProfile profile;
     protected IUserLayoutStore store=null;
+    protected Set listeners=new HashSet();
 
     protected DocumentImpl userLayoutDocument=null;
 
@@ -118,6 +157,12 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 DocumentImpl uli=(DocumentImpl)this.getLayoutStore().getUserLayout(this.owner,this.profile);
                 if(uli!=null) {
                     this.setUserLayoutDOM(uli);
+                    // inform listeners
+                    for(Iterator i=listeners.iterator();i.hasNext();) {
+                        LayoutEventListener lel=(LayoutEventListener)i.next();
+                        lel.layoutLoaded();
+                    }
+
                 } else {
                     throw new PortalException("Null user layout returned for ownerId=\""+owner.getID()+"\", profileId=\""+profile.getProfileId()+"\", layoutId=\""+profile.getLayoutId()+"\"");
                 }
@@ -139,6 +184,11 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             } else {
                 try {
                     this.getLayoutStore().setUserLayout(this.owner,this.profile,ulm,true);
+                    // inform listeners
+                    for(Iterator i=listeners.iterator();i.hasNext();) {
+                        LayoutEventListener lel=(LayoutEventListener)i.next();
+                        lel.layoutSaved();
+                    }
                 } catch (PortalException pe) {
                     throw pe;
                 } catch (Exception e) {
@@ -164,6 +214,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
 
     public UserLayoutNodeDescription addNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+        boolean isChannel=false;
         UserLayoutNodeDescription parent=this.getNode(parentId);
         if(canAddNode(node,parent,nextSiblingId)) {
             // assign new Id
@@ -173,6 +224,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             } else {
                 try {
                     if(node instanceof UserLayoutChannelDescription) {
+                        isChannel=true;
                         node.setId(this.getLayoutStore().generateNewChannelSubscribeId(owner));
                     } else {
                         node.setId(this.getLayoutStore().generateNewFolderId(owner));
@@ -196,14 +248,27 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             // register element id
             ulm.putIdentifier(node.getId(),childElement);
             this.updateCacheKey();
+            
+            // inform the listeners
+            LayoutEvent ev=new LayoutEvent(this,node);
+            for(Iterator i=listeners.iterator();i.hasNext();) {
+                LayoutEventListener lel=(LayoutEventListener)i.next();
+                if(isChannel) {
+                    lel.channelAdded(ev);
+                } else {
+                    lel.folderAdded(ev);
+                }
+            }
             return node;
         }
         return null;
     }
 
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException  {
+
         UserLayoutNodeDescription parent=this.getNode(parentId);
         UserLayoutNodeDescription node=this.getNode(nodeId);
+        String oldParentNodeId=getParentId(nodeId);
         if(canMoveNode(node,parent,nextSiblingId)) {
             // must be a folder
             Document ulm=this.getUserLayoutDOM();
@@ -216,6 +281,21 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 parentElement.insertBefore(childElement,nextSibling);
             }
             this.updateCacheKey();
+
+            // inform the listeners
+            boolean isChannel=false;
+            if(node instanceof UserLayoutChannelDescription) {
+                isChannel=true;
+            }
+            LayoutMoveEvent ev=new LayoutMoveEvent(this,node,oldParentNodeId);
+            for(Iterator i=listeners.iterator();i.hasNext();) {
+                LayoutEventListener lel=(LayoutEventListener)i.next();
+                if(isChannel) {
+                    lel.channelMoved(ev);
+                } else {
+                    lel.folderMoved(ev);
+                }
+            }
             return true;
         } else {
             return false;
@@ -224,6 +304,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public boolean deleteNode(String nodeId) throws PortalException {
         if(canDeleteNode(nodeId)) {
+            UserLayoutNodeDescription nodeDescription=this.getNode(nodeId);
+            String parentNodeId=this.getParentId(nodeId);
+
             Document ulm=this.getUserLayoutDOM();
             Element childElement=(Element)ulm.getElementById(nodeId);
             Node parent=childElement.getParentNode();
@@ -233,6 +316,22 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 throw new PortalException("Node \""+nodeId+"\" has a NULL parent !");
             }
             this.updateCacheKey();
+
+            // inform the listeners
+            boolean isChannel=false;
+            if(nodeDescription instanceof UserLayoutChannelDescription) {
+                isChannel=true;
+            }
+            LayoutMoveEvent ev=new LayoutMoveEvent(this,nodeDescription,parentNodeId);
+            for(Iterator i=listeners.iterator();i.hasNext();) {
+                LayoutEventListener lel=(LayoutEventListener)i.next();
+                if(isChannel) {
+                    lel.channelDeleted(ev);
+                } else {
+                    lel.folderDeleted(ev);
+                }
+            }
+
             return true;
         } else {
             return false;
@@ -240,6 +339,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     public synchronized boolean updateNode(UserLayoutNodeDescription node) throws PortalException {
+        boolean isChannel=false;
         if(canUpdateNode(node)) {
             // normally here, one would determine what has changed
             // but we'll just make sure that the node type has not
@@ -259,6 +359,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             if(oldNode instanceof UserLayoutChannelDescription) {
                 UserLayoutChannelDescription oldChannel=(UserLayoutChannelDescription) oldNode;
                 if(node instanceof UserLayoutChannelDescription) {
+                    isChannel=true;
                     DocumentImpl ulm=this.userLayoutDocument;
                     // generate new XML Element
                     Element newChannelElement=node.getXML(ulm);
@@ -268,6 +369,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.insertBefore(newChannelElement,nextSibling);
                     // register new child instead
                     ulm.putIdentifier(node.getId(),newChannelElement);
+
+                    // inform the listeners
+                    LayoutEvent ev=new LayoutEvent(this,node);
+                    for(Iterator i=listeners.iterator();i.hasNext();) {
+                        LayoutEventListener lel=(LayoutEventListener)i.next();
+                        lel.channelUpdated(ev);
+                    }
                 } else {
                     throw new PortalException("Change channel to folder is not allowed by updateNode() method!");
                 }
@@ -298,9 +406,19 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.insertBefore(newFolderElement,nextSibling);
                     // register new child instead
                     ulm.putIdentifier(node.getId(),newFolderElement);
+
+                    // inform the listeners
+                    LayoutEvent ev=new LayoutEvent(this,node);
+                    for(Iterator i=listeners.iterator();i.hasNext();) {
+                        LayoutEventListener lel=(LayoutEventListener)i.next();
+                        lel.folderUpdated(ev);
+                    }
                 }
             }
             this.updateCacheKey();
+
+
+
             return true;
         } else {
             return false;
@@ -463,5 +581,12 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public int getLayoutId() {
         return profile.getLayoutId();
+    }
+
+    public boolean addLayoutEventListener(LayoutEventListener l) {
+        return listeners.add(l);
+    }
+    public boolean removeLayoutEventListener(LayoutEventListener l) {
+        return listeners.remove(l);
     }
 }
