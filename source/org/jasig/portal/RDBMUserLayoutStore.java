@@ -3157,7 +3157,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * @return The layout_id field or 0 if it does not exist or is null
    * @throws SQLException
    */
-  private int getLayoutID(int userId, int profileId) throws SQLException {
+  protected int getLayoutID(int userId, int profileId) throws SQLException {
       String query =
           "SELECT LAYOUT_ID " +
           "FROM UP_USER_PROFILE " +

@@ -2913,11 +2913,27 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       try {
         // get stylesheet description
         ThemeStylesheetDescription tsd = getThemeStylesheetDescription(stylesheetId);
+        
+        int layoutId = this.getLayoutID(userId, profileId);
+        ResultSet rs;
+
+        if (layoutId == 0) { // First time, grab the default layout for this user
+          String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+          rs = stmt.executeQuery(sQuery);
+          try {
+            rs.next();
+            userId = rs.getInt(1);
+          } finally {
+            rs.close();
+          }
+        }  
+
         // get user defined defaults
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
+        rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
             // stylesheet param
