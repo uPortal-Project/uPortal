@@ -49,7 +49,7 @@
 <!-- Header -->
 <table border="0" cellpadding="0" cellspacing="1" width="100%">
   <tr>
-    <td width="25%"><span class="PortalHeaderText"><img src="images/MyIBS.gif" width="128" height="47" border="0" alt="MyIBS"></span></td>
+    <td width="25%"><span class="PortalHeaderText"><img src="images/MyIBS.gif" width="100" height="50" border="0" alt="MyIBS"></span></td>
     <td width="300"><span class="PortalHeaderText">Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!<br>
                                              <%= UtilitiesBean.getDate () %><br>
                                              <%= person == null || sUserName.equals ("guest") ? "&nbsp;" : "<a href=\"logout.jsp\">Logout</a>" %></span></td>
