@@ -279,7 +279,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
             if (requiresRegistration) {
                 //RegistrationContext registrationContext = new RegistrationContext();
                 //cd.setRegistrationContext(registrationContext);
-                throw new PortalException("Remote potlet '" + portletHandle + "' requires registration which is not yet supported.");
+                throw new PortalException("Remote portlet '" + portletHandle + "' requires registration which is not yet supported.");
             }
         } catch (Exception e) {
             throw new PortalException(e);
