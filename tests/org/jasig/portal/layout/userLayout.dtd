@@ -37,6 +37,9 @@ $Revision$
 <!ELEMENT layout (folder|channel)*>
 <!ELEMENT layout_fragment (folder|channel)*>
 
+<!ATTLIST layout
+  ID ID #REQUIRED>
+
 <!ELEMENT folder (folder|channel)*>
 <!ATTLIST folder
   ID ID #REQUIRED

@@ -244,6 +244,18 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         assertEquals("Next siblingId",man.getNextSiblingId(nodeId),null);
     }
 
+    public void testMoveUnderRootNode() throws Exception {
+        // try moving a channel
+        String nodeId="n3";
+        String targetId="root";
+        UserLayoutNodeDescription rootNode=man.getNode(targetId);
+        assertTrue("Can channel \""+nodeId+"\" be moved to folder \""+targetId+"\"",man.canMoveNode(nodeId,targetId,null));
+        man.moveNode(nodeId,targetId,null);
+        assertEquals("New channel attachment point",man.getParentId(nodeId),targetId);
+        assertEquals("Next siblingId",man.getNextSiblingId(nodeId),null);
+        //  System.out.println("Layout\n"+XML.serializeNode(man.getUserLayoutDOM()));
+    }
+
     public void testUpdateChannel() throws Exception {
         String channelId="n8";
         UserLayoutChannelDescription chan=(UserLayoutChannelDescription) man.getNode(channelId);
@@ -321,12 +333,12 @@ public class SimpleUserLayoutManagerTest extends TestCase {
         assertEquals(message+"channel description",one.getDescription(),two.getDescription());
 
         // compare parameter content
-        for(Iterator i=one.parameterNames().iterator();i.hasNext();) {
+        for(Iterator i=one.getParameterNames().iterator();i.hasNext();) {
             String pName=(String)i.next();
             assertEquals("channel parameter \""+pName+"\"",one.getParameterValue(pName),two.getParameterValue(pName));
         }
         // other way around
-        for(Iterator i=two.parameterNames().iterator();i.hasNext();) {
+        for(Iterator i=two.getParameterNames().iterator();i.hasNext();) {
             assertTrue("contains parameter",one.containsParameter((String)i.next()));
         }
 
