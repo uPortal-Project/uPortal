@@ -128,7 +128,7 @@ public class UserLayoutManager {
         };
         
         // Initialize the JNDI context for this user
-        JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), person);
+        JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), this.person);
     }
     catch (Exception e)
     {
