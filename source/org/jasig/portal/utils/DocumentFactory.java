@@ -57,12 +57,14 @@ public class DocumentFactory {
     public static Document getNewDocument() {
         IPortalDocument doc = null;
         try {
-            String className = PropertiesManager.getProperty("org.jasig.portal.utils.IPortalDocument.implementation");
+            String className = 
+                PropertiesManager.getProperty("org.jasig.portal.utils.IPortalDocument.implementation", 
+                        "org.jasig.portal.utils.PortalDocumentImpl");
             doc = (IPortalDocument)Class.forName(className).newInstance();
         } catch (Exception e) {
             log.error("org.jasig.portal.utils.DocumentFactory could not create new " 
                     + "IPortalDocument: ", e);
-            throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new " + "IPortalDocument: " + e.getMessage());
+            throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new " + "IPortalDocument: ", e);
         }
         return doc;
     }
