@@ -1144,7 +1144,7 @@ $Revision$
                                   <td nowrap="nowrap" align="left" valign="top">
                                     <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16" width="16"/>
                                     <select name="selectedCategory" class="uportal-input-text">
-                                      <xsl:for-each select="ancestor::*[1]/category/category">
+                                      <xsl:for-each select="category">
                                         <xsl:sort select="@name"/>
                                         <option value="{@ID}">
                                           <xsl:value-of select="@name"/>
@@ -1179,7 +1179,9 @@ $Revision$
                             </td>
                             <td width="100%">Select a channel<xsl:choose>
                                 <xsl:when test="$catID = 'all'">from "All catagories"</xsl:when>
-                                <xsl:otherwise>from the "<xsl:value-of select="//category[@ID=$catID]/@name"/>" category</xsl:otherwise></xsl:choose>
+                                <xsl:otherwise> from the "<xsl:value-of select="//category[@ID=$catID]/@name"/>" category
+                                <br/><span class="uportal-text-small">Description: <xsl:value-of select="//category[@ID=$catID]/@description"/></span>
+                                </xsl:otherwise></xsl:choose>
                             </td>
                           </tr>
                           <tr>
@@ -1197,6 +1199,9 @@ $Revision$
                                         <xsl:value-of select="@name"/>
                                       </option>
                                     </xsl:for-each>
+                                    <option>
+                                      <xsl:if test="not(/layout/registry//channel[not(@ID=following::channel/@ID)])">--This category contains no channels--</xsl:if>
+                                    </option>
                                   </xsl:when>
                                   <xsl:otherwise>
                                     <xsl:for-each select="/layout/registry//category[@ID=$catID]/channel">
@@ -1205,6 +1210,9 @@ $Revision$
                                         <xsl:value-of select="@name"/>
                                       </option>
                                     </xsl:for-each>
+                                    <option>
+                                      <xsl:if test="not(/layout/registry//category[@ID=$catID]/channel)">--This category contains no channels--</xsl:if>
+                                    </option>
                                   </xsl:otherwise>
                                 </xsl:choose>
                               </select>
