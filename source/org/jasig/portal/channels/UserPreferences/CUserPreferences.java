@@ -148,7 +148,7 @@ public class CUserPreferences implements IPrivilegedChannel {
      */
     private void instantiateManagePreferencesState(UserProfile profile) {
         try {
-            ThemeStylesheetDescription tsd = RdbmServices.getCoreStylesheetDescriptionImpl().getThemeStylesheetDescription(profile.getThemeStylesheetId());
+            ThemeStylesheetDescription tsd = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl().getThemeStylesheetDescription(profile.getThemeStylesheetId());
             if(tsd!=null) {
                 String cupmClass = tsd.getCustomUserPreferencesManagerClass();
                 managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
@@ -221,7 +221,7 @@ public class CUserPreferences implements IPrivilegedChannel {
       else if (action.equals("managePreferences")) {
           if (profileId != null) {
               // find the profile mapping
-              updb = RdbmServices.getUserPreferencesStoreImpl();
+              updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
               if (systemProfile) {
                   UserProfile newProfile = updb.getSystemProfileById(profileId.intValue());
                   if(newProfile!=null && (!(editedProfile.isSystemProfile() && editedProfile.getProfileId()==newProfile.getProfileId()))) {
@@ -273,7 +273,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
       IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
       up = upStore.getUserPreferences(getUserLayoutManager().getPerson(), profile);
-      up.synchronizeWithUserLayoutXML(GenericPortalBean.getUserLayoutStore().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile().getProfileId()));
+      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile().getProfileId()));
       return up;
   }
 

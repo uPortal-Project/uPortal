@@ -50,8 +50,8 @@ import  java.net.URL;
 
 
 /** <p>Initial profile selection</p>
- * <p> CSelectSystemProfile channel allows to establish mapping from user-Agent to a system profile. 
- * This channel is meant to be used by a guest user only. Logged in users are expected to use 
+ * <p> CSelectSystemProfile channel allows to establish mapping from user-Agent to a system profile.
+ * This channel is meant to be used by a guest user only. Logged in users are expected to use
  * CUserPreferences profile management screens to achieve the establish user-Agent mappings. </p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
@@ -87,13 +87,13 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   private IUserPreferencesStore getUserPreferencesStore () throws PortalException {
     // this should be obtained from the JNDI context
     if (updb == null) {
-      updb = RdbmServices.getUserPreferencesStoreImpl();
+      updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
     }
     if (updb == null) {
       throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
@@ -103,7 +103,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    * @exception PortalException
    */
   protected Hashtable getSystemProfileList () throws PortalException {

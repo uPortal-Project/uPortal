@@ -55,7 +55,7 @@ import org.apache.xpath.XPathAPI;
  * @version $Revision$
  */
 public class ChannelRegistryManager {
-  protected static final IChannelRegistryStore chanRegStore = RdbmServices.getChannelRegistryStoreImpl();
+  protected static final IChannelRegistryStore chanRegStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
   protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
   protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);

@@ -58,11 +58,6 @@ public class RdbmServices {
   private static String sJdbcUrl = null;
   private static String sJdbcUser = null;
   private static String sJdbcPassword = null;
-  private static String m_channelRegistryStoreClassName = null;
-  private static String m_userLayoutStoreClassName = null;
-  private static String m_userIdentityStoreClassName = null;
-  private static String m_userPreferencesStoreClassName = null;
-  private static String m_coreStyleSheetDescriptionStoreClassName = null;
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";      // reduce noise in log file
   static {
@@ -82,11 +77,6 @@ public class RdbmServices {
         sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
         sJdbcUser = jdbcProps.getProperty("jdbcUser");
         sJdbcPassword = jdbcProps.getProperty("jdbcPassword");
-        m_channelRegistryStoreClassName = jdbcProps.getProperty("ChannelRegistryStore");
-        m_userLayoutStoreClassName = jdbcProps.getProperty("UserLayoutStore");
-        m_userIdentityStoreClassName = jdbcProps.getProperty("UserIdentityStore");
-        m_userPreferencesStoreClassName = jdbcProps.getProperty("UserPreferencesStore");
-        m_coreStyleSheetDescriptionStoreClassName = jdbcProps.getProperty("CoreStyleSheetDescriptionStore");
         bPropsLoaded = true;
       }
     } catch (Exception e) {
@@ -161,71 +151,6 @@ public class RdbmServices {
    */
   public static String getJdbcUser () {
     return  sJdbcUser;
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   */
-  public static IUserLayoutStore getUserLayoutStoreImpl () {
-    try {
-      return  ((IUserLayoutStore)Class.forName(m_userLayoutStoreClassName).newInstance());
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      return  (null);
-    }
-  }
-
-    /**
-   * Return implementation for IUserIdentityStore
-   * @return
-   */
-  public static IUserIdentityStore getUserIdentityStoreImpl () {
-    try {
-      return  ((IUserIdentityStore)Class.forName(m_userIdentityStoreClassName).newInstance());
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      return  (null);
-    }
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   */
-  public static IUserPreferencesStore getUserPreferencesStoreImpl () {
-    try {
-      return  ((IUserPreferencesStore)Class.forName(m_userPreferencesStoreClassName).newInstance());
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      return  (null);
-    }
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   */
-  public static ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionImpl () {
-    try {
-      return  ((ICoreStylesheetDescriptionStore)Class.forName(m_coreStyleSheetDescriptionStoreClassName).newInstance());
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      return  (null);
-    }
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   */
-  public static IChannelRegistryStore getChannelRegistryStoreImpl () {
-    try {
-      return  ((IChannelRegistryStore)Class.forName(m_channelRegistryStoreClassName).newInstance());
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      return  (null);
-    }
   }
 }
 

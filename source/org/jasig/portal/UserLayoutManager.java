@@ -89,7 +89,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             m_person = person;
             // load user preferences
             // Should obtain implementation in a different way!!
-            IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
+            IUserPreferencesStore updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
             UserProfile upl = updb.getUserProfile(m_person, userAgent);
@@ -98,7 +98,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             }
             if (upl != null) {
                 // read uLayoutXML
-                uLayoutXML = RdbmServices.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
+                uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
                 if (uLayoutXML == null) {
                     LogService.instance().log(LogService.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
                                m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
@@ -110,7 +110,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                 }
                 catch(PortalNamingException pne) {
                   LogService.instance().log(LogService.ERROR, "UserLayoutManager(): Could not properly initialize user context", pne);
-                } 
+                }
                 // set dirty flag on the layout
                 layout_write_lock.setValue(true);
             }
@@ -271,7 +271,7 @@ public class UserLayoutManager implements IUserLayoutManager {
     public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
         if (newPreferences != null) {
             // Should obtain implementation in a different way!!
-            IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
+            IUserPreferencesStore updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
             updb.putUserPreferences(m_person, newPreferences);
             complete_up=newPreferences;
         }
@@ -280,7 +280,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                 uLayoutXML = newLayout;
                 layout_write_lock.setValue(true);
                 try {
-                    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
+                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
                 } catch (Exception e) {
                     LogService.instance().log(LogService.ERROR, e);
                     throw  new GeneralRenderingException(e.getMessage());
@@ -308,7 +308,7 @@ public class UserLayoutManager implements IUserLayoutManager {
 
     public ThemeStylesheetDescription getThemeStylesheetDescription () {
         if (this.tsd == null) {
-            ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
+            ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
             tsd = csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetId());
         }
         return  tsd;
@@ -316,7 +316,7 @@ public class UserLayoutManager implements IUserLayoutManager {
 
     public StructureStylesheetDescription getStructureStylesheetDescription () {
         if (this.ssd == null) {
-            ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
+            ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
             ssd = csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetId());
         }
         return  ssd;
@@ -367,7 +367,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                         /*
                           The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                         */
-                        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
+                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
                         /* end of patch */
                     } catch (Exception e) {
                         LogService.instance().log(LogService.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);

@@ -63,7 +63,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws java.lang.Exception
    */
   public Document getChannelRegistryXML () throws Exception {
-    return RdbmServices.getUserLayoutStoreImpl().getChannelRegistryXML();
+    return UserLayoutStoreFactory.getUserLayoutStoreImpl().getChannelRegistryXML();
   }
 
   /**
@@ -72,7 +72,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws java.lang.Exception
    */
   public Document getChannelTypesXML () throws Exception {
-    return RdbmServices.getUserLayoutStoreImpl().getChannelTypesXML();
+    return UserLayoutStoreFactory.getUserLayoutStoreImpl().getChannelTypesXML();
   }
 
   /** Returns a string of XML which describes the channel categories.
@@ -84,7 +84,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     try {
       catsDoc = new org.apache.xerces.dom.DocumentImpl();
       Element root = catsDoc.createElement("channelCats");
-      GenericPortalBean.getUserLayoutStore().getCategoryXML(catsDoc, root, role);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().getCategoryXML(catsDoc, root, role);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -100,7 +100,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws java.lang.Exception
    */
   public void addChannel (int id, int publisherId, Document chanXML, String catID[]) throws Exception {
-    GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, chanXML, catID);
+    UserLayoutStoreFactory.getUserLayoutStoreImpl().addChannel(id, publisherId, chanXML, catID);
   }
 
   /** A method for adding a channel to the channel registry.
@@ -111,7 +111,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    */
   public void addChannel (int id, int publisherId, Document chanXML) {
     try {
-      GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, chanXML);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().addChannel(id, publisherId, chanXML);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -124,7 +124,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    *  @param approveDate When should the channel appear
    */
   public void approveChannel(int chanId, int approverId, java.sql.Timestamp approveDate) throws Exception {
-    GenericPortalBean.getUserLayoutStore().approveChannel(chanId, approverId, approveDate);
+    UserLayoutStoreFactory.getUserLayoutStoreImpl().approveChannel(chanId, approverId, approveDate);
   }
 
   /** A method for getting the next available channel ID.
@@ -133,7 +133,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   public int getNextId () throws PortalException {
     int nextID;
     try {
-      nextID = GenericPortalBean.getUserLayoutStore().getIncrementIntegerId("UP_CHANNEL");
+      nextID = UserLayoutStoreFactory.getUserLayoutStoreImpl().getIncrementIntegerId("UP_CHANNEL");
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       throw  new GeneralRenderingException("Unable to allocate new channel ID");
@@ -149,7 +149,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    */
   public void removeChannel (String chanID) throws Exception {
     try {
-      GenericPortalBean.getUserLayoutStore().removeChannel(chanID);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().removeChannel(chanID);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       throw  new GeneralRenderingException("Unable to remove channel " + chanID);

@@ -52,9 +52,10 @@ import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.UserPreferencesStoreFactory;
 import org.jasig.portal.IUserPreferencesStore;
-import org.jasig.portal.RdbmServices;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ChannelCacheKey;
@@ -97,8 +98,8 @@ final class TabColumnPrefsState extends BaseState
   private Document userLayout;
   private UserPreferences userPrefs;
   private UserProfile editedUserProfile;
-  private static IUserLayoutStore ulStore = RdbmServices.getUserLayoutStoreImpl();
-  private static IUserPreferencesStore upStore = RdbmServices.getUserPreferencesStoreImpl();
+  private static IUserLayoutStore ulStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+  private static IUserPreferencesStore upStore = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
   private StylesheetSet set;
 
   private String action = "none";

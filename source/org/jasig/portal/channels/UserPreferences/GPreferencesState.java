@@ -68,7 +68,7 @@ class GPreferencesState extends BaseState {
   private Document userLayoutXML = null;
   ThemeStylesheetDescription tsd = null;
   StructureStylesheetDescription ssd = null;
-  ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
+  ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
   // these state variables are kept for the use by the internalStates
   private static final String layoutID = "top";                 // just a way to refer to the layout element since it doesn't have an ID attribute
   private String folderID = layoutID;
@@ -155,7 +155,7 @@ class GPreferencesState extends BaseState {
     if (userLayoutXML == null) {
       // get the layout from the database
       try {
-        userLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(context.getUserLayoutManager().getPerson(),
+        userLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(context.getUserLayoutManager().getPerson(),
             context.getCurrentUserPreferences().getProfile().getProfileId());
       } catch (Exception e) {
         LogService.instance().log(LogService.ERROR, e);
@@ -180,7 +180,7 @@ class GPreferencesState extends BaseState {
    */
   public IUserPreferencesStore getUserPreferencesStore () throws ResourceMissingException {
     if (updb == null) {
-      updb = RdbmServices.getUserPreferencesStoreImpl();
+      updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
     }
     if (updb == null) {
       throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
@@ -208,7 +208,7 @@ class GPreferencesState extends BaseState {
    */
   public ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionStore () {
     if (csddb == null)
-      csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
+      csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
     return  csddb;
   }
 
@@ -235,7 +235,7 @@ class GPreferencesState extends BaseState {
    */
   public StructureStylesheetDescription getStructureStylesheetDescription () throws ResourceMissingException, PortalException {
     if (ssd == null) {
-      ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
+      ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
       StructureStylesheetUserPreferences fsup = this.getUserPreferences().getStructureStylesheetUserPreferences();
       ssd = this.getCoreStylesheetDescriptionStore().getStructureStylesheetDescription(fsup.getStylesheetId());
       if (ssd == null) {
