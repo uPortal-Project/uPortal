@@ -60,7 +60,7 @@ import  org.jasig.portal.SAXBufferImpl;
 import  org.jasig.portal.GenericPortalBean;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.ChannelSAXStreamFilter;
-import  org.jasig.portal.RDBMUserLayoutStore;
+import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.utils.XSLT;
 import  org.xml.sax.*;
 import  org.apache.xalan.xslt.*;
@@ -106,7 +106,7 @@ public class ChannelServlet extends HttpServlet {
           // initialize stylesheet set
           GenericPortalBean.setPortalBaseDir(baseDir);
           // once JNDI DB access is in place the following line can be removed
-          GenericPortalBean.setUserLayoutStore(new RDBMUserLayoutStore());
+          GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
           this.set = new StylesheetSet(baseDir + fs + relativeSSLLocation);
           String propertiesDir = baseDir + fs + "properties" + fs;
           this.set.setMediaProps(propertiesDir + "media.properties");

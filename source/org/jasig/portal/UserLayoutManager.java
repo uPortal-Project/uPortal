@@ -97,7 +97,7 @@ public class UserLayoutManager {
       }
       // load user preferences
       // Should obtain implementation in a different way!!
-      IUserPreferencesStore updb = new RDBMUserPreferencesStore();
+      IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
       // determine user profile
       String userAgent = req.getHeader("User-Agent");
       UserProfile upl = updb.getUserProfile(this.person.getID(), userAgent);
@@ -311,7 +311,7 @@ public class UserLayoutManager {
     if (current_up != null)
       complete_up = current_up;
     // load stylesheet description files and fix user preferences
-    ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
+    ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
     // syncronize up with layout
     synchUserPreferencesWithLayout(complete_up);
   }
@@ -323,7 +323,7 @@ public class UserLayoutManager {
   public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
     if (newPreferences != null) {
       // Should obtain implementation in a different way!!
-      IUserPreferencesStore updb = new RDBMUserPreferencesStore();
+      IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
       updb.putUserPreferences(person.getID(), newPreferences);
       this.setCurrentUserPreferences(newPreferences);
     }
@@ -377,7 +377,7 @@ public class UserLayoutManager {
    */
   private ThemeStylesheetDescription getThemeStylesheetDescription () {
     if (this.tsd == null) {
-      ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
+      ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
       tsd = csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetId());
     }
     return  tsd;
@@ -389,37 +389,41 @@ public class UserLayoutManager {
    */
   private StructureStylesheetDescription getStructureStylesheetDescription () {
     if (this.ssd == null) {
-      ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
+      ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
       ssd = csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetId());
     }
     return  ssd;
   }
 
-  /*
+  /**
    * Returns structure stylesheet defined by the user profile
+   * @return 
    */
   public String getStructureStylesheet () {
     return  (UtilitiesBean.fixURI(this.getStructureStylesheetDescription().getStylesheetURI()));
   }
 
-  /*
+  /**
    * Returns theme stylesheet defined by the user profile
+   * @return 
    */
   public String getThemeStylesheet () {
     return  (UtilitiesBean.fixURI(this.getThemeStylesheetDescription().getStylesheetURI()));
   }
 
-  /*
+  /**
    * returns the mime type defined by the theme stylesheet
    * in the user profile
+   * @return 
    */
   public String getMimeType () {
     return  this.getThemeStylesheetDescription().getMimeType();
   }
 
-  /*
+  /**
    * returns a serializer defined by the theme stylesheet
    * in the user profile
+   * @return 
    */
   public String getSerializerName () {
     return  this.getThemeStylesheetDescription().getSerializerName();
@@ -442,8 +446,12 @@ public class UserLayoutManager {
     return  uLayoutXML;
   }
 
-  // helper function that allows to determine the name of a channel or
-  // folder in the current user layout given their ID.
+  /** 
+   * helper function that allows to determine the name of a channel or
+   *  folder in the current user layout given their ID.
+   * @param nodeID
+   * @return 
+   */
   public String getNodeName (String nodeID) {
     Element node = uLayoutXML.getElementById(nodeID);
     if (node != null) {
@@ -492,7 +500,6 @@ public class UserLayoutManager {
     return  null;
   }
 
-  // utility methods for operating on user layout
   /**
    * Determines if the node or any of it's parents are marked
    * as "unremovable".

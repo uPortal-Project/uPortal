@@ -128,7 +128,7 @@ public class LayoutBean {
         // do the redirect
         // for debug purposes, we do the fake mapping to the "netscape" layout
         // Should obtain implementation in a different way!!
-        IUserPreferencesStore updb = new RDBMUserPreferencesStore();
+        IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
         IPerson person = getPerson(req);
         if (person == null) {
           int guestUserId = 1;

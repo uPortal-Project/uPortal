@@ -108,7 +108,7 @@ public class PortalSessionManager extends HttpServlet {
       if (!m_userLayoutStoreSet) {
         try {
           // Should obtain implementation in a better way!
-          GenericPortalBean.setUserLayoutStore(new RDBMUserLayoutStore());
+          GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
         } catch (Exception e) {
           throw  new ServletException(e);
         }

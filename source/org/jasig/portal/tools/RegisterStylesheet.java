@@ -33,7 +33,7 @@ public class RegisterStylesheet {
       UtilitiesBean.setPortalBaseDir(portalBaseDir);
       GenericPortalBean.setPortalBaseDir(portalBaseDir);
       // Should obtain implementation in a different way!!
-      GenericPortalBean.setUserLayoutStore(new RDBMUserLayoutStore());
+      GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
     } 
     else {
       System.out.println("Please set the system parameter portal.home.  For example: java -Dportal.home=/usr/local/portal");
@@ -94,7 +94,7 @@ public class RegisterStylesheet {
       printHelp();
       return;
     }
-    ICoreStylesheetDescriptionStore csdb = new RDBMCoreStylesheetDescriptionStore();
+    ICoreStylesheetDescriptionStore csdb = RdbmServices.getCoreStylesheetDescriptionImpl();
     if (update) {
       boolean success = false;
       if (isTheme) {

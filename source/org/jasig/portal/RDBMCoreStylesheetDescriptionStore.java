@@ -68,7 +68,11 @@ public class RDBMCoreStylesheetDescriptionStore
     return  list;
   }
 
-  // functions that allow one to browse available core stylesheets in various ways
+  /**
+   * functions that allow one to browse available core stylesheets in various ways
+   * @param mimeType
+   * @return 
+   */
   public Hashtable getStructureStylesheetList (String mimeType) {
     Hashtable list = null;
     try {

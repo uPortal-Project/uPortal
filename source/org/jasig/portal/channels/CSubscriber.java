@@ -85,7 +85,8 @@ public class CSubscriber
   private boolean modified = false;             // modification flag
   private static final String regID = "top";                    // mark the top level of the categories
 
-  /** Construct a CSubscriber.
+  /** 
+   * Construct a CSubscriber.
    */
   public CSubscriber () {
     this.staticData = new ChannelStaticData();
@@ -93,17 +94,19 @@ public class CSubscriber
     this.set = new StylesheetSet(stylesheetDir + fs + "CSubscriber.ssl");
     this.set.setMediaProps(portalBaseDir + fs + "properties" + fs + "media.properties");
     // RDBMChannelRegistryStore should be retrieved in a different way!!
-    this.chanReg = new RDBMChannelRegistryStore();
+    this.chanReg = RdbmServices.getChannelRegistryStoreImpl();
   }
 
-  /**Get a handle on the UserLayoutManager
+  /**
+   * Get a handle on the UserLayoutManager
    * @param pcs portal control structures
    */
   public void setPortalControlStructures (PortalControlStructures pcs) {
     ulm = pcs.getUserLayoutManager();
   }
 
-  /** Returns channel runtime properties
+  /** 
+   * Returns channel runtime properties
    * @return handle to runtime properties
    */
   public ChannelRuntimeProperties getRuntimeProperties () {
@@ -111,21 +114,24 @@ public class CSubscriber
     return  new ChannelRuntimeProperties();
   }
 
-  /** Receive any events from the layout
+  /** 
+   * Receive any events from the layout
    * @param ev layout event
    */
   public void receiveEvent (PortalEvent ev) {
   // no events for this channel
   }
 
-  /** Receive static channel data from the portal
+  /** 
+   * Receive static channel data from the portal
    * @param sd static channel data
    */
   public void setStaticData (ChannelStaticData sd) {
     this.staticData = sd;
   }
 
-  /** Receives channel runtime data from the portal and processes actions
+  /** 
+   * Receives channel runtime data from the portal and processes actions
    * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
@@ -145,13 +151,13 @@ public class CSubscriber
       try {
         if (action.equals("browse")) {
           prepareBrowse();
-        }
+        } 
         else if (action.equals("subscribe")) {
           prepareSubscribe();
-        }
+        } 
         else if (action.equals("subscribeTo")) {
           prepareSubscribeTo();
-        }
+        } 
         else if (action.equals("saveChanges")) {
           prepareSaveChanges();
         }
@@ -164,7 +170,8 @@ public class CSubscriber
       categoryID = this.regID;
   }
 
-  /** Output channel content to the portal
+  /** 
+   * Output channel content to the portal
    * @param out a sax document handler
    */
   public void renderXML (DocumentHandler out) {
@@ -204,8 +211,8 @@ public class CSubscriber
         ssParams.put("categoryID", categoryID);
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      }
-      else
+      } 
+      else 
         Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -240,15 +247,15 @@ public class CSubscriber
     Node destination = null;
     if (destinationID == null) {
       Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : received a null destinationID !");
-    }
+    } 
     else {
       if (destinationID.equals(this.regID))
         destination = userLayoutXML.getDocumentElement();       // the layout element
-      else
+      else 
         destination = userLayoutXML.getElementById(destinationID);
       if (destination == null) {
         Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : destinationID=\"" + destinationID + "\" results in an empty node !");
-      }
+      } 
       else {
         for (int i = 0; i < subIDs.length; i++) {
           Node channel = channelRegistry.getElementById(subIDs[i]);
@@ -260,7 +267,7 @@ public class CSubscriber
               setNextInstanceID(channel);
               destination.insertBefore(userLayoutXML.importNode(channel, true), null);
             }
-          }
+          } 
           else {
             setNextInstanceID(channel);
             destination.insertBefore(userLayoutXML.importNode(channel, true), null);

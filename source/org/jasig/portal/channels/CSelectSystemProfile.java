@@ -89,10 +89,12 @@ public class CSelectSystemProfile extends BaseChannel {
    */
   private IUserPreferencesStore getUserPreferencesStore () throws PortalException {
     // this should be obtained from the JNDI context
-    if (updb == null)
-      updb = new RDBMUserPreferencesStore();
-    if (updb == null)
+    if (updb == null) {
+      updb = RdbmServices.getUserPreferencesStoreImpl();
+    }
+    if (updb == null) {
       throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
+    }
     return  updb;
   }
 

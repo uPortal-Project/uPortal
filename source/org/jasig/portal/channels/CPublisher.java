@@ -119,7 +119,7 @@ public class CPublisher
     this.set = new StylesheetSet(stylesheetDir + fs + "CPublisher.ssl");
     this.set.setMediaProps(portalBaseDir + fs + "properties" + fs + "media.properties");
     // Should obtain implementation in a different way!
-    this.chanReg = new RDBMChannelRegistryStore();
+    this.chanReg = RdbmServices.getChannelRegistryStoreImpl();
   }
 
   /**
@@ -170,7 +170,7 @@ public class CPublisher
     //catID = runtimeData.getParameter("catID");
     String role = "student";                    //need to get from current user
     // Should obtain implementation in a different way!
-    chanReg = new RDBMChannelRegistryStore();
+    chanReg = RdbmServices.getChannelRegistryStoreImpl();
     //get fresh copy of both since we don't really know if changes have been made
     if (channelTypes == null)
       channelTypes = chanReg.getTypesXML(role);
