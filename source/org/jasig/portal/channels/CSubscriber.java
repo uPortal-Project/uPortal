@@ -142,16 +142,16 @@ public class CSubscriber implements ISpecialChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;    
-    String catID = "0";
+    String catID = null;
     //catID = runtimeData.getParameter("catID");
     String role = "student"; //need to get from current user
-    chanReg = new ChannelRegistryImpl();
+    //chanReg = new ChannelRegistryImpl();
     
     //get fresh copies of both since we don't really know if changes have been made
     
     if(userLayoutXML==null)userLayoutXML=ulm.getUserLayoutCopy();
    
-    channelRegistry = chanReg.getRegistryDoc(catID, role);
+    if(channelRegistry==null) channelRegistry = chanReg.getRegistryXML(catID, role);
     
     
     action = runtimeData.getParameter ("action");
