@@ -50,6 +50,7 @@ import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.groups.RDBMEntityStore;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * The UserLayout node group service.
@@ -248,4 +249,20 @@ public class NodeGroupService implements IGroupService {
     {
         return groupStore;
     }
+  public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
+    /**@todo: Implement this org.jasig.portal.groups.IGroupService method*/
+    throw new java.lang.UnsupportedOperationException("Method searchForGroups() not yet implemented.");
+  }
+  public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
+    /**@todo: Implement this org.jasig.portal.groups.IGroupService method*/
+    throw new java.lang.UnsupportedOperationException("Method searchForGroups() not yet implemented.");
+  }
+  public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
+    /**@todo: Implement this org.jasig.portal.groups.IGroupService method*/
+    throw new java.lang.UnsupportedOperationException("Method searchForEntities() not yet implemented.");
+  }
+  public EntityIdentifier[] searchForEntities(String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
+    /**@todo: Implement this org.jasig.portal.groups.IGroupService method*/
+    throw new java.lang.UnsupportedOperationException("Method searchForEntities() not yet implemented.");
+  }
 }
