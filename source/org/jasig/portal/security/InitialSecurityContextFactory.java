@@ -89,14 +89,22 @@ public class InitialSecurityContextFactory {
        getResourceAsStream("/properties/security.properties");
     pr = new Properties();
     try {
-      pr.load(secprops);
-      secprops.close();
+      pr.load(secprops);      
     }
     catch (IOException e) {
       PortalSecurityException ep = new PortalSecurityException(e.getMessage());
       LogService.log(LogService.ERROR,ep);
       throw(ep);
-    }
+    } finally {
+            try {
+                if (secprops != null) 
+                    secprops.close();
+            } catch (IOException ioe) {
+                LogService.log(LogService.ERROR,
+                        "InitialSecurityContextFactory:getInitialContext::unable to close InputStream "
+                                + ioe);
+            }
+        }
 
     // Look for our security context factory and instantiate an instance
     // of it or die trying.
