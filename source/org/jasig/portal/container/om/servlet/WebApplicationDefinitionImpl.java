@@ -67,18 +67,18 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
     private DescriptionSet descriptions;
     private DistributableImpl distributable;
     private ParameterSet parameters;
-    private FilterListImpl filters;
-    private FilterMappingListImpl filterMappings;
-    private ListenerListImpl listeners;
+    private FilterImpl[] filters;
+    private FilterMappingImpl[] filterMappings;
+    private ListenerImpl[] listeners;
     private ServletDefinitionList servletDefinitions;
     private ServletMappingListImpl servletMappings;
     private SessionConfigImpl sessionConfig;
-    private MimeMappingListImpl mimeMappings;
+    private MimeMappingImpl[] mimeMappings;
     private WelcomeFileListImpl welcomeFiles;
-    private ErrorPageListImpl errorPages;
+    private ErrorPageImpl[] errorPages;
     private TagLibListImpl tagLibs;
-    private ResourceEnvRefListImpl resourceEnvRefs;
-    private ResourceRefListImpl resourceRefs;
+    private ResourceEnvRefImpl[] resourceEnvRefs;
+    private ResourceRefImpl[] resourceRefs;
     private SecurityConstraintImpl[] securityConstraints;
     private LoginConfigImpl loginConfig;
     private SecurityRoleSet securityRoles;
@@ -174,27 +174,27 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         this.parameters = parameters;
     }
     
-    public FilterListImpl getFilters() {
+    public FilterImpl[] getFilters() {
         return this.filters;
     }
     
-    public void setFilters(FilterListImpl filters) {
+    public void setFilters(FilterImpl[] filters) {
         this.filters = filters;
     }
     
-    public FilterMappingListImpl getFilterMappings() {
+    public FilterMappingImpl[] getFilterMappings() {
         return this.filterMappings;
     }
     
-    public void setFilterMappings(FilterMappingListImpl filterMappings) {
+    public void setFilterMappings(FilterMappingImpl[] filterMappings) {
         this.filterMappings = filterMappings;
     }
 
-    public ListenerListImpl getListeners() {
+    public ListenerImpl[] getListeners() {
         return this.listeners;
     }
     
-    public void setListeners(ListenerListImpl listeners) {
+    public void setListeners(ListenerImpl[] listeners) {
         this.listeners = listeners;
     }
 
@@ -218,11 +218,11 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         this.sessionConfig = sessionConfig;
     }
     
-    public MimeMappingListImpl getMimeMappings() {
+    public MimeMappingImpl[] getMimeMappings() {
         return this.mimeMappings;
     }
     
-    public void setMimeMappings(MimeMappingListImpl mimeMappings) {
+    public void setMimeMappings(MimeMappingImpl[] mimeMappings) {
         this.mimeMappings = mimeMappings;
     }
     
@@ -234,11 +234,11 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         this.welcomeFiles = welcomeFiles;
     }
     
-    public ErrorPageListImpl getErrorPages() {
+    public ErrorPageImpl[] getErrorPages() {
         return this.errorPages;
     }
     
-    public void setErrorPages(ErrorPageListImpl errorPages) {
+    public void setErrorPages(ErrorPageImpl[] errorPages) {
         this.errorPages = errorPages;
     }
     
@@ -250,19 +250,19 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         this.tagLibs = tagLibs;
     }
     
-    public ResourceEnvRefListImpl getResourceEnvRefs() {
+    public ResourceEnvRefImpl[] getResourceEnvRefs() {
         return this.resourceEnvRefs;
     }
     
-    public void setResourceEnvRefs(ResourceEnvRefListImpl resourceEnvRefs) {
+    public void setResourceEnvRefs(ResourceEnvRefImpl[] resourceEnvRefs) {
         this.resourceEnvRefs = resourceEnvRefs;
     }
     
-    public ResourceRefListImpl getResourceRefs() {
+    public ResourceRefImpl[] getResourceRefs() {
         return this.resourceRefs;
     }
     
-    public void setResourceRefs(ResourceRefListImpl resourceRefs) {
+    public void setResourceRefs(ResourceRefImpl[] resourceRefs) {
         this.resourceRefs = resourceRefs;
     }   
      
