@@ -63,4 +63,5 @@ public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public String mode = BROWSE_MODE; //"browse", "edit" or "select"
    public String feedback; // use to display info to user (eg. "Unable to lock...")
    public String customMessage;
+   public boolean isAdminUser;
 }
