@@ -161,7 +161,6 @@ protected ICompositeGroupService getCompositeGroupService() throws GroupsExcepti
  */
 public java.util.Iterator getContainingGroups() throws GroupsException
 {
-    Iterator i;
     Collection groupsColl;
 
     Set groupKeys = getGroupKeys();
