@@ -296,8 +296,13 @@ public class TabColumnPrefsState extends BaseState
         newTab.setName(BLANK_TAB_NAME);
     }
     String siblingId=null;
-    if(method.equals("insertBefore")) siblingId=destinationTabId;
+    if(method.equals("insertBefore")) 
+      siblingId=destinationTabId;
     ulm.addNode(newTab,UserLayoutNodeDescription.ROOT_FOLDER_ID,siblingId);
+    
+    // Add a new column to this tab
+    UserLayoutFolderDescription newColumn = createFolder("Column");
+    ulm.addNode(newColumn, newTab.getId(), null);
   }
 
   /**
