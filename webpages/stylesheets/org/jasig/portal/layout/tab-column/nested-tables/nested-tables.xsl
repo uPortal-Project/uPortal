@@ -80,6 +80,9 @@
           <img alt="" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="10" height="1"/>
         </td>
       </tr>
+      <tr>
+        <xsl:copy-of select="channel[@name='Locale Chooser']"/>
+      </tr>
     </table>
     <xsl:copy-of select="channel[@name='Login']"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
