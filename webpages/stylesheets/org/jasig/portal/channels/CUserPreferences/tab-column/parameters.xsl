@@ -211,7 +211,7 @@
           <xsl:apply-templates select="example"/>
           <br/>
           <xsl:for-each select="type/restriction/value">
-                      <xsl:for-each select="type/restriction/value">
+                      
               <xsl:variable name="paramName">
                 <xsl:value-of select="../../../name"/>
               </xsl:variable>
@@ -241,7 +241,7 @@
           <br/>
           <select name="{name}" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
-                        <xsl:for-each select="type/restriction/value">
+                        
               <xsl:variable name="paramName">
                 <xsl:value-of select="../../../name"/>
               </xsl:variable>
@@ -309,6 +309,13 @@
           <xsl:apply-templates select="example"/>
           <br/>
           <xsl:for-each select="type/restriction/value">
+                      
+              <xsl:variable name="paramName">
+                <xsl:value-of select="../../../name"/>
+              </xsl:variable>
+              <xsl:variable name="paramValue">
+                <xsl:value-of select="."/>
+              </xsl:variable>
             <input type="checkbox" name="{name}" value="{.}">
               <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                 <xsl:attribute name="checked">checked</xsl:attribute>
@@ -333,6 +340,13 @@
           <br/>
           <select name="{name}" size="6" multiple="multiple" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
+                        
+              <xsl:variable name="paramName">
+                <xsl:value-of select="../../../name"/>
+              </xsl:variable>
+              <xsl:variable name="paramValue">
+                <xsl:value-of select="."/>
+              </xsl:variable>
               <option value="{.}">
                 <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                   <xsl:attribute name="selected">selected</xsl:attribute>
