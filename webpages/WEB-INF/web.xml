@@ -12,12 +12,6 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-   <servlet>
-    <servlet-name>download</servlet-name>
-    <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-
   <servlet>
     <servlet-name>Login</servlet-name>
     <servlet-class>org.jasig.portal.LoginServlet</servlet-class>
@@ -89,7 +83,7 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>download</servlet-name>
+    <servlet-name>uPortal</servlet-name>
     <url-pattern>/worker/download/*</url-pattern>
   </servlet-mapping>
 
