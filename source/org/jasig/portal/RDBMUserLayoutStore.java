@@ -1699,7 +1699,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
         sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
         HashMap layoutStructure = new HashMap();
-        ArrayList chanIds = new ArrayList();
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
         StringBuffer structChanIds = new StringBuffer();
         rs = stmt.executeQuery(sql);
@@ -1736,8 +1735,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               lastStructId = structId;
               if (!ls.isChannel()) {
                 ls.addFolderData(temp5, temp6); // Plug in saved column values
-              } else {
-                chanIds.add(new Integer(chanId)); // For later
               }
               if (RDBMServices.supportsOuterJoins) {
                 do {
@@ -1772,23 +1769,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           }
         } finally {
           rs.close();
-        }
-
-        // We have to retrieve the channel defition after the layout structure
-        // since retrieving the channel data from the DB may interfere with the
-        // layout structure ResultSet (in other words, Oracle is a pain to program for)
-        if (chanIds.size() > 0) {
-          // Pre-prime the channel pump
-          for (int i = 0; i < chanIds.size(); i++) {
-            int chanId = ((Integer) chanIds.get(i)).intValue();
-            // Figure out if we still need to make sure
-            // channels are cached here!
-            //crs.getChannelDefinition(chanId);
-            if (DEBUG > 1) {
-              System.err.println("Precached " + chanId);
-            }
-          }
-          chanIds.clear();
         }
 
         if (!RDBMServices.supportsOuterJoins) { // Pick up structure parameters
