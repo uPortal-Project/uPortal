@@ -258,17 +258,13 @@ public class XSLT {
    */
   public void transform() throws PortalException {
     try {
-      try {
-        Transformer trans = getTransformer(this.xslURI);
-        setStylesheetParams(trans, stylesheetParams);
-        trans.transform(xmlSource, xmlResult);
-      } catch (PortalException pe) {
-        throw pe;
-      }
+      Transformer trans = getTransformer(this.xslURI);
+      setStylesheetParams(trans, stylesheetParams);
+      trans.transform(xmlSource, xmlResult);
+    } catch (PortalException pe) {
+      throw pe;
     } catch (Exception e) {
-      PortalException pe = new PortalException(e);
-      pe.setRecordedException(e);
-      throw (pe);
+      throw new PortalException(e);
     }
   }
 
@@ -284,13 +280,11 @@ public class XSLT {
    */
   public static void transform(Source xmlSource, Result xmlResult, Hashtable stylesheetParams, String xslURI) throws PortalException {
     try {
-      try {
-        Transformer trans = getTransformer(xslURI);
-        setStylesheetParams(trans, stylesheetParams);
-        trans.transform(xmlSource,xmlResult);
-      } catch (PortalException pe) {
-        throw pe;
-      }
+      Transformer trans = getTransformer(xslURI);
+      setStylesheetParams(trans, stylesheetParams);
+      trans.transform(xmlSource,xmlResult);
+    } catch (PortalException pe) {
+      throw pe;
     } catch (Exception e) {
       throw new PortalException(e);
     }
