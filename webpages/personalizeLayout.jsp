@@ -34,6 +34,8 @@ if (sAction != null)
   // Channels
   else if (sAction.equals ("removeChannel"))
     layoutBean.removeChannel (request);
+  else if (sAction.equals ("addChannel"))
+    layoutBean.addChannel (request);
   else if (sAction.equals ("moveChannelLeft"))
     layoutBean.moveChannelLeft (request);
   else if (sAction.equals ("moveChannelRight"))
