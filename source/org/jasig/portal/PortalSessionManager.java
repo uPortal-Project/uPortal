@@ -90,7 +90,16 @@ public class PortalSessionManager extends HttpServlet {
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
+  private static PortalSessionManager instance = null;
 
+  /*
+    Provides access to the servlet instance ultimately to provide access
+    to the servlet context of the portal.
+  */
+  public static final PortalSessionManager getInstance()
+  {
+     return instance;
+  }
 
   // Following flag allows to disable features that prevent
   // repeated requests from going through. This is useful
@@ -111,6 +120,7 @@ public class PortalSessionManager extends HttpServlet {
    */
   public void init() throws ServletException {
     if(!initialized) {
+      instance = this;
       // Retrieve the servlet configuration object from the servlet container
       // and make sure it's available
       ServletConfig sc = getServletConfig();

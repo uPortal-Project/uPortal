@@ -42,6 +42,8 @@ import java.io.File;
 import java.util.Enumeration;
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
+import  org.jasig.portal.car.CarResources;
+import  org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.services.LogService;
 import com.oreilly.servlet.multipart.Part;
 
@@ -57,6 +59,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private String baseActionURL = null; // Not sure if this will stay
     private String httpRequestMethod=null;
     private boolean renderingAsRoot=false;
+    private static final String TRADITIONAL_MEDIA_BASE = "media/";
 
     /**
      * Default empty constructor
@@ -269,11 +272,68 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         try {
             url=getBaseWorkerURL(worker,false);
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
         return url;
     }
 
+    /**
+       Returns a media base appropriate for web-visible resources used by and
+       deployed with the passed in object. If the class of the passed in
+       object was loaded from a CAR then a URL appropriate for accessing
+       images in CARs is returned. Otherwise, a URL to the base media
+       in the web application's document root is returned.
+     */
+    public String getBaseMediaURL( Object aChannelObject )
+    throws PortalException
+    {
+        return getBaseMediaURL( aChannelObject.getClass() );
+    }
+
+    /**
+       Returns a media base appropriate for web-visible resources used by and
+       deployed with the passed in class. If the class of the passed in
+       object was loaded from a CAR then a URL appropriate for accessing
+       images in CARs is returned. Otherwise, a URL to the base media
+       in the web application's document root is returned.
+     */
+    public String getBaseMediaURL( Class aChannelClass )
+    throws PortalException
+    {
+        if ( aChannelClass.getClassLoader() instanceof CarClassLoader )
+            return createBaseCarMediaURL();
+        return TRADITIONAL_MEDIA_BASE;
+    }
+
+    /**
+       Returns a media base appropriate for the resource path passed in. The
+       resource path is the path to the resource within its channel archive.
+       (See org.jasig.portal.car.CarResources class for more information.)
+       If the passed in resourcePath matches that of a resource loaded from
+       CARs then this method returns a URL appropriate to obtain CAR 
+       deployed, web-visible resources. Otherwise it returns a URL to the 
+       traditional media path under the uPortal web application's document
+       root.
+     */
+    public String getBaseMediaURL( String resourcePath )
+    throws PortalException
+    {
+        if ( CarResources.getInstance().containsResource( resourcePath ) )
+            return createBaseCarMediaURL();
+        return TRADITIONAL_MEDIA_BASE;
+    }
+
+    /**
+       Creates the CAR media base URL.
+     */
+    private String createBaseCarMediaURL()
+    throws PortalException
+    {
+        String url = getBaseWorkerURL( CarResources.CAR_WORKER_ID, true );
+        return url.concat( "?"+ CarResources.CAR_RESOURCE_PARM + "=" );
+    }
+
+    
     /**
      * Returns the URL to invoke one of the workers specified in PortalSessionManager.
      * Typically the channel that is invoked with the worker will have to implement an

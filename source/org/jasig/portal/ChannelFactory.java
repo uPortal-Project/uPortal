@@ -35,6 +35,7 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.services.LogService;
@@ -50,6 +51,13 @@ public class ChannelFactory {
 
     // table of multithreaded channels
     public static final java.util.Hashtable staticChannels=new java.util.Hashtable();
+    
+    // create a CAR class loader object for loading channel classes from CARs
+    // Note that the current class loader is passed as the parent and is
+    // searched before CARs are. So if a class exists in the VM classpath
+    // _and_ in a CAR the one on the classpath will be found first.
+    public static ClassLoader classLoader = new CarClassLoader(ChannelFactory.class.getClassLoader());
+    
 
     /**
      * Instantiate a channel from information supplied by the user layout manager.
@@ -113,7 +121,9 @@ public class ChannelFactory {
             exists=true;
         } else {
             try {
-                cobj =  Class.forName(className).newInstance();
+                // now load the class using the car class loader which uses
+                // the default class loader before looking into the CARs
+                cobj =  classLoader.loadClass(className).newInstance();
             } catch (Exception e) {
                 throw new PortalException("Unable to instantiate class \""+className+"\"",e);
             }
