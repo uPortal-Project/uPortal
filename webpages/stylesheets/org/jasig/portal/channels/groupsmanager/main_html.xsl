@@ -370,7 +370,7 @@
 					  <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Create';" value="Create New Member Group" class="uportal-button" />
 					  <xsl:text>
 					  </xsl:text>
-					  <input type="text" size="25" name="grpName" value="(new group name)" class="uportal-channel-text" />
+					  <input type="text" size="25" name="grpNewName" value="(new group name)" class="uportal-channel-text" />
 					</td>
 				  </tr>
 			  </xsl:if>
