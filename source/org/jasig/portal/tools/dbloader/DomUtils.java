@@ -47,7 +47,7 @@ import org.w3c.dom.Text;
  * Utility class centralizing various DOM related functions used during
  * loading of the database.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
  */

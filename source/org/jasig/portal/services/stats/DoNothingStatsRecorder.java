@@ -39,7 +39,7 @@ package org.jasig.portal.services.stats;
  * Does absolutely nothing with the recorded statistics.
  * If you want to process the statistics, use a different
  * IStatsRecorder implementation.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class DoNothingStatsRecorder extends BaseStatsRecorder {

@@ -44,7 +44,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * Formulates stats messages which can be logged, printed, etc.
  * Subclasses need to override <code>outputMessage(String message)</code>.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public abstract class MessageStatsRecorder implements IStatsRecorder {

@@ -51,7 +51,7 @@ import org.jasig.portal.security.IPerson;
  * the <code>IStatsRecorder</code> implementation should
  * probably aggregate statistics on a single server.</p>
  * 
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public interface IStatsRecorder {

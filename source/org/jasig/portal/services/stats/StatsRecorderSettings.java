@@ -47,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
  * be read upon portal startup from portal.properties.  At runtime,
  * the settings in this class can be controlled via
  * <code>StatsRecorder.set()</code>.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class StatsRecorderSettings {

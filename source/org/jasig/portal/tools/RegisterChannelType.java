@@ -46,7 +46,7 @@ import org.jasig.portal.IChannelRegistryStore;
  * type will be available to channel publishers for the production
  * of new channel definitions based on the channel type.</p>
  * <p>Usage: RegisterChannelType <class> <name> <description> <CPD URI></p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class RegisterChannelType

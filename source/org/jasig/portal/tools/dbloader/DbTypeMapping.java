@@ -42,7 +42,7 @@ import java.util.Iterator;
  * Holds mapping information from generic data types for table columns
  * to specific types for different databases.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
  */

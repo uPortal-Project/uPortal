@@ -42,7 +42,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * Records the removal of a folder from a user's layout
  * in a separate thread.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class RecordFolderRemovedFromLayoutWorkerTask extends StatsRecorderWorkerTask {

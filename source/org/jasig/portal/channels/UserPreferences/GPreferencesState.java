@@ -73,8 +73,8 @@ import org.xml.sax.ContentHandler;
  * stylesheet is expected to replace this component with its own
  * class to make layout/stylesheet preference management more
  * intuitive.
- * @author Ken Weiner, kweiner@interactivebusiness.com
- * @author Peter Kharchenko, peterk@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
+ * @author Peter Kharchenko, pkharchenko@unicon.net
  * @version $Revision$
  */
 class GPreferencesState extends BaseState {

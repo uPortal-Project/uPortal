@@ -38,7 +38,7 @@ package org.jasig.portal.tools.dbloader;
 /**
  * Utility class used during loading of the database.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
  */

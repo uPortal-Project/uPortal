@@ -39,7 +39,7 @@ import org.jasig.portal.security.IPerson;
 
 /**
  * Records a user login in a separate thread.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class RecordLoginWorkerTask extends StatsRecorderWorkerTask {

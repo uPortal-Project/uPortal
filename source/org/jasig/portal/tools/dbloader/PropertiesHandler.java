@@ -43,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * All configuration values are stored in a passed in Configuration
  * object.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
  */

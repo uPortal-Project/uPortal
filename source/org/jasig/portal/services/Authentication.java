@@ -56,7 +56,7 @@ import org.jasig.portal.security.PortalSecurityException;
 /**
  * Attempts to authenticate a user and retrieve attributes
  * associated with the user.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Don Fracapane (df7@columbia.edu)
  * Added properties in the security properties file that hold the tokens used to
  * represent the principal and credential for each security context. This version

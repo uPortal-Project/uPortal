@@ -42,7 +42,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * Records the rendering of a channel
  * in a separate thread.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class RecordChannelRenderedWorkerTask extends StatsRecorderWorkerTask {

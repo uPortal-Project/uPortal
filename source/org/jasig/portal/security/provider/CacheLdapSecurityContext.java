@@ -45,7 +45,7 @@ import org.jasig.portal.security.PortalSecurityException;
  * user.  The user's credentials are cached.</p>
  *
  * @author Russell Tokuyama (University of Hawaii)
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  * @deprecated As of uPortal 2.1.3, use {@link org.jasig.portal.security.provider.SimpleLdapSecurityContext} chained with {@link org.jasig.portal.security.provider.CacheSecurityContext} instead
  */

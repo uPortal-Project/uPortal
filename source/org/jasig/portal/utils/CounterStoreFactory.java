@@ -41,8 +41,8 @@ import org.jasig.portal.properties.PropertiesManager;
 
 /**
  * Produces an implementation of ICounterStore
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CounterStoreFactory {

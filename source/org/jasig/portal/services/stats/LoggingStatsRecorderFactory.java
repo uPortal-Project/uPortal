@@ -38,7 +38,7 @@ package org.jasig.portal.services.stats;
 
 /**
  * Produces a LoggingStatsRecorder, an implementation of IStatsRecorder
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class LoggingStatsRecorderFactory implements IStatsRecorderFactory {

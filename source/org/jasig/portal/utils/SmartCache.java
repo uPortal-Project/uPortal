@@ -42,7 +42,7 @@ import java.util.Iterator;
  * The SmartCache class is used to store objects in memory for
  * a specified amount of time.  The time should be specified in seconds.
  * If the time is specified as a negative value, it will be cahced indefinitely.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class SmartCache extends HashMap {

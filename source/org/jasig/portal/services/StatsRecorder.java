@@ -80,11 +80,11 @@ import org.jasig.portal.utils.threading.WorkTracker;
  * to an IStatsRecorder implementation that is determined
  * by the IStatsRecorderFactory implementation that can be
  * configured in portal.properties.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class StatsRecorder {
-    private static final Log log = LogFactory.getLog(StatsRecorder.class);
+  private static final Log log = LogFactory.getLog(StatsRecorder.class);
   protected static StatsRecorder statsRecorderInstance;
   protected StatsRecorderSettings statsRecorderSettings;
   protected IStatsRecorder statsRecorder;

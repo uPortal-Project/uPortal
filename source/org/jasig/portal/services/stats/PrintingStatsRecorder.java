@@ -38,7 +38,7 @@ package org.jasig.portal.services.stats;
 
 /**
  * Prints portal statistics to std out.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class PrintingStatsRecorder extends MessageStatsRecorder {

@@ -56,7 +56,7 @@ import org.xml.sax.ContentHandler;
 /**
  * This utility provides useful XML helper methods.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class XML {

@@ -42,7 +42,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * Records the moving of a channel in a user's layout
  * in a separate thread.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class RecordChannelMovedInLayoutWorkerTask extends StatsRecorderWorkerTask {

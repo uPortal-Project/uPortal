@@ -60,8 +60,8 @@ import org.xml.sax.ContentHandler;
 /** 
  * CUserPreferences manages User Layout, user preferences and profiles.
  * 
- * @author Peter Kharchenko, peterk@interactivebusiness.com
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Peter Kharchenko, pkharchenko@unicon.net
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CUserPreferences implements IPrivilegedChannel {

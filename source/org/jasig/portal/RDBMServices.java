@@ -59,7 +59,7 @@ import org.apache.commons.logging.LogFactory;
  * Provides relational database access and helper methods.
  * A static routine determins if the database/driver supports
  * prepared statements and/or outer joins.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author George Lindholm, george.lindholm@ubc.ca
  * @version $Revision$
  */

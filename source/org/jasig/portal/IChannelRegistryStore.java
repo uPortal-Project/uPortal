@@ -42,7 +42,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * Interface defining how the portal reads and writes its channel types,
  * definitions, and categories.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public interface IChannelRegistryStore {

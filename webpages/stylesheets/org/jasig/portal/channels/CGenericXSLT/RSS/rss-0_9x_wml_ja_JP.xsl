@@ -33,7 +33,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Author: Ken Weiner, kweiner@interactivebusiness.com
-Author: Peter Kharchenko, pkharchenko@interactivebusiness.com
+Author: Peter Kharchenko, pkharchenko@unicon.net
 $Revision$
 -->
 

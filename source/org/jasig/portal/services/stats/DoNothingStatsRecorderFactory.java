@@ -37,7 +37,7 @@ package org.jasig.portal.services.stats;
 
 /**
  * Produces a DoNothingStatsRecorder, an implementation of IStatsRecorder
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class DoNothingStatsRecorderFactory implements IStatsRecorderFactory {

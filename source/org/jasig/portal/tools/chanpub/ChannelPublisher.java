@@ -84,8 +84,8 @@ import org.w3c.dom.NodeList;
  * ant publish -Dchannel=all  (this will publish all channels that have a corresponding xml file)
  * ant publish -Dchannel=webmail.xml  (this will publish the specified channels)
  *
- * @author Freddy Lopez, flopez@interactivebusiness.com
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Freddy Lopez, flopez@unicon.net
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd, mboyd@sct.com
  * @version $Revision$
  */

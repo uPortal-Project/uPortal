@@ -56,7 +56,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Handles SAX events resulting from parsing of the data.xml file.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
 */

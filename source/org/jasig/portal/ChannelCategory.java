@@ -37,7 +37,7 @@ package org.jasig.portal;
 
 /**
  * A channel category.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class ChannelCategory {

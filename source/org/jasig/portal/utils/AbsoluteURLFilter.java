@@ -42,7 +42,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * <p>Replaces all relative URLs with absolute URLs.</p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public abstract class AbsoluteURLFilter extends SAX2FilterImpl {

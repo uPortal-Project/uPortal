@@ -45,7 +45,7 @@ package org.jasig.portal.utils;
  * Most of the code was borrowed from Xerces serializer classes.
  * If anyone finds a useable method in a standard XML API
  * that escapes XML strings, we should use it in place of this class.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class XMLEscaper

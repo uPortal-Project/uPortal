@@ -93,7 +93,7 @@ import org.xml.sax.ContentHandler;
 /**
  * This user preferences component is for use with layouts based
  * on the tab-column structure.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class TabColumnPrefsState extends BaseState

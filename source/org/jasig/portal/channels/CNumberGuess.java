@@ -53,7 +53,7 @@ import org.xml.sax.ContentHandler;
 
 /** <p>A number guessing game which asks the user to enter a number within
  * a certain range as determined by this channel's parameters.</p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CNumberGuess implements IChannel

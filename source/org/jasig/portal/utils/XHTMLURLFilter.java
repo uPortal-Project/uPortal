@@ -43,7 +43,7 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * Replaces all relative URLs with absolute URLs in
  * an XHTML document
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class XHTMLURLFilter extends AbsoluteURLFilter {

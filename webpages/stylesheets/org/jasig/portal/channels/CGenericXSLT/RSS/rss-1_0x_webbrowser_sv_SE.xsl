@@ -33,7 +33,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Author: Susan Bramhall, susan.bramhall@yale.edu
-Author: Ken Weiner, kweiner@interactivebusiness.com
+Author: Ken Weiner, kweiner@unicon.net
 Version $Revision$
 -->
 

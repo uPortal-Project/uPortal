@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Produces an implementation of IUserIdentityStore
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class UserIdentityStoreFactory {

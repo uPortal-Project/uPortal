@@ -51,7 +51,7 @@ import org.jasig.portal.security.IPerson;
  * Extending this class will also shield you from having to
  * implement any newly added methods to 
  * <code>IStatsRecorder</code> in the future.</p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class BaseStatsRecorder implements IStatsRecorder {

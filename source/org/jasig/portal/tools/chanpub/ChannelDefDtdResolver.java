@@ -43,7 +43,7 @@ import org.xml.sax.InputSource;
 
 /**
  * Resolves the channelDefinition.dtd
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class ChannelDefDtdResolver implements EntityResolver {

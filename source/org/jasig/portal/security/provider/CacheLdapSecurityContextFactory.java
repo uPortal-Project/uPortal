@@ -45,7 +45,7 @@ import org.jasig.portal.security.ISecurityContextFactory;
  * Just returns a new instance of the CacheLdapSecurityContext.</p>
  *
  * @author Russell Tokuyama (University of Hawaii)
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  * @deprecated As of uPortal 2.1.3, use {@link SimpleLdapSecurityContextFactory} chained with {@link CacheSecurityContextFactory} instead
  */

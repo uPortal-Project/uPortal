@@ -39,7 +39,7 @@ import org.jasig.portal.security.IPerson;
 
 /**
  * Records creation of a new session in a separate thread.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class RecordSessionCreatedWorkerTask extends StatsRecorderWorkerTask {

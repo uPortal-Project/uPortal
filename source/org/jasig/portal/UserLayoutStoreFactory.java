@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Produces an implementation of IUserLayoutStore
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */

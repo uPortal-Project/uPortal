@@ -49,7 +49,7 @@ import org.w3c.dom.Document;
 /**
  * Holds all configuration values used in DbLoader as part of loading a database.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
  */

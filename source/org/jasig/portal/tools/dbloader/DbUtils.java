@@ -49,7 +49,7 @@ import org.jasig.portal.RDBMServices;
 /**
  * Utility class for centralizing various functions performed on the database.
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd <mark.boyd@engineer.com>
  * @version $Revision$
  */

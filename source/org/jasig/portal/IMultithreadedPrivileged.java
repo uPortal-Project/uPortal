@@ -37,7 +37,7 @@ package org.jasig.portal;
 
 /**
  * An interface that a multithreaded privileged channel must implement.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 

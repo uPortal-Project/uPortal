@@ -39,7 +39,7 @@ package org.jasig.portal;
  * A channel type references a particular java class that implements
  * the IChannel interface.  It also references a channel publishing document
  * that describes the parameters that must be fed to the channel.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class ChannelType {

@@ -39,7 +39,7 @@ import org.jasig.portal.utils.threading.WorkerTask;
 
 /**
  * Base class for all stats recorder worker tasks to extend.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public abstract class StatsRecorderWorkerTask extends WorkerTask {

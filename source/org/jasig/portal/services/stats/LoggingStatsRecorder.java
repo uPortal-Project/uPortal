@@ -41,7 +41,7 @@ import org.jasig.portal.services.LogService;
 /**
  * Logs portal statistics to the portal's log.  Contains
  * set and get methods to control the log priority.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class LoggingStatsRecorder extends MessageStatsRecorder {

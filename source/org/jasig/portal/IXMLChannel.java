@@ -41,7 +41,7 @@ package org.jasig.portal;
  * interface has been introduced.  It will be removed at some point in the
  * future, so please make an effort to convert your channels so that they
  * implement IChannel instead of IXMLChannel.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  * @deprecated IXMLChannel in uPortal 1.x has been renamed to IChannel in uPortal 2.0 and beyond
  */

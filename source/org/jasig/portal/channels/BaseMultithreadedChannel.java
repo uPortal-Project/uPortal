@@ -52,7 +52,7 @@ import org.xml.sax.ContentHandler;
  * Use this only if you are familiar with the IMultithreadedChannel interface.
  * Channels that extend MultithreadedChannel typically only need to override the renderXML method
  * and should not contain any non-static member variables.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public abstract class BaseMultithreadedChannel implements IMultithreadedChannel {

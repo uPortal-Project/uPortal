@@ -63,7 +63,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
  * Reference implementation of IChannelRegistryStore.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class RDBMChannelRegistryStore implements IChannelRegistryStore {

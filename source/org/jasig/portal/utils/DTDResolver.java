@@ -43,8 +43,8 @@ import org.xml.sax.InputSource;
 
 /**
  * Provides a means to resolve uPortal DTDs
- * @author Peter Kharchenko, peterk@interactivebusiness.com
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Peter Kharchenko, pkharchenko@unicon.net
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Dave Wallace, dwallace@udel.edu modifications 
  * @version $Revision$
  */
