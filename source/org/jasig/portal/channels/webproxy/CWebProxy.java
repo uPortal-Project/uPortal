@@ -183,7 +183,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 {
   Map stateTable;
   // to prepend to the system-wide cache key
-  static final String systemCacheId="org.jasig.portal.channels.CWebProxy";
+  static final String systemCacheId="org.jasig.portal.channels.webproxy.CWebProxy";
 
   // All state variables now stored here
   private class ChannelState
@@ -221,9 +221,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       id = 0;
       cacheMode = cacheScope = null;
       iperson = null;
-      cacheTimeout = cacheDefaultTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CWebProxy.cache_default_timeout");
-      cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.CWebProxy.cache_default_mode");
-      cacheDefaultScope = PropertiesManager.getProperty("org.jasig.portal.channels.CWebProxy.cache_default_scope");
+      cacheTimeout = cacheDefaultTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_timeout");
+      cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_mode");
+      cacheDefaultScope = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_scope");
       runtimeData = null;
       cookieCutter = new CookieCutter();
       localConnContext = null;
