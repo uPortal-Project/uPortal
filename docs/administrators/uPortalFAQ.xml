@@ -120,10 +120,10 @@
           <answer>
              <para>Simply put, <productname>uPortal</productname> is a
              framework for producing a campus portal. We don't intend
-             it to be an out-of-the-box or "turn key" portal
-             "solution". Instead, uPortal is a set of Java classes and
-             XML/XSL documents that you can use to produce a portal for
-             use on your campus.
+             it to be an out-of-the-box or <quote>turn key</quote>
+             portal <quote>solution</quote>. Instead, uPortal is a set
+             of Java classes and XML/XSL documents that you can use to
+             produce a portal for use on your campus.
              </para>
           </answer>
        </qandaentry>
@@ -152,20 +152,22 @@
           <answer>
 
              <para>This is really three different questions rolled
-             into one, because there are three different 'levels' that
-             we can use to discuss what you have to understand in
-             order to 'use' the <productname>uPortal</productname>
-             framework. These levels aren't totally distinct - there's
-             considerable overlap between them. Let's consider them
-             one at a time.</para>
+             into one, because there are three different
+             <quote>levels</quote> that we can use to discuss what you
+             have to understand in order to <quote>use</quote> the
+             <productname>uPortal</productname> framework. These
+             levels aren't totally distinct - there's considerable
+             overlap between them. Let's consider them one at a
+             time.</para>
 
              <para> One level addresses what you have to know in order
              to keep an instance of the portal, customized for your
              campus' requirements and IT infrastructure, running under
              your chosen application server. I'll call that the
-             'administrative' level, since a lot of the tasks are
-             closely analogous to administering a DBMS or HTTP
-             server. See <xref linkend="install" />, below.</para>
+             <quote>administrative</quote> level, since a lot of the
+             tasks are closely analogous to administering a DBMS or
+             HTTP server. See <xref linkend="install" />,
+             below.</para>
 
              <para>The second level addresses what you must know in
              order to do the development necessary to
@@ -173,16 +175,16 @@
              customized for your campus' needs and IT infrastructure,
              that you'll use to facilitate the delivery of content and
              services to end-users. I'll call that the
-             'implementation' level. See <xref linkend="implementing"
-             />, below.</para>
+             <quote>implementation</quote> level. See <xref
+             linkend="implementing" />, below.</para>
 
              <para>The third level addresses what you must know in
              order to develop programs (which the
              <productname>uPortal</productname> developers call
-             'channels') that will work within the portal to actually
-             deliver the content and services. I'll call that the
-             'content development' level. See <xref linkend="content"
-             />, below.</para>
+             <emphasis>channels</emphasis>) that will work within the
+             portal to actually deliver the content and services. I'll
+             call that the <quote>content development</quote>
+             level. See <xref linkend="content" />, below.</para>
 
           </answer>
        </qandaentry>
@@ -226,25 +228,27 @@
              install, it has to be something you customize for the
              needs of your institution. Some portal vendors say that
              they can have a portal ready for you in no time, but
-             after you've paid them, you realize that you're on the
-             hook for some very expensive consulting engagements in
-             order to get their closed, proprietary portal to work the
-             way you want.</para>
+             after you've paid them for the <quote>product</quote>,
+             you realize that you're on the hook for some very
+             expensive consulting engagements in order to get their
+             closed, proprietary portal to work the way you
+             want.</para>
 
-             <para>Some portal "solutions" are actually third party
-             packages that a vendor of a non-Java, non-portal product
-             acquired in order to enter the portal market without
-             doing any R &#38; D. <productname>uPortal</productname>
-             was designed from the ground up to provide the tools you
-             need to build a portal and has always been is a 100% pure
-             Java.</para>
+             <para>Some portal <quote>solutions</quote> are actually
+             third party packages that a vendor of a non-Java,
+             non-portal product acquired in order to enter the portal
+             market without doing any R &#38;
+             D. <productname>uPortal</productname> was designed from
+             the ground up to provide the tools you need to build a
+             portal and has always been is a 100% pure Java.</para>
 
-             <para>Still other portal "solutions" are services that
-             are no charge to your campus, but require your campus to
-             accept advertising in exchange for the use of the
-             service. With <productname>uPortal</productname>, you
-             don't have to run advertising in your portal, but if you
-             wish to, your campus can keep the revenue produced.</para>
+             <para>Still other portal <quote>solutions</quote> are
+             services that are no charge to your campus, but require
+             your campus to accept advertising in exchange for the use
+             of the service. With <productname>uPortal</productname>,
+             you don't have to run advertising in your portal, but if
+             you wish to, your campus can keep the revenue
+             produced.</para>
 
              <para>Last but not least,
              <productname>uPortal</productname> is also available free
@@ -259,8 +263,7 @@
   </sect1>
 
   <sect1 id="install">
-    <title>Deploying, administering and maintaining an instance of
-    <productname>uPortal</productname></title>
+    <title>Deploying, administering and maintaining your portal</title>
     <qandaset>
 
        <qandaentry>
@@ -387,8 +390,7 @@
   </sect1>
 
   <sect1 id="implementing">
-    <title>Developing a campus portal using the
-    <productname>uPortal</productname> framework</title>
+    <title>Developing your campus portal</title>
 
     <qandaset>
        <qandaentry>
@@ -433,7 +435,7 @@
                    <citation>Kay2000</citation> to those looking for a
                    tutorial and in-depth reference guide to
                    XSLT. <citation>Bradley2000</citation> provides a
-                   wide-ranging overview of the XSL standard.</para>
+                   guide to the overall XSL standard.</para>
 
                 </listitem>
                 <listitem>
@@ -461,19 +463,19 @@
 
                    <para>Although now a little dated,
                    <citation>Hunter1998</citation> is a great tutorial
-                   on Java Servlets</para>
+                   on Java Servlets. The publisher expects to release
+                   a new edition soon.</para>
                 </listitem>
                 <listitem>
-                   <para>JDBC. The portal requires the use of a
+                   <para>SQL. The portal requires the use of a
                    relational database to store some user,
                    authentication, and channel subscription
-                   information, and the Java standard way to issue
-                   requests to a relational database server is to use
-                   the Java Database Connectivity API, which in turn
-                   requires use of SQL, the Structured Query
-                   Language. You must therefore be familiar with the
-                   syntax and proper use of JDBC and SQL in order to work with
-                   the <productname>uPortal</productname>
+                   information, and the standard way to issue
+                   requests to a relational database server is using
+                   SQL, the Structured Query Language. You must
+                   therefore be familiar with the syntax and proper
+                   use of SQL in order to work with the
+                   <productname>uPortal</productname>
                    framework. </para>
                 </listitem>
              </itemizedlist>
@@ -494,8 +496,9 @@
           </question>
           <answer>
              <para>No. I'm using the word 'framework' in it's
-             widely-accepted, Software Engineering sense. A framework
-             is a reusable design, expressed as a set of classes, that
+             widely-accepted, Software Engineering
+             sense<citation>Wirfs-Brock1991</citation>. A framework is
+             a reusable design, expressed as a set of classes, that
              can serve as a solution to a family of related problems
              and support reuse at a larger granularity than classes. A
              mature framework allows components to be reused as
@@ -508,10 +511,11 @@
              <para>Most frameworks in widespread use today are for
              constructing graphical user interfaces (GUIs) for
              traditional desktop
-             applications. <productname>uPortal</productname>is a
-             framework for developing a web portal and developing
-             content for display within that portal, but the
-             underlying principal is the same: the framework provides
+             applications. <productname>uPortal</productname> is
+             different in that it's a framework for developing a web
+             portal and developing content for display within that
+             portal, but the underlying principal of both kinds of
+             frameworks is the same: the framework provides
              programmers with an infrastructure that supports a
              coherent architectural model, allowing developers to
              concentrate on applying their expertise to the problem
@@ -563,12 +567,49 @@
              <para>To deliver content which requires complex user
              interaction, you'll have to create a complete web
              application which uses a channel as its user
-             interface. This approach requires that you have almost
-             the same skills as someone developing a portal instance
-             (see above), as well as be able to create and edit XML
-             DTDs and XSL stylesheets. To get an idea of what you're
-             in for when you're working at this level, carefully read
-             <ulink
+             interface. This approach requires that you have the XML,
+             Servlets and SQL skills that someone developing a campus
+             portal instance using <productname>uPortal</productname>
+             has (see above) as well as experience with:
+
+             <itemizedlist mark="bullet">
+
+                <listitem>
+                   <para>JDBC. It's likely you will want your
+                   application to store information in and retrieve
+                   information from a database, so the ability to use
+                   the Java Database Connectivity API will be
+                   essential. The portal itself requires a relational
+                   database to store information related to users and
+                   their preferences, and the standard way for your
+                   application to access this information is by using
+                   JDBC.</para>
+
+                   <para>If you're not familiar with the JDBC API,
+                   <citation>White1999</citation> is a comprehensive
+                   tutorial, reference and source of sample
+                   code</para>
+                </listitem>
+
+                <listitem>
+
+                   <para>EJB. If your application requires distributed
+                   data access, transactions and persistence, the
+                   Enterprise Java Beans distributed component model
+                   will probably become a central part of your
+                   design.</para>
+
+                   <para>For ENB beginners,
+                   <citation>Monson-Haefel2000</citation> provides a
+                   complete reference.</para>
+                </listitem>
+
+
+             </itemizedlist>
+             </para>
+ 
+             <para>To get an idea of what you're in for when you're
+             working at this level, carefully read <ulink
              url="http://www.mis2.udel.edu/ja-sig/write-channel/">Michael
              Oltz' tutorial</ulink>.</para>
 
@@ -814,6 +855,28 @@
           </biblioentry>
 
           <biblioentry>
+            <abbrev>Gulutzan1999</abbrev>
+            <authorgroup> 
+                <author>
+                   <firstname>Peter</firstname>
+                   <surname>Gulutzan1999</surname>
+                </author>
+                 <author>
+                   <firstname>Trudy</firstname>
+                   <surname>Pelzer</surname>
+                </author>
+            </authorgroup>
+            <copyright>
+               <year>1999</year>
+            </copyright>
+            <isbn>0-879-30568-1</isbn>
+            <title>SQL-99 Complete, Really</title>
+            <publisher>
+               <publishername>CMP Books</publishername>
+            </publisher>
+          </biblioentry>
+
+          <biblioentry>
             <abbrev>Harold1999</abbrev>
                <author>
                   <firstname>Elliotte</firstname>
@@ -953,6 +1016,37 @@
             </publisher>
           </biblioentry>
 
+          <biblioentry>
+            <abbrev>White1999</abbrev>
+            <authorgroup> 
+                <author>
+                   <firstname>Seth</firstname>
+                   <surname>White</surname>
+                </author>
+                <author>
+                   <firstname>Maydene</firstname>
+                   <surname>Fisher</surname>
+                </author>
+                <author>
+                   <firstname>Rick</firstname>
+                   <surname>Cattell</surname>
+                </author>
+                 <author>
+                   <firstname>Graham</firstname>
+                   <surname>Hamilton</surname>
+                </author>
+             </authorgroup>
+            <copyright>
+               <year>1999</year>
+            </copyright>
+            <isbn>0-2014-3328-1</isbn>
+            <title>JDBC API Tutorial and Reference, Second Edition:
+            Universal Data Access for the Java 2 Platform</title>
+            <publisher>
+              <publishername>O'Reilly &#38; Associates</publishername>
+            </publisher>
+          </biblioentry>
+
        </bibliodiv>
 
        <bibliodiv>
@@ -1010,7 +1104,7 @@
        </bibliodiv>
 
      </bibliography>
-     <para>There is no spoon.</para>
+     <para>$Id$</para>
   </sect1>
 
 </article>
