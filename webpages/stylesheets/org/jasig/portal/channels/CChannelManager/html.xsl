@@ -11,6 +11,7 @@
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
   <xsl:variable name="defaultTextRows">10</xsl:variable>
+  <xsl:param name="stylesheetCacheSize">0</xsl:param>
 
 
 
@@ -95,6 +96,24 @@
           </table>
         </td>
       </tr>
+	  <tr>
+		<td>
+			   <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
+            	<tr class="uportal-channel-strong" valign="top">
+              		<td  class="uportal-channel-text" colspan="2">Manage stylesheet cache:</td>
+            	</tr>
+          		<tr>
+            		<td colspan="2">Stylesheet Cache size currently <xsl:value-of select="$stylesheetCacheSize"/></td>
+            	</tr>
+            	<tr>
+            		<td><img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+              		</td>
+            		<td width="100%" class="uportal-channel-text" align="left"><a href="{$baseActionURL}?uPCM_action=purgeStylesheetCache">Purge Stylesheet Cache</a>
+            		</td>
+          		</tr>
+          	</table>
+		</td>
+	  </tr>
     </table>
   </xsl:template>
 
