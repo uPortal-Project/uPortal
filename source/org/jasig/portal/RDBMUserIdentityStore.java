@@ -70,9 +70,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @return  uPortalUID number
    * @throws Authorization exception if no user is found.
    */
-  public int getuPortalUID (IPerson person) throws AuthorizationException {
+  public int getPortalUID (IPerson person) throws AuthorizationException {
     int uPortalUID=-1;
-    uPortalUID=this.getuPortalUID(person, false);
+    uPortalUID=this.getPortalUID(person, false);
     return uPortalUID;
     }
 
@@ -82,7 +82,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @param   uPortalUID integer key to uPortal data for a user
    * @throws Authorization exception if a sql error is encountered
    */
-  public void removeuPortalUID(int uPortalUID) throws Exception {
+  public void removePortalUID(int uPortalUID) throws Exception {
      Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -160,7 +160,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @throws Authorization exception if createPortalData is false and no user is found
    *  or if a sql error is encountered
    */
-   public int getuPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+   public int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
     int uPortalUID=-1;
 
     Connection con = rdbmService.getConnection();

@@ -125,7 +125,7 @@ public class Authentication {
 
       RDBMUserIdentityStore UIDStore = new RDBMUserIdentityStore();
       try {
-      int newUID = UIDStore.getuPortalUID(m_Person, true);
+      int newUID = UIDStore.getPortalUID(m_Person, true);
       m_Person.setID(newUID);
       } catch (AuthorizationException  ae) {
       return (false);
