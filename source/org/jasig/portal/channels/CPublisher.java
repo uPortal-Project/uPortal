@@ -51,6 +51,7 @@ import  java.io.*;
 import  java.util.*;
 import  java.sql.*;
 
+
 /**
  * Provides methods associated with subscribing to a channel.
  * This includes preview, listing all available channels
@@ -63,7 +64,7 @@ public class CPublisher
   private boolean DEBUG = false;
   private ChannelStaticData staticData = null;
   private ChannelRuntimeData runtimeData = null;
-    private StylesheetSet set;
+  private StylesheetSet set;
   private IChannelRegistryStore chanReg = null;
   private RdbmServices rdbmService = new RdbmServices();
   private Connection con = null;
@@ -114,8 +115,8 @@ public class CPublisher
   /** Construct a CPublisher.
    */
   public CPublisher () {
-    this.staticData = new ChannelStaticData ();
-    this.runtimeData = new ChannelRuntimeData ();
+    this.staticData = new ChannelStaticData();
+    this.runtimeData = new ChannelRuntimeData();
     this.set = new StylesheetSet(stylesheetDir + fs + "CPublisher.ssl");
     this.set.setMediaProps(portalBaseDir + fs + "properties" + fs + "media.properties");
     // Should obtain implementation in a different way!
@@ -178,19 +179,19 @@ public class CPublisher
       currentStep = runtimeData.getParameter("currentStep");
     if (action != null) {
       if (action.equals("choose"))
-        prepareChoose();
+        prepareChoose(); 
       else if (action.equals("publish"))
-        preparePublish();
+        preparePublish(); 
       else if (action.equals("publishCats"))
-        preparePublishCats();
+        preparePublishCats(); 
       else if (action.equals("publishRoles"))
-        preparePublishRoles();
+        preparePublishRoles(); 
       else if (action.equals("publishControls"))
-        preparePublishControls();
+        preparePublishControls(); 
       else if (action.equals("publishName"))
-        preparePublishName();
+        preparePublishName(); 
       else if (action.equals("saveChanges"))
-        prepareSaveChanges();
+        prepareSaveChanges(); 
       else if (action.equals("cancel"))
         mode = NONE;
     }
@@ -234,7 +235,8 @@ public class CPublisher
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException {
+  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException, 
+      GeneralRenderingException {
     String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {
       if (xsl != null) {
@@ -246,8 +248,8 @@ public class CPublisher
         ssParams.put("extraSteps", Integer.toString(EXTRA));
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      }
-      else
+      } 
+      else 
         Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -260,8 +262,8 @@ public class CPublisher
   private void prepareChoose () {
     mode = PUBLISH;
     currentStep = "1";
-    numSteps=0;
-    totSteps=0;
+    numSteps = 0;
+    totSteps = 0;
     catID = null;
     String runtimeURI = runtimeData.getParameter("channel");
     if (runtimeURI != null)
@@ -291,11 +293,11 @@ public class CPublisher
       int i = Integer.parseInt(currentStep);
       if (i < numSteps) {
         currentStep = Integer.toString(i + 1);
-      }
+      } 
       else if (i == numSteps) {
         mode = CATS;
         currentStep = Integer.toString(i + 1);
-      }
+      } 
       else {
         publishChannel();
         currentStep = "end";
@@ -343,8 +345,7 @@ public class CPublisher
     chanReg.addChannel(nextID, staticData.getPerson().getID(), chanName, doc, catID);
     storeChanRoles(nextID);
     try {
-      chanReg.approveChannel(nextID, staticData.getPerson().getID(),
-        new java.sql.Timestamp(System.currentTimeMillis()));
+      chanReg.approveChannel(nextID, staticData.getPerson().getID(), new java.sql.Timestamp(System.currentTimeMillis()));
     } catch (Exception exc) {
       Logger.log(Logger.ERROR, exc);
     }
@@ -383,14 +384,20 @@ public class CPublisher
     mode = NAME;
     int i = Integer.parseInt(currentStep);
     currentStep = Integer.toString(i + 1);
-
-    if ((s = runtimeData.getParameter("timeout"))    != null) timeout = s;
-    if ((s = runtimeData.getParameter("minimized"))  != null) minimized = s;
-    if ((s = runtimeData.getParameter("editable"))   != null) editable = s;
-    if ((s = runtimeData.getParameter("hasHelp"))    != null) hasHelp = s;
-    if ((s = runtimeData.getParameter("hasAbout"))   != null) hasAbout = s;
-    if ((s = runtimeData.getParameter("removable"))  != null) removable = s;
-    if ((s = runtimeData.getParameter("detachable")) != null) detachable = s;
+    if ((s = runtimeData.getParameter("timeout")) != null)
+      timeout = s;
+    if ((s = runtimeData.getParameter("minimized")) != null)
+      minimized = s;
+    if ((s = runtimeData.getParameter("editable")) != null)
+      editable = s;
+    if ((s = runtimeData.getParameter("hasHelp")) != null)
+      hasHelp = s;
+    if ((s = runtimeData.getParameter("hasAbout")) != null)
+      hasAbout = s;
+    if ((s = runtimeData.getParameter("removable")) != null)
+      removable = s;
+    if ((s = runtimeData.getParameter("detachable")) != null)
+      detachable = s;
   }
 
   /**
@@ -477,7 +484,7 @@ public class CPublisher
       // Make sure all of the roles have been stored
       if (rolesSet == vRoles.size()) {
         return  (true);
-      }
+      } 
       else {
         return  (false);
       }
@@ -497,13 +504,12 @@ public class CPublisher
     Document controlDoc = new DocumentImpl();
     Element newcontrols;
     try {
-     Element controls = (Element) channelDecl.getElementsByTagName("controls").item(0);
+      Element controls = (Element)channelDecl.getElementsByTagName("controls").item(0);
       controlDoc.insertBefore(controlDoc.importNode(controls, true), null);
     } catch (Exception e) {
       newcontrols = controlDoc.createElement("controls");
       controlDoc.appendChild(newcontrols);
     }
-
     return  controlDoc;
   }
 
@@ -521,3 +527,6 @@ public class CPublisher
     return  nameDoc;
   }
 }
+
+
+
