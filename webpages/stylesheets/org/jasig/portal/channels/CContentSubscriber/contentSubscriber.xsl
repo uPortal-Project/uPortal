@@ -289,7 +289,7 @@ $Revision$
 						<tr>
 							<td colspan="3">
 								<img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
-								<a href="{$baseActionURL}?action=cancel">Cancel and return</a>
+								<a href="{$baseActionURL}?uP_root=root&amp;action=cancel">Cancel and return</a>
 							</td>
 						</tr>
 					</table>
