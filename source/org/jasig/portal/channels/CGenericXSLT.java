@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -103,17 +104,32 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     private String sslUri;
     private String xslTitle;
     private String xslUri;
+    private Map params;
     private long cacheTimeout;
     private ChannelRuntimeData runtimeData;
 
     public CState()
     {
       xmlUri = sslUri = xslTitle = xslUri = null;
+      params = new HashMap();
       cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
       runtimeData = null;
     }
+    
+    public String toString()
+    {
+       StringBuffer str = new StringBuffer();
+       str.append("xmlUri = "+xmlUri+"\n");
+       str.append("xslUri = "+xslUri+"\n");
+       str.append("sslUri = "+sslUri+"\n");
+       str.append("xslTitle = "+xslTitle+"\n");
+       if (params != null) {
+          str.append("params = "+params.toString()+"\n");
+       }
+       return str.toString();
+    }
   }
-
+  
   public CGenericXSLT()
   {
     stateTable = Collections.synchronizedMap(new HashMap());
@@ -164,6 +180,15 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
       if (xslUri != null)
         state.xslUri = xslUri;
+
+      // grab the parameters and stuff them all into the state object        
+      Enumeration enum = rd.getParameterNames();
+      while (enum.hasMoreElements()) {
+         String n = (String)enum.nextElement();
+         if (rd.getParameter(n) != null) {
+            state.params.put(n,rd.getParameter(n));
+         }
+      }
     }
   }
 
@@ -197,6 +222,8 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       LogService.instance().log(LogService.ERROR,"CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
     else
     {
+      LogService.instance().log(LogService.DEBUG,"CGenericXSLT::renderXML() : state = " + state.toString() );
+
       String xml;
       Document xmlDoc;
 
@@ -220,6 +247,18 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
+      
+      // OK, pass everything we got cached in params...
+      if (state.params != null)
+      {
+         Iterator it = state.params.keySet().iterator();
+         while (it.hasNext()) {
+            String n = (String)it.next();
+            if (state.params.get((Object)n) != null) {
+               state.runtimeData.put(n,state.params.get((Object)n));
+            }
+         }
+      }
 
       XSLT xslt = new XSLT(this);
       xslt.setXML(xmlDoc);
@@ -245,7 +284,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     else
     {
       ChannelCacheKey k = new ChannelCacheKey();
-      k.setKey(this.getKey(state));
+      k.setKey(this.getKey(state)+","+uid);
       k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
       k.setKeyValidity(new Long(System.currentTimeMillis()));
       return k;
@@ -291,7 +330,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     sbKey.append("xslUri:").append(xslUriForKey).append(", ");
     sbKey.append("cacheTimeout:").append(state.cacheTimeout).append(", ");
-    sbKey.append("params:").append(state.runtimeData.toString());
+    sbKey.append("params:").append(state.params.toString());
     return sbKey.toString();
   }
 }
