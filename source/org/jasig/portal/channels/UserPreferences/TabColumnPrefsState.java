@@ -539,7 +539,7 @@ public class TabColumnPrefsState extends BaseState
   }
 
   /**
- * @param siblingsIncludingSelf
+ * @param list as a NodeList that contains all columns in current tab
  */
   private void setEvenlyAssignedColumnWidths(NodeList list) {
     // Simply divide the number of columns by 100 and produce an evenly numbered column widths
