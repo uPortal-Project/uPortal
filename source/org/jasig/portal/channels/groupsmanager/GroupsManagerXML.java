@@ -85,7 +85,7 @@ public class GroupsManagerXML
     * @param sd
     * @return Document
     */
-   public static Document getGroupsManagerXml (ChannelRuntimeData rd, ChannelStaticData sd) {
+   public static Document getGroupsManagerXml (ChannelStaticData sd) {
       String rkey = null;
       IEntityGroup entGrp = null;
       IGroupMember aGroupMember = null;
@@ -108,9 +108,8 @@ public class GroupsManagerXML
          RDBMInitialGroupContextStore igcHome = RDBMInitialGroupContextStore.singleton();
          // have to get userID from runtimedata
          Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): JUST BEFORE USER IS SET ");
-         String userID = rd.getParameter("username");
          Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): USER SET TO "
-               + userID);
+               + sd.getAuthorizationPrincipal().getKey());
          java.util.Iterator igcItr = igcHome.findInitialGroupContextsForOwner(AuthorizationService.instance().getGroupMember(sd.getAuthorizationPrincipal()));
          IInitialGroupContext igc = null;
          Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): igc contains: ");
@@ -650,6 +649,26 @@ public class GroupsManagerXML
          gm = (IGroupMember)GroupsManagerXML.retrieveEntity(gmKey,gmElem.getAttribute("type"));
       }
       return  gm;
+   }
+   
+   public static void expandGroupElementXML(Element expandedElem, Document xmlDoc){
+      //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );
+         boolean hasGroupsXML = !(expandedElem.getElementsByTagName(GROUP_TAGNAME).getLength()
+               == 0);
+         boolean hasEntitiesXML = !(expandedElem.getElementsByTagName(ENTITY_TAGNAME).getLength()
+               == 0);
+         boolean hasMembers = (expandedElem.getAttribute("hasMembers").equals("true"));
+         Utility.logMessage("DEBUG", "ExpandGroup::execute(): Expanded element has Members = "
+               + hasMembers);
+
+         if (hasMembers) {
+            expandedElem.setAttribute("expanded", "true");
+            Utility.logMessage("DEBUG", "ExpandGroup::execute(): About to retrieve children");
+            IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(expandedElem.getAttribute("key"));
+            GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, true, expandedElem,
+                  xmlDoc);
+            //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
+         }
    }
 }
 
