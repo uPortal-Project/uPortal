@@ -67,12 +67,22 @@ public class ObjectIDImpl implements ObjectID, Serializable {
     // Internal methods.
 
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        intOID = stream.readInt();
+        try {
+    	intOID = stream.readInt();
+        } finally {
+        	if(stream != null)
+        		stream.close();
+        }
         stringOID = String.valueOf(intOID);
     }
 
     private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.write(intOID);
+        try {
+    	stream.write(intOID);
+        } finally {
+        	if (stream != null)
+        		stream.close();
+        }
     }
 
     // Addtional methods
