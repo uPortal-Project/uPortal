@@ -1,7 +1,7 @@
 package org.jasig.portal.security.provider;
 
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ©  2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,16 @@ package org.jasig.portal.security.provider;
  *
  */
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.groups.EntityTypes;
-import org.jasig.portal.*;
+import org.jasig.portal.RdbmServices;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.services.LogService;
@@ -130,14 +136,6 @@ public void add(IPermission perm) throws AuthorizationException
         { RdbmServices.releaseConnection(conn); }
 }
 /**
- * @param conn java.sql.Connection
- * @exception java.sql.SQLException
- */
-protected static void commit(Connection conn) throws java.sql.SQLException
-{
-    SqlTransaction.commit(conn);
-}
-/**
  * Delete the IPermissions from the store.
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
@@ -170,8 +168,7 @@ public void delete(IPermission perm) throws AuthorizationException
     {
         conn = RdbmServices.getConnection();
         String sQuery = getDeletePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.delete(): " + sQuery);
-        PreparedStatement ps = conn.prepareStatement(sQuery);
+        RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sQuery);
         try
             { primDelete(perm, ps); }
         finally
@@ -199,14 +196,14 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
     {
         conn = RdbmServices.getConnection();
         String sQuery = getFindPermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.existsInDatabase(): " + sQuery);
-        PreparedStatement ps = conn.prepareStatement(sQuery);
+        RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sQuery);
         try
         {
             ps.setString(1, perm.getOwner());
             ps.setString(2, perm.getPrincipal());
             ps.setString(3, perm.getActivity());
             ps.setString(4, perm.getTarget());
+            LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.existsInDatabase(): " + ps);
             rs = ps.executeQuery();
             return ( rs.next() );
         }
@@ -486,11 +483,10 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
     {
         conn = RdbmServices.getConnection();
         String sQuery = getDeletePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primDelete(): " + sQuery);
-        PreparedStatement ps = conn.prepareStatement(sQuery);
+        RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sQuery);
         try
         {
-            setAutoCommit(conn, false);
+            RdbmServices.setAutoCommit(conn, false);
 
             for ( int i=0; i<perms.length; i++ )
                 { primDelete(perms[i], ps); }
@@ -498,18 +494,18 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
         finally
             { ps.close(); }
 
-        commit(conn);
+        RdbmServices.commit(conn);
 
     }
     catch (SQLException sqle)
     {
         LogService.log (LogService.ERROR, sqle);
-        rollback(conn);
+        RdbmServices.rollback(conn);
         throw sqle;
     }
     finally
     {
-        setAutoCommit(conn, true);
+        RdbmServices.setAutoCommit(conn, true);
         RdbmServices.releaseConnection(conn);
     }
 }
@@ -520,13 +516,15 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
  * @return int - the return code from the PreparedStatement
  * @exception java.sql.Exception
  */
-private int primDelete(IPermission perm, PreparedStatement ps) throws SQLException
+private int primDelete(IPermission perm, RdbmServices.PreparedStatement ps) throws SQLException
 {
     ps.clearParameters();
     ps.setString(1, perm.getOwner());
     ps.setString(2, perm.getPrincipal());
     ps.setString(3, perm.getActivity());
     ps.setString(4, perm.getTarget());
+    LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primDelete(): " + ps);
+
     return ps.executeUpdate();
 }
 /**
@@ -542,11 +540,10 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
     {
         conn = RdbmServices.getConnection();
         String sQuery = getUpdatePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primUpdate(): " + sQuery);
-        PreparedStatement ps = conn.prepareStatement(sQuery);
+        RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sQuery);
         try
         {
-            setAutoCommit(conn, false);
+            RdbmServices.setAutoCommit(conn, false);
 
             for ( int i=0; i<perms.length; i++ )
                 { primUpdate(perms[i], ps); }
@@ -554,18 +551,18 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
         finally
             { ps.close(); }
 
-        commit(conn);
+        RdbmServices.commit(conn);
 
     }
     catch (SQLException sqle)
     {
         LogService.log (LogService.ERROR, sqle);
-        rollback(conn);
+        RdbmServices.rollback(conn);
         throw sqle;
     }
     finally
     {
-        setAutoCommit(conn, true);
+        RdbmServices.setAutoCommit(conn, true);
         RdbmServices.releaseConnection(conn);
     }
 }
@@ -576,7 +573,7 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
  * @return int - the return code from the PreparedStatement
  * @exception java.sql.Exception
  */
-private int primUpdate(IPermission perm, PreparedStatement ps) throws SQLException
+private int primUpdate(IPermission perm, RdbmServices.PreparedStatement ps) throws SQLException
 {
     java.sql.Date date = null;
 
@@ -609,16 +606,10 @@ private int primUpdate(IPermission perm, PreparedStatement ps) throws SQLExcepti
     ps.setString(5, perm.getPrincipal());
     ps.setString(6, perm.getActivity());
     ps.setString(7, perm.getTarget());
+    LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primUpdate(): " + ps);
+
 
     return ps.executeUpdate();
-}
-/**
- * @param conn java.sql.Connection
- * @exception java.sql.SQLException
- */
-protected static void rollback(Connection conn) throws java.sql.SQLException
-{
-    SqlTransaction.rollback(conn);
 }
 /**
  * Select the Permissions from the store.
@@ -722,15 +713,6 @@ throws AuthorizationException
     return ((IPermission[])perms.toArray(new IPermission[perms.size()]));
 }
 /**
- * @param conn java.sql.Connection
- * @param newValue boolean
- * @exception java.sql.SQLException The exception description.
- */
-protected static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException
-{
-    SqlTransaction.setAutoCommit(conn, newValue);
-}
-/**
  * @return org.jasig.portal.security.provider.PermissionImplRDBM
  */
 public static synchronized PermissionImplRDBM singleton()
@@ -773,7 +755,7 @@ public void update(IPermission perm) throws AuthorizationException
         conn = RdbmServices.getConnection();
         String sQuery = getUpdatePermissionSql();
         LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.update(): " + sQuery);
-        PreparedStatement ps = conn.prepareStatement(sQuery);
+        RdbmServices.PreparedStatement ps = new RdbmServices.PreparedStatement(conn, sQuery);
         try
             { primUpdate(perm, ps); }
         finally
