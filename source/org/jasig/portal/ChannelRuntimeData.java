@@ -49,7 +49,7 @@ import com.oreilly.servlet.multipart.Part;
 /**
  * A set of runtime data accessible by a channel.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
@@ -460,7 +460,6 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         return  (Object[])super.get(pName);
     }
 
-
     /**
      * Get an enumeration of parameter names.
      *
@@ -489,8 +488,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * Sets the keywords
      * @param keywords a String of keywords
      */
-    public void setKeywords(String keywords)
-    {
+    public void setKeywords(String keywords) {
       this.keywords = keywords;
     }
 
@@ -498,16 +496,17 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * Returns the keywords
      * @return a String of keywords, null if there were none
      */
-    public String getKeywords()
-    {
+    public String getKeywords() {
       return keywords;
     }
+    
 	/**
-	 * @return
+	 * @return the remote address
 	 */
 	public String getRemoteAddress() {
 		return remoteAddress;
 	}
+    
 	/**
 	 * @param string
 	 */
