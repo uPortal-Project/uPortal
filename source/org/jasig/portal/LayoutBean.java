@@ -421,10 +421,10 @@ public class LayoutBean extends GenericPortalBean
               out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
             
             if (ch.isEditable ())
-              out.println ("<a href=\"edit.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
+              out.println ("<a href=\"dispatch.jsp?method=edit&tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
             
             if (ch.hasHelp ())
-              out.println ("<a href=\"dispatch.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
+              out.println ("<a href=\"dispatch.jsp?method=help&tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
             
             out.println ("            &nbsp;");
             out.println ("          </td>");            

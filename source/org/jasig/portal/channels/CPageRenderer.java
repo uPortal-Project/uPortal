@@ -103,7 +103,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   {    
     try 
     {
-      out.println ("<form action=\"edit.jsp\">");
+      out.println ("<form action=\"dispatch.jsp\">");
       out.println ("<table border=0 cellpadding=2 cellspacing=2>");
       out.println ("  <tr>");
       out.println ("    <td>Name:</td>");
@@ -114,6 +114,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       out.println ("    <td><input type=text name=url size=50 value=\"" + params.get ("url") + "\"></td>");
       out.println ("  </tr>");
       out.println ("</table>");
+      out.println ("<input type=hidden name=method value=\"edit\">");
       out.println ("<input type=hidden name=action value=\"save\">");
       out.println ("<input type=submit name=submit value=\"Submit\">");
       out.println ("</form>");
@@ -129,19 +130,19 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     try 
     {
       HttpSession session = req.getSession (false);
-      org.jasig.portal.layout.IChannel activeChannel = (org.jasig.portal.layout.IChannel) session.getAttribute ("activeChannel");
+      org.jasig.portal.layout.IChannel dispatchChannel = (org.jasig.portal.layout.IChannel) session.getAttribute ("dispatchChannel");
       
-      for (int i = 0; i < activeChannel.getParameterCount (); i++)
+      for (int i = 0; i < dispatchChannel.getParameterCount (); i++)
       {
-        if (activeChannel.getParameterAt (i).getAttribute ("name").equals ("name"))
-          activeChannel.getParameterAt (i).setAttribute ("value", req.getParameter ("name"));
+        if (dispatchChannel.getParameterAt (i).getAttribute ("name").equals ("name"))
+          dispatchChannel.getParameterAt (i).setAttribute ("value", req.getParameter ("name"));
         
-        if (activeChannel.getParameterAt (i).getAttribute ("name").equals ("url"))
-          activeChannel.getParameterAt (i).setAttribute ("value", req.getParameter ("url"));
+        if (dispatchChannel.getParameterAt (i).getAttribute ("name").equals ("url"))
+          dispatchChannel.getParameterAt (i).setAttribute ("value", req.getParameter ("url"));
       }
       
-      EditBean editBean = (EditBean) session.getAttribute ("editBean");
-      editBean.finishEdit (req, res);
+      DispatchBean dispatchBean = (DispatchBean) session.getAttribute ("dispatchBean");
+      dispatchBean.finish (req, res);
     }
     catch (Exception e)
     {

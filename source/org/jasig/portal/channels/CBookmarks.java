@@ -111,13 +111,13 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
         out.println ("    <td>" + bookmarks[i].getAttribute ("name") + "</td>");
         out.println ("    <td>" + bookmarks[i].getAttribute ("url") + "</td>");
         out.println ("    <td>" + bookmarks[i].getAttribute ("comments") + "</td>");
-        out.println ("    <td>[<a href=\"edit.jsp?action=edit&bookmark=" + i + "\">edit</a>][<a href=\"edit.jsp?action=delete&bookmark=" + i + "\">delete</a>]</td>");
+        out.println ("    <td>[<a href=\"dispatch.jsp?method=edit&action=edit&bookmark=" + i + "\">edit</a>][<a href=\"dispatch.jsp?method=edit&action=delete&bookmark=" + i + "\">delete</a>]</td>");
         out.println ("  </tr>");
       }
       out.println ("</table>");
       out.println ("<table border=0><tr>");
-      out.println ("<td><br><input type=button name=add value=\"Add Bookmark\" onClick=\"location=\'edit.jsp?action=add\'\"></td>");
-      out.println ("<td><br><input type=button name=finished value=\"Finished\" onClick=\"location=\'edit.jsp?action=done\'\"></td>");
+      out.println ("<td><br><input type=button name=add value=\"Add Bookmark\" onClick=\"location=\'dispatch.jsp?method=edit&action=add\'\"></td>");
+      out.println ("<td><br><input type=button name=finished value=\"Finished\" onClick=\"location=\'dispatch.jsp?method=edit&action=done\'\"></td>");
       out.println ("</tr></table>");
     }
     catch (Exception e)
@@ -140,7 +140,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       String sUrl = bookmark.getAttribute("url");
       String sComments = bookmark.getAttribute("comments");
         
-      out.println ("<form action=\"edit.jsp\">");
+      out.println ("<form action=\"dispatch.jsp?method=edit\">");
       out.println ("<table>");
       out.println ("  <tr>");
       out.println ("    <th>Name</th>");
@@ -178,7 +178,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       // Write this to a database
       xml.saveDocument (xmlFile);
       
-      res.sendRedirect ("edit.jsp");
+      res.sendRedirect ("dispatch.jsp?method=edit");
     }
     catch (Exception e)
     {
@@ -194,7 +194,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       IXml xml = Xml.openDocument (xmlFilePackage, xmlFile);
       IBookmarks bm = (IBookmarks) xml.getRoot ();
         
-      out.println ("<form action=\"edit.jsp\">");
+      out.println ("<form action=\"dispatch.jsp?method=edit\">");
       out.println ("<table>");
       out.println ("  <tr>");
       out.println ("    <th>Name</th>");
@@ -253,7 +253,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
       
       // Write this to a database
       xml.saveDocument (xmlFile);
-      res.sendRedirect ("edit.jsp");
+      res.sendRedirect ("dispatch.jsp?method=edit");
     }
     catch (Exception e)
     {
@@ -266,8 +266,8 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     try
     {    
       HttpSession session = req.getSession (false);
-      EditBean editBean = (EditBean) session.getAttribute ("editBean");
-      editBean.finishEdit (req, res);
+      DispatchBean dispatchBean = (DispatchBean) session.getAttribute ("dispatchBean");
+      dispatchBean.finish (req, res);
     }
     catch (Exception e)
     {
