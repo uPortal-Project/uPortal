@@ -25,8 +25,9 @@
    <P><A CLASS="sidelinks" HREF="../docs.html" ><B> Documentation</B></A></P>
    <P><A CLASS="sidelinks" HREF="../administrators/index.html" ><B> Getting Started</B></A></P>
    <P><A CLASS="sidelinks" HREF="../developers/index.html" ><B> Developers</B></A></P>
-   <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Architecture</B></A></P>
-   <P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
+	<P><A CLASS="sidelinks" HREF="../implementors/index.html" ><B> Implementors</B></A></P>
+	<P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
+   <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Background</B></A></P>
    <P><A CLASS="sidelinks" HREF="../release/index.html" ><B> Release</B></A></P>
    <P><A CLASS="sidelinks" HREF="../minutes/index.html" ><B> Meeting Minutes</B></A></P>
    <P><IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"></P> 
@@ -45,10 +46,10 @@
   
 <p>A Oracle JDBC driver is also available through <a href="http://www.oracle.com"> 
 http://www.oracle.com</a>. Versions for Oracle 8i and Oracle 9i are available. 
-The driver downloads as a single &quot;zip&quot; file (for example, classes12.zip). 
+The driver downloads as a single &quot;<tt>zip</tt>&quot; file (for example, <tt>classes12.zip</tt>). 
 The file should be stored in a directory where it will be accessible from the 
-uPortal build environment (for example /usr/local/java/oracle/lib/classes12.zip)</p>
-<p>See Issues section about possible issues using this driver</p>
+uPortal build environment (for example <tt>/usr/local/java/oracle/lib/classes12.zip</tt>)</p>
+<p>See Issues section about possible issues using this driver.</p>
 
   <h5> Properties Configuration </h5>
   
@@ -56,37 +57,52 @@ uPortal build environment (for example /usr/local/java/oracle/lib/classes12.zip)
 <b>jdbcDriver</b> and change it to point to the Oracle zip/jar file, for example:</p>
 <pre>jdbcDriver.jar=/usr/local/java/lib/classes12.zip
 </pre>
-<p>The uPortal rdbm.properties file (in the properties directory) will need to modified to specify the driver 
-properties.  First, comment out the property definitions which are currently defined
-(most likely, for HypersonicSQL).  The rdbm.properties file contains several sample
-entries.  Uncomment the lines for the Oracle database and make whatever changes
-necessary to match your local database installation,  For example:
-</p>
-<pre>
-##### Oracle - example
-jdbcDriver=oracle.jdbc.driver.OracleDriver
-jdbcUrl=jdbc:oracle:thin:@localhost:1521:uportal
-jdbcUser=test
+<p>The uPortal <tt>rdbm.properties</tt> file (in the properties directory) will 
+need to modified to specify the driver properties. First, comment out the property 
+definitions which are currently defined (most likely, for HypersonicSQL). The 
+<tt>rdbm.properties</tt> file contains several sample entries. Uncomment the lines 
+for the Oracle database and make whatever changes necessary to match your local 
+database installation, For example: </p>
+<blockquote><tt>
+##### Oracle - example<br>
+jdbcDriver=oracle.jdbc.driver.OracleDriver<br>
+jdbcUrl=jdbc:oracle:thin:@localhost:1521:uportal<br>
+jdbcUser=test<br>
 jdbcPassword=mypass
-</pre>
-<p>The dbloader.xml properties file (also in the properties directory) may also need to be 
-modified.  This file is used by the DbLoader tool to create the uPortal database tables and
-populate the database.  It contains several sample entries which create db-type-mappings
-for different databases.  Find the tags for an Oracle database and modify the db-version,
-driver-name, and driver-version as necessary.  For example:
-</p>
-<pre>
-  &lt;db-type-mapping&gt;
-    &lt;db-name>Oracle&lt;/db-name&gt;
-    &lt;!-- Line break has to be here --&gt;
-    &lt;db-version>Oracle8 Enterprise Edition Release 8.0.6.2.0 - Production
-PL/SQL Release 8.0.6.2.0 - Production&lt;/db-version&gt;
-    &lt;driver-name&gt;Oracle JDBC driver&lt;/driver-name&gt;
-    &lt;driver-version&gt;8.1.6.0.0&lt;/driver-version&gt;
-    &lt;type&gt;&lt;generic&gt;TIMESTAMP&lt;/generic&gt;&lt;local&gt;DATE&lt;/local&gt;&lt;/type&gt;
-    &lt;!-- map more types here --&gt;
+</tt></blockquote>
+<p>The <tt>dbloader.xml</tt> properties file (also in the properties directory) 
+may also need to be modified. This file is used by the DbLoader tool to create 
+the uPortal database tables and populate the database. It contains several sample 
+entries which create db-type-mappings for different databases. Find the tags for 
+an Oracle database and modify the db-version, driver-name, and driver-version 
+as necessary. For example: </p>
+<blockquote><tt>
+  &lt;db-type-mapping&gt;<br>
+  &nbsp;&nbsp;&lt;db-name>Oracle&lt;/db-name&gt;<br>
+  &nbsp;&nbsp;&lt;!-- Line break has to be here --&gt;<br>
+  &nbsp;&nbsp;&lt;db-version>Oracle8 Enterprise Edition Release 8.0.6.2.0 - Production<br>
+  &nbsp;&nbsp;PL/SQL Release 8.0.6.2.0 - Production&lt;/db-version&gt;<br>
+  &nbsp;&nbsp;&lt;driver-name&gt;Oracle JDBC driver&lt;/driver-name&gt;<br>
+  &nbsp;&nbsp;&lt;driver-version&gt;8.1.6.0.0&lt;/driver-version&gt;<br>
+  &nbsp;&nbsp;&lt;type&gt;&lt;generic&gt;TIMESTAMP&lt;/generic&gt;&lt;local&gt;DATE&lt;/local&gt;&lt;/type&gt;<br>
+  &nbsp;&nbsp;&lt;!-- map more types here --&gt;<br>
   &lt;/db-type-mapping&gt;
-</pre>
+
+</tt></blockquote>
+     
+<p class="content"> The PersonDirs.xml file (also in the properties directory) 
+may need to be modified; This file is used if the database is to be used to provide 
+user directory information.</p>
+   
+<blockquote><tt>
+    &lt;!-- JDBC Properties --&gt;<br>
+&lt;driver&gt;oracle.jdbc.driver.OracleDriver&lt;/driver&gt;<br>
+&lt;url&gt;jdbc:oracle:thin:@localhost:1521:uportal&lt;/url&gt;<br>
+&lt;logonid&gt;test&lt;/logonid&gt;<br>
+&lt;logonpassword&gt;mypass&lt;/logonpassword&gt;,<br>
+    &lt;uidquery&gt;SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST,<br> 
+	 FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?&gt;&lt;/uidquery&gt;
+</tt></blockquote>
 <h5> Loading the Database </h5>
 <p>Loading the database requires a couple of steps</p>
 <ul>
@@ -94,17 +110,18 @@ PL/SQL Release 8.0.6.2.0 - Production&lt;/db-version&gt;
 	regarding how to create an Oracle database instances.  The database name (or in this
 	case, the Oracle SID), port number, and driver information must reflect what was defined
 	in the rdbm.properties file</li>
-	<li>Create the tables and populate the database: From the uPortal build directory, 
-run "ant db" to execute the ant target which loads the database. The ant target 
-uses the Dbloader tool. </li>
+	
+<li>Create the tables and populate the database: From the uPortal build directory, 
+run "<tt>ant db</tt>" to execute the ant target which loads the database. The 
+ant target uses the Dbloader tool. </li>
 	</ul>
   <h5> Issues and Known Bugs </h5>
    
 <p>Some people have encountered problems with the Oracle JDBC driver with certain 
-web application environments if the classes <b>zip</b> file is used as-is with 
-the <b>.zip</b> file extension. Simply renaming the file to a <b>.jar</b> file 
+web application environments if the classes <tt>zip</tt> file is used as-is with 
+the <tt>.zip</tt> file extension. Simply renaming the file to a <tt>.jar</tt> file 
 seems to fix the problem. Alternatively, unzipping the classes file into a directory 
-structure, then using the <b>jar</b> command to repackage the classes into a jar 
+structure, then using the <tt>jar</tt> command to repackage the classes into a jar 
 file works as well. 
 
    

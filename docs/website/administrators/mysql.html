@@ -81,14 +81,14 @@
    whatever changes necessary to match your local database installation, For example: 
    </p>
    
-   <pre>
-   #### MySQL 
-   #jdbcDriver=org.gjt.mm.mysql.Driver
-   #jdbcUrl=jdbc:mysql://localhost/uportaldatabase
-   #jdbcUser=testuportal
-   #jdbcPassword=test
-   </pre> 
-   <p>The dbloader.xml properties file (also in the properties directory) 
+   <blockquote><tt>
+   #### MySQL example<br>
+   jdbcDriver=org.gjt.mm.mysql.Driver<br>
+	jdbcUrl=jdbc:mysql://localhost/uportal<br>
+   jdbcUser=uportal<br>
+   jdbcPassword=uportal
+   </tt> </blockquote>
+   <p>The <tt>dbloader.xml</tt> properties file (also in the properties directory) 
    may also need to be modified. This file is used by the DbLoader tool to 
    create the uPortal database tables and populate the database. It 
    contains several sample entries which create db-type-mappings for 
@@ -97,29 +97,31 @@
    </p> 
    
 
-   <pre>
-    &lt;db-type-mapping&gt;
-       &lt;db-name>MySQL&lt;/db-name&gt;
-       &lt;db-version>3.23.26&lt;/db-version&gt;
-       &lt;driver-name&gt;Mark Matthews' driver&lt;/driver-name&gt;
-       &lt;driver-version&gt;2.0.14&lt;/driver-version&gt;
-       &lt;type&gt;&lt;generic&gt;LONGVARCHAR&lt;/generic&gt;&lt;local&gt;TEXT&lt;/local&gt;&lt;/type&gt;
-       &lt;!-- map more types here --&gt;
-    &lt;/db-type-mapping&gt;
-   </pre>
-   <p>
-   The PersonDirs.xml file (also in the properties directory) needs to be modified; MySQL does not handle the "<uidquery>" element properly as it is written in the standard release. This file should be modified just before the start of the <attributes> elements: 
-   </p>
-   <pre>
-    &lt;!-- JDBC Properties --&gt;
-    &lt;driver&gt;org.gjt.mm.mysql.Driver&lt;/driver&gt;
-    &lt;url&gt;jdbc:mysql://localhost/uportaldatabase&lt;/url&gt;
-    &lt;logonid&gt;testuportal&lt;/logonid&gt;
-    &lt;logonpassword&gt;test&lt;/logonpassword&gt;
-    &lt;!-- changed for MySQL - was SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=? --&gt;
-    &lt;uidquery&gt;SELECT CONCAT_WS(" ",FIRST_NAME,LAST_NAME) AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?&lt;/uidquery&gt;
+   <blockquote><tt>
+    &lt;db-type-mapping&gt;<br>
+    &nbsp;&nbsp;&lt;db-name>MySQL&lt;/db-name&gt;<br>
+    &nbsp;&nbsp;&lt;db-version>3.23.26&lt;/db-version&gt;<br>
+    &nbsp;&nbsp;&lt;driver-name&gt;Mark Matthews' driver&lt;/driver-name&gt;<br>
+    &nbsp;&nbsp;&lt;driver-version&gt;2.0.14&lt;/driver-version&gt;<br>
+    &nbsp;&nbsp;&lt;type&gt;&lt;generic&gt;LONGVARCHAR&lt;/generic&gt;&lt;local&gt;TEXT&lt;/local&gt;&lt;/type&gt;<br>
+    &nbsp;&nbsp;&lt;!-- map more types here --&gt;<br>
+    &lt;/db-type-mapping&gt;<br>
+   </tt></blockquote>
+   
+<p> The <tt>PersonDirs.xml</tt> file (also in the properties directory) needs 
+to be modified; MySQL does not handle the "&lt;<tt>uidquery</tt>&gt;" element properly 
+as it is written in the standard release. This file should be modified just before 
+the start of the <attributes> elements: </p>
+   <blockquote><tt>
+    &lt;!-- JDBC Properties --&gt;<br>
+    &nbsp;&nbsp;&lt;driver&gt;org.gjt.mm.mysql.Driver&lt;/driver&gt;<br>
+&nbsp;&nbsp;&lt;url&gt;jdbc:mysql://localhost/uportal&lt;/url&gt;<br>
+&nbsp;&nbsp;&lt;logonid&gt;uportal&lt;/logonid&gt;<br>
+&nbsp;&nbsp;&lt;logonpassword&gt;uportal&lt;/logonpassword&gt;<br>
+    &nbsp;&nbsp;&lt;uidquery&gt;SELECT CONCAT_WS(" ",FIRST_NAME,LAST_NAME) AS FIRST_LAST, <br>
+	 &nbsp;&nbsp;FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?&lt;/uidquery&gt;
     
-    </pre>
+    </tt></blockquote>
 
    <h4>
    Loading the Database
@@ -127,15 +129,17 @@
    <p>
    Loading the database requires a couple of steps
    </p>
-   <p>Create the database: Refer to the MySQL database documentation for 
-   instructions regarding how to create an MySQL database instances. The 
-   database name, port number, and driver information must reflect what 
-   was defined in the rdbm.properties file.
-   </p>
-   <p>Create the tables and populate the database: From the uPortal build 
+	<ul>
+   
+<li>Create the database: Refer to the MySQL database documentation for instructions 
+regarding how to create an MySQL database instances. The database name, port number, 
+and driver information must reflect what was defined in the <tt>rdbm.properties</tt> 
+file. </li>
+   <li>Create the tables and populate the database: From the uPortal build 
    directory, run "ant db" to execute the ant target which loads the 
    database. The ant target uses the Dbloader tool. 
-   </p>
+   </li>
+	</ul>
    <h4>
    Issues and Known Bugs
    </h4>
