@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+<!-- TO CHANGE: change the document title -->
+  <title>The Person Attributes Group Store</title>
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.1  (Linux)">
+  <meta name="AUTHOR" content="Dan Ellentuck">
+  <meta name="CREATED" content="20021210;14440000">
+  <meta name="CHANGEDBY" content="Dan Ellentuck">
+  <meta name="CHANGED" content="200310721;15440000">
+</head>
+<body lang="en-US" style="color: rgb(0, 0, 0);">
+<!-- start cut this section to put into jasig table cell format --><!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
+<div align="center">
+<h2>The Person Attributes Group Store ("PAGS")<br>
+</h2>
+</div>
+<br>
+The PAGS makes user attributes retrieved by <code>PersonDirectory</code>
+appear to be group memberships.&nbsp; (<code>PersonDirectory</code>
+initializes <code>IPersons</code> (IPeople?) with user attributes
+retrieved from one or more sources of directory information, including,
+for example LDAP.&nbsp; For more information, see the documentaton for <a
+ href="../properties/PersonDirs.xml.html">PersonDirs</a>.)<br>
+<br>
+PAGS computes entity memberships by testing the value of selected <code>IPerson</code>
+attributes.&nbsp; Like <code>PersonDirectory</code>, the PAGS retrieves
+information one user at a time.&nbsp; As a result, it can answer
+inquiries about what groups a particular <code>IPerson</code> or <span
+ style="font-style: italic;">group member</span> belongs to, but it
+cannot answer inquiries about what entity members are contained by a
+given group.&nbsp; <br>
+<br>
+Can do:&nbsp;
+<div style="margin-left: 40px;"><code>contains()</code><br>
+<code>find()</code><br>
+<code>findContainingGroups()</code><br>
+<code></code></div>
+<code><br>
+</code>Can't do:&nbsp; <br>
+<br>
+<div style="margin-left: 40px;"><code>findEntitiesForGroup()</code><br>
+<code></code></div>
+<code><br>
+</code>Although PAGS groups cannot answer their entity members, they
+are aware of their member groups.&nbsp; So they can also do:<br>
+&nbsp; <br>
+<div style="margin-left: 40px;"><code> findMemberGroupKeys()</code><br>
+<code>findMemberGroups()<br>
+<br>
+</code><code></code></div>
+This will usually suffice for purposes of authorization, so the PAGS
+can be thought of as an authorization-oriented group store.&nbsp; Since <code>PersonDirectory</code>
+supplies information about <code>IPersons</code> and not about <code>ChannelDefinitions</code>
+or other portal entities, a further limitation is that the PAGS can only
+contain memberships associating <code>IPerson</code> group members with <code>IPerson</code>
+groups.&nbsp; <br>
+<br style="font-style: italic;">
+<span style="font-style: italic;">Configuring the Store.</span>&nbsp;
+The contents of the store is declared in a configuration document, <code>properties/groups/PAGSGroupStoreConfig.xml</code>.
+The dtd is as follows:<br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<div style="margin-left: 40px;">&nbsp;<small>&lt;!-- A Group-Store is
+made up of 0 or more groups. --&gt;</small><br>
+</div>
+<div style="margin-left: 40px;"> <small>&lt;!ELEMENT Group-Store
+(group*)&gt;</small><br>
+<br>
+<small>&lt;!ELEMENT group
+(group-key,group-name,description,selection-test?,members?)&gt;</small><br>
+<small>&lt;!-- A group key must be unique within the document.&nbsp; A
+group-name need not be. --&gt;</small><br>
+<br>
+<small>&lt;!ELEMENT group-key (#PCDATA)&gt;</small><br>
+<small>&lt;!ELEMENT group-name (#PCDATA)&gt;</small><br>
+<small>&lt;!ELEMENT group-description (#PCDATA)&gt;</small><br>
+<br>
+<small>&lt;!ELEMENT selection-test (test-group+)&gt;</small><br>
+<small>&lt;!-- </small><br>
+<small>&nbsp; A selection-test element determines if a person is a
+member of a group.&nbsp; It is </small><br>
+<small>&nbsp; composed of one or more test-group elements whose results
+are OR-ed together. </small><br>
+<small>&nbsp; If a group does not contain a selection-test, it may have
+member groups but not</small><br>
+<small>&nbsp; member entities.&nbsp; </small><br>
+<small>--&gt;</small><br>
+<br>
+<small>&lt;!ELEMENT test-group (test+)&gt;</small><br>
+<small>&lt;!-- </small><br>
+<small>&nbsp; A test-group element is made up of 1 or more test
+elements whose results are </small><br>
+<small>&nbsp; AND-ed together.&nbsp; </small><br>
+<small>--&gt;</small><br>
+<br>
+<small>&lt;!ELEMENT test (attribute-name,tester-class,test-value)&gt;</small><br>
+<small>&lt;!-- </small><br>
+<small>&nbsp; A test element contains the name of the attribute whose
+value is to be tested</small><br>
+<small>&nbsp; (attribute-name), the class that is to perform the test
+(tester-class), and the </small><br>
+<small>&nbsp; value to be compared to the attribute value
+(test-value).&nbsp;&nbsp; </small><br>
+<small>--&gt;</small><br>
+<small>&lt;!ELEMENT attribute-name (#PCDATA)&gt;</small><br>
+<small>&lt;!ELEMENT tester-class (#PCDATA)&gt;</small><br>
+<small>&lt;!ELEMENT test-value (#PCDATA)&gt;</small><br>
+<br>
+<small>&lt;!ELEMENT members (member-key*)&gt;</small><br>
+<small>&lt;!-- The optional members element contains keys of member
+groups. --&gt;</small><br>
+<small>&lt;!ELEMENT member-key (#PCDATA)&gt;</small><br>
+</div>
+<hr style="width: 100%; height: 2px;"><br>
+The configuration lets you do 2 things: (i) declare <code>IEntityGroups</code>
+with key, name, description and member group keys, and (ii) declare the
+tests that determine if an <code>IPerson</code> is a member of a
+group.&nbsp; Since a group need not contain any member groups, the <code>&lt;members&gt;</code>
+element is optional.&nbsp; <br>
+<br>
+<span style="font-style: italic;">Tests.</span>&nbsp; Each of the tests
+to be applied to an <code>IPerson</code> is described in a <code>&lt;test&gt;</code>
+element, which consists of 3 required sub-elements, the name of the test
+class, the name of the attribute to be tested, and the value against
+which the attribute is to be tested by the tester class.&nbsp; The PAGS
+currently ships with 8 tester classes, and you can easily create your
+own.&nbsp; Each tester class must implement the <code>IPersonTester</code>
+interface, which consists of a single method:<br>
+<br>
+<div style="margin-left: 40px;"><code>public interface IPersonTester {</code><br>
+<code>&nbsp;&nbsp;&nbsp; public boolean test(IPerson person);</code><br>
+<code>}</code><br>
+</div>
+<br>
+The following tester classes come with PAGS:<br>
+<br>
+<table cellpadding="2" cellspacing="2" border="1"
+ style="text-align: left; height: 308px; width: 75%;">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;">IntegerEQTester<br>
+      </td>
+      <td style="vertical-align: top;">Converts attribute and test
+value to ints and tests. In the event of a&nbsp; NumberFormatException,
+the test fails (true for all Integer testers.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">IntegerGETester<br>
+      </td>
+      <td style="vertical-align: top;">Attribute must be GE test value.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">IntegerGTTester<br>
+      </td>
+      <td style="vertical-align: top;">Attribute must be GT test value.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">IntegerLETester<br>
+      </td>
+      <td style="vertical-align: top;">Attribute must be LE test value.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">IntegerLTTester<br>
+      </td>
+      <td style="vertical-align: top;">Attribute must be LT test value.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">RegexTester<br>
+      </td>
+      <td style="vertical-align: top;">Must match a regular
+expression.&nbsp; Do not include the delimiter. </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">StringEqualsIgnoreCaseTester<br>
+      </td>
+      <td style="vertical-align: top;">String comparison ignoring case<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">StringEqualsTester<br>
+      </td>
+      <td style="vertical-align: top;">String comparison<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div style="margin-left: 40px;"><br>
+<br>
+</div>
+<span style="font-style: italic;">Test Groups.</span>&nbsp; Tests are
+aggregated into test groups, and their results are AND-ed together, so
+all tests in a test group must return true for the test group to return
+true.&nbsp; A test group is described by a <code>&lt;test-group
+element&gt;</code>.&nbsp; If there is more than 1 <code>&lt;test-group&gt;</code>
+element, the results of the test groups are OR-ed together, so if any
+test group returns true, the tests return true.&nbsp; A true result
+means that the candidate <code>IPerson</code> is a member of the
+group.&nbsp; <br>
+<br>
+<span style="font-style: italic;">Multi-valued attributes.</span>&nbsp;
+The testers that come with PAGS will <big><code>OR</code></big> <code></code>the
+tests of successive values of a multi-valued attribute, so if any value
+satisfies the test, the test returns true.&nbsp; You can override this
+behavior in a custom tester.&nbsp; <br>
+<span style="font-style: italic;"><br>
+Caching of group store information.</span>&nbsp; Because the groups
+structure defined in the PAGS is invarient, an instance of each group,
+including the keys of its containing groups, is cached by the store on
+start-up.&nbsp; These cached instances are dealt out to satisfy all
+requests to the store for groups.&nbsp; As a result, any change to the
+store configuration (via <code>PAGSGroupStoreConfig.xml</code>)
+requires restarting the group service, which generally means restarting
+the portal.&nbsp; By contrast, memberships for an <code>IPerson</code>
+group member are cached for the life of the corresponding user's portal
+session.&nbsp; As a result, if an <code>IPerson's</code> attributes
+change, these new attributes -- and any group memberships they imply --
+will be visible on next log in.&nbsp; <br>
+<br>
+<span style="font-style: italic;">Recursive Testing.</span>&nbsp; If
+one PAGS group (the <span style="font-style: italic;">child group</span>)
+belongs to another PAGS group (the <span style="font-style: italic;">parent
+group</span>), then an <code>IPerson</code> member of the child group
+must also pass the test(s) required for membership in the parent
+group.&nbsp; This is a more restrictive contract than the group system
+in general requires, where membership in a group implies only that some
+relationship exists between a group and its members.&nbsp; Here, the
+relationship is the result of a test of specific attribute values, and
+the PAGS enforces this by testing a member against <span
+ style="font-style: italic;">all</span> of its parents.&nbsp; For
+example, assume a group named named "employees" requires status equal to
+"employed" and a group named "seniors" requires age GE 65.&nbsp; If
+"seniors" is a member of "employees", then any <code>IPerson</code>
+member of "seniors" is required to have both age GE 65 <span
+ style="font-style: italic;">and</span> status equal to
+"employed".&nbsp; <br>
+<br>
+<span style="font-style: italic;">Checklist for implementing PAGS</span>:<br>
+<ul>
+  <li>Configure the store by defining groups and their relationships in <code>properties/groups/PAGSGroupStoreConfig.xml</code>.</li>
+  <li>Comment in the entry for the PAGS group service in <code>properties/groups/compositeGroupService.xml</code>.&nbsp;</li>
+</ul>
+<span style="font-style: italic;">Running in uPortal 2.1.x</span>.&nbsp;
+The PAGS has been successfully ported to uPortal 2.1.x by Ken Weiner
+with the following steps (thank you Ken): <br>
+<br>
+&nbsp;1. Copy all the source code from the <code>org.jasig.portal.groups.pags</code>
+and <code>org.jasig.portal.groups.pags.testers</code> packages. <br>
+&nbsp;2. Copy <code>org.jasig.portal.security.IPerson</code>. <br>
+&nbsp;3. Copy <code>org.jasig.portal.security.provider.RestrictedPerson</code>.<br>
+&nbsp;4. Copy <code>org.jasig.portal.services.PersonDirectory</code>.
+Change the constructor of this class from private to public access. <br>
+&nbsp;5. Copy <code>org.jasig.portal.security.PersonFactory</code>.&nbsp;
+Also copy the following property into portal.properties: <br>
+<br>
+<div style="margin-left: 40px;"><code>org.jasig.portal.security.PersonFactory.guest_user_name=guest</code> <br>
+</div>
+<br>
+&nbsp;6. Modify <code>org.jasig.portal.RDBMUserLayoutStore</code>,
+adding the following method to the inner class SystemUser: <br>
+<br>
+<div style="margin-left: 40px;"><code>public Object[]
+getAttributeValues (String key) {return null;}</code> <br>
+</div>
+<br>
+&nbsp;7. Modify <code>org.jasig.portal.security.provider.PersonImpl</code>,
+adding the method with the following signature: <br>
+<br>
+<div style="margin-left: 40px;"><code>public Object[]
+getAttributeValues (String key) <br>
+<br>
+</code></div>
+&nbsp;&nbsp;&nbsp; Also add the following supporting import statement: <br>
+<br>
+<div style="margin-left: 40px;"><code>import java.util.List; </code><br>
+</div>
+<br>
+&nbsp;8. Copy <code>properties/groups/PAGSGroupStoreConfig.xml</code>. <br>
+&nbsp;9. Copy <code>webpages/dtd/PAGSGroupStore.dtd</code>. <br>
+10. Modify <code>compositeGroupServices.xml</code>, adding the PAGS
+group store implementation configuration. <br>
+<br>
+<code></code><i>last revised: 03/30/2004, d.e.</i><br>
+<br>
+<!-- end cut this section to put into jasig table cell format -->
+</body>
+</html>

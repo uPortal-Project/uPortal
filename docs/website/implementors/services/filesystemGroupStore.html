@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<html>
+<head>
+  <title>Filesystem Group Store</title>
+  <link href="../../uportal.css" rel="stylesheet">
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="bottom" colspan="3"><img
+ src="../../images/uportal-head.gif" alt="uPortal by JA-SIG" border="0"
+ height="87" width="592"> </td>
+    </tr>
+    <tr>
+      <td><img src="../../images/spacer.gif" alt="." border="0"
+ height="4" width="1"> </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="0" cellpadding="5" width="100%" border="0">
+  <tbody>
+    <tr>
+      <td valign="top" width="150" bgcolor="#ccccff"> <img
+ src="../../images/spacer.gif" border="0" height="4"> <br>
+      <p><a class="sidelinks" href="http://www.ja-sig.org/"><b> JA-SIG
+Home</b></a></p>
+      <p><a class="sidelinks" href="../../index.html"><b> About uPortal</b></a></p>
+      <p><a class="sidelinks" href="../../docs.html"><b> Documentation</b></a></p>
+      <p><a class="sidelinks" href="../../administrators/index.html"><b>
+Getting Started</b></a></p>
+      <p><a class="sidelinks" href="../../developers/index.html"><b>
+Developers</b></a></p>
+	
+      <p><a class="sidelinks" href="../index.html"><b> Implementors</b></a></p>
+	
+      <p><a class="sidelinks" href="../../users/index.html"><b> Users</b></a></p>
+      <p><a class="sidelinks" href="../../architecture/index.html"><b>
+Background</b></a></p>
+      <p><a class="sidelinks" href="../../release/index.html"><b> Release</b></a></p>
+      <p><img src="../../images/mellon.gif" alt="" border="0"
+ width="145" height="93"> </p>
+      </td>
+<!-- main body goes in this table cell  (see BELOW)   --> <td
+ valign="top"> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> <a =""><!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format --> </a>
+
+
+
+<div align="center">
+<h2>The Filesystem Group Store</h2>
+</div>
+<br>
+The filesystem group store lets you create a group service from lists
+of user ids in file system files.&nbsp; The files and directories in the
+filesystem model the groups and their members in the group system.&nbsp;
+The filesystem adaptor is meant to help get you up and running quickly
+and to encourage experimentation.&nbsp; You can use it to bridge the gap
+between portal start-up and the time when your users are correctly
+affiliated in LDAP, and it can supplement other membership sources with
+quirky data that doesn't fit anywhere else.&nbsp; <br>
+<br>
+The store class, <code>org.jasig.portal.groups.filesystem.FileSystemGroupStore</code>,
+implements <code>IEntityGroupStore</code>, <code>IEntityStore</code>
+and a no-op <code>IEntitySearcher</code>.  You can substitute a
+functional entity searcher by adding it to the group service element for
+this component in the configuration document, <code>compositeGroupServices.xml</code>.
+<p>The directories and files look something like this: </p>
+<p></p>
+<code>--&nbsp;groups root (perhaps "/apps/portal/groups")<br>
+</code>
+<blockquote><code>&nbsp;|--&nbsp;org.jasig.portal.ChannelDefinition
+(directory)<br>
+  </code>
+  <blockquote><code>&nbsp;|--&nbsp;channel definition file1<br>
+&nbsp;|--&nbsp;channel definition file2<br>
+&nbsp;[ other channel definition files ]<br>
+    </code></blockquote>
+  <code>&nbsp;|--&nbsp;org.jasig.portal.security.IPerson (directory)<br>
+  </code>
+  <blockquote><code>&nbsp;|--&nbsp;person directory1<br>
+    </code>
+    <blockquote><code>&nbsp;|--&nbsp;person file1 <br>
+&nbsp;|--&nbsp;person file2 <br>
+&nbsp;[ other person files ]<br>
+      </code> </blockquote>
+    <code>&nbsp;|--&nbsp;person directory2 <br>
+    </code></blockquote>
+  <code> etc.</code><br>
+</blockquote>
+<p> The groups <span style="font-style: italic;">root</span> is a file
+system directory declared in the group service   configuration document,
+as an attribute of the filesystem group   service element. This
+directory has sub-directories, each named for the   underlying entity
+type contained by groups in that sub-directory.  If a   service only
+contains groups of IPersons, the groups root would have 1 sub-directory
+named org.jasig.portal.security.IPerson. </p>
+<p> A directory named for a type may contain both sub-directories and
+files. The sub-directories represent groups that can contain other
+groups. The   files represent groups that can contain entity as well as
+group members.   The files contain keys, one to a line, and look like
+this: </p>
+<p></p>
+<hr width="100%"><code> #&nbsp;this is a comment<br>
+#&nbsp;another comment<br>
+<br>
+Moe&nbsp; this is ignored<br>
+Larry<br>
+group:org.jasig.portal.security.IPerson/someDirectory/someFile<br>
+Curly<br>
+&nbsp;# comment </code> <br>
+<hr width="100%">
+<p> Blank lines and lines starting with <code>FileSystemGroupStore.COMMENT</code>
+(here "<code>#</code>") are ignored.  The first token on a non-ignored
+line is assumed to be a group member key.  If the key starts with&nbsp; <code>FileSystemGroupStore.GROUP_PREFIX</code>
+(here <code>":group</code><code>"</code>), it is treated as a local
+group key.  Otherwise, it is assumed to be an entity key.  The rest of
+the tokens on the line are ignored. </p>
+<p> The example above contains 3 entity keys, <code>Moe</code>, <code>Larry</code>,
+and <code>Curly</code>, and 1 group key, <code>org.jasig.portal.security.IPerson/someDirectory/someFile</code>.
+It represents a group with 3 entity members and 1 group member.  The
+local key of a group is its file path starting at the type name.&nbsp;
+If the <span style="font-style: italic;">nodeSeparator </span>for the
+composite configuration is ".", the <code>FileSystemGroupStore.SUBSTITUTE_PERIOD</code>
+("$") is substituted for the real period character in a group key, so
+the group entry in this example would be <code>org$jasig$portal$security$IPerson/someDirectory/someFile</code>.<br>
+</p>
+<p>To demonstrate how this actually works, try the following short <a
+ href="filesystemGroupService_tutorial.html">filesystem group service
+tutorial</a> (estimated time 15 minutes) on the base distribution. <br>
+</p>
+<p>Although they're easy to create, filesystem groups work like other
+groups: they can be associated with Permissions, they can become group
+members, you can browse and select (though not update) them in <span
+ style="font-style: italic;">Groups Manager</span>.&nbsp; However,
+since they are not <span style="font-style: italic;">internally-managed</span>,
+they cannot contain foreign memberships (groups from other services)
+and membership changes are not guaranteed to show up in real time.&nbsp;<br>
+</p>
+<p>Note also that the store class is not a singleton, so you can have
+multiple filesystem services pointing to different "root" directories. </p>
+<p> </p>
+<i>last revised: 03/29/2004, d.e.</i><br>
+<br>
+<!-- end cut this section to put into jasig table cell format --> <br>
+
+
+<!-- end cut this section to put into jasig table cell format --><a =""> <br>
+<!-- end of main body table cell --> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> 	 </a></td>
+    </tr>
+  </tbody>
+</table>
+<!-- page footer -->
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="center">&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><img height="3" src="../../images/spacer.gif"
+ width="1" border="0" alt="."> <br>
+      <font face="Verdana, Arial, sans-serif" size="1"><a
+ href="http://www.ja-sig.org/">JA-SIG Home</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../index.html"> About uPortal</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../faq.html">FAQ</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../download.html">Download</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../docs.html">Documentation</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../getinv.html">Getting Involved</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <br>
+      <a href="../../cvs.html">Code Repository</a> <img height="13"
+ alt="*" src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../bugs.html">Reporting Bugs</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../license.html">License</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> </font></td>
+    </tr>
+  </tbody>
+</table>
+<!-- end page footer --> <br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

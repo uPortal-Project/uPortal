@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+<!-- TO CHANGE: change the document title -->
+  <title>The LDAP Group Store</title>
+  <meta name="GENERATOR" content="OpenOffice.org 1.0.1  (Linux)">
+  <meta name="AUTHOR" content="Dan Ellentuck">
+  <meta name="CREATED" content="20021210;14440000">
+  <meta name="CHANGEDBY" content="Dan Ellentuck">
+  <meta name="CHANGED" content="200310721;15440000">
+</head>
+<body lang="en-US" text="#000000">
+<!-- start cut this section to put into jasig table cell format --><!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
+<div align="center">
+<h2>The LDAP Group Store</h2>
+</div>
+<br>
+<p>The LDAP group store is a small scale store that you can use to draw
+membership information from an LDAP server.&nbsp; It may also be useful
+in low volume environments where no one group has very many
+members.&nbsp; It has already inspired a number of offspring, including
+Matthew Ling's "Just in time LDAP group store" and the "Person
+Attributes Group Store" that are aimed at larger scale
+deployments.&nbsp; <br>
+</p>
+<p>The LDAP group store gets its entity memberships from LDAP and its
+group structure   from a configuration file, <code>properties/groups/LDAPGroupStoreConfig.xml</code>.&nbsp;
+The configuration file also defines the location of the native group
+store.&nbsp; (The dtd for <code>LDAPGroupStoreConfig.xml</code> is <code>LDAPGroupStore.dtd</code>.)&nbsp;
+Understanding the configuration  file is crucial to understanding how
+the group store works. &nbsp;</p>
+<p> <i>Configuration file elements.</i>&nbsp; The configuration file
+has a  single <code>config</code> element that describes the LDAP
+connection and some number  of <code>group</code> elements that
+establish the groups      structure and ultimately, map LDAP queries to
+groups.&nbsp; The <code>config</code> element currently points to the
+Columbia University  public LDAP server: </p>
+<blockquote><small>&lt;config&gt;<br>
+&nbsp;&nbsp;
+&nbsp;&lt;url&gt;ldap://ldap.columbia.edu:389/o=Columbia%20University,c=US&lt;/url&gt;<br>
+&nbsp;&nbsp; &nbsp;&lt;logonid&gt;&lt;/logonid&gt;<br>
+&nbsp;&nbsp; &nbsp;&lt;logonpassword&gt;&lt;/logonpassword&gt;<br>
+&nbsp;&nbsp; &nbsp;&lt;keyfield&gt;uni&lt;/keyfield&gt;<br>
+&nbsp;&nbsp; &nbsp;&lt;namefield&gt;cn&lt;/namefield&gt;<br>
+&nbsp;&nbsp; &nbsp;&lt;usercontext&gt;&lt;/usercontext&gt;<br>
+&nbsp;&nbsp; &nbsp;&lt;refresh-minutes&gt;120&lt;/refresh-minutes&gt;<br>
+&lt;/config&gt;<br>
+  </small></blockquote>
+<p><i>Group elements.</i>&nbsp; The <code>group</code> element contains
+the <code>IEntityGroup</code> attributes <code>key</code>,<code>name</code>
+and <code>description</code>.&nbsp; Just as an <code>IEntityGroup</code>
+can contain groups and entities, a <code>group</code> element can
+contain other member <code>group</code> elements, and it can contain
+member entities      in the form of a single <code>entity-set</code>.&nbsp;
+At its simplest,    an&nbsp;<code>entity-set</code> can contain a <code>filter</code>
+element that defines an LDAP query that    returns entities.&nbsp; Or it
+may contain    a <code>union</code>, <code>intersection</code>, <code>difference</code>
+or <code>subtract</code> element, which, in turn,    contains&nbsp;<code>entity-sets</code>
+whose results are combined through    one of the following operations: </p>
+<blockquote>
+  <table cellpadding="2" cellspacing="2" border="1" width="66%">
+    <tbody>
+      <tr>
+        <td valign="top">union<br>
+        </td>
+        <td valign="top">all entities from all contained entity-sets<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">intersection<br>
+        </td>
+        <td valign="top">all common entities from all contained
+entity-sets<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">difference<br>
+        </td>
+        <td valign="top">all entities that occur in only one contained
+entity-set<br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">subtract<br>
+        </td>
+        <td valign="top">all entities in the first entity-set minus any
+that occur in the rest<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+<br>
+<p><i>The Group Samples.</i>&nbsp; The samples provide examples of each
+of these <code>entity-set</code> types.&nbsp; The configuration file
+ships with  7 sample groups, described below. &nbsp;They form the
+following structure     (the group key is in parentheses):</p>
+<blockquote><code> All LDAP Groups (all)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Vigdors(1)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Fracapanes and Ellentucks (2)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Union test (3)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Intersection test (4)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Difference test (5)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Subtract test (6)<br>
+  </code><br>
+  <code></code></blockquote>
+<ul>
+  <li><i> All LDAP Groups (all)</i> contains groups "1" thru  "6" but
+contains no member entities.&nbsp; It does not (directly) pull
+information from LDAP.<br>
+    <br>
+  </li>
+  <li><i> Vigdors (1)</i> contains an <code>entity-set</code> with a <code>filter</code>
+element whose String value is <code>cn=*vigdor</code>.&nbsp; The
+members of <i>Vigdors</i> are the entities returned by this query. <br>
+    <br>
+  </li>
+  <li><i>Fracapanes and Ellentucks (2)</i> contains an <code>entity-set</code>
+with a <code>union</code> element that <i>or's</i> the results of two <code>entity-set</code>
+elements, each of which has a <code>filter </code> element describing
+an LDAP query.<code>&nbsp;</code> The resulting<code> entity-set</code>
+contains those entities returned by LDAP from the query <code>cn=*fracapane</code>
+plus those entities returned by <code>cn=*ellentuck</code>.<br>
+    <br>
+  </li>
+  <li><i> Union test (3)</i> is similar to <i>Fracapanes and Ellentucks
+(2)</i> in that it contains an <code>entity-set</code> with a <code>union</code>
+element containing 2 <code>entity-sets</code> each of which has a <code>filter</code>
+element.&nbsp; The resulting <code>entity-set</code> contains the union
+of <code>cn=donald f*</code> and <code>cn=*frac*</code>.<br>
+    <br>
+  </li>
+  <li><i> Intersection test (4)</i> contains an <code>entity-set</code>
+with an <code>intersection</code> element that <i>and's</i> the results
+of two <code>entity-set</code> elements, each of which has a <code>filter</code>
+element.&nbsp; The resulting <code>entity-set</code> contains the
+intersection of <code>cn=donald f*</code> and <code>cn=*frac*</code>.<br>
+    <br>
+  </li>
+  <li><i> Difference test (5)</i> contains an <code>entity-set</code>
+with a <code>difference</code> element that <i>exclusive-or's</i> the
+results of two <code>entity-set</code> elements, each of which has a <code>filter</code>
+element.&nbsp; The resulting <code>entity-set</code> contains the
+entities returned by one but not both of <code>cn=donald f*</code> and <code>cn=*frac*</code>.<br>
+    <br>
+  </li>
+  <li><i> Subtract test (6)</i> contains an <code>entity-set</code> with
+a <code>subtract</code> element that <i>subtracts</i> the results of one <code>entity-set</code>
+from another.&nbsp; Each <code>entity-set</code> has a <code>filter</code>
+element, and the resulting <code>entity-set</code> contains the entities
+returned by <code>cn=donald f*</code> but not by <code>cn=*frac*</code>.<br>
+  </li>
+</ul>
+<p><i>Limitations of the LDAP Group Store.</i>&nbsp; It is important to
+understand what the <code>LDAPGroupStore</code> does and does not do and
+why it does    not support updates.&nbsp; The store queries LDAP to
+discover entities that   are group members, but it looks at its
+configuration file  to discover groups   and their relationships.&nbsp;
+As a result, the   store  will discover an entity added to LDAP
+(provided it is returned  by  an <code>entity-set</code> defined in the
+configuration file.)&nbsp;   But it will not discover any group beyond
+those defined in the configuration    file.&nbsp; The way to add a group
+to the store is to add a <code>group</code> element to the configuration
+document.&nbsp; Likewise,   the way  to make a group a member of another
+group in the store is to add   a <code>group</code> element to another <code>group</code>
+element in the configuration document.&nbsp; On the other hand, the  way
+to add an entity   to a group from the store   is to add or update the
+entity in LDAP.&nbsp; The LDAP group store could   support updates to
+the group structure (adding or deleting member groups)   if it had the
+ability to update the configuration document.&nbsp; It could   support
+updates to entity memberships if it had the ability to update
+LDAP.&nbsp; &nbsp;</p>
+<p><i>Deploying the LDAP Group Store Locally.</i>&nbsp; The
+configuration file as delivered&nbsp;<code></code>points to the Columbia
+University public    LDAP server and defines a few not-terribly-useful
+groups.&nbsp; To implement    a local LDAP group service that uses the <code>LDAPGroupStore</code>,
+modify     the configuration file so that the <code>config</code>
+element points to your LDAP server.&nbsp; Then, replace the <code>entity-sets</code>
+and <code> filters</code> with queries that return meaningful   results.
+&nbsp;When you do this, give your groups   appropriate names    and make
+sure their keys  are unique.&nbsp;&nbsp; For   example, you might create
+a structure like:</p>
+<blockquote><code> All LDAP Groups (all)</code><br>
+  <code> &nbsp;&nbsp;&nbsp; Faculty Groups (1)</code><br>
+  <code>&nbsp; &nbsp; &nbsp; &nbsp; Biology Department (3)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Chemistry Department (4)</code><code><br>
+&nbsp; &nbsp; Portal Staff (2)<br>
+  </code><code>&nbsp; &nbsp; &nbsp; &nbsp; Portal Administrators (5)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Portal Developers (6)</code><code></code><br>
+</blockquote>
+<code></code>
+<p>Now un-comment the "ldap" <code>service</code> element  in <code>compositeGroupServices.xml</code>
+and start up the portal. &nbsp;In    the <i>Groups Manager</i> channel,
+try adding <i>All LDAP Groups </i>to    the root group <i>Everyone</i>.&nbsp;
+Be sure to <span style="font-style: italic;">Add Members</span> rather
+than <span style="font-style: italic;">Create New Member Group</span>
+since the group <span style="font-style: italic;">All LDAP Groups</span>
+already exists.&nbsp; (For instructions on using <i>Groups  Manager</i>,
+see&nbsp;<a href="../groupsmanager.html">The Groups Manager Channel</a>.)
+&nbsp; The groups that you defined in your LDAP configuration file
+should now be available   for browsing in Groups Manager, although you
+won't be able to  update them. </p>
+<p>Once you are comfortable with the process of defining groups in the
+configuration file, you can begin the task of deriving a group structure
+from LDAP that includes    your portal population and models your
+organization. &nbsp;</p>
+<i>last revised: 03/29/2004</i>, d.e.<br>
+<br>
+<!-- end cut this section to put into jasig table cell format --> <br>
+<!-- end of main body table cell --> <img height="4" width="692"><br>
+<!-- end cut this section to put into jasig table cell format -->
+</body>
+</html>
