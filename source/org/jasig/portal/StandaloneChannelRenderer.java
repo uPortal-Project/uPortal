@@ -149,7 +149,7 @@ public class StandaloneChannelRenderer
             th.endElement("","channel","channel");
             th.endDocument();
         } catch (InternalPortalException ipe) {
-            throw ipe.getException();
+            throw ipe.getCause();
         }
     }
 
