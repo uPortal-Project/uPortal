@@ -42,33 +42,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Interface defining how the portal retrieves it's channels and categories.
+ * Interface defining how the portal discovers it's channels and categories.
  * Methods are also provided to allow for publishing and unpublishing content.
- * The intent is that this task can be performed based on channel, category, and role.
- * @author John Laker
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public interface IChannelRegistryStore {
-
-  /**
-   * Get next available channel ID
-   * @return channel id
-   * @exception PortalException
-   */
-  public int getNextId () throws PortalException;
-
-  /**
-   * Gets the channel registry as an XML document
-   * @return the channel registry XML
-   * @throws java.lang.Exception
-   */
-  public Document getChannelRegistryXML () throws Exception;
-
-  /**
-   * put your documentation comment here
-   * @param registryXML
-   */
-  public void setRegistryXML (String registryXML) throws Exception;
 
   /**
    * Registers a channel type.
@@ -79,67 +58,13 @@ public interface IChannelRegistryStore {
 
 
   /**
-   * Returns a string of XML which describes the channel types.
+   * Returns an array of ChannelTypes.
    * @return channelTypes, the list of publishable channel types
    * @throws java.lang.Exception
    */
-  public Document getChannelTypesXML () throws Exception;
+  public ChannelType[] getChannelTypes() throws Exception;
 
-  /**
-   * Removes a channel from the channel registry.
-   * @param chanID, the ID of the channel to remove.
-   * @exception Exception
-   */
-  public void removeChannel (String chanID) throws Exception;
-
-  /**
-   * Publishes a channel.
-   * @param id the identifier for the channel
-   * @param publisher the user who is publishing this channel
-   * @param chanXML XML that describes the channel
-   * @param catID an array of category IDs
-   * @exception Exception
-   */
-  public void addChannel (int id, IPerson publisher, Document chanXML, String catID[]) throws Exception;
-
-  /**
-   * Approves a channel.
-   * @param chanId
-   * @param approver
-   * @param approveDate
-   * @exception Exception
-   */
-  public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception;
-
-  /**
-   * Get a prepared statement for Channels
-   */
-  public RDBMServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException;
-
-  /**
-   * Get a prepared statement for channel parameters (if needed)
-   */
-  public RDBMServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException;
-
-  /**
-   * Get a channel definition
-   */
-  public ChannelDefinition getChannel(int channelPublishId);
-
-  /**
-   * Invalidate a channel definition
-   */
-  public void flushChannelEntry(int chanId);
-
-  /**
-   * Get a channel definition (from the store if necessary)
-   */
-  public ChannelDefinition getChannel(int channelPublishId, boolean cacheChannel, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException;
-
-  /**
-   * Get an XML representation of a channel
-   */
-  public Element getChannelXML(int chanId, Document doc, String idTag);
+  // more to come!!!
 }
 
 
