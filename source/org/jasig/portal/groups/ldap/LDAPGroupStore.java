@@ -5,6 +5,7 @@
 
 package org.jasig.portal.groups.ldap;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -21,8 +22,10 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.GroupsException;
@@ -42,6 +45,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
 
 /**
  * LDAPGroupStore.
@@ -68,8 +72,14 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     try{
       config = ResourceLoader.getResourceAsDocument(this.getClass(),"/properties/groups/LDAPGroupStoreConfig.xml");
     }
-    catch(Exception rme){
-      throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document");
+    catch(IOException e){
+        throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
+    } catch (ResourceMissingException e) {
+        throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
+    } catch (ParserConfigurationException e) {
+        throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
+    } catch (SAXException e) {
+        throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
     }
     init(config);
   }
