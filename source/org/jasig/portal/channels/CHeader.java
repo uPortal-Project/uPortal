@@ -56,7 +56,7 @@ public class CHeader extends BaseChannel
 
     String fs=File.separator;
     StylesheetSet set;
-    String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
+    String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CHeader" + fs;
 
     public CHeader() {
         set = new StylesheetSet (stylesheetDir + "CHeader.ssl");
@@ -65,7 +65,8 @@ public class CHeader extends BaseChannel
 
     public void renderXML (DocumentHandler out)
     {
-        String userName = (String) runtimeData.getSessionAttribute ("userName");
+	    
+	String userName= (String) staticData.getPerson().getFullName();
 
         Document doc = new org.apache.xerces.dom.DocumentImpl();
         Element headerEl=doc.createElement("header");
@@ -84,6 +85,8 @@ public class CHeader extends BaseChannel
             XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
             XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
+	    if(userName!=null && userName.equals("Guest")) 
+		processor.setStylesheetParam("guest",processor.createXString("true"));
             processor.process (xmlSource, xslSource, xmlResult);
         } catch (Exception e) { Logger.log(Logger.ERROR,e); }
     }
