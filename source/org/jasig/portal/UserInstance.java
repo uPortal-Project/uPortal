@@ -548,6 +548,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             LogService.log(LogService.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
                         }
+                        tst.setParameter("uP_productAndVersion", Version.getProductAndVersion());
                         // tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
 
                         // initialize a filter to fill in channel attributes for the "theme" (second) transformation.

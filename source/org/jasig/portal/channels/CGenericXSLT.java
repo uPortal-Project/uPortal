@@ -59,6 +59,7 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.Version;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.LocalConnectionContext;
 import org.jasig.portal.services.LogService;
@@ -307,6 +308,9 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
       state.runtimeData.put("isRenderingAsRoot", String.valueOf(state.runtimeData.isRenderingAsRoot()));
+      
+      // Add uPortal version string (used in footer channel)
+      state.runtimeData.put("uP_productAndVersion", Version.getProductAndVersion());
       
       // OK, pass everything we got cached in params...
       if (state.params != null)

@@ -38,6 +38,7 @@ Version $Revision$
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" indent="yes"/>
     <!--<xsl:output method="html" indent="no"/>-->
+    <xsl:param name="uP_productAndVersion">uPortal X.X.X</xsl:param>
     <!--These variables and parameters are used in all modes-->
     <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
     <!--modes: view (default), preferences, fragment-->
@@ -104,7 +105,7 @@ Version $Revision$
     <xsl:template match="layout">
         <html>
             <head>
-                <title>uPortal 2.3+</title>
+                <title><xsl:value-of select="$uP_productAndVersion"/></title>
                 <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
                 <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}_portlet.css"/>
                 <xsl:call-template name="scripts"/>

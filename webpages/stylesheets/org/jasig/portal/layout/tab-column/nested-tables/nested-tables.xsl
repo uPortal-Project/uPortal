@@ -3,6 +3,7 @@
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="baseIdempotentActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="uP_productAndVersion">uPortal X.X.X</xsl:param>
 
   <xsl:param name="skin" select="'imm'"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
@@ -45,7 +46,7 @@
   <xsl:template match="layout">
     <html>
       <head>
-        <title>uPortal 2.3+</title>
+        <title><xsl:value-of select="$uP_productAndVersion"/></title>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
