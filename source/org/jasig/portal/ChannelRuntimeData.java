@@ -250,15 +250,6 @@ public class ChannelRuntimeData extends Hashtable
   }
 
   /**
-   * Return a session attribute
-   * @param attribute wanted
-   */
-  public Object getSessionAttribute (String attribute) {
-    HttpSession session = request.getSession(false);
-    return  session.getAttribute(attribute);
-  }
-
-  /**
    * Find a stylesheet for this connection
    * @parameter stylesheet title
    * @parameter Stylesheet object
@@ -297,25 +288,6 @@ public class ChannelRuntimeData extends Hashtable
     return  mm.getMedia(request);
   }
 
-  /**
-   * @depricated
-   */
-  public void setContentType(String mimeType) {
-    response.setContentType(mimeType);
-  }
-
-  /**
-   * @depricated
-   */
-  public void addHeader(String name, String value) {
-    response.addHeader(name, value);
-  }
-  /**
-   * @depricated
-   */
-  public ServletOutputStream getOutputStream() throws IOException {
-    return response.getOutputStream();
-  }
   // if you need to pass objects, use this
   public synchronized Object put (Object key, Object value) {
     return  super.put(key, value);

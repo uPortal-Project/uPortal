@@ -1154,7 +1154,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         String index = runtimeData.getParameter ("attachment");
         if (DEBUG) System.err.println(iMsg + ", " + index);
         if (index == null) {
-          runtimeData.setContentType("text/html");
+          setContentType("text/html");
           //displayErrorMsg ("No attachment selected", true, xml);
         } else {
           int attachmentIndex = Integer.parseInt (index);
@@ -1165,21 +1165,21 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           String contentType = attachment.getContentType ();
           String attachmentName = attachmentName(attachment, attachmentIndex);
 
-          runtimeData.addHeader("Accept-Ranges", "bytes");
-          runtimeData.addHeader("Content-Disposition", "inline; filename=\"" + attachmentName + "\"");
-          runtimeData.addHeader("Cache-Control", "private");  // Have to override (possible) no-cache directives
+          addHeader("Accept-Ranges", "bytes");
+          addHeader("Content-Disposition", "inline; filename=\"" + attachmentName + "\"");
+          addHeader("Cache-Control", "private");  // Have to override (possible) no-cache directives
           int colonPos = contentType.indexOf (";");
           if (colonPos > 0) {
-            runtimeData.setContentType (contentType.substring (0, colonPos).toLowerCase ());
+            setContentType (contentType.substring (0, colonPos).toLowerCase ());
           } else {
-            runtimeData.setContentType (contentType.toLowerCase ());
+            setContentType (contentType.toLowerCase ());
           }
           Date sentDate = msg.getSentDate();
           if (sentDate != null) {
-            runtimeData.addHeader("Last-Modified", httpDateFormat.format(sentDate));
+            addHeader("Last-Modified", httpDateFormat.format(sentDate));
           }
 
-          OutputStream browser = runtimeData.getOutputStream();
+          OutputStream browser = getOutputStream();
           InputStream in = attachment.getInputStream ();
           try {
             int bufferSize = 8192;
@@ -1519,20 +1519,20 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
             folder = getFolder ( (config.sFolderDir == null ? "" : config.sFolderDir + folderSeparator) + folderName);
             folder.open(Folder.READ_ONLY);
             if (folder == null) {
-              runtimeData.setContentType("text/html");
+              setContentType("text/html");
               //displayErrorMsg ("Lost connection to mail server", false, xml);
               return;
             }
           }
           Message messages[] = folder.getMessages();
 
-          runtimeData.addHeader("Accept-Ranges", "bytes");
-          runtimeData.addHeader("Content-Disposition", "inline; filename=\"" + folderName + ".zip\"");
-          runtimeData.addHeader("Cache-Control", "private");  // Have to override (possible) no-cache directives
-          runtimeData.setContentType("application/zip");
-          runtimeData.addHeader("Last-Modified", httpDateFormat.format(new Date()));
+          addHeader("Accept-Ranges", "bytes");
+          addHeader("Content-Disposition", "inline; filename=\"" + folderName + ".zip\"");
+          addHeader("Cache-Control", "private");  // Have to override (possible) no-cache directives
+          setContentType("application/zip");
+          addHeader("Last-Modified", httpDateFormat.format(new Date()));
 
-          ZipOutputStream zout = new ZipOutputStream(runtimeData.getOutputStream());
+          ZipOutputStream zout = new ZipOutputStream(getOutputStream());
           zout.setLevel(Deflater.BEST_COMPRESSION);
           zout.setMethod(zout.DEFLATED);
           StringBuffer pad = new StringBuffer();
@@ -2550,6 +2550,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       sPassword = password;
 
       session = Session.getDefaultInstance (props, null);
+      session.setDebug(false);
       store = session.getStore (urlName);
       store.addStoreListener (storeListener);
       store.connect ();
@@ -2584,10 +2585,13 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           if (DEBUG) System.err.println(storeFolders.length + " folders found");
           imapFolders.ensureCapacity (storeFolders.length + 1);
           for (int i = 0; i < storeFolders.length; i++) {
+            try {
               if (storeFolders[i].exists ()) {
-                storeFolders[i].open(Folder.READ_ONLY);
-                imapFolders.add (storeFolders[i]);
+                imapFolders.add (storeFolders[i].getName());
               }
+            } catch (Exception e) {
+              System.err.println(e);
+            }
           }
         }
 
@@ -2956,6 +2960,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         return;
       }
 
+      if (DEBUG) System.err.println("Adding folder " + folderName);
       if (isSpecialFolder (folderName)) {
         specialFolders.add (folderName);
       } else {
@@ -3603,4 +3608,27 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       metrics.showMetrics = false;
     }
   }
+
+  //
+    /**
+   * @depricated
+   */
+  public void setContentType(String mimeType) {
+    //response.setContentType(mimeType);
+  }
+
+  /**
+   * @depricated
+   */
+  public void addHeader(String name, String value) {
+    //response.addHeader(name, value);
+  }
+  /**
+   * @depricated
+   */
+  public ServletOutputStream getOutputStream() throws IOException {
+    //return response.getOutputStream();
+    return null;
+  }
+
 }
