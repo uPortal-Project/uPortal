@@ -178,8 +178,9 @@ private void deleteEntityType(EntityType et) throws SQLException
             ps.setInt(1, et.getTypeId().intValue());
             ps.setString(2, et.getType().getName());
 
-            log.debug("EntityTypes.deleteEntityType(): " + ps + "(" +
-              et.getTypeId() + ", " + et.getType() + ")" );
+            if (log.isDebugEnabled())
+                log.debug("EntityTypes.deleteEntityType(): " + ps + "(" +
+                        et.getTypeId() + ", " + et.getType() + ")" );
 
             int rc = ps.executeUpdate();
 
@@ -429,8 +430,10 @@ private void insertEntityType(EntityType et) throws SQLException
             ps.setString(2, et.getType().getName());
             ps.setString(3, et.getDescriptiveName());
 
-            log.debug("EntityTypes.insertEntityType(): " + ps + "(" +
-              et.getTypeId() + ", " + et.getType() + ", " + et.getDescriptiveName() + ")" );
+            if (log.isDebugEnabled())
+                log.debug("EntityTypes.insertEntityType(): " + ps + "(" +
+                        et.getTypeId() + ", " + et.getType() + ", " + 
+                        et.getDescriptiveName() + ")" );
 
             int rc = ps.executeUpdate();
 
@@ -551,8 +554,10 @@ private void updateEntityType(EntityType et) throws SQLException
             ps.setString(1, et.getDescriptiveName());
             ps.setInt(2, et.getTypeId().intValue());
 
-            log.debug("EntityTypes.updateEntityType(): " + ps + "(" +
-              et.getType() + ", " + et.getDescriptiveName() + ", " + et.getTypeId() + ")" );
+            if (log.isDebugEnabled())
+                log.debug("EntityTypes.updateEntityType(): " + ps + "(" +
+                        et.getType() + ", " + et.getDescriptiveName() + ", " + 
+                        et.getTypeId() + ")" );
 
             int rc = ps.executeUpdate();
 
