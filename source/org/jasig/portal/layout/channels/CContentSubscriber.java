@@ -45,7 +45,11 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+//import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+import java.util.Vector;
 
   /**
    * A channel for adding new content to a layout.
@@ -58,10 +62,124 @@ import org.xml.sax.ContentHandler;
     private PortalControlStructures controlStructures;
     private IUserLayoutManager ulm;
     private static Document channelRegistry;
+    private Vector expandedCategories, condensedCategories;
+    private Vector expandedChannels, condensedChannels;
+    private Vector expandedFragments, condensedFragments;
+    private Vector[] expandedItems;
+	private Vector[] condensedItems;
 
     public CContentSubscriber() {
        super();
+	   expandedCategories = new Vector();
+	   expandedChannels = new Vector();
+	   expandedFragments = new Vector();
+	   condensedCategories = new Vector();
+	   condensedChannels = new Vector();
+	   condensedFragments = new Vector();
+	   expandedItems = new Vector[] { expandedFragments, expandedChannels, expandedCategories }; 
+	   condensedItems = new Vector[] { condensedFragments, condensedChannels, condensedCategories }; 
     }
+
+	private void analyzeParameters() throws PortalException {
+		
+		    //Document channelRegistry = (Document) CContentSubscriber.channelRegistry.cloneNode(true);
+		
+			String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_fragmentID"));
+		    String channelId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_channelID"));
+		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
+			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
+			boolean allFragments = false, 
+			        allChannels = false, 
+			        allCategories = false;
+		           
+			 if (action.equals("expand")) {
+			 	
+				if ( CommonUtils.parseInt(fragmentId) > 0 ) {
+				  expandedFragments.add(fragmentId);
+				  condensedFragments.remove(fragmentId);
+				} else if ( fragmentId.equals("all") ) {
+				   allFragments = true;
+				   condensedFragments.removeAllElements(); 		    
+				}  
+				
+				if ( CommonUtils.parseInt(channelId) > 0 ) {
+				  expandedChannels.add(channelId);
+				  condensedChannels.remove(channelId);
+				} else if ( channelId.equals("all") ) {
+				   allChannels = true;
+				   condensedChannels.removeAllElements();
+				}  
+				   
+				if ( CommonUtils.parseInt(categoryId) > 0 ) {
+				  expandedCategories.add(categoryId);
+				  condensedCategories.remove(categoryId);
+				} else if ( categoryId.equals("all") ) {
+				   allCategories = true; 	
+				   condensedCategories.remove(categoryId);
+				}
+				  	  		 	
+			 } else if ( action.equals("condense") ) {
+				
+				if ( CommonUtils.parseInt(fragmentId) > 0 ) {
+				  condensedFragments.add(fragmentId); 
+				  expandedFragments.remove(fragmentId);
+				} else if ( fragmentId.equals("all") ) {
+				   allFragments = true;	
+				   expandedFragments.removeAllElements();
+				}    		    
+				
+				if ( CommonUtils.parseInt(channelId) > 0 ) {
+				  condensedChannels.add(channelId);
+				  expandedChannels.remove(channelId);
+				} else if ( channelId.equals("all") ) {
+				   allChannels = true;	
+				   expandedChannels.removeAllElements();
+				} 
+				   
+				if ( CommonUtils.parseInt(categoryId) > 0 ) {
+				  condensedCategories.add(categoryId);	
+				  expandedCategories.remove(categoryId);
+				} else if ( categoryId.equals("all") ) {
+				   allCategories = true;	
+				   expandedCategories.removeAllElements();
+				  }  		 
+			 }	
+			 
+			
+			 
+		     Vector tagNames = new Vector();
+			 
+			 if ( allFragments )
+			 	tagNames.add("fragment");
+			 if ( allChannels )
+			    tagNames.add("channel");
+			 if ( allCategories )
+			    tagNames.add("category");
+			    
+			 for ( int i = 0; i < expandedItems.length; i++ ) {	 
+			   Vector list = expandedItems[i];
+			   for ( int j = 0; j < list.size(); j++ )
+			    channelRegistry.getElementById((String)list.get(j)).setAttribute("view","expand");
+			 }  
+			  
+			 for ( int i = 0; i < condensedItems.length; i++ ) {	 
+			   Vector list = condensedItems[i];
+			   for ( int j = 0; j < list.size(); j++ )
+				channelRegistry.getElementById((String)list.get(j)).setAttribute("view","condense");
+			 }    
+			 
+		     for ( int i = 0; i < tagNames.size(); i++ ) {
+			  NodeList nodeList = channelRegistry.getElementsByTagName((String)tagNames.get(i));
+			  for ( int k = 0; k < nodeList.getLength(); k++ ) {
+				Element node = (Element) nodeList.item(k);
+				node.setAttribute("view",action);
+			  } 
+		     } 
+		     
+		System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(channelRegistry));    
+			 
+	}		 	
+
 
     /**
      * Passes portal control structure to the channel.
@@ -79,6 +197,8 @@ import org.xml.sax.ContentHandler;
     }
 
     public void renderXML (ContentHandler out) throws PortalException {
+    	
+	  analyzeParameters();	
 
       String catId = CommonUtils.nvl(runtimeData.getParameter("catID"));
 
