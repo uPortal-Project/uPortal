@@ -983,9 +983,9 @@ public class RDBMUserLayoutStore
    *
    * </code></p>
    * @return types, the channel types as a Document
-   * @throws java.lang.Exception
+   * @throws java.sql.SQLException
    */
-  public Document getChannelTypesXML () throws Exception {
+  public Document getChannelTypesXML () throws SQLException {
     Document doc = new org.apache.xerces.dom.DocumentImpl();
     Element root = doc.createElement("channelTypes");
     doc.appendChild(root);
