@@ -5,10 +5,6 @@
   <xsl:param name="skin" select="'imm'"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
     
-<!--<xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
--->
-<!--  <xsl:variable name="mediaPath">file:///C|\LaJolla\uPortal\webpages\media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
--->
   <!-- This template is supposed to render a fragment of the layout. For example, during
        a detach mode, only the <channel> element that's detached is passed along to the structure
        transformation.
@@ -406,7 +402,7 @@
             </a>
           </xsl:if>
 
-          <xsl:if test="not(@unremovable='true') and not(//focused)">
+          <xsl:if test="not(@unremovable='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
             <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
               <img alt="remove" src="{$mediaPath}/{$skin}/controls/remove.gif" width="16" height="16" border="0"/>
             </a>
