@@ -33,13 +33,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Author: Ken Weiner, kweiner@interactivebusiness.com
+Modified by: Jon Allen, jfa@immagic.com
 Version $Revision$
 -->
 
 <channelDef>
 
   <description>
-    This channel renders Rich Site Summary (RSS) documents
+    This channel renders RSS documents
   </description>
 
   <class>org.jasig.portal.channels.CGenericXSLT</class>
@@ -49,12 +50,11 @@ Version $Revision$
       <ID>1</ID>
 
       <!-- displayed at the top of the step screen -->
-      <name>Provide RSS URL and select stylesheeet.</name>
+      <name>Provide RSS URL and select stylesheet.</name>
 
       <!-- intention is for documentation but could be used for other things -->
       <description>
-        URLs can optionally be specified relative to the classpath.  For stylesheet selection use 0.9 for original 0.9 rss files.  
-	Use 0.9x or 1.0x for rdf documents.
+        URLs can optionally be specified relative to the classpath.  Choose the specific stylesheet to match the version of the source RSS, or use the universal RSS translator for all versions of RSS.
       </description>
 
       <parameter modify="publish">
@@ -90,6 +90,7 @@ Version $Revision$
             <value display="0.9 (netscape simple RDF format)">CGenericXSLT/RSS/RSS-0_9.ssl</value>
             <value display="0.9x (RSS format)" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
             <value display="1.0x (RDF format)">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
+            <value display="Universal (0.90-2.0)">CGenericXSLT/RSS/RSS-universal.ssl</value>
           </restriction>
         </type>
       </parameter>
