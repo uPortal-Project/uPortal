@@ -334,21 +334,6 @@
   </table>
 
   <table>
-    <name>UPC_BOOKMARKS</name>
-    <desc>Used by the bookmark channel to store a user's bookmark data in XML format</desc>
-    <columns>
-      <column> <name>PORTAL_USER_ID</name> <type>INTEGER</type>
-        <desc>Foreign key USER_ID of table UP_USER</desc>
-        <key>FK</key>
-      </column>
-      <column> <name>BOOKMARK_XML</name>   <type>LONGVARCHAR</type>
-        <desc>User's bookmarks stored in XML</desc>
-      </column>
-    </columns>
-    <primary-key>PORTAL_USER_ID</primary-key>
-  </table>
-
-  <table>
     <name>UP_SEQUENCE</name>
     <desc>Emulates auto-increment/sequence values for the the various uPortal tables primary keys. Not used by DBLoader.</desc>
     <columns>
