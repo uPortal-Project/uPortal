@@ -178,6 +178,7 @@ public interface IUserPreferencesStore {
      * @return structure stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,int stylesheetId);
+
     /** Obtain theme styelsheet user preferences
      *
      * @param userId user id
@@ -187,7 +188,6 @@ public interface IUserPreferencesStore {
      */
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,int stylesheetId);
 
-
     /** Save structure stylesheet user pferences
      *
      * @param userId user id
@@ -195,6 +195,7 @@ public interface IUserPreferencesStore {
      * @param fsup structure stylesheet user preferences
      */
     public void setStructureStylesheetUserPreferences(int userId,int profileId, StructureStylesheetUserPreferences fsup);
+
     /** Save theme stylesheet user preferences
      *
      * @param userId user id
@@ -202,10 +203,5 @@ public interface IUserPreferencesStore {
      * @param ssup structure stylesheet user preferneces
      */
     public void setThemeStylesheetUserPreferences(int userId,int profileId, ThemeStylesheetUserPreferences ssup);
-
-    /** Get all the skins info in a Document object
-     *
-     */
-    public Document getSkins() throws Exception;
 
 }

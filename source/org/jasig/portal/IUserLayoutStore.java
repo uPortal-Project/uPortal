@@ -51,7 +51,6 @@ public interface IUserLayoutStore {
   /* UserLayout  */
   public Document getUserLayout(int userId,int profileId) throws Exception;
   public void setUserLayout(int userId,int profileId,Document layoutXML) throws Exception;
-  public Document getSkins() throws Exception;
 
   /* UserPreferences */
   public int getUserBrowserMapping(int userId,String userAgent) throws Exception;

@@ -167,21 +167,6 @@ public class RDBMUserPreferencesStore
   }
 
   /**
-   * Calls the getSkins method in RDBMUserLayoutStore
-   * Can't find anyplace better for the method right now
-   * @return Document object that contains all the info about the skins
-   */
-  public Document getSkins () {
-    Document doc = null;
-    try {
-      doc = GenericPortalBean.getUserLayoutStore().getSkins();
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
-    }
-    return  doc;
-  }
-
-  /**
    * put your documentation comment here
    * @param userId
    * @param profileId

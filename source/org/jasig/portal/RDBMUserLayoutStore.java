@@ -3054,61 +3054,6 @@ public class RDBMUserLayoutStore
     return  tsd;
   }
 
-  public Document getSkins() throws Exception {
-    Element skin = null;
-    Element node = null;
-    Document SkinsInfoDocument = DocumentFactory.getNewDocument ();
-    Element root = SkinsInfoDocument.createElement("root");
-
-    Connection connection = rdbmService.getConnection();
-    Statement stmt = connection.createStatement();
-    String query = "SELECT SKIN_NAME, SKIN, SKIN_DESCRIPTION FROM UP_SKINS";
-
-    try {
-      // Get the result set
-      ResultSet rs = stmt.executeQuery(query);
-
-      try {
-        while (rs != null && rs.next ()) {
-          //Start of an enrty
-          skin = SkinsInfoDocument.createElement("skin");
-          //make Skin node
-          node = SkinsInfoDocument.createElement("Skin");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN")));
-          skin.appendChild(node);
-          //make Skin-Name node
-          node = SkinsInfoDocument.createElement("Skin-Name");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_NAME")));
-          skin.appendChild(node);
-          //make Skin-Description node
-          node = SkinsInfoDocument.createElement("Skin-Description");
-          node.appendChild(SkinsInfoDocument.createTextNode(rs.getString("SKIN_DESCRIPTION")));
-          skin.appendChild(node);
-          //append skin to root
-          root.appendChild(skin);
-          //end of entry
-        }
-      }
-      finally {
-        rs.close();
-      }
-
-      //append root to the document
-      SkinsInfoDocument.appendChild(root);
-      //System.out.println(UtilitiesBean.dom2PrettyString(SkinsInfoDocument));
-    }
-    catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      SkinsInfoDocument = null;
-      throw e;
-    }
-    finally {
-      stmt.close();
-      rdbmService.releaseConnection(connection);
-    }
-    return SkinsInfoDocument;
-  }
-
   /**
    * Registers a NEW theme stylesheet with the database.
    * @param tsd Stylesheet description object
