@@ -235,10 +235,10 @@ public class SubscriberBean extends GenericPortalBean{
    */
    public void setRegistry ()
    {
-    String sQuery = "select cl.name, ch.chan_id, title "+
-                   "from portal_class cl, portal_channels ch, portal_chan_class chcl "+
-                   "where ch.chan_id=chcl.chan_id and chcl.class_id =cl.class_id "+
-                   "order by cl.name, ch.title";
+    String sQuery = "SELECT CL.NAME, CH.CHAN_ID, TITLE "+
+                    "FROM PORTAL_CLASS CL, PORTAL_CHANNELS CH, PORTAL_CHAN_CLASS CHCL " +
+                    "WHERE CH.CHAN_ID=CHCL.CHAN_ID AND CHCL.CLASS_ID=CL.CLASS_ID " +
+                    "ORDER BY CL.NAME, CH.TITLE";
 
     ResultSet rs = null;
     Statement stmt = null;
