@@ -35,59 +35,68 @@
 
 package org.jasig.portal.channels;
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import java.io.*;
+import java.net.URL;
 import java.util.Hashtable;
-import java.util.Enumeration;
-import org.jasig.portal.*;
-import org.w3c.dom.*;
-import org.apache.xalan.xslt.*;
-
+import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.Logger;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.GeneralRenderingException;
+import org.xml.sax.DocumentHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
- * This pseudo-channel provides header XML document fragment
- * to be used in compilation of the structuredLayoutXML
+ * This channel provides content for a page header.  It is indended
+ * to be included in a layout folder of type "header".  Most stylesheets
+ * will render the content of such header channels consistently on every
+ * page.
  * @author Peter Kharchenko
+ * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision 1.1$
  */
 public class CHeader extends BaseChannel
 {
+  String sslUri = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
 
-    String fs=File.separator;
-    StylesheetSet set;
-    String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CHeader" + fs;
+  public void renderXML(DocumentHandler out) throws PortalException
+  {
+    String fullName = (String)staticData.getPerson().getFullName();
+    Document doc = new org.apache.xerces.dom.DocumentImpl();
 
-    public CHeader() {
-        set = new StylesheetSet (stylesheetDir + "CHeader.ssl");
-        set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
-    }
+    // Create <header> element
+    Element headerEl = doc.createElement("header");
 
-    public void renderXML (DocumentHandler out)
+    // Create <full-name> element under <header>
+    Element fullNameEl = doc.createElement("full-name");
+    fullNameEl.appendChild(doc.createTextNode(fullName));
+    headerEl.appendChild(fullNameEl);
+
+    // Create <timestamp-long> element under <header>
+    Element timeStampLongEl = doc.createElement("timestamp-long");
+    timeStampLongEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("EEEE, MMM d, yyyy 'at' hh:mm a")));
+    headerEl.appendChild(timeStampLongEl);
+
+    // Create <timestamp-short> element under <header>
+    Element timeStampShortEl = doc.createElement("timestamp-short");
+    timeStampShortEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("M.d.y h:mm a")));
+    headerEl.appendChild(timeStampShortEl);
+
+    doc.appendChild(headerEl);
+
+    // Set up stylesheet parameters: "baseActionURL" and "guest"
+    Hashtable ssParams = new Hashtable(2);
+    ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
+    if (fullName != null && fullName.equals("Guest"))
+      ssParams.put("guest", "true");
+
+    try
     {
-
-        String userName= (String) staticData.getPerson().getFullName();
-
-        Document doc = new org.apache.xerces.dom.DocumentImpl();
-        Element headerEl=doc.createElement("header");
-        Element titleEl=doc.createElement("title");
-        titleEl.appendChild(doc.createTextNode("Welcome "+userName+" !"));
-        headerEl.appendChild(titleEl);
-        doc.appendChild(headerEl);
-
-        try {
-
-            XSLTInputSource xmlSource = new XSLTInputSource (doc);
-            XSLTInputSource xslSource = runtimeData.getStylesheet(set);
-            if(xslSource==null) {
-            Logger.log(Logger.ERROR,"CHeader::renderXML() : unable to locate a stylesheet");
-            }
-            XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
-            XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-            if(userName!=null && userName.equals("Guest"))
-                processor.setStylesheetParam("guest",processor.createXString("true"));
-            processor.process (xmlSource, xslSource, xmlResult);
-        } catch (Exception e) { Logger.log(Logger.ERROR,e); }
+      XSLT.transform(doc, new URL(sslUri), out, ssParams, runtimeData.getMedia());
     }
+    catch (Exception e)
+    {
+      throw new GeneralRenderingException(e.getMessage());
+    }
+  }
 }
