@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Enumeration;
 import java.util.Collections;
+import java.util.HashSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -86,13 +87,17 @@ import org.jasig.portal.security.LocalConnectionContext;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.
- *    See http://www.mun.ca/cc/portal/cw/ for full documentation.
- *    This version introduces experimental features, which may or may
- *    not survive to the next release.  Default values are backwards
- *    compatible with uPortal version 2.0.1.  Only defaults have been
- *    fully tested.</p>
+ *    See docs/website/developers/channel_docs/reference/CwebProxy.html
+ *    for full documentation.
+ * </p>
  *
- * <p>Static Channel Parameters:</p>
+ * <p>Static Channel Parameters:
+ *    Except where indicated, static parameters can be updated by equivalent
+ *    Runtime parameters.  Caching parameters can also be changed temporarily.
+ *    Cache scope and mode can only be made more restrictive, not less.
+ *    Cache defaults and IPerson restrictions are loaded first from properties,
+ *    and overridden by static data if there.
+ * </p>    
  * <ol>
  *  <li>"cw_xml" - a URI for the source XML document
  *  <li>"cw_ssl" - a URI for the corresponding .ssl (stylesheet list) file
@@ -139,24 +144,26 @@ import org.jasig.portal.security.LocalConnectionContext;
  *	            user statically to override the first instance.</i>
  *  <li>"cw_person" - IPerson attributes to pass.
  *		    <i>A comma-separated list of IPerson attributes to
- *		    pass to the back end application.</i>
- *  <li>"upc_localConnContext" - The class name of the LocalConnectionContext 
- *                  implementation.
- *                  <i>Use when local data needs to be sent with the
- *                  request for the URL.</i>
+ *		    pass to the back end application.  The static data
+ *		    value will be passed on </i>all<i> requests not
+ *		    overridden by a runtime data cw_person.</i>
+ *  <li>"cw_person_allow" - Restrict IPerson attribute passing to this list.
+ *		    <i>A comma-separated list of IPerson attributes that
+ *		    may be passed via cw_person.  Static data only.</i>
+ *  <li>"upc_localConnContext" - LocalConnectionContext implementation class.
+ *                  <i>The name of a class to use when data sent to the
+ *                  backend application needs to be modified or added
+ *                  to suit local needs.</i>
  * </ol>
  * <p>Runtime Channel Parameters:</p>
- *    The static parameters above can be updated by equivalent Runtime
- *    parameters.  Caching parameters can also be changed temporarily.
- *    Cache scope and mode can only be made more restrictive, not less.
- *    The following parameter is runtime-only.
+ *    The following parameters are runtime-only.
  * </p>
  * <ol>
  *  <li>"cw_reset" - an instruction to return to reset internal variables.
- *		   The value <code>return</code> resets <code>cw_xml</code>
+ *		   <i>The value <code>return</code> resets <code>cw_xml</code>
  *		   to its last value before changed by button events.  The
  *		   value "reset" returns all variables to the static data
- *		   values.  Runtime data parameter only.
+ *		   values.</i>
  *  <li>"cw_download" - use download worker for this link or form 
  *                 <i>any link or form that contains this parameter will be 
  *                 handled by the download worker, if the pass-through mode 
@@ -191,6 +198,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private int id;
     private IPerson iperson;
     private String person;
+    private String person_allow;
+    private HashSet person_allow_set;
     private String fullxmlUri;
     private String buttonxmlUri;
     private String xmlUri;
@@ -224,6 +233,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       cacheTimeout = cacheDefaultTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_timeout");
       cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_mode");
       cacheDefaultScope = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_scope");
+      person_allow = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.person_allow");
       runtimeData = null;
       cookieCutter = new CookieCutter();
       localConnContext = null;
@@ -249,6 +259,24 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     state.id = sd.getPerson().getID();
     state.iperson = sd.getPerson();
     state.person = sd.getParameter("cw_person");
+    String person_allow = sd.getParameter ("cw_person_allow");
+    if ( person_allow != null )
+      state.person_allow = person_allow;
+    // state.person_allow could have been set by a property or static data
+    if ( state.person_allow != null )
+    {
+      state.person_allow_set = new HashSet();
+      StringTokenizer st = new StringTokenizer(state.person_allow,",");
+      if (st != null)
+      {
+        while ( st.hasMoreElements () ) {
+          String pName = st.nextToken();
+          if ((pName!=null)&&(!pName.trim().equals("")))
+	    state.person_allow_set.add(pName);
+        }
+      }
+    }
+
     state.xmlUri = sd.getParameter ("cw_xml");
     state.sslUri = sd.getParameter ("cw_ssl");
     state.fullxmlUri = sd.getParameter ("cw_xml");
@@ -257,6 +285,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     state.infoUri = sd.getParameter ("cw_info");
     state.helpUri = sd.getParameter ("cw_help");
     state.editUri = sd.getParameter ("cw_edit");
+
     String cacheScope = sd.getParameter ("cw_cacheDefaultScope");
     if (cacheScope != null)
       state.cacheDefaultScope = cacheScope;
@@ -330,6 +359,10 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
        String passThrough = state.runtimeData.getParameter("cw_passThrough");
        if (passThrough != null)
           state.passThrough = passThrough;
+
+       String person = state.runtimeData.getParameter("cw_person");
+       if (person == null)
+          person = state.person;
    
        String tidy = state.runtimeData.getParameter("cw_tidy");
        if (tidy != null)
@@ -460,29 +493,51 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
                    }
                }
 	     // here add in attributes according to cw_person
-	     if (state.person != null) {
-               StringTokenizer st = new StringTokenizer(state.person,",");
+	     
+	     if (person != null) {
+               StringTokenizer st = new StringTokenizer(person,",");
                if (st != null)
                  {
                    while (st.hasMoreElements ())
                      {
                        String pName = st.nextToken();
-                       if ((pName!=null)&&(!pName.trim().equals(""))){
-LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person attribute: " + pName);
-                         newXML.append(appendchar);
-                         appendchar = "&";
-                         newXML.append(pName);
-                         newXML.append("=");
-                         // note, this only gets the first one if it's a
-                         // java.util.Vector.  Should check
-                         String pVal = (String)state.iperson.getAttribute(pName);
-                         if (pVal != null)
-                           newXML.append(URLEncoder.encode(pVal));
+                       if ((pName!=null)&&(!pName.trim().equals("")))
+		       {
+			 LogService.instance().log(LogService.DEBUG, "CWebProxy: attempt to add person attribute: " + pName);
+
+			 if ( state.person_allow_set == null ||
+			   state.person_allow_set.contains(pName) )
+			 {
+                           newXML.append(appendchar);
+                           appendchar = "&";
+                           newXML.append(pName);
+                           newXML.append("=");
+                           // note, this only gets the first one if it's a
+                           // java.util.Vector.  Should check
+                           String pVal = (String)state.iperson.getAttribute(pName);
+                           if (pVal != null)
+                             newXML.append(URLEncoder.encode(pVal));
+			 } else {
+			   LogService.instance().log(LogService.INFO,
+			     "CWebProxy: request to pass " + pName + " denied.");
+			 }
                        }
                      }
                  }
 	       }
 	     // end new cw_person code
+
+	     // keyword processing
+	     String keywords = rd.getKeywords();
+	     if (keywords != null)
+	     {
+	LogService.instance().log(LogService.DEBUG, "CWebProxy: got keywords: " + keywords);
+	       if (appendchar.equals("&"))
+	         newXML.append("&keywords=" + keywords);
+	       else
+	         newXML.append(keywords);   
+	     }
+	     // end keyword processing
 
              // to add: if not already set, make a copy of sd for
 	     // the "reset" command
