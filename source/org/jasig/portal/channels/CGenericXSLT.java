@@ -212,29 +212,15 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
 	    
-      try 
-      {
-        if (state.xslUri != null)
-          XSLT.transform(xmlDoc, new URL(state.xslUri), out, state.runtimeData);
-        else 
-        {
-          if (state.xslTitle != null)
-            XSLT.transform(xmlDoc, new URL(state.sslUri), out, state.runtimeData, state.xslTitle, state.runtimeData.getBrowserInfo());
-          else
-            XSLT.transform(xmlDoc, new URL(state.sslUri), out, state.runtimeData, state.runtimeData.getBrowserInfo());
-        }
-      }
-      catch (SAXException se) 
-      {
-        throw new GeneralRenderingException("Problem performing the transformation:" + se.toString());
-      }
-      catch (IOException ioe) 
-      {
-        StringWriter sw = new StringWriter();
-        ioe.printStackTrace(new PrintWriter(sw));
-        sw.flush();
-        throw new GeneralRenderingException(sw.toString());
-      }
+      XSLT xslt = new XSLT();
+      xslt.setXML(xmlDoc);
+      if (state.xslUri != null)
+        xslt.setXSL(state.xslUri);
+      else 
+        xslt.setSSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.setStylesheetParameters(state.runtimeData);
+      xslt.transform();
     }
   }
 

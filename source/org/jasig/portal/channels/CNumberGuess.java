@@ -35,25 +35,17 @@
 
 package org.jasig.portal.channels;
 
-
+import org.jasig.portal.IChannel;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
-
-import org.jasig.portal.*;
-
 import org.jasig.portal.services.LogService;
-
 import org.xml.sax.DocumentHandler;
-
-import java.net.URL;
-
-import java.io.File;
 import java.io.StringWriter;
-
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.InitialContext;
 
 /** <p>A number guessing game which asks the user to enter a number within
  * a certain range as determined by this channel's parameters.</p>
@@ -77,8 +69,8 @@ public class CNumberGuess implements IChannel
    */
   public CNumberGuess ()
   {
-      this.staticData = new ChannelStaticData ();
-      this.runtimeData = new ChannelRuntimeData ();
+    this.staticData = new ChannelStaticData ();
+    this.runtimeData = new ChannelRuntimeData ();
   }
 
   /** Returns channel runtime properties
@@ -156,7 +148,7 @@ public class CNumberGuess implements IChannel
   /** Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (DocumentHandler out)
+  public void renderXML (DocumentHandler out) throws PortalException
   {
     String sSuggest = null;
 
@@ -165,37 +157,34 @@ public class CNumberGuess implements IChannel
     else if (iGuess > iAnswer)
       sSuggest = "lower";
 
-    try	{
-        StringWriter w = new StringWriter ();
-        w.write ("<?xml version='1.0'?>\n");
-        w.write ("<content>\n");
-        w.write ("  <minNum>" + iMinNum + "</minNum>\n");
-        w.write ("  <maxNum>" + iMaxNum + "</maxNum>\n");
-        w.write ("  <guesses>" + iGuesses + "</guesses>\n");
-        w.write ("  <guess>" + iGuess + "</guess>\n");
+    StringWriter w = new StringWriter ();
+    w.write ("<?xml version='1.0'?>\n");
+    w.write ("<content>\n");
+    w.write ("  <minNum>" + iMinNum + "</minNum>\n");
+    w.write ("  <maxNum>" + iMaxNum + "</maxNum>\n");
+    w.write ("  <guesses>" + iGuesses + "</guesses>\n");
+    w.write ("  <guess>" + iGuess + "</guess>\n");
 
-        if (bFirstTime)
-          ; // Do nothing
-        else if (iGuess == iAnswer)
-        {
-          w.write ("  <answer>" + iAnswer + "</answer>\n");
-          bFirstTime = true;
-          iGuesses = 0;
-          iAnswer = getRandomNumber (iMinNum, iMaxNum);
-        }
-        else
-          w.write ("  <suggest>" + sSuggest + "</suggest>\n");
-
-        w.write ("</content>\n");
-
-        Hashtable ssParams = new Hashtable();
-        ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-        XSLT.transform(w.toString(), new URL(sslLocation), out, ssParams, "main", runtimeData.getBrowserInfo());
-    }
-    catch (Exception e)
+    if (bFirstTime)
+      ; // Do nothing
+    else if (iGuess == iAnswer)
     {
-      LogService.instance().log(LogService.ERROR, e);
+      w.write ("  <answer>" + iAnswer + "</answer>\n");
+      bFirstTime = true;
+      iGuesses = 0;
+      iAnswer = getRandomNumber (iMinNum, iMaxNum);
     }
+    else
+      w.write ("  <suggest>" + sSuggest + "</suggest>\n");
+
+    w.write ("</content>\n");
+
+    XSLT xslt = new XSLT();
+    xslt.setXML(w.toString());
+    xslt.setSSL(sslLocation, "main", runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    xslt.transform();
   }
 
   private int getRandomNumber (int min, int max)
