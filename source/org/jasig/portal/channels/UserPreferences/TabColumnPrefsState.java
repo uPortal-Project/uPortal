@@ -121,8 +121,8 @@ public class TabColumnPrefsState extends BaseState
 
   // These can be overridden in a sub-class.
   protected static String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
-  protected static String SKIN_LIST_FILE = "media/org/jasig/portal/layout/tab-column/nested-tables/skinList.xml";
-
+  protected static String SKINS_PATH = "media/org/jasig/portal/layout/tab-column/nested-tables";
+  
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
   // very good and should be improved.  For example, there needs to be a way to let a user know that
@@ -1102,13 +1102,14 @@ public class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKIN_LIST_FILE);
+      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
       XSLT xslt = new XSLT (this);
       xslt.setXML(xmlStream);
       xslt.setXSL(sslLocation, "skinList", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
+      xslt.setStylesheetParameter("skinsPath", SKINS_PATH);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       if(currentSkin!=null)
         xslt.setStylesheetParameter("currentSkin", currentSkin);
@@ -1345,3 +1346,4 @@ public class TabColumnPrefsState extends BaseState
   }
 
 }
+
