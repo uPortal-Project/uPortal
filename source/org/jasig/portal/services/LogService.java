@@ -27,7 +27,8 @@
 
 package  org.jasig.portal.services;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
 import org.jasig.portal.utils.ResourceLoader;
@@ -69,11 +70,14 @@ public final class LogService {
   public final static Priority INFO = Priority.INFO;
 
   public final static Priority DEBUG = Priority.DEBUG;
-  private static boolean bInitialized = false;
-  private static Logger m_logger = null;
+  private static final Log log = LogFactory.getLog("org.jasig.portal");
   private static final LogService m_instance = new LogService();
 
 
+  static{
+      initialize();
+  }
+  
   protected LogService () {
     initialize();
   }
@@ -83,89 +87,95 @@ public final class LogService {
   }
 
   /**
-   *  Configures the Log4J system using the properties/Logger.properties file.
-   *  Read the Log4J docs on how to setup one of these files to do anything
-   *  you want. If this method isn't called before doing some logging, then
-   *  Log4j will complain.
+   * Used to configure Log4J with the Logger.properties file.
+   * Now does nothing, as the build.xml now copies the Logger.properties file
+   * to the well known name (log4j.properties) and location (base of the classpath
+   * by virtue of being in the base of the WEB-INF/classes/ directory) expected
+   * by Log4J.
+   *  @deprecated no longer does anything
    */
   private final static void initialize () {
-    // don't bother if we are already initialized
-    if (bInitialized) {
-      return;
-    }
-    try {
-      String loggerPropsFileName = ResourceLoader.getResourceAsFileString(LogService.class, "/properties/Logger.properties");
-      PropertyConfigurator.configureAndWatch(loggerPropsFileName);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    try {
-      // use a logger for the uPortal package to allow isolating logging
-      m_logger = Logger.getLogger("org.jasig.portal");
-      bInitialized = true;
-    } catch (Exception e) {
-      System.err.println("Problem writing to log.");
-      e.printStackTrace();
-    } catch (Error er) {
-      System.err.println("Problem writing to log.");
-      er.printStackTrace();
-    }
+    /*
+     * No longer does anything.
+     * The build.xml compile task copies the Logger.properties file
+     * to the well known name and location Log4J expects.
+     */
   }
 
 
   public final static void log (Priority pLogLevel, String sMessage) {
-    try {
       initialize();
-      m_logger.log(pLogLevel, sMessage);
-    } catch (Exception e) {
-      System.err.println("Problem writing to log.");
-      e.printStackTrace();
-    } catch (Error er) {
-      System.err.println("Problem writing to log.");
-      er.printStackTrace();
-    }
+      if (pLogLevel == null){
+          log.fatal(sMessage);
+      } else if (pLogLevel.equals(SEVERE)){
+          log.fatal(sMessage);
+      } else if (pLogLevel.equals(ERROR)){
+          log.error(sMessage);
+      } else if (pLogLevel.equals(WARN)){
+          log.warn(sMessage);
+      } else if (pLogLevel.equals(INFO)){
+          log.info(sMessage);
+      } else if (pLogLevel.equals(DEBUG)){
+          log.debug(sMessage);
+      } else if (pLogLevel.equals(NONE)){
+          log.debug(sMessage);
+      } else {
+          // should never get here
+          log.fatal(sMessage);
+      }
   }
 
 
   public final static void log (Priority pLogLevel, Throwable ex) {
-    try {
       initialize();
-      m_logger.log(pLogLevel, "EXCEPTION: " + ex, ex);
-    } catch (Exception e) {
-      System.err.println("Problem writing to log.");
-      e.printStackTrace();
-    } catch (Error er) {
-      System.err.println("Problem writing to log.");
-      er.printStackTrace();
-    }
+      if (pLogLevel == null){
+          log.fatal(ex);
+      } else if (pLogLevel.equals(SEVERE)){
+          log.fatal(ex);
+      } else if (pLogLevel.equals(ERROR)){
+          log.error(ex);
+      } else if (pLogLevel.equals(WARN)){
+          log.warn(ex);
+      } else if (pLogLevel.equals(INFO)){
+          log.info(ex);
+      } else if (pLogLevel.equals(DEBUG)){
+          log.debug(ex);
+      } else if (pLogLevel.equals(NONE)){
+          log.debug(ex);
+      } else {
+          // should never get here
+          log.fatal(ex);
+      }
   }
 
 
   public final static void log (Priority pLogLevel, String sMessage, Throwable ex) {
-    try {
       initialize();
-      m_logger.log(pLogLevel, sMessage, ex);
-    } catch (Exception e) {
-      System.err.println("Problem writing to log.");
-      e.printStackTrace();
-    } catch (Error er) {
-      System.err.println("Problem writing to log.");
-      er.printStackTrace();
-    }
+      if (pLogLevel == null){
+          log.fatal(sMessage, ex);
+      }else if (pLogLevel.equals(SEVERE)){
+          log.fatal(sMessage, ex);
+      } else if (pLogLevel.equals(ERROR)){
+          log.error(sMessage, ex);
+      } else if (pLogLevel.equals(WARN)){
+          log.warn(sMessage, ex);
+      } else if (pLogLevel.equals(INFO)){
+          log.info(sMessage, ex);
+      } else if (pLogLevel.equals(DEBUG)){
+          log.debug(sMessage, ex);
+      } else if (pLogLevel.equals(NONE)){
+          log.debug(sMessage, ex);
+      } else {
+          // Should never get here.
+          log.fatal(sMessage, ex);
+      }
   }
 
   public final static void log (String sMessage) {
-    try {
       initialize();
-      m_logger.log(INFO, sMessage);
-    } catch (Exception e) {
-      System.err.println("Problem writing to log.");
-      e.printStackTrace();
-    } catch (Error er) {
-      System.err.println("Problem writing to log.");
-      er.printStackTrace();
-    }
+    log.info(sMessage);
   }
+  
 }
 
 
