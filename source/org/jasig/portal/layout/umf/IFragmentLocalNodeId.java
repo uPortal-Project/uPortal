@@ -5,14 +5,14 @@
 
 package org.jasig.portal.layout.umf;
 
-import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.node.INodeId;
 
 
 /**
- * User Modifiable Fragment Node implementation.
+ * The fragment node ID interface.
  * @author Michael Ivanov <a href="mailto:">mvi@immagic.com</a>
  * @version $Revision$
  */
-public abstract class UmfNode extends ALNode {
+public interface IFragmentLocalNodeId extends INodeId {
 
 }
