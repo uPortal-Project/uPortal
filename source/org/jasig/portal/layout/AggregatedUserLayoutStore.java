@@ -1484,7 +1484,16 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery("SELECT FRAGMENT_ID, FRAGMENT_DESCRIPTION FROM UP_OWNER_FRAGMENT WHERE OWNER_ID="+person.getID());
     while ( rs.next() )
-      fragments.put ( rs.getInt(1) + "", rs.getString(2) );
+    {
+        // Oracle will return nulls instead of the empty string.
+        // Hashtable doesn't allow null values so we convert them 
+        // to "" before storing in the Hashtable.
+        String col2  = rs.getString(2);
+        if (col2 == null){
+            col2 = "";
+        }
+        fragments.put ( rs.getInt(1) + "", col2 );
+    }
 
     if ( rs != null ) rs.close();
     if ( stmt != null ) stmt.close();
