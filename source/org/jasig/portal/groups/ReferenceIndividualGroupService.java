@@ -93,13 +93,71 @@ public ReferenceIndividualGroupService() throws GroupsException
 public void deleteGroup(IEntityGroup group) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
+    synchronizeGroupMembersOnDelete(group);
     getGroupStore().delete(group);
     if ( cacheInUse() )
         { cacheRemove(group); }
-
 }
 /**
- * Removes the <code>ILockableEntityGroup</code> from the cache and the store.
+ * Removes the <code>ILockableEntityGroup</code> from its containing groups.
+ * The <code>finally</code> block tries to release any groups that are still
+ * locked, which can occur if an attempt to remove the group from one of
+ * its containing groups fails and throws a GroupsException.  In this event,
+ * we do not try to roll back any successful removes, since that would probably
+ * fail anyway.
+ * @param group ILockableEntityGroup
+ */
+private void removeDeletedGroupFromContainingGroups(ILockableEntityGroup group)
+throws GroupsException
+{
+    Iterator itr;
+    IEntityGroup containingGroup = null;
+    ILockableEntityGroup lockableGroup = null;
+    IEntityLock lock = null;
+    List lockableGroups = new ArrayList();
+    try
+    {
+        String lockOwner = group.getLock().getLockOwner();
+        for ( itr=group.getContainingGroups(); itr.hasNext(); )
+        {
+            containingGroup = (IEntityGroup) itr.next();
+            lockableGroup=
+                GroupService.findLockableGroup(containingGroup.getKey(), lockOwner);
+                if ( lockableGroup != null )
+                     { lockableGroups.add(lockableGroup); }
+        }
+        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
+        {
+            lockableGroup = (ILockableEntityGroup) itr.next();
+            lockableGroup.removeMember(group);
+            lockableGroup.updateMembers();
+        }
+    }
+    catch (GroupsException ge)
+        { throw new GroupsException("Could not remove deleted group " + group.getKey() +
+                " from parent : " + ge.getMessage()); }
+    finally
+    {
+        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
+        {
+            lock = ((ILockableEntityGroup) itr.next()).getLock();
+            try
+            {
+                if ( lock.isValid() )
+                    { lock.release(); }
+            }
+            catch (LockingException le)
+            {
+                LogService.instance().log(LogService.ERROR,
+                    "ReferenceIndividualGroupService.removeDeletedGroupFromContainingGroups(): " +
+                    "Problem unlocking parent group: " + le.getMessage());
+            }
+        }
+    }
+}
+/**
+ * Removes the <code>ILockableEntityGroup</code> from the cache and the store,
+ * including both parent and child memberships.
  * @param group ILockableEntityGroup
  */
 public void deleteGroup(ILockableEntityGroup group) throws GroupsException
@@ -109,8 +167,8 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
     {
         if ( group.getLock().isValid() )
         {
+            removeDeletedGroupFromContainingGroups(group);
             deleteGroup( (IEntityGroup)group );
-            group.getLock().release();
         }
         else
             { throw new GroupsException("Could not delete group " + group.getKey() +
@@ -119,6 +177,11 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
     catch (LockingException le)
         { throw new GroupsException("Could not delete group " + group.getKey() +
                 " : " + le.getMessage()); }
+    finally
+    {
+        try { group.getLock().release(); }
+        catch ( LockingException le ) {}
+    }
 }
   private EntityIdentifier[] filterEntities(EntityIdentifier[] entities, IEntityGroup ancestor) throws GroupsException{
     ArrayList ar = new ArrayList(entities.length);
@@ -331,7 +394,7 @@ public Iterator findMembers(IEntityGroup eg) throws GroupsException
 public IEntity getEntity(String key, Class type) throws GroupsException
 {
     IEntity ent = primGetEntity(key, type);
-    
+
     if ( cacheInUse() )
     {
         try
@@ -477,7 +540,7 @@ private void initialize() throws GroupsException
             throw new GroupsException(eMsg);
         }
     }
- 
+
 }
 /**
  * Answers if the group can be updated or deleted in the store.
@@ -672,6 +735,26 @@ protected IEntity primGetEntity(String key, Class type) throws GroupsException
 }
 
 /**
+ * Remove the back pointers of the group members of the deleted group.  Then
+ * update the cache to invalidate copies on peer servers.
+ *
+ * @param group ILockableEntityGroup
+ */
+protected void synchronizeGroupMembersOnDelete(IEntityGroup group)
+throws GroupsException
+{
+    GroupMemberImpl gmi = null;
+
+    for (Iterator it=group.getMembers(); it.hasNext();)
+    {
+        gmi = (GroupMemberImpl) it.next();
+        gmi.removeGroup(group);
+        if ( cacheInUse() )
+           { cacheUpdate(gmi); }
+    }
+}
+
+/**
  * Adjust the back pointers of the updated group members to either add or remove
  * the parent group.  Then update the cache to invalidate copies on peer servers.
  *
@@ -690,7 +773,7 @@ throws GroupsException
         if ( cacheInUse() )
            { cacheUpdate(gmi); }
     }
-	
+
     for (Iterator it=egi.getRemovedMembers().values().iterator(); it.hasNext();)
     {
         gmi = (GroupMemberImpl) it.next();
