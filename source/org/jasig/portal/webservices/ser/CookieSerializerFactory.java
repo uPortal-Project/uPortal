@@ -51,7 +51,7 @@ public class CookieSerializerFactory extends BaseSerializerFactory {
    * @param xmlType the xml type
    */ 
   public CookieSerializerFactory(Class javaType, QName xmlType) {
-    super(CookieSerializer.class, true, xmlType, javaType);
+    super(CookieSerializer.class, xmlType, javaType);
   }
     
 }

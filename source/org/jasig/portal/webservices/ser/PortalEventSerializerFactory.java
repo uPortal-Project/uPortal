@@ -51,7 +51,7 @@ public class PortalEventSerializerFactory extends BaseSerializerFactory {
    * @param xmlType the xml type
    */ 
   public PortalEventSerializerFactory(Class javaType, QName xmlType) {
-    super(PortalEventSerializer.class, true, xmlType, javaType);
+    super(PortalEventSerializer.class, xmlType, javaType);
   }
     
 }
