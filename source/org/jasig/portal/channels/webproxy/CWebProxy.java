@@ -664,7 +664,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       MediaManager mm = new MediaManager();
       String media = mm.getMedia(state.runtimeData.getBrowserInfo());
       String mimeType = mm.getReturnMimeType(media);
-      if (mm.UNKNOWN.equals(mimeType)) {
+      if (MediaManager.UNKNOWN.equals(mimeType)) {
         String accept = state.runtimeData.getBrowserInfo().getHeader("accept");
         if (accept != null && accept.indexOf("text/html") != -1) {
           mimeType = "text/html";
