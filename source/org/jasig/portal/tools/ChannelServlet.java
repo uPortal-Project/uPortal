@@ -242,7 +242,7 @@ public class ChannelServlet extends HttpServlet {
                       th.startElement("","channel","channel", atl);
                       ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(th);
                       custodian.setParent(buffer);
-                      buffer.stopBuffering();
+                      buffer.stopBuffering(); buffer.outputBuffer(); 
                       th.endElement("","channel","channel");
                       th.endDocument();
                   } catch (SAXException e) {

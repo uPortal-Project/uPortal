@@ -175,8 +175,6 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public synchronized void stopBuffering () throws SAXException
     {
-        this.outputBuffer();
-        this.clearBuffer();
         buffering = false;
     }
 
@@ -431,6 +429,10 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     {
         if(buffering) {
             eventTypes.add(new Integer(ENDDOCUMENT));
+            if(outputAtDocumentEnd) {
+                this.stopBuffering();
+                this.outputBuffer();
+            }
         } else if (contentHandler != null) {
 	    contentHandler.endDocument();
 	}

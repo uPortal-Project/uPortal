@@ -511,7 +511,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     tsth.setResult(new SAXResult(cif));
                 }
                 // fire up theme transformation
-                crb.stopBuffering();
+                crb.stopBuffering(); crb.outputBuffer(); crb.clearBuffer();
 
 
                 if(this.CACHE_ENABLED && ccaching) {
