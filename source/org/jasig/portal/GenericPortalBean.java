@@ -15,7 +15,8 @@ import org.jasig.portal.layout.*;
  */
 public class GenericPortalBean
 {  
-  private static String sPortalBaseDir = null; 
+  private static String sPortalBaseDir = null;
+  public boolean DEBUG = false;
   
   /**
    * Set the top level directory for the portal.  This makes it possible
@@ -34,6 +35,15 @@ public class GenericPortalBean
   public static String getPortalBaseDir ()
   {
     return sPortalBaseDir;
+  }
+
+  /**
+   * Just a simple debug method that prints
+   * messages to System.out
+   */
+  public void debug(String message)
+  {
+    if(DEBUG) System.out.println("DEBUG: "+message);
   }
 }
 
