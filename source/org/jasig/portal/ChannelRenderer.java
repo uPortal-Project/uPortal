@@ -502,23 +502,28 @@ public class ChannelRenderer
 			    }
 			}
 
-                        // check if need to render
-                        synchronized(cacheWriteLock) {
-                            if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
-                                // need to render again and cache the output
-                                buffer = new SAX2BufferImpl ();
-                                buffer.startBuffering();
-                                channel.renderXML (buffer);
+                        // future work: here we should synchronize based on a particular cache key.
+                        // Imagine a VERY popular cache entry timing out, then portal will attempt
+                        // to re-render the page in many threads (serving many requests) simultaneously.
+                        // If one was to synchronize on writing cache for a particular key, one thread
+                        // would render and others would wait for it to complete. 
 
-                                // save cache
-                                if(key!=null) {
-                                    if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-                                        systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-                                        LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
-                                    } else {
-                                        getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
-                                        LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
-                                    }
+                        // check if need to render
+                        if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
+                            // need to render again and cache the output
+                            buffer = new SAX2BufferImpl ();
+                            buffer.startBuffering();
+                            channel.renderXML (buffer);
+
+                            // save cache
+                            if(key!=null) {
+
+                                if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+                                    systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+                                    LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
+                                } else {
+                                    getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+                                    LogService.instance().log(LogService.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
                                 }
                             }
                         }
@@ -564,9 +569,7 @@ public class ChannelRenderer
          * Sets a character cache for the current rendering.
          */
         public void setCharacterCache(String chars) {
-            synchronized(cacheWriteLock) {
-                cbuffer=chars;
-            }
+            cbuffer=chars;
             if(CACHE_CHANNELS) {
                 // try to obtain rendering from cache
                 if(channel instanceof ICacheable ) {
