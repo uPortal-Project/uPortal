@@ -134,6 +134,7 @@ public class DbLoader
   private static PrintWriter scriptOut;
   private static String admin_locale;
   private static boolean localeAware;
+  private static Hashtable tableColumnTypes = new Hashtable(300);
 
   public static void main(String[] args)
   {
@@ -203,7 +204,7 @@ public class DbLoader
            } else if (args[i].equals("-nP")) {
               populateTables = false;
            } else if (args[i].equals("-l")) {
-	          localeAware = true;
+              localeAware = true;
               useLocale = true;
            }
         }
@@ -346,28 +347,38 @@ public class DbLoader
   private static int getJavaSqlDataTypeOfColumn(Document tablesDocGeneric, String tableName, String columnName)
   {
     int dataType = 0;
+    String hashKey = tableName + File.separator + columnName;
 
-    // Find the right table element
-    Element table = getTableWithName(tablesDocGeneric, tableName);
-
-    // Find the columns element within
-    Element columns = getFirstChildWithName(table, "columns");
-
-    // Search for the first column who's name is columnName
-    for (Node ch = columns.getFirstChild(); ch != null; ch = ch.getNextSibling())
-    {
-      if (ch instanceof Element && ch.getNodeName().equals("column"))
-      {
-        Element name = getFirstChildWithName((Element)ch, "name");
-        if (getNodeValue(name).equals(columnName))
+    // Try to use cached version first
+    if (tableColumnTypes.get(hashKey) != null) {
+       dataType = ((Integer)tableColumnTypes.get(hashKey)).intValue();
+    } else {
+        // Find the right table element
+        Element table = getTableWithName(tablesDocGeneric, tableName);
+    
+        // Find the columns element within
+        Element columns = getFirstChildWithName(table, "columns");
+    
+        // Search for the first column who's name is columnName
+        for (Node ch = columns.getFirstChild(); ch != null; ch = ch.getNextSibling())
         {
-          // Get the corresponding type and return it's type code
-          Element value = getFirstChildWithName((Element)ch, "type");
-          dataType = getJavaSqlType(getNodeValue(value));
+          if (ch instanceof Element && ch.getNodeName().equals("column"))
+          {
+            Element name = getFirstChildWithName((Element)ch, "name");
+            if (getNodeValue(name).equals(columnName))
+            {
+              // Get the corresponding type and return it's type code
+              Element value = getFirstChildWithName((Element)ch, "type");
+              dataType = getJavaSqlType(getNodeValue(value));
+            }
+          }
         }
-      }
+        
+        // Store value in hashtable for next call to this method.
+        // This prevents repeating xml parsing which takes a very long time
+        tableColumnTypes.put(hashKey, new Integer(dataType));
     }
-
+    
     return dataType;
   }
 
@@ -701,14 +712,14 @@ public class DbLoader
       public String getTablesUri() { return tablesUri; }
       public String getTablesXslUri() { return tablesXslUri; }
       public String getDataUri() {
-    	  String ret = dataUri;
+          String ret = dataUri;
           if (localeAware == true && admin_locale != null) {
               // Switch to replaceAll when we can rely on JDK 1.4
               // ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
               Perl5Util perl5Util = new Perl5Util();
               ret = perl5Util.substitute("s/\\.xml/_" + admin_locale + ".xml" + "/g", ret);
           }
-    	  return ret;
+          return ret;
       }
       public String getDataXslUri() { return dataXslUri; }
       public String getCreateScript() { return createScript; }
@@ -1412,7 +1423,7 @@ public class DbLoader
 
   private static void exit()
   {
-	RDBMServices.releaseConnection(con);
+    RDBMServices.releaseConnection(con);
 
     if (scriptOut != null)
       scriptOut.close();
