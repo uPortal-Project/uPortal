@@ -499,10 +499,10 @@ public class LayoutBean extends GenericPortalBean
               out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
             
             if (ch.isEditable ())
-              out.println ("<a href=\"dispatch.jsp?method=edit&tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
+              out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
             
             if (ch.hasHelp ())
-              out.println ("<a href=\"dispatch.jsp?method=help&tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
+              out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
             
             out.println ("            &nbsp;");
             out.println ("          </td>");            
@@ -726,10 +726,14 @@ public class LayoutBean extends GenericPortalBean
       for (int iCol = 0; iCol < columns.length; iCol++)
         out.println ("<option value=" + iCol + ">before column " + (iCol + 1) + "</option>");
         
-      out.println ("<option value=" + columns.length + "selected>at the end</option>");
+      out.println ("<option value=\"" + columns.length + "\" selected>at the end</option>");
       out.println ("</select>");
-      out.println ("</form>");
-      out.println ("<br>");        
+      out.println ("&nbsp;&nbsp;&nbsp;&nbsp;");
+      
+      // Revert to default layout xml
+      out.println ("[<a href=\"personalizeLayout.jsp?action=revertToDefaultLayoutXml\">Revert to default layout</a>]");
+      
+      out.println ("</form>");      
     }
     catch (Exception e)
     {
@@ -903,6 +907,85 @@ public class LayoutBean extends GenericPortalBean
     try 
     {
       String sClass = channel.getAttribute ("class");
+            
+      String sKey = getChannelID (channel);
+      org.jasig.portal.IChannel ch = getChannelInstance (sKey);
+      
+      if (ch == null)
+      {
+        // Load this channel's parameters into the channel config object
+        ChannelConfig chConfig = new ChannelConfig ();
+        org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
+              
+        if (parameters != null)
+        {
+          for (int iParam = 0; iParam < parameters.length; iParam++)
+          {
+            String sParamName = parameters[iParam].getAttribute ("name");
+            String sParamValue = parameters[iParam].getAttribute ("value");
+            chConfig.setParameter (sParamName, sParamValue);
+          }
+          
+          // For now, pass an additional parameter which contains the channel's ID
+          // These parameters should eventually be passed in a ChannelConfig object
+          chConfig.setChannelID (sKey);
+        }
+        
+        // Get new instance of channel
+        ch = (org.jasig.portal.IChannel) Class.forName (sClass).newInstance ();
+     
+        // Send the channel its parameters
+        ch.init (chConfig);   
+        
+        // Store an instance of this channel for later use
+        htChannelInstances.put (sKey, ch);
+      }
+      
+      return ch;
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+    return null;
+  }
+  
+  /**
+   * Returns an instance of a channel, which comes from 
+   * a member hashtable assuming it has been previously initalized.
+   * @param channel ID
+   * @return portal channel object
+   */
+  public org.jasig.portal.IChannel getChannelInstance (String sChannelID)
+  {    
+    org.jasig.portal.IChannel ch = null;
+    
+    try 
+    {
+      if (htChannelInstances != null)
+        ch = (org.jasig.portal.IChannel) htChannelInstances.get (sChannelID);
+      else
+        Logger.log (Logger.ERROR, "Cannot use channel ID to lookup a channel instance.  Channel instances have not yet been created.");
+      
+      return ch;      
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+    return null;
+  }    
+  
+  /**
+   * Generate a unique identifier for the channel instance.
+   * @param channel object from layout XML
+   * @return a unique identifier for the channel instance
+   */
+  public String getChannelID (org.jasig.portal.layout.IChannel channel)
+  {    
+    try 
+    {
+      String sClass = channel.getAttribute ("class");
       
       // Build a string from channel class and parameter values to be used
       // as a key for looking up channel instances
@@ -917,36 +1000,7 @@ public class LayoutBean extends GenericPortalBean
           sbKey.append (sParamValue);
         }
       }
-      
-      String sKey = sbKey.toString ();
-      org.jasig.portal.IChannel ch = (org.jasig.portal.IChannel) htChannelInstances.get (sKey);
-      
-      if (ch == null)
-      {
-        // Create a hashtable of this channel's parameters
-        Hashtable params = new Hashtable ();
-              
-        if (parameters != null)
-        {
-          for (int iParam = 0; iParam < parameters.length; iParam++)
-          {
-            String sParamName = parameters[iParam].getAttribute ("name");
-            String sParamValue = parameters[iParam].getAttribute ("value");
-            params.put (sParamName, sParamValue);
-          }
-        }
-        
-        // Get new instance of channel
-        ch = (org.jasig.portal.IChannel) Class.forName (sClass).newInstance ();
-     
-        // Send the channel its parameters
-        ch.initParams (params);   
-        
-        // Store an instance of this channel for later use
-        htChannelInstances.put (sKey, ch);
-      }
-      
-      return ch;
+      return sbKey.toString ();
     }
     catch (Exception e)
     {
