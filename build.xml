@@ -455,6 +455,11 @@
       <classpath refid="compile.classpath"/>
     </javac>
 
+    <!-- Copy resources with classes -->
+    <copy  todir="${build.home}/WEB-INF/classes">
+      <fileset dir="source" excludes="CVS,**/*.java"/>
+    </copy>
+      
     <!-- Copy associated resource files -->
     <copy  todir="${build.home}/WEB-INF/classes/properties">
       <fileset dir="properties" includes="**/*"/>
