@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,8 +40,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -66,7 +66,7 @@ import javax.servlet.http.HttpSession;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.*;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SubstitutionServletOutputStream;
 import org.jasig.portal.utils.SubstitutionWriter;
 
