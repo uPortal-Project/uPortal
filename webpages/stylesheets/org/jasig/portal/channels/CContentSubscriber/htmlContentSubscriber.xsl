@@ -80,150 +80,150 @@ Version $Revision$
                     <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="4">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med" nowrap="nowrap">
-                    <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                     <a href="{$baseActionURL}?uP_sparam=channelState&amp;channelState='browse'">
                       <span class="uportal-text-small">Browse</span>
                     </a>
-                    <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="10" class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -232,148 +232,148 @@ Version $Revision$
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td colspan="4">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="4">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light" nowrap="nowrap">
-                    <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                     <span class="uportal-text-small">Search</span>
-                    <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="11" class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -382,7 +382,7 @@ Version $Revision$
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td width="100%" class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -404,151 +404,151 @@ Version $Revision$
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td colspan="4">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="4">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light" nowrap="nowrap">
-                    <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                     <span class="uportal-text-small">Browse</span>
-                    <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="10" class="uportal-background-light">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -557,152 +557,152 @@ Version $Revision$
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td colspan="4">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="4">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="3">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td colspan="2">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med" nowrap="nowrap">
                     <a href="#">
-                      <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                      <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                       <a href="{$baseActionURL}?uP_sparam=channelState&amp;channelState='search'">
                         <span class="uportal-text-small">Search</span>
                       </a>
-                      <img border="0" height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                      <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                     </a>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-content">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-semidark">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                   <td class="uportal-background-shadow">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="11" class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -711,7 +711,7 @@ Version $Revision$
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td width="100%" class="uportal-background-med">
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -735,69 +735,69 @@ Version $Revision$
     <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td class="uportal-background-med">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td width="100%">
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-shadow">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
       <tr>
         <td class="uportal-background-med">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-dark">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-dark">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-dark">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-dark">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
       <tr>
         <td class="uportal-background-med">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-dark">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
           <table class="uportal-background-content" cellpadding="2" cellspacing="0" border="0" width="100%">
             <tr>
               <td class="uportal-background-content" align="left" valign="bottom" nowrap="nowrap">
-                <span class="uportal-channel-table-header">Search Content <img src="$mediaPath/transparent.gif" width="16" height="1" alt="" title=""/>
+                <span class="uportal-channel-table-header">Search Content <img src="{$mediaPath}/transparent.gif" width="16" height="1" alt="" title=""/>
                 </span>
               </td>
               <td width="100%" align="right" valign="bottom" nowrap="nowrap" class="uportal-text-small">
-                <img src="$mediaPath/transparent.gif" width="1" height="1" alt="" title=""/>
+                <img src="{$mediaPath}/transparent.gif" width="1" height="1" alt="" title=""/>
               </td>
             </tr>
             <tr>
@@ -805,7 +805,7 @@ Version $Revision$
                 <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
                     <td>
-                      <img height="2" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                      <img height="2" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                     </td>
                   </tr>
                 </table>
@@ -815,7 +815,7 @@ Version $Revision$
           <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
             <tr class="uportal-channel-text">
               <td>
-                <img height="1" width="5" src="$mediaPath/transparent.gif" alt=""/>
+                <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt=""/>
               </td>
               <td align="left" valign="top">
                 <span class="uportal-label">Search for</span>:<br/>
@@ -839,7 +839,7 @@ Version $Revision$
                 </table>
               </td>
               <td>
-                <img height="1" width="5" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td align="left" valign="top">
                 <span class="uportal-label">whos</span>
@@ -864,7 +864,7 @@ Version $Revision$
                 </table>
               </td>
               <td>
-                <img height="1" width="5" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="5" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td align="center" valign="top">
                 <br/>
@@ -876,14 +876,14 @@ Version $Revision$
                 </select>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td align="center" valign="top">
                 <br/>
                 <input name="textfield" type="text" class="uportal-input-text" value="search term(s)" size="25"/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td width="100%" align="left" valign="top">
                 <br/>
@@ -895,7 +895,7 @@ Version $Revision$
                 <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
                     <td>
-                      <img height="2" width="1" src="$mediaPath/transparent.gif" alt=""/>
+                      <img height="2" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                     </td>
                   </tr>
                 </table>
@@ -904,111 +904,111 @@ Version $Revision$
           </table>
         </td>
         <td class="uportal-background-content">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-shadow">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
       <tr>
         <td class="uportal-background-med">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-content">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-content">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-content">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-shadow">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
       <tr>
         <td class="uportal-background-med">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-shadow">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
       <tr>
         <td class="uportal-background-med">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
           <input class="uportal-button" value="Cancel" name="submit22" type="button"/>
           <input value="managePreferences" name="userPreferencesAction22" type="hidden"/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-shadow">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
       <tr>
         <td class="uportal-background-med">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td>
-          <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
         <td class="uportal-background-shadow">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
       <tr>
         <td colspan="7" class="uportal-background-shadow">
-          <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+          <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
         </td>
       </tr>
     </table>
@@ -1029,65 +1029,65 @@ Version $Revision$
           <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
               <td class="uportal-background-med">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td width="100%">
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-shadow">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
             <tr>
               <td class="uportal-background-med">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-dark">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-dark">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-dark">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-dark">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
             <tr>
               <td class="uportal-background-med">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-dark">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
                 <table class="uportal-background-content" cellpadding="2" cellspacing="0" border="0" width="100%">
                   <tr>
                     <td class="uportal-background-content" align="left" valign="bottom" nowrap="nowrap">
-                      <span class="uportal-channel-table-header">Select Category<img src="$mediaPath/transparent.gif" width="16" height="1" alt="" title=""/>
+                      <span class="uportal-channel-table-header">Select Category<img src="{$mediaPath}/transparent.gif" width="16" height="1" alt="" title=""/>
                       </span>
                     </td>
                     <td width="100%" align="right" valign="bottom" nowrap="nowrap" class="uportal-text-small">
@@ -1100,7 +1100,7 @@ Version $Revision$
                       <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                         <tr>
                           <td height="2">
-                            <img height="2" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                            <img height="2" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                           </td>
                         </tr>
                       </table>
@@ -1109,113 +1109,114 @@ Version $Revision$
                 </table>
                 <xsl:apply-templates select="category"/>
                 <xsl:apply-templates select="channel"/>
+                <xsl:apply-templates select="fragments"/>
               </td>
               <td class="uportal-background-content">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-shadow">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
             <tr>
               <td class="uportal-background-med">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-content">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-content">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-content">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-shadow">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
             <tr>
               <td class="uportal-background-med">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-shadow">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
             <tr>
               <td class="uportal-background-med">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
                 <input class="uportal-button" value="Cancel" name="submit2" type="button"/>
                 <input value="managePreferences" name="userPreferencesAction2" type="hidden"/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-shadow">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
             <tr>
               <td class="uportal-background-med">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td>
-                <img height="10" width="10" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
               <td class="uportal-background-shadow">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
             <tr>
               <td colspan="7" class="uportal-background-shadow">
-                <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
             </tr>
           </table>
@@ -1237,7 +1238,7 @@ Version $Revision$
             <td class="uportal-navigation-category">
               <strong>
                 <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='condense'&amp;uP_sparam=uPcCS_categoryID&amp;uPcCS_categoryID='{@ID}'">
-                  <img src="$mediaPath/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
+                  <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
                 </a>
               </strong>
             </td>
@@ -1245,7 +1246,7 @@ Version $Revision$
               <xsl:value-of select="count(ancestor::*)*10"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
-              <img src="$mediaPath/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <strong>
@@ -1260,7 +1261,7 @@ Version $Revision$
               <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                   </td>
                 </tr>
               </table>
@@ -1276,7 +1277,7 @@ Version $Revision$
             <td class="uportal-navigation-category">
               <strong>
                 <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='expand'&amp;uP_sparam=uPcCS_categoryID&amp;uPcCS_categoryID='{@ID}'">
-                  <img src="$mediaPath/collapsed.gif" width="16" height="16" border="0" alt="" title=""/>
+                  <img src="{$mediaPath}/collapsed.gif" width="16" height="16" border="0" alt="" title=""/>
                 </a>
               </strong>
             </td>
@@ -1284,7 +1285,7 @@ Version $Revision$
               <xsl:value-of select="count(ancestor::*)*10"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
-              <img src="$mediaPath/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='expand'&amp;uP_sparam=uPcCS_categoryID&amp;uPcCS_categoryID='{@ID}'">
@@ -1299,7 +1300,7 @@ Version $Revision$
               <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
                   </td>
                 </tr>
               </table>
@@ -1321,13 +1322,13 @@ Version $Revision$
         <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
-              <img src="$mediaPath/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <xsl:variable name="indentWidth">
               <xsl:value-of select="count(ancestor::*)*10"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
-              <img src="$mediaPath/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
               <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='condense'&amp;uP_sparam=uPcCS_channelID&amp;uPcCS_channelID='{@ID}'">
@@ -1340,7 +1341,7 @@ Version $Revision$
               <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -1353,11 +1354,11 @@ Version $Revision$
               <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Type:</td>
-                  <td>Individual Channel/Fragment</td>
+                  <td>Channel</td>
                 </tr>
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Description:</td>
-                  <td width="100%">Metadata description of the content.</td>
+                  <td width="100%"><xsl:value-of select="@description"/></td>
                 </tr>
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Settings:</td>
@@ -1389,25 +1390,25 @@ Version $Revision$
                   <td>Actions:</td>
                   <td width="100%">
                     <table width="100%" border="0" cellspacing="3" cellpadding="3">
+                      <!-- Preview of Channel Held until Later Release
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
                           <a href="#" target="_blank">
-                            <img src="$mediaPath/preview.gif" width="16" height="16" border="0" alt="" title=""/>
+                            <img src="{$mediaPath}/preview.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
                         <td>
-                          <a href="#" target="_blank">Preview this content in a new window</a>
+                          <a href="#" target="_blank">Preview this channel in a new window</a>
                         </td>
-                      </tr>
+                      </tr>  Preview of Channel Held until Later Release -->
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
-                          <a href="#">
-                            <img src="$mediaPath/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
+                          <a href="{$baseActionURL}?uP_sparam=channelPublishID&amp;channelPublishID='{@ID}'&amp;uP_request_add_targets=channel">
+                            <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
                         <td>
-                          <a href="{$baseActionURL}?uP_sparam=channelPublishID&amp;channelPublishID='{@ID}'&amp;uP_request_add_targets=channel">
-                          Subscribe to this content</a>
+                          <a href="{$baseActionURL}?uP_sparam=channelPublishID&amp;channelPublishID='{@ID}'&amp;uP_request_add_targets=channel"> Subscribe to this channel</a>
                         </td>
                       </tr>
                     </table>
@@ -1423,7 +1424,7 @@ Version $Revision$
               <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -1435,13 +1436,13 @@ Version $Revision$
         <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
-              <img src="$mediaPath/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <xsl:variable name="indentWidth">
               <xsl:value-of select="count(ancestor::*)*10"/>
             </xsl:variable>
             <td class="uportal-navigation-category">
-              <img src="$mediaPath/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='expand'&amp;uP_sparam=uPcCS_channelID&amp;uPcCS_channelID='{@ID}'">
@@ -1454,7 +1455,7 @@ Version $Revision$
               <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td>
-                    <img height="1" width="1" src="$mediaPath/transparent.gif" alt="" title=""/>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
                   </td>
                 </tr>
               </table>
@@ -1466,5 +1467,191 @@ Version $Revision$
   </xsl:template>
   <!--~-->
   <!-- end of table for content item -->
+  <!--~-->
+  <!--~-->
+  <!-- begin table for fragment title -->
+  <!--~-->
+  <xsl:template match="fragments">
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
+      <tr class="uportal-channel-text" valign="top" align="left">
+        <td class="uportal-navigation-category">
+          <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
+        </td>
+        <td class="uportal-navigation-category">
+          <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
+        </td>
+        <td width="100%" valign="bottom" class="uportal-navigation-category">
+          <strong> Fragments </strong>
+        </td>
+      </tr>
+      <tr class="uportal-background-content" valign="top" align="left">
+        <td colspan="5">
+          <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+              <td>
+                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <xsl:apply-templates select="category/fragment"/>
+  </xsl:template>
+  <!--~-->
+  <!-- end table for fragment title -->
+  <!--~-->
+  <!--~-->
+  <!-- begin table for fragment list -->
+  <!--~-->
+  <xsl:template match="fragment">
+        <xsl:choose>
+      <xsl:when test="view='expanded'">
+        <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
+          <tr class="uportal-channel-text" valign="top" align="left">
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
+            </td>
+            <xsl:variable name="indentWidth">
+              <xsl:value-of select="count(ancestor::*)*10"/>
+            </xsl:variable>
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
+            </td>
+            <td width="100%" valign="bottom" class="uportal-text">
+              <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='condense'&amp;uP_sparam=uPcCS_channelID&amp;uPcCS_channelID='{@ID}'">
+                <xsl:value-of select="@title"/>
+              </a>
+            </td>
+          </tr>
+          <tr class="uportal-background-content" valign="top" align="left">
+            <td colspan="5">
+              <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
+          <tr>
+            <td>
+              <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
+                <tr class="uportal-channel-text" valign="top" align="left">
+                  <td>Type:</td>
+                  <td>Channel</td>
+                </tr>
+                <tr class="uportal-channel-text" valign="top" align="left">
+                  <td>Description:</td>
+                  <td width="100%"><xsl:value-of select="./description"/></td>
+                </tr>
+                <tr class="uportal-channel-text" valign="top" align="left">
+                  <td>Settings:</td>
+                  <td width="100%">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                      <tr>
+                        <td class="uportal-label">Language:</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <select name="select">
+                            <option value="defualtlang" selected="selected">Use my defualt language</option>
+                            <option value="EnglishC">English (Canadian)</option>
+                            <option value="EnglishUK">English (United Kingdom)</option>
+                            <option value="EnglishUS">English (United States)</option>
+                            <option value="French">French</option>
+                            <option value="German">German</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Russian">Russian</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="Swedish">Swedish</option>
+                          </select>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr class="uportal-channel-text" valign="top" align="left">
+                  <td>Actions:</td>
+                  <td width="100%">
+                    <table width="100%" border="0" cellspacing="3" cellpadding="3">
+                      <!-- Preview of Channel Held until Later Release
+                      <tr align="left" valign="top" class="uportal-channel-text">
+                        <td>
+                          <a href="#" target="_blank">
+                            <img src="{$mediaPath}/preview.gif" width="16" height="16" border="0" alt="" title=""/>
+                          </a>
+                        </td>
+                        <td>
+                          <a href="#" target="_blank">Preview this fragment in a new window</a>
+                        </td>
+                      </tr>  Preview of Channel Held until Later Release -->
+                      <tr align="left" valign="top" class="uportal-channel-text">
+                        <td>
+                          <a href="{$baseActionURL}?uP_sparam=fragmentPublishID&amp;fragmentPublishID='{@ID}'&amp;uP_request_add_targets=folder">
+                            <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
+                          </a>
+                        </td>
+                        <td>
+                          <a href="{$baseActionURL}?uP_sparam=fragmentPublishID&amp;fragmentPublishID='{@ID}'&amp;uP_request_add_targets=folder"> Subscribe to this fragment</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table class="uportal-background-content" cellpadding="3" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td>
+              <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </xsl:when>
+      <xsl:otherwise>
+        <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
+          <tr class="uportal-channel-text" valign="top" align="left">
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/transparent.gif" width="16" height="16" border="0" alt="" title=""/>
+            </td>
+            <td class="uportal-navigation-category">
+              <img src="{$mediaPath}/transparent.gif" width="20" height="1" border="0" alt="" title=""/>
+            </td>
+            <td width="100%" valign="bottom" class="uportal-navigation-category">
+              <xsl:variable name="myID"><xsl:value-of select="./ID"/></xsl:variable>
+              <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='expand'&amp;uP_sparam=uPcCS_fragmentID&amp;uPcCS_fragmentID='{$myID}'">
+                <xsl:value-of select="./name"/>
+              </a>
+            </td>
+          </tr>
+          <tr class="uportal-background-content" valign="top" align="left">
+            <td colspan="5">
+              <table class="uportal-background-light" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!--~-->
+  <!-- end table for fragment list -->
   <!--~-->
 </xsl:stylesheet>
