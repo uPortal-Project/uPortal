@@ -7,7 +7,6 @@ package org.jasig.portal.services.persondir.support;
 
 import java.util.Map;
 
-import org.springframework.dao.DataAccessException;
 
 /**
  * Interface for classes that are able to take a Map from currrently known
