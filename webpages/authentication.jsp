@@ -45,6 +45,8 @@
 <%
 String sUserName = request.getParameter("userName");
 String sPassword = request.getParameter("password");
+String baseActionURL = request.getParameter("baseActionURL");
+String redirectString = "render.uP";
 
 boolean bAuthorized = auth.authenticate(sUserName, sPassword);
 session.setAttribute("up_authorizationAttempted", "true");
@@ -70,6 +72,11 @@ if(bAuthorized)
   IPerson person = auth.getPerson ();
   session.setAttribute ("up_person", person);
 }
+else
+{
+  redirectString = baseActionURL + "?userName=" + sUserName;
+  System.out.println("redstr=" + redirectString);
+}
 
-response.sendRedirect("index.jsp");
+response.sendRedirect(redirectString);
 %>
