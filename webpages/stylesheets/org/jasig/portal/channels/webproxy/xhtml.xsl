@@ -7,6 +7,7 @@
 <xsl:preserve-space elements="script/comment() script/text()"/>
 
    <xsl:template match="html">
+      <xsl:copy-of select="/html/head/base" />
       <xsl:apply-templates select="body"/>
    </xsl:template>
 
