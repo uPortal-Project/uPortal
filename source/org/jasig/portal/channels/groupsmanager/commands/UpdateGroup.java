@@ -100,7 +100,8 @@ public class UpdateGroup extends GroupsManagerCommand {
          sessionData.feedback = retMsg;
          return;
       }
-      IEntityGroup updGroup = GroupsManagerXML.retrieveGroup(updKey);
+      //IEntityGroup updGroup = GroupsManagerXML.retrieveGroup(updKey);
+      IEntityGroup updGroup = sessionData.lockedGroup;
       if (updGroup == null) {
          retMsg = "Unable to retrieve Group!";
          sessionData.feedback = retMsg;

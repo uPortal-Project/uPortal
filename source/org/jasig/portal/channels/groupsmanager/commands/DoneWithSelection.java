@@ -181,7 +181,8 @@ public class DoneWithSelection extends GroupsManagerCommand {
       Element childElem;
       String parentName = parentElem.getAttribute("key");
       String childName = "";
-      parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
+      //parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
+      parentGroup = sessionData.lockedGroup;
       Iterator gmItr = gmCollection.iterator();
       while (gmItr.hasNext()) {
          childGm = (IGroupMember) gmItr.next();

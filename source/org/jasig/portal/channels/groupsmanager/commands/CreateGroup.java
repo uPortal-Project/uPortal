@@ -93,16 +93,15 @@ import  javax.xml.parsers.*;
       }
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Parent element was found!");
 
-      parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
+      //parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
+      parentGroup = sessionData.lockedGroup;
       if (parentGroup == null) {
          retMsg = "Unable to retrieve Parent Entity Group!";
          sessionData.feedback = retMsg;
          return;
       }
-      else {
-         parentEntityType = parentGroup.getLeafType();
-      }
-      parentEntityType = (Class) GroupsManagerXML.getEntityTypes().get("Person");
+      parentEntityType = parentGroup.getLeafType();
+      //parentEntityType = (Class) GroupsManagerXML.getEntityTypes().get("Person");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): About to create new group: "
             + newGrpName + " Type: " + parentEntityType.getName());
       String userID = getUserID(sessionData);

@@ -86,7 +86,8 @@ public class DeleteGroup extends GroupsManagerCommand {
         delElem.getParentNode().removeChild(delElem);
       }
       else{
-         IEntityGroup delGroup = GroupsManagerXML.retrieveGroup(delKey);
+         //IEntityGroup delGroup = GroupsManagerXML.retrieveGroup(delKey);
+         IEntityGroup delGroup = sessionData.lockedGroup;
          if (delGroup == null) {
             retMsg = "Unable to retrieve Group!";
             sessionData.feedback = retMsg;

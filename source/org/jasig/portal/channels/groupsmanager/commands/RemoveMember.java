@@ -93,8 +93,8 @@ public class RemoveMember extends GroupsManagerCommand {
       }
       // The child will always be an IGroupMember
       childGm = GroupsManagerXML.retrieveGroupMemberForElementId(model, childID);
-      parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(model,
-            parentID);
+      //parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(model, parentID);
+      parentGroup = sessionData.lockedGroup;
       removeChildFromGroup(parentGroup, childGm);
       hasMbrs = String.valueOf(((IEntityGroup)parentGroup).hasMembers());
       Utility.logMessage("DEBUG", "RemoveMember::execute(): Got the parent group ");
