@@ -26,6 +26,7 @@ import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
@@ -65,8 +66,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     }
   }
 
-  // I18n propertiy
-  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
+  // I18n property
+  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware", LocaleManager.DEFAULT_LOCALE_AWARE);
   
   /**
    * Create a new ChannelType object.
