@@ -70,12 +70,12 @@ public class FactoryManagerServiceImpl implements PortletContainerService, Facto
         this.properties = properties;
         Properties factoryProperties = null;
         try {
-         factoryProperties = ResourceLoader.getResourceAsProperties(FactoryManagerServiceImpl.class,FACTORY_PROPERTIES);
-        } catch ( Exception e ) {
-           throw new IllegalAccessException ( "Could not load " + FACTORY_PROPERTIES + " file");	 
-          }
-        for ( Enumeration names = factoryProperties.propertyNames(); names.hasMoreElements(); ) {
-        	String name = (String) names.nextElement();
+            factoryProperties = ResourceLoader.getResourceAsProperties(FactoryManagerServiceImpl.class,FACTORY_PROPERTIES);
+        } catch (Exception e) {
+            throw new IllegalAccessException ("Could not load " + FACTORY_PROPERTIES + " file");	 
+        }
+        for (Enumeration names = factoryProperties.propertyNames(); names.hasMoreElements();) {
+            String name = (String)names.nextElement();
             addFactory(name,factoryProperties.getProperty(name));
         }    
         
@@ -94,11 +94,11 @@ public class FactoryManagerServiceImpl implements PortletContainerService, Facto
     // Additional methods
     
     private void addFactory(String factoryInterfaceName, String factoryImplName) throws Exception {
-            Class factoryInterface = Class.forName(factoryInterfaceName);
-            Class factoryImpl = Class.forName(factoryImplName);
-            Factory factory = (Factory)factoryImpl.newInstance();
-            factory.init(servletConfig, properties);
-            addFactory(factoryInterface, factory);
+        Class factoryInterface = Class.forName(factoryInterfaceName);
+        Class factoryImpl = Class.forName(factoryImplName);
+        Factory factory = (Factory)factoryImpl.newInstance();
+        factory.init(servletConfig, properties);
+        addFactory(factoryInterface, factory);
     }
     
     private void addFactory(Class factoryInterface, Factory factory) {
