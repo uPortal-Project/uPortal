@@ -307,6 +307,11 @@
                        more robust like Oracle or PostgreSQL.
                        Version: (depends on your database)
                        URL: (depends on your database)
+                       
+  hsqldb.jar           Comes with uPortal only as a convenience.  It can and
+                       probably should be replaced with another database driver.
+                       Version: 1.7.2.4
+                       URL: http://hsqldb.sourceforge.net
 
   junit.jar            JUnit is a regression testing framework.  It is used
                        to implement unit tests in Java.
