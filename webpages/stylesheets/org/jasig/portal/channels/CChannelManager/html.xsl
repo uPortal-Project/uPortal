@@ -608,10 +608,9 @@
                 </td>
               </tr>
               <tr>
-<tr>
-
+              <tr>
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Name\nExample: StockCharts\n\nDescription: This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same.')">
+    <a href="javascript:alert('Name: Channel Title\n\nExample: StockCharts\n\nDescription: This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same.')">
     <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a></td>
                 <td>
@@ -635,7 +634,7 @@
                 </td>
               </tr>
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Name\nExample: StockCharts\n\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.')">
+    <a href="javascript:alert('Name: Channel Name\n\nExample: StockCharts\n\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.')">
     <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a></td>
                 <td>
@@ -661,7 +660,7 @@
               <tr>
 
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Description\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ')">
+    <a href="javascript:alert('Name: Channel Description\n\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ')">
     <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a></td>
                 <td>
@@ -669,11 +668,9 @@
                 <td>
                   <span class="uportal-label">Channel Description:</span><br/>
                   <textarea name="description" cols="50" rows="3" class="uportal-input-text">
-                  <xsl:choose>
-                    <xsl:when test="manageChannels/selectGeneralSettings/params/step/channel/@description">
+                    <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@description">
                       <xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@description"/>
-                    </xsl:when>
-                    <xsl:otherwise>Enter a description</xsl:otherwise></xsl:choose>
+                    </xsl:if>
                   </textarea>
                 </td>
               </tr>
@@ -694,7 +691,7 @@
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                  <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Timeout\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering.')">
+    <a href="javascript:alert('Name: Channel Timeout\n\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering.')">
     <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a></td>
                 <td>
@@ -718,13 +715,13 @@
                 </td>
               </tr>
               <xsl:choose>
-<xsl:when test="/manageChannels/selectGeneralSettings/params/step/channel/@typeID = -1">
-<tr class="uportal-channel-text">
+                <xsl:when test="/manageChannels/selectGeneralSettings/params/step/channel/@typeID = -1">
+                <tr class="uportal-channel-text">
                 <!--<td align="center" valign="top">
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Channel Class\nExample: org.jasig.portal.channels.myChannelClass\n\nDescription: This is the class for a custom channel. A channel class is mandatory')">
+    <a href="javascript:alert('Name: Channel Class\n\nExample: edu.myuniversity.portal.channels.myChannel.MyChannelClass\n\nDescription: This is the java class for a custom channel. A channel class is mandatory')">
     <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a></td>
 
@@ -747,10 +744,11 @@
                   </table>
                 </td>
               </tr>
-</xsl:when>
-<xsl:otherwise>
-<input type="hidden" name="class" value="{/manageChannels/channelDef/class}"/>
-</xsl:otherwise></xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                  <input type="hidden" name="class" value="{/manageChannels/channelDef/class}"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </table>
           </td>
         </tr>
@@ -908,7 +906,7 @@
       <!-- <xsl:value-of select="@modify"/>just for debug -->
       <xsl:choose>
         <xsl:when test="@modify!='publish-only'">
-          <input type="checkbox" name="{name}_sub">
+          <input type="checkbox" name="uPCM_{name}_sub">
             <xsl:if test="@modify='subscribe'">
               <xsl:attribute name="checked">checked</xsl:attribute>
             </xsl:if>
@@ -1145,15 +1143,15 @@
           <xsl:apply-templates select="example"/>
           <br/>
           <textarea rows="{$defaultTextRows}" cols="{$defaultTextCols}" class="uportal-input-text">
-          <xsl:choose>
-          <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
-          <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
-          <xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
-          </xsl:when>
-          <xsl:otherwise>
-          <xsl:value-of select="defaultValue"/>
-          </xsl:otherwise>
-          </xsl:choose>
+            <xsl:choose>
+              <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
+                <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
+                <xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="defaultValue"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </textarea>
         </td>
       </xsl:when>
@@ -1200,7 +1198,7 @@
       <xsl:template name="help">
     <a>
     <xsl:attribute name="href">
-    javascript:alert('Name: <xsl:value-of select="label"/>\nExample: <xsl:value-of select="example"/>\n\nDescription: <xsl:value-of select="description"/>')</xsl:attribute>
+    javascript:alert('Name: <xsl:value-of select="label"/>\n\nExample: <xsl:value-of select="example"/>\n\nDescription: <xsl:value-of select="description"/>')</xsl:attribute>
     <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a>
   </xsl:template>
