@@ -478,8 +478,7 @@ public class ChannelRegistryManager {
     IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
     IPermission[] permissions = new IPermission[groupMembers.length];
     for (int i = 0; i < groupMembers.length; i++) {
-      String principalKey = groupMembers[i].getKey();
-      IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, groupMembers[i].getType());
+      IAuthorizationPrincipal authPrincipal = authService.newPrincipal(groupMembers[i]);
       permissions[i] = upm.newPermission(authPrincipal);
       permissions[i].setType(GRANT_PERMISSION_TYPE);
       permissions[i].setActivity(SUBSCRIBER_ACTIVITY);
