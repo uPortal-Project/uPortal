@@ -10,21 +10,19 @@
 <body>
 
 <!-- header table -->
-
 <form method="post">
 <xsl:attribute name="action"><xsl:value-of select="$baseActionURL"/></xsl:attribute>
 <input type="hidden" name="action" value="submitEditChoice"/>
 <table width="100%" border="0"><tr><td align="left">profile name: <xsl:value-of select="$profileName"/></td><td align="right">
 <input type="submit" name="submit" value="manage"/>
-<select name="manageTarget">
-<option value="layout">channels and folders</option>
-<option selected="" value="gpref">global preferences</option>
-<option value="prof">profiles</option>
+<select name="userPreferencesAction">
+<option selected="" value="layout">channels and folders</option>
+<option value="gpref">global preferences</option>
+<option value="manageProfiles">profiles</option>
 </select>
 </td>
 </tr></table>
 </form>
-
 <!-- end of the header table -->
 
 <p align="center">Editing stylesheet parameters:</p>

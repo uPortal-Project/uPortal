@@ -16,10 +16,10 @@
 <input type="hidden" name="action" value="submitEditChoice"/>
 <table width="100%" border="0"><tr><td align="left">profile name: <xsl:value-of select="$profileName"/></td><td align="right">
 <input type="submit" name="submit" value="manage"/>
-<select name="manageTarget">
+<select name="userPreferencesAction">
 <option selected="" value="layout">channels and folders</option>
 <option value="gpref">global preferences</option>
-<option value="prof">profiles</option>
+<option value="manageProfiles">profiles</option>
 </select>
 </td>
 </tr></table>
