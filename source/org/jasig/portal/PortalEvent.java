@@ -15,7 +15,7 @@ public class PortalEvent {
     
   
     // framework-generated events
-    public static final int RENDERING_DONE = 0;
+    
     public static final int SESSION_DONE = 1;
     public static final int UNSUBSCRIBE = 2;
 
@@ -27,16 +27,6 @@ public class PortalEvent {
     public static final int MINIMIZE_EVENT = 7;
     public static final int MAXIMIZE_EVENT = 8;
     
-  /**
-   * The framework-generated event representing the rendering cycle having
-   * finished. The original intent was to broadcast it to the involved channels at the
-   * end of each rendering cycle.
-   * The framework implementation doesn't actually ever send this event
-   * -- listening for it is currently pointless.
-   */
-  public static final PortalEvent RENDERING_DONE_EVENT = 
-      new PortalEvent(RENDERING_DONE, "renderingDone", 
-              PortalEventSource.FRAMEWORK_GENERATED);
     
   /**
    * The framework-generated event that is broadcast to
