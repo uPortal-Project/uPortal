@@ -38,6 +38,8 @@ package org.jasig.portal.channels;
 import java.util.*;
 import org.xml.sax.DocumentHandler;
 import org.jasig.portal.*;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.services.LogService;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
 
@@ -130,7 +132,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel
             if(chFate!=null) {
                 // a fate has been chosen
                 if(chFate.equals("retry")) {
-                    Logger.log(Logger.DEBUG,"CError:setRuntimeData() : going for retry");
+                    LogService.instance().log(LogService.DEBUG,"CError:setRuntimeData() : going for retry");
                     // clean things up for the channel
                     ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
                     crd.clear(); // Remove parameters
@@ -147,7 +149,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                         resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a refresh attempt.");
                     }
                 } else if(chFate.equals("restart")) {
-                    Logger.log(Logger.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
+                    LogService.instance().log(LogService.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
 		    
                     ChannelManager cm=portcs.getChannelManager();
 		    
@@ -167,12 +169,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a reload attempt.");
                                 cm.addChannelInstance(str_channelID,this);
-                                Logger.log(Logger.ERROR,"CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
+                                LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
                             }
                         }
                     } catch (Exception e) {
                         resetCError(this.GENERAL_ERROR,e,this.str_channelID,null,"Channel failed to reinstantiate!");
-                        Logger.log(Logger.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
+                        LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
 		    showStackTrace=!showStackTrace;
@@ -308,9 +310,9 @@ public class CError extends BaseChannel implements IPrivilegedChannel
             format.setIndenting(true);
             org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
             xsl.serialize (doc);
-            Logger.log(Logger.DEBUG,outString.toString());
+            LogService.instance().log(LogService.DEBUG,outString.toString());
         } catch (Exception e) {
-            Logger.log(Logger.DEBUG,e);
+            LogService.instance().log(LogService.DEBUG,e);
         }
         // end of debug block
 
@@ -319,7 +321,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel
             XSLTInputSource xslSource = set.getStylesheet(portcs.getHttpServletRequest());
             if(xslSource==null) {
                 // some meaningful error-tolerant output should be generated here.
-                Logger.log(Logger.ERROR,"CError::renderXML() : unable to locate a stylesheet");
+                LogService.instance().log(LogService.ERROR,"CError::renderXML() : unable to locate a stylesheet");
             } else {
                 XSLTResultTarget xmlResult = new XSLTResultTarget(out);
                 XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
@@ -332,6 +334,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel
 
                 processor.process (xmlSource, xslSource, xmlResult);
             }
-        } catch (Exception e) { Logger.log(Logger.ERROR,"CError::renderXML() : things are bad. Error channel threw: "+e); }
+        } catch (Exception e) { 
+            LogService.instance().log(LogService.ERROR,"CError::renderXML() : things are bad. Error channel threw: "+e); 
+        }
     }
 }
