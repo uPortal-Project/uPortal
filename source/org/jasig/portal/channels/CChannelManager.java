@@ -43,6 +43,7 @@ import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.Authorization;
 import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
@@ -57,8 +58,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.sql.SQLException;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -561,18 +560,19 @@ public class CChannelManager extends BaseChannel {
     Document cpdDoc = null;
     if (cpdUri != null) {
       try {
-        DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        cpdDoc = parser.parse(this.getClass().getResourceAsStream(cpdUri));
+        cpdDoc = ResourceLoader.getResourceAsDocument(this.getClass(), cpdUri);
       } catch (java.io.IOException ioe) {
         throw new ResourceMissingException(cpdUri, "Channel publishing document", ioe.getMessage());
       } catch (org.xml.sax.SAXException se) {
-        throw new GeneralRenderingException("Unable to parse CPD file: " + se.getMessage());
+        throw new PortalException("Unable to parse CPD file: " + cpdUri, se);
       } catch (ParserConfigurationException pce) {
-        throw new GeneralRenderingException("Unable to parse CPD file: " + pce.getMessage());
+        throw new PortalException("Unable to parse CPD file: " + cpdUri, pce);
       }
     }
+
     return cpdDoc;
   }
+
 
   // This method needs some caching!!!
   protected static Document getRoles() {
