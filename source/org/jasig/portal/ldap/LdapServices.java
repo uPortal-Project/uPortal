@@ -7,17 +7,16 @@ package org.jasig.portal.ldap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.xpath.XPathAPI;
-import org.jasig.portal.ldap.ILdapServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xpath.XPathAPI;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -292,13 +291,15 @@ public final class LdapServices {
     }
   
     /**
-     * Get an iterator over the named {@link ILdapServer} instances.
-     * If a server is configured in ldap.properties it will not be available via this
-     * method; only servers configured in ldap.xml are available via this method.
-     * @return an Iterator over named {@link ILdapServer}s.
+     * Get a {@link Map} of {@link ILdapServer} instances.
+     * If a server is configured in ldap.properties it will not be available 
+     * in the {@link Map}. They key is the server name, value is the 
+     * {@link ILdapServer} instance
+     * 
+     * @return A {@link Map} of {@link ILdapServer} instances.
      */
-    public static Iterator getNamedLdapServers() {
-        return ldapConnections.values().iterator();
+    public static Map getLdapServerMap() {
+        return Collections.unmodifiableMap(ldapConnections);
     }
     
     /**
