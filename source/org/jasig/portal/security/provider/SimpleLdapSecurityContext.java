@@ -48,6 +48,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.jasig.portal.ILdapConnection;
 import org.jasig.portal.LdapServices;
 import org.jasig.portal.security.IConfigurableSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
@@ -59,6 +60,16 @@ import org.jasig.portal.services.LogService;
  * credentials against an LDAP directory.  It expects to be able to bind
  * to the LDAP directory as the user so that it can authenticate the
  * user.</p>
+ * <p>
+ * By implementing the {@link org.jasig.portal.security.IConfigurableSecurityContext}
+ * interface this context may have properties set on it. The one property
+ * the <code>SimpleLdapSecurityContext</code> looks for is defined by
+ * the String {@link #LDAP_PROPERTIES_CONNECTION_NAME} "connection".
+ * This property allows a specific, named, LDAP connection to be used by
+ * the context. If no "connection" property is specified the default
+ * LDAP connection returned by {@link org.jasig.portal.LdapServices} is
+ * used. 
+ * </p>
  *
  * @author Russell Tokuyama (University of Hawaii)
  * @version $Revision$
@@ -76,7 +87,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     "sn"        // last name
   };
   
-  private static final String LDAP_PROPERTIES_FILE_PROP_NAME = "properties";
+  public static final String LDAP_PROPERTIES_CONNECTION_NAME = "connection";
   private Properties ctxProperties;
 
   SimpleLdapSecurityContext() {
@@ -112,13 +123,13 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
    */
   public synchronized void authenticate () throws PortalSecurityException {
     this.isauth = false;
-    LdapServices ldapservices;
+    ILdapConnection ldapConn;
     
-    String propFile = ctxProperties.getProperty(LDAP_PROPERTIES_FILE_PROP_NAME);
+    String propFile = ctxProperties.getProperty(LDAP_PROPERTIES_CONNECTION_NAME);
     if(propFile != null && propFile.length() > 0)
-        ldapservices = new LdapServices(propFile);
+        ldapConn = LdapServices.getLDAPConnection(propFile);
     else
-        ldapservices = new LdapServices();    
+        ldapConn = LdapServices.getLDAPConnection();    
     
     String creds = new String(this.myOpaqueCredentials.credentialstring);
     if (this.myPrincipal.UID != null && !this.myPrincipal.UID.trim().equals("") && this.myOpaqueCredentials.credentialstring
@@ -131,12 +142,12 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       String first_name = null;
       String last_name = null;
       
-      user.append(ldapservices.getUidAttribute()).append("=");
+      user.append(ldapConn.getUidAttribute()).append("=");
       user.append(this.myPrincipal.UID).append(")");
       LogService.log(LogService.DEBUG,
                      "SimpleLdapSecurityContext: Looking for " +
                      user.toString());
-      conn = ldapservices.getConnection();
+      conn = ldapConn.getConnection();
       
       // set up search controls
       SearchControls searchCtls = new SearchControls();
@@ -145,7 +156,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
       
       // do lookup
       try {
-        results = conn.search(ldapservices.getBaseDN(), user.toString(), searchCtls);
+        results = conn.search(ldapConn.getBaseDN(), user.toString(), searchCtls);
         if (results != null) {
           if (!results.hasMore())
             LogService.log(LogService.ERROR,
@@ -156,7 +167,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             SearchResult entry = (SearchResult)results.next();
             StringBuffer dnBuffer = new StringBuffer();
             dnBuffer.append(entry.getName()).append(", ");
-            dnBuffer.append(ldapservices.getBaseDN());
+            dnBuffer.append(ldapConn.getBaseDN());
             Attributes attrs = entry.getAttributes();
             first_name = getAttributeValue(attrs, ATTR_FIRSTNAME);
             last_name = getAttributeValue(attrs, ATTR_LASTNAME);
@@ -169,7 +180,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             searchCtls.setReturningAttributes(new String[0]);
             searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
             
-            String attrSearch = "(" + ldapservices.getUidAttribute() + "=*)";
+            String attrSearch = "(" + ldapConn.getUidAttribute() + "=*)";
             LogService.log(LogService.DEBUG,
                            "SimpleLdapSecurityContext: Looking in " +
                            dnBuffer.toString() + " for " + attrSearch);
@@ -200,7 +211,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
                        this.myPrincipal.UID + "; " + e);
         throw new PortalSecurityException("SimpleLdapSecurityContext: LDAP Error" + e + " with user: " + this.myPrincipal.UID);
       } finally {
-        ldapservices.releaseConnection(conn);
+        ldapConn.releaseConnection(conn);
       }
     }
     else {

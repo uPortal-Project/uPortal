@@ -159,7 +159,7 @@ public class InitialSecurityContextFactory {
                 }
                 catch (Exception e) {
                     PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryName);
-                    LogService.log(LogService.ERROR,ep);
+                    LogService.log(LogService.ERROR, "Failed to instantiate " + factoryName, e);
                     throw(ep);
                 }
                 
