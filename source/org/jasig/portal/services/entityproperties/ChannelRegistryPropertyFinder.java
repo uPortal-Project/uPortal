@@ -110,6 +110,9 @@ public class ChannelRegistryPropertyFinder
                 if (name.equals("Timeout")){
                   r = String.valueOf(cd.getTimeout()); 
                 }
+                if (name.equals("Secure")){
+                  r = String.valueOf(cd.isSecure());
+                }                
             } catch (Exception e) {
                 LogService.log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :");
                 LogService.log(LogService.ERROR, e);
