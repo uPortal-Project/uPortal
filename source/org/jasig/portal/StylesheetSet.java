@@ -43,13 +43,17 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
-import org.apache.xalan.xslt.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
-import org.apache.xalan.xslt.*;
-import java.net.*;
+import java.net.URL;
+import java.net.MalformedURLException;
 import org.xml.sax.helpers.*;
 
+import org.jasig.portal.utils.SAX2FilterImpl;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * A tool for managing a collection of stylesheets.
@@ -59,7 +63,7 @@ import org.xml.sax.helpers.*;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class StylesheetSet extends SAXFilterImpl {
+public class StylesheetSet extends SAX2FilterImpl {
   protected Hashtable title_table;
   protected OrderedProps props = null;
 
@@ -72,11 +76,10 @@ public class StylesheetSet extends SAXFilterImpl {
 
   /**
    * put your documentation comment here
-   * @param   DocumentHandler dt
+   * @param   ContentHandler dt
    */
-  public StylesheetSet (DocumentHandler dt) {
-    this();
-    this.setDocumentHandler(dt);
+  public StylesheetSet (ContentHandler dt) {
+      super(dt);
   }
 
   /**
@@ -85,19 +88,21 @@ public class StylesheetSet extends SAXFilterImpl {
    */
   public StylesheetSet (String uri) throws PortalException {
     try {
-      Parser parser = ParserFactory.makeParser("org.apache.xerces.parsers.SAXParser");
-      StylesheetSet dummy = new StylesheetSet();
-      parser.setDocumentHandler(dummy);
-      URL url = expandSystemId(uri);
-      java.io.InputStream is = url.openStream();
-      if (url != null)
-        parser.parse(new org.xml.sax.InputSource(is));
-      is.close();
-      this.title_table = dummy.getTitleTable();
-    } catch (FileNotFoundException fnfe) {
-      throw new ResourceMissingException(uri, "The stylesheet list (.ssl) file", fnfe.getMessage());
-    } catch (Exception e) {
-      throw new GeneralRenderingException("Unable to read and/or parse stylesheet list file." + e);
+        XMLReader reader = XMLReaderFactory.createXMLReader();
+        StylesheetSet dummy = new StylesheetSet();
+        reader.setContentHandler((ContentHandler)dummy);
+        URL url = expandSystemId(uri);
+        try {
+            reader.parse(url.toString());
+            this.title_table = dummy.getTitleTable();
+        } catch (IOException ioe) {
+            throw new ResourceMissingException(url.toString(),"XSLT stylesheet","StylesheetSet(uri) : Unable to read stylesheet set from the specified location. Please check the URL.");
+        } catch (SAXException se) {
+            throw new GeneralRenderingException("StylesheetSet(uri) : Unable to parse stylesheet set (.ssl) file. URL=\""+url+"\", exception message: "+se.getMessage());
+        }
+    } catch (SAXException se) {
+        se.printStackTrace();
+        throw new GeneralRenderingException("StylesheetSet(uri) : Unable to instantiate SAX Reader. Please check your library installation.");
     }
   }
 
@@ -106,7 +111,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param title
    * @return 
    */
-  public XSLTInputSource getStylesheet (String title) {
+  public Source getStylesheet (String title) {
     Hashtable media_table = (Hashtable)title_table.get(title);
     if (media_table == null)
       return  null;
@@ -124,14 +129,14 @@ public class StylesheetSet extends SAXFilterImpl {
       }
     }
     // after all this mess we should have a valid sd
-    return  (new XSLTInputSource(sd.getURI()));
+    return  (new StreamSource(sd.getURI()));
   }
 
   /**
    * put your documentation comment here
    * @return 
    */
-  public XSLTInputSource getStylesheet () {
+  public Source getStylesheet () {
     // this is painful ... browse through all possible
     // browse through all titles to find a non-alternate
     // stylesheet
@@ -153,7 +158,7 @@ public class StylesheetSet extends SAXFilterImpl {
         }
       }
     }
-    return  (new XSLTInputSource(sd.getURI()));
+    return  (new StreamSource(sd.getURI()));
   }
 
   /**
@@ -162,7 +167,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param media
    * @return 
    */
-  public XSLTInputSource getStylesheet (String title, String media) {
+  public Source getStylesheet (String title, String media) {
     Hashtable media_table = (Hashtable)title_table.get(title);
     if (media_table == null)
       return  null;
@@ -174,7 +179,7 @@ public class StylesheetSet extends SAXFilterImpl {
     }
     if (sd == null)
       return  null;
-    return  (new XSLTInputSource(sd.getURI()));
+    return  (new StreamSource(sd.getURI()));
   }
 
   /**
@@ -183,7 +188,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param media
    * @return 
    */
-  public XSLTInputSource getStylesheet (String title, BrowserInfo bi) throws PortalException {
+  public Source getStylesheet (String title, BrowserInfo bi) throws PortalException {
     String media = getMedia(bi);
     Hashtable media_table = (Hashtable)title_table.get(title);
     if (media_table == null)
@@ -196,7 +201,7 @@ public class StylesheetSet extends SAXFilterImpl {
     }
     if (sd == null)
       return  null;
-    return  (new XSLTInputSource(sd.getURI()));
+    return  (new StreamSource(sd.getURI()));
   }
 
   /**
@@ -323,7 +328,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param req
    * @return 
    */
-  public XSLTInputSource getStylesheet (String title, HttpServletRequest req) throws PortalException {
+  public Source getStylesheet (String title, HttpServletRequest req) throws PortalException {
     //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     return  getStylesheet(title, getMedia(req));
   }
@@ -333,10 +338,10 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param req
    * @return 
    */
-  public XSLTInputSource getStylesheet (HttpServletRequest req) throws PortalException {
+  public Source getStylesheet (HttpServletRequest req) throws PortalException {
     StylesheetDescription sd = getStylesheetDescription(getMedia(req));
     if (sd != null) {
-      return  new XSLTInputSource(sd.getURI());
+      return  new StreamSource(sd.getURI());
     } 
     else {
       return  null;
@@ -348,11 +353,11 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param media
    * @return 
    */
-  public XSLTInputSource getStylesheetByMedia (String media) throws GeneralRenderingException {
+  public Source getStylesheetByMedia (String media) throws GeneralRenderingException {
     //	LogService.instance().log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd = getStylesheetDescription(media);
     if (sd != null) {
-      return  new XSLTInputSource(sd.getURI());
+      return  new StreamSource(sd.getURI());
     } 
     else {
       return  (null);
@@ -382,14 +387,14 @@ public class StylesheetSet extends SAXFilterImpl {
    * @param data
    * @exception SAXException
    */
-  public void processingInstruction (java.lang.String target, java.lang.String data) throws SAXException {
+  public void processingInstruction(String target, String data) throws SAXException {
     if (target.equals("xml-stylesheet")) {
       StylesheetDescription sd = new StylesheetDescription(data);
       this.addStyleSheet(sd);
     }
     // pass on the stylesheet instruction
-    if (outDocumentHandler != null) {
-      outDocumentHandler.processingInstruction(target, data);
+    if (this.getContentHandler() != null) {
+      this.getContentHandler().processingInstruction(target, data);
     }
   }
 

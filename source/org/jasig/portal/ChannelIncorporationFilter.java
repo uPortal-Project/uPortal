@@ -35,8 +35,10 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+import org.xml.sax.ext.LexicalHandler;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -46,7 +48,7 @@ import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
 
-public class ChannelIncorporationFilter extends SAXFilterImpl
+public class ChannelIncorporationFilter extends SAX2FilterImpl
 {
   // keep track if we are "in" the <channel> element
   private boolean insideChannelElement = false;
@@ -58,19 +60,29 @@ public class ChannelIncorporationFilter extends SAXFilterImpl
   private String channelID;
   private long timeOut;
 
-  // public functions
+    // constructors
 
-  public ChannelIncorporationFilter (DocumentHandler handler, ChannelManager chanm)
-  {
-    super (handler);
-    this.cm = chanm;
-  }
+    // bare
+    public ChannelIncorporationFilter(ChannelManager chanm) {
+        this.cm=chanm;
+    }
 
-  public void startElement (java.lang.String name, org.xml.sax.AttributeList atts) throws SAXException
+    // upward chaining
+    public ChannelIncorporationFilter(XMLReader parent, ChannelManager chanm) {
+        super(parent);
+        this.cm=chanm;
+    }
+    // downward chaining
+    public ChannelIncorporationFilter (ContentHandler handler, ChannelManager chanm) {
+        super (handler);
+        this.cm = chanm;
+    }
+
+  public void startElement (String uri, String localName, String qName,  Attributes atts) throws SAXException
   {
     if (!insideChannelElement) {
       // recognizing "channel"
-      if (name.equals ("channel")) {
+      if (qName.equals ("channel")) {
         insideChannelElement = true;
 
         // get class attribute
@@ -79,24 +91,24 @@ public class ChannelIncorporationFilter extends SAXFilterImpl
         timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
         params = new Hashtable ();
       } else {
-        super.startElement (name,atts);
+        super.startElement (uri,localName,qName,atts);
       }
-    } else if (name.equals ("parameter")) {
+    } else if (qName.equals ("parameter")) {
       params.put (atts.getValue ("name"), atts.getValue ("value"));
     }
   }
 
-  public void endElement (java.lang.String name) throws SAXException
+  public void endElement (String uri, String localName, String qName) throws SAXException
   {
     if (insideChannelElement) {
-      if (name.equals ("channel")) {
-        if (super.outDocumentHandler != null) {
-            cm.outputChannel (channelID, this.getDocumentHandler (),this.channelClassName,this.timeOut,this.params);
+      if (qName.equals ("channel")) {
+        if (this.getContentHandler() != null) {
+            cm.outputChannel (channelID, this.getContentHandler(),this.channelClassName,this.timeOut,this.params);
             insideChannelElement = false;
         }
       }
     } else { 
-        super.endElement (name);
+        super.endElement (uri,localName,qName);
     }
   }
 }

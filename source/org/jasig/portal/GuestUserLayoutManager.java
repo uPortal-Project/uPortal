@@ -41,8 +41,7 @@ import  org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.utils.BooleanLock;
 import  java.sql.*;
 import  org.w3c.dom.*;
-import  org.apache.xalan.xpath.*;
-import  org.apache.xalan.xslt.*;
+
 import  org.apache.xml.serialize.*;
 import  org.w3c.dom.*;
 import  javax.servlet.*;
@@ -51,7 +50,6 @@ import  javax.servlet.http.*;
 import  java.io.*;
 import  java.util.*;
 import  java.text.*;
-import  java.net.*;
 
 
 /**

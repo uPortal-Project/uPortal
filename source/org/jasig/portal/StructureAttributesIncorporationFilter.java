@@ -35,6 +35,7 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import java.io.*;
@@ -43,7 +44,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.List;
 
-import org.xml.sax.helpers.AttributeListImpl;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.servlet.*;
 import javax.servlet.jsp.*;
@@ -56,41 +57,45 @@ import javax.servlet.http.*;
  * @version $Revision$
  */
 
-public class StructureAttributesIncorporationFilter extends SAXFilterImpl
+public class StructureAttributesIncorporationFilter extends SAX2FilterImpl
 {
     protected StructureStylesheetUserPreferences fsup;
 
-
-    public StructureAttributesIncorporationFilter (DocumentHandler handler, StructureStylesheetUserPreferences prefs)
-    {
-        super (handler);
+    // downward
+    public StructureAttributesIncorporationFilter(ContentHandler handler, StructureStylesheetUserPreferences prefs) {
+        super(handler);
         this.fsup=prefs;
     }
 
-    public void startElement (java.lang.String name, org.xml.sax.AttributeList atts) throws SAXException
+    // upward
+    public StructureAttributesIncorporationFilter(XMLReader parent, StructureStylesheetUserPreferences prefs) {
+        super(parent);
+        this.fsup=prefs;
+    }
+
+    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException
     {
         // recognizing "channel"
-        if (name.equals ("channel")) {
-            AttributeListImpl attsImpl=new AttributeListImpl(atts);
-            String channelID = attsImpl.getValue ("ID");
+        if (qName.equals("channel")) {
+            AttributesImpl attsImpl=new AttributesImpl(atts);
+            String channelID = attsImpl.getValue("ID");
             for(Enumeration ca=fsup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
                 String attrName=(String) ca.nextElement();
-                attsImpl.addAttribute(attrName,"CDATA",fsup.getChannelAttributeValue(channelID,attrName));
+                attsImpl.addAttribute("",attrName,attrName,"CDATA",fsup.getChannelAttributeValue(channelID,attrName));
                 //		Logger.log(Logger.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
             }
-            super.startElement(name,attsImpl);
-        } else 	if (name.equals ("folder")) {
-            AttributeListImpl attsImpl=new AttributeListImpl(atts);
-            String folderID = attsImpl.getValue ("ID");
+            super.startElement(uri,localName,qName,attsImpl);
+        } else 	if (qName.equals("folder")) {
+            AttributesImpl attsImpl=new AttributesImpl(atts);
+            String folderID = attsImpl.getValue("ID");
             for(Enumeration fe=fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
                 String attrName=(String) fe.nextElement();
-                attsImpl.addAttribute(attrName,"CDATA",fsup.getFolderAttributeValue(folderID,attrName));
+                attsImpl.addAttribute("",attrName,attrName,"CDATA",fsup.getFolderAttributeValue(folderID,attrName));
                 //		Logger.log(Logger.DEBUG,"adding attribute to folder="+folderID+" "+attrName+"="+fsup.getFolderAttributeValue(folderID,attrName));
             }
-            super.startElement(name,attsImpl);
-
+            super.startElement(uri,localName,qName,attsImpl);
         } else
-            super.startElement (name, atts);
+            super.startElement(uri,localName,qName, atts);
     }
 }
 

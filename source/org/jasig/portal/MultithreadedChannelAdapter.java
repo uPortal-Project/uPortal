@@ -35,7 +35,7 @@
 
 package org.jasig.portal;
 
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 
 /**
  * Internal adaptor class that presents {@link IMultithreadedChannel} as a simple {@link IChannel}
@@ -69,7 +69,7 @@ public class MultithreadedChannelAdapter implements IChannel {
 	return channel.getRuntimeProperties(this.uid);
     }
 
-    public void renderXML (DocumentHandler out) throws PortalException {
+    public void renderXML (ContentHandler out) throws PortalException {
 	channel.renderXML(out,this.uid);
     }
 }

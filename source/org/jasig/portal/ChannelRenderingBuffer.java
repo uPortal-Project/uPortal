@@ -35,9 +35,13 @@
 
 package org.jasig.portal;
 
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.Attributes;
 import java.util.Hashtable;
+import org.jasig.portal.utils.SAX2BufferImpl;
+
 
 /**
  * Channel Rendering buffer allows portal to accumulate a list
@@ -52,7 +56,7 @@ import java.util.Hashtable;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class ChannelRenderingBuffer extends SAXBufferImpl
+public class ChannelRenderingBuffer extends SAX2BufferImpl
 {
   protected ChannelManager cm;
 
@@ -69,18 +73,41 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
    * @param handler output document handler
    * @param chanman channel manager
    */
-  public ChannelRenderingBuffer (ChannelManager chanman)
-  {
+  public ChannelRenderingBuffer(ChannelManager chanman) {
     super();
     ccaching=false;
     this.cm = chanman;
     this.startBuffering();
-    this.setDocumentHandler(null);
+    this.setContentHandler(null);
   }
 
-  public ChannelRenderingBuffer (ChannelManager chanman,boolean ccaching)
-  {
+  public ChannelRenderingBuffer(ContentHandler ch,ChannelManager chanman) {
+    super(ch);
+    ccaching=false;
+    this.cm = chanman;
+    this.startBuffering();
+    this.setContentHandler(null);
+  }
+
+  public ChannelRenderingBuffer(XMLReader parent,ChannelManager chanman) {
+    super(parent);
+    ccaching=false;
+    this.cm = chanman;
+    this.startBuffering();
+    this.setContentHandler(null);
+  }
+
+  public ChannelRenderingBuffer(ChannelManager chanman,boolean ccaching) {
     this(chanman);
+    this.setCharacterCaching(ccaching);
+  }
+
+  public ChannelRenderingBuffer(ContentHandler ch,ChannelManager chanman,boolean ccaching) {
+    this(ch,chanman);
+    this.setCharacterCaching(ccaching);
+  }
+  public ChannelRenderingBuffer(XMLReader parent,ChannelManager chanman,boolean ccaching) {
+    this(parent,chanman);
     this.setCharacterCaching(ccaching);
   }
 
@@ -88,54 +115,47 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
         this.ccaching=setting;
     }
 
-  public void startDocument () throws SAXException
-  {
+  public void startDocument() throws SAXException {
     insideChannelElement = false;
     super.startDocument ();
   }
 
-  public void endDocument () throws SAXException
-  {
-    super.endDocument ();
+  public void endDocument() throws SAXException {
+    super.endDocument();
 
     // buffer will be unplugged by the LayoutBean
     //    this.stopBuffering();
   }
 
-  public void startElement (java.lang.String name, org.xml.sax.AttributeList atts) throws SAXException
+  public void startElement(String url, String localName, String qName, Attributes atts) throws SAXException
   {
-    if (!insideChannelElement)
-    {
+    if (!insideChannelElement) {
       // recognizing "channel"
-      if (name.equals ("channel"))
-      {
+      if (qName.equals("channel")) {
         insideChannelElement = true;
 
         // get class attribute
-        channelClassName = atts.getValue ("class");
-        channelID = atts.getValue ("ID");
-        timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
-        params = new Hashtable ();
+        channelClassName = atts.getValue("class");
+        channelID = atts.getValue("ID");
+        timeOut = java.lang.Long.parseLong(atts.getValue("timeout"));
+        params = new Hashtable();
       }
     }
-    else if (name.equals ("parameter"))
-    {
-      params.put (atts.getValue ("name"), atts.getValue ("value"));
+    else if (qName.equals("parameter")) {
+      params.put(atts.getValue("name"), atts.getValue("value"));
     }
 
-    super.startElement (name,atts);
+    super.startElement(url,localName,qName,atts);
   }
 
-  public void endElement (java.lang.String name) throws SAXException
+  public void endElement(String url, String localName, String qName) throws SAXException
   {
-    if (insideChannelElement)
-    {
-      if (name.equals ("channel"))
-      {
-        cm.startChannelRendering (channelID, channelClassName, timeOut,params,this.ccaching);
+    if (insideChannelElement) {
+      if (qName.equals("channel")) {
+        cm.startChannelRendering(channelID, channelClassName, timeOut,params,this.ccaching);
         insideChannelElement=false;
       }
     }
-    super.endElement (name);
+    super.endElement (url,localName,qName);
   }
 }

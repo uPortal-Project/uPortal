@@ -37,6 +37,7 @@ package org.jasig.portal;
 
 
 import org.jasig.portal.channels.CError;
+import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.security.*;
 import javax.servlet.http.*;
 import java.util.Hashtable;
@@ -433,7 +434,7 @@ public class ChannelManager {
      * @param chanId unique channel Id
      * @param dh document handler that will receive channel content
      */
-    public void outputChannel (String chanId, DocumentHandler dh, String className, long timeOut, Hashtable params) {
+    public void outputChannel (String chanId, ContentHandler dh, String className, long timeOut, Hashtable params) {
         ChannelRenderer cr;
 
         if (rendererTable.get (chanId) == null) {
@@ -441,9 +442,9 @@ public class ChannelManager {
         }
         if ((cr = (ChannelRenderer) rendererTable.get (chanId)) != null) {
             rendererTable.remove(chanId);
-            ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter (dh);
+            ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(dh);
             try {
-                int out = cr.outputRendering (custodian);
+                int out = cr.outputRendering(custodian);
                 if(out==cr.RENDERING_TIMED_OUT) {
                     // rendering has timed out
                     IChannel badChannel=(IChannel) channelTable.get(chanId);
@@ -455,7 +456,7 @@ public class ChannelManager {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
                         rd.setBrowserInfo(binfo);
                         rd.setBaseActionURL(this.pcs.getHttpServletRequest().getContextPath()+"/channel/"+chanId+"/"+uPElement);
-                        errorChannel.setRuntimeData (rd);
+                        errorChannel.setRuntimeData(rd);
 
                         errorChannel.setPortalControlStructures(pcs);
                         errorChannel.renderXML(dh);
@@ -470,7 +471,7 @@ public class ChannelManager {
 
             } catch (InternalPortalException ipe) {
                 // this implies that the channel has thrown an exception during
-                // renderXML() call. No events had been placed onto the DocumentHandler,
+                // renderXML() call. No events had been placed onto the ContentHandler,
                 // so that an Error channel can be rendered in place.
                 Exception channelException=ipe.getException();
                 if(channelException!=null) {
@@ -546,9 +547,9 @@ public class ChannelManager {
         }
         if ((cr = (ChannelRenderer) rendererTable.get(chanId)) != null) {
             
-            SAXBufferImpl dh=new SAXBufferImpl();
+            SAX2BufferImpl dh=new SAX2BufferImpl();
             // in case there isn't a character cache
-            ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter (dh);
+            ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter((ContentHandler)dh);
             try {
                 int out = cr.completeRendering ();
                 if(out==cr.RENDERING_SUCCESSFUL) {
@@ -586,7 +587,7 @@ public class ChannelManager {
 
             } catch (InternalPortalException ipe) {
                 // this implies that the channel has thrown an exception during
-                // renderXML() call. No events had been placed onto the DocumentHandler,
+                // renderXML() call. No events had been placed onto the ContentHandler,
                 // so that an Error channel can be rendered in place.
                 Exception channelException=ipe.getException();
                 if(channelException!=null) {

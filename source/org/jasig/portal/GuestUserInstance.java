@@ -46,8 +46,6 @@ import  java.util.*;
 import  java.text.*;
 import  java.net.*;
 import  org.w3c.dom.*;
-import  org.apache.xalan.xpath.*;
-import  org.apache.xalan.xslt.*;
 import  org.apache.xml.serialize.*;
 
 

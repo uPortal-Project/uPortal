@@ -260,10 +260,10 @@ public class MediaManager {
         frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
         return  new XMLSerializer(out, frmt);
       } 
-      else if (serializerName.equals("PalmHTML")) {
+      /*      else if (serializerName.equals("PalmHTML")) {
         OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
         return  new PalmHTMLSerializer(out, frmt);
-      } 
+        } */
       else if (serializerName.equals("XML")) {
         OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
         return  new XMLSerializer(out, frmt);
@@ -298,10 +298,10 @@ public class MediaManager {
       frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
       return  new XMLSerializer(out, frmt);
     } 
-    else if (serializerName.equals("PalmHTML")) {
+    /*    else if (serializerName.equals("PalmHTML")) {
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       return  new PalmHTMLSerializer(out, frmt);
-    } 
+      } */
     else if (serializerName.equals("XML")) {
       OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
       return  new XMLSerializer(out, frmt);
@@ -331,10 +331,10 @@ public class MediaManager {
       frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
       return  new XMLSerializer(out, frmt);
     } 
-    else if (serializerName != null && serializerName.equals("PalmHTML")) {
+    /*    else if (serializerName != null && serializerName.equals("PalmHTML")) {
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       return  new PalmHTMLSerializer(out, frmt);
-    } 
+      } */
     else if (serializerName != null && serializerName.equals("XML")) {
       OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
       return  new XMLSerializer(out, frmt);
@@ -372,10 +372,10 @@ public class MediaManager {
         frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
         return  new XMLSerializer(out, frmt);
       } 
-      else if (serializerName.equals("PalmHTML")) {
+      /*      else if (serializerName.equals("PalmHTML")) {
         OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
         return  new PalmHTMLSerializer(out, frmt);
-      } 
+        } */
       else if (serializerName.equals("XML")) {
         OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
         return  new XMLSerializer(out, frmt);

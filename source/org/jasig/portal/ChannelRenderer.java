@@ -161,7 +161,7 @@ public class ChannelRenderer
   }
 
   /**
-   * Output channel rendering through a given DocumentHandler.
+   * Output channel rendering through a given ContentHandler.
    * Note: call of outputRendering() without prior call to startRendering() is equivalent to
    * sequential calling of startRendering() and then outputRendering().
    * outputRendering() is a blocking function. It will return only when the channel completes rendering
@@ -169,7 +169,7 @@ public class ChannelRenderer
    * @param out Document Handler that will receive information rendered by the channel.
    * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut;
    */
-  public int outputRendering (DocumentHandler out) throws Exception
+  public int outputRendering (ContentHandler out) throws Exception
   {
 
 
@@ -224,13 +224,14 @@ public class ChannelRenderer
     
     if (!abandoned && worker.done ()) 
     {
-	SAXBufferImpl buffer;
+	SAX2BufferImpl buffer;
       if (worker.successful() && ((buffer=worker.getBuffer())!=null))
       {
         // unplug the buffer :)
         try
         {
-	    buffer.outputBuffer(out);
+            buffer.setAllHandlers(out);
+            buffer.outputBuffer();
             return RENDERING_SUCCESSFUL;
         }
         catch (SAXException e) {
@@ -313,7 +314,7 @@ public class ChannelRenderer
     
     if (!abandoned && worker.done ()) 
     {
-	SAXBufferImpl buffer;
+	SAX2BufferImpl buffer;
       if (worker.successful() && (((buffer=worker.getBuffer())!=null) || (ccacheable && worker.cbuffer!=null))) {
           return RENDERING_SUCCESSFUL;
       } else {
@@ -335,7 +336,7 @@ public class ChannelRenderer
      *
      * @return rendered buffer
      */
-    public SAXBufferImpl getBuffer() {
+    public SAX2BufferImpl getBuffer() {
         if(worker!=null) {
             return worker.getBuffer();
         } else {
@@ -385,7 +386,7 @@ public class ChannelRenderer
         private boolean done;
         private IChannel channel;
         private ChannelRuntimeData rd;
-	private SAXBufferImpl buffer;
+	private SAX2BufferImpl buffer;
         private String cbuffer;
         private Exception exc=null;
 
@@ -428,8 +429,8 @@ public class ChannelRenderer
                                         if(ccacheable && (entry.buffer instanceof String)) {
                                             cbuffer=(String)entry.buffer;
                                             Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached character content based on a key \""+key.getKey()+"\"");
-                                        } else if(entry.buffer instanceof SAXBufferImpl) {
-                                            buffer=(SAXBufferImpl) entry.buffer;
+                                        } else if(entry.buffer instanceof SAX2BufferImpl) {
+                                            buffer=(SAX2BufferImpl) entry.buffer;
                                             Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
                                         }
 				    } else {
@@ -450,8 +451,8 @@ public class ChannelRenderer
                                             cbuffer=(String)entry.buffer;
                                             Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached character content based on a key \""+key.getKey()+"\"");
 
-                                        } else if(entry.buffer instanceof SAXBufferImpl) {
-                                            buffer=(SAXBufferImpl) entry.buffer;
+                                        } else if(entry.buffer instanceof SAX2BufferImpl) {
+                                            buffer=(SAX2BufferImpl) entry.buffer;
                                             Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
                                         }
 				    } else {
@@ -467,7 +468,7 @@ public class ChannelRenderer
                         synchronized(cacheWriteLock) {
                             if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
                                 // need to render again and cache the output
-                                buffer = new SAXBufferImpl ();
+                                buffer = new SAX2BufferImpl ();
                                 buffer.startBuffering();
                                 channel.renderXML (buffer);
                                 
@@ -484,13 +485,13 @@ public class ChannelRenderer
                             }
                         }
 		    } else {
-			buffer = new SAXBufferImpl ();
+			buffer = new SAX2BufferImpl ();
 			buffer.startBuffering();
 			channel.renderXML (buffer);
 		    }
 		} else  {
 		    // in the case when channel cache is not enabled
-		    buffer = new SAXBufferImpl ();
+		    buffer = new SAX2BufferImpl ();
 		    buffer.startBuffering();
 		    channel.renderXML (buffer);
 		}
@@ -505,7 +506,7 @@ public class ChannelRenderer
             return this.successful;
         }
 
-	public SAXBufferImpl getBuffer() {
+	public SAX2BufferImpl getBuffer() {
 	    return this.buffer;
 	}
 

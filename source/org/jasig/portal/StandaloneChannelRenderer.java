@@ -53,8 +53,12 @@ import  org.jasig.portal.jndi.JNDIManager;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
 import  org.xml.sax.*;
-import  org.apache.xalan.xslt.*;
+
 import  org.apache.xml.serialize.*;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels
@@ -158,21 +162,20 @@ public class StandaloneChannelRenderer extends BaseChannel {
 	// get the framing stylesheet
 	String xslURI = set.getStylesheetURI(req);
 	try {
-	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-	    processor.setDocumentHandler(ser);
-	    processor.setStylesheet(XSLT.getStylesheetRoot(xslURI));
-	    processor.startDocument();
-	    org.xml.sax.helpers.AttributeListImpl atl = new org.xml.sax.helpers.AttributeListImpl();
-	    atl.addAttribute("name", "CDATA", channelName);
+            TransformerHandler th=XSLT.getTransformerHandler(xslURI);
+            th.setResult(new SAXResult(ser));
+	    org.xml.sax.helpers.AttributesImpl atl = new org.xml.sax.helpers.AttributesImpl();
+	    atl.addAttribute("","name","name", "CDATA", channelName);
 	    // add other attributes: hasHelp, hasAbout, hasEdit
-	    processor.startElement("channel", atl);
-	    ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(processor);
+            th.startDocument();
+	    th.startElement("","channel","channel", atl);
+	    ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(th);
 	    int out=cr.outputRendering(custodian);
 	    if(out==cr.RENDERING_TIMED_OUT) {
 		throw new InternalTimeoutException("The channel has timed out");
 	    }
-	    processor.endElement("channel");
-	    processor.endDocument();
+	    th.endElement("","channel","channel");
+	    th.endDocument();
 	} catch (InternalPortalException ipe) {
 	    throw ipe.getException();
 	}

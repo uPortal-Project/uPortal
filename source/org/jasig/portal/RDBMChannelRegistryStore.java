@@ -40,8 +40,6 @@ package  org.jasig.portal;
 
 import  org.jasig.portal.utils.DTDResolver;
 import  java.io.*;
-import  org.apache.xalan.xpath.*;
-import  org.apache.xalan.xslt.*;
 import  org.apache.xml.serialize.*;
 import  org.apache.xerces.dom.*;
 import  org.w3c.dom.*;
