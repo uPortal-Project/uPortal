@@ -65,10 +65,12 @@ import  org.apache.xml.serialize.XMLSerializer;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.channels.CError;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
+
+
+import java.io.PrintWriter;
+
 
 
 /**
@@ -371,22 +373,11 @@ public class RDBMUserLayoutStore
     public int getChildId () {return childId;}
     public int getChanId () {return chanId;}
 
-    public Element getStructureDocument(DocumentImpl doc, IAuthorizationPrincipal ap) throws Exception {
+    public Element getStructureDocument(DocumentImpl doc) throws Exception {
       Element structure = null;
 
       if (isChannel()) {
-        if (ap.canRender(chanId)) {
-          structure = getChannel(chanId, doc, channelPrefix + structId);
-        } else {            // No access
-          ChannelDefinition channel= getChannel(chanId);
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureDocument(): no access to channel "
-            + chanId);
-          if (channel != null) {
-            structure = channel.getDocument(doc, channelPrefix + structId,
-              "You do not have permission to access this channel.", CError.CHANNEL_AUTHORIZATION_EXCEPTION);
-          }
-        }
-
+        structure = getChannel(chanId, doc, channelPrefix + structId);
         if (structure == null) {
           // Can't find channel
           ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
@@ -827,16 +818,16 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
    protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
-        Element root, int structId, IAuthorizationPrincipal ap) throws java.sql.SQLException, Exception {
+        Element root, int structId) throws java.sql.SQLException, Exception {
       while (structId != 0) {
         if (DEBUG>1) {
           System.err.println("CreateLayout(" + structId + ")");
         }
         LayoutStructure ls = (LayoutStructure) layoutStructure.get(new Integer(structId));
-        Element structure = ls.getStructureDocument(doc, ap);
+        Element structure = ls.getStructureDocument(doc);
         root.appendChild(structure);
         if (!ls.isChannel()) {          // Folder
-          createLayout(layoutStructure, doc,  structure, ls.getChildId(), ap);
+          createLayout(layoutStructure, doc,  structure, ls.getChildId());
         }
         structId = ls.getNextId();
       }
@@ -2202,17 +2193,7 @@ public class RDBMUserLayoutStore
         }
 
         if (layoutStructure.size() > 0) { // We have a layout to work with
-
-          //  Replace roles with permissions/groups:
-          // UserInChannelRole uir = new UserInChannelRole(con, realUserId);
-          String userKey = "" + realUserId;
-          Class userType = org.jasig.portal.security.IPerson.class;
-          IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(userKey, userType);
-            try {
-            createLayout(layoutStructure, doc, root, firstStructId, ap);
-          } finally {
-            // ap.close(); (?)
-          }
+          createLayout(layoutStructure, doc, root, firstStructId);
           layoutStructure.clear();
 
           long stopTime = System.currentTimeMillis();

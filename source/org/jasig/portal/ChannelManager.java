@@ -59,6 +59,10 @@ import org.w3c.dom.NodeList;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+
 import tyrex.naming.MemoryContext;
 
 /**
@@ -160,14 +164,14 @@ public class ChannelManager {
      * @param params channel publish/subscribe params
      * @return a character buffer (<code>String</code>) or a SAX buffer (<code>SAXBufferImpl</code>)
      */
-    public Object getChannelCharacters (String chanId, String className, long timeOut, Hashtable params) {
+    public Object getChannelCharacters (String chanId, String channelPublishId, String className, long timeOut, Hashtable params) {
         ChannelRenderer cr;
 
         if (rendererTable.get(chanId) == null) {
             if(className!=null && params!=null) {
-                this.startChannelRendering(chanId, className, timeOut, params,true);
+                this.startChannelRendering(chanId, channelPublishId, className, timeOut, params,true);
             } else {
-                LogService.instance().log(LogService.ERROR,"ChannelManager::getChannelCharacters() : channel has not been instantiated ! Please use full version of getChannelCharacters() !");
+                LogService.instance().log(LogService.ERROR,"ChannelManager:g:etChannelCharacters() : channel has not been instantiated ! Please use full version of getChannelCharacters() !");
             }
         }
         if ((cr = (ChannelRenderer) rendererTable.get(chanId)) != null) {
@@ -365,6 +369,7 @@ public class ChannelManager {
         Element elChannel=(Element) ulm.getUserLayoutNode(chanId);
         if(elChannel!=null) {
             String className=elChannel.getAttribute("class");
+            String channelPublishId=elChannel.getAttribute("chanID");
             long timeOut=java.lang.Long.parseLong(elChannel.getAttribute("timeout"));
             Hashtable params=new Hashtable();
             NodeList paramsList=elChannel.getElementsByTagName("parameter");
@@ -374,7 +379,7 @@ public class ChannelManager {
                 params.put(param.getAttribute("name"),param.getAttribute("value"));
             }
             try {
-                return instantiateChannel(chanId,className,timeOut,params);
+                return instantiateChannel(chanId,channelPublishId, className,timeOut,params);
             } catch (Exception ex) {
                 LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
                 return null;
@@ -382,45 +387,56 @@ public class ChannelManager {
         } else return null;
 
     }
-    private IChannel instantiateChannel(String chanId, String className, long timeOut, Hashtable params) throws Exception {
+    private IChannel instantiateChannel(String chanId, String channelPublishId, String className, long timeOut, Hashtable params) throws Exception {
         IChannel ch=null;
 
-        boolean exists=false;
-        // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
-        // channel more then once, but it's difficult to implement "instanceof" operation on
-        // the java.lang.Class. So, I just look into the staticChannels table.
-        Object cobj=staticChannels.get(className);
-        if(cobj!=null) {
-            exists=true;
-        } else {
-            cobj =  Class.forName (className).newInstance ();
-        }
+        // check if the user has permissions to instantiate this channel
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserLayoutManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
 
-        // determine what kind of a channel it is.
-        // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
-        if(cobj instanceof IMultithreadedChannel) {
-            String uid=this.pcs.getHttpServletRequest().getSession(false).getId()+"/"+chanId;
-            if(cobj instanceof IMultithreadedCacheable) {
-                if(cobj instanceof IPrivileged) {
-                    // both cacheable and privileged
-                    ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
-                } else {
-                    // just cacheable
-                    ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
-                }
-            } else if(cobj instanceof IPrivileged) {
-                ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
+        if(ap.canRender(Integer.parseInt(channelPublishId))) {
+            
+            boolean exists=false;
+            // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
+            // channel more then once, but it's difficult to implement "instanceof" operation on
+            // the java.lang.Class. So, I just look into the staticChannels table.
+            Object cobj=staticChannels.get(className);
+            if(cobj!=null) {
+                exists=true;
             } else {
-                // plain multithreaded
-                ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
+                cobj =  Class.forName (className).newInstance ();
             }
-            // see if we need to add the instance to the staticChannels
-            if(!exists) {
-                staticChannels.put(className,cobj);
+
+            // determine what kind of a channel it is.
+            // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
+            if(cobj instanceof IMultithreadedChannel) {
+                String uid=this.pcs.getHttpServletRequest().getSession(false).getId()+"/"+chanId;
+                if(cobj instanceof IMultithreadedCacheable) {
+                    if(cobj instanceof IPrivileged) {
+                        // both cacheable and privileged
+                        ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+                    } else {
+                        // just cacheable
+                        ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+                    }
+                } else if(cobj instanceof IPrivileged) {
+                    ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
+                } else {
+                    // plain multithreaded
+                    ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
+                }
+                // see if we need to add the instance to the staticChannels
+                if(!exists) {
+                    staticChannels.put(className,cobj);
+                }
+            } else {
+                // vanilla IChannel
+                ch=(IChannel)cobj;
             }
         } else {
-            // vanilla IChannel
-            ch=(IChannel)cobj;
+            // user is not authorized to instantiate this channel
+            // create an instance of an error channel instead
+            LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : user has no authorization to render channel "+chanId+".");
+            ch=new CError(CError.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",chanId,null);
         }
 
         // construct a ChannelStaticData object
@@ -449,11 +465,11 @@ public class ChannelManager {
      * @param chanId unique channel Id
      * @param dh document handler that will receive channel content
      */
-    public void outputChannel (String chanId, ContentHandler dh, String className, long timeOut, Hashtable params) {
+    public void outputChannel (String chanId, String channelPublishId, ContentHandler dh, String className, long timeOut, Hashtable params) {
         ChannelRenderer cr;
 
         if (rendererTable.get (chanId) == null) {
-            this.startChannelRendering (chanId, className, timeOut, params,false);
+            this.startChannelRendering (chanId, channelPublishId, className, timeOut, params,false);
         }
         if ((cr = (ChannelRenderer) rendererTable.get (chanId)) != null) {
             rendererTable.remove(chanId);
@@ -715,14 +731,14 @@ public class ChannelManager {
      * @param className name of the channel class
      * @param params a table of parameters
      */
-    public void startChannelRendering (String chanId, String className, long timeOut, Hashtable params,boolean ccacheable)
+    public void startChannelRendering (String chanId, String channelPublishId, String className, long timeOut, Hashtable params,boolean ccacheable)
     {
         // see if the channel is cached
         IChannel ch;
 
         if ((ch = (IChannel) channelTable.get (chanId)) == null) {
             try {
-                ch=instantiateChannel(chanId,className,timeOut,params);
+                ch=instantiateChannel(chanId,channelPublishId,className,timeOut,params);
             } catch (Exception e) {
                 CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,chanId,null);
                 channelTable.put(chanId,errorChannel);
