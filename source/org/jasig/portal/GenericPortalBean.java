@@ -79,8 +79,6 @@ public class GenericPortalBean
   public static void setDbImpl(IDBImpl dbImpl)
   {
     dbImplObject = dbImpl;
-                  System.err.println(dbImpl);
-
   }
   /**
    * Get the dbImpl object for the portal
