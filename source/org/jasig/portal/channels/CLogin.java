@@ -70,7 +70,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   private String attemptedUserName="";
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CLogin/CLogin.ssl");
   private boolean bAuthenticated = false;
-  private boolean bAuthorizationAttemptFailed = false;
+  private boolean bauthenticationAttemptFailed = false;
   private boolean bSecurityError = false;
   private String xslUriForKey = null;
 
@@ -85,13 +85,13 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   public void setPortalControlStructures(PortalControlStructures pcs)
   {
     HttpSession session = pcs.getHttpSession();
-    String authorizationAttempted = (String)session.getAttribute("up_authorizationAttempted");
-    String authorizationError = (String)session.getAttribute("up_authorizationError");
+    String authenticationAttempted = (String)session.getAttribute("up_authenticationAttempted");
+    String authenticationError = (String)session.getAttribute("up_authenticationError");
 
-    if (authorizationAttempted != null)
-      bAuthorizationAttemptFailed = true;
+    if (authenticationAttempted != null)
+      bauthenticationAttemptFailed = true;
 
-    if (authorizationError != null)
+    if (authenticationError != null)
       bSecurityError = true;
   }
 
@@ -133,7 +133,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
       Element errorElement = doc.createElement("error");
       loginStatusElement.appendChild(errorElement);
     }
-    else if (bAuthorizationAttemptFailed && !bAuthenticated)
+    else if (bauthenticationAttemptFailed && !bAuthenticated)
     {
       // Create <failure> element under <login-status>
       Element failureElement = doc.createElement("failure");
@@ -190,7 +190,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
         }
   sbKey.append("xslUri:").append(xslUriForKey).append(", ");
   sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
-  sbKey.append("bAuthorizationAttemptFailed:").append(bAuthorizationAttemptFailed).append(", ");
+  sbKey.append("bauthenticationAttemptFailed:").append(bauthenticationAttemptFailed).append(", ");
   sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
   sbKey.append("bSecurityError:").append(bSecurityError);
   k.setKey(sbKey.toString());

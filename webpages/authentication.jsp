@@ -59,7 +59,7 @@ if (userName != null && password != null)
   }
   catch (PortalSecurityException pse)
   {
-    session.setAttribute ("up_authorizationError", "true");
+    session.setAttribute ("up_authenticationError", "true");
   }
   session.setAttribute("up_authorizationAttempted", "true");
 
