@@ -128,6 +128,11 @@
     </p>
 
     <p>
+    In the case where CWebProxy needs the channel to provide refreshed output,
+    it will call the application with no parameters, as is usual for HTTP.
+    </p>
+
+    <p>
     In some cases, you don't want a link to go through the normal mechanisms,
     but instead wish it to be handled as a download for an object with its
     own MIME type.  CWebProxy includes a way to indicate this.
@@ -191,8 +196,10 @@
         <li><b>Mode</b>: To cache or not to cache.  May be <b>none</b>
 	  (normally don't cache), or <b>all</b> (cache by default).
 
-        <li><b>Scope</b>: Affects which instances of this channel are cached.
+        <li><b>Scope</b>: Affects which instances of this channel share
+	  cached data.  At this time only instance caching is available.
 
+	<!--
 	  <ul>
             <li><b>system</b>: one copy for all users.</li>
 	    <li><b>user</b>: one copy per user.  This is particularly useful
@@ -201,6 +208,7 @@
 		different output if a user subscribes to it more than once.</li>
  	    <li><b>instance</b>: each instance of the channel has its own cache.</li>
           </ul>
+	-->
 
         <li><b>Timeout</b>:  How long cached output is valid in "all" mode.
       </ul>
@@ -270,20 +278,11 @@
 
       <li><b>cw_cacheDefaultTimeout</b> - Default timeout in seconds.
 
-      <li><b>cw_cacheDefaultScope</b> - Default cache scope.  May be
-	<i>system</i> (one copy for all users), or
-	<i>user</i> (one copy per user), or
-	<i>instance</i> (cache for this channel instance only).</li>
-
       <li><b>cw_cacheDefaultMode</b> - Default caching mode.
 	May be <i>none</i> (normally don't cache), or
 	<i>all</i> (cache everything).</li>
 
       <li><b>cw_cacheTimeout</b> - override default for this request only.
-	Primarily intended as a runtime parameter, but can
-	user statically to override the first instance.</li>
-
-      <li><b>cw_cacheScope</b> - override default for this request only.
 	Primarily intended as a runtime parameter, but can
 	user statically to override the first instance.</li>
 
@@ -297,7 +296,7 @@
 	value will be passed on <i>all</i> requests not
 	overridden by a runtime data cw_person.</li>
 
-      <li><b>cw_person_allow</b> - Restrict IPerson attribute passing to this list.
+      <li><b>cw_personAllow</b> - Restrict IPerson attribute passing to this list.
 	 A comma-separated list of IPerson attributes that
 	 may be passed via cw_person.  An empty or non-existent
 	 value means use the default value from the corresponding
@@ -313,20 +312,17 @@
 
     <h3>Properties</h3>
     <p>
-    CWebProxy has four properties which act as portal-wide defaults for
+    CWebProxy has a few properties which act as portal-wide defaults for
     equivalent static data (channel publish-time parameters).  These are
     set in the <b>properties/portal.properties</b> configuration file.
     </p>
     <ul>
       <li><b>cache_default_timeout</b>:  Default value for
           <i>cw_cacheDefaultTimeout</i>.</li>
-      <li><b>cache_default_scope</b>:  Default value for
-          <i>cw_cacheDefaultScope</i>.  If you don't know what
-	  this should be, set it to <i>instance</i>.</li>
       <li><b>cache_default_mode</b>:  Default value for
           <i>cw_cacheDefaultMode</i>.  If you're not sure what
 	  to use, disable caching by default with the value <i>none</i>.</li>
-      <li><b>person_allow</b>:  Default value for <i>person_allow</i>.  
+      <li><b>person_allow</b>:  Default value for <i>cw_personAllow</i>.  
           An empty value means everything is restricted, disabling
 	  this mechanism.  A special value of <i>*</i> means no
 	  restrictions.
@@ -353,9 +349,6 @@
       <li><b>cw_reset</b>: An instruction to reset internal
       variables. The value <i>return</i> resets <i>cw_xml</i> to
       its last value before changed by button events.
-      <!-- The value
-      <i>reset</i> returns all variables to the static data values.
-      (reset not impl. yet.) Runtime data parameter only. -->
       </li>
 
       <li><b>cw_download</b>: Use download worker for this link or form.
@@ -508,7 +501,7 @@
     Documentation author Andrew Drask&oacute;y.
     </p>
     <p>
-    Last Modified November 28, 2002.
+    Last Modified December 2, 2002.
     </p>
   </body>
 </html>
