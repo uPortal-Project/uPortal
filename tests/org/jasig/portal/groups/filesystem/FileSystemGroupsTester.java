@@ -461,7 +461,15 @@ public void testFindContainingGroups() throws Exception
         }
         assertEquals(msg, 1, containingGroups.size());
     }
+    
+    msg = "Finding containing groups for a non-existent type...";
+    print(msg);
 
+    ent = GroupService.getEntity(testEntityKeys[0], new Object().getClass());
+    itr = ent.getContainingGroups();
+    boolean hasContainingGroup = itr.hasNext();
+    assertTrue(msg, ! hasContainingGroup);
+    
     print("Test completed successfully." + CR);
 
     print("***** LEAVING FileSystemGroupsTester.testFindContainingGroups() *****" + CR);
