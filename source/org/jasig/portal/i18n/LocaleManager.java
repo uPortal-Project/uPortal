@@ -218,22 +218,27 @@ public class LocaleManager  {
     public void setLocalesFromBrowserSetting(HttpServletRequest request) {
 
 	String language = request.getHeader("Accept-Language");
-	StringTokenizer  tokens = new StringTokenizer(language, ",");
-	Locale[] locales = new Locale[tokens.countTokens()];
-	int index;
 
-	LogService.log(LogService.DEBUG, "LocaleManager.setLocalesFromBrowserSetting: Accept-Language = " + language);
+        if (language != null) {
+            StringTokenizer  tokens = new StringTokenizer(language, ",");
+            Locale[] locales = new Locale[tokens.countTokens()];
+            int index;
 
-	for (int i=0; tokens.hasMoreTokens(); i++) {
-	    String lang = tokens.nextToken();
-	    if ((index = lang.indexOf(';')) != -1) {
-		lang = lang.substring(0, index);
-	    }
-	    lang = lang.trim();
-	    locales[i] = getLocaleForLanguage(lang);
-	    LogService.log(LogService.DEBUG, "LocaleManager.setLocalesFromBrowserSetting: localesFromBrowserSetting #" + i + " = " + locales[i]);
-	}
-	localesFromBrowserSetting = locales;
+            LogService.log(LogService.DEBUG, "LocaleManager.setLocalesFromBrowserSetting: Accept-Language = " + language);
+
+            for (int i=0; tokens.hasMoreTokens(); i++) {
+                String lang = tokens.nextToken();
+                if ((index = lang.indexOf(';')) != -1) {
+                    lang = lang.substring(0, index);
+                }
+                lang = lang.trim();
+                locales[i] = getLocaleForLanguage(lang);
+                LogService.log(LogService.DEBUG, "LocaleManager.setLocalesFromBrowserSetting: localesFromBrowserSetting #" + i + " = " + locales[i]);
+            }
+            localesFromBrowserSetting = locales;
+        }  else {
+            localesFromBrowserSetting = null;
+        }
     }
 
     public boolean isLocaleChanged(HttpServletRequest req) {
