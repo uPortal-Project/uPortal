@@ -352,22 +352,22 @@
   </xsl:template>
   <xsl:template name="controls">
     <xsl:if test="not(@hasHelp='false')">
-      <a href="{$baseActionURL}?uP_help_target={@ID}">
+      <a href="{$baseActionURL}?uP_help_target={@ID}#{@ID}">
         <img alt="help" title="help" src="{$mediaPath}/{$skin}/controls/help.gif" width="16" height="16" border="0"/>
       </a>
     </xsl:if>
     <xsl:if test="not(@hasAbout='false')">
-      <a href="{$baseActionURL}?uP_about_target={@ID}">
+      <a href="{$baseActionURL}?uP_about_target={@ID}#{@ID}">
         <img alt="about" title="about" src="{$mediaPath}/{$skin}/controls/about.gif" width="16" height="16" border="0"/>
       </a>
     </xsl:if>
     <xsl:if test="not(@editable='false')">
-      <a href="{$baseActionURL}?uP_edit_target={@ID}">
+      <a href="{$baseActionURL}?uP_edit_target={@ID}#{@ID}">
         <img alt="edit" title="edit" src="{$mediaPath}/{$skin}/controls/edit.gif" width="16" height="16" border="0"/>
       </a>
     </xsl:if>
     <xsl:if test="@printable='true'">
-      <a href="{$baseActionURL}?uP_print_target={@ID}">
+      <a href="{$baseActionURL}?uP_print_target={@ID}#{@ID}">
         <img alt="print" title="print" src="{$mediaPath}/{$skin}/controls/print.gif" width="16" height="16" border="0"/>
       </a>
     </xsl:if>

@@ -2201,7 +2201,7 @@ Version $Revision$
     <!-- - Channel about -->
     <!-- - -->
     <xsl:template name="channel.action.about">
-        <a href="{$baseActionURL}?uP_about_target={@ID}">
+        <a href="{$baseActionURL}?uP_about_target={@ID}#{@ID}">
             <img alt="about" title="about" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
         </a>
     </xsl:template>
@@ -2217,7 +2217,7 @@ Version $Revision$
     <!-- - Channel help  -->
     <!-- - -->
     <xsl:template name="channel.action.help">
-        <a href="{$baseActionURL}?uP_help_target={@ID}">
+        <a href="{$baseActionURL}?uP_help_target={@ID}#{@ID}">
             <img alt="help" title="help" src="{$mediaPathIcons}/contenthelp.gif" width="26" height="23" border="0"/>
         </a>
     </xsl:template>
@@ -2225,7 +2225,7 @@ Version $Revision$
     <!-- - Channel edit -->
     <!-- - -->
     <xsl:template name="channel.action.edit">
-        <a href="{$baseActionURL}?uP_edit_target={@ID}">
+        <a href="{$baseActionURL}?uP_edit_target={@ID}#{@ID}">
             <img alt="edit" title="edit" src="{$mediaPathIcons}/contentedit.gif" width="26" height="23" border="0"/>
         </a>
     </xsl:template>
@@ -2233,7 +2233,7 @@ Version $Revision$
     <!-- - Channel print -->
     <!-- - -->
     <xsl:template name="channel.action.print">
-        <a href="{$baseActionURL}?uP_print_target={@ID}">
+        <a href="{$baseActionURL}?uP_print_target={@ID}#{@ID}">
             <img alt="print" title="print" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
         </a>
     </xsl:template>
