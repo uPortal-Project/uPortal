@@ -25,7 +25,7 @@ import javax.xml.transform.sax.SAXSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.channels.CError;
+import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
@@ -157,7 +157,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           }
           structure = cd.getDocument(doc, channelPrefix + structId,
            "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.",
-           CError.CHANNEL_MISSING_EXCEPTION);
+           ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode());
         }
       } else {
         structure = doc.createElement("folder");
