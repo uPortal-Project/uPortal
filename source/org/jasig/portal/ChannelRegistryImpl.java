@@ -53,7 +53,7 @@ import org.w3c.dom.*;
  */
 public class ChannelRegistryImpl implements IChannelRegistry {
     
-    private Document chanDoc = null;
+    private DocumentImpl chanDoc = null;
     private Document types = null;
     String sRegDtd = "channelRegistry.dtd";
     private RdbmServices rdbmService = new RdbmServices ();
@@ -137,23 +137,18 @@ public class ChannelRegistryImpl implements IChannelRegistry {
                     cat = chanDoc.createElement("category");
                     cat.setAttribute("ID", "cat"+catid);
                     cat.setAttribute("name", catnm);
+                    chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
                 }
                 org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
                 parser.parse (new org.xml.sax.InputSource (new StringReader (chxml)));
                 Document doc = parser.getDocument();
                 //System.out.println("chan: "+ serializeDOM(doc));
                 chan = doc.getDocumentElement();
+                chanDoc.putIdentifier(((Element)chan).getAttribute("ID"), (Element)chan);
                 cat.appendChild(chanDoc.importNode(chan, true));
             }
             root.appendChild(cat);
             chanDoc.appendChild(root);
-            //System.out.println("chan: "+ serializeDOM(chanDoc));
-            DTDResolver dtdResolver = new DTDResolver(sRegDtd);
-            org.apache.xerces.parsers.DOMParser parser2 = new org.apache.xerces.parsers.DOMParser ();
-            parser2.setEntityResolver(dtdResolver);
-            parser2.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-            parser2.parse (new org.xml.sax.InputSource (new StringReader (serializeDOM(chanDoc))));
-            chanDoc = parser2.getDocument();
             stmt.close();
          } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -435,7 +430,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             serial.serialize( chanDoc.getDocumentElement() );
         }
         catch (java.io.IOException ioe) {
-            Logger.log(Logger.ERROR, "ioe thrown: "+ ioe.getMessage());
+            Logger.log(Logger.ERROR, ioe);
         }
         
         return stringOut.toString();
