@@ -85,7 +85,6 @@ import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
-import org.jasig.portal.container.servlet.StoredServletResponseImpl;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
@@ -373,10 +372,11 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     try {
                         StringWriter sw = new StringWriter();
                         PrintWriter pw = new PrintWriter(sw);
-                        HttpServletRequest wrappedRequest = pcs.getHttpServletRequest();
-                        HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
+                        HttpServletRequest request = pcs.getHttpServletRequest();
+                        HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
                         //System.out.println("Processing portlet action on " + cd.getPortletWindow().getId());
-                        portletContainer.processPortletAction(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+                        portletContainer.processPortletAction(cd.getPortletWindow(), request, wrappedResponse);
+                        InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
                         cd.setProcessedAction(true);
                     } catch (Exception e) {
                         throw new PortalException(e);
@@ -468,11 +468,12 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             
             // Check if this portlet has just processed an action during this request.
             // If so, then we capture the changes that the portlet may have made during
-            // its processAction implementation and we pass them to the render request.
-            // Pluto's normally does this by creating a new render URL and redirecting,
-            // but we have overidden that behavior in our own version of PortletContainerImpl.
+            // its processAction implementation (captured in the portlet's ActionResponse)
+            //  and we pass them to the render request.
+            // Pluto's portlet container implementation does this by creating a new render URL 
+            // and redirecting, but we have overidden that behavior in our own version of PortletContainerImpl.
             if (cd.hasProcessedAction()) {
-                InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
+                InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
                 PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
                 // Change modes
                 if (actionResponse.getChangedPortletMode() != null) {
@@ -490,16 +491,16 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
 
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
-            HttpServletRequest wrappedRequest = pcs.getHttpServletRequest();
+            HttpServletRequest request = pcs.getHttpServletRequest();
             HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
                                     
             // Hide the request parameters if this portlet isn't targeted
             if (!rd.isTargeted()) {
-                wrappedRequest = new EmptyRequestImpl(wrappedRequest);
+                request = new EmptyRequestImpl(request);
             }
             
             //System.out.println("Rendering portlet " + cd.getPortletWindow().getId());
-            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
+            portletContainer.renderPortlet(cd.getPortletWindow(), request, wrappedResponse);
             
             markup = sw.toString();
             

@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.om.window.PortletWindow;
+import org.jasig.portal.container.om.window.PortletWindowImpl;
 
 /**
  * Same as Pluto's PortletContainerImpl, but this one ignores redirects.
@@ -59,7 +60,9 @@ public class PortletContainerImpl extends org.apache.pluto.PortletContainerImpl 
                             InternalActionResponse _actionResponse) 
     throws IOException {
         
-        // Don't do anything.
+        // Rather than redirect, we shall capture the internal action response
+        // and make it available to the portlet adapter via the portlet window
+        ((PortletWindowImpl)portletWindow).setInternalActionResponse(_actionResponse);
         
     }
 

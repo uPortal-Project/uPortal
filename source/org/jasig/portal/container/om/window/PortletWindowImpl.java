@@ -39,6 +39,7 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.om.common.ObjectID;
 import org.apache.pluto.om.entity.PortletEntity;
 import org.apache.pluto.om.window.PortletWindow;
@@ -59,6 +60,7 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     
     private ChannelRuntimeData runtimeData;
     private HttpServletRequest request;
+    private InternalActionResponse internalActionResponse;
 
     // PortletWindow methods
     
@@ -97,6 +99,14 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     
     public HttpServletRequest getHttpServletRequest() {
         return this.request;
+    }
+
+    public InternalActionResponse getInternalActionResponse() {
+        return internalActionResponse;
+    }
+
+    public void setInternalActionResponse(InternalActionResponse internalActionResponse) {
+        this.internalActionResponse = internalActionResponse;
     }
 
 }
