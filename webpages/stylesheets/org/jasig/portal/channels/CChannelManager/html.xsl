@@ -2,8 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <!--<xsl:param name="action">defaultView</xsl:param>-->
-  <xsl:param name="action">selectCategory</xsl:param>
+  <xsl:param name="action">defaultView</xsl:param>>
+  <!--xsl:param name="action">selectCategory</xsl:param-->
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="defaultLength">10</xsl:variable>
@@ -13,8 +13,8 @@
   <xsl:variable name="filterByID">
     <xsl:value-of select="//filterByID[1]"/>
   </xsl:variable>
-  <xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable>
-  <!--<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>-->
+  <!--xsl:variable name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:variable-->
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>-->
   <xsl:template match="/">
     <html>
       <head>
@@ -89,9 +89,10 @@
   </xsl:template>
   <xsl:template name="selectChannelType">
     <xsl:call-template name="workflow"/>
+
     <!-- form begin -->
-    <form method="post" action="{$baseActionURL}">
-      <input type="hidden" name="action" value="selectGeneralSettings"/>
+    <form name="workflow" method="post" action="{$baseActionURL}">
+      <input type="hidden" name="action" value="none"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
         <td>
@@ -158,7 +159,7 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="Submit33" value="Next &gt;" class="uportal-button"/> <input type="submit" name="Submit53" value="Review" class="uportal-button"/> <input type="submit" name="Submit8" value="Cancel" class="uportal-button"/> </td>
+          <input type="submit" name="submit" value="Next &gt;" onclick="document.workflow.action.value='selectGeneralSettings'" class="uportal-button"/> <input type="submit" name="submit" value="Review" onclick="document.workflow.action.value='selectReviewChannel'" class="uportal-button"/> <input type="submit" name="cancel" value="Cancel" onclick="document.workflow.action.value='cancel'" class="uportal-button"/> </td>
       </tr>
     </table>
     </form>
@@ -492,8 +493,10 @@
   </xsl:template>
   <xsl:template name="selectGeneralSettings">
     <xsl:call-template name="workflow"/>
+    <!-- form begin -->
+    <form name="workflow" method="post" action="{$baseActionURL}">
+    <input type="hidden" name="action" value="none"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <!-- form begin -->
       <tr class="uportal-channel-text">
         <td>
           <strong>Settings [one]:</strong> Complete the Settings form below</td>
@@ -562,18 +565,21 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="Submit4" value="&lt; Back" class="uportal-button"/> <input type="submit" name="Submit3" value="Next &gt;" class="uportal-button"/> <input type="submit" name="Submit532" value="Review" class="uportal-button"/> <input type="submit" name="Submit82" value="Cancel" class="uportal-button"/> </td>
+          <input type="submit" name="submit" value="&lt; Back" onclick="document.workflow.action.value='selectChannelType'" class="uportal-button"/> <input type="submit" name="submit" value="Next &gt;" onclick="document.workflow.action.value='channelDef'" class="uportal-button"/> <input type="submit" name="submit" value="Review" onclick="document.workflow.action.value='selectReviewChannel'" class="uportal-button"/> <input type="submit" name="submit" value="Cancel" onclick="document.workflow.action.value='cancel'" class="uportal-button"/> </td>
       </tr>
-      <!-- form end -->
     </table>
+    </form>
+    <!-- form end -->
   </xsl:template>
   <xsl:template name="beginChannelDef">
     <xsl:call-template name="workflow"/>
     <xsl:apply-templates select="manageChannels/channelDef[1]" mode="dynamicSettings"/>
   </xsl:template>
   <xsl:template match="channelDef" mode="dynamicSettings">
+    <!-- form begin -->
+    <form name="workflow" method="post" action="{$baseActionURL}">
+    <input type="hidden" name="action" value="none"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <!-- form begin -->
       <tr class="uportal-channel-text">
         <td>
           <strong>
@@ -609,10 +615,11 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="Submit4" value="&lt; Back" class="uportal-button"/> <input type="submit" name="Submit3" value="Next &gt;" class="uportal-button"/> <input type="submit" name="Submit532" value="Review" class="uportal-button"/> <input type="submit" name="Submit82" value="Cancel" class="uportal-button"/> </td>
+          <input type="submit" name="submit" value="&lt; Back" onclick="document.workflow.action.value='selectGeneralSettings'" class="uportal-button"/> <input type="submit" name="Submit3" value="Next &gt;" onclick="document.workflow.action.value='selectControls'" class="uportal-button"/> <input type="submit" name="submit" value="Review" onclick="document.workflow.action.value='selectReviewChannel'" class="uportal-button"/> <input type="submit" name="submit" value="Cancel" onclick="document.workflow.action.value='cancel'" class="uportal-button"/> </td>
       </tr>
-      <!-- form end -->
     </table>
+    </form>
+    <!-- form end -->
   </xsl:template>
   <!-- The current step info-->
   <xsl:template match="step">
