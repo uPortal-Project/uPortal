@@ -47,18 +47,19 @@ public class HttpProxyServlet extends HttpServlet {
 	// Ensures requests come from pages in the portal
 	if (null!=checkReferer){
 		String referer = request.getHeader("Referer");
-		log.debug("HttpProxyServlet: HTTP Referer: " + referer);
+        if (log.isDebugEnabled())
+            log.debug("HttpProxyServlet: HTTP Referer: " + referer);
 		if (null!=referer && !referer.startsWith(checkReferer)) {
-			// log referrer 
-			log.warn("HttpProxyServlet: bad Referer: " + referer);
+			if (log.isWarnEnabled())
+			    log.warn("HttpProxyServlet: bad Referer: " + referer);
 			response.setStatus(404);
 			return;
 		}
 	}
 	
 	if (request.getSession(false)==null) {
-		// log referrer in debugging mode
-		log.warn("HttpProxyServlet: no session");
+		if (log.isWarnEnabled())
+		    log.warn("HttpProxyServlet: no session");
 		response.setStatus(404);
 		return;		
 	}
