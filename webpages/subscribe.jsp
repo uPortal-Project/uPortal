@@ -7,9 +7,10 @@
 <%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
-<jsp:useBean id="subscribe" class="org.jasig.portal.SubscriberBean" scope="session" />
+<jsp:useBean id="subscribe" class="org.jasig.portal.SubscriberBean" scope="request" />
 
 <%
+session.removeAttribute("subscribe");
 String sAction = request.getParameter ("action");
 
 if (sAction != null)
@@ -47,7 +48,7 @@ Click on a channel to preview.
 </form>
 
 <%
-subscribe.getChannels(request, response, out);
+subscribe.getAllChannels(request, response, out);
 %>
 
 <%-- Finished and Cancel Changes buttons --%>
