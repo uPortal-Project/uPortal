@@ -1619,6 +1619,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    *   UserPreferences
    */
   private int getUserBrowserMapping (IPerson person, String userAgent) throws Exception {
+    if (userAgent.length() > 255){
+        userAgent = userAgent.substring(0,254);
+        log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
+    }
     int userId = person.getID();
     int profileId = 0;
     Connection con = RDBMServices.getConnection();
@@ -2647,6 +2651,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
 
   public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) throws Exception {
+    if (userAgent.length() > 255){
+        userAgent = userAgent.substring(0,254);
+        log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
+    }
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
     try {
