@@ -41,6 +41,7 @@ import  java.util.Date;
 import  java.util.HashMap;
 import  java.util.Properties;
 import  java.sql.Connection;
+import  java.sql.DatabaseMetaData;
 import  java.sql.ResultSet;
 import  java.sql.Statement;
 import  java.sql.SQLException;
@@ -86,21 +87,23 @@ public class RdbmServices {
         /**
          * Prepared statements
          */
-        try {
-          sql = "SELECT USER_ID FROM UP_USER WHERE USER_ID=?";
-          java.sql.PreparedStatement pstmt = con.prepareStatement(sql);
+        if (usePreparedStatements) {
           try {
-            pstmt.clearParameters ();
-            pstmt.setInt(1, 0);
-            ResultSet rs = pstmt.executeQuery();
+            sql = "SELECT USER_ID FROM UP_USER WHERE USER_ID=?";
+            java.sql.PreparedStatement pstmt = con.prepareStatement(sql);
             try {
-              rs.close();
-            } catch (SQLException sqle) {}
-            supportsPreparedStatements = usePreparedStatements && true;
-          } finally {
-            pstmt.close();
-          }
-        } catch (SQLException sqle) {}
+              pstmt.clearParameters ();
+              pstmt.setInt(1, 0);
+              ResultSet rs = pstmt.executeQuery();
+              try {
+                rs.close();
+              } catch (SQLException sqle) {}
+              supportsPreparedStatements = true;
+            } finally {
+              pstmt.close();
+            }
+          } catch (SQLException sqle) {}
+        }
 
         /**
          * Do we support outer joins?
@@ -151,7 +154,8 @@ public class RdbmServices {
          * Transaction support
          */
         String tranMsg = "";
-        if (con.getMetaData().supportsTransactions()) {
+        DatabaseMetaData md = con.getMetaData();
+        if (md.supportsTransactions()) {
           try {
             con.setAutoCommit(false);
             Statement stmt = con.createStatement();
@@ -168,8 +172,9 @@ public class RdbmServices {
           }
         }
 
-        LogService.instance().log(LogService.INFO, con.getMetaData().getDatabaseProductName() +
-          " database/driver supports:\n     Prepared statements=" + supportsPreparedStatements +
+        LogService.instance().log(LogService.INFO, md.getDatabaseProductName() +
+          "/" + getJdbcDriver() + " (" + md.getDriverVersion() +
+          ") database/driver supports:\n     Prepared statements=" + supportsPreparedStatements +
           ", Outer joins=" + supportsOuterJoins + ", Transactions=" + supportsTransactions + tranMsg +
           ", '{ts' metasyntax=" + tsEnd.equals("}"));
       } finally {
