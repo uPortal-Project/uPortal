@@ -55,9 +55,8 @@ public class DBImplOracle extends DBImpl implements IDBImpl {
       " AND UC.CHAN_ID = UCP.CHAN_ID(+)";
     Logger.log (Logger.DEBUG, sQuery);
 
-    ResultSet rs = null;
+    ResultSet rs = stmt.executeQuery (sQuery);
     try {
-      rs = stmt.executeQuery (sQuery);
       if (rs.next()) {
         channel = doc.createElement("channel");
         Element system = doc.createElement("system");
@@ -70,9 +69,7 @@ public class DBImplOracle extends DBImpl implements IDBImpl {
         channel.appendChild(system);
       }
     } finally {
-      if (rs != null) {
-        rs.close();
-      }
+      rs.close();
    }
     return channel;
   }

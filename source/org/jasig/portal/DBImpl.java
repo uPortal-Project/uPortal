@@ -181,33 +181,36 @@ public class DBImpl implements IDBImpl
             }
   }
 
-  protected Element createChannelNode(Statement stmt, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
+  protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
   {
-  System.err.println("DBImpl::createChannelNode(" + chanId + ")");
-  Thread.dumpStack();
     Element channel = null;
     String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
     Logger.log (Logger.DEBUG, sQuery);
 
-    ResultSet rs = stmt.executeQuery (sQuery);
+    Statement stmt = con.createStatement();
     try {
-      if (rs.next()) {
-        channel = doc.createElement("channel");
-        Element system = doc.createElement("system");
-        createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
-        rs.close();
+      ResultSet rs = stmt.executeQuery (sQuery);
+      try {
+        if (rs.next()) {
+          channel = doc.createElement("channel");
+          Element system = doc.createElement("system");
+          createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
+          rs.close();
 
-        sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
-        Logger.log (Logger.DEBUG, sQuery);
-        rs = stmt.executeQuery (sQuery);
-        while(rs.next()) {
-          createChannelNodeParameters(doc, rs, channel, system);
+          sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
+          Logger.log (Logger.DEBUG, sQuery);
+          rs = stmt.executeQuery (sQuery);
+          while(rs.next()) {
+            createChannelNodeParameters(doc, rs, channel, system);
+          }
+          channel.appendChild(system);
         }
-        channel.appendChild(system);
+      } finally {
+        rs.close();
       }
     } finally {
-      rs.close();
-   }
+      stmt.close();
+    }
     return channel;
   }
 
@@ -243,11 +246,11 @@ public class DBImpl implements IDBImpl
     int chldStructId;
     int chanId;
 
-    String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID=" + structId;
-    Logger.log (Logger.DEBUG, sQuery);
     Element system = null;
     Element parameter = null;
     Element structure;
+    String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID=" + structId;
+    Logger.log (Logger.DEBUG, sQuery);
     ResultSet rs = stmt.executeQuery (sQuery);
     try {
       rs.next();
@@ -310,11 +313,11 @@ public class DBImpl implements IDBImpl
 
   protected static boolean channelInUserRole(int chanId, int userId, Connection con) throws java.sql.SQLException
   {
-      String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
-        "WHERE UUR.USER_ID=" + userId + " AND UC.CHAN_ID=" + chanId +" AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
-      Logger.log (Logger.DEBUG, sQuery);
       Statement stmt = con.createStatement();
       try {
+        String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
+          "WHERE UUR.USER_ID=" + userId + " AND UC.CHAN_ID=" + chanId +" AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
+        Logger.log (Logger.DEBUG, sQuery);
         ResultSet rs = stmt.executeQuery (sQuery);
         try {
           if (!rs.next()) {
@@ -341,13 +344,7 @@ public class DBImpl implements IDBImpl
         Logger.log(Logger.INFO, "No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
       }
 
-      /* Don't use stmt since createChannelNode will close the active ResultSet which we still need */
-      Statement stmt2 = stmt.getConnection().createStatement();
-      try {
-        return createChannelNode(stmt2, doc, chanId, idTag);
-      } finally {
-        stmt2.close();
-      }
+      return createChannelNode(stmt.getConnection(), doc, chanId, idTag);
     } else { // Folder
       int priority = rs.getInt("PRIORITY");
       String name = rs.getString("NAME");
@@ -382,9 +379,8 @@ public class DBImpl implements IDBImpl
   public Document getUserLayout (int userId, int profileId) throws Exception {
     Connection con = rdbmService.getConnection();
     String str_uLayoutXML = null;
+    con = rdbmService.getConnection ();
     try {
-      con = rdbmService.getConnection ();
-
       DocumentImpl doc = new DocumentImpl();
       Element root = doc.createElement("layout");
 
@@ -393,14 +389,16 @@ public class DBImpl implements IDBImpl
         long startTime = System.currentTimeMillis();
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
         Logger.log (Logger.DEBUG, subSelectString);
-        ResultSet rs = stmt.executeQuery (subSelectString);
+
         int layoutId;
+        ResultSet rs = stmt.executeQuery (subSelectString);
         try {
           rs.next();
           layoutId = rs.getInt("LAYOUT_ID");
         } finally {
           rs.close();
         }
+
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
         Logger.log (Logger.DEBUG, sQuery);
         rs = stmt.executeQuery (sQuery);
@@ -416,7 +414,7 @@ public class DBImpl implements IDBImpl
           rs.close();
         }
         long stopTime = System.currentTimeMillis();
-        Logger.log(Logger.DEBUG, "Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to create");
+        Logger.log(Logger.DEBUG, "DBImpl::getUserLayout() Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to create");
 
         doc.appendChild(root);
         if (DEBUG > 0) {
@@ -445,50 +443,47 @@ public class DBImpl implements IDBImpl
     int layoutId = 0;
     Connection con = rdbmService.getConnection();
     try {
-          setAutoCommit(con, false); // Need an atomic update here
+      setAutoCommit(con, false); // Need an atomic update here
 
-          String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-          Logger.log (Logger.DEBUG, query);
+      Statement stmt = con.createStatement ();
+      try {
+        String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+        Logger.log (Logger.DEBUG, query);
 
-          ResultSet rs = null;
-          Statement stmt = con.createStatement ();
-          try {
-            rs = stmt.executeQuery (query);
-            if (rs.next())
-              layoutId = rs.getInt("LAYOUT_ID");
-          } finally {
-            if (rs != null) {
-              rs.close();
-            }
+        ResultSet rs = stmt.executeQuery (query);
+        try {
+          if (rs.next()) {
+            layoutId = rs.getInt("LAYOUT_ID");
           }
-
-          String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
-
-          try {
-            String sQuery = "DELETE UP_STRUCT_PARAM WHERE " + selectString;
-            Logger.log (Logger.DEBUG, sQuery);
-            stmt.executeUpdate(sQuery);
-
-            sQuery = "DELETE UP_LAYOUT_STRUCT WHERE " + selectString;
-            Logger.log (Logger.DEBUG, sQuery);
-            stmt.executeUpdate(sQuery);
-            if (DEBUG > 0) {
-              System.err.println("--> saving document");
-              dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
-              System.err.println("<--");
-            }
-            saveStructure(layoutXML.getFirstChild().getFirstChild(), stmt, userId, profileId, new StructId());
-          } finally {
-            stmt.close();
-          }
-
-          commit(con);
-        } catch (Exception e) {
-          rollback(con);
-          Logger.log(Logger.ERROR,e);
         } finally {
-          rdbmService.releaseConnection (con);
+          rs.close();
         }
+
+        String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
+        String sQuery = "DELETE UP_STRUCT_PARAM WHERE " + selectString;
+        Logger.log (Logger.DEBUG, sQuery);
+        stmt.executeUpdate(sQuery);
+
+        sQuery = "DELETE UP_LAYOUT_STRUCT WHERE " + selectString;
+        Logger.log (Logger.DEBUG, sQuery);
+        stmt.executeUpdate(sQuery);
+        if (DEBUG > 0) {
+          System.err.println("--> saving document");
+          dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
+          System.err.println("<--");
+        }
+        saveStructure(layoutXML.getFirstChild().getFirstChild(), stmt, userId, profileId, new StructId());
+      } finally {
+        stmt.close();
+      }
+
+      commit(con);
+    } catch (Exception e) {
+      rollback(con);
+      throw e;
+    } finally {
+      rdbmService.releaseConnection (con);
+    }
   }
 
   protected class StructId {
@@ -605,37 +600,33 @@ public class DBImpl implements IDBImpl
    *
    */
   public void addChannel (int id, String title, Document doc, String catID[]) throws Exception {
-    Statement stmt = null;
     Connection con = rdbmService.getConnection();
     try {
-        addChannel(id, title, doc);
-
-      stmt = con.createStatement();
+      addChannel(id, title, doc, con);
 
       // Set autocommit false for the connection
       setAutoCommit(con, false);
 
-      for (int i = 0; i < catID.length; i++) {
-        String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + catID[i]  + ")";
-        Logger.log(Logger.DEBUG, "DBImpl::addChannel(): " + sInsert);
-        stmt.executeUpdate(sInsert);
-      }
-
-      // Commit the transaction
-      commit(con);
-    } catch (Exception e) {
-
-      // Roll back the transaction
-      rollback(con);
-
-      throw  e;
-    } finally {
+      Statement stmt = con.createStatement();
       try {
-        if (stmt != null)
-          stmt.close();
-      } catch (SQLException ex) {
-        Logger.log(Logger.ERROR, ex);
+        for (int i = 0; i < catID.length; i++) {
+          String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + catID[i]  + ")";
+          Logger.log(Logger.DEBUG, "DBImpl::addChannel(): " + sInsert);
+          stmt.executeUpdate(sInsert);
+        }
+
+        // Commit the transaction
+        commit(con);
+
+      } catch (Exception e) {
+        // Roll back the transaction
+        rollback(con);
+
+        throw  e;
+      } finally {
+        stmt.close();
       }
+    } finally {
       rdbmService.releaseConnection(con);
     }
   }
@@ -649,58 +640,62 @@ public class DBImpl implements IDBImpl
    */
   public void addChannel (int id, String title, Document doc) throws Exception {
     //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
-    Statement stmt = null;
     Connection con = rdbmService.getConnection();
-    Element channel = (Element)doc.getFirstChild();
-
     try {
-      // Set autocommit false for the connection
-      setAutoCommit(con, false);
-      stmt = con.createStatement();
-      String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, " +
-        "CHAN_PUBL_ID, CHAN_PUBL_DT, CHAN_APVL_ID, CHAN_APVL_DT, CHAN_PRIORITY, CHAN_TIMEOUT, " +
-        "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_REMOVABLE, CHAN_DETACHABLE, CHAN_NAME) ";
-      sInsert += "VALUES (" + id + ",'" + title + "','" + title + " Channel','" + channel.getAttribute("class") + "'," +
-        "0,SYSDATE,0,SYSDATE" +
-        ",'" + channel.getAttribute("priority") + "'" +
-        ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable")) + "'" +
-        ",'" + dbBool(channel.getAttribute("editable")) + "'" +
-        ",'" + dbBool(channel.getAttribute("hasHelp")) + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" +
-        ",'" + dbBool(channel.getAttribute("removable")) + "'," +"'" + dbBool(channel.getAttribute("detachable")) + "'" +
-        ",'" + channel.getAttribute("name") + "')";
-      Logger.log(Logger.DEBUG, "DBImpl::addChannel(): " + sInsert);
-      stmt.executeUpdate(sInsert);
-
-      NodeList parameters = channel.getChildNodes();
-      if (parameters != null) {
-        for (int i = 0 ; i < parameters.getLength(); i++) {
-          if (parameters.item(i).getNodeName().equals("parameter")) {
-            Element parmElement = (Element) parameters.item(i);
-            NamedNodeMap nm = parmElement.getAttributes();
-            String nodeName = nm.item(0).getNodeName();
-            String nodeValue = nm.item(0).getNodeValue();
-            if (DEBUG > 1) System.err.println("D" +  nodeName + "=" + nodeValue);
-            sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_H_D_IND, CHAN_PARM_OVRD) VALUES ("+
-             id + ",'" + nodeName + "','" + nodeValue + "','D','N')";
-            Logger.log(Logger.DEBUG, sInsert);
-            stmt.executeUpdate(sInsert);
-          }
-        }
-      }
-
-      commit(con);
-    } catch (Exception e) {
-      rollback(con);
-      Logger.log(Logger.ERROR, e);
+      addChannel(id, title, doc, con);
     } finally {
-      try {
-        if (stmt != null)
-          stmt.close();
-      } catch (SQLException ex) {
-        Logger.log(Logger.ERROR, ex);
-      }
       rdbmService.releaseConnection(con);
     }
+  }
+
+  protected void addChannel (int id, String title, Document doc, Connection con)  throws Exception {
+      Element channel = (Element)doc.getFirstChild();
+
+      // Set autocommit false for the connection
+      setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+      try {
+        String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, " +
+          "CHAN_PUBL_ID, CHAN_PUBL_DT, CHAN_APVL_ID, CHAN_APVL_DT, CHAN_PRIORITY, CHAN_TIMEOUT, " +
+          "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_REMOVABLE, CHAN_DETACHABLE, CHAN_NAME) ";
+        sInsert += "VALUES (" + id + ",'" + title + "','" + title + " Channel','" + channel.getAttribute("class") + "'," +
+          "0,SYSDATE,0,SYSDATE" +
+          ",'" + channel.getAttribute("priority") + "'" +
+          ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable")) + "'" +
+          ",'" + dbBool(channel.getAttribute("editable")) + "'" +
+          ",'" + dbBool(channel.getAttribute("hasHelp")) + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" +
+          ",'" + dbBool(channel.getAttribute("removable")) + "'," +"'" + dbBool(channel.getAttribute("detachable")) + "'" +
+          ",'" + channel.getAttribute("name") + "')";
+        Logger.log(Logger.DEBUG, "DBImpl::addChannel(): " + sInsert);
+        stmt.executeUpdate(sInsert);
+
+        NodeList parameters = channel.getChildNodes();
+        if (parameters != null) {
+          for (int i = 0 ; i < parameters.getLength(); i++) {
+            if (parameters.item(i).getNodeName().equals("parameter")) {
+              Element parmElement = (Element) parameters.item(i);
+              NamedNodeMap nm = parmElement.getAttributes();
+              String nodeName = nm.item(0).getNodeName();
+              String nodeValue = nm.item(0).getNodeValue();
+              if (DEBUG > 1) System.err.println("D" +  nodeName + "=" + nodeValue);
+              sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_H_D_IND, CHAN_PARM_OVRD) VALUES ("+
+               id + ",'" + nodeName + "','" + nodeValue + "','D','N')";
+              Logger.log(Logger.DEBUG, sInsert);
+              stmt.executeUpdate(sInsert);
+            }
+          }
+        }
+
+        // Commit the transaction
+        commit(con);
+
+      } catch (Exception e) {
+        rollback(con);
+        throw e;
+      } finally {
+        stmt.close();
+      }
+
   }
 
   /**
@@ -718,42 +713,45 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT CL.CAT_ID, CL.CAT_TITLE, CHCL.CHAN_ID "+
-        "FROM UP_CATEGORY CL, UP_CHANNEL CH, UP_CAT_CHAN CHCL " +
-        "WHERE CH.CHAN_ID=CHCL.CHAN_ID AND CHCL.CAT_ID=CL.CAT_ID";
-
-      if(catID!=null) sQuery += " AND CL.CAT_ID=" + catID;
-
-      sQuery += " ORDER BY CL.CAT_TITLE, CH.CHAN_TITLE";
-      Logger.log(Logger.DEBUG, "DBImpl::getRegistryXML(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
       try {
-        while (rs.next()) {
-          String catnm = rs.getString(2);
-          int chanId = rs.getInt(3);
-          Node chan = null;
-          String s = rs.getString(1);
-          if (!s.equals(catid)) {
-            if (catid.length() > 0) {
-              root.appendChild(cat);
+        String sQuery = "SELECT CL.CAT_ID, CL.CAT_TITLE, CHCL.CHAN_ID "+
+          "FROM UP_CATEGORY CL, UP_CHANNEL CH, UP_CAT_CHAN CHCL " +
+         "WHERE CH.CHAN_ID=CHCL.CHAN_ID AND CHCL.CAT_ID=CL.CAT_ID";
+
+        if(catID!=null) sQuery += " AND CL.CAT_ID=" + catID;
+
+        sQuery += " ORDER BY CL.CAT_TITLE, CH.CHAN_TITLE";
+        Logger.log(Logger.DEBUG, "DBImpl::getRegistryXML(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            String catnm = rs.getString(2);
+            int chanId = rs.getInt(3);
+            Node chan = null;
+            String s = rs.getString(1);
+            if (!s.equals(catid)) {
+              if (catid.length() > 0) {
+                root.appendChild(cat);
+              }
+              catid = s;
+              cat = chanDoc.createElement("category");
+              cat.setAttribute("ID", "cat" + catid);
+              cat.setAttribute("name", catnm);
+              chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
             }
-            catid = s;
-            cat = chanDoc.createElement("category");
-            cat.setAttribute("ID", "cat" + catid);
-            cat.setAttribute("name", catnm);
-            chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
+            Element child = createChannelNode(con, chanDoc, chanId, "xchan" + chanId);
+            if (DEBUG > 3) System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
+            cat.appendChild(child);
           }
-          Element child = createChannelNode(stmt, chanDoc, chanId, "xchan" + chanId);
-          if (DEBUG > 3) System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
-          cat.appendChild(child);
+        } finally {
+          rs.close();
         }
       } finally {
-        rs.close();
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
     }
-    DBImpl.dumpDoc(cat, "- ");
     return  cat;
   }
 
@@ -770,21 +768,29 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT TYPE_NAME, TYPE_DEF_URI FROM UP_CHAN_TYPES";
-      Logger.log(Logger.DEBUG, "DBImpl::getTypesXML(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      while (rs.next()) {
-        String name = rs.getString(1);
-        String uri = rs.getString(2);
-        Node chan = null;
-        Element type = types.createElement("channelType");
-        Element elem = types.createElement("name");
-        elem.appendChild(types.createTextNode(name));
-        type.appendChild(elem);
-        elem = types.createElement("definition");
-        elem.appendChild(types.createTextNode(uri));
-        type.appendChild(elem);
-        root.appendChild(type);
+      try {
+        String sQuery = "SELECT TYPE_NAME, TYPE_DEF_URI FROM UP_CHAN_TYPES";
+        Logger.log(Logger.DEBUG, "DBImpl::getTypesXML(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            String name = rs.getString(1);
+            String uri = rs.getString(2);
+            Node chan = null;
+            Element type = types.createElement("channelType");
+            Element elem = types.createElement("name");
+            elem.appendChild(types.createTextNode(name));
+            type.appendChild(elem);
+            elem = types.createElement("definition");
+            elem.appendChild(types.createTextNode(uri));
+            type.appendChild(elem);
+            root.appendChild(type);
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -798,28 +804,36 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT UC.CAT_ID, UC.CAT_TITLE "+
-        "FROM UP_CATEGORY UC ";
+      try {
+        String sQuery = "SELECT UC.CAT_ID, UC.CAT_TITLE "+
+          "FROM UP_CATEGORY UC ";
 
-      if(role != null && !role.equals("")) {
-        sQuery += ", UP_CAT_CHAN, UCC, UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR" +
-          " WHERE UR.ROLE_TITLE='" + role + "' AND URC.ROLE_ID = UR.ROLE_ID AND URC.CHAN_ID = UC.CHAN_ID" +
-          " AND UC.CHAN_ID = UCC.CHAN_ID AND UCC.CAT_ID = UC.CAT_ID";
-      }
+        if(role != null && !role.equals("")) {
+          sQuery += ", UP_CAT_CHAN, UCC, UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR" +
+            " WHERE UR.ROLE_TITLE='" + role + "' AND URC.ROLE_ID = UR.ROLE_ID AND URC.CHAN_ID = UC.CHAN_ID" +
+            " AND UC.CHAN_ID = UCC.CHAN_ID AND UCC.CAT_ID = UC.CAT_ID";
+        }
 
-      sQuery += " ORDER BY UC.CAT_TITLE";
-      Logger.log(Logger.DEBUG, "DBImpl::getCategoryXML(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      Element cat = null;
-      while (rs.next()) {
-        String catnm = rs.getString(2);
-        String id = rs.getString(1);
-        cat = catsDoc.createElement("category");
-        cat.setAttribute("ID", id);
-        cat.setAttribute("name", catnm);
-        root.appendChild(cat);
+        sQuery += " ORDER BY UC.CAT_TITLE";
+        Logger.log(Logger.DEBUG, "DBImpl::getCategoryXML(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          Element cat = null;
+          while (rs.next()) {
+            String catnm = rs.getString(2);
+            String id = rs.getString(1);
+            cat = catsDoc.createElement("category");
+            cat.setAttribute("ID", id);
+            cat.setAttribute("name", catnm);
+            root.appendChild(cat);
+          }
+          catsDoc.appendChild(root);
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
-      catsDoc.appendChild(root);
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -842,12 +856,19 @@ public class DBImpl implements IDBImpl
        "AND " + "UPPER(ROLE_TITLE)=UPPER('" + role + "')";
       Logger.log(Logger.DEBUG, "DBImpl::isUserInRole(): " + query);
       Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery(query);
-      if (rs.next()) {
-        return  (true);
-      }
-      else {
-        return  (false);
+      try {
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          if (rs.next()) {
+            return  (true);
+          } else {
+            return  (false);
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -860,20 +881,27 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public Vector getAllRoles () throws Exception {
-    Connection con = rdbmService.getConnection();
     Vector roles = new Vector();
+    Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT ROLE_TITLE, ROLE_DESC FROM UP_ROLE";
-      Logger.log(Logger.DEBUG, "DBImpl::getAllRolessQuery(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      RoleImpl roleImpl = null;
-      // Add all of the roles in the portal database to to the vector
-      while (rs.next()) {
-        roleImpl = new RoleImpl(rs.getString("ROLE_TITLE"));
-        roles.add(roleImpl);
+      try {
+        String sQuery = "SELECT ROLE_TITLE, ROLE_DESC FROM UP_ROLE";
+        Logger.log(Logger.DEBUG, "DBImpl::getAllRolessQuery(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          RoleImpl roleImpl = null;
+          // Add all of the roles in the portal database to to the vector
+          while (rs.next()) {
+            roleImpl = new RoleImpl(rs.getString("ROLE_TITLE"));
+            roles.add(roleImpl);
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
-      stmt.close();
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -893,20 +921,27 @@ public class DBImpl implements IDBImpl
       // Set autocommit false for the connection
       setAutoCommit(con, false);
 
-      Statement stmt = con.createStatement();
-      // Count the number of records inserted
       int recordsInserted = 0;
-      for (int i = 0; i < roles.size(); i++) {
-        String sQuery = "SELECT ROLE_ID FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
-        Logger.log(Logger.DEBUG, "DBImpl::setChannelRoles(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        rs.next();
-        int roleId = rs.getInt("ROLE_ID");
-        String sInsert = "INSERT INTO UP_ROLE_CHAN (CHAN_ID, ROLE_ID) VALUES (" + channelID + "," + roleId + ")";
-        Logger.log(Logger.DEBUG, "DBImpl::setChannelRoles(): " + sInsert);
-        recordsInserted += stmt.executeUpdate(sInsert);
+      Statement stmt = con.createStatement();
+      try {
+        // Count the number of records inserted
+        for (int i = 0; i < roles.size(); i++) {
+          String sQuery = "SELECT ROLE_ID FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
+          Logger.log(Logger.DEBUG, "DBImpl::setChannelRoles(): " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          try {
+            rs.next();
+            int roleId = rs.getInt("ROLE_ID");
+            String sInsert = "INSERT INTO UP_ROLE_CHAN (CHAN_ID, ROLE_ID) VALUES (" + channelID + "," + roleId + ")";
+            Logger.log(Logger.DEBUG, "DBImpl::setChannelRoles(): " + sInsert);
+            recordsInserted += stmt.executeUpdate(sInsert);
+          } finally {
+            rs.close();
+          }
+        }
+      } finally {
+        stmt.close();
       }
-      stmt.close();
 
       // Commit the transaction
       commit(con);
@@ -931,12 +966,20 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String query = "SELECT ROLE_TITLE, CHAN_ID FROM UP_ROLE_CHAN UCR, UP_ROLE UR, UP_CHANNEL UC " +
-        "WHERE UC.CHAN_ID=" + channelID + " AND UC.CHAN_ID=URC.CHAN_ID AND URC.ROLE_ID=UR.ROLE_ID";
-      Logger.log(Logger.DEBUG, "DbImpl::getChannelRoles(): " + query);
-      ResultSet rs = stmt.executeQuery(query);
-      while (rs.next()) {
-        channelRoles.addElement(rs.getString("ROLE_TITLE"));
+      try {
+        String query = "SELECT ROLE_TITLE, CHAN_ID FROM UP_ROLE_CHAN UCR, UP_ROLE UR, UP_CHANNEL UC " +
+          "WHERE UC.CHAN_ID=" + channelID + " AND UC.CHAN_ID=URC.CHAN_ID AND URC.ROLE_ID=UR.ROLE_ID";
+        Logger.log(Logger.DEBUG, "DbImpl::getChannelRoles(): " + query);
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          while (rs.next()) {
+            channelRoles.addElement(rs.getString("ROLE_TITLE"));
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -953,12 +996,20 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String query = "SELECT ROLE_TITLE, USER_ID FROM UP_USER_ROLE UUR, UP_ROLE UR, UP_USER UU " +
-        "WHERE UU.USER_ID=" + userId + " AND UU.USER_ID=UUR.USER_ID AND UUR.ROLE_ID=UR.ROLE_ID";
-      Logger.log(Logger.DEBUG, "DbImpl::getUserRoles(): " + query);
-      ResultSet rs = stmt.executeQuery(query);
-      while (rs.next()) {
-        userRoles.addElement(rs.getString("ROLE_TITLE"));
+      try {
+        String query = "SELECT ROLE_TITLE, USER_ID FROM UP_USER_ROLE UUR, UP_ROLE UR, UP_USER UU " +
+          "WHERE UU.USER_ID=" + userId + " AND UU.USER_ID=UUR.USER_ID AND UUR.ROLE_ID=UR.ROLE_ID";
+        Logger.log(Logger.DEBUG, "DbImpl::getUserRoles(): " + query);
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          while (rs.next()) {
+            userRoles.addElement(rs.getString("ROLE_TITLE"));
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -978,27 +1029,36 @@ public class DBImpl implements IDBImpl
       setAutoCommit(con, false);
 
       Statement stmt = con.createStatement();
-      int insertCount = 0;
-      for (int i = 0; i < roles.size(); i++) {
-        String query = "SELECT ROLE_ID, ROLE_TITLE FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
-        Logger.log(Logger.DEBUG, "DbImpl::addUserRoles(): " + query);
-        ResultSet rs = stmt.executeQuery(query);
-        rs.next();
-        int roleId = rs.getInt("ROLE_ID");
-        String insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID) VALUES (" + userId + ", " + roleId + ")";
-        Logger.log(Logger.DEBUG, "DbImpl::addUserRoles(): " + insert);
-        insertCount = stmt.executeUpdate(insert);
-        if (insertCount != 1) {
-          Logger.log(Logger.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
+      try {
+        int insertCount = 0;
+        for (int i = 0; i < roles.size(); i++) {
+          String query = "SELECT ROLE_ID, ROLE_TITLE FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
+          Logger.log(Logger.DEBUG, "DbImpl::addUserRoles(): " + query);
+          ResultSet rs = stmt.executeQuery(query);
+          try {
+            rs.next();
+            int roleId = rs.getInt("ROLE_ID");
+            String insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID) VALUES (" + userId + ", " + roleId + ")";
+            Logger.log(Logger.DEBUG, "DbImpl::addUserRoles(): " + insert);
+            insertCount = stmt.executeUpdate(insert);
+            if (insertCount != 1) {
+              Logger.log(Logger.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
+            }
+          } finally {
+            rs.close();
+          }
         }
-      }
 
-      // Commit the transaction
-      commit(con);
-    } catch (Exception e) {
-      // Roll back the transaction
-      rollback(con);
-      throw  e;
+        // Commit the transaction
+        commit(con);
+
+      } catch (Exception e) {
+        // Roll back the transaction
+        rollback(con);
+        throw  e;
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1017,22 +1077,26 @@ public class DBImpl implements IDBImpl
       setAutoCommit(con, false);
 
       Statement stmt = con.createStatement();
-      int deleteCount = 0;
-      for (int i = 0; i < roles.size(); i++) {
-        String delete = "DELETE FROM UP_USER_ROLE WHERE USER_ID=" + userId + " AND ROLE_ID=" + roles.elementAt(i);
-        Logger.log(Logger.DEBUG, "DbImpl::removeUserRoles(): " + delete);
-        deleteCount = stmt.executeUpdate(delete);
-        if (deleteCount != 1) {
-          Logger.log(Logger.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
+      try {
+        int deleteCount = 0;
+        for (int i = 0; i < roles.size(); i++) {
+          String delete = "DELETE FROM UP_USER_ROLE WHERE USER_ID=" + userId + " AND ROLE_ID=" + roles.elementAt(i);
+          Logger.log(Logger.DEBUG, "DbImpl::removeUserRoles(): " + delete);
+          deleteCount = stmt.executeUpdate(delete);
+          if (deleteCount != 1) {
+            Logger.log(Logger.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
+          }
         }
-      }
 
-      // Commit the transaction
-      commit(con);
-    } catch (Exception e) {
-      // Roll back the transaction
-      rollback(con);
-      throw  e;
+        // Commit the transaction
+        commit(con);
+      } catch (Exception e) {
+        // Roll back the transaction
+        rollback(con);
+        throw  e;
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1047,28 +1111,28 @@ public class DBImpl implements IDBImpl
     String[] acct = new String[] {
       null, null, null, null
     };
-    String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
-        + "UP_USER.USER_NAME = '" + username + "'";
-    Logger.log(Logger.DEBUG, query);
     Connection con = rdbmService.getConnection();
-    Statement stmt = null;
-    ResultSet rset = null;
     try {
-      stmt = con.createStatement();
-      rset = stmt.executeQuery(query);
-      if (rset.next()) {
-       acct[0] = rset.getInt("USER_ID") + "";
-       acct[1] = rset.getString("ENCRPTD_PSWD");
-       acct[2] = rset.getString("FIRST_NAME");
-       acct[3] = rset.getString("LAST_NAME");
+      Statement stmt = con.createStatement();
+      try {
+        String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
+          + "UP_USER.USER_NAME = '" + username + "'";
+        Logger.log(Logger.DEBUG, query);
+        ResultSet rset = stmt.executeQuery(query);
+        try {
+          if (rset.next()) {
+            acct[0] = rset.getInt("USER_ID") + "";
+            acct[1] = rset.getString("ENCRPTD_PSWD");
+            acct[2] = rset.getString("FIRST_NAME");
+            acct[3] = rset.getString("LAST_NAME");
+          }
+        } finally {
+          rset.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
-      try {
-        rset.close();
-      } catch (Exception e) {}
-      try {
-        stmt.close();
-      } catch (Exception e) {}
       rdbmService.releaseConnection(con);
     }
     return  acct;
@@ -1085,28 +1149,28 @@ public class DBImpl implements IDBImpl
     String[] acct = new String[] {
       null, null, null
     };
-    String query = "SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR "
-        + "WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
-        + "UP_USER.USER_NAME = '" + username + "'";
-    Logger.log(Logger.DEBUG, query);
     Connection con = rdbmService.getConnection();
-    Statement stmt = null;
-    ResultSet rset = null;
     try {
-      stmt = con.createStatement();
-      rset = stmt.executeQuery(query);
-      if (rset.next()) {
-       acct[0] = rset.getString("FIRST_NAME");
-       acct[1] = rset.getString("LAST_NAME");
-       acct[2] = rset.getString("EMAIL");
+      Statement stmt = con.createStatement();
+      try {
+        String query = "SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR "
+            + "WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
+            + "UP_USER.USER_NAME = '" + username + "'";
+        Logger.log(Logger.DEBUG, query);
+        ResultSet rset = stmt.executeQuery(query);
+        try {
+          if (rset.next()) {
+            acct[0] = rset.getString("FIRST_NAME");
+            acct[1] = rset.getString("LAST_NAME");
+            acct[2] = rset.getString("EMAIL");
+          }
+        } finally {
+          rset.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
-      try {
-        rset.close();
-      } catch (Exception e) {}
-      try {
-        stmt.close();
-      } catch (Exception e) {}
       rdbmService.releaseConnection(con);
     }
     return  acct;
@@ -1118,47 +1182,61 @@ public class DBImpl implements IDBImpl
    * get&increment method.
    */
     public synchronized int getIncrementIntegerId(String tableName) throws Exception {
-        Connection con=null;
-        int id;
+      int id;
+      Connection con=rdbmService.getConnection();
+      try {
+        Statement stmt = con.createStatement ();
         try {
-            con=rdbmService.getConnection();
-            Statement stmt = con.createStatement ();
-
-            String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + tableName + "'";
-            Logger.log (Logger.DEBUG, sQuery);
-            ResultSet rs = stmt.executeQuery (sQuery);
+          String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + tableName + "'";
+          Logger.log (Logger.DEBUG, sQuery);
+          ResultSet rs = stmt.executeQuery (sQuery);
+          try {
             rs.next();
             id = rs.getInt ("SEQUENCE_VALUE") + 1;
-            sQuery = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+id+" WHERE SEQUENCE_NAME='" + tableName + "'";
-            Logger.log (Logger.DEBUG, sQuery);
-            stmt.executeUpdate(sQuery);
+          } finally {
+            rs.close();
+          }
+
+          String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+id+" WHERE SEQUENCE_NAME='" + tableName + "'";
+          Logger.log (Logger.DEBUG, sInsert);
+          stmt.executeUpdate(sInsert);
         } finally {
-            rdbmService.releaseConnection (con);
+          stmt.close();
         }
-        return id;
+      } finally {
+        rdbmService.releaseConnection (con);
+      }
+      return id;
     }
 
     public synchronized void createCounter(String tableName) throws Exception {
-        Connection con=null;
+      Connection con=rdbmService.getConnection();
+      try {
+        Statement stmt = con.createStatement ();
         try {
-            con=rdbmService.getConnection();
-            Statement stmt = con.createStatement ();
-            String sQuery = "INSERT INTO UP_SEQUENCE ('SEQUENCE_NAME,SEQUENCE_VALUE') VALUES ('"+tableName+"',0)";
-            Logger.log (Logger.DEBUG, sQuery);
-            ResultSet rs = stmt.executeQuery (sQuery);
+            String sInsert = "INSERT INTO UP_SEQUENCE ('SEQUENCE_NAME,SEQUENCE_VALUE') VALUES ('"+tableName+"',0)";
+            Logger.log (Logger.DEBUG, sInsert);
+            stmt.executeUpdate (sInsert);
         } finally {
-            rdbmService.releaseConnection (con);
+          stmt.close();
         }
+      } finally {
+        rdbmService.releaseConnection (con);
+      }
     }
 
-  public synchronized void setCounter(String tableName,int value) throws Exception {
-      Connection con=null;
+  public synchronized void setCounter(String tableName,int value) throws Exception
+  {
+      Connection con=rdbmService.getConnection();
       try {
-          con=rdbmService.getConnection();
           Statement stmt = con.createStatement ();
-          String sQuery = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+value+"WHERE SEQUENCE_NAME='" + tableName + "'";
-          Logger.log (Logger.DEBUG, sQuery);
-          stmt.executeUpdate (sQuery);
+          try {
+            String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+value+"WHERE SEQUENCE_NAME='" + tableName + "'";
+            Logger.log (Logger.DEBUG, sUpdate);
+            stmt.executeUpdate (sUpdate);
+          } finally {
+            stmt.close();
+          }
       } finally {
           rdbmService.releaseConnection (con);
       }
@@ -1207,19 +1285,26 @@ public class DBImpl implements IDBImpl
    *   UserPreferences
    */
   public int getUserBrowserMapping (int userId, String userAgent) throws Exception {
-    Connection con = rdbmService.getConnection();
     int profileId = 0;
+    Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT PROFILE_ID, USER_ID FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND USER_AGENT='" + userAgent
-          + "'";
-      Logger.log(Logger.DEBUG, "DBImpl::getUserBrowserMapping(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-        profileId = rs.getInt("PROFILE_ID");
-      }
-      else {
-        return  0;
+      try {
+        String sQuery = "SELECT PROFILE_ID, USER_ID FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND USER_AGENT='" + userAgent
+            + "'";
+        Logger.log(Logger.DEBUG, "DBImpl::getUserBrowserMapping(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          if (rs.next()) {
+            profileId = rs.getInt("PROFILE_ID");
+          } else {
+            return  0;
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1242,22 +1327,27 @@ public class DBImpl implements IDBImpl
 
       // remove the old mapping and add the new one
       Statement stmt = con.createStatement();
-      String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID='" + userId + "' AND USER_AGENT='" + userAgent + "'";
-      Logger.log(Logger.DEBUG, "DBImpl::setUserBrowserMapping(): " + sQuery);
-      stmt.executeUpdate(sQuery);
-      sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "'," +
+      try {
+        String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID='" + userId + "' AND USER_AGENT='" + userAgent + "'";
+        Logger.log(Logger.DEBUG, "DBImpl::setUserBrowserMapping(): " + sQuery);
+        stmt.executeUpdate(sQuery);
+
+        sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "'," +
           profileId + ")";
-      Logger.log(Logger.DEBUG, "DBImpl::setUserBrowserMapping(): " + sQuery);
-      stmt.executeUpdate(sQuery);
+        Logger.log(Logger.DEBUG, "DBImpl::setUserBrowserMapping(): " + sQuery);
+        stmt.executeUpdate(sQuery);
 
-      // Commit the transaction
-      commit(con);
-    } catch (Exception e) {
+        // Commit the transaction
+        commit(con);
+      } catch (Exception e) {
 
-      // Roll back the transaction
-      rollback(con);
+        // Roll back the transaction
+        rollback(con);
 
-      throw  e;
+        throw  e;
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1275,14 +1365,23 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_NAME, THEME_SS_NAME FROM UP_USER_PROFILES WHERE USER_ID="
+      try {
+        String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_NAME, THEME_SS_NAME FROM UP_USER_PROFILES WHERE USER_ID="
           + userId + " AND PROFILE_ID=" + profileId;
-      Logger.log(Logger.DEBUG, "DBImpl::getUserProfileId(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      if (rs.next())
-        upl = new UserProfile(profileId, rs.getString("PROFILE_NAME"), rs.getString("DESCRIPTION"), rs.getInt("LAYOUT_ID"), rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"));
-      else
-        return  null;
+        Logger.log(Logger.DEBUG, "DBImpl::getUserProfileId(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          if (rs.next()) {
+            upl = new UserProfile(profileId, rs.getString("PROFILE_NAME"), rs.getString("DESCRIPTION"), rs.getInt("LAYOUT_ID"), rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"));
+          } else {
+            return  null;
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1300,13 +1399,21 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_NAME, THEME_SS_NAME FROM UP_USER_PROFILES WHERE USER_ID=" + userId;
-      Logger.log(Logger.DEBUG, "DBImpl::getUserProfileList(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      while (rs.next()) {
-        UserProfile upl = new UserProfile(rs.getInt("PROFILE_ID"), rs.getString("PROFILE_NAME"), rs.getString("DESCRIPTION"), rs.getInt("LAYOUT_ID"),
-          rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"));
-        pv.put(upl.getProfileName(), upl);
+      try {
+        String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_NAME, THEME_SS_NAME FROM UP_USER_PROFILES WHERE USER_ID=" + userId;
+        Logger.log(Logger.DEBUG, "DBImpl::getUserProfileList(): " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            UserProfile upl = new UserProfile(rs.getInt("PROFILE_ID"), rs.getString("PROFILE_NAME"), rs.getString("DESCRIPTION"), rs.getInt("LAYOUT_ID"),
+              rs.getString("STRUCTURE_SS_NAME"), rs.getString("THEME_SS_NAME"));
+            pv.put(upl.getProfileName(), upl);
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1324,23 +1431,28 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      // this is ugly, but we have to know wether to do INSERT or UPDATE
-      String sQuery = "SELECT USER_ID, PROFILE_NAME FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-      Logger.log(Logger.DEBUG, "DBImpl::setUserProfile() : " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-        sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='" + profile.getThemeStylesheetName() + "', STRUCTURE_SS_NAME='"
-            + profile.getStructureStylesheetName() + "', DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
-            + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
+      try {
+        // this is ugly, but we have to know wether to do INSERT or UPDATE
+        String sQuery = "SELECT USER_ID, PROFILE_NAME FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
+        Logger.log(Logger.DEBUG, "DBImpl::setUserProfile() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          if (rs.next()) {
+            sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='" + profile.getThemeStylesheetName() + "', STRUCTURE_SS_NAME='"
+                + profile.getStructureStylesheetName() + "', DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
+                + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
+          } else {
+            sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("
+                + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "','" + profile.getStructureStylesheetName()
+                + "','" + profile.getThemeStylesheetName() + "','" + profile.getProfileDescription() + "')";
+          }
+        } finally {
+          rs.close();
+        }
         Logger.log(Logger.DEBUG, "DBImpl::setUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
-      }
-      else {
-        sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("
-            + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "','" + profile.getStructureStylesheetName()
-            + "','" + profile.getThemeStylesheetName() + "','" + profile.getProfileDescription() + "')";
-        Logger.log(Logger.DEBUG, "DBImpl::setUserProfile() : " + sQuery);
-        stmt.executeQuery(sQuery);
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1356,36 +1468,44 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
-    Connection con = rdbmService.getConnection();
 
     StructureStylesheetUserPreferences fsup=new StructureStylesheetUserPreferences();
     fsup.setStylesheetName(stylesheetName);
-    Document upXML = null;
+    String str_upXML = null;
+    Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
-        + stylesheetName + "' AND PROFILE_ID=" + profileId;
-        Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        String str_upXML = null;
-        if (rs.next()) {
-          str_upXML = rs.getString("USER_PREFERENCES_XML");
-        }
-
-        if (str_upXML != null) {
-          Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + str_upXML);
-          DOMParser parser = new DOMParser();
-          parser.parse(new org.xml.sax.InputSource(new StringReader(str_upXML)));
-          upXML = parser.getDocument();
-        }
+      try {
+          String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
+            + stylesheetName + "' AND PROFILE_ID=" + profileId;
+          Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          try {
+            if (rs.next()) {
+              str_upXML = rs.getString("USER_PREFERENCES_XML");
+            }
+          } finally {
+            rs.close();
+          }
       } finally {
-        rdbmService.releaseConnection(con);
+        stmt.close();
       }
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
+
+    Document upXML = null;
+    if (str_upXML != null) {
+      Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + str_upXML);
+      DOMParser parser = new DOMParser();
+      parser.parse(new org.xml.sax.InputSource(new StringReader(str_upXML)));
+      upXML = parser.getDocument();
+    }
 
       if(upXML!=null) {
-        this.populateUserParameterPreferences(upXML,fsup);
-        this.populateUserParameterChannelAttributes(upXML,fsup);
-        this.populateUserParameterFolderAttributes(upXML,fsup);
+        populateUserParameterPreferences(upXML,fsup);
+        populateUserParameterChannelAttributes(upXML,fsup);
+        populateUserParameterFolderAttributes(upXML,fsup);
       } else {
         // construct user preference object with the default values
         // CoreStylesheetDescriptionDB object should not be instantiated here.
@@ -1426,32 +1546,40 @@ public class DBImpl implements IDBImpl
     ThemeStylesheetUserPreferences ssup=new ThemeStylesheetUserPreferences();
     ssup.setStylesheetName(stylesheetName);
 
-    Document upXML = null;
+    String str_upXML = null;
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
-        + stylesheetName + "' AND PROFILE_ID=" + profileId;
-        Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetUserPreferences() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        String str_upXML = null;
-        if (rs.next()) {
-          str_upXML = rs.getString("USER_PREFERENCES_XML");
-        }
+      try {
+          String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
+            + stylesheetName + "' AND PROFILE_ID=" + profileId;
+          Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetUserPreferences() : " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          try {
+            if (rs.next()) {
+              str_upXML = rs.getString("USER_PREFERENCES_XML");
+            }
+          } finally {
+            rs.close();
+          }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
 
-        if (str_upXML != null) {
+    Document upXML = null;
+    if (str_upXML != null) {
           Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetUserPreferences() : " + str_upXML);
           DOMParser parser = new DOMParser();
           parser.parse(new org.xml.sax.InputSource(new StringReader(str_upXML)));
           upXML = parser.getDocument();
-        }
-      } finally {
-        rdbmService.releaseConnection(con);
-      }
+    }
 
-      if(upXML!=null) {
-        this.populateUserParameterPreferences(upXML,ssup);
-        this.populateUserParameterChannelAttributes(upXML,ssup);
-      } else {
+    if(upXML!=null) {
+        populateUserParameterPreferences(upXML,ssup);
+        populateUserParameterChannelAttributes(upXML,ssup);
+    } else {
         // construct user preference object with the default values
         // CoreStylesheetDescriptionDB object should not be instantiated here.
         // This will go away once everything is merged under one DB interface.
@@ -1468,9 +1596,10 @@ public class DBImpl implements IDBImpl
           ssup.addChannelAttribute(name,ssd.getChannelAttributeDefaultValue(name));
         }
         //                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getThemeStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
-      }
-      return ssup;
+    }
+    return ssup;
   }
+
     static protected final void populateUserParameterChannelAttributes(Document upXML,ThemeStylesheetUserPreferences up) {
         NodeList attributesNodes=upXML.getElementsByTagName("channelattributes");
         // just get the first matching node. Since this XML is portal generated, we trust it.
@@ -1547,7 +1676,6 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public void setStructureStylesheetUserPreferences (int userId, int profileId, StructureStylesheetUserPreferences fsup) throws Exception {
-    Connection con = rdbmService.getConnection();
 
     String stylesheetName=fsup.getStylesheetName();
     // construct a DOM tree
@@ -1558,31 +1686,37 @@ public class DBImpl implements IDBImpl
     spEl.appendChild(constructFolderAttributesElement(fsup,doc));
     doc.appendChild(spEl);
 
+    // update the database
+    StringWriter outString = new StringWriter();
+    OutputFormat format = new OutputFormat(doc);
+    format.setOmitXMLDeclaration(true);
+    XMLSerializer xsl = new XMLSerializer(outString, format);
+    xsl.serialize(doc);
 
+    Connection con = rdbmService.getConnection();
     try {
-      // update the database
-      StringWriter outString = new StringWriter();
-      OutputFormat format = new OutputFormat(doc);
-      format.setOmitXMLDeclaration(true);
-      XMLSerializer xsl = new XMLSerializer(outString, format);
-      xsl.serialize(doc);
       Statement stmt = con.createStatement();
-      // this is ugly, but we have to know wether to do INSERT or UPDATE
-      String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
-          + stylesheetName + "' AND PROFILE_ID=" + profileId;
-      Logger.log(Logger.DEBUG, "DBImpl::setStructureStylesheetUserPreferences() : " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-        sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='" + outString.toString() + "' WHERE USER_ID = " + userId
-            + " AND STYLESHEET_NAME='" + stylesheetName + "' AND PROFILE_ID=" + profileId;
+      try {
+        // this is ugly, but we have to know wether to do INSERT or UPDATE
+        String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
+            + stylesheetName + "' AND PROFILE_ID=" + profileId;
+        Logger.log(Logger.DEBUG, "DBImpl::setStructureStylesheetUserPreferences() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          if (rs.next()) {
+            sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='" + outString.toString() + "' WHERE USER_ID = " + userId
+                + " AND STYLESHEET_NAME='" + stylesheetName + "' AND PROFILE_ID=" + profileId;
+          } else {
+            sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_ID,PROFILE_ID,NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES (" +
+              userId + "," + profileId + ",'" + stylesheetName + "','" + outString.toString() + "')";
+          }
+        } finally {
+          rs.close();
+        }
         Logger.log(Logger.DEBUG, "DBImpl::setStructureStylesheetUserPreferences() : " + sQuery);
         stmt.executeUpdate(sQuery);
-      }
-      else {
-        sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_ID,PROFILE_ID,NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES (" +
-            userId + "," + profileId + ",'" + stylesheetName + "','" + outString.toString() + "')";
-        Logger.log(Logger.DEBUG, "DBImpl::setStructureStylesheetUserPreferences() : " + sQuery);
-        stmt.executeQuery(sQuery);
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1648,7 +1782,6 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public void setThemeStylesheetUserPreferences (int userId, int profileId, ThemeStylesheetUserPreferences ssup) throws Exception {
-    Connection con = rdbmService.getConnection();
 
     String stylesheetName=ssup.getStylesheetName();
     // construct a DOM tree
@@ -1658,30 +1791,37 @@ public class DBImpl implements IDBImpl
     spEl.appendChild(constructChannelAttributesElement(ssup,doc));
     doc.appendChild(spEl);
 
+    // update the database
+    StringWriter outString = new StringWriter();
+    OutputFormat format = new OutputFormat(doc);
+    format.setOmitXMLDeclaration(true);
+    XMLSerializer xsl = new XMLSerializer(outString, format);
+    xsl.serialize(doc);
+
+    Connection con = rdbmService.getConnection();
     try {
-      // update the database
-      StringWriter outString = new StringWriter();
-      OutputFormat format = new OutputFormat(doc);
-      format.setOmitXMLDeclaration(true);
-      XMLSerializer xsl = new XMLSerializer(outString, format);
-      xsl.serialize(doc);
       Statement stmt = con.createStatement();
-      // this is ugly, but we have to know wether to do INSERT or UPDATE
-      String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
-          + stylesheetName + "' AND PROFILE_ID=" + profileId;
-      Logger.log(Logger.DEBUG, "DBImpl::setThemeStylesheetUserPreferences() : " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-        sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='" + outString.toString() + "' WHERE USER_ID = " + userId
-            + " AND STYLESHEET_NAME='" + stylesheetName + "' AND PROFILE_ID=" + profileId;
+      try {
+        // this is ugly, but we have to know wether to do INSERT or UPDATE
+        String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
+            + stylesheetName + "' AND PROFILE_ID=" + profileId;
+        Logger.log(Logger.DEBUG, "DBImpl::setThemeStylesheetUserPreferences() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          if (rs.next()) {
+            sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='" + outString.toString() + "' WHERE USER_ID = " + userId
+                + " AND STYLESHEET_NAME='" + stylesheetName + "' AND PROFILE_ID=" + profileId;
+          } else {
+            sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_ID,PROFILE_ID,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES (" + userId
+                + "," + profileId + ",'" + stylesheetName + "','" + outString.toString() + "')";
+          }
+        } finally {
+          rs.close();
+        }
         Logger.log(Logger.DEBUG, "DBImpl::setThemeStylesheetUserPreferences() : " + sQuery);
         stmt.executeUpdate(sQuery);
-      }
-      else {
-        sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_ID,PROFILE_ID,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES (" + userId
-            + "," + profileId + ",'" + stylesheetName + "','" + outString.toString() + "')";
-        Logger.log(Logger.DEBUG, "DBImpl::setThemeStylesheetUserPreferences() : " + sQuery);
-        stmt.executeQuery(sQuery);
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1698,11 +1838,15 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='" + profile.getThemeStylesheetName() + "', STRUCTURE_SS_NAME='"
-          + profile.getStructureStylesheetName() + "', DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
-          + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
-      Logger.log(Logger.DEBUG, "DBImpl::updateUserProfile() : " + sQuery);
-      stmt.executeUpdate(sQuery);
+      try {
+        String sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='" + profile.getThemeStylesheetName() + "', STRUCTURE_SS_NAME='"
+            + profile.getStructureStylesheetName() + "', DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
+            + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
+        Logger.log(Logger.DEBUG, "DBImpl::updateUserProfile() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1722,11 +1866,15 @@ public class DBImpl implements IDBImpl
       int id = getIncrementIntegerId("UP_USER_PROFILES");
       profile.setProfileId(id);
       Statement stmt = con.createStatement();
-      String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("
-          + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "','" + profile.getStructureStylesheetName()
-          + "','" + profile.getThemeStylesheetName() + "','" + profile.getProfileDescription() + "')";
-      Logger.log(Logger.DEBUG, "DBImpl::addUserProfile() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      try {
+        String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("
+            + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "','" + profile.getStructureStylesheetName()
+            + "','" + profile.getThemeStylesheetName() + "','" + profile.getProfileDescription() + "')";
+        Logger.log(Logger.DEBUG, "DBImpl::addUserProfile() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1743,9 +1891,13 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "DELETE FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-      Logger.log(Logger.DEBUG, "DBImpl::deleteUserProfile() : " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
+      try {
+        String sQuery = "DELETE FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
+        Logger.log(Logger.DEBUG, "DBImpl::deleteUserProfile() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1777,14 +1929,22 @@ public class DBImpl implements IDBImpl
    *
    */
   public void getMimeTypeList (Hashtable list) throws Exception {
-    String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPES A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
-    Logger.log(Logger.DEBUG, "DBImpl::getMimeTypeList() : " + sQuery);
-    Connection con = rdbmService.getConnection();
-    Statement stmt = con.createStatement();
+   Connection con = rdbmService.getConnection();
     try {
-      ResultSet rs = stmt.executeQuery(sQuery);
-      while (rs.next()) {
-        list.put(rs.getString("MIME_TYPE"), rs.getString("MIME_TYPE_DESCRIPTION"));
+      Statement stmt = con.createStatement();
+      try {
+        String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPES A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
+        Logger.log(Logger.DEBUG, "DBImpl::getMimeTypeList() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            list.put(rs.getString("MIME_TYPE"), rs.getString("MIME_TYPE_DESCRIPTION"));
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1798,15 +1958,23 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public void getStructureStylesheetList (String mimeType, Hashtable list) throws Exception {
-    String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_STRUCT_SS A, UP_SS_MAP B WHERE B.MIME_TYPE='"
-        + mimeType + "' AND B.STRUCT_SS_NAME=A.STYLESHEET_NAME";
-    Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery(sQuery);
-      while (rs.next()) {
-        list.put(rs.getString("STYLESHEET_NAME"), rs.getString("STYLESHEET_DESCRIPTION_TEXT"));
+      try {
+        String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_STRUCT_SS A, UP_SS_MAP B WHERE B.MIME_TYPE='"
+            + mimeType + "' AND B.STRUCT_SS_NAME=A.STYLESHEET_NAME";
+        Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            list.put(rs.getString("STYLESHEET_NAME"), rs.getString("STYLESHEET_DESCRIPTION_TEXT"));
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1820,15 +1988,23 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public void getThemeStylesheetList (String structureStylesheetName, Hashtable list) throws Exception {
-    String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_THEME_SS A, UP_SS_MAP B WHERE B.STRUCT_SS_NAME='"
-        + structureStylesheetName + "' AND A.STYLESHEET_NAME=B.THEME_SS_NAME";
-    Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery(sQuery);
-      while (rs.next()) {
-        list.put(rs.getString("STYLESHEET_NAME"), rs.getString("STYLESHEET_DESCRIPTION_TEXT"));
+      try {
+        String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_THEME_SS A, UP_SS_MAP B WHERE B.STRUCT_SS_NAME='"
+            + structureStylesheetName + "' AND A.STYLESHEET_NAME=B.THEME_SS_NAME";
+        Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          while (rs.next()) {
+            list.put(rs.getString("STYLESHEET_NAME"), rs.getString("STYLESHEET_DESCRIPTION_TEXT"));
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
     } finally {
       rdbmService.releaseConnection(con);
@@ -1842,21 +2018,33 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public String[] getStructureStylesheetDescription (String stylesheetName) throws Exception {
-    String sQuery = "SELECT * FROM UP_STRUCT_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
-    Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetDescription() : " + sQuery);
     Connection con = rdbmService.getConnection();
-    Statement stmt = con.createStatement();
-    ResultSet rs = stmt.executeQuery(sQuery);
-    rs.next();
-    // retreive database values
-    String[] db = new String[] {
-      null, null, null, null
-    };
-    db[0] = rs.getString("STYLESHEET_NAME");
-    db[1] = rs.getString("STYLESHEET_DESCRIPTION_TEXT");
-    db[2] = rs.getString("STYLESHEET_URI");
-    db[3] = rs.getString("STYLESHEET_DESCRIPTION_URI");
-    return  db;
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String sQuery = "SELECT * FROM UP_STRUCT_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
+        Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetDescription() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          rs.next();
+          // retrieve database values
+          String[] db = new String[] {
+            null, null, null, null
+          };
+          db[0] = rs.getString("STYLESHEET_NAME");
+          db[1] = rs.getString("STYLESHEET_DESCRIPTION_TEXT");
+          db[2] = rs.getString("STYLESHEET_URI");
+          db[3] = rs.getString("STYLESHEET_DESCRIPTION_URI");
+          return  db;
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
   }
 
   /**
@@ -1866,21 +2054,33 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public String[] getThemeStylesheetDescription (String stylesheetName) throws Exception {
-    String sQuery = "SELECT * FROM UP_THEME_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
-    Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetDescription() : " + sQuery);
     Connection con = rdbmService.getConnection();
-    Statement stmt = con.createStatement();
-    ResultSet rs = stmt.executeQuery(sQuery);
-    rs.next();
-    // retreive database values
-    String[] db = new String[] {
-      null, null, null, null
-    };
-    db[0] = rs.getString("STYLESHEET_NAME");
-    db[1] = rs.getString("STYLESHEET_DESCRIPTION_TEXT");
-    db[2] = rs.getString("STYLESHEET_URI");
-    db[3] = rs.getString("STYLESHEET_DESCRIPTION_URI");
-    return  db;
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String sQuery = "SELECT * FROM UP_THEME_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
+        Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetDescription() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          rs.next();
+          // retrieve database values
+          String[] db = new String[] {
+            null, null, null, null
+          };
+          db[0] = rs.getString("STYLESHEET_NAME");
+          db[1] = rs.getString("STYLESHEET_DESCRIPTION_TEXT");
+          db[2] = rs.getString("STYLESHEET_URI");
+          db[3] = rs.getString("STYLESHEET_DESCRIPTION_URI");
+          return  db;
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
   }
 
   /**
@@ -1892,14 +2092,16 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      // note that we don't delete from UP_THEME_SS_MAP table.
-      // Information contained in that table belongs to theme-stage stylesheet. Let them fix it.
-      String sQuery = "DELETE FROM UP_STRUCT_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'; DELETE FROM UP_SS_MAP WHERE STRUC_SS_NAME='"
-          + stylesheetName + "';";
-      Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
-      stmt.executeUpdate(sQuery);
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      try {
+        // note that we don't delete from UP_THEME_SS_MAP table.
+        // Information contained in that table belongs to theme-stage stylesheet. Let them fix it.
+        String sQuery = "DELETE FROM UP_STRUCT_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'; DELETE FROM UP_SS_MAP WHERE STRUC_SS_NAME='"
+            + stylesheetName + "';";
+        Logger.log(Logger.DEBUG, "DBImpl::removeStructureStylesheetDescription() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1914,12 +2116,14 @@ public class DBImpl implements IDBImpl
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      String sQuery = "DELETE FROM UP_THEME_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'; DELETE FROM UP_SS_MAP WHERE THEME_SS_NAME='"
-          + stylesheetName + "';";
-      Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
-      stmt.executeUpdate(sQuery);
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      try {
+        String sQuery = "DELETE FROM UP_THEME_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'; DELETE FROM UP_SS_MAP WHERE THEME_SS_NAME='"
+            + stylesheetName + "';";
+        Logger.log(Logger.DEBUG, "DBImpl::removeThemeStylesheetDescription() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1934,15 +2138,19 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public void addStructureStylesheetDescription (String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI,
-      String xmlStylesheetDescriptionText) throws Exception {
-    String sQuery = "INSERT INTO UP_STRUCT_SS (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) VALUES ('"
-        + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
-        + "')";
-    Logger.log(Logger.DEBUG, "DBImpl::addStructureStylesheetDescription() : " + sQuery);
+    String xmlStylesheetDescriptionText) throws Exception {
     Connection con = rdbmService.getConnection();
-    Statement stmt = con.createStatement();
     try {
-      stmt.executeUpdate(sQuery);
+      Statement stmt = con.createStatement();
+      try {
+        String sQuery = "INSERT INTO UP_STRUCT_SS (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) VALUES ('"
+           + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
+           + "')";
+        Logger.log(Logger.DEBUG, "DBImpl::addStructureStylesheetDescription() : " + sQuery);
+        stmt.executeUpdate(sQuery);
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1959,33 +2167,38 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public void addThemeStylesheetDescription (String xmlStylesheetName, String stylesheetURI, String stylesheetDescriptionURI,
-      String xmlStylesheetDescriptionText, String mimeType, Enumeration enum) throws Exception {
-    String sQuery = "INSERT INTO UP_THEME_SS (STYLESHEET_NAME,STYLESHEET_URI,STYLESHEET_DESCRIPTION_URI,STYLESHEET_DESCRIPTION_TEXT) VALUES ('"
-        + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
-        + "')";
-    Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+    String xmlStylesheetDescriptionText, String mimeType, Enumeration enum) throws Exception {
+
     Connection con = rdbmService.getConnection();
-
-    // Set autocommit false for the connection
-    setAutoCommit(con, false);
-
     try {
+      // Set autocommit false for the connection
+      setAutoCommit(con, false);
+
       Statement stmt = con.createStatement();
-      stmt.executeUpdate(sQuery);
-      while (enum.hasMoreElements()) {
-        String ssName = (String)enum.nextElement();
-        sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('" + xmlStylesheetName + "','" +
-            ssName + "','" + mimeType + "');";
+      try {
+        String sQuery = "INSERT INTO UP_THEME_SS (STYLESHEET_NAME,STYLESHEET_URI,STYLESHEET_DESCRIPTION_URI,STYLESHEET_DESCRIPTION_TEXT) VALUES ('"
+            + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
+            + "')";
         Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
-      }
 
-      // Commit the transaction
-      commit(con);
-    } catch (Exception e) {
-      // Roll back the transaction
-      rollback(con);
-      throw  e;
+        while (enum.hasMoreElements()) {
+          String ssName = (String)enum.nextElement();
+          sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('" + xmlStylesheetName + "','" +
+              ssName + "','" + mimeType + "');";
+          Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
+          stmt.executeUpdate(sQuery);
+        }
+
+        // Commit the transaction
+        commit(con);
+      } catch (Exception e) {
+        // Roll back the transaction
+        rollback(con);
+        throw  e;
+      } finally {
+        stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -1998,16 +2211,21 @@ public class DBImpl implements IDBImpl
    * @exception Exception
    */
   public void saveBookmarkXML (int userId, Document doc) throws Exception {
+    StringWriter outString = new StringWriter();
+    XMLSerializer xsl = new XMLSerializer(outString, new OutputFormat(doc));
+    xsl.serialize(doc);
+
     Connection con = rdbmService.getConnection();
     try {
-      StringWriter outString = new StringWriter();
-      XMLSerializer xsl = new XMLSerializer(outString, new OutputFormat(doc));
-      xsl.serialize(doc);
       Statement statem = con.createStatement();
-      String sQuery = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString() + "' WHERE PORTAL_USER_ID = " +
-          userId;
-      Logger.log(Logger.DEBUG, "DBImpl::saveBookmarkXML(): " + sQuery);
-      statem.executeUpdate(sQuery);
+      try {
+        String sQuery = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString() + "' WHERE PORTAL_USER_ID = " +
+            userId;
+        Logger.log(Logger.DEBUG, "DBImpl::saveBookmarkXML(): " + sQuery);
+        statem.executeUpdate(sQuery);
+      } finally {
+        statem.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
