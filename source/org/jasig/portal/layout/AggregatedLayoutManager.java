@@ -1467,12 +1467,19 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 
         // Add the new node to the database and get the node with a new node ID
-        layoutNode = layoutStore.addUserLayoutNode(person,userProfile,layoutNode);
+        if ( autoCommit ) 
+         layoutNode = layoutStore.addUserLayoutNode(person,userProfile,layoutNode);
+        else {
+         IALNodeDescription desc = layoutNode.getNodeDescription();
+         desc.setId(layoutStore.getNextNodeId(person));
+         if ( desc.getType() == IUserLayoutNodeDescription.CHANNEL )
+           layoutStore.fillChannelDescription((IALChannelDescription)desc);  	  
+        }
+          
         String nodeId = layoutNode.getId();
 
         // Putting the new node into the hashtable
         layout.getLayoutData().put(nodeId,layoutNode);
-
 
         if ( prevNode != null ) prevNode.setNextNodeId(nodeId);
 
@@ -1482,17 +1489,20 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         // Setting new child node ID to the parent node
         if ( prevNode == null )
           parentFolder.setFirstChildNodeId(nodeId);
+       
+        if ( autoCommit ) {
+        
+         // TO UPDATE ALL THE NEIGHBOR NODES IN THE DATABASE
+         if ( nextNode != null )
+          layoutStore.updateUserLayoutNode(person,userProfile,nextNode);
 
-        // TO UPDATE ALL THE NEIGHBOR NODES IN THE DATABASE
-        if ( nextNode != null )
-         layoutStore.updateUserLayoutNode(person,userProfile,nextNode);
+         if ( prevNode != null )
+          layoutStore.updateUserLayoutNode(person,userProfile,prevNode);
 
-        if ( prevNode != null )
-         layoutStore.updateUserLayoutNode(person,userProfile,prevNode);
-
-        // Update the parent node
-        layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
-
+          // Update the parent node
+          layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
+        
+        }  
 
         updateCacheKey();
         return layoutNode.getNodeDescription();
