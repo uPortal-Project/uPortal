@@ -48,6 +48,11 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
      * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.lang.String)
      */
     public final Map getUserAttributes(final String uid) {
+        
+        if (uid == null) {
+            throw new IllegalArgumentException("Illegal to invoke getUserAttributes(String) with null argument.");
+        }
+        
         final Map seed = Collections.singletonMap(this.getDefaultAttributeName(), uid);
         
         return this.getUserAttributes(seed);
