@@ -19,7 +19,7 @@
 
 
 # points to a place where jsp,html,gif,WEB-INF etc. are copied
-#htmldest=F:/resin/html/portal-2/
+#htmldest=./webpages/
 
 
 # and of course the classpath, comment-out to use your environment CLASSPATH
@@ -30,6 +30,9 @@
 # this is a directory that will simply be deleted when realclean is called
 # leave commented-out for no action
 #jspdest=F:/resin/work/_jsp/_portal-2
+
+#set database type here eg. hypersonic, oracle, etc.
+#dbtype=hypersonic
 
 # sql properties for running scripts and populating the database
 # comment the dbdriver to suppress sql target
