@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -31,11 +31,16 @@ import org.w3c.dom.Element;
 public interface IPortalDocument extends Document {
 
     /**
-     * Registers an identifier name with a specified element node.
+     * Prior to uPortal 2.5, registered an identifier for a given Element of this
+     * Document.  
+     * 
+     * As of uPortal 2.5, this interface no longer requires that this method have
+     * any effect.  It is included here only for binary compatibility.
      *
      * @param idName a key used to store an <code>Element</code> object.
      * @param element an <code>Element</code> object to map.
      * document.
+     * @deprecated this method no longer is required to have any effect.
      */
     public void putIdentifier(String idName, Element element);
 
@@ -43,8 +48,12 @@ public interface IPortalDocument extends Document {
      * Copies the element cache from the source document. This will
      * provide equivalent mappings from IDs to elements in this
      * document provided the elements exist in the source document.
+     * 
+     * As of uPortal 2.5, this interface no longer requires this method to have
+     * any effect and it is included here only for binary compatibility.
      *
      * @param sourceDoc The source doc to copy from.
+     * @deprecated this methid no longer is required to have any effect
      */
     public void copyCache(IPortalDocument sourceDoc);
 }
