@@ -46,4 +46,10 @@ public interface IGroupConstants {
     public final String EVERYONE = "org.jasig.portal.security.IPerson";
     public final String CHANNEL_CATEGORIES = "org.jasig.portal.ChannelDefinition";
     public final String PORTAL_ADMINISTRATORS = "org.jasig.portal.security.IPerson.PortalAdministrators";
+    
+    //Search method constants
+    public final int IS =1;
+    public final int STARTS_WITH=2;
+    public final int ENDS_WITH=3;
+    public final int CONTAINS=4;
 }
