@@ -379,6 +379,37 @@
   </table>
 
   <table>
+    <name>UP_GROUP_PRIORITY_RANGE</name>
+    <rows>
+      <row>
+        <column><name>GROUP_KEY</name><value>local.0</value></column>
+        <column><name>MIN_PRIORITY</name><value>0</value></column>
+        <column><name>MAX_PRIORITY</name><value>2000</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_KEY</name><value>local.1</value></column>
+        <column><name>MIN_PRIORITY</name><value>0</value></column>
+        <column><name>MAX_PRIORITY</name><value>2500</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_KEY</name><value>local.3</value></column>
+        <column><name>MIN_PRIORITY</name><value>0</value></column>
+        <column><name>MAX_PRIORITY</name><value>5000</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_KEY</name><value>local.4</value></column>
+        <column><name>MIN_PRIORITY</name><value>0</value></column>
+        <column><name>MAX_PRIORITY</name><value>20000</value></column>
+      </row>
+      <row>
+        <column><name>GROUP_KEY</name><value>local.14</value></column>
+        <column><name>MIN_PRIORITY</name><value>0</value></column>
+        <column><name>MAX_PRIORITY</name><value>10000000</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
     <name>UP_SEQUENCE</name>
     <rows>
       <row>
