@@ -51,7 +51,7 @@
         <td valign="top" align="right" class="uportal-background-med">
           <xsl:if test="$allowRefresh='true'">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=retry</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=retry</xsl:attribute>
               <img border="0" width="16" height="16" alt="Retry the channel">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_refresh.gif</xsl:attribute>
               </img>
@@ -62,7 +62,7 @@
           </xsl:if>
           <xsl:if test="$allowReinstantiation='true'">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=restart</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=restart</xsl:attribute>
               <img border="0" width="16" height="16" alt="Restart the channel">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_reboot.gif</xsl:attribute>
               </img>
@@ -75,7 +75,7 @@
             <xsl:choose>
               <xsl:when test="$showStackTrace='true' and */stack">
                 <a>
-                  <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=toggle_stack_trace</xsl:attribute>
+                  <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
                   <img border="0" width="16" height="16" alt="Hide stack trace">
                     <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_hide_trace.gif</xsl:attribute>
                   </img>
@@ -83,7 +83,7 @@
               </xsl:when>
               <xsl:otherwise>
                 <a>
-                  <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=toggle_stack_trace</xsl:attribute>
+                  <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=toggle_stack_trace</xsl:attribute>
                   <img border="0" width="16" height="16" alt="Show stack trace">
                     <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>error_show_trace.gif</xsl:attribute>
                   </img>

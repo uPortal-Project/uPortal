@@ -23,6 +23,10 @@
 		<defaultvalue>true</defaultvalue>
 		<description>Flag determening if the channel can be minimized or not</description>
 	</attribute>
+	<attribute name="minimized">
+		<defaultvalue>false</defaultvalue>
+		<description>Flag determening if the channel is minimized or not</description>
+	</attribute>
 </channelattributes>
 
 </stylesheetdescription>

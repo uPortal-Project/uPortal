@@ -8,7 +8,7 @@
 <xsl:param name="newBookmark">false</xsl:param>
 
 <xsl:template match="bookmark">
-<form action="{$baseActionURL}" method="post">
+<form action="{$baseActionURL}" >
 
 <xsl:choose>
 <xsl:when test="$newBookmark='false'">

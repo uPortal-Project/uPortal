@@ -106,21 +106,34 @@
           <td nowrap="true" valign="center" align="right">
            <xsl:if test="@hasHelp='true'">
             <a>
-            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=help</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_help_target=<xsl:value-of select="@ID"/></xsl:attribute>
             <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/help.gif" alt="Help"/>
             </a>
            </xsl:if>
            <xsl:if test="@editable='true'">
             <a>
-            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=edit</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_edit_target=<xsl:value-of select="@ID"/></xsl:attribute>
             <img border="0" width="23" height="15" src="media/org/jasig/portal/layout/tabColumn/edit.gif" alt="Edit"/>
             </a>
            </xsl:if>
            <xsl:if test="@minimizable='true'">
+
+
+          <xsl:choose>
+           <xsl:when test="@minimized='true'">
             <a>
-            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=minimize</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_tcattr=minimized&amp;minimized_channelId=<xsl:value-of select="@ID"/>&amp;minimized_<xsl:value-of select="@ID"/>_value=false</xsl:attribute>
             <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/minimize.gif" alt="Minimize"/>
             </a>
+           </xsl:when>
+           <xsl:otherwise>
+            <a>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_tcattr=minimized&amp;minimized_channelId=<xsl:value-of select="@ID"/>&amp;minimized_<xsl:value-of select="@ID"/>_value=true</xsl:attribute>
+            <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/minimize.gif" alt="Minimize"/>
+            </a>
+	   </xsl:otherwise>
+	  </xsl:choose>
+
            </xsl:if>
            <xsl:if test="@detachable='true'">
             <a>
@@ -130,7 +143,7 @@
            </xsl:if>
            <xsl:if test="@removable='true'">
             <a>
-            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=remove</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_remove_target=<xsl:value-of select="@ID"/></xsl:attribute>
             <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/remove.gif" alt="Remove"/>
             </a>
            </xsl:if>
@@ -150,7 +163,7 @@
          <table bgcolor="{$activeTabColor}" border="0" cellspacing="0" cellpadding="2">
          <tr align="center">
             <td>
-             <font face="Arial"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?stylesheetTarget=s&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a></font>
+             <font face="Arial"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_tparam=activeTab&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a></font>
             </td>
         </tr>
         </table>
@@ -163,7 +176,7 @@
          <tr align="center">
             <td>
              <font face="Arial">
-              <a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?stylesheetTarget=s&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a>
+              <a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_tparam=activeTab&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a>
              </font>
             </td>
         </tr>

@@ -68,12 +68,12 @@
       All Categories
     </xsl:when>
     <xsl:otherwise>    
-      <a href="{$baseActionURL}action=browse&amp;categoryID=top">All Categories</a>
+      <a href="{$baseActionURL}?action=browse&amp;categoryID=top">All Categories</a>
     </xsl:otherwise>
   </xsl:choose>
 
   <xsl:for-each select="ancestor::*">
-    <a href="{$baseActionURL}action=browse&amp;categoryID={@ID}"><xsl:value-of select="@name"/></a>
+    <a href="{$baseActionURL}?action=browse&amp;categoryID={@ID}"><xsl:value-of select="@name"/></a>
     <xsl:text> &gt; </xsl:text>
   </xsl:for-each>
 
@@ -86,7 +86,7 @@
     <td align="right"><input type="checkbox" name="sub" value="{@ID}"/></td>
     
     <td>
-      <a href="{$baseActionURL}action=browse&amp;categoryID={@ID}"><img src="{$imageDir}/folder_closed.gif" border="0" width="13" height="10"/>
+      <a href="{$baseActionURL}?action=browse&amp;categoryID={@ID}"><img src="{$imageDir}/folder_closed.gif" border="0" width="13" height="10"/>
       <xsl:value-of select="@name"/></a></td>
     <td><img src="{$imageDir}/blank.gif" border="0" /></td>
   </tr>

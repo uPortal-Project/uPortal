@@ -89,12 +89,12 @@
       My Channels
     </xsl:when>
     <xsl:otherwise>    
-      <a href="{$baseActionURL}action=browse&amp;folderID=top">My Channels</a>
+      <a href="{$baseActionURL}?action=browse&amp;folderID=top">My Channels</a>
     </xsl:otherwise>
   </xsl:choose>
 
   <xsl:for-each select="ancestor::*">
-    <a href="{$baseActionURL}action=browse&amp;folderID={@ID}"><xsl:value-of select="@name"/></a>
+    <a href="{$baseActionURL}?action=browse&amp;folderID={@ID}"><xsl:value-of select="@name"/></a>
     <xsl:text> &gt; </xsl:text>
   </xsl:for-each>
 
@@ -110,11 +110,11 @@
     <td align="center">
 
       <xsl:if test="position() != 1">
-        <a href="{$baseActionURL}action=reorder&amp;dir=up&amp;elementID={@ID}"><img src="{$imageDir}/arrow_up.gif" border="0" width="15" height="17"/></a>
+        <a href="{$baseActionURL}?action=reorder&amp;dir=up&amp;elementID={@ID}"><img src="{$imageDir}/arrow_up.gif" border="0" width="15" height="17"/></a>
       </xsl:if>
 
     	<xsl:if test="position() != last()">
-    	  <a href="{$baseActionURL}action=reorder&amp;dir=down&amp;elementID={@ID}"><img src="{$imageDir}/arrow_down.gif" border="0" width="15" height="17"/></a>
+    	  <a href="{$baseActionURL}?action=reorder&amp;dir=down&amp;elementID={@ID}"><img src="{$imageDir}/arrow_down.gif" border="0" width="15" height="17"/></a>
     	</xsl:if>
 
       <xsl:if test="position() = 1 and position() = last()">
@@ -124,9 +124,9 @@
     </td>
     
     <td>
-      <a href="{$baseActionURL}action=browse&amp;folderID={@ID}"><img src="{$imageDir}/folder_closed.gif" border="0" width="13" height="10"/>
+      <a href="{$baseActionURL}?action=browse&amp;folderID={@ID}"><img src="{$imageDir}/folder_closed.gif" border="0" width="13" height="10"/>
       <xsl:value-of select="@name"/></a></td>
-    <td><a href="{$baseActionURL}action=editElement&amp;folderID={@ID}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
+    <td><a href="{$baseActionURL}?action=editElement&amp;folderID={@ID}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
   </tr>
 </xsl:template>
 
@@ -136,11 +136,11 @@
     <td align="center">
        
   	  <xsl:if test="position() != 1">
-  	  	<a href="{$baseActionURL}action=reorder&amp;dir=up&amp;elementID={@ID}"><img src="{$imageDir}/arrow_up.gif" border="0" width="15" height="17"/></a>
+  	  	<a href="{$baseActionURL}?action=reorder&amp;dir=up&amp;elementID={@ID}"><img src="{$imageDir}/arrow_up.gif" border="0" width="15" height="17"/></a>
   	  </xsl:if>
 
   	  <xsl:if test="position() != last()">
-  	  	<a href="{$baseActionURL}action=reorder&amp;dir=down&amp;elementID={@ID}"><img src="{$imageDir}/arrow_down.gif" border="0" width="15" height="17"/></a>
+  	  	<a href="{$baseActionURL}?action=reorder&amp;dir=down&amp;elementID={@ID}"><img src="{$imageDir}/arrow_down.gif" border="0" width="15" height="17"/></a>
       </xsl:if>
 
   	  <xsl:if test="position() = 1 and position() = last()">
@@ -149,7 +149,7 @@
 
 	  </td>   
 	  <td><xsl:value-of select="@name"/></td>
-    <td><a href="{$baseActionURL}action=editElement&amp;folderID={@ID}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
+    <td><a href="{$baseActionURL}?action=editElement&amp;folderID={@ID}"><img src="{$imageDir}/edit.gif" border="0" width="12" height="12"/></a></td>
   </tr>
 </xsl:template>
 
