@@ -30,43 +30,37 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
-/**
- * Title:        uPortal 20
- * Description:
- * @author Bernie Durfee (IBS)
- * @version 1.0
- */
-
 
 package  org.jasig.portal.utils;
 
-import  org.apache.xerces.parsers.SAXParser;
-import  org.xml.sax.InputSource;
-import  org.xml.sax.DocumentHandler;
-import  org.xml.sax.SAXException;
-import  java.io.IOException;
-import  java.io.StringReader;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.InputSource;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.StringReader;
 
 
 /**
- * put your documentation comment here
+ * Convenience methods for SAX parsing
+ * @author Bernie Durfee, bdurfee@interactivebusiness.com
+ * @version $Revision$
  */
 public class SAXHelper {
 
   /**
-   * put your documentation comment here
-   * @param out
-   * @param content
-   * @exception SAXException, IOException
+   * Outputs SAX events to specified ContentHandler based on the content String
+   * @param out, the ContentHandler
+   * @param content, an XML string
+   * @exception SAXException, IOException, ParserConfigurationException
    */
-  public static synchronized void outputContent (DocumentHandler out, String content) throws SAXException, IOException {
-    SAXParser saxParser = new SAXParser();
-    saxParser.setDocumentHandler(out);
-    saxParser.parse(new InputSource(new StringReader(content)));
+  public static synchronized void outputContent (ContentHandler out, String content) throws SAXException, IOException, ParserConfigurationException {
+    XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+    xmlReader.setContentHandler(out);
+    xmlReader.parse(new InputSource(new StringReader(content)));
   }
 }
 
