@@ -732,9 +732,9 @@ throws AuthorizationException
 
     if ( owner != null )
     {
-        sqlQuery.append(RDBMServices.sqlEscape(OWNER_COLUMN));
+        sqlQuery.append(OWNER_COLUMN);
         sqlQuery.append(" = '");
-        sqlQuery.append(owner);
+        sqlQuery.append(RDBMServices.sqlEscape(owner));
         sqlQuery.append("' ");
     }
     else
