@@ -47,7 +47,7 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
 
-import org.jasig.portal.PortalFileAppender;
+import org.jasig.portal.services.PortalFileAppender;
 
 /**
  * The Logger class is used to output messages to a log file.
