@@ -41,14 +41,8 @@
                 </channel>
               </folder>
             </folder>
-            <folder ID="t02" priority="0" name="More">
+            <folder ID="t02" priority="0" name="Misc">
               <folder ID="col03" priority="0" name="Column 1">
-                <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
-                  <parameter value="http://www.interactivebusiness.com/publish/ibs.rss" name="xml"/>
-                  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-                </channel>
-              </folder>
-              <folder ID="col04" priority="0" name="Column 2">
                 <channel ID="chan89" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CApplet" name="Minesweeper">
                   <parameter name="code" value="jmapplet.class"/>
                   <parameter name="codeBase" value="http://www.nrr.co.uk/javamine/"/>
@@ -62,31 +56,32 @@
                   <parameter name="APPLET.mines" value="10"/>
                   <parameter name="APPLET.marks" value="true"/>
                   <parameter name="APPLET.graphics" value="true"/>
+                </channel>                
+              </folder>
+              <folder ID="col04" priority="0" name="Column 2">
+                <channel ID="chan11" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Word of the Day">
+                  <parameter value="http://www.dictionary.com/wordoftheday/wotd.rss" name="xml"/>
+                  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
                 </channel>
               </folder>
             </folder>
-            <folder ID="t03" priority="0" name="AndMore">
+            <folder ID="t03" priority="0" name="News">
               <folder ID="col05" priority="0" name="Column 1">
+                <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
+                  <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
+                  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+                </channel>              
+              </folder>
+              <folder ID="col06" priority="0" name="Column 2">
+                <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
+                  <parameter value="http://www.interactivebusiness.com/publish/ibs.rss" name="xml"/>
+                  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+                </channel>
                 <channel ID="chan10" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="The Motley Fool">
                   <parameter value="http://www.fool.com/xml/foolnews_rss091.xml" name="xml"/>
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
                 </channel>
               </folder>
-              <folder ID="col06" priority="0" name="Column 2">
-                <channel ID="chan11" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Word of the Day">
-                  <parameter value="http://www.dictionary.com/wordoftheday/wotd.rss" name="xml"/>
-                  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-                </channel>
-                <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
-                  <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
-                  <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-                </channel>
-              </folder>
-            </folder>
-            <folder ID="t04" priority="0" name="Remove for release!">
-              <channel ID="chan92" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences" fname="portal/userpreferences/general"/>
-              <channel ID="chan90" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe" fname="portal/subscribe/general"/>
-              <channel ID="chan91" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish" fname="portal/publish/general"/>
             </folder>
           </layout>
 
@@ -136,7 +131,7 @@
                 <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false" hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CSnoop" name="Snooper"/>
               </folder>
             </folder>
-            <folder ID="t03" priority="0" name="Hidden">
+            <folder ID="t03" priority="0" name="User Preferences">
               <channel ID="chan90" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe" fname="portal/subscribe/general"/>
               <channel ID="chan91" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish" fname="portal/publish/general"/>
               <channel ID="chan92" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences" fname="portal/userpreferences/general"/>
