@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
@@ -84,11 +83,4 @@ public class DepthRestriction extends ALRestriction {
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction#checkRestriction(org.jasig.portal.layout.al.common.node.ILayoutNode)
-     */
-    public boolean checkRestriction(ILayoutNode node) throws PortalException {
-        // TODO Auto-generated method stub
-        return false;
-    }
 }

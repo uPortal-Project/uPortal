@@ -6,8 +6,10 @@
 package org.jasig.portal.layout.al.common.restrictions;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.IAggregatedLayout;
-import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.al.IAggregatedLayout;
+import org.jasig.portal.layout.al.IALNode;
+import org.jasig.portal.layout.al.common.node.ILayoutNode;
+import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
  * The generic aggregated layout restriction class.
@@ -34,16 +36,25 @@ public abstract class ALRestriction extends UserLayoutRestriction {
   /**
    * Checks the restriction on a node for a given user layout and node ID
    * @param layout a <code>IAggregatedLayout</code> layout
-   * @param nodeId a <code>String</code> node ID
+   * @param nodeId a <code>INodeId</code> node ID
    * @return a boolean value
    * @exception PortalException
    */
-  public boolean checkRestriction ( IAggregatedLayout layout, String nodeId ) throws PortalException {
-  	ALNode node = layout.getLayoutNode(nodeId);
+  public boolean checkRestriction ( IAggregatedLayout layout, INodeId nodeId ) throws PortalException {
+  	IALNode node = (IALNode) layout.getLayoutNode(nodeId);
   	if ( node == null )
   	  throw new PortalException ( "The aggregated layout does not contain the node specified by ID = "+nodeId);	
   	return checkRestriction(node);
   }
   
+  /**
+   * Checks the restriction on a given node
+   * @param node a <code>ILayoutNode</code> node
+   * @return a boolean value
+   * @exception PortalException
+   */
+  public boolean checkRestriction ( ILayoutNode node ) throws PortalException {
+  	return false;
+  }
   
 }

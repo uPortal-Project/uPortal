@@ -6,7 +6,7 @@
 package org.jasig.portal.layout.al.common.restrictions;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.node.ILayoutNode;
+import org.jasig.portal.layout.al.common.node.ILayoutNode;
 
 /**
  * UserLayoutRestriction summary sentence goes here.
@@ -72,16 +72,14 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      * @exception PortalException
      */
   public abstract boolean checkRestriction(String propertyValue) throws PortalException;
-
+  
   /**
    * Checks the restriction on a given node
    * @param node a <code>ILayoutNode</code> node
    * @return a boolean value
    * @exception PortalException
    */
-  public boolean checkRestriction ( ILayoutNode node ) throws PortalException {
-  	return true;
-  }
+  public abstract boolean checkRestriction ( ILayoutNode node ) throws PortalException;
 
   /**
      * Sets the restriction expression

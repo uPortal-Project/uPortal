@@ -15,8 +15,8 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ReferenceGroupServiceFactory;
-import org.jasig.portal.layout.ALNode;
-import org.jasig.portal.layout.IALNodeDescription;
+import org.jasig.portal.layout.al.IALNode;
+import org.jasig.portal.layout.al.IALNodeDescription;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 
 
@@ -97,8 +97,8 @@ public class GroupRestriction extends ALRestriction {
            * @exception PortalException
          */
          public boolean checkRestriction( ILayoutNode node ) throws PortalException {
-           if ( !(node instanceof ALNode) )	
-               throw new PortalException ( "The node must be ALNode type!");  
+           if ( !(node instanceof IALNode) )	
+               throw new PortalException ( "The node must be IALNode type!");  
            IEntityGroup group = groupService.findGroup(((IALNodeDescription)node).getGroup());
            for ( int i = 0; i < groups.length; i++ )
             if ( groups[i].contains(group) )
