@@ -343,6 +343,9 @@
               </xsl:choose>
           </td>
         </tr>
+        <xsl:if test="($group/@editable='false') and (not($highlightedGroupID='0') and not($grpKey='null') and ($ignorePermissions or key('can',concat('ASSIGNPERMISSIONS','|',$grpKey))))">
+        	<tr><td></td><td><input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Permissions';" value="Assign Permissions" class="uportal-button" /></td></tr>
+        </xsl:if>
         <xsl:if test="$mode='edit'">
 			<tr>	
 				<td></td>
