@@ -51,7 +51,6 @@ import  java.io.*;
 import  java.util.*;
 import  java.sql.*;
 
-
 /**
  * Provides methods associated with subscribing to a channel.
  * This includes preview, listing all available channels
@@ -81,10 +80,11 @@ public class CPublisher
   private static final int CATS = 4;
   private static final int ROLES = 5;
   private static final int PUBROLES = 6;
-  private static final int NAME = 7;
-  private static final int PREVIEW = 8;
+  private static final int CONTROLS = 7;
+  private static final int NAME = 8;
+  private static final int PREVIEW = 9;
   //number of extra steps
-  private static final int EXTRA = 4;
+  private static final int EXTRA = 5;
   private int mode = NONE;
   private Document channelTypes = null;
   private Document channelDecl = null;
@@ -108,6 +108,7 @@ public class CPublisher
   private String minimized = "false";
   private String editable = "false";
   private String hasHelp = "false";
+  private String hasAbout = "false";
   private String removable = "true";
   private String detachable = "true";
 
@@ -179,17 +180,19 @@ public class CPublisher
       currentStep = runtimeData.getParameter("currentStep");
     if (action != null) {
       if (action.equals("choose"))
-        prepareChoose();
+        prepareChoose(); 
       else if (action.equals("publish"))
-        preparePublish();
+        preparePublish(); 
       else if (action.equals("publishCats"))
-        preparePublishCats();
+        preparePublishCats(); 
       else if (action.equals("publishRoles"))
-        preparePublishRoles();
+        preparePublishRoles(); 
+      else if (action.equals("publishControls"))
+        preparePublishControls(); 
       else if (action.equals("publishName"))
-        preparePublishName();
+        preparePublishName(); 
       else if (action.equals("saveChanges"))
-        prepareSaveChanges();
+        prepareSaveChanges(); 
       else if (action.equals("cancel"))
         mode = NONE;
     }
@@ -213,6 +216,9 @@ public class CPublisher
           break;
         case ROLES:
           processXML("main", getRoles(), out);
+          break;
+        case CONTROLS:
+          processXML("main", getControls(), out);
           break;
         default:
           processXML("main", channelTypes, out);
@@ -242,8 +248,8 @@ public class CPublisher
         ssParams.put("extraSteps", Integer.toString(EXTRA));
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      }
-      else
+      } 
+      else 
         Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -287,11 +293,11 @@ public class CPublisher
       int i = Integer.parseInt(currentStep);
       if (i < numSteps) {
         currentStep = Integer.toString(i + 1);
-      }
+      } 
       else if (i == numSteps) {
         mode = CATS;
         currentStep = Integer.toString(i + 1);
-      }
+      } 
       else {
         publishChannel();
         currentStep = "end";
@@ -313,14 +319,14 @@ public class CPublisher
     int nextID = chanReg.getNextId();
     Document doc = new DocumentImpl();
     Element chan = doc.createElement("channel");
-    chan.setAttribute("timeout", "5000");
-    chan.setAttribute("priority", "1");
-    chan.setAttribute("minimized", "false");
-    chan.setAttribute("editable", "false");
-    chan.setAttribute("hasHelp", "false");
-    chan.setAttribute("hasAbout", "false");
-    chan.setAttribute("removable", "true");
-    chan.setAttribute("detachable", "true");
+    chan.setAttribute("timeout", timeout);
+    chan.setAttribute("priority", priority);
+    chan.setAttribute("minimized", minimized);
+    chan.setAttribute("editable", editable);
+    chan.setAttribute("hasHelp", hasHelp);
+    chan.setAttribute("hasAbout", hasAbout);
+    chan.setAttribute("removable", removable);
+    chan.setAttribute("detachable", detachable);
     chan.setAttribute("class", (String)hParams.get("class"));
     chan.setAttribute("name", chanName);
     chan.setAttribute("ID", "chan" + nextID);
@@ -354,7 +360,7 @@ public class CPublisher
    * put your documentation comment here
    */
   private void preparePublishRoles () {
-    mode = NAME;
+    mode = CONTROLS;
     int i = Integer.parseInt(currentStep);
     currentStep = Integer.toString(i + 1);
     try {
@@ -363,6 +369,24 @@ public class CPublisher
       vRoles = new Vector();
       vRoles.add("student");
     }
+  }
+
+  /**
+   * get values for controls and timeout via runtimeData
+   */
+  private void preparePublishControls () {
+    String s;
+    mode = NAME;
+    int i = Integer.parseInt(currentStep);
+    currentStep = Integer.toString(i + 1);
+
+    if ((s = runtimeData.getParameter("timeout"))    != null) timeout = s;
+    if ((s = runtimeData.getParameter("minimized"))  != null) minimized = s;
+    if ((s = runtimeData.getParameter("editable"))   != null) editable = s;
+    if ((s = runtimeData.getParameter("hasHelp"))    != null) hasHelp = s;
+    if ((s = runtimeData.getParameter("hasAbout"))   != null) hasAbout = s;
+    if ((s = runtimeData.getParameter("removable"))  != null) removable = s;
+    if ((s = runtimeData.getParameter("detachable")) != null) detachable = s;
   }
 
   /**
@@ -411,7 +435,7 @@ public class CPublisher
 
   /**
    * put your documentation comment here
-   * @return
+   * @return 
    */
   private Document getRoles () {
     Document roleDoc = null;
@@ -449,7 +473,7 @@ public class CPublisher
       // Make sure all of the roles have been stored
       if (rolesSet == vRoles.size()) {
         return  (true);
-      }
+      } 
       else {
         return  (false);
       }
@@ -460,8 +484,28 @@ public class CPublisher
   }
 
   /**
+   * set up a control document for the stylesheet.
+   * grab it from the CPD.  The channelDefinition DTD should ensure
+   * that it's there and has all the attributes.
+   * @return 
+   */
+  private Document getControls () {
+    Document controlDoc = new DocumentImpl();
+    Element newcontrols;
+    try {
+     Element controls = (Element) channelDecl.getElementsByTagName("controls").item(0);
+      controlDoc.insertBefore(controlDoc.importNode(controls, true), null);
+    } catch (Exception e) {
+      newcontrols = controlDoc.createElement("controls");
+      controlDoc.appendChild(newcontrols);
+    }
+
+    return  controlDoc;
+  }
+
+  /**
    * put your documentation comment here
-   * @return
+   * @return 
    */
   private Document getNameDoc () {
     Document nameDoc = null;
@@ -473,6 +517,3 @@ public class CPublisher
     return  nameDoc;
   }
 }
-
-
-
