@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -356,15 +356,18 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         if ( isFolder ) {
             ++depth;
             ALFolder folder = (ALFolder) node;
-            String id = getLastSiblingNode(folder.getFirstChildNodeId()).getId();
-            while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
-			  String lastNodeId = getLastSiblingNode(id).getId();
-			  id = getLayoutNode(lastNodeId).getPreviousNodeId();
-			  moveNodeToLostFolder(lastNodeId);
-            }  
-            for ( String nextId = folder.getFirstChildNodeId(); nextId != null; 
-                  nextId = getLayoutNode(nextId).getNextNodeId() )
-              moveWrongNodesToLostFolder(nextId,depth);
+            String firstChildId = folder.getFirstChildNodeId();
+            if ( firstChildId != null ) {
+             String id = getLastSiblingNode(firstChildId).getId();
+             while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
+			   String lastNodeId = getLastSiblingNode(id).getId();
+			   id = getLayoutNode(lastNodeId).getPreviousNodeId();
+			   moveNodeToLostFolder(lastNodeId);
+             }  
+             for ( String nextId = folder.getFirstChildNodeId(); nextId != null; 
+                   nextId = getLayoutNode(nextId).getNextNodeId() )
+               moveWrongNodesToLostFolder(nextId,depth);
+            } 
         }
 
   }
