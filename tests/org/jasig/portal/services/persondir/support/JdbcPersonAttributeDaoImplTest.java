@@ -14,7 +14,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.jasig.portal.services.db.TransientDatasource;
+import org.jasig.portal.rdbm.TransientDatasource;
 
 import junit.framework.TestCase;
 

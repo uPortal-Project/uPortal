@@ -3,7 +3,7 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.services.db;
+package org.jasig.portal.rdbm;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
