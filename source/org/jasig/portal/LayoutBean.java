@@ -61,6 +61,7 @@ import  org.apache.xml.serialize.*;
  * @version $Revision$
  */
 public class LayoutBean {
+    public static final int guestUserId = 1;
   // all channel content/parameters/caches/etc are managed here
   ChannelManager channelManager;
   UserLayoutManager uLayoutManager;
@@ -90,7 +91,7 @@ public class LayoutBean {
     HttpSession session = req.getSession(false);
     IPerson person = (IPerson)session.getAttribute("up_person");
     if (person == null) {
-      int guestUserId = 1;
+
       person = new org.jasig.portal.security.provider.PersonImpl();
       person.setID(guestUserId);
       person.setFullName("Guest");
