@@ -2146,7 +2146,7 @@
                   <input type="hidden" name="uPCM_action" value="channelDef"/>
                   <input type="hidden" name="uPCM_capture" value="customSettings"/>
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
-                  <input type="hidden" name="uPCM_step" value="$stepID"/>
+                  <input type="hidden" name="uPCM_step" value="{$stepID}"/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
                     <td>Name:<br />
