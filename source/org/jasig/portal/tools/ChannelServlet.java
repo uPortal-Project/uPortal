@@ -72,7 +72,7 @@ import org.xml.sax.SAXException;
 /**
  * A servlet that allows one to render an IChannel outside of the portal.
  * @author Peter Kharchenko <pkharchenko@interactivebusiness.com>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class ChannelServlet extends HttpServlet {
   public static String detachBaseStart = "detach_";
@@ -125,7 +125,7 @@ public class ChannelServlet extends HttpServlet {
         int guestUserId = 1;
         IPerson person = new org.jasig.portal.security.provider.PersonImpl();
         person.setID(guestUserId);
-        person.setAttribute(person.USERNAME,"guest");
+        person.setAttribute(IPerson.USERNAME,"guest");
         person.setFullName("Guest");
         sd.setPerson(person);
         // todo: determine and pass channel publish/subscribe parameters.
