@@ -23,6 +23,7 @@ import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMServices.JdbcDb;
 import org.jasig.portal.RDBMServices.OracleDb;
 import org.jasig.portal.RDBMServices.PostgreSQLDb;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 
 /**
@@ -111,6 +112,8 @@ public class DatabaseServerImpl implements IDatabaseServer {
                     LOG.error(errMsg, sqle);
                 else
                     LOG.warn(errMsg, sqle);
+                
+                throw new DataAccessResourceFailureException("Error getting connection to [" + this + "]", sqle);
             }            
         }
 

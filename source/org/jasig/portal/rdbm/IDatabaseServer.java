@@ -10,6 +10,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.DataAccessException;
+
 /**
  * This interface represents a single database server. It provides methods
  * to get connections to the server and other meta information about the
@@ -29,13 +31,17 @@ public interface IDatabaseServer {
     public DataSource getDataSource();
 
     /**
-     * Gets a {@link Connection} to the database server. This is generally
-     * implemented as a convience method which wraps the calls
-     * {@link #getDataSource()} and {@link DataSource#getConnection()}. If
-     * a {@link java.sql.SQLException} is thrown while geting the connection
-     * <code>null</code> is returned.
+     * Gets a {@link Connection} to the database server. 
      * 
-     * @return A {@link Connection} to the database server or <code>null</code> if an error occurs.
+     * This is generally
+     * implemented as a convience method which wraps the calls
+     * {@link #getDataSource()} and {@link DataSource#getConnection()}.
+     * 
+     * If unable to obtain a connection, implementations should throw a
+     * DataAccessException.
+     * 
+     * @return A {@link Connection} to the database server
+     * @throws DataAccessException on failure
      */
     public Connection getConnection();
     
