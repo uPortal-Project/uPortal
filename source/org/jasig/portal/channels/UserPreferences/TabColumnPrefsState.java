@@ -57,6 +57,7 @@ import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.factories.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -940,42 +941,19 @@ final class TabColumnPrefsState extends BaseState
     public void renderXML (ContentHandler out) throws PortalException
     {
       File xmlFile = null;
+      String sFS = File.separator;
+      String XMLUri = GenericPortalBean.getPortalBaseDir() + "webpages"+sFS+"media"+sFS+"org"+sFS+"jasig"+sFS+"portal"+sFS+"layout"+sFS+"tab-column"+sFS+"nested-tables"+sFS+"skinList.xml";
+      String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
+      xmlFile = new File (XMLUri);
 
-      //if (skinsSAX2ChannelBuffer == null) {
-        //skinsSAX2ChannelBuffer = new SAX2BufferImpl(out);
-        String sFS = File.separator;
-        String XMLUri = GenericPortalBean.getPortalBaseDir() + "webpages"+sFS+"media"+sFS+"org"+sFS+"jasig"+sFS+"portal"+sFS+"layout"+sFS+"tab-column"+sFS+"nested-tables"+sFS+"skinList.xml";
-        String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
-        try {
-          xmlFile = new File (XMLUri);
-        }
-        catch (NullPointerException e) {
-          throw new GeneralRenderingException ("Can't find XML file in TabColumnPrefsState:SelectSkinsState.renderXML");
-        }
-
-        XSLT xslt = new XSLT ();
-        xslt.setXML(xmlFile);
-        xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
-        xslt.setTarget(out);
-        //skinsSAX2ChannelBuffer.startBuffering();
-        //xslt.setTarget(skinsSAX2ChannelBuffer);
-        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-        if(currentSkin!=null)
-          xslt.setStylesheetParameter("currentSkin", currentSkin);
-        xslt.transform();
-        /*try {
-          skinsSAX2ChannelBuffer.stopBuffering();
-        }
-        catch (SAXException e) {
-          throw new GeneralRenderingException ("Trying to stop buffering, TabColumnPrefsState:SelectSkinsState.renderXML");
-        }
-      }
-      try {
-        skinsSAX2ChannelBuffer.outputBuffer();
-      }
-      catch (SAXException e) {
-        throw new GeneralRenderingException ("Trying to output buffer, TabColumnPrefsState:SelectSkinsState.renderXML");
-      }*/
+      XSLT xslt = new XSLT ();
+      xslt.setXML(xmlFile);
+      xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+      if(currentSkin!=null)
+        xslt.setStylesheetParameter("currentSkin", currentSkin);
+      xslt.transform();
     }
   }
 
@@ -1058,4 +1036,5 @@ final class TabColumnPrefsState extends BaseState
       context.setState(defaultState);
     }
   }
+
 }
