@@ -87,7 +87,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
       String theCommand = runtimeData.getParameter("grpCommand");
       String parentID = getCommandArg(runtimeData);
       boolean parentIsInitialGroupContext = parentIsInitialGroupContext(parentID);
-      String newGrpName = runtimeData.getParameter("grpName");
+      String newGrpName = runtimeData.getParameter("grpNewName");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): New grp: " + newGrpName +
             " will be added to parent element = " + parentID);
       IEntityGroup parentGroup = null;
