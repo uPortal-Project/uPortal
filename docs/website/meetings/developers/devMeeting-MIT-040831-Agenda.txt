@@ -43,7 +43,7 @@ Monday, August 30, 2004
                  Bean factory (IoC)
                  Domain objects
                  Identifiers
-                 Transfer objects
+                 Data transfer objects (DTO)
                  Data access objects (DAO)
                  Spring JDBC implementation
 
@@ -97,7 +97,8 @@ Tuesday, August 31, 2004
 
 02:45 - 03:30  Documentation [John Fereira]
 
-                 Website 
+                 Website
+                 What goes in CVS
 
 03:30 - 04:00  Meeting summary [Ken Weiner]
 
