@@ -267,8 +267,8 @@ public class PortalSessionManager extends HttpServlet {
         }
       }
     }  catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "PortalSessionManager::workerTask(): Worker " + worker + " task failed.");
-      LogService.instance().log(LogService.ERROR, e.getMessage());
+      LogService.instance().log(LogService.ERROR, "PortalSessionManager::workerTask(): Worker " + worker +
+                                                  " task failed.", e);
     }
   }
 
