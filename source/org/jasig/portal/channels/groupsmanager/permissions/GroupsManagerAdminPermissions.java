@@ -36,7 +36,7 @@
 
 package  org.jasig.portal.channels.groupsmanager.permissions;
 
-import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
+import org.jasig.portal.channels.groupsmanager.Utility;
 import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -48,10 +48,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
  * @author Don Fracapane
  * @version $Revision$
  */
-public class GroupsManagerAdminPermissions
-      implements IGroupsManagerPermissions, GroupsManagerConstants {
-
-   protected static IGroupsManagerPermissions _instance = null;
+public class GroupsManagerAdminPermissions extends GroupsManagerDefaultPermissions {
 
    /**
     * put your documentation comment here
@@ -59,12 +56,13 @@ public class GroupsManagerAdminPermissions
    public GroupsManagerAdminPermissions () {
    }
 
+   protected static IGroupsManagerPermissions _instance = null;
+
    /**
-    * Return the single instance of GroupsManagerDefaultPermissions.
+    * Return the single instance of GroupsManagerAdminPermissions.
     * @return IGroupsManagerPermissions
     */
-   public static IGroupsManagerPermissions getInstance()
-   {
+   public static synchronized IGroupsManagerPermissions getInstance(){
       if (_instance == null){
          _instance = new GroupsManagerAdminPermissions();
       }
@@ -72,90 +70,15 @@ public class GroupsManagerAdminPermissions
    }
 
    /**
-    * Answers if principal can assign permissions to the target group member.
+    * Answers if principal can perform the activity on the target group member.
     * @param ap AuthorizationPrincipal
+    * @param activity String
     * @param gm IGroupMember
     * @return boolean
     */
-   public boolean canAssignPermissions (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canAssignPermissions() not yet implemented.");
-      return  true;
+   public boolean isAuthorized (IAuthorizationPrincipal ap, String activity, IGroupMember gm) {
+      boolean answer = (Utility.hasValue(gm.getKey()) ? true : false);
+      return  answer;
    }
 
-   /**
-    * Answers if principal can create a group in the target group member.
-    * @param ap AuthorizationPrincipal
-    * @param gm IGroupMember
-    * @return boolean
-   */
-   public boolean canCreateGroup (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canCreateGroup() not yet implemented.");
-      return  true;
-   }
-
-   /**
-    * Answers if principal can manage the members in the target group member.
-    * @param ap AuthorizationPrincipal
-    * @param gm IGroupMember
-    * @return boolean
-    */
-   public boolean canManageMembers (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canManageMembers() not yet implemented.");
-      return  true;
-   }
-
-   /**
-    * Answers if principal can delete the target group member.
-    * @param ap AuthorizationPrincipal
-    * @param gm IGroupMember
-    * @return boolean
-    */
-   public boolean canDelete (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canDelete() not yet implemented.");
-      return  true;
-   }
-
-   /**
-    * Answers if principal can select the target group member.
-    * @param ap AuthorizationPrincipal
-    * @param gm IGroupMember
-    * @return boolean
-    */
-   public boolean canSelect (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canSelect() not yet implemented.");
-      return  true;
-   }
-
-   /**
-    * Answers if principal can update the target group member.
-    * @param ap AuthorizationPrincipal
-    * @param gm IGroupMember
-    * @return boolean
-    */
-   public boolean canUpdate (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canRename() not yet implemented.");
-      return  true;
-   }
-
-   /**
-    * Answers if principal can view the target group member.
-    * @param ap AuthorizationPrincipal
-    * @param gm IGroupMember
-    * @return boolean
-    */
-    public boolean canView (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canView() not yet implemented.");
-      return  true;
-   }
-
-   /**
-    * Answers if the principal is able to view the group member properties.
-    * @param ap IAuthorizationPrincipal
-    * @param gm IGroupMember
-    * @return boolean
-    */
-   public boolean canViewProperties (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canView() not yet implemented.");
-      return  true;
-   }
 }

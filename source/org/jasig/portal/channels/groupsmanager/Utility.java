@@ -276,7 +276,7 @@ public class Utility
     * @param o Object
     * @return boolean
     */
-   protected static boolean hasValue (Object o) {
+   public static boolean hasValue (Object o) {
       boolean rval = false;
       if (o != null && !o.toString().trim().equals("")) {
          rval = true;
@@ -291,7 +291,7 @@ public class Utility
     * @param test String
     * @return boolean
     */
-   protected static boolean hasValue (Object o, String test) {
+   public static boolean hasValue (Object o, String test) {
       boolean rval = false;
       if (hasValue(o)) {
          if (String.valueOf(o).equals(test)) {

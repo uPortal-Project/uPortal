@@ -175,13 +175,18 @@ public class GroupsManagerDefaultPermissions
     * @return boolean
     */
    public boolean isAuthorized (IAuthorizationPrincipal ap, String activity, IGroupMember gm) {
+      /* If the gm key is null, we cannot meaningfully determine authorizations. The transient
+      search element has a null key so all permissions should be denied.
+      */
       boolean answer = false;
-      try {
-         answer = ap.hasPermission(OWNER, activity, gm.getKey());
-      } catch (AuthorizationException ae) {
-         Utility.logMessage("ERROR", "GroupsManagerDefaultPermission::isAuthorized(): Raised AuthorizationException exception",
-               ae);
-         answer = false;
+      if (gm.getKey() != null){
+         try {
+            answer = ap.hasPermission(OWNER, activity, gm.getKey());
+         } catch (AuthorizationException ae) {
+            Utility.logMessage("ERROR", "GroupsManagerDefaultPermission::isAuthorized(): Raised AuthorizationException exception",
+                  ae);
+            answer = false;
+         }
       }
       return  answer;
    }

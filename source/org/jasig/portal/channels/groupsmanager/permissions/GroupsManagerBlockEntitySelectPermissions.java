@@ -36,10 +36,9 @@
 
 package  org.jasig.portal.channels.groupsmanager.permissions;
 
-import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
-import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
 
 
 /**
@@ -48,8 +47,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
  * @author Don Fracapane
  * @version $Revision$
  */
-public class GroupsManagerBlockEntitySelectPermissions extends GroupsManagerDefaultPermissions
-      implements IGroupsManagerPermissions, GroupsManagerConstants {
+public class GroupsManagerBlockEntitySelectPermissions extends GroupsManagerDefaultPermissions {
 
    /**
     * put your documentation comment here
@@ -57,19 +55,20 @@ public class GroupsManagerBlockEntitySelectPermissions extends GroupsManagerDefa
    public GroupsManagerBlockEntitySelectPermissions () {
    }
 
+   protected static IGroupsManagerPermissions _instance = null;
+
    /**
-    * Return the single instance of GroupsManagerDefaultPermissions.
+    * Return the single instance of GroupsManagerBlockEntitySelectPermissions.
     * @return IGroupsManagerPermissions
     */
-   public static IGroupsManagerPermissions getInstance()
-   {
+   public static synchronized IGroupsManagerPermissions getInstance(){
       if (_instance == null){
          _instance = new GroupsManagerBlockEntitySelectPermissions();
       }
       return _instance;
    }
 
-   /**
+    /**
     * Answers if principal can select the target group member.
     * @param ap AuthorizationPrincipal
     * @param gm IGroupMember
