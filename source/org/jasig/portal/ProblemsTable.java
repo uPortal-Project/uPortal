@@ -39,7 +39,7 @@ public class ProblemsTable {
      * The name of the PropertiesManager property the value of which should be the 
      * number of recent PortalExceptions you would like stored for each specific subcategory of ErrorID.
      */
-    public static final String MAX_RECENT_ERRORS_PER_SPECIFIC_PROPERTY = "org.jasig.uportal.ProblemsTable.maxRecentErrorsPerSpecific";
+    public static final String MAX_RECENT_ERRORS_PER_SPECIFIC_PROPERTY = "org.jasig.portal.ProblemsTable.maxRecentErrorsPerSpecific";
     
     /**
      * The default number of recent PortalExceptions that will be stored for each specific subcategory of ErrorID
@@ -56,7 +56,7 @@ public class ProblemsTable {
      * The name of the propertiesManager property the value of which should be the number of recent
      * PortalExceptions you would like stored in the overall FIFO cache, regardless of ErrorID.
      */
-    public static final String OVERALL_RECENT_ERRORS_PROPERTY = "org.jasig.uportal.ProblemsTable.recentErrorsOverall";
+    public static final String OVERALL_RECENT_ERRORS_PROPERTY = "org.jasig.portal.ProblemsTable.recentErrorsOverall";
     
     /**
      * The default number of recent PortalExceptions that will be stored in the overall FIFO queue
