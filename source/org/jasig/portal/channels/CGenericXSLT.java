@@ -119,14 +119,19 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     stateTable = Collections.synchronizedMap(new HashMap());
   }
 
-  public void setStaticData (ChannelStaticData sd, String uid)
+  public void setStaticData (ChannelStaticData sd, String uid) throws ResourceMissingException
   {
     CState state = new CState();
     state.xmlUri = sd.getParameter("xmlUri");
     state.sslUri = sd.getParameter("sslUri");
 
-    if (state.sslUri != null)
-      state.sslUri = this.getClass().getResource(state.sslUri).toString();
+    if (state.sslUri != null) {
+      java.net.URL url = this.getClass().getResource(state.sslUri);
+      if (url == null) {
+        throw new ResourceMissingException(state.sslUri, "Uri", "Unable to get resource");
+      }
+      state.sslUri = url.toString();
+    }
       //state.sslUri = state.sslUri;
 
     state.xslTitle = sd.getParameter("xslTitle");
