@@ -139,13 +139,6 @@ public class LayoutBean
 
     try
     {
-      //debug
-      Logger.log(Logger.DEBUG,"--------Context Path=\""+req.getContextPath()+"\".");
-      Logger.log(Logger.DEBUG,"--------Path info=\""+req.getPathInfo()+"\".");
-      Logger.log(Logger.DEBUG,"--------Path translated=\""+req.getPathTranslated()+"\".");
-      Logger.log(Logger.DEBUG,"--------Query String=\""+req.getQueryString()+"\".");
-      Logger.log(Logger.DEBUG,"--------Servlet Path=\""+req.getServletPath()+"\".");
-
       // get the layout manager
       if (uLayoutManager == null) {
         uLayoutManager = new UserLayoutManager (req, getPerson(req));
