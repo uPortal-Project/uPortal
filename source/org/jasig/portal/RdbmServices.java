@@ -162,4 +162,13 @@ public class RdbmServices extends GenericPortalBean
   {
     return sJdbcUrl;
   }
+
+  /**
+   * Get the JDBC user
+   * @return the JDBC connection URL
+   */
+  public static String getJdbcUser ()
+  {
+    return sJdbcUser;
+  }
 }
