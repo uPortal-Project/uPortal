@@ -245,13 +245,13 @@ public class XMLChannelWrapper
     }
     // Send the runtime data to the channel
     m_ch.setRuntimeData(rd);
-    HTMLSerializer htmlSerializer = new HTMLSerializer(out, new OutputFormat("HTML", "UTF-8", true));
-    try {
-      // Render the channel into the HTML stream
-      m_ch.renderXML(htmlSerializer);
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
-    }
+
+    OutputFormat outputFormat = new OutputFormat("HTML","UTF-8",true);
+    outputFormat.setOmitDocumentType(true);
+    HTMLSerializer htmlSerializer= new HTMLSerializer(out, outputFormat);
+
+    // Render the channel into the HTML stream
+    m_ch.renderXML(htmlSerializer);
   }
 
   /**
