@@ -106,7 +106,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		}
 	}
 
-	private String analyzeParameters() throws Exception {
+	private String analyzeParameters() throws PortalException {
 		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = runtimeData.getParameter("uPcFM_action");
 		if (action != null) {
@@ -229,7 +229,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	}
 
 	public void renderXML(ContentHandler out) throws PortalException {
-
+		
+		String fragmentId = analyzeParameters();
 
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
 		xslt.setXML(getFragmentList());
@@ -238,8 +239,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 			"fragmentManager",
 			runtimeData.getBrowserInfo());
 		xslt.setTarget(out);
-		/*if ( catId.length() > 0 )
-		 xslt.setStylesheetParameter("catID", catId );*/
+		xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
 		xslt.setStylesheetParameter(
 			"baseActionURL",
 			runtimeData.getBaseActionURL());
