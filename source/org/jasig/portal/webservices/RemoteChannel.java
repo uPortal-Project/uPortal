@@ -41,6 +41,7 @@ import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.ChannelRenderer;
 import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivileged;
 import org.jasig.portal.IMultithreadedChannel;
@@ -152,7 +153,7 @@ public class RemoteChannel implements IRemoteChannel {
     staticData.setJNDIContext(channelContext);
 
     // Set the channel parameters
-    ChannelDefinition.ChannelParameter[] channelParams = channelDef.getParameters();
+    ChannelParameter[] channelParams = channelDef.getParameters();
     for (int i = 0; i < channelParams.length; i++) {
       staticData.setParameter(channelParams[i].getName(), channelParams[i].getValue());
     }
