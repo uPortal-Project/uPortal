@@ -90,6 +90,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String MEMBER_IS_GROUP_COLUMN = "MEMBER_IS_GROUP";
     private static String MEMBER_IS_ENTITY = "F";
     private static String MEMBER_IS_GROUP = "T";
+    private static String GROUP_NODE_SEPARATOR;
 
     // SQL strings for group MEMBERS crud:
     private static String allMemberColumns;
@@ -109,6 +110,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 public RDBMEntityGroupStore()
 {
     super();
+    initialize();
 }
 /**
  * @param conn java.sql.Connection
@@ -425,7 +427,7 @@ public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
             {
                 while (rs.next())
                 {
-                    groupKey = rs.getString(1) + NODE_SEPARATOR + rs.getString(2);
+                    groupKey = rs.getString(1) + GROUP_NODE_SEPARATOR + rs.getString(2);
                     groupKeys.add(groupKey);
                 }
             }
@@ -905,6 +907,20 @@ private static java.lang.String getUpdateGroupSql()
             updateGroupSql = buff.toString();
     }
     return updateGroupSql;
+}
+/**
+ * Get the node separator character from the GroupServiceConfiguration.  
+ * Default it to IGroupConstants.NODE_SEPARATOR.
+ */
+private void initialize() {
+    String sep;
+    try
+        { sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
+    catch (Exception ex)
+        { sep = NODE_SEPARATOR; }
+    GROUP_NODE_SEPARATOR = sep;
+    String msg = "RDBMEntityGroupStore.initialize(): Node separator set to " + sep;
+    LogService.log (LogService.INFO, msg);
 }
 /**
  * Find and return an instance of the group.

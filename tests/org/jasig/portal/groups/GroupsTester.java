@@ -338,7 +338,8 @@ public static junit.framework.Test suite() {
   suite.addTest(new GroupsTester("testContains"));
   suite.addTest(new GroupsTester("testDeleteChildGroup"));
   suite.addTest(new GroupsTester("testMixLockableAndNonLockableGroups"));
-  suite.addTest(new GroupsTester("testConcurrentAccess")); 
+  suite.addTest(new GroupsTester("testConcurrentAccess"));
+  suite.addTest(new GroupsTester("testParseCompoundKeys")); 
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -1417,6 +1418,57 @@ public void testConcurrentAccess() throws Exception
     Thread.sleep(numReadTests * 20);  // let them die.
 
     print(CR + "***** LEAVING GroupsTester.testConcurrentAccess() *****" + CR);
+}
+
+/**
+ */
+public void testParseCompoundKeys() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testParseCompoundKeys() *****" + CR);
+    
+    String msg = null;
+    int maxNodes=5;
+    int idx=0;
+    String[] keys = new String[maxNodes];
+    String[] nodes = new String[maxNodes];
+    String key = null;
+    String sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
+    print("GroupServiceConfiguration node separator: " + sep);
+    
+    print("Creating random node strings.");
+    for (idx=0; idx<maxNodes; idx++)
+        { nodes[idx] = (getRandomString(random, 3) + idx); }
+
+    print ("Creating keys.");    
+    for (idx=0; idx<maxNodes; idx++)
+    {
+        key = nodes[0];
+        for (int i = 1; i<=idx; i++) 
+            { key = key + sep + nodes[i]; }
+        keys[idx] = key;
+        print("key " + idx + " : " + key);
+    }
+    
+    for (idx=1; idx<maxNodes; idx++)
+    {
+        CompositeEntityIdentifier cei = null;
+        msg = "Creating CompositeEntityIdentifier for " + keys[idx];
+        print(msg);
+        cei = new CompositeEntityIdentifier(keys[idx], GROUP_CLASS);
+        assertNotNull(msg, cei);
+        msg = "Testing COMPOUND key of " + cei;
+        assertEquals(msg, keys[idx], cei.getKey());
+        msg = "Testing LOCAL key of " + cei;
+        assertEquals(msg, nodes[idx], cei.getLocalKey());
+        msg = "Testing SERVICE NAME of " + cei;
+        assertEquals(msg, idx, cei.getServiceName().size());
+    }
+    
+    
+
+    print(CR + "***** LEAVING GroupsTester.testParseCompoundKeys() *****" + CR);
+
+
 }
 
 }
