@@ -1464,13 +1464,13 @@ public class RDBMUserLayoutStore
    * @param approver
    * @exception Exception
    */
-  public void approveChannel(int chanId, IPerson approver, java.sql.Timestamp approveDate) throws Exception {
+  public void approveChannel(int chanId, IPerson approver, java.util.Date approveDate) throws Exception {
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
         String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() + ", CHAN_APVL_DT = " +
-        tsStart + " '" + approveDate.toString() + "'" + tsEnd +
+        tsStart + " '" + new java.sql.Timestamp(approveDate.getTime()).toString() + "'" + tsEnd +
         " WHERE CHAN_ID = " + chanId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
@@ -1541,7 +1541,7 @@ public class RDBMUserLayoutStore
             + "CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
         sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
             + publisher.getID() + ", " + sysdate + ", " + timeout
-            + "', '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
+            + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
             + "', '" + sqlName + "', '" + sqlFName + "')";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
         stmt.executeUpdate(sInsert);
