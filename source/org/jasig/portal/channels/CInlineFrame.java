@@ -63,7 +63,7 @@ import  org.jasig.portal.services.LogService;
 public class CInlineFrame extends BaseChannel {
   protected String srcUrl;      // the url for the IFrame content
   protected String frameHeight; // the height of the IFrame in pixels
-  
+
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/CInlineFrame.ssl");
 
   /**
@@ -78,13 +78,13 @@ public class CInlineFrame extends BaseChannel {
    * Build an XML string and transform for display using org.jasig.portal.util.XSLT
    * Creates IFrame or link depending on browser capability.
    */
-  public void renderXML (DocumentHandler out) throws PortalException {   
+  public void renderXML (DocumentHandler out) throws PortalException {
     StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
     sbXML.append("<iframe>");
     sbXML.append("  <url>").append(srcUrl).append("</url>");
     sbXML.append("  <height>").append(frameHeight).append("</height>");
     sbXML.append("</iframe>");
-    
+
     XSLT xslt = new XSLT();
     xslt.setXML(sbXML.toString());
     xslt.setXSL(sslLocation, getStylesheetTitle(), runtimeData.getBrowserInfo());
@@ -100,7 +100,8 @@ public class CInlineFrame extends BaseChannel {
   private String getStylesheetTitle () {
     String ssTitle = "noIFrameSupport";
     String userAgent = runtimeData.getBrowserInfo().getUserAgent();
-    if ((userAgent.indexOf("MSIE 3") >= 0) || (userAgent.indexOf("MSIE 4") >= 0) || (userAgent.indexOf("MSIE 5") >= 0) || 
+    if ((userAgent.indexOf("MSIE 3") >= 0) || (userAgent.indexOf("MSIE 4") >= 0) ||
+        (userAgent.indexOf("MSIE 5") >= 0) || (userAgent.indexOf("MSIE 6") >= 0) ||
         (userAgent.indexOf("Mozilla/5") >= 0)) {
       ssTitle = "IFrameSupport";
     }
