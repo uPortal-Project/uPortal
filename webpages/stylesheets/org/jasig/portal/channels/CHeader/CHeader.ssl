@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CHeader/html.xsl"  type="text/xsl" media="netscape"?>
-<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CHeader/html.xsl"  type="text/xsl" media="explorer"?>
-<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CHeader/header_wml.xsl"  type="text/xsl" media="up"?>
+<?xml-stylesheet href="CHeader/html.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet href="CHeader/html.xsl"  type="text/xsl" media="explorer"?>
+<?xml-stylesheet href="CHeader/header_wml.xsl"  type="text/xsl" media="up"?>
 
 
 <document>

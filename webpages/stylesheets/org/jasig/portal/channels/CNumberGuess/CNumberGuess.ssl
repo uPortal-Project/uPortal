@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet title="main" href="webpages/stylesheets/org/jasig/portal/channels/CNumberGuess/guessNumber.xsl" type="text/xsl" media="explorer"?>
+<?xml-stylesheet title="main" href="CNumberGuess/guessNumber.xsl" type="text/xsl" media="explorer"?>
 
 <document>
 </document>
