@@ -41,6 +41,8 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringWriter;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Hashtable;
@@ -173,30 +175,32 @@ public class PortalSessionManager extends HttpServlet {
         res.setHeader("uPortal-version", "uPortal_2-0+");
 
         HttpSession session = req.getSession();
+
         if (session != null) {
-
-            // obtain a tag table
             Set requestTags=null;
-            synchronized(session) {
-                requestTags=(Set)session.getAttribute("uP_requestTags");
-                if(requestTags==null) {
-                    requestTags=Collections.synchronizedSet(new HashSet());
-                    session.setAttribute("uP_requestTags",requestTags);
-                }
-            }
-
-            // determine current tag
-            UPFileSpec upfs=new UPFileSpec(req);
-
-            String tag=upfs.getTagId();
-
-            // see if the tag was registered
             boolean request_verified=false;
-            if(tag!=null) {
-                request_verified=(tag.equals(IDEMPOTENT_URL_TAG) || requestTags.remove(tag));
-            }
 
-            LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
+            if(!ALLOW_REPEATED_REQUESTS) {
+                // obtain a tag table
+                synchronized(session) {
+                    requestTags=(Set)session.getAttribute("uP_requestTags");
+                    if(requestTags==null) {
+                        requestTags=Collections.synchronizedSet(new HashSet());
+                        session.setAttribute("uP_requestTags",requestTags);
+                    }
+                }
+                // determine current tag
+                UPFileSpec upfs=new UPFileSpec(req);
+
+                String tag=upfs.getTagId();
+
+                // see if the tag was registered
+                if(tag!=null) {
+                    request_verified=(tag.equals(IDEMPOTENT_URL_TAG) || requestTags.remove(tag));
+                }
+
+                LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
+            }
 
             try {
                 UserInstance userInstance = null;
@@ -219,18 +223,19 @@ public class PortalSessionManager extends HttpServlet {
                     throw new ServletException(e);
                 }
 
-                // generate and register a new tag
-                String newTag=Long.toHexString(randomGenerator.nextLong());
-                LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+req.getSession(false).getId());
-                // no need to check for duplicates :) we'd have to wait a lifetime of a universe for this time happen
-                if(!requestTags.add(newTag)) {
-                    LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
-                }
 
                 // fire away
                 if(ALLOW_REPEATED_REQUESTS) {
                     userInstance.writeContent(new RequestParamWrapper(req,true),res);
                 } else {
+                    // generate and register a new tag
+                    String newTag=Long.toHexString(randomGenerator.nextLong());
+                    LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+req.getSession(false).getId());
+                    // no need to check for duplicates :) we'd have to wait a lifetime of a universe for this time happen
+                    if(!requestTags.add(newTag)) {
+                        LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
+                    }
+
                     userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }
             } catch (PortalException pe) {
@@ -531,6 +536,11 @@ public class PortalSessionManager extends HttpServlet {
                     }
                 }
                 // regular params
+                try {
+                    source.setCharacterEncoding("UTF-8");
+                } catch (UnsupportedEncodingException uee) {
+                    LogService.instance().log(LogService.ERROR, "PortalSessionManager.RequestParamWrapper(): unable to set UTF-8 character encoding! "+uee);
+                }
                 Enumeration en = source.getParameterNames();
                 if (en != null) {
                     while (en.hasMoreElements()) {
