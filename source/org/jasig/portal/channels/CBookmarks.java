@@ -367,7 +367,7 @@ public class CBookmarks implements IChannel
     if (stylesheet!=null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-      processor.setStylesheetParam ("channelID",processor.createXString (staticData.getChannelID ()));
+      processor.setStylesheetParam ("baseActionURL",processor.createXString (runtimeData.getBaseActionURL ()));
       processor.setStylesheetParam ("bookmarkID",processor.createXString (String.valueOf (bookmarkNumber)));
       processor.process (new XSLTInputSource (bookmark),stylesheet,new XSLTResultTarget (out));
     }
