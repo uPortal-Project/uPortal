@@ -137,23 +137,18 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     {
       throw new ResourceMissingException (xmlUri, "", e.getMessage());
     }
-
-    Hashtable ssParams = new Hashtable();
-    ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-
-    for (Enumeration pen = runtimeData.keys(); pen.hasMoreElements() ;)
-    {
-      String key = (String)pen.nextElement();
-      ssParams.put(key, (String)runtimeData.get(key));
-    }
-
+   
+    runtimeData.put("baseActionURL",runtimeData.getBaseActionURL());
     try
     {
-      XSLT.transform(out, media, xml, sslUri, ssParams);
+      XSLT.transform(out, media, xml, sslUri, runtimeData);
     }
     catch (Exception e)
     {
-      throw new GeneralRenderingException(e.getMessage());
+	java.io.StringWriter sw=new java.io.StringWriter();
+	e.printStackTrace(new java.io.PrintWriter(sw));
+	sw.flush();
+      throw new GeneralRenderingException(sw.toString());
     }
   }
 }
