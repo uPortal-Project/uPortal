@@ -151,8 +151,10 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         log.error( "CGenericXSLT: Cannot initialize ILocalConnectionContext: " + e);
       }
     }
-
+    state.params.putAll(sd);
+    
     stateTable.put(uid,state);
+    
   }
 
   public void setRuntimeData (ChannelRuntimeData rd, String uid)
@@ -228,6 +230,17 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     {
       if (log.isDebugEnabled())
           log.debug("CGenericXSLT::renderXML() : state = " + state );
+      
+      // OK, pass everything we got cached in params...
+      if (state.params != null) {
+          Iterator it = state.params.keySet().iterator();
+          while (it.hasNext()) {
+              String n = (String) it.next();
+              if (state.params.get((Object) n) != null) {
+                  state.runtimeData.put(n, state.params.get((Object) n));
+              }
+          }
+      }
 
       String xml;
       Document xmlDoc;
