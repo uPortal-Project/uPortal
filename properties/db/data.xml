@@ -154,8 +154,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>1002</value></column>
         <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -168,8 +168,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>1004</value></column>
         <column><name>PRNT_NODE_ID</name><value>1001</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -182,8 +182,8 @@
         <column><name>PREV_NODE_ID</name><value>1002</value></column>
         <column><name>CHLD_NODE_ID</name><value>1006</value></column>
         <column><name>PRNT_NODE_ID</name><value>1001</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -196,8 +196,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
         <column><name>PRNT_NODE_ID</name><value>1002</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -210,8 +210,8 @@
         <column><name>PREV_NODE_ID</name><value>1004</value></column>
         <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
         <column><name>PRNT_NODE_ID</name><value>1002</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -224,8 +224,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
         <column><name>PRNT_NODE_ID</name><value>1003</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -239,8 +239,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>1011</value></column>
         <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -253,8 +253,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>1013</value></column>
         <column><name>PRNT_NODE_ID</name><value>1010</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -268,8 +268,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
         <column><name>PRNT_NODE_ID</name><value>1011</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -282,8 +282,8 @@
         <column><name>PREV_NODE_ID</name><value>1011</value></column>
         <column><name>CHLD_NODE_ID</name><value>1014</value></column>
         <column><name>PRNT_NODE_ID</name><value>1010</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
@@ -297,8 +297,8 @@
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
         <column><name>PRNT_NODE_ID</name><value>1012</value></column>
-        <column><name>UNREMOVABLE</name><value>Y</value></column>
-        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>PRIORITY</name><value>0</value></column>
       </row>
 
