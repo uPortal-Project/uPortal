@@ -57,59 +57,81 @@ public class RestrictedPerson implements IPerson {
     }
 
     public Object getAttribute(String key) {
-        return person.getAttribute(key);
+        return this.person.getAttribute(key);
     }
     
     public Object[] getAttributeValues(String key) {
-        return person.getAttributeValues(key);
+        return this.person.getAttributeValues(key);
     }
 
     public Enumeration getAttributeNames() {
-        return person.getAttributeNames();
+        return this.person.getAttributeNames();
     }
 
     public Enumeration getAttributes() {
-        return person.getAttributes();
+        return this.person.getAttributes();
     }
 
     public String getFullName() {
-        return person.getFullName();
+        return this.person.getFullName();
     }
 
     public int getID() {
-        return person.getID();
+        return this.person.getID();
     }
 
     public boolean isGuest() {
-        return person.isGuest();
-    }
-
-    public void setAttribute(String key, Object value) {
-        setAttribute(key, value);
-    }
-
-    public void setFullName(String sFullName) {
-        setFullName(sFullName);
-    }
-
-    public void setID(int sID) {
-        setID(sID);
+        return this.person.isGuest();
     }
 
     /**
-     * Prevents access to the security context
+     * RestrictedPerson's implementation of setAttribute does nothing.
+     */
+    public void setAttribute(String key, Object value) {
+        // Part of RestrictedPerson's restrictedness is to do nothing
+        // when this method is invoked.
+    }
+
+    /**
+     * RestrictedPerson's implementation of setFullName does nothing.
+     */
+    public void setFullName(String sFullName) {
+        // Part of RestrictedPerson's restrictedness is to do nothing
+        // when this method is invoked.
+    }
+
+    /**
+     * RestrictedPerson's implementation of setID does nothing.
+     */
+    public void setID(int sID) {
+        // Part of RestrictedPerson's restrictedness is to do nothing
+        // when this method is invoked.
+    }
+
+    /**
+     * RestrictedPerson's implementation of getSecurityContext prevents
+     * access to the security context by always returning null.
      * @return null
      */
     public ISecurityContext getSecurityContext() {
         return null;
     }
 
+    /**
+     * RestrictedPerson's implementation of setSecurityContext does nothing.
+     */
     public void setSecurityContext(ISecurityContext securityContext) {
-        setSecurityContext(securityContext);
+        // Part of RestrictedPerson's restrictedness is to do nothing
+        // when this method is invoked.
     }
 
+    /**
+     * RestrictedPerson's implementation of getEntityIdentifier always returns null,
+     * as part of the restrictedness of this IPerson implementation.
+     * @return null
+     */
     public EntityIdentifier getEntityIdentifier() {
-        return getEntityIdentifier();
+        return null;
     }
 }
 
