@@ -51,29 +51,29 @@
 						</table>
 					</xsl:when>
 					<xsl:when test="$EditMode='AddBookmark'">
-						<table border="0">
-					
+						<table border="0">					
 							<tr>
-								<td class="uportal-label">Bookmark Title:</td>
-								<tr><td><input type="text" name="BookmarkTitle" class="uportal-input-text"></input></td></tr>
-							</tr>
-
-
-
-
-							<tr>
-								<td  class="uportal-label">URL:</td></tr>
-							<tr>	<td><input type="text" name="BookmarkURL" class="uportal-input-text"></input></td>
+							  <td class="uportal-label">Bookmark Title:</td>
 							</tr>
 							<tr>
-								<td class="uportal-label">Description:</td></tr>
-							<tr>	<td><textarea rows="5" cols="20" name="BookmarkDescription" class="uportal-input-text"></textarea></td>
+							  <td><input type="text" name="BookmarkTitle" class="uportal-input-text"></input></td>
 							</tr>
 							<tr>
-								<td>
-									<input type="submit" name="SubmitButton" value="Add" class="uportal-button"></input>
-									<input type="submit" name="SubmitButton" value="Cancel" class="uportal-button"></input>
-								</td>
+							  <td class="uportal-label">URL:</td>
+							</tr>
+							<tr>
+							  <td><input type="text" name="BookmarkURL" class="uportal-input-text"></input></td>
+							</tr>
+							<tr>
+							  <td class="uportal-label">Description:</td></tr>
+							<tr>	
+							  <td><textarea rows="5" cols="20" name="BookmarkDescription" class="uportal-input-text">Add description here</textarea></td>
+							</tr>
+							<tr>
+							  <td>
+							    <input type="submit" name="SubmitButton" value="Add" class="uportal-button"></input>
+								<input type="submit" name="SubmitButton" value="Cancel" class="uportal-button"></input>
+							  </td>
 							</tr>
 						</table>
 					</xsl:when>
