@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-  <xsl:param name="baseActionURL">default</xsl:param>
+  <xsl:param name="baseActionURL">baseActionURL</xsl:param>
+  <xsl:param name="downloadWorkerURL">downloadWorker</xsl:param>
 
   <xsl:template match="/">
     <p class="uportal-text">
@@ -39,7 +40,14 @@
     <xsl:if test="value">
       <tr>
         <td><xsl:value-of select="name"/></td>
-        <td><xsl:value-of select="value"/></td>
+        <xsl:choose>
+        <xsl:when test="name='jpegPhoto'">
+            <td><img src="{$downloadWorkerURL}?attribute={name}" /></td>
+        </xsl:when>
+        <xsl:otherwise>
+            <td><xsl:value-of select="value"/></td>
+        </xsl:otherwise>
+        </xsl:choose>
       </tr>
     </xsl:if>
   </xsl:template>
