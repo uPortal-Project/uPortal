@@ -289,13 +289,14 @@ public class CGroupsManagerServantFactory {
         long time1 = Calendar.getInstance().getTime().getTime();
       CGroupsManagerServant servant;
       try {
-        IEntityGroup testgroup = GroupService.findGroup(groupKey);
-        testgroup.getClass();
+        ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(groupKey,staticData.getAuthorizationPrincipal().getPrincipalString());
+        lockedGroup.getClass();
         servant = getGroupsServant();
         ChannelStaticData slaveSD = cloneStaticData(staticData);
 
         ((IChannel)servant).setStaticData(slaveSD);
         servant.getSessionData().mode = "edit";
+        servant.getSessionData().lockedGroup = lockedGroup;
         servant.getSessionData().highlightedGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
         servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
       }
