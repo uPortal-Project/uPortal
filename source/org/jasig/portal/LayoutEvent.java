@@ -51,7 +51,7 @@ public class LayoutEvent
   public static final int EDIT_BUTTON_EVENT = 0;
   public static final int HELP_BUTTON_EVENT = 1;
   public static final int DETACH_BUTTON_EVENT = 2;
-  public static final int MINIMIZE_BUTTON_EVENT = 3;
+  public static final int ABOUT_BUTTON_EVENT = 3;
 
   private static final String [] eventName =
   {
