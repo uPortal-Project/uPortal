@@ -45,6 +45,11 @@ import org.xml.sax.*;
  */
 public class ChannelRenderer
 {
+    public static final int RENDERING_SUCCESSFUL=0;
+    public static final int RENDERING_FAILED=1;
+    public static final int RENDERING_TIMED_OUT=2;
+      
+
   protected IChannel channel;
   protected SAXBufferImpl buffer;
 
@@ -104,6 +109,8 @@ public class ChannelRenderer
    */
   public int outputRendering (DocumentHandler out) throws Exception
   {
+
+
     if (!rendering)
       this.startRendering ();
 
@@ -131,7 +138,7 @@ public class ChannelRenderer
         try
         {
           buffer.outputBuffer (out);
-	  return 0;
+	  return RENDERING_SUCCESSFUL;
         }
         catch (SAXException e) {
 	    // worst case scenario: partial content output :(
@@ -143,11 +150,11 @@ public class ChannelRenderer
 	  Exception e;
 	  if((e=worker.getException())!=null) throw new InternalPortalException(e);
 	  // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
-	  return 1;
+	  return RENDERING_FAILED;
       }
     } else {
 	// rendering has timed out
-	return 2;
+	return RENDERING_TIMED_OUT;
     }
   }
 

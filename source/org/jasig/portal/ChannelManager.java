@@ -296,6 +296,32 @@ public class ChannelManager {
 	    ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter (dh);
 	    try {
 		int out = cr.outputRendering (custodian);
+		if(out==cr.RENDERING_TIMED_OUT) {
+		    // rendering has timed out
+		    IChannel badChannel=(IChannel) channelTable.get(chanID);
+		    channelTable.remove(badChannel);
+		    CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,chanID,badChannel);
+		    channelTable.put(chanID,errorChannel);
+		    // demand output
+		    try {
+			ChannelRuntimeData rd = new ChannelRuntimeData ();
+			rd.setHttpRequest (req);
+			String reqURI = req.getRequestURI ();
+			reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
+			rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+			errorChannel.setRuntimeData (rd);
+
+			errorChannel.setPortalControlStructures(pcs);
+			errorChannel.renderXML(dh);
+		    } catch (Exception e) {
+			// things are looking bad for our hero
+			StringWriter sw=new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			sw.flush();
+			Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+		    }
+		}
+
 	    } catch (InternalPortalException ipe) {
 		// this implies that the channel has thrown an exception during
 		// renderXML() call. No events had been placed onto the DocumentHandler,
