@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.apache.pluto.services.log.LogService;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
@@ -61,8 +62,16 @@ public class ALMigrationUtil {
   public ALMigrationUtil() throws Exception {
     if ( ulsdb == null )
      ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-     InputStream is = this.getClass().getResourceAsStream( "/properties/al/al.properties");
-     props.load(is);
+     InputStream is = null; 
+    try {
+      is = this.getClass().getResourceAsStream( "/properties/al/al.properties");
+      props.load(is);
+     } finally {
+     	if(is!=null)
+     	 is.close();
+     	else
+     	 org.jasig.portal.services.LogService.log(org.jasig.portal.services.LogService.ERROR, "ALMigrationUtil::line 73 Can not close InputStream");
+     }
   }
 
   public void registerStylesheet ( String stylesheetURI, String stylesheetDescriptionURI, int stylesheetId, boolean isTheme, int command ) {
