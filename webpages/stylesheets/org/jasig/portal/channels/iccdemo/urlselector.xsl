@@ -3,6 +3,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
   <xsl:param name="baseActionURL">base url not set</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
 
   <xsl:template match="urlselector">
     <xsl:for-each select="warning">

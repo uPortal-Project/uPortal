@@ -45,6 +45,8 @@ $Revision$
   
 	<xsl:param name="baseActionURL">actionURLnotPassed</xsl:param>
 
+        <xsl:param name="locale">en_US</xsl:param>
+
   <xsl:template match="rss">
     <xsl:apply-templates select="channel"/>
     <p align="center">

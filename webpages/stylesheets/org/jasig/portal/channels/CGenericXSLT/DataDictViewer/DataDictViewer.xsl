@@ -36,6 +36,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 Author: Debra Rundle, rundle@princeton.edu
 Version $Revision$
 -->
+<xsl:param name="locale">en_US</xsl:param>
 
 <xsl:template match="*|/"><xsl:apply-templates/></xsl:template>
 

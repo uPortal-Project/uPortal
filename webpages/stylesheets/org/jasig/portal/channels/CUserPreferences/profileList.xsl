@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:param name="baseActionURL">baseActionURL_false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:param name="profileType">system</xsl:param>
   <xsl:param name="profileId">1</xsl:param>
   <xsl:param name="allowSystemProfileMap">true</xsl:param>

@@ -43,6 +43,7 @@ $Revision$
   <xsl:param name="elementID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="showLockUnlock">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--remove for CVS

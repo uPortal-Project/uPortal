@@ -41,6 +41,7 @@ $Revision$
   <xsl:param name="errorID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <xsl:param name="locale">en_US</xsl:param>
 
   <xsl:template match="/">
     <!--    $activeTab:<xsl:value-of select="$activeTab"/><br/>

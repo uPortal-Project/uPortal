@@ -39,6 +39,7 @@ $Revision$
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
   <xsl:param name="baseActionURL">default</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:param name="authenticated">false</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/nested-categories/deck-of-cards</xsl:variable>
 

@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:xmsg="urn:x-lexica:xmsg:message:1.0">
   <xsl:output method="html" indent="yes" />
   <xsl:param name="baseActionURL">default</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:param name="highlightedGroupID" select="false()"/>
   <xsl:param name="rootViewGroupID">0</xsl:param>
   <xsl:param name="mode" />
@@ -386,7 +387,7 @@
 	  <td colspan="3">
 	  	<table width="100%" border="0">
     			<tr>
-    				<td class="uportal-channel-strong">
+    				<td class="uportal-channel-strong" nowrap="nowrap">
     					<xsl:text>Members</xsl:text>
     				</td>
     				<td width="50%">

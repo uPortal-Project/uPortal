@@ -40,6 +40,7 @@ $Revision$
   <xsl:param name="catID">top</xsl:param>
   <xsl:param name="errorID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
 
   <xsl:template match="/">

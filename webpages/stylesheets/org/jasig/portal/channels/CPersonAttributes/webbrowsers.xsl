@@ -3,6 +3,7 @@
 
   <xsl:param name="baseActionURL">baseActionURL</xsl:param>
   <xsl:param name="downloadWorkerURL">downloadWorker</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
 
   <xsl:template match="/">
     <p class="uportal-text">

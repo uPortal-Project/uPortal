@@ -2,6 +2,7 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="html"/>
+<xsl:param name="locale">en_US</xsl:param>
 
  <xsl:template match="rss">
  <html><body>

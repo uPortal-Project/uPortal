@@ -38,6 +38,7 @@ $Revision$
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:param name="baseActionURL">default</xsl:param>
   <xsl:param name="authenticated">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:template match="header">
     <xsl:if test="$authenticated != 'false'">
       <a href="{$baseActionURL}?uP_root=root" class="uportal-navigation-category">Home </a> | <xsl:if test="chan-mgr-chanid">

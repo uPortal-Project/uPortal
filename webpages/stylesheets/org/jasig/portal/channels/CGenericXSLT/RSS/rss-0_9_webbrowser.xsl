@@ -40,6 +40,8 @@ Version $Revision$
 
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
 
+  <xsl:param name="locale">en_US</xsl:param>
+
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CGenericXSLT</xsl:variable>
 
   <xsl:template match="/rdf:RDF">

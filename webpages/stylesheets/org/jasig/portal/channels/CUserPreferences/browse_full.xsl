@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <xsl:param name="baseActionURL">Default</xsl:param>
+<xsl:param name="locale">en_US</xsl:param>
 <xsl:param name="folderID">root</xsl:param>
 <xsl:param name="modified">false</xsl:param>
 <xsl:param name="profileName">default profile</xsl:param>

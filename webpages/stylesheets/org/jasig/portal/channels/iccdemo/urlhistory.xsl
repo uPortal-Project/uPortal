@@ -4,6 +4,7 @@
   <xsl:param name="baseActionURL">base url not set</xsl:param>
   <xsl:param name="CURLSelectId">CURLSelect id is not set</xsl:param>
   <xsl:param name="passExternally">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
 
   <xsl:template match="urlselector">
 

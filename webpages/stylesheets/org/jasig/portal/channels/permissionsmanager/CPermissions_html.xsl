@@ -3,6 +3,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
         <xsl:output method="html" indent="yes" version="4.0"/>
         <xsl:param name="baseActionURL"/>
+        <xsl:param name="locale">en_US</xsl:param>
         <xsl:param name="prmView"/>
         <xsl:param name="isAdminUser" select="false()"/>
         <xsl:param name="commandResponse">null</xsl:param>

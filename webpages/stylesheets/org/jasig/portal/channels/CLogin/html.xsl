@@ -39,6 +39,7 @@ $Revision$
   <xsl:output method="html" indent="yes"/>
   <xsl:param name="baseActionURL">default</xsl:param>
   <xsl:param name="unauthenticated">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
 <xsl:variable name="mediaPath" select="'media/org/jasig/portal/channels/CLogin'"/>
   <xsl:template match="login-status">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">

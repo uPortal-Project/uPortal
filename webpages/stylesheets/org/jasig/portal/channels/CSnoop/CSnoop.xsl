@@ -2,6 +2,7 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output indent="yes"/>
+  <xsl:param name="locale">en_US</xsl:param>
 
   <xsl:template match="/">
     <table width="100%" cellspacing="0" cellpadding="2" border="0">

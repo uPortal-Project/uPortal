@@ -39,6 +39,7 @@ Version $Revision$
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CGenericXSLT/CCssViewer</xsl:variable>
   <xsl:variable name="genericMediaPath">media/org/jasig/portal/channels/CGenericXSLT</xsl:variable>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:template match="/">
     <xsl:apply-templates/>
   </xsl:template>

@@ -40,6 +40,7 @@ $Revision$
   <xsl:output method="html" indent="yes"/>
   <xsl:param name="baseActionURL">default</xsl:param>
   <xsl:param name="unauthenticated">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
 
   <xsl:template match="login-status">
     <xsl:choose>

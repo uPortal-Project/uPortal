@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:param name="baseActionURL">Default</xsl:param>
+<xsl:param name="locale">en_US</xsl:param>
 <xsl:variable name="imageDir" select="'media/org/jasig/portal/channels/CUserPreferences'"/>
 
 <xsl:template match="/">

@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
   <xsl:param name="action">defaultView</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMsg">no parameter passed</xsl:param>

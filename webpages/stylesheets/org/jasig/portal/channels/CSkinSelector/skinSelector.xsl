@@ -5,6 +5,7 @@
 	<xsl:param name="skinsPath">media/org/jasig/portal/layout/AL_TabColumn</xsl:param>
 	<xsl:param name="currentSkin">immII</xsl:param>
 	<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CSkinSelector</xsl:variable>
+        <xsl:param name="locale">en_US</xsl:param>
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="skins"/>
