@@ -42,8 +42,12 @@ public class LayoutManagerImpl implements  ILayoutManager {
         // should lost folder (i.e. loose nodes be obtained separately?)
         
         // obtain list of all pushed fragments
+    	
+    	// add pushed fragments to the root of the user fragment
         
         // obtain list of operations
+    	
+    	// obtain list of all pulled fragments based on the operation list
         
         // perform operations, recording which pushed fragments
         // has been successfully attached
