@@ -325,10 +325,6 @@ public class TabColumnPrefsState extends BaseState
 
   private final void changeColumnWidths(HashMap columnWidths) throws Exception
   {
-    // Must get from store because the one in memory is comtaminated with stylesheet params
-    // that shouldn't get persisted
-    //UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
-    //StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
     StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
     java.util.Set sColWidths = columnWidths.keySet();
     java.util.Iterator iterator = sColWidths.iterator();
@@ -531,21 +527,8 @@ public class TabColumnPrefsState extends BaseState
   private final void updateTabLock(String elementId, boolean locked) throws Exception
   {
       // NOTE: this method is to be removed soon.
-      /*
-    Element element = userLayout.getElementById(elementId);
-    if(locked)
-    {
-      element.setAttribute("unremovable", "true");
-      element.setAttribute("immutable", "true");
-    }
-    else
-    {
-      element.setAttribute("unremovable", "false");
-      element.setAttribute("immutable", "false");
-    }
-    saveLayout(false);
-      */
   }
+  
   /**
    * A folder is a tab if its parent element is the layout element
    * @param folder the folder in question
@@ -554,7 +537,7 @@ public class TabColumnPrefsState extends BaseState
   private final boolean isTab (String folderId) throws PortalException
   {
       // we could be a bit more careful here and actually check the type
-      return (ulm.getParentId(folderId)==UserLayoutNodeDescription.ROOT_FOLDER_ID);
+      return ulm.getParentId(folderId).equals(UserLayoutNodeDescription.ROOT_FOLDER_ID);
   }
 
   /**
@@ -875,6 +858,7 @@ public class TabColumnPrefsState extends BaseState
             String destinationColumnId = elementID;
 
             addColumn(method, destinationColumnId);
+            action = "none";
           }
           catch (Exception e)
           {
