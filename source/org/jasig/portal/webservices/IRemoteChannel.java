@@ -40,7 +40,8 @@ import org.jasig.portal.PortalEvent;
 import org.w3c.dom.Element;
 
 /**
- * <p>A remote channel web service interface on which to base the WSDL</p>
+ * A remote channel web service interface on which to base the WSDL
+ * 
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
