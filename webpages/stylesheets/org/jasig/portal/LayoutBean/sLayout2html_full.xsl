@@ -19,6 +19,7 @@
     <html>
       <head>
        <title><xsl:value-of select="header/title"/></title>
+       <link rel="stylesheet" href="{$mediaDir}/general.css" type="text/css"/>
        <!--xsl:call-template name="javaScripts"/-->
       </head>
       <body bgcolor="white" text="#000000">
