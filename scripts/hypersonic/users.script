@@ -34,7 +34,21 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
         <parameter value="" name="archive"/>
         <parameter value="200" name="width"/>
         <parameter value="200" name="height"/>
-        <parameter value="fps>18^a1>12500^pixd>29^pixangle>5^radius>26^roty>-4^rotx>0^rotz>0.401^irotx>0^iroty>0^irotz>0^style>1^color>#00FF66^bgcolor>#000000^12hour>0" name="params"/>
+        <parameter name="APPLET.fps" value="18"/>  
+        <parameter name="APPLET.a1" value="12500"/>
+        <parameter name="APPLET.pixd" value="29"/>   
+        <parameter name="APPLET.pixangle" value="5"/>
+        <parameter name="APPLET.radius" value="26"/>
+        <parameter name="APPLET.roty" value="4"/>
+        <parameter name="APPLET.rotx" value="0"/>
+        <parameter name="APPLET.rotz" value="0.401"/>
+        <parameter name="APPLET.irotx" value="0"/>
+        <parameter name="APPLET.iroty" value="0"/>
+        <parameter name="APPLET.irotz" value="0"/>
+        <parameter name="APPLET.style" value="1"/>
+        <parameter name="APPLET.color" value="#00FF66"/>  
+        <parameter name="APPLET.bgcolor" value="#000000"/>
+        <parameter name="APPLET.12hour" value="0"/>
       </channel>
       <channel instanceID="c2" minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="ESPN Scoreboard" name="name"/>
@@ -43,7 +57,15 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
         <parameter value="ScorePost.zip" name="archive"/>
         <parameter value="128" name="width"/>
         <parameter value="182" name="height"/>
-        <parameter value="cabbase>ScorePost.cab^bgcolor>#336699^text>#FFFFFF^data>/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat^ad data>/ad/scorepost/nhl.txt^target>_top^delay>3500^data time>30000^inactive data time>300000" name="params"/>
+        <parameter name="APPLET.cabbase" value="ScorePost.cab"/>
+        <parameter name="APPLET.bgcolor" value="#336699"/>
+        <parameter name="APPLET.text" value="#FFFFFF"/>
+        <parameter name="APPLET.data" value="/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat"/>
+        <parameter name="APPLET.ad data" value="/ad/scorepost/nhl.txt"/>
+        <parameter name="APPLET.target" value="_top"/>
+        <parameter name="APPLET.delay" value="3500"/>
+        <parameter name="APPLET.data time" value="30000"/>
+        <parameter name="APPLET.inactive data time" value="300000"/>
       </channel>
     </column>
     <column width="50%">
