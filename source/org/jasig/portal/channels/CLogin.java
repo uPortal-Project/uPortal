@@ -36,6 +36,9 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.LayoutBean;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
@@ -62,7 +65,7 @@ import org.w3c.dom.Element;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CLogin implements IPrivilegedChannel
+public class CLogin implements IPrivilegedChannel, ICacheable
 {
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
@@ -166,4 +169,34 @@ public class CLogin implements IPrivilegedChannel
       throw new GeneralRenderingException(e.getMessage());
     }
   }
+
+    public ChannelCacheKey generateKey() {
+
+	ChannelCacheKey k=new ChannelCacheKey();
+	// guest pages are cached system-wide
+	if(staticData.getPerson().getID()==LayoutBean.guestUserId) {
+	    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+	} else {
+	    k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+	}
+	StringBuffer sbKey = new StringBuffer(1024);
+	sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+	sbKey.append("media:").append(media).append(", ");
+	sbKey.append("bAuthenticated:").append(bAuthenticated).append(", ");
+	sbKey.append("bAuthorizationAttemptFailed:").append(bAuthorizationAttemptFailed).append(", ");
+	sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
+	sbKey.append("bSecurityError:").append(bSecurityError);
+	k.setKey(sbKey.toString());
+	k.setKeyValidity(new Long(System.currentTimeMillis()));
+	return k;
+    }
+
+    public boolean isCacheValid(Object validity) {
+	if(validity instanceof Long) {
+	    // set timeout to 15 minutes
+	    return (System.currentTimeMillis()-((Long)validity).longValue()<15*60*1000);
+	} else {
+	    return false;
+	}
+    }
 }
