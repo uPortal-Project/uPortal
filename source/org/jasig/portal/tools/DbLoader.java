@@ -156,13 +156,25 @@ public class DbLoader
         if (createScript)
           initScript();
 
-        // Read tables.xml
-        DOMParser domParser = new DOMParser();
-        // Eventually, write and validate against a DTD
-        //domParser.setFeature ("http://xml.org/sax/features/validation", true);
-        //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
-        domParser.parse(PropertiesHandler.properties.getTablesUri());
-        tablesDoc = domParser.getDocument();
+        try
+        {
+          String tablesURI = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
+          
+          // Read tables.xml
+          DOMParser domParser = new DOMParser();
+          // Eventually, write and validate against a DTD
+          //domParser.setFeature ("http://xml.org/sax/features/validation", true);
+          //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
+          domParser.parse(tablesURI);
+          tablesDoc = domParser.getDocument();
+        }
+        catch(Exception e)
+        {
+          System.out.println("Could not open " + UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri()));
+          e.printStackTrace();
+          
+          return;
+        }
 
         // Hold on to tables xml with generic types
         tablesDocGeneric = (Document)tablesDoc.cloneNode(true);
@@ -170,10 +182,12 @@ public class DbLoader
         // Replace all generic data types with local data types
         replaceDataTypes(tablesDoc);
 
+        String tablesXslUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesXslUri());
+        
         // tables.xml + tables.xsl --> DROP TABLE and CREATE TABLE sql statements
         XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
         XSLTInputSource tablesInputSource = new XSLTInputSource(tablesDoc);
-        XSLTInputSource tablesXslInputSource = new XSLTInputSource(PropertiesHandler.properties.getTablesXslUri());
+        XSLTInputSource tablesXslInputSource = new XSLTInputSource(tablesXslUri);
         XSLTResultTarget tablesTarget = new XSLTResultTarget(new TableHandler());
         processor.process (tablesInputSource, tablesXslInputSource, tablesTarget);
 
@@ -550,7 +564,8 @@ public class DbLoader
     parser.parse(propertiesUri);
   }
 
-  static class PropertiesHandler extends DefaultHandler
+  static class PropertiesHandler
+    extends DefaultHandler
   {
     private static StringBuffer charBuff = null;
 
