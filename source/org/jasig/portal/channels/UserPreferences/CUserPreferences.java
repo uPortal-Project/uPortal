@@ -81,9 +81,9 @@ public class CUserPreferences implements IPrivilegedChannel {
     return  upm;
   }
 
-    protected IUserLayoutManager getUserLayoutManager() {
-        return getUserPreferencesManager().getUserLayoutManager();;
-    }
+  protected IUserLayoutManager getUserLayoutManager() {
+    return getUserPreferencesManager().getUserLayoutManager();
+  }
 
   protected UserPreferences getCurrentUserPreferences() {
     return  up;
