@@ -76,6 +76,7 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.utils.AbsoluteURLFilter;
+import org.jasig.portal.wsrp.ChannelInstanceManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
@@ -89,9 +90,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class RemoteChannel implements IRemoteChannel {
   private static final IChannelRendererFactory cChannelRendererFactory = 
-      ChannelRendererFactory.newInstance(
-          RemoteChannel.class.getName()
-          );
+      ChannelRendererFactory.newInstance(ChannelInstanceManager.class.getName());
 
   protected static final String MARKUP_FRAGMENT_ROOT = "channel";
   protected static final String PERSON_KEY = "org.jasig.portal.security.IPerson";

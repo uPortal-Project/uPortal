@@ -70,7 +70,6 @@ import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.AbsoluteURLFilter;
-import org.jasig.portal.webservices.RemoteChannel;
 import org.jasig.portal.wsrp.types.AccessDeniedFault;
 import org.jasig.portal.wsrp.types.InteractionParams;
 import org.jasig.portal.wsrp.types.InvalidHandleFault;
@@ -95,8 +94,7 @@ public class ChannelInstanceManager {
 
     private static final IChannelRegistryStore channelRegistryStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
     protected static final Random randomNumberGenerator = new Random();
-    // Change portal.properties and then change the following line!
-    private static final IChannelRendererFactory channelRendererFactory = ChannelRendererFactory.newInstance(RemoteChannel.class.getName());
+    private static final IChannelRendererFactory channelRendererFactory = ChannelRendererFactory.newInstance(ChannelInstanceManager.class.getName());
     protected static String baseUrl;
 
     public ChannelInstanceManager(String portletHandle, String sessionId, UserContext userContext) throws Exception {
