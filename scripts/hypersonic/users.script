@@ -72,7 +72,7 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
       </channel>
     </column>
     <column width="70%">
-       <channel instanceID="chan05" minimized="false" class="org.jasig.portal.xmlchannels.BookmarksChannel"/>
+       <channel instanceID="c9" minimized="false" class="org.jasig.portal.xmlchannels.BookmarksChannel"/>
     </column>
   </tab>
 </layout>
