@@ -153,6 +153,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           ChannelDefinition cd = new ChannelDefinition(chanId);
           cd.setTitle("Missing channel");
           cd.setName("Missing channel");
+          cd.setTimeout(20000);
           String missingChannel = "Unknown";
           if (channelDef != null) {
             missingChannel = channelDef.getName();
