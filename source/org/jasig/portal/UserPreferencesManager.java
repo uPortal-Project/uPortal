@@ -222,7 +222,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             }
 
             if (upl != null) {
-                if (localeManager.localeAware()) {
+                if (localeManager.isLocaleAware()) {
                     upl.setLocaleManager(localeManager);
                 }
                 ulm=UserLayoutManagerFactory.getUserLayoutManager(m_person,upl);
