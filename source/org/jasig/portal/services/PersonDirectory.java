@@ -331,11 +331,13 @@ public class PersonDirectory {
     jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
     jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
     if (pdi.url.startsWith("ldaps")) { // Handle SSL connections
-	String newurl=pdi.url.substring(0,4) + pdi.url.substring(5);
-	pdi.url=newurl;
-	jndienv.put(Context.SECURITY_PROTOCOL,"ssl");
+      String newurl=pdi.url.substring(0,4) + pdi.url.substring(5);
+      jndienv.put(Context.SECURITY_PROTOCOL,"ssl");
+      jndienv.put(Context.PROVIDER_URL,newurl);
     }
-    jndienv.put(Context.PROVIDER_URL,pdi.url);
+    else {
+      jndienv.put(Context.PROVIDER_URL,pdi.url);
+    }
     if (pdi.logonid!=null)
       jndienv.put(Context.SECURITY_PRINCIPAL,pdi.logonid);
     if (pdi.logonpassword!=null)
