@@ -29,7 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * default data set file data.xml.
  * 
  * @author Mark Boyd <mark.boyd@engineer.com>
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 public class DatabaseTagHandler
     extends DefaultHandler
@@ -216,6 +216,12 @@ public class DatabaseTagHandler
             config.setDataURL(dataURL);
             
             DbLoader loader = new DbLoader(config);
+            
+            String dataString = "(no data definition)";
+            if (dataURL != null) {
+                dataString = dataURL.toString();
+            }
+            
             try
             {
                 loader.process();
@@ -225,9 +231,9 @@ public class DatabaseTagHandler
                 if (log.isInfoEnabled())
                     log.info(
                     "***** Successfully processed *****\n"
-                        + tablesURL.toString()
+                        + tablesURL
                         + " and \n"
-                        + dataURL.toString()
+                        + dataString
                         + ".\nLogged Output:\n---------------------\n"
                         + logBfr.toString()
                         + (createScript
@@ -239,9 +245,9 @@ public class DatabaseTagHandler
             {            
                 log.error(
                     "***** Failure during processing ***** \n"
-                        + tablesURL.toString()
+                        + tablesURL
                         + " and \n"
-                        + dataURL.toString()
+                        + dataString
                         + ".\nLogged Output:\n---------------------\n"
                         + logBfr.toString()
                         + (createScript
