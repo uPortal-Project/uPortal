@@ -99,9 +99,9 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
   protected final void fixURL(String elementName, String attName, String qName, Attributes atts, AttributesImpl attsImpl) {
     if (qName.equals(elementName)) {
       String attValue = atts.getValue(attName);
-      // Assume that if attribute value doesn't contain "://",
+      // Assume that if attribute value exists and doesn't contain "://",
       // then it is a relative URL and a base URL must be prepended to it
-      if (attValue.indexOf("://") < 0) {
+      if (attValue != null && attValue.indexOf("://") < 0) {
         attValue = baseUrl + attValue;
         int index = atts.getIndex(attName);
         attsImpl.setAttribute(index, atts.getURI(index), atts.getLocalName(index), attName, atts.getType(index), attValue);
