@@ -57,7 +57,7 @@ function xml(nodelist){
 		<p align="left">
 			<xsl:value-of select="name"/>
 		</p>
-		<table border="0" cellpadding="0" cellspacing="4" width="100%">
+		<table align="center" border="1" cellpadding="5" cellspacing="0">
 			<tr>
 				<td>Label</td>
 				<td>Data</td>
