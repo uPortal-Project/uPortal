@@ -31,16 +31,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.Logger;
-import org.jasig.portal.RdbmServices;
-import org.jasig.portal.GenericPortalBean;
-import java.util.*;
-import java.security.MessageDigest;
+package  org.jasig.portal.security.provider;
+
+import  org.jasig.portal.security.*;
+import  org.jasig.portal.Logger;
+import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.GenericPortalBean;
+import  java.util.*;
+import  java.security.MessageDigest;
+
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -49,34 +53,43 @@ import java.security.MessageDigest;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-
-class SimpleSecurityContext extends ChainingSecurityContext implements ISecurityContext {
+class SimpleSecurityContext extends ChainingSecurityContext
+    implements ISecurityContext {
   private final int SIMPLESECURITYAUTHTYPE = 0xFF02;
 
-  SimpleSecurityContext() {
+  /**
+   * put your documentation comment here
+   */
+  SimpleSecurityContext () {
     super();
   }
 
-  public int getAuthType() {
-    return this.SIMPLESECURITYAUTHTYPE;
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public int getAuthType () {
+    return  this.SIMPLESECURITYAUTHTYPE;
   }
 
-  public synchronized void authenticate() throws PortalSecurityException {
+  /**
+   * put your documentation comment here
+   * @exception PortalSecurityException
+   */
+  public synchronized void authenticate () throws PortalSecurityException {
     this.isauth = false;
-    if (this.myPrincipal.UID != null &&
-        this.myOpaqueCredentials.credentialstring != null) {
+    if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
       String first_name = null, last_name = null, md5_passwd = null;
       int globalUID;
       try {
-        String acct[] = GenericPortalBean.getDbImplObject().getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
-          globalUID  = Integer.parseInt(acct[0]);
+          globalUID = Integer.parseInt(acct[0]);
           first_name = acct[2];
-          last_name  = acct[3];
+          last_name = acct[3];
           md5_passwd = acct[1];
           if (!md5_passwd.substring(0, 5).equals("(MD5)")) {
-            Logger.log(Logger.ERROR, "Password not an MD5 hash: " +
-                md5_passwd.substring(0, 5));
+            Logger.log(Logger.ERROR, "Password not an MD5 hash: " + md5_passwd.substring(0, 5));
             return;
           }
           String txthash = md5_passwd.substring(5);
@@ -99,64 +112,69 @@ class SimpleSecurityContext extends ChainingSecurityContext implements ISecurity
           if (same) {
             this.myPrincipal.globalUID = globalUID;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            Logger.log(Logger.INFO, "User " + this.myPrincipal.UID +
-              " is authenticated");
+            Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
             this.isauth = true;
-          }
-          else
+          } 
+          else 
             Logger.log(Logger.INFO, "MD5 Password Invalid");
-        }
-        else
+        } 
+        else 
           Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
         Logger.log(Logger.ERROR, ep);
-        throw(ep);
+        throw  (ep);
       }
-    }
-    else
-      Logger.log
-        (Logger.ERROR,
-        "Principal or OpaqueCredentials not initialized prior to authenticate");
-
+    } 
+    else 
+      Logger.log(Logger.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     // Ok...we are now ready to authenticate all of our subcontexts.
-
     super.authenticate();
     return;
   }
 
-//
-// This was originally Jonathan B. Knudsen's Example from his book
-// Java Cryptography published by O'Reilly Associates (1st Edition 1998)
-//
-
-  public static byte[] decode(String base64) {
+  //
+  // This was originally Jonathan B. Knudsen's Example from his book
+  // Java Cryptography published by O'Reilly Associates (1st Edition 1998)
+  //
+  public static byte[] decode (String base64) {
     int pad = 0;
     for (int i = base64.length() - 1; base64.charAt(i) == '='; i--)
       pad++;
-    int length = base64.length() * 6 / 8 - pad;
+    int length = base64.length()*6/8 - pad;
     byte[] raw = new byte[length];
     int rawIndex = 0;
     for (int i = 0; i < base64.length(); i += 4) {
-      int block = (getValue(base64.charAt(i)) << 18)
-          + (getValue(base64.charAt(i + 1)) << 12)
-          + (getValue(base64.charAt(i + 2)) << 6)
-          + (getValue(base64.charAt(i + 3)));
+      int block = (getValue(base64.charAt(i)) << 18) + (getValue(base64.charAt(i + 1)) << 12) + (getValue(base64.charAt(
+          i + 2)) << 6) + (getValue(base64.charAt(i + 3)));
       for (int j = 0; j < 3 && rawIndex + j < raw.length; j++)
-        raw[rawIndex + j] = (byte)((block >> (8 * (2 - j))) & 0xff);
+        raw[rawIndex + j] = (byte)((block >> (8*(2 - j))) & 0xff);
       rawIndex += 3;
     }
-    return raw;
+    return  raw;
   }
 
-  protected static int getValue(char c) {
-    if (c >= 'A' && c <= 'Z') return c - 'A';
-    if (c >= 'a' && c <= 'z') return c - 'a' + 26;
-    if (c >= '0' && c <= '9') return c - '0' + 52;
-    if (c == '+') return 62;
-    if (c == '/') return 63;
-    if (c == '=') return 0;
-    return -1;
+  /**
+   * put your documentation comment here
+   * @param c
+   * @return 
+   */
+  protected static int getValue (char c) {
+    if (c >= 'A' && c <= 'Z')
+      return  c - 'A';
+    if (c >= 'a' && c <= 'z')
+      return  c - 'a' + 26;
+    if (c >= '0' && c <= '9')
+      return  c - '0' + 52;
+    if (c == '+')
+      return  62;
+    if (c == '/')
+      return  63;
+    if (c == '=')
+      return  0;
+    return  -1;
   }
 }
+
+
+

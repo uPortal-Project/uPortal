@@ -31,295 +31,256 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security.provider;
 
-import java.util.Vector;
-import java.util.Properties;
+package  org.jasig.portal.security.provider;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.FileInputStream;
+import  java.util.Vector;
+import  java.util.Properties;
+import  java.io.File;
+import  java.io.IOException;
+import  java.io.FileInputStream;
+import  org.jasig.portal.SmartCache;
+import  org.jasig.portal.security.IPerson;
+import  org.jasig.portal.security.IRole;
+import  org.jasig.portal.security.provider.RoleImpl;
+import  org.jasig.portal.security.provider.PersonImpl;
+import  org.jasig.portal.security.IAuthorization;
+import  org.jasig.portal.security.PortalSecurityException;
+import  org.jasig.portal.GenericPortalBean;
+import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.Logger;
 
-import org.jasig.portal.SmartCache;
-
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IRole;
-import org.jasig.portal.security.provider.RoleImpl;
-import org.jasig.portal.security.provider.PersonImpl;
-
-import org.jasig.portal.security.IAuthorization;
-import org.jasig.portal.security.PortalSecurityException;
-
-import org.jasig.portal.GenericPortalBean;
-import org.jasig.portal.RdbmServices;
-import org.jasig.portal.Logger;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public class ReferenceAuthorization implements IAuthorization
-{
+public class ReferenceAuthorization
+    implements IAuthorization {
   // Clear the caches every 10 seconds
   protected static SmartCache userRolesCache = new SmartCache(300);
   protected static SmartCache chanRolesCache = new SmartCache(300);
   protected static String s_channelPublisherRole = null;
-
-  static
-  {
-    try
-    {
+  static {
+    try {
       // Find our properties file and open it
       String filename = GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "security.properties";
       File propFile = new File(filename);
-
       Properties securityProps = new Properties();
-
-      try
-      {
-        securityProps.load (new FileInputStream(propFile));
+      try {
+        securityProps.load(new FileInputStream(propFile));
         s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
-      }
-      catch(IOException e)
-      {
+      } catch (IOException e) {
         Logger.log(Logger.ERROR, new PortalSecurityException(e.getMessage()));
       }
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
   }
 
-  public ReferenceAuthorization()
-  {
+  /**
+   * put your documentation comment here
+   */
+  public ReferenceAuthorization () {
   }
 
   // For the publish mechanism to use
-  public boolean isUserInRole(IPerson person, IRole role)
-  {
-
-    if(person == null || role == null)
-    {
-      return(false);
+  public boolean isUserInRole (IPerson person, IRole role) {
+    if (person == null || role == null) {
+      return  (false);
     }
-
     int userId = person.getID();
-
-    if(userId == -1)
-    {
-      return(false);
+    if (userId == -1) {
+      return  (false);
     }
-
-    try
-    {
-      return GenericPortalBean.getDbImplObject().isUserInRole(userId, (String)role.getRoleTitle());
-    }
-    catch(Exception e)
-    {
-      Logger.log(Logger.ERROR, e);
-      return(false);
-    }
-  }
-
-  public Vector getAllRoles()
-  {
-    try
-    {
-      return GenericPortalBean.getDbImplObject().getAllRoles();
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-      return(null);
-    }
-  }
-
-  public int setChannelRoles(int channelID, Vector roles)
-  {
-    // Don't do anything if no roles were passed in
-    if(roles == null || roles.size() < 1)
-    {
-      return(0);
-    }
-
     try {
-      return GenericPortalBean.getDbImplObject().setChannelRoles(channelID, roles);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-      return(-1);
+      return  GenericPortalBean.getUserLayoutStore().isUserInRole(userId, (String)role.getRoleTitle());
+    } catch (Exception e) {
+      Logger.log(Logger.ERROR, e);
+      return  (false);
     }
   }
 
-  public boolean canUserPublish(IPerson person)
-  {
-    if(person == null || person.getID() == -1)
-    {
-      // Possibly throw security exception
-      return(false);
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public Vector getAllRoles () {
+    try {
+      return  GenericPortalBean.getUserLayoutStore().getAllRoles();
+    } catch (Exception e) {
+      Logger.log(Logger.ERROR, e);
+      return  (null);
     }
+  }
 
+  /**
+   * put your documentation comment here
+   * @param channelID
+   * @param roles
+   * @return 
+   */
+  public int setChannelRoles (int channelID, Vector roles) {
+    // Don't do anything if no roles were passed in
+    if (roles == null || roles.size() < 1) {
+      return  (0);
+    }
+    try {
+      return  GenericPortalBean.getUserLayoutStore().setChannelRoles(channelID, roles);
+    } catch (Exception e) {
+      Logger.log(Logger.ERROR, e);
+      return  (-1);
+    }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param person
+   * @return 
+   */
+  public boolean canUserPublish (IPerson person) {
+    if (person == null || person.getID() == -1) {
+      // Possibly throw security exception
+      return  (false);
+    }
     boolean canPublish = isUserInRole(person, new RoleImpl(s_channelPublisherRole));
-    return(canPublish);
+    return  (canPublish);
   }
 
   // For the subscribe mechanism to use
-  public Vector getAuthorizedChannels(IPerson person)
-  {
-    if(person == null || person.getID() == -1)
-    {
+  public Vector getAuthorizedChannels (IPerson person) {
+    if (person == null || person.getID() == -1) {
       // Possibly throw security exception
-      return(null);
+      return  (null);
     }
-
-    return(new Vector());
+    return  (new Vector());
   }
 
-  public boolean canUserSubscribe(IPerson person, int channelID)
-  {
+  /**
+   * put your documentation comment here
+   * @param person
+   * @param channelID
+   * @return 
+   */
+  public boolean canUserSubscribe (IPerson person, int channelID) {
     // Fail immediatly if the inputs aren't reasonable
-    if(person == null || person.getID() == -1)
-    {
-      return(false);
+    if (person == null || person.getID() == -1) {
+      return  (false);
     }
-
     // Get all of the channel roles
     Vector chanRoles = getChannelRoles(channelID);
-
     // If the channel has no roles associated then it's globally accessable
-    if( chanRoles.size() == 0 )
-    {
-      return(true);
+    if (chanRoles.size() == 0) {
+      return  (true);
     }
-
     // Get all of the user's roles
     Vector userRoles = getUserRoles(person);
-
     // If the user has no roles and the channel does then he can't have access
-    if( userRoles.size() == 0 )
-    {
-      return(false);
+    if (userRoles.size() == 0) {
+      return  (false);
     }
-
     // Check to see if the user has at least one role in common with the channel
-    for( int i = 0; i < userRoles.size(); i++ )
-    {
-      if(chanRoles.contains(userRoles.elementAt(i)))
-      {
-        return(true);
+    for (int i = 0; i < userRoles.size(); i++) {
+      if (chanRoles.contains(userRoles.elementAt(i))) {
+        return  (true);
       }
     }
-
-    return(false);
+    return  (false);
   }
 
-  public boolean canUserRender(IPerson person, int channelID)
-  {
+  /**
+   * put your documentation comment here
+   * @param person
+   * @param channelID
+   * @return 
+   */
+  public boolean canUserRender (IPerson person, int channelID) {
     // If the user can subscribe to a channel, then they can render it!
-    return(canUserSubscribe(person, channelID));
+    return  (canUserSubscribe(person, channelID));
   }
 
-  public Vector getChannelRoles(int channelID)
-  {
+  /**
+   * put your documentation comment here
+   * @param channelID
+   * @return 
+   */
+  public Vector getChannelRoles (int channelID) {
     // Check the smart cache for the roles first
     Vector channelRoles = (Vector)chanRolesCache.get("" + channelID);
-    if( channelRoles != null )
-    {
-      return(channelRoles);
-    }
-    else
-    {
+    if (channelRoles != null) {
+      return  (channelRoles);
+    } 
+    else {
       channelRoles = new Vector();
     }
-
-    try
-    {
-      GenericPortalBean.getDbImplObject().getChannelRoles(channelRoles, channelID);
-
+    try {
+      GenericPortalBean.getUserLayoutStore().getChannelRoles(channelRoles, channelID);
       chanRolesCache.put("" + channelID, channelRoles);
-
-      return(channelRoles);
-    }
-    catch(Exception e)
-    {
+      return  (channelRoles);
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
-      return(null);
+      return  (null);
     }
-
   }
 
   // For the render mechanism to use
-  public Vector getUserRoles(IPerson person)
-  {
-    if(person == null || person.getID() == -1)
-    {
-      return(null);
+  public Vector getUserRoles (IPerson person) {
+    if (person == null || person.getID() == -1) {
+      return  (null);
     }
-
     int userId = person.getID();
-
     // Check the smart cache for the roles first
     Vector userRoles = (Vector)userRolesCache.get(new Integer(userId));
-    if( userRoles != null )
-    {
-      return(userRoles);
-    }
-    else
-    {
+    if (userRoles != null) {
+      return  (userRoles);
+    } 
+    else {
       userRoles = new Vector();
     }
-
-    try
-    {
-      GenericPortalBean.getDbImplObject().getUserRoles(userRoles, userId);
+    try {
+      GenericPortalBean.getUserLayoutStore().getUserRoles(userRoles, userId);
       userRolesCache.put(new Integer(userId), userRoles);
-      return userRoles;
-    }
-    catch(Exception e)
-    {
+      return  userRoles;
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
-      return(null);
+      return  (null);
     }
   }
 
   // For the administration mechanism to use
-  public void addUserRoles(IPerson person, Vector roles)
-  {
-    if(person == null || person.getID() == -1 || roles == null || roles.size() < 1)
-    {
+  public void addUserRoles (IPerson person, Vector roles) {
+    if (person == null || person.getID() == -1 || roles == null || roles.size() < 1) {
       return;
     }
-
-    try
-    {
-      GenericPortalBean.getDbImplObject().addUserRoles(person.getID(), roles);
-    }
-    catch(Exception e)
-    {
+    try {
+      GenericPortalBean.getUserLayoutStore().addUserRoles(person.getID(), roles);
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
   }
 
-  public void removeUserRoles(IPerson person, Vector roles)
-  {
-    if(person == null || person.getID() == -1 || roles == null || roles.size() < 1)
-    {
+  /**
+   * put your documentation comment here
+   * @param person
+   * @param roles
+   */
+  public void removeUserRoles (IPerson person, Vector roles) {
+    if (person == null || person.getID() == -1 || roles == null || roles.size() < 1) {
       return;
     }
-
-    try
-    {
-      GenericPortalBean.getDbImplObject().removeUserRoles(person.getID(), roles);
+    try {
+      GenericPortalBean.getUserLayoutStore().removeUserRoles(person.getID(), roles);
       return;
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
       return;
     }
   }
 }
+
+
+

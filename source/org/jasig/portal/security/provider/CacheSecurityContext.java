@@ -31,16 +31,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.Logger;
-import org.jasig.portal.RdbmServices;
-import org.jasig.portal.GenericPortalBean;
-import java.util.*;
-import java.security.MessageDigest;
+package  org.jasig.portal.security.provider;
+
+import  org.jasig.portal.security.*;
+import  org.jasig.portal.Logger;
+import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.GenericPortalBean;
+import  java.util.*;
+import  java.security.MessageDigest;
+
 
 /**
  * <p>This is an implementation of a SecurityContext that performs absolutely
@@ -58,62 +62,58 @@ import java.security.MessageDigest;
  * @version $Revision$
  *
  */
-
-class CacheSecurityContext extends ChainingSecurityContext implements ISecurityContext {
-
+class CacheSecurityContext extends ChainingSecurityContext
+    implements ISecurityContext {
   private final int CACHESECURITYAUTHTYPE = 0xFF03;
-
   private byte[] cachedcredentials;
 
-  CacheSecurityContext() {
+  /**
+   * put your documentation comment here
+   */
+  CacheSecurityContext () {
     super();
-}
-
-  public int getAuthType() {
-    return this.CACHESECURITYAUTHTYPE;
   }
 
-  public synchronized void authenticate()  throws PortalSecurityException {
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public int getAuthType () {
+    return  this.CACHESECURITYAUTHTYPE;
+  }
+
+  /**
+   * put your documentation comment here
+   * @exception PortalSecurityException
+   */
+  public synchronized void authenticate () throws PortalSecurityException {
     this.isauth = false;
-    if (this.myPrincipal.UID != null &&
-        this.myOpaqueCredentials.credentialstring != null) {
+    if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
       String first_name = null, last_name = null;
       try {
-        String acct[] = GenericPortalBean.getDbImplObject().getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
           first_name = acct[2];
-          last_name  = acct[3];
+          last_name = acct[3];
           this.myPrincipal.FullName = first_name + " " + last_name;
-          Logger.log(Logger.INFO, "User " + this.myPrincipal.UID +
-              " is authenticated");
-
+          Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           // Save our credentials so that the parent's authenticate()
           // method doesn't blow them away.
-
-          this.cachedcredentials =
-              new byte[this.myOpaqueCredentials.credentialstring.length];
-          System.arraycopy(this.myOpaqueCredentials.credentialstring,
-            0, this.cachedcredentials, 0,
-            this.myOpaqueCredentials.credentialstring.length);
+          this.cachedcredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
+          System.arraycopy(this.myOpaqueCredentials.credentialstring, 0, this.cachedcredentials, 0, this.myOpaqueCredentials.credentialstring.length);
           this.isauth = true;
-        }
-        else
+        } 
+        else 
           Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
-      }
-      catch (Exception e) {
-        PortalSecurityException ep = new PortalSecurityException
-          ("SQL Database Error");
+      } catch (Exception e) {
+        PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
         Logger.log(Logger.ERROR, ep);
-        throw(ep);
+        throw  (ep);
       }
-    }
-    else
-      Logger.log
-        (Logger.ERROR,
-        "Principal or OpaqueCredentials not initialized prior to authenticate");
-
+    } 
+    else 
+      Logger.log(Logger.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     // Ok...we are now ready to authenticate all of our subcontexts.
-
     super.authenticate();
     return;
   }
@@ -122,29 +122,35 @@ class CacheSecurityContext extends ChainingSecurityContext implements ISecurityC
    * We need to override this method in order to return a class that implements
    * the NotSoOpaqueCredentals interface.
    */
-  public IOpaqueCredentials getOpaqueCredentials() {
+  public IOpaqueCredentials getOpaqueCredentials () {
     if (this.isauth) {
       NotSoOpaqueCredentials oc = new CacheOpaqueCredentials();
       oc.setCredentials(this.cachedcredentials);
-      return oc;
-    }
-    else
-      return null;
+      return  oc;
+    } 
+    else 
+      return  null;
   }
 
   /**
    * This is a new implementation of an OpaqueCredentials class that
    * implements the less-opaque NotSoOpaqueCredentials.
    */
-  private class CacheOpaqueCredentials
-      extends ChainingSecurityContext.ChainingOpaqueCredentials
+  private class CacheOpaqueCredentials extends ChainingSecurityContext.ChainingOpaqueCredentials
       implements NotSoOpaqueCredentials {
 
-    public String getCredentials() {
+    /**
+     * put your documentation comment here
+     * @return 
+     */
+    public String getCredentials () {
       if (this.credentialstring != null)
-        return new String(this.credentialstring);
-      else
-        return null;
+        return  new String(this.credentialstring); 
+      else 
+        return  null;
     }
   }
 }
+
+
+

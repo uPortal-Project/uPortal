@@ -31,20 +31,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.channels;
 
-import org.jasig.portal.*;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.XSLT;
-import org.xml.sax.DocumentHandler;
-import java.util.*;
-import javax.servlet.http.*;
-import org.w3c.dom.*;
-import org.apache.xalan.xslt.*;
-import java.io.StringWriter;
-import java.net.URL;
+package  org.jasig.portal.channels;
+
+import  org.jasig.portal.*;
+import  org.jasig.portal.security.IPerson;
+import  org.jasig.portal.utils.XSLT;
+import  org.xml.sax.DocumentHandler;
+import  java.util.*;
+import  javax.servlet.http.*;
+import  org.w3c.dom.*;
+import  org.apache.xalan.xslt.*;
+import  java.io.StringWriter;
+import  java.net.URL;
+
 
 /** <p>Initial profile selection</p>
  * <p> CSelectSystemProfile channel allows to establish mapping from user-Agent to a system profile. 
@@ -53,76 +57,95 @@ import java.net.URL;
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
  */
-
-
 public class CSelectSystemProfile extends BaseChannel {
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSelectSystemProfile/CSelectSystemProfile.ssl");
+  IUserPreferencesStore updb;
+  private Hashtable systemProfileList;
 
-    private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSelectSystemProfile/CSelectSystemProfile.ssl");
-
-    IUserPreferencesDB updb;
-    private Hashtable systemProfileList;
-
-    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
-	super.setRuntimeData(rd);
-        String action=runtimeData.getParameter("action");
-        if(action!=null) {
-            String profileId=runtimeData.getParameter("profileId");
-            boolean systemProfile=false;
-            if(profileId!=null) {
-                String profileType=runtimeData.getParameter("profileType");
-		if(action.equals("map")) {
-                    this.getUserPreferencesDB().setSystemBrowserMapping(this.runtimeData.getBrowserInfo().getUserAgent(),Integer.parseInt(profileId));
-                }
-            }
+  /**
+   * put your documentation comment here
+   * @param rd
+   * @exception PortalException
+   */
+  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+    super.setRuntimeData(rd);
+    String action = runtimeData.getParameter("action");
+    if (action != null) {
+      String profileId = runtimeData.getParameter("profileId");
+      boolean systemProfile = false;
+      if (profileId != null) {
+        String profileType = runtimeData.getParameter("profileType");
+        if (action.equals("map")) {
+          this.getUserPreferencesStore().setSystemBrowserMapping(this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
         }
+      }
     }
+  }
 
-    private IUserPreferencesDB getUserPreferencesDB() throws PortalException {
-	// this should be obtained from the JNDI context
-        if(updb==null) updb=new UserPreferencesDBImpl();
-        if(updb==null) throw new ResourceMissingException("","User preference database","Unable to obtain the list of user profiles, since the user preference database is currently down");
-        return updb;
+  /**
+   * put your documentation comment here
+   * @return 
+   * @exception PortalException
+   */
+  private IUserPreferencesStore getUserPreferencesStore () throws PortalException {
+    // this should be obtained from the JNDI context
+    if (updb == null)
+      updb = new RDBMUserPreferencesStore();
+    if (updb == null)
+      throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
+    return  updb;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   * @exception PortalException
+   */
+  protected Hashtable getSystemProfileList () throws PortalException {
+    if (systemProfileList == null)
+      systemProfileList = this.getUserPreferencesStore().getSystemProfileList();
+    return  systemProfileList;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param out
+   * @exception PortalException
+   */
+  public void renderXML (DocumentHandler out) throws PortalException {
+    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Element edEl = doc.createElement("profiles");
+    doc.appendChild(edEl);
+    // fill out system-defined profiles
+    Element sEl = doc.createElement("system");
+    for (Enumeration spe = this.getSystemProfileList().elements(); spe.hasMoreElements();) {
+      UserProfile p = (UserProfile)spe.nextElement();
+      Element pEl = doc.createElement("profile");
+      pEl.setAttribute("id", Integer.toString(p.getProfileId()));
+      pEl.setAttribute("name", p.getProfileName());
+      Element dEl = doc.createElement("description");
+      dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
+      pEl.appendChild(dEl);
+      sEl.appendChild(pEl);
     }
-
-    protected Hashtable getSystemProfileList() throws PortalException {
-        if(systemProfileList==null)
-            systemProfileList=this.getUserPreferencesDB().getSystemProfileList();
-        return systemProfileList;
+    edEl.appendChild(sEl);
+    /*  try {
+     Logger.log(Logger.DEBUG,UtilitiesBean.dom2PrettyString(doc));
+     } catch (Exception e) {
+     Logger.log(Logger.ERROR,e);
+     }
+     */
+    Hashtable params = new Hashtable();
+    params.put("baseActionURL", runtimeData.getBaseActionURL());
+    try {
+      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, runtimeData.getMedia());
+    } catch (org.xml.sax.SAXException e) {
+      throw  new GeneralRenderingException("Unable to complete transformation");
+    } catch (java.io.IOException i) {
+      throw  new GeneralRenderingException("IOException has been encountered");
     }
-
-    public void renderXML(DocumentHandler out) throws PortalException {
-	Document doc = new org.apache.xerces.dom.DocumentImpl();
-	Element edEl=doc.createElement("profiles");
-	doc.appendChild(edEl);
-	// fill out system-defined profiles
-	Element sEl=doc.createElement("system");
-	for(Enumeration spe=this.getSystemProfileList().elements(); spe.hasMoreElements(); ) {
-	    UserProfile p=(UserProfile) spe.nextElement();
-	    Element pEl=doc.createElement("profile");
-	    pEl.setAttribute("id",Integer.toString(p.getProfileId()));
-	    pEl.setAttribute("name",p.getProfileName());
-	    Element dEl=doc.createElement("description");
-	    dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
-	    pEl.appendChild(dEl);
-	    sEl.appendChild(pEl);
-	}
-	edEl.appendChild(sEl);
-	
-	/*  try {
-	    Logger.log(Logger.DEBUG,UtilitiesBean.dom2PrettyString(doc));
-            } catch (Exception e) {
-	    Logger.log(Logger.ERROR,e);
-	    }
-	*/
-
-	Hashtable params=new Hashtable();
-	params.put("baseActionURL", runtimeData.getBaseActionURL());
-	try {
-	    XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, runtimeData.getMedia());
-	} catch (org.xml.sax.SAXException e) {
-	    throw new GeneralRenderingException("Unable to complete transformation");
-	} catch (java.io.IOException i) {
-	    throw new GeneralRenderingException("IOException has been encountered");
-	}
-    }
+  }
 }
+
+
+

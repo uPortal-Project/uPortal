@@ -31,15 +31,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.Logger;
-import org.jasig.portal.RdbmServices;
-import org.jasig.portal.GenericPortalBean;
-import java.util.*;
+package  org.jasig.portal.security.provider;
+
+import  org.jasig.portal.security.*;
+import  org.jasig.portal.Logger;
+import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.GenericPortalBean;
+import  java.util.*;
+
 
 /**
  * <p>This is an implementation of a SecurityContext that merely checks to see
@@ -51,50 +55,57 @@ import java.util.*;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-
-class TrustSecurityContext extends ChainingSecurityContext implements ISecurityContext {
-
+class TrustSecurityContext extends ChainingSecurityContext
+    implements ISecurityContext {
   private final int TRUSTSECURITYAUTHTYPE = 0xFF01;
 
-  TrustSecurityContext() {
+  /**
+   * put your documentation comment here
+   */
+  TrustSecurityContext () {
     super();
   }
 
-  public int getAuthType() {
-    return this.TRUSTSECURITYAUTHTYPE;
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public int getAuthType () {
+    return  this.TRUSTSECURITYAUTHTYPE;
   }
 
-  public synchronized void authenticate() throws PortalSecurityException{
+  /**
+   * put your documentation comment here
+   * @exception PortalSecurityException
+   */
+  public synchronized void authenticate () throws PortalSecurityException {
     this.isauth = false;
     if (this.myPrincipal.UID != null) {
       try {
         String first_name, last_name;
-        String acct[] = GenericPortalBean.getDbImplObject().getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
           first_name = acct[2];
-          last_name  = acct[3];
+          last_name = acct[3];
           this.myPrincipal.FullName = first_name + " " + last_name;
-          Logger.log(Logger.INFO, "User " + this.myPrincipal.UID +
-              " is authenticated");
+          Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
-        }
-        else
+        } 
+        else 
           Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
-      }
-      catch (Exception e) {
-        PortalSecurityException ep = new PortalSecurityException
-          ("SQL Database Error");
+      } catch (Exception e) {
+        PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
         Logger.log(Logger.ERROR, ep);
-        throw(ep);
+        throw  (ep);
       }
-    }
-    else
-      Logger.log
-        (Logger.ERROR, "Principal not initialized prior to authenticate");
-
+    } 
+    else 
+      Logger.log(Logger.ERROR, "Principal not initialized prior to authenticate");
     // Ok...we are now ready to authenticate all of our subcontexts.
-
     super.authenticate();
     return;
   }
 }
+
+
+
