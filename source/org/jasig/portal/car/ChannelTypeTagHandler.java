@@ -87,8 +87,8 @@ public class ChannelTypeTagHandler extends DefaultHandler
             this.name = null;
             this.description = null;
             this.uri = null;
-            this.charBufr.delete(0, charBufr.length());
         }
+        this.charBufr.delete(0, charBufr.length());
     }
 
     /**
@@ -120,7 +120,7 @@ public class ChannelTypeTagHandler extends DefaultHandler
             // leaving block so register the type
             try
             {
-                RegisterChannelType.register(name, namespaceURI, localName, qName);
+                RegisterChannelType.register(clazz, name, description, uri);
             }
             catch (Exception e)
             {
