@@ -1012,7 +1012,7 @@ public class DBImpl implements IDBImpl
     String[] acct = new String[] {
       null, null, null, null
     };
-    String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME FROM UP_USER, UP_SHADOW WHERE UP_USER.USER_ID = UP_SHADOW.USER_ID AND "
+    String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
         + "UP_USER.USER_NAME = '" + username + "'";
     Logger.log(Logger.DEBUG, query);
     Connection con = rdbmService.getConnection();
@@ -1026,6 +1026,7 @@ public class DBImpl implements IDBImpl
        acct[1] = rset.getString("ENCRPTD_PSWD");
        acct[2] = rset.getString("FIRST_NAME");
        acct[3] = rset.getString("LAST_NAME");
+       acct[4] = rset.getString("EMAIL");
       }
     } finally {
       try {
