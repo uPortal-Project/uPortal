@@ -401,16 +401,22 @@ final class TabColumnPrefsState extends BaseState
    */
   private final Element createFolder (String name) throws Exception
   {
+    String ID = String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID()));
     Element layout = userLayout.getDocumentElement();
     Document doc = layout.getOwnerDocument();
-    Element column = doc.createElement("folder");
-    column.setAttribute("name", name);
-    column.setAttribute("ID", String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID())));
-    column.setAttribute("type", "regular");
-    column.setAttribute("hidden", "false");
-    column.setAttribute("unremovable", "false");
-    column.setAttribute("immutable", "false");
-    return column;
+    Element folder = doc.createElement("folder");
+    folder.setAttribute("name", name);
+    folder.setAttribute("ID", ID);
+    folder.setAttribute("type", "regular");
+    folder.setAttribute("hidden", "false");
+    folder.setAttribute("unremovable", "false");
+    folder.setAttribute("immutable", "false");
+
+    // This is Xerces-dependent, but it is the only way to get things to work at the moment
+    // Without this line, it is not possible to access this new folder with the getElementById() method
+    ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(ID, folder);
+
+    return folder;
   }
 
   private void saveLayout () throws PortalException
@@ -714,7 +720,7 @@ final class TabColumnPrefsState extends BaseState
         // Begin SAX chain
         UtilitiesBean.node2SAX(userLayout, saif);
 
-        //if (action.equals("deleteColumn"))
+        //if (action.equals("newTab"))
         //  System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
       }
       catch (Exception e)
