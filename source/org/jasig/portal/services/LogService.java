@@ -53,6 +53,7 @@ import org.jasig.portal.utils.ResourceLoader;
  *
  * @author     Ken Weiner, Bernie Durfee, Vikrant Joshi, Zed A. Shaw
  * @version    $Revision$
+ * @deprecated As of uPortal 2.4, please use Apache Commons Logging directly
  */
 public final class LogService {
   // Log levels, create fake ones if they don't match the Log4J standard ones
@@ -68,8 +69,6 @@ public final class LogService {
   public final static Priority INFO = Priority.INFO;
 
   public final static Priority DEBUG = Priority.DEBUG;
-  private final static String fs = File.separator;
-  private final static String sLogRelativePath = "logs" + fs + "portal.log";
   private static boolean bInitialized = false;
   private static Logger m_logger = null;
   private static final LogService m_instance = new LogService();
