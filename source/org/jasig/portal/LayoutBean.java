@@ -942,7 +942,7 @@ public class LayoutBean extends GenericPortalBean
 	if(channelObject instanceof org.jasig.portal.IChannel) 
 	    ch=(org.jasig.portal.IChannel) channelObject;
 	else if(channelObject instanceof org.jasig.portal.IXMLChannel)
-	    ch=new XMLChannelWraper((org.jasig.portal.IXMLChannel) channelObject);
+	    ch=new XMLChannelWrapper((org.jasig.portal.IXMLChannel) channelObject);
 	//peterk 1.18 change -end
      
         // Send the channel its parameters
