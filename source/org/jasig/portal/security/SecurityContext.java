@@ -170,4 +170,19 @@ public interface SecurityContext {
    *
    */
   public void addSubContext(String name, SecurityContext ctx);
+
+  /**
+   * Returns the reason for authentication failure:
+   * eg. authentication server not available
+   *
+   */
+
+  public String getAuthenticationFailure();
+
 }
+
+
+
+
+
+

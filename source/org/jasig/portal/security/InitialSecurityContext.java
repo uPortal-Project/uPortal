@@ -196,4 +196,10 @@ public class InitialSecurityContext implements SecurityContext {
     return;
   }
 
+    public String getAuthenticationFailure() {
+	return (ictx == null ? "" : ictx.getAuthenticationFailure());
+    }
 }
+
+
+
