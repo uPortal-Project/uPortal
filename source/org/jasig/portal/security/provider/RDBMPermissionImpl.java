@@ -45,6 +45,8 @@ import java.util.List;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.groups.CompositeEntityIdentifier;
+import javax.naming.*;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.services.LogService;
@@ -63,12 +65,14 @@ public class RDBMPermissionImpl implements IPermissionStore {
     // sql Strings:
     private static String PERMISSION_TABLE = "UP_PERMISSION";
     private static String OWNER_COLUMN =     "OWNER";
-    private static String PRINCIPAL_COLUMN = "PRINCIPAL";
+    private static String PRINCIPAL_TYPE_COLUMN = "PRINCIPAL_TYPE";
+    private static String PRINCIPAL_KEY_COLUMN = "PRINCIPAL_KEY";
     private static String ACTIVITY_COLUMN =  "ACTIVITY";
     private static String TARGET_COLUMN =    "TARGET";
     private static String TYPE_COLUMN =      "PERMISSION_TYPE";
     private static String EFFECTIVE_COLUMN = "EFFECTIVE";
     private static String EXPIRES_COLUMN =   "EXPIRES";
+    private static String allPermissionColumnsSql;
     private static String deletePermissionSql;
     private static String findPermissionSql;
     private static String insertPermissionSql;
@@ -93,10 +97,10 @@ public void add(IPermission[] perms) throws AuthorizationException
         {
             primAdd(perms);
         }
-        catch (SQLException sqle)
+        catch (Exception ex)
         {
-            LogService.log (LogService.ERROR, sqle);
-            throw new AuthorizationException(sqle.getMessage());
+            LogService.log (LogService.ERROR, ex);
+            throw new AuthorizationException(ex.getMessage());
         }
     }
 }
@@ -127,9 +131,9 @@ public void add(IPermission perm) throws AuthorizationException
         finally
             { ps.close(); }
     }
-    catch (SQLException sqle)
+    catch (Exception ex)
     {
-        LogService.log(LogService.ERROR, sqle.getMessage());
+        LogService.log(LogService.ERROR, ex.getMessage());
         throw new AuthorizationException("Problem adding Permission " + perm);
     }
     finally
@@ -148,10 +152,10 @@ public void delete(IPermission[] perms) throws AuthorizationException
         {
             primDelete(perms);
         }
-        catch (SQLException sqle)
+        catch (Exception ex)
         {
-            LogService.log (LogService.ERROR, sqle);
-            throw new AuthorizationException(sqle.getMessage());
+            LogService.log (LogService.ERROR, ex);
+            throw new AuthorizationException(ex.getMessage());
         }
     }
 }
@@ -174,9 +178,9 @@ public void delete(IPermission perm) throws AuthorizationException
         finally
             { ps.close(); }
     }
-    catch (SQLException sqle)
+    catch (Exception ex)
     {
-        LogService.log(LogService.ERROR, sqle.getMessage());
+        LogService.log(LogService.ERROR, ex.getMessage());
         throw new AuthorizationException("Problem deleting Permission " + perm);
     }
     finally
@@ -188,19 +192,25 @@ public void delete(IPermission perm) throws AuthorizationException
  * @param perm org.jasig.portal.security.IPermission
  * @exception java.sql.SQLException
  */
-public boolean existsInDatabase(IPermission perm) throws SQLException
+public boolean existsInDatabase(IPermission perm) throws AuthorizationException, SQLException
 {
-    Connection conn = RDBMServices.getConnection();
+    Connection conn = null;
     try
     {
+        Name principalName = CompositeEntityIdentifier.parseCompoundKey(perm.getPrincipal());
+        String type = principalName.get(0);
+        String key = principalName.getSuffix(0).toString();
+
+        conn = RDBMServices.getConnection();
         String sQuery = getFindPermissionSql();
         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sQuery);
         try
         {
             ps.setString(1, perm.getOwner());
-            ps.setString(2, perm.getPrincipal());
-            ps.setString(3, perm.getActivity());
-            ps.setString(4, perm.getTarget());
+            ps.setInt   (2, getPrincipalType(perm));
+            ps.setString(3, getPrincipalKey(perm));
+            ps.setString(4, perm.getActivity());
+            ps.setString(5, perm.getTarget());
             LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.existsInDatabase(): " + ps);
             ResultSet rs = ps.executeQuery();
             try {
@@ -212,15 +222,42 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
         finally
             { ps.close(); }
     }
-    catch (SQLException sqle)
+    catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, sqle);
-        throw sqle;
+        LogService.log (LogService.ERROR, ex);
+        throw new AuthorizationException("RDBMPermissionImpl.existsInDatabase(): " + ex);
     }
     finally
     {
         RDBMServices.releaseConnection(conn);
     }
+}
+/**
+ * @return java.lang.String
+ */
+private static String getAllPermissionColumnsSql()
+{
+    if ( allPermissionColumnsSql == null )
+    {
+        StringBuffer sqlBuff = new StringBuffer(200);
+        sqlBuff.append(OWNER_COLUMN);
+        sqlBuff.append(", ");
+        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
+        sqlBuff.append(", ");
+        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
+        sqlBuff.append(", ");
+        sqlBuff.append(ACTIVITY_COLUMN);
+        sqlBuff.append(", ");
+        sqlBuff.append(TARGET_COLUMN);
+        sqlBuff.append(", ");
+        sqlBuff.append(TYPE_COLUMN);
+        sqlBuff.append(", ");
+        sqlBuff.append(EFFECTIVE_COLUMN);
+        sqlBuff.append(", ");
+        sqlBuff.append(EXPIRES_COLUMN);
+        allPermissionColumnsSql = sqlBuff.toString();
+    }
+    return allPermissionColumnsSql;
 }
 /**
  * @return java.lang.String
@@ -235,7 +272,9 @@ private static String getDeletePermissionSql()
         sqlBuff.append(" WHERE ");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_COLUMN);
+        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
+        sqlBuff.append(" = ? AND ");
+        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
         sqlBuff.append(" = ? AND ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(" = ? AND ");
@@ -258,7 +297,9 @@ private static java.lang.String getFindPermissionSql()
         sqlBuff.append("WHERE ");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_COLUMN);
+        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
+        sqlBuff.append(" = ? AND ");
+        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
         sqlBuff.append(" = ? AND ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(" = ? AND ");
@@ -281,23 +322,67 @@ private static String getInsertPermissionSql()
         sqlBuff.append("INSERT INTO ");
         sqlBuff.append(PERMISSION_TABLE);
         sqlBuff.append(" (");
-        sqlBuff.append(OWNER_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(PRINCIPAL_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(ACTIVITY_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(TARGET_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(TYPE_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(EFFECTIVE_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(EXPIRES_COLUMN);
-        sqlBuff.append(") VALUES (?, ?, ?, ?, ?, ?, ?)");
+        sqlBuff.append(getAllPermissionColumnsSql());
+        sqlBuff.append(") VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         insertPermissionSql = sqlBuff.toString();
     }
     return insertPermissionSql;
+}
+/**
+ * Returns the principal key portion of the IPermission principal.
+ * @return String
+ * @param String
+ * @exception AuthorizationException
+ */
+private String getPrincipalKey(String principalString) throws AuthorizationException
+{
+    try
+    {
+        Name principalName = CompositeEntityIdentifier.parseCompoundKey(principalString);
+        return principalName.getSuffix(1).toString();
+    }
+    catch (NamingException ne)
+    {
+        throw new AuthorizationException("Problem parsing principal key: " + ne.getMessage());
+    }
+}
+/**
+ * Returns the principal key portion of the IPermission principal.
+ * @return String
+ * @param perm org.jasig.portal.security.IPermission
+ * @exception AuthorizationException
+ */
+private String getPrincipalKey(IPermission perm) throws AuthorizationException
+{
+    return getPrincipalKey(perm.getPrincipal());
+}
+/**
+ * Returns the principal type portion of the principal.
+ * @return int
+ * @param String principalString
+ * @exception javax.naming.AuthorizationException
+ */
+private int getPrincipalType(String principalString) throws AuthorizationException
+{
+    try
+    {
+        Name principalName = CompositeEntityIdentifier.parseCompoundKey(principalString);
+        return Integer.parseInt(principalName.get(0));
+    }
+    catch (NamingException ne)
+    {
+        throw new AuthorizationException("Problem parsing principal type: " + ne.getMessage());
+    }
+}
+/**
+ * Returns the principal type portion of the IPermission principal.
+ * @return int
+ * @param perm org.jasig.portal.security.IPermission
+ * @exception AuthorizationException
+ */
+private int getPrincipalType(IPermission perm) throws AuthorizationException
+{
+    return getPrincipalType(perm.getPrincipal());
 }
 /**
  * @return java.lang.String
@@ -308,19 +393,7 @@ private static String getSelectPermissionSql()
     {
         StringBuffer sqlBuff = new StringBuffer(200);
         sqlBuff.append("SELECT ");
-        sqlBuff.append(OWNER_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(PRINCIPAL_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(ACTIVITY_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(TARGET_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(TYPE_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(EFFECTIVE_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(EXPIRES_COLUMN);
+        sqlBuff.append(getAllPermissionColumnsSql());
         sqlBuff.append(" FROM ");
         sqlBuff.append(PERMISSION_TABLE);
         sqlBuff.append(" ");
@@ -347,7 +420,9 @@ private static String getUpdatePermissionSql()
         sqlBuff.append(" = ? WHERE ");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_COLUMN);
+        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
+        sqlBuff.append(" = ? AND ");
+        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
         sqlBuff.append(" = ? AND ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(" = ? AND ");
@@ -363,13 +438,28 @@ private static String getUpdatePermissionSql()
  */
 private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
 {
+    java.sql.Timestamp ts = null;
+    int nanos = 0;
+
     IPermission perm = newInstance(rs.getString(OWNER_COLUMN));
-    perm.setPrincipal(rs.getString(PRINCIPAL_COLUMN));
+    perm.setPrincipal(rs.getString(PRINCIPAL_TYPE_COLUMN) + "." + rs.getString(PRINCIPAL_KEY_COLUMN) );
     perm.setActivity(rs.getString(ACTIVITY_COLUMN));
     perm.setTarget(rs.getString(TARGET_COLUMN));
     perm.setType(rs.getString(TYPE_COLUMN));
-    perm.setEffective(rs.getDate(EFFECTIVE_COLUMN));
-    perm.setExpires(rs.getDate(EXPIRES_COLUMN));
+
+    ts = rs.getTimestamp(EFFECTIVE_COLUMN);
+    if ( ts != null )
+    {
+        nanos = ts.getNanos() / 1000000;
+        perm.setEffective(new java.util.Date(ts.getTime()+nanos));
+    }
+
+    ts = rs.getTimestamp(EXPIRES_COLUMN);
+    if ( ts != null )
+    {
+        nanos = ts.getNanos() / 1000000;
+        perm.setExpires(new java.util.Date(ts.getTime()+nanos));
+    }
 
     return perm;
 }
@@ -385,7 +475,7 @@ public IPermission newInstance(String owner)
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception java.sql.Exception
  */
-private void primAdd(IPermission[] perms) throws SQLException, AuthorizationException
+private void primAdd(IPermission[] perms) throws Exception
 {
     Connection conn = null;
     int rc = 0;
@@ -420,11 +510,11 @@ private void primAdd(IPermission[] perms) throws SQLException, AuthorizationExce
         RDBMServices.commit(conn);
 
     }
-    catch (SQLException sqle)
+    catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, sqle);
+        LogService.log (LogService.ERROR, ex);
         RDBMServices.rollback(conn);
-        throw sqle;
+        throw ex;
     }
     finally
     {
@@ -439,36 +529,37 @@ private void primAdd(IPermission[] perms) throws SQLException, AuthorizationExce
  * @return int - the return code from the PreparedStatement
  * @exception java.sql.Exception
  */
-private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws SQLException
+private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws Exception
 {
-    java.sql.Date date = null;
+    java.sql.Timestamp ts = null;
 
     // NON-NULL COLUMNS:
     ps.clearParameters();
     ps.setString(1, perm.getOwner());
-    ps.setString(2, perm.getPrincipal());
-    ps.setString(3, perm.getActivity());
-    ps.setString(4, perm.getTarget());
+    ps.setInt(   2, getPrincipalType(perm));
+    ps.setString(3, getPrincipalKey(perm));
+    ps.setString(4, perm.getActivity());
+    ps.setString(5, perm.getTarget());
     // TYPE:
     if ( perm.getType() == null )
-        { ps.setNull(5, Types.VARCHAR); }
+        { ps.setNull(6, Types.VARCHAR); }
     else
-        { ps.setString(5, perm.getType()); }
+        { ps.setString(6, perm.getType()); }
     // EFFECTIVE:
     if ( perm.getEffective() == null )
-        { ps.setNull(6, Types.DATE); }
-    else
-        {
-            date = new java.sql.Date(perm.getEffective().getTime());
-            ps.setDate(6, date);
-        }
-    // EXPIRES:
-    if ( perm.getExpires() == null )
         { ps.setNull(7, Types.DATE); }
     else
         {
-            date = new java.sql.Date(perm.getExpires().getTime());
-            ps.setDate(7, date);
+            ts = new java.sql.Timestamp(perm.getEffective().getTime());
+            ps.setTimestamp(7, ts);
+        }
+    // EXPIRES:
+    if ( perm.getExpires() == null )
+        { ps.setNull(8, Types.DATE); }
+    else
+        {
+            ts = new java.sql.Timestamp(perm.getExpires().getTime());
+            ps.setTimestamp(8, ts);
         }
 }
 /**
@@ -476,7 +567,7 @@ private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception java.sql.Exception
  */
-private void primDelete(IPermission[] perms) throws SQLException, AuthorizationException
+private void primDelete(IPermission[] perms) throws Exception
 {
     Connection conn = null;
 
@@ -498,11 +589,11 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
         RDBMServices.commit(conn);
 
     }
-    catch (SQLException sqle)
+    catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, sqle);
+        LogService.log (LogService.ERROR, ex);
         RDBMServices.rollback(conn);
-        throw sqle;
+        throw ex;
     }
     finally
     {
@@ -517,13 +608,14 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
  * @return int - the return code from the PreparedStatement
  * @exception java.sql.Exception
  */
-private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) throws SQLException
+private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) throws Exception
 {
     ps.clearParameters();
     ps.setString(1, perm.getOwner());
-    ps.setString(2, perm.getPrincipal());
-    ps.setString(3, perm.getActivity());
-    ps.setString(4, perm.getTarget());
+    ps.setInt(   2, getPrincipalType(perm));
+    ps.setString(3, getPrincipalKey(perm));
+    ps.setString(4, perm.getActivity());
+    ps.setString(5, perm.getTarget());
     LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primDelete(): " + ps);
 
     return ps.executeUpdate();
@@ -533,7 +625,7 @@ private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) thro
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception java.sql.Exception
  */
-private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationException
+private void primUpdate(IPermission[] perms) throws Exception
 {
     Connection conn = null;
 
@@ -555,11 +647,11 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
         RDBMServices.commit(conn);
 
     }
-    catch (SQLException sqle)
+    catch (Exception ex)
     {
-        LogService.log (LogService.ERROR, sqle);
+        LogService.log (LogService.ERROR, ex);
         RDBMServices.rollback(conn);
-        throw sqle;
+        throw ex;
     }
     finally
     {
@@ -574,9 +666,9 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
  * @return int - the return code from the PreparedStatement
  * @exception java.sql.Exception
  */
-private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) throws SQLException
+private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) throws Exception
 {
-    java.sql.Date date = null;
+    java.sql.Timestamp ts = null;
 
     // UPDATE COLUMNS:
 
@@ -591,22 +683,23 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
         { ps.setNull(2, Types.DATE); }
     else
     {
-        date = new java.sql.Date(perm.getEffective().getTime());
-        ps.setDate(2, date);
+        ts = new java.sql.Timestamp(perm.getEffective().getTime());
+        ps.setTimestamp(2, ts);
     }
     // EXPIRES:
     if ( perm.getExpires() == null )
         { ps.setNull(3, Types.DATE); }
     else
     {
-        date = new java.sql.Date(perm.getExpires().getTime());
-        ps.setDate(3, date);
+        ts = new java.sql.Timestamp(perm.getExpires().getTime());
+        ps.setTimestamp(3, ts);
     }
     // WHERE COLUMNS:
     ps.setString(4, perm.getOwner());
-    ps.setString(5, perm.getPrincipal());
-    ps.setString(6, perm.getActivity());
-    ps.setString(7, perm.getTarget());
+    ps.setInt(   5, getPrincipalType(perm));
+    ps.setString(6, getPrincipalKey(perm));
+    ps.setString(7, perm.getActivity());
+    ps.setString(8, perm.getTarget());
     LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primUpdate(): " + ps);
 
 
@@ -650,9 +743,14 @@ throws AuthorizationException
     if ( principal != null )
         {
             sqlQuery.append("AND ");
-            sqlQuery.append(PRINCIPAL_COLUMN);
+            sqlQuery.append(PRINCIPAL_TYPE_COLUMN);
+            sqlQuery.append(" = ");
+            sqlQuery.append(getPrincipalType(principal));
+            sqlQuery.append(" ");
+            sqlQuery.append("AND ");
+            sqlQuery.append(PRINCIPAL_KEY_COLUMN);
             sqlQuery.append(" = '");
-            sqlQuery.append(principal);
+            sqlQuery.append(getPrincipalKey(principal));
             sqlQuery.append("' ");
         }
 
@@ -735,10 +833,10 @@ public void update(IPermission[] perms) throws AuthorizationException
         {
             primUpdate(perms);
         }
-        catch (SQLException sqle)
+        catch (Exception ex)
         {
-            LogService.log (LogService.ERROR, sqle);
-            throw new AuthorizationException(sqle.getMessage());
+            LogService.log (LogService.ERROR, ex);
+            throw new AuthorizationException(ex.getMessage());
         }
     }
 }
@@ -762,9 +860,9 @@ public void update(IPermission perm) throws AuthorizationException
         finally
             { ps.close(); }
     }
-    catch (SQLException sqle)
+    catch (Exception ex)
     {
-        LogService.log(LogService.ERROR, sqle.getMessage());
+        LogService.log(LogService.ERROR, ex.getMessage());
         throw new AuthorizationException("Problem updating Permission " + perm);
     }
     finally

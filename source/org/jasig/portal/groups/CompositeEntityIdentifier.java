@@ -169,4 +169,12 @@ public String toString() {
     return "CompositeEntityIdentifier (" + type + "(" + getKey() + "))";
 
 }
+
+/**
+ * Returns a CompoundName parsed from key
+ */
+public static Name parseCompoundKey(String key) throws NamingException
+{
+    return getParser().parse(key);
+}
 }

@@ -76,8 +76,11 @@
       <column> <name>OWNER</name>           <type>VARCHAR</type>   <param>255</param>
       <desc>Framework entity owner - UP_FRAMEWORK, UP_ERROR_CHAN</desc>
       </column>
-      <column><name>PRINCIPAL</name>        <type>VARCHAR</type>   <param>255</param>
-      <desc>**** Numeric value</desc>
+      <column><name>PRINCIPAL_TYPE</name>        <type>INTEGER</type>
+      <desc>**** Numeric value foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
+      </column>
+      <column><name>PRINCIPAL_KEY</name>        <type>VARCHAR</type>   <param>255</param>
+      <desc>**** The key of the entity represented by the principal</desc>
       </column>
       <column><name>ACTIVITY</name>         <type>VARCHAR</type>   <param>255</param>
       <desc>Allowable activities, ex. VIEW, PUBLISH, SUBSCRIBE</desc>
