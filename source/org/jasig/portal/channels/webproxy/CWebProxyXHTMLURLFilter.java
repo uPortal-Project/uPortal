@@ -121,7 +121,8 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
       }
       catch (Exception e)
       {
-        log.debug("CWebProxyXHTMLFilter:: Exception: " + e);
+          if (log.isDebugEnabled())
+              log.debug("CWebProxyXHTMLFilter:: Exception: " + e);
       }
     }
     else if (insideForm)
@@ -194,7 +195,8 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
     }
     catch (SAXException e)
     {
-      log.info("CWebProxyXHTMLURLFilter::cannot add input element to buffer: " + e);
+        if (log.isInfoEnabled())
+            log.info("CWebProxyXHTMLURLFilter::cannot add input element to buffer: " + e);
     }
   }
 
