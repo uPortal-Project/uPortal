@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ascii"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <!--Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+<!--
+Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
@@ -34,6 +34,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 Author: Jultin Tilton, jet@immagic.com
 $Revision$
 -->
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="activeTab">1</xsl:param>
@@ -41,7 +42,7 @@ $Revision$
   <xsl:param name="position">no parameter passed</xsl:param>
   <xsl:param name="elementID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
-  <xsl:param name="showLockUnlock">true</xsl:param>
+  <xsl:param name="showLockUnlock">false</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--remove for CVS
@@ -904,7 +905,7 @@ $Revision$
         </td>
       </tr>
       <!-- Add the lock/unlock icon if the user is allowed to make things immutable -->
-      <xsl:if test="$showLockUnlock">
+      <xsl:if test="$showLockUnlock = 'true'">
         <tr>
           <td valign="top">
             <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
