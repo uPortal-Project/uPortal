@@ -158,7 +158,7 @@
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="a">
+   <xsl:template match="a|area">
       <xsl:param name="href-uri">
         <xsl:choose>
            <!--handles relative URIs for href attributes-->
