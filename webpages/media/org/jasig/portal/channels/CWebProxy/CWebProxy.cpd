@@ -31,6 +31,36 @@
 			</parameter>
 
 			<parameter modify="publish-only">
+				<name>cw_help</name>
+				<label>Help URI</label>
+				<type base="string" input="text" display="text">
+					<length>40</length>
+					<maxlength>2000</maxlength>
+				</type>
+				<defaultValue>http://www.mun.ca/cc/portal/cw/num_help.html</defaultValue>
+			</parameter>
+
+			<parameter modify="publish-only">
+				<name>cw_info</name>
+				<label>Info URI</label>
+				<type base="string" input="text" display="text">
+					<length>40</length>
+					<maxlength>2000</maxlength>
+				</type>
+				<defaultValue>http://www.mun.ca/cc/portal/cw/num_info.html</defaultValue>
+			</parameter>
+
+			<parameter modify="publish-only">
+				<name>cw_edit</name>
+				<label>Edit URI</label>
+				<type base="string" input="text" display="text">
+					<length>40</length>
+					<maxlength>2000</maxlength>
+				</type>
+				<defaultValue>http://www.mun.ca/cc/portal/cw/num_edit.html</defaultValue>
+			</parameter>
+
+			<parameter modify="publish-only">
 				<name>cw_tidy</name>
 				<label>Enable HTML Filter?</label>
 				<type base="string" input="single-choice" display="drop-down">
