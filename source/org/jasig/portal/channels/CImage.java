@@ -38,17 +38,13 @@ package org.jasig.portal.channels;
 import org.jasig.portal.*;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
-import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
-import java.util.Hashtable;
-import java.net.URL;
 
 /** <p>A simple channel which renders an image along with an optional
  * caption and subcaption.</p>
  * <p>Channel parameters:</p>
  *   <table>
  *     <tr><th>Name</th><th>Description</th><th>Example</th><th>Required</th></tr>
- *     <tr><td>name</td><td>The name of the channel instance</td><td>Hamilton Library Web Cam</td><td>yes</td></tr>
  *     <tr><td>img-uri</td><td>The URI of the image to display</td><td>http://webcam.its.hawaii.edu/uhmwebcam/image01.jpg</td><td>yes</td></tr>
  *     <tr><td>img-width</td><td>The width of the image to display</td><td>320</td><td>no</td></tr>
  *     <tr><td>img-height</td><td>The height of the image to display</td><td>240</td><td>no</td></tr>
@@ -64,6 +60,7 @@ public class CImage extends BaseChannel
 {
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CImage/CImage.ssl");
 
+  private String sImageUri = null;
   private String sImageWidth = null;
   private String sImageHeight = null;
   private String sImageBorder = null;
@@ -77,6 +74,7 @@ public class CImage extends BaseChannel
    */
   public void setStaticData (ChannelStaticData sd)
   {
+    sImageUri = sd.getParameter ("img-uri");
     sImageWidth = sd.getParameter ("img-width");
     sImageHeight = sd.getParameter ("img-height");
     sImageBorder = sd.getParameter ("img-border");
@@ -88,54 +86,44 @@ public class CImage extends BaseChannel
   /**
    * Output channel content to the portal
    * @param out a sax document handler
+   * @throws org.jasig.portal.PortalException
    */
-  public void renderXML (DocumentHandler out)
+  public void renderXML (DocumentHandler out) throws PortalException
   {
-    try
-    {
-      StringBuffer sb = new StringBuffer(1024);
-      sb.append("<?xml version='1.0'?>\n");
-      sb.append("<content>\n");
-      sb.append("  <image src=\"" + staticData.getParameter ("img-uri") + "\" ");
+    StringBuffer sb = new StringBuffer(1024);
+    sb.append("<?xml version='1.0'?>\n");
+    sb.append("<content>\n");
+    sb.append("  <image src=\"" + sImageUri + "\" ");
 
-      if (exists (sImageWidth))
-        sb.append("         width=\"" + sImageWidth + "\" ");
+    if (exists (sImageWidth))
+      sb.append("         width=\"" + sImageWidth + "\" ");
 
-      if (exists (sImageHeight))
-        sb.append("         height=\"" + sImageHeight + "\" ");
+    if (exists (sImageHeight))
+      sb.append("         height=\"" + sImageHeight + "\" ");
 
-      if (exists (sImageBorder))
-        sb.append("         border=\"" + sImageBorder + "\"");
+    if (exists (sImageBorder))
+      sb.append("         border=\"" + sImageBorder + "\"");
 
-      if (exists (sImageLink))
-        sb.append("         link=\"" + sImageLink + "\"");
+    if (exists (sImageLink))
+      sb.append("         link=\"" + sImageLink + "\"");
 
-      sb.append("  />\n");
+    sb.append("  />\n");
 
-      if (exists (sCaption))
-        sb.append("  <caption>" + sCaption + "</caption>\n");
+    if (exists (sCaption))
+      sb.append("  <caption>" + sCaption + "</caption>\n");
 
-      if (exists (sSubCaption))
-        sb.append("  <subcaption>" + sSubCaption + "</subcaption>\n");
+    if (exists (sSubCaption))
+      sb.append("  <subcaption>" + sSubCaption + "</subcaption>\n");
 
-      sb.append("</content>\n");
+    sb.append("</content>\n");
 
-      Hashtable params = new Hashtable(1);
-      params.put("baseActionURL", runtimeData.getBaseActionURL());
-
-      try
-      {
-        XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, params, runtimeData.getBrowserInfo());
-      }
-      catch (Exception e)
-      {
-        throw new GeneralRenderingException(e.getMessage());
-      }
-    }
-    catch (Exception e)
-    {
-      LogService.instance().log (LogService.ERROR, e);
-    }
+    XSLT xslt = new XSLT();
+    xslt.setXML(sb.toString());
+    xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    xslt.transform();
+    System.out.println(sb.toString());
   }
 
   private static boolean exists (String s)
