@@ -109,8 +109,10 @@ private void initialize() {
     catch (Exception ex)
         { sep = NODE_SEPARATOR; }
     GROUP_NODE_SEPARATOR = sep;
-    String msg = "RDBMEntityGroupStore.initialize(): Node separator set to " + sep;
-    log.info( msg);
+    if (log.isInfoEnabled()) {
+        String msg = "RDBMEntityGroupStore.initialize(): Node separator set to " + sep;
+        log.info( msg);
+    }
 }
 
 /**
@@ -150,9 +152,10 @@ throws GroupsException
             ps.clearParameters();
             ps.setString(1, groupKey);
             ps.setString(2, memberKey);
-            log.debug(
-              "RDBMEntityGroupStore.containsEntity(): " + ps +
-                  " (" + groupKey + ", " + memberKey + ")");
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityGroupStore.containsEntity(): " + ps +
+                        " (" + groupKey + ", " + memberKey + ")");
             ResultSet rs = ps.executeQuery();
             try
             {
@@ -190,9 +193,10 @@ throws GroupsException
             ps.setString(1, groupKey);
             ps.setString(2, memberKey);
             ps.setString(3, memberService);
-            log.debug(
-              "RDBMEntityGroupStore.containsGroup(): " + ps +
-                  " (" + groupKey + ", " + memberKey + ", " + memberService + ")");
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityGroupStore.containsGroup(): " + ps +
+                        " (" + groupKey + ", " + memberKey + ", " + memberService + ")");
             ResultSet rs = ps.executeQuery();
             try
             {
@@ -230,9 +234,10 @@ throws GroupsException
             ps.setString(1, groupKey);
             ps.setString(2, memberName);
             ps.setString(3, service);
-            log.debug(
-              "RDBMEntityGroupStore.containsGroupNamed(): " + ps +
-                  " (" + groupKey + ", " + memberName + ", " + service + ")");
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityGroupStore.containsGroupNamed(): " + ps +
+                        " (" + groupKey + ", " + memberName + ", " + service + ")");
             ResultSet rs = ps.executeQuery();
             try
             {
@@ -357,9 +362,10 @@ throws GroupsException
             {
                     ps.setString(1, memberKey);
                     ps.setInt(2, type);
-                    log.debug(
-                      "RDBMEntityGroupStore.findContainingGroupsForEntity(): " + ps +
-                      " (" + memberKey + ", " + type + ", memberIsGroup = F)");
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "RDBMEntityGroupStore.findContainingGroupsForEntity(): " + ps +
+                                " (" + memberKey + ", " + type + ", memberIsGroup = F)");
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
                     {
@@ -411,9 +417,10 @@ throws GroupsException
                     ps.setString(1, serviceName);
                     ps.setString(2, memberKey);
                     ps.setInt(3, type);
-                    log.debug(
-                      "RDBMEntityGroupStore.findContainingGroupsForGroup(): " + ps +
-                      " (" + serviceName + ", " + memberKey + ", " + type + ", memberIsGroup = T)");
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "RDBMEntityGroupStore.findContainingGroupsForGroup(): " + ps +
+                                " (" + serviceName + ", " + memberKey + ", " + type + ", memberIsGroup = T)");
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
                     {
@@ -508,7 +515,8 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
         try
         {
                 ps.setString(1, creatorID);
-                log.debug( "RDBMEntityGroupStore.findGroupsByCreator(): " + ps);
+                if (log.isDebugEnabled())
+                    log.debug( "RDBMEntityGroupStore.findGroupsByCreator(): " + ps);
                 ResultSet rs = ps.executeQuery();
                 try
                 {
@@ -565,8 +573,9 @@ public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
         try
         {
             ps.setString(1, group.getLocalKey());
-            log.debug(
-              "RDBMEntityGroupStore.findMemberGroupKeys(): " + ps + " (" + group.getLocalKey() + ")");
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityGroupStore.findMemberGroupKeys(): " + ps + " (" + group.getLocalKey() + ")");
             java.sql.ResultSet rs = ps.executeQuery();
             try
             {
@@ -614,8 +623,10 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
         {
             ps.setString(1, localKey);
             ps.setString(2, serviceName);
-            log.debug(
-              "RDBMEntityGroupStore.findMemberGroups(): " + ps + " (" + localKey + ", " + serviceName + ")");
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityGroupStore.findMemberGroups(): " + ps + 
+                        " (" + localKey + ", " + serviceName + ")");
             java.sql.ResultSet rs = ps.executeQuery();
             try
             {
@@ -1111,10 +1122,13 @@ throws  SQLException,
  */
 protected static void logNoTransactionWarning()
 {
-    String msg = "You are running the portal on a database that does not support transactions.  " +
-                 "This is not a supported production environment for uPortal.  " +
-                 "Sooner or later, your database will become corrupt.";
-    log.warn(msg);
+    if (log.isWarnEnabled()) {
+        String msg = "You are running the portal on a database that does not support transactions.  " +
+        "This is not a supported production environment for uPortal.  " +
+        "Sooner or later, your database will become corrupt.";
+        
+        log.warn(msg);
+    }
 }
 /**
  * @return org.jasig.portal.groups.IEntity
@@ -1207,10 +1221,11 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
             ps.setString(4, group.getName());
             ps.setString(5, group.getDescription());
 
-            log.debug("RDBMEntityGroupStore.primAdd(): " +
-              ps + "(" + group.getLocalKey() + ", " + group.getCreatorID() + ", " +
-              typeID + ", " + group.getName() + ", " +
-              group.getDescription() + ")" );
+            if (log.isDebugEnabled())
+                log.debug("RDBMEntityGroupStore.primAdd(): " +
+                        ps + "(" + group.getLocalKey() + ", " + group.getCreatorID() + ", " +
+                        typeID + ", " + group.getName() + ", " +
+                        group.getDescription() + ")" );
 
             int rc = ps.executeUpdate();
 
@@ -1251,14 +1266,17 @@ private void primDelete(IEntityGroup group) throws SQLException
 
         try
         {
+            if (log.isDebugEnabled())
                 log.debug(
                   "RDBMEntityGroupStore.primDelete(): " + deleteMembershipSql);
-                stmnt.executeUpdate(deleteMembershipSql);
+                
+            stmnt.executeUpdate(deleteMembershipSql);
 
+            if (log.isDebugEnabled())
                 log.debug(
                   "RDBMEntityGroupStore.primDelete(): " + deleteGroupSql);
-                stmnt.executeUpdate(deleteGroupSql);
-            }
+            stmnt.executeUpdate(deleteGroupSql);
+        }
         finally
             { stmnt.close(); }
         commit(conn);
@@ -1295,8 +1313,9 @@ private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsExc
             try
             {
                     ps.setString(1, groupID);
-                    log.debug(
-                      "RDBMEntityGroupStore.find(): " + ps + " (" + groupID + ")");
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "RDBMEntityGroupStore.find(): " + ps + " (" + groupID + ")");
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
                     {
@@ -1346,10 +1365,11 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
             ps.setString(4, group.getDescription());
             ps.setString(5, group.getLocalKey());
 
-            log.debug(
-              "RDBMEntityGroupStore.primUpdate(): " + ps + "(" +
-              group.getCreatorID() + ", " + typeID + ", " + group.getName() +
-              ", " + group.getDescription() + ", " + group.getLocalKey() +  ")" );
+            if (log.isDebugEnabled())
+                log.debug(
+                        "RDBMEntityGroupStore.primUpdate(): " + ps + "(" +
+                        group.getCreatorID() + ", " + typeID + ", " + group.getName() +
+                        ", " + group.getDescription() + ", " + group.getLocalKey() +  ")" );
 
             int rc = ps.executeUpdate();
 
@@ -1414,9 +1434,10 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                         psDeleteMemberGroup.setString(2, serviceName);
                         psDeleteMemberGroup.setString(3, memberKey);
 
-                        log.debug(
-                          "RDBMEntityGroupStore.primUpdateMembers(): " + psDeleteMemberGroup +
-                          "(" + groupKey + ", " + serviceName + ", " + memberKey + ", isGroup = T)" );
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                    "RDBMEntityGroupStore.primUpdateMembers(): " + psDeleteMemberGroup +
+                                    "(" + groupKey + ", " + serviceName + ", " + memberKey + ", isGroup = T)" );
 
                         psDeleteMemberGroup.executeUpdate();
                     } // for
@@ -1441,9 +1462,10 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                         psDeleteMemberEntity.setString(1, groupKey);
                         psDeleteMemberEntity.setString(2, memberKey);
 
-                        log.debug(
-                          "RDBMEntityGroupStore.primUpdateMembers(): " + psDeleteMemberEntity +
-                          "(" + groupKey + ", " + memberKey + ", " + "isGroup = F)" );
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                    "RDBMEntityGroupStore.primUpdateMembers(): " + psDeleteMemberEntity +
+                                    "(" + groupKey + ", " + memberKey + ", " + "isGroup = F)" );
 
                         psDeleteMemberEntity.executeUpdate();
                     }  // for
@@ -1485,9 +1507,10 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                     psAdd.setString(3, memberKey);
                     psAdd.setString(4, isGroup);
 
-                    log.debug(
-                      "RDBMEntityGroupStore.primUpdateMembers(): " + psAdd +
-                      "(" + groupKey + ", " + memberKey + ", " + isGroup + ")" );
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "RDBMEntityGroupStore.primUpdateMembers(): " + psAdd +
+                                "(" + groupKey + ", " + memberKey + ", " + isGroup + ")" );
 
                     psAdd.executeUpdate();
                 }
