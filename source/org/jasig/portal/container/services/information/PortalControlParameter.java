@@ -64,8 +64,8 @@ public class PortalControlParameter {
     static public final String STATE = "st";
 
     private Map requestParameters = new HashMap();
-    private Map statefulControlParameters = null;
-    private Map statelessControlParameters = null;
+    private Map statefulControlParameters = new HashMap();
+    private Map statelessControlParameters = new HashMap();
     private String portalURL = null;
 
     public static String decodeParameterName(String paramName) {
@@ -243,7 +243,7 @@ public class PortalControlParameter {
         if (mode != null)
             return new PortletMode(mode);
         else
-            return null;
+            return PortletMode.VIEW;
     }
     private String getPrevModeKey(PortletWindow window) {
         return PREV_MODE + "_" + window.getId().toString();
@@ -254,7 +254,7 @@ public class PortalControlParameter {
         if (state != null)
             return new WindowState(state);
         else
-            return null;
+            return WindowState.NORMAL;
     }
     private String getPrevStateKey(PortletWindow window) {
         return PREV_STATE + "_" + window.getId().toString();
