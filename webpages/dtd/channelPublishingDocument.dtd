@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XML Spy v3.5 (http://www.xmlspy.com) by JTL (UD) -->
 <!ELEMENT channelDef (description, class, params)>
 <!ELEMENT description (#PCDATA)>
 <!ELEMENT class (#PCDATA)>
@@ -13,24 +12,30 @@
 >
 <!ELEMENT label (#PCDATA)>
 <!ELEMENT defaultValue (#PCDATA)>
+
+<!ELEMENT type (data, base, display?, length?, maxlength?, restriction?)>
 <!ATTLIST type
 	base (string | integer | float | boolean) #REQUIRED
 	input (multi-choice | single-choice | text) #REQUIRED
 	display (drop-down | radio | select-list | checkbox | text | textarea | hidden) #IMPLIED
 >
-<!ELEMENT type (data, base, display?, length?, maxlength?, restriction?)>
+
 <!ELEMENT length (#PCDATA)>
 <!ELEMENT maxlength (#PCDATA)>
+
 <!ELEMENT restriction (value*, min?, max?)>
 <!ATTLIST restriction
 	type (enumeration | range) #REQUIRED
 >
+
 <!ELEMENT max (#PCDATA)>
 <!ELEMENT min (#PCDATA)>
 <!ELEMENT value (#PCDATA)>
 <!ATTLIST value
+	display CDATA #IMPLIED
 	default (true | false) #IMPLIED
 >
+
 <!ELEMENT controls EMPTY>
 <!ATTLIST controls
 	timeout CDATA "5000"
