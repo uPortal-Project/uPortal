@@ -664,6 +664,12 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       MediaManager mm = new MediaManager();
       String media = mm.getMedia(state.runtimeData.getBrowserInfo());
       String mimeType = mm.getReturnMimeType(media);
+      if (MediaManager.UNKNOWN.equals(mimeType)) {
+        String accept = state.runtimeData.getBrowserInfo().getHeader("accept");
+        if (accept != null && accept.indexOf("text/html") != -1) {
+          mimeType = "text/html";
+        }
+      }
 
       CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out);
       AbsoluteURLFilter filter1 = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, state.xmlUri, filter2);
