@@ -35,11 +35,17 @@
 
 package org.jasig.portal.container.services.information;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Hashtable;
+import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -48,6 +54,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
+import org.jasig.portal.services.LogService;
+
+import com.oreilly.servlet.Base64Decoder;
+import com.oreilly.servlet.Base64Encoder;
 
 
 /**
@@ -148,7 +158,7 @@ public class PortletStateManager {
     private void analyzeRequestInformation() {
         params.clear();
         String windowId = windowOfAction.getId().toString();
-        for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
+        for (Enumeration names =runtimeData.getParameterNames(); names.hasMoreElements();) {
             String paramName = (String)names.nextElement();
             String[] values = runtimeData.getParameterValues(paramName);
 
@@ -218,6 +228,43 @@ public class PortletStateManager {
 	   return values;  
 	}
 	
+	public static Hashtable decodeURLParameters ( String encodedParameters ) {
+	  Hashtable params = new Hashtable();		
+	  if ( encodedParameters == null || encodedParameters.length() <= 0 )
+	    return params;	
+	  StringTokenizer tokenizer = new StringTokenizer(Base64Decoder.decode(encodedParameters),"&");
+	  while ( tokenizer.hasMoreTokens() ) {
+	  	String param = tokenizer.nextToken();
+	  	String paramName = param.substring(0,param.indexOf('='));
+	  	String paramValue = param.substring(param.indexOf("=")+1);
+	  	if ( params.containsKey(paramName) ){
+	  	  Vector values = (Vector) params.get(paramName);
+	  	  values.add(paramValue);	
+	  	} else {
+	  	   Vector values = new Vector();
+	  	   values.add(paramValue);	
+	  	   params.put(paramName,values);
+	  	}
+	  }
+	  for ( Iterator i = params.keySet().iterator(); i.hasNext(); ) {
+	  	Object key = i.next();
+	  	Vector values = (Vector) params.get(key);
+	  	int size = values.size();
+	  	String[] strValues = new String[size];
+	  	for ( int j = 0; j < size; j++ )
+	  	 strValues[j] = (String) values.get(j);
+	  	params.put(key,strValues);
+	  }
+	    return params;   
+	}
+	
+	
+	public static String encodeURLParameters ( String urlParameters ) {
+		if ( urlParameters == null || urlParameters.length() <= 0 )
+		  return "";
+		return Base64Encoder.encode(urlParameters);
+	}	
+		
 	
 	/**
 	  * Generates the hash key for the given PortletWindow

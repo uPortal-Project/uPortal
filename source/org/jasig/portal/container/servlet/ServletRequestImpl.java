@@ -39,6 +39,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.jasig.portal.container.services.information.PortletStateManager;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -54,7 +56,15 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     
     public ServletRequestImpl(HttpServletRequest request) {
         super(request);
-        this.parameters = new Hashtable(request.getParameterMap());
+        String url = getRequestURL().toString();
+        if ( url.indexOf("param.") > 0 ) {
+          String encodedParams = url.substring(url.indexOf("param.")+6,url.indexOf(".param"));	
+          parameters = PortletStateManager.decodeURLParameters(java.net.URLDecoder.decode(encodedParams));
+        } 
+        if ( parameters != null )
+         parameters.putAll(request.getParameterMap());
+        else 
+         parameters = new Hashtable(request.getParameterMap());
     }
     
     public String getParameter(String name) {

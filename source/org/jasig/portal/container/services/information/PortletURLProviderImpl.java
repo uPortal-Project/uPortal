@@ -97,11 +97,12 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     	
         ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
         String baseActionURL = runtimeData.getBaseActionURL();
-		StringBuffer url = new StringBuffer(baseActionURL);
+		
         
-        String queryString = urlManager.toString();
+        String encodedURLParams = PortletStateManager.encodeURLParameters(urlManager.toString());
   
-		if ( queryString.length() > 0 ) url.append("?"+queryString);
+		StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
+		  ("param."+java.net.URLEncoder.encode(encodedURLParams)+".param."+baseActionURL):baseActionURL);
 		
         return url.toString();
     }
