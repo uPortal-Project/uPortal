@@ -84,7 +84,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
         if (request_verified) {
             // parse request body
             String contentType = source.getContentType();
-            if (contentType != null && contentType.startsWith("multipart/form-data") && isPortletAction) {
+            if (contentType != null && contentType.startsWith("multipart/form-data") && !isPortletAction) {
                 com.oreilly.servlet.multipart.Part attachmentPart;
                 try {
                     MultipartParser multi = new MultipartParser(source, source.getContentLength(), true, true, "UTF-8");
