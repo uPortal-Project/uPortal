@@ -64,6 +64,8 @@ public class CNumberGuess implements IChannel
   private int iAnswer = 0;
   private boolean bFirstTime = true;
 
+  private LogService logger;
+
   /** Constructs a CNumberGuess.
    */
   public CNumberGuess ()
@@ -95,6 +97,21 @@ public class CNumberGuess implements IChannel
   public void setStaticData (ChannelStaticData sd)
   {
     this.staticData = sd;
+
+    // obtain an instance of LogService
+    // (this is done to provide an example of how to use
+    //  channel services use)
+    if(logger==null) {
+        try {
+            logger=(LogService)sd.getJNDIContext().lookup("/services/org.jasig.portal.services.LogService");
+            logger.log(LogService.DEBUG,"CNumberGuess::setStaticData() : obtained LogService instance from JNDI");
+        } catch (javax.naming.NamingException ne) {
+            logger=LogService.instance();
+            logger.log(LogService.ERROR, "CNumberGuess()::setStaticData() : unable to botain LogService instance from JNDI: "+ne);
+        }
+    }
+
+
     String sMinNum = null;
     String sMaxNum = null;
 
@@ -113,7 +130,7 @@ public class CNumberGuess implements IChannel
       iMinNum = 0;
       iMaxNum = 100;
 
-      LogService.instance().log(LogService.WARN, "org.jasig.portal.xmlchannels.CNumberGuess: Either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
+      logger.log(LogService.WARN, "CNumberGuess::setStaticData() : either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
     }
    }
 
