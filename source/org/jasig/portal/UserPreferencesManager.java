@@ -469,6 +469,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         try {
             if(saveUserPreferencesAtLogout) {
                 ulsdb.putUserPreferences(m_person, complete_up);
+                ulm.saveUserLayout();
             }
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"UserPreferencesManager::finishedSession() : unable to persist layout upon session termination !", e);
