@@ -55,7 +55,7 @@
  *    - a SMTP server
  *    - the Java Activation Framework package (1.0.1 or later)
  *    - the JavaMail package (1.1.3 or later)
- *    - the Oreilly Servlet package (com.oreilly.servlet) (31oct2000 or later),
+ *    - the Oreilly Servlet package (com.oreilly.servlet) (20Nov2000 or later),
  *      used for sending attachments. Download it from
  *        http://www.servlets.com/resources/com.oreilly.servlet/index.html
  *
@@ -2655,7 +2655,14 @@ public int getDefaultDetachHeight () {return 250;}
        * You only get one chance to process the request stream so
        * cache everything now and process the request later on
        */
-      MultipartParser multi = new MultipartParser (req, iMaxMessageSize, true, true);
+      MultipartParser multi;
+      try {
+        multi = new MultipartParser (req, iMaxMessageSize, true, true);
+      } catch (IOException ioe) {
+        displayErrorMsg(ioe, true, out);
+        return;
+      }
+
       com.oreilly.servlet.multipart.Part attachmentPart;
       while ((attachmentPart = multi.readNextPart()) != null) {
         String partName = attachmentPart.getName();
@@ -2689,71 +2696,80 @@ public int getDefaultDetachHeight () {return 250;}
           if (sSubmitValue.equals ("Send")) {
             // Send the message
 
-            Message msg = constructMessage (parameters, attachments);
-            Transport.send (msg);
-            messagesSent++;
+            try {
+              Message msg = constructMessage (parameters, attachments);
+              Transport.send (msg);
+              messagesSent++;
 
-            // Save copy in sent folder
-            msg.setSentDate (new Date ());
-            Message[] msgs = new Message[1];
-            msgs[0] = msg;
-            Folder sent = getFolder ( (sFolderDir == null ? "" : sFolderDir + folderSeparator) + sSentName);
+              // Save copy in sent folder
+              msg.setSentDate (new Date ());
+              Message[] msgs = new Message[1];
+              msgs[0] = msg;
+              Folder sent = getFolder ( (sFolderDir == null ? "" : sFolderDir + folderSeparator) + sSentName);
 
-            // Create Sent Items folder if it doesn't already exist
-            if (!sent.exists ()) {
-              sent.create (Folder.HOLDS_MESSAGES);
-              imapFolders.add (sent);
+              // Create Sent Items folder if it doesn't already exist
+              if (!sent.exists ()) {
+                sent.create (Folder.HOLDS_MESSAGES);
+                imapFolders.add (sent);
+              }
+
+              sent.open (Folder.READ_WRITE);
+              sent.appendMessages (msgs);
+              sent.close (false);
+
+              /**
+               * If we are replying to a message, set the replied to flag for
+               * that message
+               */
+              String replyMsg = (String) parameters.get("replymsg");
+              if (replyMsg != null) {
+                int iReplyMsg = Integer.parseInt(replyMsg);
+                Message[] oldMsg = new Message[1];
+                oldMsg[0] = activeFolder.getMessage(iReplyMsg);
+                Flags flags = new Flags (Flags.Flag.ANSWERED);
+                flags.add (Flags.Flag.SEEN);
+                activeFolder.folder.setFlags (oldMsg, flags, true);
+              }
+
+              out.println ("<p>&nbsp;&nbsp;Your mail <strong>" + HTMLescape (msg.getSubject ()) + "</strong> has been sent.  A copy was saved in your " + sSentName + " folder.</p>");
+            } catch (AddressException ae) {
+              displayErrorMsg (ae, false, out);
             }
-
-            sent.open (Folder.READ_WRITE);
-            sent.appendMessages (msgs);
-            sent.close (false);
-
-            /**
-             * If we are replying to a message, set the replied to flag for
-             * that message
-             */
-            String replyMsg = (String) parameters.get("replymsg");
-            if (replyMsg != null) {
-              int iReplyMsg = Integer.parseInt(replyMsg);
-              Message[] oldMsg = new Message[1];
-              oldMsg[0] = activeFolder.getMessage(iReplyMsg);
-              Flags flags = new Flags (Flags.Flag.ANSWERED);
-              flags.add (Flags.Flag.SEEN);
-              activeFolder.folder.setFlags (oldMsg, flags, true);
-            }
-
-            out.println ("<p>&nbsp;&nbsp;Your mail <strong>" + HTMLescape (msg.getSubject ()) + "</strong> has been sent.  A copy was saved in your " + sSentName + " folder.</p>");
           }
 
           // If the user clicked "Save as draft", construct message and save it in drafts folder
           else if (sSubmitValue.equals ("Save as draft")) {
-            Message msg = constructMessage (parameters, attachments);
+            try {
+              Message msg = constructMessage (parameters, attachments);
 
-            msg.setSentDate (new Date ());
-            Message[] msgs = new Message[1];
-            msgs[0] = msg;
-            if (activeFolder != null &&
-              activeFolder.getFolderName ().equals (sDraftsName)) {
-              activeFolder.folder.appendMessages (msgs);
-              activeFolder.folder.expunge ();       // Remove old copies of draft
-            } else {
-              Folder drafts = getFolder ( (sFolderDir == null ? "" : sFolderDir + folderSeparator) + sDraftsName);
+              msg.setSentDate (new Date ());
+              Message[] msgs = new Message[1];
+              msgs[0] = msg;
+              if (activeFolder != null &&
+                activeFolder.getFolderName ().equals (sDraftsName)) {
+                activeFolder.folder.appendMessages (msgs);
+                activeFolder.folder.expunge ();       // Remove old copies of draft
+              } else {
+                Folder drafts = getFolder ( (sFolderDir == null ? "" : sFolderDir + folderSeparator) + sDraftsName);
 
-              // Create Drafts folder if it doesn't already exist
-              if (!drafts.exists ()) {
-                drafts.create (Folder.HOLDS_MESSAGES);
-                imapFolders.add (drafts);
+                // Create Drafts folder if it doesn't already exist
+                if (!drafts.exists ()) {
+                  drafts.create (Folder.HOLDS_MESSAGES);
+                  imapFolders.add (drafts);
+                }
+
+                drafts.open (Folder.READ_WRITE);
+                Flags flags = new Flags (Flags.Flag.DRAFT);
+                msg.setFlags (flags, true);
+                drafts.appendMessages (msgs);
+                drafts.close (true);
               }
 
-              drafts.open (Folder.READ_WRITE);
-              Flags flags = new Flags (Flags.Flag.DRAFT);
-              msg.setFlags (flags, true);
-              drafts.appendMessages (msgs);
-              drafts.close (true);
+              out.println ("<p>&nbsp;&nbsp;Your mail <strong>" + HTMLescape ((String)parameters.get("subject")) + "</strong> has been saved in the " + sDraftsName + " folder.</p>");
+            } catch (AddressException ae) {
+              displayErrorMsg (ae, false, out);
             }
 
-            out.println ("<p>&nbsp;&nbsp;Your mail <strong>" + HTMLescape ((String)parameters.get("subject")) + "</strong> has been saved in the " + sDraftsName + " folder.</p>");
           }
 
           // If the user clicked "Cancel",
@@ -2856,7 +2872,8 @@ public int getDefaultDetachHeight () {return 250;}
           MimeBodyPart bp = new MimeBodyPart ();
           bp.setDisposition (Part.ATTACHMENT);
           bp.setDataHandler (includeAttachments[i].getDataHandler ());
-          bp.setFileName (includeAttachments[i].getFileName ());
+
+          bp.setFileName (attachmentName(includeAttachments[i], i));
           mp.addBodyPart (bp);
         }
         includeAttachments = null;
@@ -2895,7 +2912,7 @@ public int getDefaultDetachHeight () {return 250;}
     StringBuffer sbMsgText = new StringBuffer ();
 
     // Return empty string if message is not of type TEXT/PLAIN
-    if (bodyText == null || !bodyText.isMimeType ("text/plain")) {
+    if (bodyText == null || !bodyText.isMimeType ("text/*")) {
       return "";
     } else if (bIsDraft) {
       BufferedReader in = new BufferedReader (new InputStreamReader (bodyText.getInputStream ()));
@@ -2932,7 +2949,7 @@ public int getDefaultDetachHeight () {return 250;}
       try {
         String line;
         while ( (line = in.readLine ()) != null) {
-          sbMsgText.append ("> " + line);
+          sbMsgText.append ("> " + line + "\n");
         }
       } finally {
         in.close ();
@@ -3135,22 +3152,27 @@ public int getDefaultDetachHeight () {return 250;}
    * @param the servlet request object
    * @param the servelet response object
    */
-  private void checkIMAPConnection (HttpServletRequest req, HttpServletResponse res) throws CIMAPLostConnectionException, AuthenticationFailedException {
+  private void checkIMAPConnection (HttpServletRequest req, HttpServletResponse res) throws Exception, CIMAPLostConnectionException, AuthenticationFailedException {
     Thread.yield ();
     try {
       if (inbox != null) {
         int a = inbox.folder.getUnreadMessageCount ();
       } else {
-        store.close();
+        if (store != null) {
+          store.close();
+        }
       }
     } catch (MessagingException me) {
       try {
-        store.close ();
+        if (store != null) {
+          store.close ();
+        }
       } catch (MessagingException me2) {
         //
       }
     }
-    if (!store.isConnected ()) {
+
+    if (store == null || !store.isConnected ()) {
       Logger.log(Logger.DEBUG, "Lost connection to store, re-initializing.");
 
       try {
@@ -3160,9 +3182,9 @@ public int getDefaultDetachHeight () {return 250;}
         if (e instanceof CIMAPLostConnectionException) {
           throw (CIMAPLostConnectionException)e;
         }
-        Logger.log (Logger.ERROR, "checkIMAPConnection:"+e);
+        Logger.log (Logger.ERROR, "checkIMAPConnection:" + e);
         DispatchBean.finish (req, res);   // Can't re-initialize up, go back to portal
-        return;
+        throw e; // I don't think we are supposed to return to here, but just in case
       }
     }
   }
@@ -4177,6 +4199,7 @@ public int getDefaultDetachHeight () {return 250;}
       Logger.log(Logger.INFO, "WebMail metric: Read " + messagesRead + ", Deleted " + messagesDeleted +
         ", Moved " + messagesMoved + ", Downloaded " + messagesDownloaded + ", Attachments " + attachmentsViewed +
         ", Sent " + messagesSent);
+        showMetrics = false;
     }
   }
 }
