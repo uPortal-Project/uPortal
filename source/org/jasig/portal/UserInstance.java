@@ -716,6 +716,7 @@ public class UserInstance implements HttpSessionBindingListener {
      try {
 
        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
+	   IAggregatedUserLayoutManager alm = getAggregatedLayoutManager(ulm);
        String newNodeId = null;
 
         // Sending the theme stylesheets parameters based on the user security context
@@ -866,10 +867,7 @@ public class UserInstance implements HttpSessionBindingListener {
         
 		param = req.getParameter("uPcFM_action");
 		if ( param != null ) { 
-		  if ( ulm instanceof TransientUserLayoutManagerWrapper )
-		    ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-		  if ( ulm instanceof IAggregatedUserLayoutManager ) {		
-			IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm;
+		  if ( alm != null ) {		
 			String fragmentId = req.getParameter("uP_fragmentID"); 
 			if ( param.equals("edit") && fragmentId != null ) {
 		         if ( CommonUtils.parseInt(fragmentId) > 0 ) 
@@ -884,11 +882,22 @@ public class UserInstance implements HttpSessionBindingListener {
 		
 		// If we have created a new node we need to let the structure XSL know about it
 		structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
+		// Sending the parameter indicating whether the layout or the fragment is loaded in the preferences mode
+		if ( alm != null )
+		  structPrefs.putParameterValue("edit_mode",alm.isFragmentLoaded()?"fragment":"layout");
 
 
       } catch ( Exception e ) {
           throw new PortalException(e);
         }
+    }
+    
+    private IAggregatedUserLayoutManager getAggregatedLayoutManager(IUserLayoutManager ulm) throws PortalException {
+		if ( ulm instanceof TransientUserLayoutManagerWrapper )
+			 ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
+		if ( ulm instanceof IAggregatedUserLayoutManager )	
+			 return (IAggregatedUserLayoutManager) ulm;
+		     return null;	 
     }
 
     /**
