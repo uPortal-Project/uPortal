@@ -1,5 +1,5 @@
 /**
- * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,8 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Collection;
+
+import javax.xml.transform.TransformerException;
 
   /**
    * A channel for adding new content to a layout.
@@ -293,9 +295,8 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
 		     
-	  } catch ( Exception e ) {
-	  	  e.printStackTrace();
-	  	  throw new PortalException(e.getMessage());	     
+	  } catch ( TransformerException e ) {
+	  	  throw new PortalException(e);	     
 	  }
 			 
 	}		 	
