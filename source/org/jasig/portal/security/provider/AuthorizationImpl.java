@@ -18,13 +18,15 @@ import org.jasig.portal.services.LogService;
  */
 public class AuthorizationImpl implements IAuthorizationService {
 	
-	private IPermissionStore permissionStore;	    
-  // Clear the caches every 5 minutes
-	protected SmartCache permissionsCache = new SmartCache(300);
-	protected Object permissionsCacheLock = new Object();
-	protected String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
-	protected String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";	
-	private static AuthorizationImpl singleton;
+    private IPermissionStore permissionStore;	    
+    // Clear the caches every 5 minutes
+    protected SmartCache permissionsCache = new SmartCache(300);
+    protected Object permissionsCacheLock = new Object();
+    protected String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
+    protected String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
+    protected String PERIOD_STRING = ".";
+
+    private static AuthorizationImpl singleton;
   /**
    *
    */
@@ -70,7 +72,7 @@ throws AuthorizationException
  */
 private void addToPermissionsCache(IPermission[] permissions, IAuthorizationPrincipal principal)
 {
-	synchronized (permissionsCacheLock)
+    synchronized (permissionsCacheLock)
     {
         permissionsCache.put(principal, permissions);
     }
@@ -83,7 +85,7 @@ private void addToPermissionsCache(IPermission[] permissions, IAuthorizationPrin
  */
 public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws AuthorizationException
 {
-	return doesPrincipalHavePermission(principal, null, CHANNEL_PUBLISHER_ACTIVITY, null);
+    return doesPrincipalHavePermission(principal, null, CHANNEL_PUBLISHER_ACTIVITY, null);
 }
 /**
  * Answers if the principal has permission to RENDER this Channel.
@@ -95,7 +97,7 @@ public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws Au
 public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelID) 
 throws AuthorizationException
 {
-	return canPrincipalSubscribe(principal, channelID);
+    return canPrincipalSubscribe(principal, channelID);
 }
 /**
  * Answers if the principal has permission to SUBSCRIBE to this Channel.
@@ -107,8 +109,8 @@ throws AuthorizationException
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID) 
 throws AuthorizationException
 {
-	String owner = "CHAN_ID" + "." + channelID;
-	return primDoesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, null);
+    String owner = "CHAN_ID" + "." + channelID;
+    return primDoesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, null);
 }
 /**
  * @param group - org.jasig.portal.groups.IEntityGroup - the Permission principal
@@ -120,8 +122,8 @@ throws AuthorizationException
 private boolean doesGroupHavePermission(IEntityGroup group, String owner, String activity, String target)
 throws AuthorizationException
 {
-	IAuthorizationPrincipal principal = getPrincipalForGroup(group);
-	return primDoesPrincipalHavePermission(principal, owner, activity, target);
+    IAuthorizationPrincipal principal = getPrincipalForGroup(group);
+    return primDoesPrincipalHavePermission(principal, owner, activity, target);
 }
 /**
  * Answers if the owner has given the principal permission to perform the activity on 
@@ -137,29 +139,29 @@ throws AuthorizationException
  * be retrieved.
  */
 public boolean doesPrincipalHavePermission(
-	IAuthorizationPrincipal principal, 
-	String owner,
-	String activity,
-	String target) 
+    IAuthorizationPrincipal principal, 
+    String owner,
+    String activity,
+    String target) 
 throws AuthorizationException
 {
-	boolean hasPermission = primDoesPrincipalHavePermission(principal, owner, activity, target);
-	if ( ! hasPermission )
-	{
-		try
-		{ 
-			Iterator i = getGroupsForPrincipal(principal); 
-			while ( i.hasNext() && ! hasPermission )
-			{
-				IAuthorizationPrincipal prn = getPrincipalForGroup( (IEntityGroup) i.next() );
-				hasPermission = primDoesPrincipalHavePermission(prn, owner, activity, target);
-			}	
-		}
-		catch ( GroupsException ge )
-			{ throw new AuthorizationException(ge.getMessage()); }
-	}
-	
-	return hasPermission;
+    boolean hasPermission = primDoesPrincipalHavePermission(principal, owner, activity, target);
+    if ( ! hasPermission )
+    {
+        try
+        { 
+            Iterator i = getGroupsForPrincipal(principal);
+            while ( i.hasNext() && ! hasPermission )
+            {
+                IAuthorizationPrincipal prn = getPrincipalForGroup( (IEntityGroup) i.next() );
+                hasPermission = primDoesPrincipalHavePermission(prn, owner, activity, target);
+            }
+        }
+        catch ( GroupsException ge )
+            { throw new AuthorizationException(ge.getMessage()); }
+    }
+
+    return hasPermission;
 }
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for 
@@ -178,22 +180,22 @@ throws AuthorizationException
  * be retrieved.
  */
 public IPermission[] getAllPermissionsForPrincipal
-	(IAuthorizationPrincipal principal, 
-	String owner, 
-	String activity, 
-	String target)
+    (IAuthorizationPrincipal principal, 
+    String owner, 
+    String activity, 
+    String target)
 throws AuthorizationException 
 {
-	IPermission[] perms = getPermissionsForPrincipal(principal, owner, activity, target);
-	ArrayList al = new ArrayList(Arrays.asList(perms));
-	Iterator i = getInheritedPrincipals(principal);
-	while ( i.hasNext() )
-	{
-		IAuthorizationPrincipal p = (IAuthorizationPrincipal) i.next();
-		perms = getPermissionsForPrincipal(p, owner, activity, target);
-		al.addAll(Arrays.asList(perms));
-	}
-	return ((IPermission[])al.toArray(new IPermission[al.size()]));
+    IPermission[] perms = getPermissionsForPrincipal(principal, owner, activity, target);
+    ArrayList al = new ArrayList(Arrays.asList(perms));
+    Iterator i = getInheritedPrincipals(principal);
+    while ( i.hasNext() )
+    {
+        IAuthorizationPrincipal p = (IAuthorizationPrincipal) i.next();
+        perms = getPermissionsForPrincipal(p, owner, activity, target);
+        al.addAll(Arrays.asList(perms));
+    }
+    return ((IPermission[])al.toArray(new IPermission[al.size()]));
 }
 /**
  * Does this mean all channels the principal could conceivably subscribe
@@ -206,7 +208,7 @@ throws AuthorizationException
 public Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
-	return new Vector();
+    return new Vector();
 }
 /**
  * Returns <code>IAuthorizationPrincipals</code> that have <code>IPermissions</code> for
@@ -230,9 +232,9 @@ throws AuthorizationException
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal) 
 throws GroupsException
 {
-	String key = principal.getKey();
-	Class type = principal.getType();
-	return EntityStoreRDBM.singleton().newInstance(key, type);
+    String key = principal.getKey();
+    Class type = principal.getType();
+    return EntityStoreRDBM.singleton().newInstance(key, type);
 }
 /**
  * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to 
@@ -244,8 +246,8 @@ throws GroupsException
 private Iterator getGroupsForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
-	IGroupMember gm = getGroupMemberForPrincipal(principal);
-	return gm.getAllContainingGroups();
+    IGroupMember gm = getGroupMemberForPrincipal(principal);
+    return gm.getAllContainingGroups();
 }
 /**
  * Hook into the Groups system, find all containing groups, and convert the
@@ -256,21 +258,21 @@ throws GroupsException
 private Iterator getInheritedPrincipals(IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
-	Iterator i = null;
-	ArrayList al = new ArrayList(5);
+    Iterator i = null;
+    ArrayList al = new ArrayList(5);
 
-	try
-		{ i = getGroupsForPrincipal(principal); }
-	catch ( GroupsException ge )
-		{ throw new AuthorizationException("Could not retrieve Groups for " + principal + " " + ge.getMessage()); }
+    try
+        { i = getGroupsForPrincipal(principal); }
+    catch ( GroupsException ge )
+        { throw new AuthorizationException("Could not retrieve Groups for " + principal + " " + ge.getMessage()); }
 
-	while ( i.hasNext() )
-	{
-		IEntityGroup group = (IEntityGroup) i.next();
-		IAuthorizationPrincipal p = getPrincipalForGroup(group);
-		al.add(p);
-	}
-	return al.iterator();
+    while ( i.hasNext() )
+    {
+        IEntityGroup group = (IEntityGroup) i.next();
+        IAuthorizationPrincipal p = getPrincipalForGroup(group);
+        al.add(p);
+    }
+    return al.iterator();
 }
 /**
  * @return IPermission[]
@@ -279,8 +281,8 @@ throws AuthorizationException
 private IPermission[] getPermissionsForGroup(IEntityGroup group)
 throws AuthorizationException 
 {
-	IAuthorizationPrincipal principal = getPrincipalForGroup(group);
-	return primGetPermissionsForPrincipal(principal);
+    IAuthorizationPrincipal principal = getPrincipalForGroup(group);
+    return primGetPermissionsForPrincipal(principal);
 }
 /**
  * Returns the <code>IPermissions</code> owner has granted for the specified activity 
@@ -297,8 +299,7 @@ throws AuthorizationException
 public IPermission[] getPermissionsForOwner(String owner, String activity, String target)
 throws AuthorizationException 
 {
-	int nullType = EntityTypes.NULL_TYPE_ID;
-	return primRetrievePermissions(owner, nullType, null, activity, target);
+    return primRetrievePermissions(owner, null, activity, target);
 }
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for 
@@ -316,20 +317,20 @@ throws AuthorizationException
  * be retrieved.
  */
 public IPermission[] getPermissionsForPrincipal
-	(IAuthorizationPrincipal principal, 
-	String owner, 
-	String activity, 
-	String target)
+    (IAuthorizationPrincipal principal, 
+    String owner, 
+    String activity, 
+    String target)
 throws AuthorizationException 
 {
-	return primGetPermissionsForPrincipal(principal, owner, activity, target);
+    return primGetPermissionsForPrincipal(principal, owner, activity, target);
 }
 /**
  * @return org.jasig.portal.security.IPermissionStore
  */
 private IPermissionStore getPermissionStore() 
 {
-	return permissionStore;
+    return permissionStore;
 }
 /**
  * @param org.jasig.portal.groups.IEntityGroup
@@ -337,9 +338,25 @@ private IPermissionStore getPermissionStore()
  */
 private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group) 
 {
-	String key = group.getKey();
-	Class type = IEntityGroup.class;    //group.getEntityType();
-	return newPrincipal(key, type);
+    String key = group.getKey();
+    Class type = IEntityGroup.class;    //group.getEntityType();
+    return newPrincipal(key, type);
+}
+/**
+ * Returns <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.  
+ *
+ * @return IAuthorizationPrincipal[]
+ * @param permissions IPermission[]
+ */
+private IAuthorizationPrincipal getPrincipalFromPermission(IPermission permission) 
+throws AuthorizationException
+{
+    String principalString = permission.getPrincipal();    
+    int idx = principalString.indexOf(PERIOD_STRING);
+    Integer typeId = new Integer(principalString.substring(0, idx));
+    Class type = EntityTypes.getEntityType(typeId);
+    String key = principalString.substring(idx + 1);
+    return newPrincipal(key, type);
 }
 /**
  * Returns <code>IAuthorizationPrincipals</code> associated with the <code>IPermission[]</code>.  
@@ -353,37 +370,20 @@ throws AuthorizationException
     Set principals = new HashSet();
     for ( int i=0; i<permissions.length; i++ )
     {
-        Class type = (EntityTypes.getEntityType(new Integer(permissions[i].getPrincipalType())));
-        String key = permissions[i].getPrincipalKey();
-	    IAuthorizationPrincipal principal = newPrincipal(key, type);
-	    principals.add(principal);
+        IAuthorizationPrincipal principal = getPrincipalFromPermission(permissions[i]);
+        principals.add(principal);
     }
     return ((IAuthorizationPrincipal[])principals.toArray(new IAuthorizationPrincipal[principals.size()]));
 }
 /**
- * FIX THIS!
- * @return java.lang.String
+ * Returns the String used by an <code>IPermission</code> to represent an
+ * <code>IAuthorizationPrincipal</code>.
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
-public String getPrincipalString(IAuthorizationPrincipal principal) 
+private String getPrincipalString(IAuthorizationPrincipal principal) 
 {
-	String typeString = null;
-	String typeName = principal.getType().getName();
-	if ( typeName.equals("org.jasig.portal.security.IPerson") )
-		typeString = "USER_ID";
-	if ( typeName.equals("org.jasig.portal.groups.IEntityGroup") )
-		typeString = "GROUP_ID";
-	if ( typeName.equals("org.jasig.portal.IChannel") )
-		typeString = "CHAN_ID";
-	return typeString + "." + principal.getKey();
-}
-/**
- * @param principal org.jasig.portal.security.IAuthorizationPrincipal
- */
-private int getPrincipalTypeID(IAuthorizationPrincipal principal) 
-{
-    Class type = principal.getType();
-    return (EntityTypes.getEntityTypeID(type)).intValue();
+    Integer type = EntityTypes.getEntityTypeID(principal.getType());
+    return type + PERIOD_STRING + principal.getKey();
 }
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for 
@@ -407,9 +407,8 @@ public IPermission[] getUncachedPermissionsForPrincipal
 	String target)
 throws AuthorizationException 
 {
-	String key = principal.getKey();
-    int type = getPrincipalTypeID(principal);
-	return primRetrievePermissions(owner, type, key, activity, target);
+    String pString = getPrincipalString(principal);
+    return primRetrievePermissions(owner, pString, activity, target);
 }
 /**
  *
@@ -425,7 +424,7 @@ private void initialize() throws AuthorizationException
  */
 public IPermission newPermission(String owner)
 {
-	return getPermissionStore().newInstance(owner);
+    return newPermission(owner, null);
 }
 /**
  * Factory method for an <code>IPermission</code>.
@@ -435,10 +434,13 @@ public IPermission newPermission(String owner)
  */
 public IPermission newPermission(String owner, IAuthorizationPrincipal principal)
 {
-	IPermission p = getPermissionStore().newInstance(owner);
-	p.setPrincipalKey(principal.getKey());
-	p.setPrincipalType(getPrincipalTypeID(principal));
-	return p;
+    IPermission p = getPermissionStore().newInstance(owner);
+    if ( principal != null )
+    {
+        String pString = getPrincipalString(principal);
+        p.setPrincipal(pString);
+    }
+    return p;
 }
 /**
  * Factory method for IPermissionManager.
@@ -447,7 +449,7 @@ public IPermission newPermission(String owner, IAuthorizationPrincipal principal
  */
 public IPermissionManager newPermissionManager(String owner) 
 {
-	return new PermissionManagerImpl(owner, this);
+    return new PermissionManagerImpl(owner, this);
 }
 /**
  * Factory method for IAuthorizationPrincipal.
@@ -457,7 +459,7 @@ public IPermissionManager newPermissionManager(String owner)
  */
 public IAuthorizationPrincipal newPrincipal(String key, Class type) 
 {
-	return new AuthorizationPrincipalImpl(key, type, this);
+    return new AuthorizationPrincipalImpl(key, type, this);
 }
 /**
  * Factory method for IUpdatingPermissionManager.
@@ -466,7 +468,7 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type)
  */
 public IUpdatingPermissionManager newUpdatingPermissionManager(String owner) 
 {
-	return new UpdatingPermissionManagerImpl(owner, this);
+    return new UpdatingPermissionManagerImpl(owner, this);
 }
 /**
  * @return boolean
@@ -478,29 +480,29 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
  * be retrieved.
  */
 private boolean primDoesPrincipalHavePermission(
-	IAuthorizationPrincipal principal, 
-	String owner,
-	String activity,
-	String target) 
+    IAuthorizationPrincipal principal, 
+    String owner,
+    String activity,
+    String target) 
 throws AuthorizationException
 {
-	boolean hasPermission = false;
-	IPermission[] perms = primGetPermissionsForPrincipal(principal);
+    boolean hasPermission = false;
+    IPermission[] perms = primGetPermissionsForPrincipal(principal);
 	
-	if ( perms.length > 0 )
-	{
-		for ( int i=0; i<perms.length && ! hasPermission; i++ )
-		{ 
-			
-			hasPermission = (
-				( owner.equals(perms[i].getOwner()) ) 		&&
-				( activity.equals(perms[i].getActivity()) )	&&
-				( (target == null) || target.equals(perms[i].getTarget()) ) &&
-				( ! perms[i].getType().equals("DENY") )	
-			);
-		}
-	}	
-	return hasPermission;
+    if ( perms.length > 0 )
+    {
+        for ( int i=0; i<perms.length && ! hasPermission; i++ )
+        { 
+
+            hasPermission = (
+                ( owner.equals(perms[i].getOwner()) ) 		&&
+                ( activity.equals(perms[i].getActivity()) )	&&
+                ( (target == null) || target.equals(perms[i].getTarget()) ) &&
+                ( ! perms[i].getType().equals("DENY") )	
+            );
+        }
+    }
+    return hasPermission;
 }
 /**
  * @return IPermission[]
@@ -526,41 +528,40 @@ throws AuthorizationException
  * @param target String  
  */
 private IPermission[] primGetPermissionsForPrincipal
-	(IAuthorizationPrincipal principal, 
-	String owner, 
-	String activity, 
-	String target)
+    (IAuthorizationPrincipal principal, 
+    String owner, 
+    String activity, 
+    String target)
 throws AuthorizationException 
 {
-	IPermission[] perms = primGetPermissionsForPrincipal(principal);
-	if ( owner == null && activity == null && target == null )
-		{ return perms; }
-	ArrayList al = new ArrayList(perms.length);
-	for ( int i=0; i<perms.length; i++ )
-	{
-		if ( 
-			(owner == null || owner.equals(perms[i].getOwner())) &&
-			(activity == null || activity.equals(perms[i].getActivity())) &&
-			(target == null || target.equals(perms[i].getTarget()))
-		   )
-			{ al.add(perms[i]); }
-	}
+    IPermission[] perms = primGetPermissionsForPrincipal(principal);
+    if ( owner == null && activity == null && target == null )
+        { return perms; }
+    ArrayList al = new ArrayList(perms.length);
+    for ( int i=0; i<perms.length; i++ )
+    {
+        if ( 
+            (owner == null || owner.equals(perms[i].getOwner())) &&
+            (activity == null || activity.equals(perms[i].getActivity())) &&
+            (target == null || target.equals(perms[i].getTarget()))
+           )
+            { al.add(perms[i]); }
+    }
 
- 	return ((IPermission[])al.toArray(new IPermission[al.size()]));
-	
+    return ((IPermission[])al.toArray(new IPermission[al.size()]));
+
 }
 /**
  * @return IPermission[]
  * @param owner String
- * @param principalType int 
- * @param principalKey String
+ * @param principal String
  * @param activity String
  * @param target String 
  */
-private IPermission[] primRetrievePermissions(String owner, int principalType, String principalKey, String activity, String target)
+private IPermission[] primRetrievePermissions(String owner, String principal, String activity, String target)
 throws AuthorizationException 
 {
-	return getPermissionStore().select(owner, principalType, principalKey, activity, target, null);
+    return getPermissionStore().select(owner, principal, activity, target, null);
 }
 /**
  * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipals</code> from
@@ -569,7 +570,7 @@ throws AuthorizationException
  */
 private void removeFromPermissionsCache(IAuthorizationPrincipal[] principals)
 {
-	synchronized (permissionsCacheLock)
+    synchronized (permissionsCacheLock)
     {
         for ( int i=0; i<principals.length; i++ )
             { permissionsCache.remove(principals[i]); }
@@ -612,13 +613,13 @@ throws AuthorizationException
     { 
         removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
         getPermissionStore().delete(permissions); 
-	}
+    }
 }
 /**
  * @param newPermissionManager org.jasig.portal.security.provider.ReferencePermissionStore
  */
 private void setPermissionStore(IPermissionStore newPermissionStore) {
-	permissionStore = newPermissionStore;
+    permissionStore = newPermissionStore;
 }
 /**
  * @return org.jasig.portal.security.provider.AuthorizationImpl

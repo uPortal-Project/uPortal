@@ -47,91 +47,81 @@ import org.jasig.portal.AuthorizationException;
 public interface IPermission {
 
   /**
-   * Gets the activity that this Permission is associated with
-   * @return 
+   * Gets the activity associated with this <code>IPermission</code>.
+   * @return String
    */
   public String getActivity ();
 
   /**
-   * Gets that date that this Permission should become effective on
+   * Gets that date that this <code>IPermission</code> should become effective on.
    * @return 
    */
   public Date getEffective ();
 
   /**
-   * Gets the date that this Permission should expire on
+   * Gets the date that this <code>IPermission</code> should expire on.
    * @return 
    */
   public Date getExpires ();
 
   /**
-   * Returns the owner of this Permission
+   * Returns the owner of this <code>IPermission</code>.
    * @return 
    */
   public String getOwner ();
 
   /**
-   * Returns the key of the principal that this object is bound to
-   * @return 
-   */
-  public String getPrincipalKey();
-
-  /**
-   * Returns the entity type of the principal that this object is bound to
-   * @return 
-   */
-  public int getPrincipalType();
-
-  /**
-   * Gets the target that this Permission is associated with
+   * Gets the target associated with this <code>IPermission</code>.
    * @return 
    */
   public String getTarget ();
   
   /**
-   * Returns the Permission type.
+   * Returns the <code>Permission</code> type.
    */
   public String getType ();
   
   /**
-   * Sets the activity that this Permission is associated with
-   * @param activity
+   * Sets the activity associated with this <code>IPermission</code>.
+   * @param activity String
    */
   public void setActivity (String activity);
   
   /**
-   * Sets the date that this Permission should become effective on
-   * @param effective
+   * Sets the date that this <code>IPermission</code> should become effective on.
+   * @param effective java.util.Date
    */
   public void setEffective (Date effective);
   
   /**
-   * Sets the date that this Permission should expire on
-   * @param expires
+   * Sets the date that this <code>IPermission</code> should expire on.
+   * @param expires java.util.Date
    */
   public void setExpires (Date expires);
  
   /**
-   * Sets the key of the principal that this object is bound to
-   * @param newPrincipalKey
-   */
-  public void setPrincipalKey (String newPrincipalKey);
-  
-  /**
-   * Sets the entity type of the principal that this object is bound to
-   * @param newPrincipalType
-   */
-  public void setPrincipalType (int newPrincipalType);
-  
-  /**
-   * Sets the target that this Permission is associated with
+   * Sets the target associated with this <code>IPermission</code>.
    * @param target
    */
   public void setTarget (String target);
   
   /**
-   * Sets the Permission type.
-   * @param type
+   * Sets the <code>IPermission</code> type.
+   * @param type String
    */
   public abstract void setType (String type);
+
+  /**
+   * Returns a String representing the <code>IAuthorizationPrincipal</code> associated
+   * with this <code>IPermission</code>.
+   * @return 
+   */
+  public String getPrincipal();
+
+  /**
+   * Sets the principal String representing the <code>IAuthorizationPrincipal</code> 
+   * associated with this <code>IPermission</code>.
+   * @param newPrincipal String
+   */
+  public void setPrincipal (String newPrincipal);
 }

@@ -47,8 +47,7 @@ import  org.jasig.portal.groups.EntityTypes;
  */
 public class PermissionImpl implements IPermission{
   private String m_owner = null;	
-  private String m_principalKey = null;
-  private int m_principalType = 0;
+  private String m_principal = null;
   private String m_activity = null;
   private String m_target = null;
   private String m_type = null;
@@ -65,8 +64,8 @@ public class PermissionImpl implements IPermission{
     m_owner = owner;
   }
   /**
-   * Returns the token that represents the activity that this Permission is associated with.
-   * @return 
+   * Returns the token that represents the activity associated with this <code>IPermission</code>.
+   * @return String 
    */
   public String getActivity () {
     return  (m_activity);
@@ -93,86 +92,65 @@ public class PermissionImpl implements IPermission{
     return  (m_owner);
   }
   /**
-   * Returns the token that represents the key of the principal that this Permission is associated with.
-   * @return 
-   */
-  public String getPrincipalKey () {
-    return  (m_principalKey);
-  }
-  /**
+   * Returns the token that represents the <code>IAuthorizationPrincipal</code> 
+   * associated with this <code>IPermission</code>.
    * @return String
    */
-  private String getPrincipalString () 
-  {
-    Integer typeID = new Integer(getPrincipalType());
-    Class type = EntityTypes.getEntityType(typeID);
-	return type.getName() + " : " + getPrincipalKey();
+  public String getPrincipal () {
+    return  (m_principal);
   }
   /**
-   * Returns the entity type of the principal that this Permission is associated with.
-   * @return 
-   */
-  public int getPrincipalType () {
-    return  (m_principalType);
-  }
-  /**
-   * Returns the token that represents the target that this Permission is associated with.
+   * Returns the token that represents the target associated with this <code>IPermission</code>.
    */
   public String getTarget () {
     return  (m_target);
   }
   /**
    * Returns the type of permission that this is, generally GRANT or DENY
-   * @return 
+   * @return String
    */
   public String getType () {
     return  (m_type);
   }
   /**
-   * Specifies the token that represents the activity that this Permission is associated with.
-   * @param activity
+   * Specifies the token that represents the activity associated with this <code>IPermission</code>.
+   * @param activity String
    */
   public void setActivity (String activity) {
     m_activity = activity;
   }
   /**
-   * Specifies the date that this Permission will become effective.
-   * @param effective
+   * Specifies the date that this <code>IPermission</code> will become effective.
+   * @param effective java.util.Date
    */
   public void setEffective (Date effective) {
     m_effective = effective;
   }
   /**
-   * Specifies the date that this Permission will expire.
-   * @param expires
+   * Specifies the date that this <code>IPermission</code> will expire.
+   * @param expires java.util.Date
    */
   public void setExpires (Date expires) {
     m_expires = expires;
   }
   /**
-   * Specifies the token that represents the key of principal that this Permission is associated with.
-   * @param principal
+   * Specifies the token that represents the <code>IAuthorizationPrincipal</code> 
+   * associated with this <code>IPermission</code>.
+   * @param newPrincipal String
    */
-  public void setPrincipalKey (String newPrincipalKey) {
-    m_principalKey = newPrincipalKey;
+  public void setPrincipal (String newPrincipal) {
+    m_principal = newPrincipal;
   }
   /**
-   * Specifies the entity type of the principal that this Permission is associated with.
-   * @param principal
-   */
-  public void setPrincipalType (int newPrincipalType) {
-    m_principalType = newPrincipalType;
-  }
-  /**
-   * Specifies the token that represents the target that this Permission is associated with.
-   * @param target
+   * Specifies the token that represents the target associated with this <code>IPermission</code>.
+   * @param target String
    */
   public void setTarget (String target) {
     m_target = target;
   }
   /**
-   * Sets the permission type
-   * @param type
+   * Sets the <code>IPermission</code> type.
+   * @param type String
    */
   public void setType (String type) {
     m_type = type;
@@ -184,7 +162,7 @@ public String toString() {
     StringBuffer buff = new StringBuffer("Permission on ");
     buff.append(getOwner());
     buff.append(" for ");
-    buff.append(getPrincipalString());
+    buff.append(getPrincipal());
     buff.append(" (");
     buff.append(getActivity());
     buff.append(")");

@@ -79,19 +79,6 @@ import org.jasig.portal.security.Permission;
     public IPermission newInstance(String owner);
     
 /**
- * Select the IPermissions from the store.
- * @param owner String - the Permission owner
- * @param principalType int - the entity type id of the Permission principal 
- * @param principalKey String - the key of the Permission principal
- * @param activity String - the Permission activity 
- * @param target String - the Permission target
- * @param type String - the Permission type    
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
- */
-    public IPermission[] select(String owner, int principalType, String principalKey, String activity, String target, String type) 
-    throws AuthorizationException;
-    
-/**
  * Update the IPermissions in the store.
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
@@ -105,4 +92,15 @@ import org.jasig.portal.security.Permission;
  */
     public void update(IPermission perm) throws AuthorizationException;
     
+/**
+ * Select the IPermissions from the store.
+ * @param owner String - the Permission owner
+ * @param principal String - the Permission principal
+ * @param activity String - the Permission activity 
+ * @param target String - the Permission target
+ * @param type String - the Permission type    
+ * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ */
+    public IPermission[] select(String owner, String principal, String activity, String target, String type) 
+    throws AuthorizationException;
 }

@@ -1,6 +1,5 @@
 package org.jasig.portal.security.provider;
 
-
 /**
  * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
  *
@@ -47,7 +46,7 @@ import org.jasig.portal.utils.SqlTransaction;
 
 /**
  * Reference implementation of IPermissionStore.  Performs CRUD operations
- * on the Permission table.
+ * on the UP_Permission table.
  * @author Dan Ellentuck (de3@columbia.edu)
  * @version $Revision$ 
  */
@@ -56,15 +55,14 @@ public class PermissionImplRDBM implements IPermissionStore {
     private static PermissionImplRDBM singleton;
 	
     // sql Strings:
-    private static String PERMISSION_TABLE =      "UP_PERMISSION";
-    private static String OWNER_COLUMN =          "OWNER";
-    private static String PRINCIPAL_TYPE_COLUMN = "PRINCIPAL_TYPE";
-    private static String PRINCIPAL_KEY_COLUMN =  "PRINCIPAL_KEY";
-    private static String ACTIVITY_COLUMN =       "ACTIVITY";
-    private static String TARGET_COLUMN =         "TARGET";
-    private static String TYPE_COLUMN =           "PERMISSION_TYPE";
-    private static String EFFECTIVE_COLUMN =      "EFFECTIVE";
-    private static String EXPIRES_COLUMN =        "EXPIRES";
+    private static String PERMISSION_TABLE = "UP_PERMISSION";
+    private static String OWNER_COLUMN =     "OWNER";
+    private static String PRINCIPAL_COLUMN = "PRINCIPAL";
+    private static String ACTIVITY_COLUMN =  "ACTIVITY";
+    private static String TARGET_COLUMN =    "TARGET";
+    private static String TYPE_COLUMN =      "PERMISSION_TYPE";
+    private static String EFFECTIVE_COLUMN = "EFFECTIVE";
+    private static String EXPIRES_COLUMN =   "EXPIRES";
     private static String deletePermissionSql;
     private static String findPermissionSql;
     private static String insertPermissionSql;
@@ -108,9 +106,11 @@ public void add(IPermission perm) throws AuthorizationException
     int rc = 0;
 
     try
-    {
+    {   
         conn = RdbmServices.getConnection();
-        PreparedStatement ps = conn.prepareStatement(getInsertPermissionSql());
+        String sQuery = getInsertPermissionSql();
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.add(): " + sQuery); 
+        PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
             rc = primAdd(perm, ps);
@@ -168,19 +168,21 @@ public void delete(IPermission perm) throws AuthorizationException
     try
     {
         conn = RdbmServices.getConnection();
-        PreparedStatement ps = conn.prepareStatement(getDeletePermissionSql());
+        String sQuery = getDeletePermissionSql();
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.delete(): " + sQuery); 
+        PreparedStatement ps = conn.prepareStatement(sQuery);
         try
             { primDelete(perm, ps); }
         finally
             { ps.close(); }
-	}
-	catch (SQLException sqle)
-	{
-		LogService.log(LogService.ERROR, sqle.getMessage());
-		throw new AuthorizationException("Problem deleting Permission " + perm);
-	}
-	finally
-		{ RdbmServices.releaseConnection(conn); }
+    }
+    catch (SQLException sqle)
+    {
+        LogService.log(LogService.ERROR, sqle.getMessage());
+        throw new AuthorizationException("Problem deleting Permission " + perm);
+    }
+    finally
+        { RdbmServices.releaseConnection(conn); }
 }
 /**
  * Answer if this entity exists in the database.
@@ -195,14 +197,15 @@ public boolean existsInDatabase(IPermission perm) throws SQLException
     try
     {
         conn = RdbmServices.getConnection();
-        PreparedStatement ps = conn.prepareStatement(getFindPermissionSql());
+        String sQuery = getFindPermissionSql();
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.existsInDatabase(): " + sQuery); 
+        PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
             ps.setString(1, perm.getOwner());
-            ps.setInt(2, perm.getPrincipalType());
-            ps.setString(3, perm.getPrincipalKey());
-            ps.setString(4, perm.getActivity());
-            ps.setString(5, perm.getTarget());
+            ps.setString(2, perm.getPrincipal());
+            ps.setString(3, perm.getActivity());
+            ps.setString(4, perm.getTarget());
             rs = ps.executeQuery();
             return ( rs.next() );
         }
@@ -233,9 +236,7 @@ private static String getDeletePermissionSql()
         sqlBuff.append(" WHERE ");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
-        sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
+        sqlBuff.append(PRINCIPAL_COLUMN);
         sqlBuff.append(" = ? AND ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(" = ? AND ");
@@ -254,13 +255,11 @@ private static java.lang.String getFindPermissionSql()
 {
     if ( findPermissionSql == null )
     {
-	    StringBuffer sqlBuff = new StringBuffer(getSelectPermissionSql());
-	    sqlBuff.append("WHERE ");
-	    sqlBuff.append(OWNER_COLUMN);
-	    sqlBuff.append(" = ? AND ");
-	    sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
+        StringBuffer sqlBuff = new StringBuffer(getSelectPermissionSql());
+        sqlBuff.append("WHERE ");
+        sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
+	    sqlBuff.append(PRINCIPAL_COLUMN);
         sqlBuff.append(" = ? AND ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(" = ? AND ");
@@ -285,9 +284,7 @@ private static String getInsertPermissionSql()
         sqlBuff.append(" (");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(", ");
-        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
-        sqlBuff.append(", ");
-        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
+        sqlBuff.append(PRINCIPAL_COLUMN);
         sqlBuff.append(", ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(", ");
@@ -298,7 +295,7 @@ private static String getInsertPermissionSql()
         sqlBuff.append(EFFECTIVE_COLUMN);
         sqlBuff.append(", ");
         sqlBuff.append(EXPIRES_COLUMN);
-        sqlBuff.append(") VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        sqlBuff.append(") VALUES (?, ?, ?, ?, ?, ?, ?)");
         insertPermissionSql = sqlBuff.toString();
     }
     return insertPermissionSql;
@@ -314,10 +311,8 @@ private static String getSelectPermissionSql()
         sqlBuff.append("SELECT ");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(", ");
-        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
+        sqlBuff.append(PRINCIPAL_COLUMN);
         sqlBuff.append(", ");	    
-        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
-        sqlBuff.append(", ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(", ");
         sqlBuff.append(TARGET_COLUMN);
@@ -353,9 +348,7 @@ private static String getUpdatePermissionSql()
         sqlBuff.append(" = ? WHERE ");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_TYPE_COLUMN);
-        sqlBuff.append(" = ? AND ");
-        sqlBuff.append(PRINCIPAL_KEY_COLUMN);
+        sqlBuff.append(PRINCIPAL_COLUMN);
         sqlBuff.append(" = ? AND ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(" = ? AND ");
@@ -372,8 +365,7 @@ private static String getUpdatePermissionSql()
 private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
 {
     IPermission perm = newInstance(rs.getString(OWNER_COLUMN));
-    perm.setPrincipalType(rs.getInt(PRINCIPAL_TYPE_COLUMN));
-    perm.setPrincipalKey(rs.getString(PRINCIPAL_KEY_COLUMN));    
+    perm.setPrincipal(rs.getString(PRINCIPAL_COLUMN));
     perm.setActivity(rs.getString(ACTIVITY_COLUMN));
     perm.setTarget(rs.getString(TARGET_COLUMN));
     perm.setType(rs.getString(TYPE_COLUMN));
@@ -402,7 +394,9 @@ private void primAdd(IPermission[] perms) throws SQLException, AuthorizationExce
     try
     {
         conn = RdbmServices.getConnection();
-        PreparedStatement ps = conn.prepareStatement(getInsertPermissionSql());
+        String sQuery = getInsertPermissionSql();
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primAdd(): " + sQuery); 
+        PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
             setAutoCommit(conn, false);
@@ -451,30 +445,29 @@ private int primAdd(IPermission perm, PreparedStatement ps) throws SQLException
 
     // NON-NULL COLUMNS:
     ps.setString(1, perm.getOwner());
-    ps.setInt(2, perm.getPrincipalType());
-    ps.setString(3, perm.getPrincipalKey());
-    ps.setString(4, perm.getActivity());
-    ps.setString(5, perm.getTarget());
+    ps.setString(2, perm.getPrincipal());
+    ps.setString(3, perm.getActivity());
+    ps.setString(4, perm.getTarget());
     // TYPE:
     if ( perm.getType() == null )
-    	{ ps.setNull(6, Types.VARCHAR); }
+    	{ ps.setNull(5, Types.VARCHAR); }
     else
-        { ps.setString(6, perm.getType()); }
+        { ps.setString(5, perm.getType()); }
     // EFFECTIVE:
     if ( perm.getEffective() == null )
-   	    { ps.setNull(7, Types.DATE); }
+   	    { ps.setNull(6, Types.DATE); }
 	else
         { 
             date = new java.sql.Date(perm.getEffective().getTime());
-            ps.setDate(7, date); 
+            ps.setDate(6, date); 
         }
     // EXPIRES:
     if ( perm.getExpires() == null )
-        { ps.setNull(8, Types.DATE); }
+        { ps.setNull(7, Types.DATE); }
     else
         {
             date = new java.sql.Date(perm.getExpires().getTime());
-            ps.setDate(8, date);
+            ps.setDate(7, date);
         }
     return ps.executeUpdate();
 }
@@ -490,7 +483,9 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
     try
     {
         conn = RdbmServices.getConnection();
-        PreparedStatement ps = conn.prepareStatement(getDeletePermissionSql());
+        String sQuery = getDeletePermissionSql();
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primDelete(): " + sQuery); 
+        PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
             setAutoCommit(conn, false);
@@ -526,10 +521,9 @@ private void primDelete(IPermission[] perms) throws SQLException, AuthorizationE
 private int primDelete(IPermission perm, PreparedStatement ps) throws SQLException
 {
     ps.setString(1, perm.getOwner());
-    ps.setInt(2, perm.getPrincipalType());
-    ps.setString(3, perm.getPrincipalKey());
-    ps.setString(4, perm.getActivity());
-    ps.setString(5, perm.getTarget());
+    ps.setString(2, perm.getPrincipal());
+    ps.setString(3, perm.getActivity());
+    ps.setString(4, perm.getTarget());
     return ps.executeUpdate();
 }
 /**
@@ -544,7 +538,9 @@ private void primUpdate(IPermission[] perms) throws SQLException, AuthorizationE
     try
     { 
         conn = RdbmServices.getConnection();
-        PreparedStatement ps = conn.prepareStatement(getUpdatePermissionSql());
+        String sQuery = getUpdatePermissionSql();
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.primUpdate(): " + sQuery); 
+        PreparedStatement ps = conn.prepareStatement(sQuery);
         try
         {
             setAutoCommit(conn, false);
@@ -606,10 +602,9 @@ private int primUpdate(IPermission perm, PreparedStatement ps) throws SQLExcepti
     }
     // WHERE COLUMNS:
     ps.setString(4, perm.getOwner());
-    ps.setInt(5, perm.getPrincipalType());
-    ps.setString(6, perm.getPrincipalKey());
-    ps.setString(7, perm.getActivity());
-    ps.setString(8, perm.getTarget());
+    ps.setString(5, perm.getPrincipal());
+    ps.setString(6, perm.getActivity());
+    ps.setString(7, perm.getTarget());
 
     return ps.executeUpdate();
 }
@@ -624,14 +619,13 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
 /**
  * Select the Permissions from the store.
  * @param owner String - the Permission owner
- * @param principalKey String - the key of the Permission principal
+ * @param principal String - the Permission principal
  * @param activity String - the Permission activity  
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
  */
 public IPermission[] select
     (String owner, 
-    int principalType,
-    String principalKey, 
+    String principal, 
     String activity, 
     String target, 
     String type) 
@@ -654,24 +648,15 @@ throws AuthorizationException
     }
     else
     {
-        sqlQuery.append("1 = 1");
+        sqlQuery.append("1 = 1 ");
     }
 	
-    if ( principalType != EntityTypes.NULL_TYPE_ID )
+    if ( principal != null )
         { 
             sqlQuery.append("AND ");
-            sqlQuery.append(PRINCIPAL_TYPE_COLUMN);
-            sqlQuery.append(" = ");
-            sqlQuery.append(principalType);
-            sqlQuery.append(" ");
-        }
-
-    if ( principalKey != null )
-        { 
-            sqlQuery.append("AND ");
-            sqlQuery.append(PRINCIPAL_KEY_COLUMN);
+            sqlQuery.append(PRINCIPAL_COLUMN);
             sqlQuery.append(" = '");
-            sqlQuery.append(principalKey);
+            sqlQuery.append(principal);
             sqlQuery.append("' ");
         }
 
@@ -701,11 +686,13 @@ throws AuthorizationException
             sqlQuery.append(type);
             sqlQuery.append("' ");
         }
-			
+
+    LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.select(): " + sqlQuery.toString()); 
+
     try
     {
         conn = RdbmServices.getConnection();
-        stmnt = conn.createStatement();
+        stmnt = conn.createStatement();        
         try
         {
             rs = stmnt.executeQuery(sqlQuery.toString());
@@ -780,7 +767,9 @@ public void update(IPermission perm) throws AuthorizationException
     try
     {
         conn = RdbmServices.getConnection();
-        PreparedStatement ps = conn.prepareStatement(getUpdatePermissionSql());
+        String sQuery = getUpdatePermissionSql();
+        LogService.instance().log(LogService.DEBUG, "PermissionImplRDBM.update(): " + sQuery); 
+        PreparedStatement ps = conn.prepareStatement(sQuery);
         try
             { primUpdate(perm, ps); }
         finally

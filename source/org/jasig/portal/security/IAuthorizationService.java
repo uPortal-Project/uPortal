@@ -125,9 +125,9 @@ public interface IAuthorizationService
  */
     public IPermission[] getAllPermissionsForPrincipal (
 	  IAuthorizationPrincipal principal,
-	  String owner,
-	  String activity,
-	  String target)
+      String owner,
+      String activity,
+      String target)
     throws AuthorizationException;
 /**
  * Does this mean all channels the principal could conceivably subscribe
@@ -169,10 +169,10 @@ public interface IAuthorizationService
  * be retrieved.
  */
     public IPermission[] getPermissionsForPrincipal (
-	  IAuthorizationPrincipal principal,
-	  String owner,
-	  String activity,
-	  String target)
+      IAuthorizationPrincipal principal,
+      String owner,
+      String activity,
+      String target)
     throws AuthorizationException;
 /**
  * Creates a new <code>IPermission</code> for the <code>principal</code> on behalf of the 
