@@ -195,9 +195,11 @@ public class ChannelRegistryManager {
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
 
     // Use current channel ID if modifying previously published channel, otherwise get a new ID
+    boolean newChannel = true;
     int ID = 0;
     String chanID = channel.getAttribute("ID");
     if (chanID != null && chanID.trim().length() > 0) {
+      newChannel = false;
       ID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
       LogService.instance().log(LogService.INFO, "Attempting to modify channel " + ID + "...");
     }
@@ -224,12 +226,16 @@ public class ChannelRegistryManager {
       permissions[i].setActivity("SUBSCRIBE");
       permissions[i].setTarget("CHAN_ID." + ID);
     }
-    upm.addPermissions(permissions);
+
+    if (newChannel)
+       upm.addPermissions(permissions);
+    else
+       upm.updatePermissions(permissions); // this doesn't change the principal! shouldn't it?
 
     // Approve channel - this can be removed when there is a mechanism to approve channels
     chanRegStore.approveChannel(ID, publisher, new Date(System.currentTimeMillis()));
 
-    LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
+    LogService.instance().log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
   }
 
   /**
