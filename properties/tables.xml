@@ -183,7 +183,11 @@
 		<name>UP_USER_PROFILES</name>
 		<columns>
 			<column>
-				<name>ID</name>
+				<name>USER_ID</name>
+				<type>INTEGER</type>
+			</column>
+			<column>
+				<name>PROFILE_ID</name>
 				<type>INTEGER</type>
 			</column>
 			<column>
@@ -213,13 +217,12 @@
 		<name>UP_USER_SS_PREFS</name>
 		<columns>
 			<column>
-				<name>ID</name>
+				<name>USER_ID</name>
 				<type>INTEGER</type>
 			</column>
 			<column>
-				<name>PROFILE_NAME</name>
-				<type>VARCHAR</type>
-				<param>30</param>
+				<name>PROFILE_ID</name>
+				<type>INTEGER</type>
 			</column>
 			<column>
 				<name>STYLESHEET_NAME</name>
@@ -310,7 +313,7 @@
 		<name>UP_USER_UA_MAP</name>
 		<columns>
 			<column>
-				<name>ID</name>
+				<name>USER_ID</name>
 				<type>INTEGER</type>
 			</column>
 			<column>
@@ -319,9 +322,8 @@
 				<param>100</param>
 			</column>
 			<column>
-				<name>PROFILE_NAME</name>
-				<type>VARCHAR</type>
-				<param>30</param>
+				<name>PROFILE_ID</name>
+				<type>INTEGER</type>
 			</column>
 		</columns>
 	</table>

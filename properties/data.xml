@@ -606,7 +606,11 @@
 		<rows>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
+					<value>1</value>
+				</column>
+				<column>
+					<name>PROFILE_ID</name>
 					<value>1</value>
 				</column>
 				<column>
@@ -628,8 +632,12 @@
 			</row>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
 					<value>1</value>
+				</column>
+				<column>
+					<name>PROFILE_ID</name>
+					<value>2</value>
 				</column>
 				<column>
 					<name>PROFILE_NAME</name>
@@ -646,8 +654,12 @@
 			</row>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
 					<value>2</value>
+				</column>
+				<column>
+					<name>PROFILE_ID</name>
+					<value>1</value>
 				</column>
 				<column>
 					<name>PROFILE_NAME</name>
@@ -664,7 +676,11 @@
 			</row>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
+					<value>2</value>
+				</column>
+				<column>
+					<name>PROFILE_ID</name>
 					<value>2</value>
 				</column>
 				<column>
@@ -687,12 +703,12 @@
 		<rows>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
 					<value>1</value>
 				</column>
 				<column>
-					<name>PROFILE_NAME</name>
-					<value>netscape</value>
+					<name>PROFILE_ID</name>
+					<value>1</value>
 				</column>
 				<column>
 					<name>STYLESHEET_NAME</name>
@@ -722,12 +738,12 @@
 			</row>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
 					<value>1</value>
 				</column>
 				<column>
-					<name>PROFILE_NAME</name>
-					<value>netscape</value>
+					<name>PROFILE_ID</name>
+					<value>1</value>
 				</column>
 				<column>
 					<name>STYLESHEET_NAME</name>
@@ -757,12 +773,12 @@
 			</row>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
 					<value>2</value>
 				</column>
 				<column>
-					<name>PROFILE_NAME</name>
-					<value>netscape</value>
+					<name>PROFILE_ID</name>
+					<value>1</value>
 				</column>
 				<column>
 					<name>STYLESHEET_NAME</name>
@@ -792,12 +808,12 @@
 			</row>
 			<row>
 				<column>
-					<name>ID</name>
+					<name>USER_ID</name>
 					<value>2</value>
 				</column>
 				<column>
-					<name>PROFILE_NAME</name>
-					<value>netscape</value>
+					<name>PROFILE_ID</name>
+					<value>1</value>
 				</column>
 				<column>
 					<name>STYLESHEET_NAME</name>
