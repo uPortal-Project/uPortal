@@ -291,10 +291,18 @@ throws GroupsException
 
     for ( Iterator services = getComponentServices().values().iterator(); services.hasNext(); )
     {
-        IGroupService service = (IGroupService) services.next();
+        IIndividualGroupService service = (IIndividualGroupService) services.next();
         EntityIdentifier[] ids = service.searchForGroups(query, method, leaftype);
         for (int i=0; i<ids.length; i++)
-            { allIds.add(ids[i]);}
+        {
+            try 
+            {
+                CompositeEntityIdentifier cei = new CompositeEntityIdentifier(ids[i].getKey(),leaftype);
+                cei.setServiceName(service.getServiceName());
+	            allIds.add(cei);
+            }
+            catch (javax.naming.InvalidNameException ine) {}
+        }
     }
     return (EntityIdentifier[])allIds.toArray(new EntityIdentifier[allIds.size()]);
 }

@@ -545,28 +545,28 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     switch (method){
       case IS:
         for (i=0; i<g.length;i++){
-          if(g[i].name.equals("query")){
+          if(g[i].name.equals(query)){
             ids.add(new EntityIdentifier(g[i].key,group));
           }
         }
         break;
       case STARTS_WITH:
         for (i=0; i<g.length;i++){
-          if(g[i].name.startsWith("query")){
+          if(g[i].name.startsWith(query)){
             ids.add(new EntityIdentifier(g[i].key,group));
           }
         }
         break;
       case ENDS_WITH:
         for (i=0; i<g.length;i++){
-          if(g[i].name.endsWith("query")){
+          if(g[i].name.endsWith(query)){
             ids.add(new EntityIdentifier(g[i].key,group));
           }
         }
         break;
       case CONTAINS:
         for (i=0; i<g.length;i++){
-          if(g[i].name.indexOf("query") > -1){
+          if(g[i].name.indexOf(query) > -1){
             ids.add(new EntityIdentifier(g[i].key,group));
           }
         }
