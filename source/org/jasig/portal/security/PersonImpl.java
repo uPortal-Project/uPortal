@@ -31,12 +31,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security;
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
+
+package  org.jasig.portal.security;
+
+import  java.io.Serializable;
+import  java.util.Enumeration;
+import  java.util.Hashtable;
+
 
 /**
  * <p>This is an implementation of an AdditionalDescriptor that contains a user's
@@ -44,14 +49,12 @@ import java.util.Hashtable;
  *
  * @author Adam Rybicki
  */
-
-public class PersonImpl implements IPerson, 
-                                   Serializable 
-{
+public class PersonImpl
+    implements IPerson, Serializable {
   protected Hashtable m_Attributes = null;
   protected String m_FullName = null;
   protected String m_ID = null;
-  
+
   /**
    * Returns an attribute for a key.  For multivalue attributes, this will be
    * a <code>java.util.Vector</code>.  For objects represented as strings,
@@ -60,67 +63,67 @@ public class PersonImpl implements IPerson,
    * @param key Attribute's name.
    * @return Value of an attribute identified by the key.
    */
-  public Object getAttribute (String key)
-  {
-    if (m_Attributes == null)
-      return null;
-      
-    return m_Attributes.get (key);
+  public Object getAttribute (String key) {
+    if (m_Attributes == null) {
+      return  null;
+    }
+    return  m_Attributes.get(key);
   }
-  
+
   /**
    * Returns a <code>java.util.Enumeration</code> of all the attribute values.
    * @return <code>java.util.Enumeration</code> of the attributes.
    */
-  public Enumeration getAttributes ()
-  {
-    if (m_Attributes == null)
-      return null;
-      
-    return m_Attributes.elements();
+  public Enumeration getAttributes () {
+    if (m_Attributes == null) {
+      return  null;
+    }
+    return  m_Attributes.elements();
   }
-  
+
   /**
    * Sets the specified attribute to a value.
    * @param key Attribute's name
    * @param value Attribute's value
    */
-  public void setAttribute (String key, Object value)
-  {
-    if (m_Attributes == null)
-      m_Attributes = new Hashtable ();
-      
-    m_Attributes.put (key, value);
+  public void setAttribute (String key, Object value) {
+    if (m_Attributes == null) {
+      m_Attributes = new Hashtable();
+    }
+    if (key == null) {
+      return;
+    }
+    if (value == null) {
+      value = "";
+    }
+    m_Attributes.put(key, value);
   }
-  
+
   /**
    * Removes the specified attribute.
    * @param key Attribute's name
    * @return the value of the removed object or null if there was nothing to remove
    */
-  public Object removeAttribute (String key)
-  {
-    if (m_Attributes == null)
-      return null;
-      
-     return m_Attributes.remove(key);
+  public Object removeAttribute (String key) {
+    if (m_Attributes == null) {
+      return  null;
+    }
+    return  m_Attributes.remove(key);
   }
 
   /**
    * Returns the user's ID that was used for authentication.
    * @return User's ID.
    */
-  public String getID ()
-  {
-    return m_ID;
+  public String getID () {
+    return  m_ID;
   }
-  
+
   /**
    * Sets the user's ID.
    * @param sID User's ID as supplied for authentication
    */
-  public void setID (String sID)
-  {
+  public void setID (String sID) {
     m_ID = sID;
   }
 
@@ -128,17 +131,18 @@ public class PersonImpl implements IPerson,
    * Returns the user's name that was established during authentication.
    * @return User's name.
    */
-  public String getFullName ()
-  {
-    return m_FullName;
+  public String getFullName () {
+    return  m_FullName;
   }
-  
+
   /**
    * Sets the user's full name.
    * @param sFullName User's name as established during authentication
    */
-  public void setFullName (String sFullName)
-  {
+  public void setFullName (String sFullName) {
     m_FullName = sFullName;
   }
 }
+
+
+
