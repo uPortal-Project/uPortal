@@ -36,10 +36,10 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
 import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
-import java.io.File;
 import java.util.Hashtable;
 import java.net.URL;
 
@@ -60,16 +60,9 @@ import java.net.URL;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CImage implements IChannel
+public class CImage extends BaseChannel
 {
-  private ChannelStaticData staticData = null;
-  private ChannelRuntimeData runtimeData = null;
-  private String media;
-
-  private static final String fs = File.separator;
-  private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
-  private String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CImage";
-  private static final String sslLocation = UtilitiesBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CImage" + fs + "CImage.ssl";
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CImage/CImage.ssl");
 
   private String sImageWidth = null;
   private String sImageHeight = null;
@@ -77,34 +70,6 @@ public class CImage implements IChannel
   private String sImageLink = null;
   private String sCaption = null;
   private String sSubCaption = null;
-    private MediaManager mm;
-
-  /**
-   * Constructs a CImage.
-   */
-  public CImage ()
-  {
-      this.mm=new MediaManager();
-  }
-
-  /**
-   * Returns channel runtime properties
-   * @return handle to runtime properties
-   */
-  public ChannelRuntimeProperties getRuntimeProperties ()
-  {
-    // Channel will always render, so the default values are ok
-    return new ChannelRuntimeProperties ();
-  }
-
-  /**
-   * Processes layout-level events coming from the portal
-   * @param ev a portal layout event
-   */
-  public void receiveEvent (PortalEvent ev)
-  {
-    // no events for this channel
-  }
 
   /**
    * Receive static channel data from the portal
@@ -112,25 +77,12 @@ public class CImage implements IChannel
    */
   public void setStaticData (ChannelStaticData sd)
   {
-    this.staticData = sd;
     sImageWidth = sd.getParameter ("img-width");
     sImageHeight = sd.getParameter ("img-height");
     sImageBorder = sd.getParameter ("img-border");
     sImageLink = sd.getParameter ("img-link");
     sCaption = sd.getParameter ("caption");
     sSubCaption = sd.getParameter ("subcaption");
-  }
-
-
-  /**
-   * Receives channel runtime data from the portal and processes actions
-   * passed to it.  The names of these parameters are entirely up to the channel.
-   * @param rd handle to channel runtime data
-   */
-  public void setRuntimeData (ChannelRuntimeData rd)
-  {
-    this.runtimeData = rd;
-    media = mm.getMedia(runtimeData.getBrowserInfo());
   }
 
   /**
@@ -173,7 +125,7 @@ public class CImage implements IChannel
 
       try
       {
-        XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, params, media);
+        XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, params, runtimeData.getBrowserInfo());
       }
       catch (Exception e)
       {
@@ -182,7 +134,7 @@ public class CImage implements IChannel
     }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e);
+      LogService.instance().log (LogService.ERROR, e);
     }
   }
 
