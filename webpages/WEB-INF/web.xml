@@ -8,20 +8,12 @@
   <servlet>
     <servlet-name>uPortal</servlet-name>
     <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
-    <init-param>
-      <param-name>portalBaseDir</param-name>
-      <param-value>d:\projects\jasig\uPortal20\portal</param-value>
-    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
 
   <servlet>
     <servlet-name>Authentication</servlet-name>
     <servlet-class>org.jasig.portal.AuthenticationServlet</servlet-class>
-    <init-param>
-      <param-name>portalBaseDir</param-name>
-      <param-value>d:\projects\jasig\uPortal20\portal</param-value>
-    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
 
@@ -32,7 +24,7 @@
 
   <servlet-mapping>
     <servlet-name>Authentication</servlet-name>
-    <url-pattern>Authentication</url-pattern>
+    <url-pattern>/Authentication</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
