@@ -148,16 +148,11 @@ public class CarResources {
         }
         catch( Exception e )
         {
-            StringWriter sw = new StringWriter();
-            PrintWriter p = new PrintWriter( sw );
-            e.printStackTrace( p );
-            p.flush();
             log.error(
                 "An Exception occurred while loading "
                     + "channel archives. Any channels "
                     + "deployed via CARs will not be "
-                    + "available. Details:\n"
-                                       + sw );
+                    + "available.",  e);
         }
     }
 
