@@ -892,6 +892,7 @@ public class RDBMUserLayoutStore
                     }
                   }
                   rs.close();
+                  rs = null;
 
                   /**
                    * We have to retrieve the channel defition after the layout structure
@@ -944,10 +945,14 @@ public class RDBMUserLayoutStore
                     }
                   } finally {
                     rs.close();
+                    rs = null;
                   }
                 }
               } finally {
-                rs.close();
+                if (rs != null) {
+                  rs.close();
+                  rs = null;
+                }
               }
             } finally {
               stmt.close();
@@ -961,7 +966,9 @@ public class RDBMUserLayoutStore
             }
           }
         } finally {
-          rs.close();
+          if (rs != null) {
+            rs.close();
+          }
         }
         long stopTime = System.currentTimeMillis();
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
