@@ -6,7 +6,6 @@
 package org.jasig.portal.container.services.information;
 
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -18,26 +17,19 @@ import org.jasig.portal.container.services.PortletContainerService;
 
 /**
  * Implementation of Apache Pluto InformationProviderService.
- * @author Ken Weiner, kweiner@unicon.net
+ * @author Michael Ivanov, mivanov@unicon.net
  * @version $Revision$
  */
 public class InformationProviderServiceImpl implements PortletContainerService, InformationProviderService {
     
-    private ServletConfig servletConfig;
-    private Properties properties;
-    private DynamicInformationProvider provider;
+    private static DynamicInformationProvider dynamicProvider;
 	private static StaticInformationProviderImpl staticInfoProvider;
-	private static int MAX_HASH_CODE_NUMBER = 10;
-	private Vector hashCodes;
     
     private static final String dynamicInformationProviderRequestParameterName = "org.apache.pluto.services.information.DynamicInformationProvider";
 
     // PortletContainerService methods
     
     public void init(ServletConfig servletConfig, Properties properties) throws Exception {
-        this.servletConfig = servletConfig;
-        this.properties = properties;
-        hashCodes = new Vector();
         if ( staticInfoProvider == null ) {
 		 staticInfoProvider = new StaticInformationProviderImpl();
          staticInfoProvider.init(servletConfig, properties);
@@ -45,10 +37,7 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
     }
     
     public void destroy() throws Exception {
-        properties = null;
-        servletConfig = null;
 		staticInfoProvider = null;
-		hashCodes = null;
     }    
     
     // InformationProviderService methods
@@ -58,14 +47,9 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
     }
 
     public synchronized DynamicInformationProvider getDynamicProvider(HttpServletRequest request) {
-      String hashCode = Integer.toString(request.hashCode());	
-      if ( !hashCodes.contains(hashCode) ) {
-      	if ( hashCodes.size() >= MAX_HASH_CODE_NUMBER )
-      	  hashCodes.removeAllElements();	
-      	hashCodes.add(hashCode);
-        provider = new DynamicInformationProviderImpl(request);
-      }  
-        return provider;
+      if ( dynamicProvider == null ) 
+      	dynamicProvider = new DynamicInformationProviderImpl();
+        return dynamicProvider;
     }
 
 }

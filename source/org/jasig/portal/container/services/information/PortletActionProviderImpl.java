@@ -7,7 +7,6 @@ package org.jasig.portal.container.services.information;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.PortletActionProvider;
@@ -19,13 +18,10 @@ import org.apache.pluto.services.information.PortletActionProvider;
  */
 public class PortletActionProviderImpl implements PortletActionProvider {
     
-    private HttpServletRequest request;
     private PortletWindow portletWindow;
 
-    public PortletActionProviderImpl(HttpServletRequest request, PortletWindow portletWindow) {
-        this.request = request;
+    public PortletActionProviderImpl(PortletWindow portletWindow) {
         this.portletWindow = portletWindow;
-        
     }
 
     // PortletActionProvider methods
@@ -37,7 +33,7 @@ public class PortletActionProviderImpl implements PortletActionProvider {
 
     public void changePortletWindowState(WindowState state) {
 		if ( state != null ) {	
-		  PortletStateManager.setState(portletWindow,state);
+		    PortletStateManager.setState(portletWindow,state);
 	    }  
     }
 

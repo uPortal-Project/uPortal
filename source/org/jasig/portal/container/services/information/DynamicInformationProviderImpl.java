@@ -12,7 +12,6 @@ import java.util.Collection;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.DynamicInformationProvider;
@@ -31,10 +30,8 @@ import org.apache.pluto.services.information.ResourceURLProvider;
 public class DynamicInformationProviderImpl implements DynamicInformationProvider {
 	
     private static StaticInformationProvider staticInfoProvider;
-    private HttpServletRequest request;
     
-    public DynamicInformationProviderImpl(HttpServletRequest request) {
-        this.request = request;	
+    public DynamicInformationProviderImpl() {
         if ( staticInfoProvider == null )
 		 staticInfoProvider = InformationProviderAccess.getStaticProvider();
     }
@@ -65,7 +62,7 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
     public PortletActionProvider getPortletActionProvider(PortletWindow portletWindow) {
-        return new PortletActionProviderImpl(request, portletWindow);
+        return new PortletActionProviderImpl(portletWindow);
     }
 
     public PortletMode getPortletMode(PortletWindow portletWindow) {
