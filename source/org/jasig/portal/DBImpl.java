@@ -313,7 +313,7 @@ public class DBImpl implements IDBImpl
 
   protected final Element createLayoutStructure(ResultSet rs, int chanId, int userId, Statement stmt, DocumentImpl doc) throws java.sql.SQLException
   {
-    String idTag = rs.getString("ID_TAG");
+    String idTag = rs.getString("STRUCT_ID");
     if (chanId != 0) { // Channel
       /* See if we have access to the channel */
       if (!channelInUserRole(chanId, userId, stmt.getConnection())) {
@@ -323,7 +323,7 @@ public class DBImpl implements IDBImpl
         Logger.log(Logger.INFO, "DBImpl::createLayoutStructure(): No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
       }
 
-      return createChannelNode(stmt.getConnection(), doc, chanId, idTag);
+      return createChannelNode(stmt.getConnection(), doc, chanId, "n" + idTag);
     } else { // Folder
       String name = rs.getString("NAME");
       String type = rs.getString("TYPE");
@@ -333,8 +333,8 @@ public class DBImpl implements IDBImpl
 
       Element folder = doc.createElement("folder");
       Element system = doc.createElement("system");
-      doc.putIdentifier(idTag, folder);
-      addChannelHeaderAttribute("ID", idTag, folder, system);
+      doc.putIdentifier("s" + idTag, folder);
+      addChannelHeaderAttribute("ID", "s" + idTag, folder, system);
       addChannelHeaderAttribute("name", name, folder, system);
       addChannelHeaderAttribute("type", (type != null ? type : "regular"), folder, system);
       addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder, system);
@@ -490,7 +490,10 @@ public class DBImpl implements IDBImpl
         return saveStructure(node.getNextSibling(), stmt, userId, layoutId, structId);
       }
 
-      int saveStructId = structId.id++;
+      Element structure = (Element) node;
+      Element system = findSystemNode(node);
+
+      int saveStructId = Integer.parseInt(structure.getAttribute("ID").substring(1));
       int nextStructId = 0;
       int childStructId = 0;
       String sQuery;
@@ -502,9 +505,6 @@ public class DBImpl implements IDBImpl
 
       nextStructId = saveStructure(node.getNextSibling(), stmt, userId, layoutId, structId);
 
-      Element structure = (Element) node;
-      Element system = findSystemNode(node);
-
       String chanId = "NULL";
       String structName = "NULL";
       if (node.getNodeName().equals("channel")) {
@@ -513,9 +513,9 @@ public class DBImpl implements IDBImpl
         structName = "'" + sqlEscape(structure.getAttribute("name")) + "'";
       }
       sQuery = "INSERT INTO UP_LAYOUT_STRUCT " +
-      "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,ID_TAG,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) VALUES (" +
+      "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) VALUES (" +
         userId + "," + layoutId + "," + saveStructId + "," + nextStructId + "," + childStructId + "," +
-        "'" + structure.getAttribute("external_id") + "'," + chanId + ",'" + structure.getAttribute("ID") + "'," +
+        "'" + structure.getAttribute("external_id") + "'," + chanId + "," +
         structName + ",'" + structure.getAttribute("type") + "'," +
         "'" + dbBool(structure.getAttribute("hidden")) + "','" + dbBool(structure.getAttribute("immutable")) + "'," +
         "'" + dbBool(structure.getAttribute("unremovable")) + "')";
@@ -841,6 +841,39 @@ public class DBImpl implements IDBImpl
     }
   }
 
+  /**
+   * Get the next structure Id
+   * @parameter userId
+   * @result next free structure ID
+   */
+  public int getNextStructId(int userId) throws Exception {
+    Connection con = rdbmService.getConnection();
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
+        Logger.log(Logger.DEBUG, "DBImpl::getNextStructId(): " + sQuery);
+
+        ResultSet rs = stmt.executeQuery(sQuery);
+        try {
+          rs.next();
+          int currentStructId = rs.getInt(1);
+          int nextStructId = currentStructId + 1;
+          sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE NEXT_STRUCT_ID=" + currentStructId;
+          Logger.log(Logger.DEBUG, "DBImpl::getNextStructId(): " + sQuery);
+          stmt.executeUpdate(sQuery);
+
+          return nextStructId;
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
+  }
 
   /**
    *

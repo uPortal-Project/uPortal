@@ -154,14 +154,20 @@ public class CSubscriber implements IPrivilegedChannel
 
     if (action != null)
     {
-      if (action.equals ("browse"))
-        prepareBrowse ();
-      else if (action.equals ("subscribe"))
-        prepareSubscribe ();
-      else if (action.equals ("subscribeTo"))
-        prepareSubscribeTo ();
-      else if (action.equals ("saveChanges"))
-        prepareSaveChanges ();
+      try {
+        if (action.equals ("browse")) {
+          prepareBrowse ();
+        } else if (action.equals ("subscribe")) {
+          prepareSubscribe ();
+        } else if (action.equals ("subscribeTo")) {
+          prepareSubscribeTo ();
+        } else if (action.equals ("saveChanges")) {
+          prepareSaveChanges ();
+        }
+      } catch (Exception e) {
+        Logger.log(Logger.ERROR, e);
+        throw new GeneralRenderingException(e.getMessage());
+      }
     }
 
     if (categoryID == null)
@@ -235,7 +241,7 @@ public class CSubscriber implements IPrivilegedChannel
     subIDs = runtimeData.getParameterValues ("sub");
   }
 
-  private void prepareSubscribeTo ()
+  private void prepareSubscribeTo () throws Exception
   {
     mode = SUBTO;
     String destinationID = runtimeData.getParameter ("destination");
@@ -255,7 +261,6 @@ public class CSubscriber implements IPrivilegedChannel
             for (int i = 0; i < subIDs.length; i++) {
 
                 Node channel = channelRegistry.getElementById (subIDs[i]);
-
                 // user wants to add an entire category to layout
                 if(subIDs[i].startsWith("cat")) {
                     NodeList channels = channel.getChildNodes();
@@ -289,30 +294,9 @@ public class CSubscriber implements IPrivilegedChannel
    * to be added to user's layout.xml
    * @return String
    */
-   public void setNextInstanceID(Node channel)
+   public void setNextInstanceID(Node channel) throws Exception
    {
-    NodeList chans = userLayoutXML.getElementsByTagName("channel");
-
-    List instanceIDs = new ArrayList();
-
-    for (int iChan = 0; iChan < chans.getLength(); iChan++)
-    {
-        Integer id;
-        Element nChan = (Element)chans.item(iChan);
-        String sInstanceID = nChan.getAttribute("ID");
-        if (!sInstanceID.startsWith("hchan")) {
-            id = new Integer (sInstanceID.substring (4));
-            instanceIDs.add (id);
-        }
-    }
-
-    Collections.sort(instanceIDs);
-    int iHighest = -1;
-    if (instanceIDs.size() > 0)
-    {
-       iHighest = ((Integer)instanceIDs.get (instanceIDs.size () - 1)).intValue ();
-    }
-    String sInstanceID = "chan" + (iHighest + 1);
+    String sInstanceID = "n" + GenericPortalBean.getDbImplObject().getNextStructId(staticData.getPerson().getID());
     ((Element)channel).setAttribute("ID", sInstanceID);
    }
 

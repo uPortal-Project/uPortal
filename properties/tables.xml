@@ -10,6 +10,7 @@
       <column> <name>USER_DFLT_USR_ID</name> <type>INTEGER</type>                     </column>
       <column> <name>USER_DFLT_LAY_ID</name> <type>INTEGER</type>                     </column>
       <column> <name>CURR_LAY_ID</name>      <type>INTEGER</type>                     </column>
+      <column> <name>NEXT_STRUCT_ID</name> <type>INTEGER</type>                   </column>
       <column> <name>LST_CHAN_UPDT_DT</name> <type>TIMESTAMP</type>                   </column>
     </columns>
   </table>
@@ -58,7 +59,6 @@
       <column> <name>CHLD_STRUCT_ID</name> <type>INTEGER</type>                   </column>
       <column> <name>EXTERNAL_ID</name>    <type>INTEGER</type>                   </column>
       <column> <name>CHAN_ID</name>        <type>INTEGER</type>                   </column>
-      <column> <name>ID_TAG</name>         <type>VARCHAR</type> <param>35</param> </column>
       <column> <name>NAME</name>           <type>VARCHAR</type> <param>35</param> </column>
       <column> <name>TYPE</name>           <type>VARCHAR</type> <param>35</param> </column>
       <column> <name>HIDDEN</name>         <type>VARCHAR</type> <param>1</param>  </column>
@@ -66,7 +66,6 @@
       <column> <name>UNREMOVABLE</name>      <type>VARCHAR</type> <param>1</param>  </column>
     </columns>
     <primary-key>LAYOUT_ID, USER_ID, STRUCT_ID</primary-key>
-    <not-null>ID_TAG</not-null>
   </table>
 
   <table>
