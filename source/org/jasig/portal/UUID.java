@@ -78,14 +78,6 @@ public class UUID extends PortalID {
  	bytes[8] &= 0x3f;
 	bytes[8] |= 0x40; 
 
-	long mostSig = 0;
-	for (int i = 0; i < 8; i++) {
-	    mostSig = (mostSig << 8) | (bytes[i] & 0xff);
-	}
-	long leastSig = 0;
-	for (int i = 8; i < 16; i++) {
-	    leastSig = (leastSig << 8) | (bytes[i] & 0xff);
-	}
 	return new UUID(bytes);
     };    
 
