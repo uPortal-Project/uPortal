@@ -1343,9 +1343,9 @@
 
     <property name="channel" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
-      <classpath refid="compile.classpath"/>
       <classpath>
-        <pathelement path="${build.home}/WEB-INF/classes"/>
+          <pathelement path="${build.home}/WEB-INF/classes"/>
+          <path refid="compile.classpath"/>
       </classpath>
       <arg value="-n"/>
       <arg value="${channel}"/>
