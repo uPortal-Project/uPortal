@@ -176,7 +176,32 @@ public class UserLayoutManager implements IUserLayoutManager {
      * It also processes layout root requests (uP_root)
      * @param req current <code>HttpServletRequest</code>
      */
-    public void processUserPreferencesParameters (HttpServletRequest req) {
+    public void processUserPreferencesParameters(HttpServletRequest req) {
+        // save processing
+        String saveWhat=req.getParameter("uP_save");
+        if(saveWhat!=null) {
+            try {
+                if(saveWhat.equals("preferences")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                } else if(saveWhat.equals("layout")) {
+                    synchronized(layout_write_lock) {
+                        layout_write_lock.setValue(true);
+                        ulsdb.setUserLayout(m_person, complete_up.getProfile(), uLayoutXML, false);
+                    }                
+                } else if(saveWhat.equals("all")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                    synchronized(layout_write_lock) {
+                        layout_write_lock.setValue(true);
+                        ulsdb.setUserLayout(m_person, complete_up.getProfile(), uLayoutXML, false);
+                    }
+                }
+                LogService.instance().log(LogService.ERROR, "UserLayoutManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
+
+            } catch (Exception e) {
+                LogService.instance().log(LogService.ERROR, "UserLayoutManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
+            }
+        }
+
         // layout root setting
         String root;
         if ((root = req.getParameter("uP_root")) != null) {
@@ -199,8 +224,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             for (int i = 0; i < sparams.length; i++) {
                 String pValue = req.getParameter(sparams[i]);
                 complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i], pValue);
-                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
-                           + "\"=\"" + pValue + "\".");
+                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i] + "\"=\"" + pValue + "\".");
             }
         }
         String[] tparams = req.getParameterValues("uP_tparam");
@@ -208,8 +232,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             for (int i = 0; i < tparams.length; i++) {
                 String pValue = req.getParameter(tparams[i]);
                 complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i], pValue);
-                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
-                           + "\"=\"" + pValue + "\".");
+                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]+ "\"=\"" + pValue + "\".");
             }
         }
         // attribute processing
@@ -223,8 +246,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sfattr \"" + aName
-                                   + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sfattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -238,8 +260,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting scattr \"" + aName
-                                   + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting scattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -254,8 +275,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tcattr \"" + aName
-                                   + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tcattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -294,7 +314,7 @@ public class UserLayoutManager implements IUserLayoutManager {
      * put your documentation comment here
      * @return boolean
      */
-    public boolean isUserAgentUnmapped () {
+    public boolean isUserAgentUnmapped() {
         return  unmapped_user_agent;
     }
 
@@ -302,7 +322,7 @@ public class UserLayoutManager implements IUserLayoutManager {
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException {
+    public void setNewUserLayoutAndUserPreferences(Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException {
       try {
         if (newPreferences != null) {
             ulsdb.putUserPreferences(m_person, newPreferences);
@@ -335,18 +355,18 @@ public class UserLayoutManager implements IUserLayoutManager {
     }
 
 
-    public UserProfile getCurrentProfile () {
+    public UserProfile getCurrentProfile() {
         return  this.getUserPreferences().getProfile();
     }
 
-    public ThemeStylesheetDescription getThemeStylesheetDescription () throws Exception {
+    public ThemeStylesheetDescription getThemeStylesheetDescription() throws Exception {
         if (this.tsd == null) {
            tsd = ulsdb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetId());
         }
         return  tsd;
     }
 
-    public StructureStylesheetDescription getStructureStylesheetDescription () throws Exception {
+    public StructureStylesheetDescription getStructureStylesheetDescription() throws Exception {
         if (this.ssd == null) {
             ssd = ulsdb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetId());
         }
@@ -370,7 +390,7 @@ public class UserLayoutManager implements IUserLayoutManager {
      * @param nodeId
      * @return node name
      */
-    public String getNodeName (String nodeId) {
+    public String getNodeName(String nodeId) {
         Element node = uLayoutXML.getElementById(nodeId);
         if (node != null) {
             return  node.getAttribute("name");
@@ -379,7 +399,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             return  null;
     }
 
-    public boolean removeChannel (String channelId) throws PortalException {
+    public boolean removeChannel(String channelId) throws PortalException {
         // warning .. the channel should also be removed from uLayoutXML
         Element channel = uLayoutXML.getElementById(channelId);
         if (channel != null) {
