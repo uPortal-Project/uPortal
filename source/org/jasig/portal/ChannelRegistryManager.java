@@ -256,7 +256,8 @@ public class ChannelRegistryManager {
     channelE.setAttribute("editable", channelDef.isEditable() ? "true" : "false");
     channelE.setAttribute("hasHelp", channelDef.hasHelp() ? "true" : "false");
     channelE.setAttribute("hasAbout", channelDef.hasAbout() ? "true" : "false");
-
+    channelE.setAttribute("secure", channelDef.isSecure() ? "true" : "false");
+    
     // Add any parameters
     ChannelParameter[] parameters = channelDef.getParameters();
     for (int i = 0; i < parameters.length; i++) {
@@ -296,6 +297,9 @@ public class ChannelRegistryManager {
       channelDef.setTimeout(Integer.parseInt(timeout));
     }
 
+    String secure = channelE.getAttribute("secure");
+    channelDef.setIsSecure(secure != null && secure.equals("true") ? true : false);
+    
     channelDef.setTypeId(Integer.parseInt(channelE.getAttribute("typeID")));
     String chanEditable = channelE.getAttribute("editable");
     String chanHasHelp = channelE.getAttribute("hasHelp");
