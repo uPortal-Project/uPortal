@@ -588,7 +588,7 @@ public java.lang.String getGroupsRootPath() {
 protected Collection getIdsFromFile(File idFile, boolean groupIds)
 throws IOException, FileNotFoundException
 {
-    List ids = new ArrayList();
+    Collection ids = new HashSet();
     BufferedReader br = new BufferedReader(new FileReader(idFile));
     String line, tok;
 
