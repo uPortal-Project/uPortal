@@ -39,6 +39,8 @@ package org.jasig.portal.container.services.information;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
+import java.util.Map;
+
 import org.apache.pluto.om.window.PortletWindow;
 
 /**
@@ -69,5 +71,7 @@ public interface PortletURLManager {
 	 public void clearParameters(PortletWindow portletWindow);
 	 
 	 public void clearParameters();
+	 
+	 public void setParameters(Map parameters);
 
 }

@@ -36,6 +36,7 @@
 package org.jasig.portal.container.services.information;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -74,9 +75,9 @@ public class PortletURLManagerImpl implements PortletURLManager {
 	private static final String MINIMIZED = "minimized";
 	private static final String ROOT = "root";
 	
-	private static HashMap windowStates = new HashMap();
-	private static HashMap portletModes = new HashMap();
-	private HashMap params;
+	private static Map windowStates = new HashMap();
+	private static Map portletModes = new HashMap();
+	private Map params = new HashMap();
 	
 	private PortletWindow windowOfAction;
 	private ChannelRuntimeData runtimeData;
@@ -97,7 +98,7 @@ public class PortletURLManagerImpl implements PortletURLManager {
 	}
 	
 	private void analizeRequestInformation() {
-		params = new HashMap();
+		params.clear();
 		for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
 		  String paramName = (String) names.nextElement();
 		  String[] values = runtimeData.getParameterValues(paramName);
@@ -125,6 +126,13 @@ public class PortletURLManagerImpl implements PortletURLManager {
 			    params.put(paramName,values[0]);
 		      }    
 		}  
+	}
+	
+	public void setParameters(Map parameters) {	
+	  for ( Iterator names = parameters.keySet().iterator(); names.hasNext();){
+		 Object name = names.next();
+		 params.put(name,parameters.get(name));
+	  } 
 	}
 
     public boolean isAction() {
@@ -159,7 +167,7 @@ public class PortletURLManagerImpl implements PortletURLManager {
 	}
 
 	public void clearParameters(PortletWindow portletWindow) {
-	  HashMap map = windowStates;	
+	  Map map = windowStates;	
 	  for ( int i = 0; i < 2; i++ )	{
 		Iterator keyIterator = map.keySet().iterator();
 		while ( keyIterator.hasNext() ) {
@@ -175,7 +183,7 @@ public class PortletURLManagerImpl implements PortletURLManager {
 	}
 	
 	public void clearParameters() {
-	  if ( params != null ) params.clear();	  
+	  params.clear();	  
 	}
 
 	public PortletMode getMode(PortletWindow window) {
@@ -233,9 +241,10 @@ public class PortletURLManagerImpl implements PortletURLManager {
 
 	public String toString() {
 		
-		if ( windowOfAction == null ) return "";
 
 		StringBuffer url = new StringBuffer();
+		
+	 if ( windowOfAction != null ) {	
 		
 		String windowId = windowOfAction.getId().toString();
 		
@@ -264,26 +273,27 @@ public class PortletURLManagerImpl implements PortletURLManager {
 		if ( mode.equals(PortletMode.EDIT) )
 			url.append((size>0?"&":"")+UP_EDIT_TARGET+"="+windowId);  
 		else if ( mode.equals(PortletMode.HELP) ) 
-		    url.append((size>0?"&":"")+UP_HELP_TARGET+"="+windowId);  	   
+		    url.append((size>0?"&":"")+UP_HELP_TARGET+"="+windowId);  
+	 }	    	   
 
 	    // Other parameters
 		if ( url.length() > 0 ) url.append("&");
 		Iterator keys = params.keySet().iterator();
 		while ( keys.hasNext() ) {
 			String name = (String) keys.next();
-			if (name.startsWith(getKey(windowOfAction))) {
+			//if (name.startsWith(getKey(windowOfAction))) {
 			 String value = (String) params.get(name);
-			 if ( name.indexOf(MULTI) > 0 ) {
+			 if ( windowOfAction != null && name.indexOf(MULTI) > 0 && name.startsWith(getKey(windowOfAction)) ) {
 			    String[] values = decodeValues(value);
 			    for ( int i = 0; i < values.length; i++ ) {
 				 url.append(decodeMultiName(windowOfAction,name)).append("=").append(values[i]);
 				 url.append("&");
 			    } 
 			 } else {
-			     url.append(decodeMultiName(windowOfAction,name)).append("=").append((String)value); 
+			     url.append(name).append("=").append((String)value); 
 			     url.append("&");   
 			   }    	 
-			}
+			//}
 		}
 
         

@@ -101,6 +101,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     public void setParameters(Map parameters) {
         this.parameters = parameters;
+		urlManager.setParameters(parameters);
     }
 
     public String toString() {
