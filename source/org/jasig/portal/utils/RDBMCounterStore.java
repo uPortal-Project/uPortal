@@ -37,9 +37,11 @@
 package org.jasig.portal.utils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
+import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
@@ -48,106 +50,190 @@ import org.jasig.portal.services.LogService;
  *
  * @author George Lindholm, george.lindholm@ubc.ca
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
  */
 public class RDBMCounterStore implements ICounterStore {
-
-
+    
+    /**
+     * Creates a new counter with an initial value of 0. Does not check to
+     * see if the counter already exists.
+     * 
+     * @see org.jasig.portal.utils.ICounterStore#createCounter(java.lang.String)
+     */
     public synchronized void createCounter (String counterName) throws Exception {
         Connection con = RDBMServices.getConnection();
+        PreparedStatement createCounterPstmt = null;
+        
         try {
             RDBMServices.setAutoCommit(con, false);
-            Statement stmt = con.createStatement();
-            try {
-                String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE) VALUES ('" + counterName + "',0)";
-                LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
-                stmt.executeUpdate(sInsert);
-                RDBMServices.commit(con);
-            } catch (Exception e) {
-                RDBMServices.rollback(con);
-                throw e;
-            } finally {
-                stmt.close();
+            
+            String createCounterInsert =
+                "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME, SEQUENCE_VALUE) " +
+                "VALUES (?, 0)";
+            
+            createCounterPstmt = con.prepareStatement(createCounterInsert);
+            createCounterPstmt.setString(1, counterName);
+            
+            LogService.log(LogService.DEBUG, "RDBMCounterStore::createCounter(" + counterName + "): " + createCounterInsert);
+            int updateCount = createCounterPstmt.executeUpdate();
+            
+            if (updateCount <= 0) {
+                PortalException pe = new PortalException("RDBMCounterStore::createCounter(): An error occured while creating the counter named: " + counterName + ".\nNo rows were created.");
+                LogService.log(LogService.ERROR, pe); 
+                throw pe;
             }
-        } finally {
+            
+            RDBMServices.commit(con);
+        }
+        catch (SQLException sqle) {
+            RDBMServices.rollback(con);
+            
+            PortalException pe = new PortalException("RDBMCounterStore::createCounter(): An error occured while creating the counter named: " + counterName, sqle);
+            LogService.log(LogService.ERROR, pe); 
+            throw pe;
+        } 
+        finally {
+            try { createCounterPstmt.close(); } catch (Exception e) {};
+       
             RDBMServices.releaseConnection(con);
         }
     }
 
 
+    /**
+     * Sets the counter to the specified value. Does not check to make
+     * sure the counter already exists.
+     * 
+     * @see org.jasig.portal.utils.ICounterStore#setCounter(java.lang.String, int)
+     */
     public synchronized void setCounter (String counterName, int value) throws Exception {
         Connection con = RDBMServices.getConnection();
+        
+        PreparedStatement setCounterPstmt = null;
+        
         try {
             RDBMServices.setAutoCommit(con, false);
-            Statement stmt = con.createStatement();
-            try {
-                String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + value + "WHERE SEQUENCE_NAME='" + counterName + "'";
-                LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
-                stmt.executeUpdate(sUpdate);
-                RDBMServices.commit(con);
-            } catch (Exception e) {
-                RDBMServices.rollback(con);
-                throw e;
-            } finally {
-                stmt.close();
-            }
-        } finally {
+            
+            String setCounterUpdate = 
+                "UPDATE UP_SEQUENCE " +
+                "SET SEQUENCE_VALUE=? " +
+                "WHERE SEQUENCE_NAME=?";
+            
+            setCounterPstmt = con.prepareStatement(setCounterUpdate);
+            setCounterPstmt.setInt(1, value);
+            setCounterPstmt.setString(2, counterName);
+            
+            LogService.log(LogService.DEBUG, "RDBMCounterStore::setCounter(" + counterName + ", " + value + "): " + setCounterUpdate);
+            int updateCount = setCounterPstmt.executeUpdate();
+            
+            if (updateCount <= 0) {
+                PortalException pe = new PortalException("RDBMCounterStore::setCounter(): An error occured while setting the counter named: " + counterName + ".\nNo rows were updated.");
+                LogService.log(LogService.ERROR, pe); 
+                throw pe;
+            }            
+            
+            RDBMServices.commit(con);
+        } 
+        catch (SQLException sqle) {
+            RDBMServices.rollback(con);
+            
+            PortalException pe = new PortalException("RDBMCounterStore::createCounter(): An error occured while creating the counter named: " + counterName, sqle);
+            LogService.log(LogService.ERROR, pe); 
+            throw pe;
+            
+        }
+        finally {
+            try { setCounterPstmt.close(); } catch (Exception e) {};
+            
             RDBMServices.releaseConnection(con);
         }
     }
 
-    /*
-     * get&increment method.
+    /**
+     * Gets the next number in the sequence. If the counter does not exist
+     * it is first created.
+     * 
+     * @see org.jasig.portal.utils.ICounterStore#getIncrementIntegerId(java.lang.String)
      */
     public synchronized int getIncrementIntegerId (String counterName) throws Exception {
         Connection con = RDBMServices.getConnection();
-        Statement stmt = null;
+        
+        PreparedStatement getCounterPstmt = null;
+        PreparedStatement updateCounterPstmt = null;
         ResultSet rs = null;
+        
         try {
-            stmt = con.createStatement();
-            try {
-                String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + counterName + "'";
-                for (int i = 0; i < 25; i++) 
-                {
-                    try 
-                    {
-                        LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sQuery);
-                        rs = stmt.executeQuery(sQuery);
-                        int origId;
-                        int nextId;
-                        rs.next();
-                        origId = rs.getInt(1);
-                        nextId = origId + 1;
-                        String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + counterName + "'" +
-                            " AND SEQUENCE_VALUE=" + origId;
-                        LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sUpdate);
-                        int rowsUpdated = stmt.executeUpdate(sUpdate);
-                        if (rowsUpdated > 0) 
-                            { return nextId; }
-                        else 
-                        {
-                            // Assume concurrent update (from other server). Try again after some random amount of milliseconds. 
-                            Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
-                        }
-                    }  // end try
-                    finally
-                    {
-                        if ( rs != null )
-                            { rs.close(); } 
-                    }
-                }      // end for
-            }          // end try 
-            finally 
+            String getCounterQuery =
+                "SELECT SEQUENCE_VALUE " +
+                "FROM UP_SEQUENCE " +
+                "WHERE SEQUENCE_NAME=?";
+            
+            String updateCounterQuery =
+                "UPDATE UP_SEQUENCE " +
+                "SET SEQUENCE_VALUE=? " +
+                "WHERE SEQUENCE_NAME=? AND SEQUENCE_VALUE=?";
+            
+            getCounterPstmt = con.prepareStatement(getCounterQuery);
+            getCounterPstmt.setString(1, counterName);
+            
+            updateCounterPstmt = con.prepareStatement(updateCounterQuery);
+            updateCounterPstmt.setString(2, counterName);
+            
+            for (int i = 0; i < 25; i++) 
             {
-                if (stmt != null)
-                    { stmt.close(); } 
-            }
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, e);
-        } finally {
+                LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(" + counterName + "): " + getCounterQuery);
+                rs = getCounterPstmt.executeQuery();
+                
+                if (!rs.next()) {
+                    try {
+                        createCounter(counterName);
+                    }
+                    catch (Exception e) {
+                        throw new PortalException("RDBMCounterStore::getIncrementInteger(): Could not create new counter for name: " + counterName, e);
+                    }
+                    
+                    rs = getCounterPstmt.executeQuery();
+                    
+                    if (!rs.next()) {
+                        throw new PortalException("RDBMCounterStore::getIncrementInteger(): Counter should have been created but was not found, name: " + counterName);
+                    }
+                }
+                
+                int origId = rs.getInt(1);
+                int nextId = origId + 1;
+                
+                updateCounterPstmt.setInt(1, nextId);
+                updateCounterPstmt.setInt(3, origId);
+                
+                LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(" + counterName + ", " + nextId + ", " + origId + "): " + updateCounterQuery);
+                int rowsUpdated = updateCounterPstmt.executeUpdate();
+                
+                if (rowsUpdated > 0) { 
+                    return nextId;
+                }
+                else {
+                    // Assume concurrent update (from other server). Try again after some random amount of milliseconds. 
+                    Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
+                }
+            }          // end try 
+        } 
+        catch (SQLException sqle) {
+            PortalException pe = new PortalException("RDBMCounterStore::getIncrementInteger(): An error occured while updating the counter, name: " + counterName, sqle);
+            LogService.log(LogService.ERROR, pe);
+            throw pe;
+        } 
+        finally {
+            try { getCounterPstmt.close(); } catch (Exception e) {}
+            try { updateCounterPstmt.close(); } catch (Exception e) {}
+            try { rs.close(); } catch (Exception e) {}
+            
             RDBMServices.releaseConnection(con);
         }
-        throw new Exception("Unable to increment counter for " + counterName);
+        
+        PortalException pe = new PortalException("RDBMCounterStore::getIncrementInteger(): Unable to increment counter for " + counterName);
+        LogService.log(LogService.ERROR, pe);
+        throw pe;
     }
 
 }
