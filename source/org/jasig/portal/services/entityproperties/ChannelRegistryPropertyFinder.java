@@ -80,9 +80,9 @@ public class ChannelRegistryPropertyFinder
 
     public String getProperty(IBasicEntity entity, String name) {
         String r = null;
-        if (entity.getEntityType().equals(chan)) {
+        if (entity.getType().equals(chan)) {
             try {
-                Element c = ChannelRegistryManager.getChannel(entity.getEntityKey());
+                Element c = ChannelRegistryManager.getChannel(entity.getKey());
                 r = c.getAttribute(name);
             } catch (Exception e) {
                 LogService.instance().log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty() :");

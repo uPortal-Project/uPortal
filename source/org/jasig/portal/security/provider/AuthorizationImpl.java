@@ -526,10 +526,10 @@ public IPermissionManager newPermissionManager(String owner)
 public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
 throws GroupsException
 {
-    String key = groupMember.getKey();
+    String key = groupMember.getUnderlyingEntity().getKey();
     Class type = ( groupMember.isGroup() )
         ? EntityTypes.GROUP_ENTITY_TYPE
-        : groupMember.getEntityType();
+        : groupMember.getLeafType();
     return newPrincipal(key, type);
 }
 /**

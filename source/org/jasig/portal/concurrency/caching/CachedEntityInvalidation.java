@@ -62,13 +62,13 @@ public CachedEntityInvalidation(Class eType, String eKey, Date time)
 /**
   * @return java.lang.String
  */
-public final String getEntityKey() {
+public final String getKey() {
     return entityKey;
 }
 /**
  * @return java.lang.Class
  */
-public final Class getEntityType() {
+public final Class getType() {
     return entityType;
 }
 /**
@@ -81,7 +81,7 @@ public Date getInvalidationTime() {
  * @return String
  */
 public String toString() {
-    return "CachedEntityInvalidation: " + getEntityType().getName() +
-      "(" + getEntityKey() + ") " + new java.sql.Timestamp(getInvalidationTime().getTime());
+    return "CachedEntityInvalidation: " + getType().getName() + "(" +
+      getKey() + ") " + new java.sql.Timestamp(getInvalidationTime().getTime());
 }
 }

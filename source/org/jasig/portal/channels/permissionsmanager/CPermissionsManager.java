@@ -213,7 +213,7 @@ public class CPermissionsManager
       for (int a = 0; a< aps.length ; a++){
         try {
           IGroupMember agm = AuthorizationService.instance().getGroupMember(aps[a]);
-          LogService.instance().log(LogService.DEBUG,"PermissionsManager.PopulateMembers(): checking whether "+agm.getType()+"."+agm.getKey()+" needs to be added");
+          LogService.instance().log(LogService.DEBUG,"PermissionsManager.PopulateMembers(): checking whether "+agm.getUnderlyingEntity().getType()+"."+agm.getUnderlyingEntity().getKey()+" needs to be added");
           if (!gmembers.contains(agm)){
             gmembers.add(agm);
           }

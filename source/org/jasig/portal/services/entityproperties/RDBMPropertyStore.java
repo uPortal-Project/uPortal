@@ -81,8 +81,8 @@ public class RDBMPropertyStore
             conn = this.getConnection();
             ps = new RDBMServices.PreparedStatement(conn, selectPropertyNames);
             ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getEntityType()).intValue());
-            ps.setString(2, entity.getEntityKey());
+            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getType()).intValue());
+            ps.setString(2, entity.getKey());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ar.add(rs.getString(NAME_COL));
@@ -107,8 +107,8 @@ public class RDBMPropertyStore
             conn = this.getConnection();
             ps = new RDBMServices.PreparedStatement(conn, selectProperty);
             ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getEntityType()).intValue());
-            ps.setString(2, entity.getEntityKey());
+            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getType()).intValue());
+            ps.setString(2, entity.getKey());
             ps.setString(3, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -134,8 +134,8 @@ public class RDBMPropertyStore
             conn = this.getConnection();
             ps = new RDBMServices.PreparedStatement(conn, insertProperty);
             ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getEntityType()).intValue());
-            ps.setString(2, entity.getEntityKey());
+            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getType()).intValue());
+            ps.setString(2, entity.getKey());
             ps.setString(3, name);
             ps.setString(4, value);
             ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
@@ -158,8 +158,8 @@ public class RDBMPropertyStore
             conn = this.getConnection();
             ps = new RDBMServices.PreparedStatement(conn, deleteProperty);
             ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getEntityType()).intValue());
-            ps.setString(2, entity.getEntityKey());
+            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entity.getType()).intValue());
+            ps.setString(2, entity.getKey());
             ps.setString(3, name);
             int i = ps.executeUpdate();
             //System.out.println(i+" "+ps.toString());

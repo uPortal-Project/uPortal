@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,35 +49,26 @@ import java.util.*;
 public abstract class GroupMemberImpl implements IGroupMember
 {
 /*
- * The key to the underlying <code>IGroupMember</code>, which is either an <code>IEntity</code> or
- * an <code>IEntityGroup</code>.
+ * The key of the <code>IGroupMember</code>.  If an <code>IEntity</code>,
+ * it is the key of the underlying entity, if an <code>IEntityGroup</code>,
+ * the key of the group.
  */
     private java.lang.String key;
-/*
- * If an <code>IEntity</code>, the <code>type</code> of its underlying entity.  If an
- * <code>IEntityGroup</code>, the <code>entityType</code> of its <code>IEntities</code>.
- * This is analagous to <code>Class</code>, as applied to <code>Arrays</code> and their elements.
- */
-    private static java.lang.Class defaultEntityType;
-    private java.lang.Class entityType;
 
-// Cache for the containing <code>IEntityGroups</code>.
+    private static java.lang.Class defaultEntityType;
+
+/*
+ * A cache for the <code>IEntityGroups</code> that contain this
+ * <code>IGroupMember</code>.
+ */
     private HashMap groups;
     private boolean groupsInitialized;
 /**
- * entityType will be defaulted to Object
+ * GroupMemberImpl constructor
  */
-    public GroupMemberImpl(String newKey) throws GroupsException
-{
-    this(newKey, null);
-}
-/**
- * @exception GroupsException is thrown if the <code>entityType</code> is unknown.
- */
-public GroupMemberImpl(String newKey, Class newEntityType) throws GroupsException
+public GroupMemberImpl(String newKey)
 {
     super();
-    setEntityType(newEntityType);
     key = newKey;
 }
 /**
@@ -137,7 +128,7 @@ public java.util.Iterator getAllMembers() throws GroupsException
  * @return java.lang.String
  */
 protected String getCacheKey() {
-    return getKey() + new Boolean(isGroup()).hashCode();
+    return getUnderlyingEntity().getKey() + new Boolean(isGroup()).hashCode();
 }
 /**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
@@ -189,12 +180,6 @@ protected IEntityGroupStore getEntityGroupFactory() throws GroupsException {
     return GroupService.getGroupService().getGroupStore();
 }
 /**
- * @return java.lang.Class
- */
-public java.lang.Class getEntityType() {
-    return entityType;
-}
-/**
  * @return java.lang.String
  */
 public java.lang.String getKey() {
@@ -216,20 +201,6 @@ public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
 public java.util.Iterator getMembers() throws GroupsException
 {
     return getEmptyIterator();
-}
-/**
- * Returns the type represented by the <code>IGroupMember</code>.  In the
- * case of an <code>IEntityGroup</code> this is <code>IEntityGroup</code>.  In
- * the case of an <code>IEntity</code> it is the <code>entityType</code> of
- * the <code>IEntity</code>.
- *
- * @return java.lang.Class
- */
-public Class getType()
-{
-    return ( isGroup() )
-        ? org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE
-        : getEntityType();
 }
 /*
  * @return an integer hash code for the receiver
@@ -297,6 +268,16 @@ private boolean isGroupsInitialized() {
     return groupsInitialized;
 }
 /**
+ * @return boolean.
+ */
+protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
+{
+    if ( anEntityType == null )
+        { anEntityType = getDefaultEntityType(); }
+    Integer typeID = org.jasig.portal.EntityTypes.getEntityTypeID(anEntityType);
+    return ( typeID != null );
+}
+/**
  * Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm.
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
@@ -338,21 +319,6 @@ private java.util.HashMap primGetGroups() {
 public void removeGroup(IEntityGroup eg)
 {
     primGetGroups().remove(eg.getName());
-}
-/**
- * @exception GroupsException is thrown if the <code>entityType</code> is unknown.
- */
-private void setEntityType(Class newEntityType) throws GroupsException
-{
-    if ( newEntityType == null )
-        entityType = getDefaultEntityType();
-    else
-    {
-        Integer typeID = org.jasig.portal.EntityTypes.getEntityTypeID(newEntityType);
-        if ( typeID == null )
-            throw new GroupsException("Unknown entity type: " + newEntityType);
-        entityType = newEntityType;
-    }
 }
 /**
  * @param newGroupsInitialized boolean

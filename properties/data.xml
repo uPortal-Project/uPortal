@@ -6066,6 +6066,10 @@
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.ChannelDefinition</value></column>
       </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>5</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntity</value></column>
+      </row>
     </rows>
   </table>
 

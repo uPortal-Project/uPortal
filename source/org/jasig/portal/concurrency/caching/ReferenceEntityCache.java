@@ -96,10 +96,10 @@ public ReferenceEntityCache(Class type, int maxSize, int maxUnusedTime, int swee
  */
 public void add(IBasicEntity entity) throws CachingException
 {
-    if ( ! this.getEntityType().isAssignableFrom(entity.getEntityType()) )
+    if ( ! this.getEntityType().isAssignableFrom(entity.getType()) )
         { throw new CachingException("Problem adding " + entity + ": entity type is incompatible with cache.");}
 
-    getCache().put(entity.getEntityKey(), entity);
+    getCache().put(entity.getKey(), entity);
 }
 /**
  * Remove stale entries from the cache.

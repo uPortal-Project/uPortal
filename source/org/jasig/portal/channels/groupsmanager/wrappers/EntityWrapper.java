@@ -73,13 +73,13 @@ public class EntityWrapper extends GroupMemberWrapper {
             aDoc, false));
       Utility.logMessage("DEBUG", "EntityWrapper.getXml(): START, Element: " + rootElem);
       try {
-         //IEntity ent = GroupsManagerXML.retrieveEntity(gm.getKey());
          IEntity ent = (IEntity) gm;
          rootElem.setAttribute("id", GroupsManagerXML.getNextUid());
-         rootElem.setAttribute("key", gm.getKey());
-         rootElem.setAttribute("type", gm.getType().getName());
-         rootElem.setAttribute("displayName", GroupsManagerXML.getEntityName(ent.getEntityType(),
-               ent.getKey()));
+         rootElem.setAttribute("key", gm.getUnderlyingEntity().getKey());
+         rootElem.setAttribute("type", gm.getLeafType().getName());
+         rootElem.setAttribute("displayName", GroupsManagerXML.getEntityName(ent.getLeafType(),
+               ent.getUnderlyingEntity().getKey()));
+
          rootElem.setAttribute("selected", "false");
       } catch (Exception e) {
          Utility.logMessage("ERROR", "EntityWrapper.getXml(): ERROR retrieving entity "

@@ -139,8 +139,8 @@ public class EntityPropertyRegistry {
     }
 
     protected String getPropKey(IBasicEntity entity) {
-        return  org.jasig.portal.EntityTypes.getEntityTypeID(entity.getEntityType()).toString()
-                + "." + entity.getEntityKey();
+        return  org.jasig.portal.EntityTypes.getEntityTypeID(entity.getType()).toString()
+                + "." + entity.getKey();
     }
 
     protected EntityProperties getProperties(IBasicEntity entity) {
@@ -163,7 +163,7 @@ public class EntityPropertyRegistry {
                     finder = store;
                 }
                 else {
-                    if (entity.getEntityType().equals(finderTypes[i])) {
+                    if (entity.getType().equals(finderTypes[i])) {
                         finder = finders[i];
                     }
                     else {

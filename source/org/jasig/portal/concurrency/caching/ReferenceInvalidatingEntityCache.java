@@ -72,11 +72,11 @@ public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
             super();
             ent = entity;
         }
-        public Class getEntityType() {
-            return ent.getEntityType();
+        public Class getType() {
+            return ent.getType();
         }
-        public String getEntityKey() {
-            return ent.getEntityKey();
+        public String getKey() {
+            return ent.getKey();
         }
         public IBasicEntity getEntity() {
             return ent;
@@ -205,7 +205,7 @@ public void removeInvalidEntities()
 
         for ( int i=0; i<invalidations.length; i++ )
         {
-            String key = invalidations[i].getEntityKey();
+            String key = invalidations[i].getKey();
 
             CacheEntry entry = (CacheEntry)primGet(key);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,14 +32,62 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-
 package org.jasig.portal.groups;
 
- /**
- * <code>IEntity</code> is the leaf sub-type of <code>IGroupMember</code>.
- * <p>
+import org.jasig.portal.IBasicEntity;
+
+/**
  * @author Dan Ellentuck
  * @version $Revision$
+ * @see IBasicEntity
  */
-public interface IEntity extends IGroupMember {
+public class MinimalEntity implements IBasicEntity {
+    String key;
+    Class type;
+/**
+ * MinimalEntity constructor.
+ */
+public MinimalEntity(String entityKey, Class entityType) {
+    super();
+    key = entityKey;
+    type = entityType;
+}
+/**
+ * @param obj the Object to compare with
+ * @return true if these Objects are equal; false otherwise.
+ */
+public boolean equals(Object o) {
+    if ( o == null )
+        return false;
+    if ( ! (o instanceof IBasicEntity) )
+        return false;
+    IBasicEntity ent = (IBasicEntity) o;
+    return ent.getType() == getType() &&
+        ent.getKey().equals(key);
+}
+/**
+ * @return java.lang.String
+ */
+public String getKey() {
+    return key;
+}
+/**
+ * @return java.lang.Class
+ */
+public Class getType() {
+    return type;
+}
+/**
+ * @return an integer hash code for the receiver
+ */
+public int hashCode() {
+    return getType().hashCode() + getKey().hashCode();
+}
+/**
+ * Returns a String that represents the value of this object.
+ * @return a string representation of the receiver
+ */
+public String toString() {
+    return "MinimalEntity (" + type + "(" + key + "))";
+}
 }

@@ -84,7 +84,7 @@ public ReferenceEntityCachingService() throws CachingException
  */
 public void add(IBasicEntity ent) throws CachingException
 {
-    getCache(ent.getEntityType()).add(ent);
+    getCache(ent.getType()).add(ent);
 }
 /**
  * Create a cache for a specific entity type.
@@ -257,6 +257,6 @@ public static synchronized IEntityCachingService singleton() throws CachingExcep
  */
 public void update(IBasicEntity ent) throws CachingException
 {
-    getCache(ent.getEntityType()).update(ent);
+    getCache(ent.getType()).update(ent);
 }
 }

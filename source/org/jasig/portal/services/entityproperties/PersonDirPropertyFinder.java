@@ -73,7 +73,7 @@ public class PersonDirPropertyFinder
 
     public String[] getPropertyNames(IBasicEntity entity) {
         String[] r = new String[0];
-        if (entity.getEntityType().equals(person)) {
+        if (entity.getType().equals(person)) {
             r = (String[])getPropertiesHash(entity).keySet().toArray(r);
         }
         return  r;
@@ -81,7 +81,7 @@ public class PersonDirPropertyFinder
 
     public String getProperty(IBasicEntity entity, String name) {
         String r = null;
-        if (entity.getEntityType().equals(person)) {
+        if (entity.getType().equals(person)) {
             r = (String)getPropertiesHash(entity).get(name);
         }
         return  r;
@@ -89,16 +89,16 @@ public class PersonDirPropertyFinder
 
     protected Hashtable getPropertiesHash(IBasicEntity entity) {
         Hashtable ht;
-        if ((ht = (Hashtable)cache.get(entity.getEntityKey())) == null) {
+        if ((ht = (Hashtable)cache.get(entity.getKey())) == null) {
             ht = new Hashtable(0);
             try {
-                int key = Integer.parseInt(entity.getEntityKey());
+                int key = Integer.parseInt(entity.getKey());
                 String uname = this.getUserName(key);
                 ht = pd.getUserDirectoryInformation(uname);
             } catch (Exception e) {
                 LogService.instance().log(LogService.ERROR, e);
             }
-            cache.put(entity.getEntityKey(), ht);
+            cache.put(entity.getKey(), ht);
         }
         return  ht;
     }

@@ -242,6 +242,7 @@ public class GroupsManagerXML
       msg = "GroupsManagerXML.getEntityName() timer: " + String.valueOf(time2 - time1)
             + " ms total";
       Utility.logMessage("DEBUG", msg);
+      Utility.logMessage("DEBUG", "GroupsManagerXML.getEntityName(): typClass/aKey/entName = " + typClass + "/" + aKey + "/" + entName);
       return  entName;
    }
 

@@ -82,7 +82,7 @@ public class GroupWrapper extends GroupMemberWrapper {
             rootElem.setAttribute("id", nextID);
          }
          rootElem.setAttribute("key", gm.getKey());
-         rootElem.setAttribute("entityType",gm.getEntityType().getName());
+         rootElem.setAttribute("entityType",gm.getLeafType().getName());
          rootElem.setAttribute("type", gm.getType().getName());
          boolean hasMems = gm.hasMembers();
          Utility.logMessage("DEBUG", "GroupWrapper::getXml(): gm.hasMembers(): " + hasMems);
@@ -170,7 +170,7 @@ public class GroupWrapper extends GroupMemberWrapper {
             String aKey = gm.getKey();
             while (gmItr.hasNext()) {
                aChildGm = (IGroupMember)gmItr.next();
-               String childKey = aChildGm.getKey();
+               String childKey = aChildGm.getUnderlyingEntity().getKey();
                Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  " + aChildGm);
                boolean isPresent = false;
                if (aChildGm.isGroup()){

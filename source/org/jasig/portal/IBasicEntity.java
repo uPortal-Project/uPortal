@@ -42,12 +42,14 @@ package org.jasig.portal;
   * @version $Revision$
   */
 public interface IBasicEntity {
+
 /**
  * @return java.lang.String
  */
-public String getEntityKey();
+public String getKey();
+
 /**
  * @return java.lang.Class
  */
-public Class getEntityType();
+public Class getType();
 }

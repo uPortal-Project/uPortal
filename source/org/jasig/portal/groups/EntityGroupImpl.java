@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,9 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup
     private java.lang.String name;
     private java.lang.String description;
 
+    // A group and its members share an entityType.
+    private java.lang.Class entityType;
+
     // Caches for the contained GroupMembers.
     private HashMap members;
     private boolean membersInitialized;
@@ -60,8 +63,12 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup
 /**
  * EntityGroupImpl
  */
-public EntityGroupImpl(String newKey, Class newEntityType) throws GroupsException{
-    super(newKey, newEntityType);
+public EntityGroupImpl(String groupKey, Class groupType) throws GroupsException {
+    super(groupKey);
+    if ( isKnownEntityType(groupType) )
+        { entityType = groupType; }
+    else
+        { throw new GroupsException("Unknown entity type: " + groupType); }
 }
 /**
  * Adds <code>GroupMember</code> gm to our member <code>Map</code> and conversely,
@@ -107,6 +114,16 @@ private void checkIfAlreadyMember(IGroupMember gm) throws GroupsException
         throw new GroupsException(gm + " is already a member of " + this);
 }
 /**
+ * Checks to see if the prospect has the same <code>entityType</code> as this.
+ * @param gm org.jasig.portal.groups.IGroupMember
+ * @exception org.jasig.portal.groups.GroupsException
+ */
+private void checkProspectiveEntityType(IGroupMember gm) throws GroupsException
+{
+    if ( this.getLeafType() != gm.getLeafType() )
+        throw new GroupsException(this + " and " + gm + " have different entity types.");
+}
+/**
  * A member must share the <code>entityType</code> of its containing <code>IEntityGroup</code>.
  * If it is a group, it must have a unique name within each of its containing groups and
  * the resulting group must not contain a circular reference.
@@ -132,11 +149,11 @@ private void checkProspectiveMember(IGroupMember gm) throws GroupsException
 /**
  * Checks to see if the prospect has the same <code>entityType</code> as this.
  * @param gm org.jasig.portal.groups.IGroupMember
- * @exception org.jasig.portal.groups.GroupsException The exception description.
+ * @exception org.jasig.portal.groups.GroupsException
  */
 private void checkProspectiveMemberEntityType(IGroupMember gm) throws GroupsException
 {
-    if ( this.getEntityType() != gm.getEntityType() )
+    if ( this.getLeafType() != gm.getLeafType() )
         throw new GroupsException(this + " and " + gm + " have different entity types.");
 }
 /**
@@ -296,6 +313,23 @@ public java.util.Iterator getEntities() throws GroupsException
     return entities.iterator();
 }
 /**
+ * Returns the key of the underyling entity.
+ * @return java.lang.String
+ */
+public String getEntityKey()
+{
+    return getKey();
+}
+/**
+ * Returns the entity type of this groups's members.
+ *
+ * @return java.lang.Class
+ * @see org.jasig.portal.EntityTypes
+ */
+ public java.lang.Class getEntityType() {
+    return entityType;
+}
+/**
   * @return org.jasig.portal.groups.IEntityGroupStore
  */
 private IEntityGroupStore getFactory() throws GroupsException {
@@ -306,6 +340,15 @@ private IEntityGroupStore getFactory() throws GroupsException {
  */
 public String getGroupID() {
     return getKey();
+}
+/**
+ * Returns the entity type of this groups's members.
+ *
+ * @return java.lang.Class
+ * @see org.jasig.portal.EntityTypes
+ */
+public java.lang.Class getLeafType() {
+    return entityType;
 }
 /**
  * Returns the named <code>IEntityGroup</code> from our members Collection.
@@ -352,6 +395,22 @@ protected HashMap getRemovedMembers()
     if ( this.removedMembers == null )
         this.removedMembers = new HashMap();
     return removedMembers;
+}
+/**
+ * Returns this object's type for purposes of caching and locking, as
+ * opposed to the underlying entity type.
+ *
+ * @return java.lang.Class
+ */
+public Class getType()
+{
+    return org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE;
+}
+/**
+ * @return org.jasig.portal.IBasicEntity
+ */
+public IBasicEntity getUnderlyingEntity() {
+    return this;
 }
 /**
  * Answers if there are any added memberships not yet committed to the database.

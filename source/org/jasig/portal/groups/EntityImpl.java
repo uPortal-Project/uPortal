@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,18 +35,38 @@
 
 package org.jasig.portal.groups;
 
+import org.jasig.portal.IBasicEntity;
+
 /**
  * Reference implementation for <code>IEntity</code>.
  * @author Dan Ellentuck
  * @version $Revision$
  */
 public class EntityImpl extends GroupMemberImpl implements IEntity {
+    protected IBasicEntity underlyingEntity;
 /**
  * EntityImpl
  */
-public EntityImpl(String newKey, Class newEntityType) throws GroupsException
+public EntityImpl(String newEntityKey, Class newEntityType) throws GroupsException
 {
-    super(newKey, newEntityType);
+    super(newEntityKey);
+    if ( isKnownEntityType(newEntityType) )
+        { setUnderlyingEntity( new MinimalEntity(newEntityKey, newEntityType) ); }
+    else
+        { throw new GroupsException("Unknown entity type: " + newEntityType); }
+
+}
+/**
+ * EntityImpl
+ */
+public EntityImpl(IBasicEntity ent) throws GroupsException
+{
+    super(ent.getKey());
+    if ( isKnownEntityType(ent.getType()) )
+        { setUnderlyingEntity(ent) ; }
+    else
+        { throw new GroupsException("Unknown entity type: " + ent.getType()); }
+
 }
 /**
  * @param obj the Object to compare with
@@ -65,11 +85,66 @@ public boolean equals(Object obj)
     return this.getKey().equals(((IGroupMember)obj).getKey());
 }
 /**
+ * Returns the key of the underyling entity.
+ * @return java.lang.String
+ */
+public String getEntityKey()
+{
+    return getUnderlyingEntity().getKey();
+}
+/**
+ * Returns the type of the underyling entity.
+ * @return java.lang.Class
+ */
+public Class getEntityType()
+{
+    return getUnderlyingEntity().getType();
+}
+/**
+ * Returns this object's key, e.g., for caching purposes, as opposed to
+ * the key of the underlying entity.
+ * @return java.lang.String
+ */
+public java.lang.String getKey() {
+    Integer id = org.jasig.portal.EntityTypes.getEntityTypeID(getEntityType());
+    return id + "." + getUnderlyingEntity().getKey();
+}
+/**
+ * Returns the type of the underyling entity.
+ * @return java.lang.Class
+ */
+public Class getLeafType()
+{
+    return getUnderlyingEntity().getType();
+}
+/**
+ * Returns this object's type, as opposed to the type of its
+ * underlying entity.
+ *
+ * @return java.lang.Class
+ */
+public Class getType()
+{
+    return org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE;
+}
+/**
+ * @return org.jasig.portal.IBasicEntity
+ */
+public IBasicEntity getUnderlyingEntity() {
+    return underlyingEntity;
+}
+/**
  * @return boolean
  */
 public boolean isEntity()
 {
     return true;
+}
+/**
+ * @param newUnderlyingEntity org.jasig.portal.IBasicEntity
+ */
+protected void setUnderlyingEntity(IBasicEntity newUnderlyingEntity) {
+    underlyingEntity = newUnderlyingEntity;
 }
 /**
  * Returns a String that represents the value of this object.

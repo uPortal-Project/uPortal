@@ -83,8 +83,8 @@ public class AddMembers extends org.jasig.portal.channels.groupsmanager.commands
       // if not IPerson group, then set view root to root for requested type
       try{
         IGroupMember pg = Utility.retrieveGroupMemberForElementId(this.getXmlDoc(staticData),parentAddElemId);
-        if (!(pg.getEntityType().getName().equals(GroupService.EVERYONE))){
-          runtimeData.setParameter("grpViewKey",GroupService.getRootGroup(pg.getEntityType()).getKey());
+        if (!(pg.getLeafType().getName().equals(GroupService.EVERYONE))){
+          runtimeData.setParameter("grpViewKey",GroupService.getRootGroup(pg.getLeafType()).getKey());
         }
       }
       catch(Exception e){

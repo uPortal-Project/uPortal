@@ -313,7 +313,7 @@ throws LockingException
 public IEntityLock newLock(IBasicEntity entity, int lockType, String owner)
 throws LockingException
 {
-    return newLock(entity.getEntityType(), entity.getEntityKey(), lockType, owner, defaultLockPeriod);
+    return newLock(entity.getType(), entity.getKey(), lockType, owner, defaultLockPeriod);
 }
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
@@ -327,7 +327,7 @@ throws LockingException
 public IEntityLock newLock(IBasicEntity entity, int lockType, String owner, int durationSecs)
 throws LockingException
 {
-    return newLock(entity.getEntityType(), entity.getEntityKey(), lockType, owner, durationSecs);
+    return newLock(entity.getType(), entity.getKey(), lockType, owner, durationSecs);
 }
 /**
  * Releases the <code>IEntityLock</code>.

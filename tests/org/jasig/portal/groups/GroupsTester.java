@@ -16,37 +16,37 @@ import org.jasig.portal.security.IPerson;
 public class GroupsTester extends TestCase {
     private static Class GROUP_CLASS;
     private static Class IPERSON_CLASS;
-    private static Class MINIMAL_ENTITY_CLASS;
+    private static Class TEST_ENTITY_CLASS;
     private static String CR = "\n";
     private IEntity[] testEntities;
     private String[] testEntityKeys;
     private int numTestEntities = 0;
 
 
-    private class MinimalEntity implements IBasicEntity
+    private class TestEntity implements IBasicEntity
     {
         private String key;
-        private MinimalEntity(String entityKey) {
+        private TestEntity(String entityKey) {
             super();
             key = entityKey;
         }
-        public Class getEntityType() {
+        public Class getType() {
             return this.getClass();
         }
-        public String getEntityKey() {
+        public String getKey() {
             return key;
         }
         public boolean equals(Object o) {
             if ( o == null )
                 return false;
-            if ( ! (o instanceof IEntity) )
+            if ( ! (o instanceof IBasicEntity) )
                 return false;
             IBasicEntity ent = (IBasicEntity) o;
-            return ent.getEntityType() == getEntityType() &&
-                   ent.getEntityKey().equals(key);
+            return ent.getType() == getType() &&
+                   ent.getKey().equals(key);
         }
         public String toString() {
-            return "MinimalEntity(" + key + ")";
+            return "TestEntity(" + key + ")";
         }
     }
 /**
@@ -64,7 +64,7 @@ protected void addTestEntityType()
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         String sql =  "INSERT INTO UP_ENTITY_TYPE " +
-                      "VALUES (99, " + "'" + MINIMAL_ENTITY_CLASS.getName() + "')";
+                      "VALUES (99, " + "'" + TEST_ENTITY_CLASS.getName() + "')";
         int rc = stmnt.executeUpdate( sql );
         if ( rc == 1 )
             { print("Test entity type inserted.");}
@@ -81,7 +81,7 @@ protected void deleteTestEntityType()
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         String sql =  "DELETE FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = " + "'" +
-                      MINIMAL_ENTITY_CLASS.getName() + "'";
+                      TEST_ENTITY_CLASS.getName() + "'";
         int rc = stmnt.executeUpdate( sql );
         if ( rc == 1 )
             { print("Test entity type deleted.");}
@@ -98,7 +98,7 @@ protected void deleteTestGroups()
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         String sql =  "DELETE FROM UP_GROUP WHERE ENTITY_TYPE_ID = " +
-                      EntityTypes.getEntityTypeID(MINIMAL_ENTITY_CLASS);
+                      EntityTypes.getEntityTypeID(TEST_ENTITY_CLASS);
         int rc = stmnt.executeUpdate( sql );
         print("Test group rows deleted: " + rc);
 
@@ -144,14 +144,14 @@ private RDBMEntityGroupStore getGroupStore() throws GroupsException
  */
 private IEntity getNewEntity(String key) throws GroupsException
 {
-    return 	getService().getEntity(key, MINIMAL_ENTITY_CLASS);
+    return 	getService().getEntity(key, TEST_ENTITY_CLASS);
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
  */
 private IEntityGroup getNewGroup() throws GroupsException
 {
-    IEntityGroup group = getService().newGroup(MINIMAL_ENTITY_CLASS);
+    IEntityGroup group = getService().newGroup(TEST_ENTITY_CLASS);
     group.setName("name_" + group.getKey());
     group.setCreatorID("de3");
     return group;
@@ -228,8 +228,8 @@ protected void setUp()
             { GROUP_CLASS = Class.forName("org.jasig.portal.groups.IEntityGroup"); }
         if ( IPERSON_CLASS == null )
             { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
-        if ( MINIMAL_ENTITY_CLASS == null )
-            { MINIMAL_ENTITY_CLASS = MinimalEntity.class; }
+        if ( TEST_ENTITY_CLASS == null )
+            { TEST_ENTITY_CLASS = TestEntity.class; }
 
     addTestEntityType();
     numTestEntities = 100;
@@ -322,7 +322,7 @@ public void testAddAndDeleteMembers() throws Exception
 {
     print(CR + "***** ENTERING GroupsTester.testAddAndDeleteMembers() *****" + CR);
     String msg = null;
-    Class type = MINIMAL_ENTITY_CLASS;
+    Class type = TEST_ENTITY_CLASS;
     int totNumGroups = 3;
     int totNumEntities = 5;
     IEntityGroup[] groups = new IEntityGroup[totNumGroups];

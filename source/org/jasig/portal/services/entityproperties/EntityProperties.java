@@ -57,11 +57,11 @@ public class EntityProperties
         this.props = new HashMap();
     }
 
-    public String getEntityKey() {
+    public String getKey() {
         return  key;
     }
 
-    public Class getEntityType() {
+    public Class getType() {
         return  this.getClass();
     }
 

@@ -75,6 +75,7 @@ public class EntityTypes {
     public static int NULL_TYPE_ID = -1;
 
     public static Class GROUP_ENTITY_TYPE = null;
+    public static Class LEAF_ENTITY_TYPE = null;
 
 /**
  * EntityTypes constructor comment.
@@ -172,6 +173,7 @@ private void initialize()
     try
     {
         GROUP_ENTITY_TYPE = Class.forName("org.jasig.portal.groups.IEntityGroup");
+        LEAF_ENTITY_TYPE = Class.forName("org.jasig.portal.groups.IEntity");
 
         conn = RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();

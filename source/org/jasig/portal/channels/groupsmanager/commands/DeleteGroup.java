@@ -125,7 +125,7 @@ public class DeleteGroup extends GroupsManagerCommand {
             }
             else {
                String nodeKey = ((Element)parentNode).getAttribute("key");
-               if (parentEntGrp == null || !parentEntGrp.getKey().equals(nodeKey)) {
+               if (parentEntGrp == null || !parentEntGrp.getEntityKey().equals(nodeKey)) {
                   parentEntGrp = GroupsManagerXML.retrieveGroup(nodeKey);
                   hasMbrs = String.valueOf(parentEntGrp.hasMembers());
                }
@@ -182,7 +182,7 @@ public class DeleteGroup extends GroupsManagerCommand {
     */
    public static void deletePermissions (IGroupMember grpMbr) throws ChainedException{
       try {
-         String grpKey = grpMbr.getKey();
+         String grpKey = grpMbr.getEntityKey();
          // first we retrieve all permissions for which the group is the principal
          IAuthorizationPrincipal iap = AuthorizationService.instance().newPrincipal(grpMbr);
          IPermission[] perms1 = iap.getPermissions();

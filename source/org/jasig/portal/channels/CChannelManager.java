@@ -282,7 +282,7 @@ public class CChannelManager extends BaseChannel {
 
     /**
      * Make sure that the step ID is always a valid one
-     * or else set it to "1" 
+     * or else set it to "1"
      * @param stepID
      * @return the fixed step ID
      */
@@ -495,7 +495,7 @@ public class CChannelManager extends BaseChannel {
                 IGroupMember[] ctgs = (IGroupMember[])getCategoryServant().getResults();
                 catIDs = new String[ctgs.length];
                 for (int c = 0; c < ctgs.length; c++) {
-                    catIDs[c] = ctgs[c].getKey();
+                    catIDs[c] = ctgs[c].getUnderlyingEntity().getKey();
                 }
                 // collect groups that can subscribe
                 IEntityGroup[] groups;
@@ -546,13 +546,13 @@ public class CChannelManager extends BaseChannel {
                     } catch (NumberFormatException nfe) {
                         // do nothing here, just leave the current page as is.
                     }
-                }        
+                }
             }
             else if (action.equals("filterByCategory")) {
                 String filterByID = runtimeData.getParameter("newCategory");
                 if (filterByID != null) {
                     // User may be beyond the last page of this filtered set so put them back on page 1.
-                    modChanSettings.setCurrentPage("1");                  
+                    modChanSettings.setCurrentPage("1");
                     modChanSettings.setFilterByID(filterByID);
                     channelManagerDoc = getChannelManagerDoc(modChanSettings);
                 }
@@ -626,8 +626,8 @@ public class CChannelManager extends BaseChannel {
             try {
                 for (int c = 0; c < gms.length; c++) {
                     Element selectedGroupE = emptyDoc.createElement("selectedGroup");
-                    selectedGroupE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
-                    selectedGroupE.appendChild(emptyDoc.createTextNode(gms[c].getKey()));
+                    selectedGroupE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getUnderlyingEntity().getType()).getName(gms[c].getUnderlyingEntity().getKey()));
+                    selectedGroupE.appendChild(emptyDoc.createTextNode(gms[c].getUnderlyingEntity().getKey()));
                     selectedGroupsE.appendChild(selectedGroupE);
                 }
             } catch (Exception e) {
@@ -654,8 +654,8 @@ public class CChannelManager extends BaseChannel {
             try {
                 for (int c = 0; c < gms.length; c++) {
                     Element selectedCategoryE = emptyDoc.createElement("selectedCategory");
-                    selectedCategoryE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
-                    selectedCategoryE.appendChild(emptyDoc.createTextNode((gms[c].getKey())));
+                    selectedCategoryE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getUnderlyingEntity().getType()).getName(gms[c].getUnderlyingEntity().getKey()));
+                    selectedCategoryE.appendChild(emptyDoc.createTextNode((gms[c].getUnderlyingEntity().getKey())));
                     selectedCategoriesE.appendChild(selectedCategoryE);
                 }
             } catch (Exception e) {
@@ -1218,7 +1218,7 @@ public class CChannelManager extends BaseChannel {
         protected void setFunctionalName (String fname) {
             this.fname = fname;
         }
-        
+
         /**
          * put your documentation comment here
          * @param description

@@ -34,10 +34,10 @@ public class EntityCacheTester extends TestCase {
             super();
             key = entityKey;
         }
-        public Class getEntityType() {
+        public Class getType() {
             return this.getClass();
         }
-        public String getEntityKey() {
+        public String getKey() {
             return key;
         }
         public boolean equals(Object o) {
@@ -46,8 +46,8 @@ public class EntityCacheTester extends TestCase {
             if ( ! (o instanceof IBasicEntity) )
                 return false;
             IBasicEntity ent = (IBasicEntity) o;
-            return ent.getEntityType() == getEntityType() &&
-                   ent.getEntityKey().equals(key);
+            return ent.getType() == getType() &&
+                   ent.getKey().equals(key);
         }
         public String toString() {
             return "MinimalEntity(" + key + ")";
@@ -67,7 +67,7 @@ protected void addTestEntityType()
     {
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
-        String sql =  "INSERT INTO UP_GROUP_ENTITY_TYPE " +
+        String sql =  "INSERT INTO UP_ENTITY_TYPE " +
                       "VALUES (99, " + "'" + MINIMAL_ENTITY_CLASS.getName() + "')";
         int rc = stmnt.executeUpdate( sql );
         if ( rc == 1 )
@@ -84,7 +84,7 @@ protected void deleteTestEntityType()
     {
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
-        String sql =  "DELETE FROM UP_GROUP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = " + "'" +
+        String sql =  "DELETE FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = " + "'" +
                       MINIMAL_ENTITY_CLASS.getName() + "'";
         int rc = stmnt.executeUpdate( sql );
         if ( rc == 1 )
@@ -600,7 +600,7 @@ public void testStoreUpdates() throws Exception
     print(msg);
     for(idx=0; idx<numUpdates; idx++)
     {
-        String key = testEntities[idx].getEntityKey();
+        String key = testEntities[idx].getKey();
         invalidations = getStore().findAfter(now, MINIMAL_ENTITY_CLASS, key);
         assertEquals(msg, 1, invalidations.length);
     }

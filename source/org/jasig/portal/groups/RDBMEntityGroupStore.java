@@ -32,6 +32,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 package org.jasig.portal.groups;
 
 import java.sql.Connection;
@@ -226,8 +227,8 @@ throws GroupsException
  */
 public java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsException
 {
-    String memberKey = gm.getKey();
-    Integer type = EntityTypes.getEntityTypeID(gm.getEntityType());
+    String memberKey = gm.getUnderlyingEntity().getKey();
+    Integer type = EntityTypes.getEntityTypeID(gm.getLeafType());
     boolean isGroup = gm.isGroup();
     return findContainingGroups(memberKey, type.intValue(), isGroup);
 }
@@ -731,7 +732,7 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
             new RDBMServices.PreparedStatement(conn, getInsertGroupSql());
        try
         {
-            Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
+            Integer typeID = EntityTypes.getEntityTypeID(group.getLeafType());
             ps.setString(1, group.getKey());
             ps.setString(2, group.getCreatorID());
             ps.setInt   (3, typeID.intValue());
@@ -820,7 +821,7 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
 
         try
         {
-            Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
+            Integer typeID = EntityTypes.getEntityTypeID(group.getLeafType());
 
             ps.setString(1, group.getCreatorID());
             ps.setInt(2, typeID.intValue());
@@ -873,8 +874,8 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                 Iterator deletes = egi.getRemovedMembers().values().iterator();
                 while ( deletes.hasNext() )
                 {
-                    GroupMemberImpl removedGM = (GroupMemberImpl) deletes.next();
-                    memberKey = removedGM.getKey();
+                    IGroupMember removedGM = (IGroupMember) deletes.next();
+                    memberKey = removedGM.getUnderlyingEntity().getKey();
                     isGroup = removedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
                     psDelete.setString(1, groupKey);
                     psDelete.setString(2, memberKey);
@@ -901,8 +902,8 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                 Iterator adds = egi.getAddedMembers().values().iterator();
                 while ( adds.hasNext() )
                 {
-                    GroupMemberImpl addedGM = (GroupMemberImpl) adds.next();
-                    memberKey = addedGM.getKey();
+                    IGroupMember addedGM = (IGroupMember) adds.next();
+                    memberKey = addedGM.getUnderlyingEntity().getKey();
                     isGroup = addedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
                     psAdd.setString(1, groupKey);
                     psAdd.setString(2, memberKey);

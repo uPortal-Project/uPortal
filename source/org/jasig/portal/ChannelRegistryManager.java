@@ -73,12 +73,12 @@ import org.apache.xerces.dom.DocumentImpl;
  */
 public class ChannelRegistryManager {
   protected static final IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-   
+
   // Cache timeout properties
   protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
   protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
   protected static final int cpdCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.cpd_cache_timeout");
-   
+
   // Caches
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);
   protected static final SmartCache channelTypesCache = new SmartCache(chanTypesCacheTimeout);
@@ -88,14 +88,14 @@ public class ChannelRegistryManager {
   private static final String CHANNEL_REGISTRY_CACHE_KEY = "channelRegistryCacheKey";
   private static final String CHANNEL_TYPES_CACHE_KEY = "channelTypesCacheKey";
   private static final String CPD_CACHE_KEY = "cpdCacheKey";
-  
+
   // Permission constants
   private static final String FRAMEWORK_OWNER = "UP_FRAMEWORK";
   private static final String SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
   private static final String GRANT_PERMISSION_TYPE = "GRANT";
 
   /**
-   * Returns a copy of the channel registry as a Document.  
+   * Returns a copy of the channel registry as a Document.
    * This document is not filtered according to a user's channel permissions.
    * For a filtered list, see  <code>getChannelRegistry(IPerson person)</code>
    * @return a copy of the channel registry as a Document
@@ -115,9 +115,9 @@ public class ChannelRegistryManager {
         LogService.instance().log(LogService.INFO, "Caching channel registry.");
       }
     }
-    
+
     // Clone the original registry document so that it doesn't get modified
-    return XML.cloneDocument((DocumentImpl)channelRegistry); 
+    return XML.cloneDocument((DocumentImpl)channelRegistry);
   }
 
   /**
@@ -147,7 +147,7 @@ public class ChannelRegistryManager {
 
     return channelRegistry;
   }
-  
+
   /**
    * Returns an XML document which describes the channel registry.
    * See uPortal's <code>channelRegistry.dtd</code>
@@ -173,7 +173,7 @@ public class ChannelRegistryManager {
       IGroupMember member = (IGroupMember)iter.next();
       if (member.isGroup()) {
         IEntityGroup memberGroup = (IEntityGroup)member;
-        String key = memberGroup.getKey();
+        String key = memberGroup.getUnderlyingEntity().getKey();
         String name = memberGroup.getName();
         String description = memberGroup.getDescription();
 
@@ -186,7 +186,7 @@ public class ChannelRegistryManager {
         processGroupsRecursively(memberGroup, categoryE);
       } else {
         IEntity channelDefMember = (IEntity)member;
-        int channelPublishId = Integer.parseInt(channelDefMember.getKey());
+        int channelPublishId = Integer.parseInt(channelDefMember.getUnderlyingEntity().getKey());
         ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
         if (channelDef != null) {
           // Make sure channel is approved
@@ -199,7 +199,7 @@ public class ChannelRegistryManager {
         }
       }
     }
-  }  
+  }
 
   /**
    * Looks in channel registry for a channel element matching the
@@ -221,12 +221,12 @@ public class ChannelRegistryManager {
   }
 
   /**
-   * Create XML representing this channel definition. 
+   * Create XML representing this channel definition.
    * I don't think this method really belongs in the
    * ChannelRegistryManager since this XML fragment is
-   * related more to a channel instance, but we'll hold 
+   * related more to a channel instance, but we'll hold
    * it here for now and find a better place for it later :)
-   * @param subscribeId, the channel subscibe ID, formerly called instance ID 
+   * @param subscribeId, the channel subscibe ID, formerly called instance ID
    * @param channelDef a channel definition
    * @return channelXML, the XML representing this channel definition
    */
@@ -244,7 +244,7 @@ public class ChannelRegistryManager {
     channelE.setAttribute("editable", channelDef.isEditable() ? "true" : "false");
     channelE.setAttribute("hasHelp", channelDef.hasHelp() ? "true" : "false");
     channelE.setAttribute("hasAbout", channelDef.hasAbout() ? "true" : "false");
-    
+
     // Add any parameters
     ChannelParameter[] parameters = channelDef.getParameters();
     for (int i = 0; i < parameters.length; i++) {
@@ -257,41 +257,41 @@ public class ChannelRegistryManager {
       }
       channelE.appendChild(parameterE);
     }
-    
+
     return channelE;
-  }  
+  }
 
   /**
    * Update a channel definition with data from a channel XML
    * element.  I don't think this method really belongs in the
    * ChannelRegistryManager since this XML fragment contains
-   * a channel subscribe ID, but we'll hold it here for now 
+   * a channel subscribe ID, but we'll hold it here for now
    * and find a better place for it later :)
-   * Note that this method does not set the ID, publisher ID, 
+   * Note that this method does not set the ID, publisher ID,
    * approver ID, pubish date, or approval date.
    * @param channelE, an XML element representing a channel definition
    * @param channelDef, the channel definition to update
-   */  
+   */
   public static void setChannelXML(Element channelE, ChannelDefinition channelDef) {
     channelDef.setFName(channelE.getAttribute("fname"));
     channelDef.setName(channelE.getAttribute("name"));
     channelDef.setDescription(channelE.getAttribute("description"));
     channelDef.setTitle(channelE.getAttribute("title"));
     channelDef.setJavaClass(channelE.getAttribute("class"));
-    
+
     String timeout = channelE.getAttribute("timeout");
     if (timeout != null && timeout.trim().length() != 0) {
       channelDef.setTimeout(Integer.parseInt(timeout));
     }
-    
+
     channelDef.setTypeId(Integer.parseInt(channelE.getAttribute("typeID")));
     String chanEditable = channelE.getAttribute("editable");
     String chanHasHelp = channelE.getAttribute("hasHelp");
-    String chanHasAbout = channelE.getAttribute("hasAbout");  
+    String chanHasAbout = channelE.getAttribute("hasAbout");
     channelDef.setEditable(chanEditable != null && chanEditable.equals("true") ? true : false);
     channelDef.setHasHelp(chanHasHelp != null && chanHasHelp.equals("true") ? true : false);
     channelDef.setHasAbout(chanHasAbout != null && chanHasAbout.equals("true") ? true : false);
-    
+
     // Now set the channel parameters
     NodeList channelChildren = channelE.getChildNodes();
     if (channelChildren != null) {
@@ -324,11 +324,11 @@ public class ChannelRegistryManager {
           channelDef.addParameter(paramName, paramValue, paramOverride);
         }
       }
-    }    
+    }
   }
-  
+
   /**
-   * Create XML representing the channel types. 
+   * Create XML representing the channel types.
    * It will look something like this:
    * <p><code>
    *
@@ -391,10 +391,10 @@ public class ChannelRegistryManager {
       channelTypesE.appendChild(channelTypeE);
     }
     doc.appendChild(channelTypesE);
-    
+
     return doc;
-  }  
-  
+  }
+
   /**
    * Looks in channel registry for a channel element matching the
    * given channel ID.
@@ -413,7 +413,7 @@ public class ChannelRegistryManager {
     }
     return categories;
   }
-  
+
   /**
    * Publishes a channel.
    * @param channel the channel XML fragment
@@ -425,7 +425,7 @@ public class ChannelRegistryManager {
   public static void publishChannel (Element channel, String[] categoryIDs, IEntityGroup[] groups, IPerson publisher) throws Exception {
     // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
-    
+
     ChannelDefinition channelDef = null;
 
     // Use current channel ID if modifying previously published channel, otherwise get a new ID
@@ -449,7 +449,7 @@ public class ChannelRegistryManager {
     channelDef.setPublisherId(publisher.getID());
     channelDef.setApproverId(-1);
     crs.saveChannelDefinition(channelDef);
-    
+
     // Delete existing category memberships for this channel
     String channelDefEntityKey = String.valueOf(channelDef.getId());
     IEntity channelDefEntity = GroupService.getEntity(channelDefEntityKey, ChannelDefinition.class);
@@ -463,7 +463,7 @@ public class ChannelRegistryManager {
         group.updateMembers();
       }
     }
-    
+
     // For each category ID, add channel to category
     for (int i = 0; i < categoryIDs.length; i++) {
       categoryIDs[i] = categoryIDs[i].startsWith("cat") ? categoryIDs[i].substring(3) : categoryIDs[i];
@@ -471,14 +471,14 @@ public class ChannelRegistryManager {
       ChannelCategory category = crs.getChannelCategory(iCatID);
       crs.addChannelToCategory(channelDef, category);
     }
-    
+
     // Set groups
     AuthorizationService authService = AuthorizationService.instance();
     String target = "CHAN_ID." + ID;
     IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
     IPermission[] permissions = new IPermission[groups.length];
     for (int i = 0; i < groups.length; i++) {
-      String principalKey = groups[i].getKey();
+      String principalKey = groups[i].getUnderlyingEntity().getKey();
       IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, IEntityGroup.class);
       permissions[i] = upm.newPermission(authPrincipal);
       permissions[i].setType(GRANT_PERMISSION_TYPE);
@@ -497,7 +497,7 @@ public class ChannelRegistryManager {
     crs.approveChannelDefinition(channelDef, publisher, new Date(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
-  }  
+  }
 
   /**
    * Removes a channel from the channel registry.
@@ -510,7 +510,7 @@ public class ChannelRegistryManager {
     // Remove the channel
     String sChannelPublishId = channelID.startsWith("chan") ? channelID.substring(4) : channelID;
     int channelPublishId = Integer.parseInt(sChannelPublishId);
-    crs.disapproveChannelDefinition(crs.getChannelDefinition(channelPublishId));   
+    crs.disapproveChannelDefinition(crs.getChannelDefinition(channelPublishId));
   }
 
   /**
@@ -534,9 +534,9 @@ public class ChannelRegistryManager {
         LogService.instance().log(LogService.INFO, "Caching channel types.");
       }
     }
-    
+
     // Clone the original channel types document so that it doesn't get modified
-    return XML.cloneDocument((DocumentImpl)channelTypes);      
+    return XML.cloneDocument((DocumentImpl)channelTypes);
   }
 
   /**
@@ -596,9 +596,9 @@ public class ChannelRegistryManager {
         LogService.instance().log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
       }
     }
-    
+
     // Clone the original CPD document so that it doesn't get modified
-    return XML.cloneDocument((DocumentImpl)cpd);     
+    return XML.cloneDocument((DocumentImpl)cpd);
   }
 }
 

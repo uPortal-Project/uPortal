@@ -85,7 +85,7 @@ public void add(IBasicEntity entity) throws CachingException
 {
     Connection conn = null;
     CachedEntityInvalidation cachedEnt =
-      newInstance(entity.getEntityType(), entity.getEntityKey(), new Date());
+      newInstance(entity.getType(), entity.getKey(), new Date());
     try
     {
         conn = RDBMServices.getConnection();
@@ -157,7 +157,7 @@ public void deleteBefore(Date expiration) throws CachingException
 private boolean existsInStore(IBasicEntity entity, Connection conn)
 throws CachingException
 {
-    return ( select(entity.getEntityType(), entity.getEntityKey(), null, conn).length > 0 );
+    return ( select(entity.getType(), entity.getKey(), null, conn).length > 0 );
 }
  /**
  * Retrieve CachedEntityInvalidations from the underlying entity invalidation store.
@@ -300,8 +300,8 @@ private CachedEntityInvalidation newInstance (Class type, String key, Date expir
 private void primAdd(CachedEntityInvalidation ent, Connection conn)
 throws SQLException, CachingException
 {
-    Integer typeID = EntityTypes.getEntityTypeID(ent.getEntityType());
-    String key = ent.getEntityKey();
+    Integer typeID = EntityTypes.getEntityTypeID(ent.getType());
+    String key = ent.getKey();
     Timestamp ts = new Timestamp(ent.getInvalidationTime().getTime());
 
     try
@@ -418,8 +418,8 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
 private void primUpdate(CachedEntityInvalidation ent, Connection conn)
 throws SQLException, CachingException
 {
-    Integer typeID = EntityTypes.getEntityTypeID(ent.getEntityType());
-    String key = ent.getEntityKey();
+    Integer typeID = EntityTypes.getEntityTypeID(ent.getType());
+    String key = ent.getKey();
     java.sql.Timestamp ts = new java.sql.Timestamp(ent.getInvalidationTime().getTime());
 
     try

@@ -167,7 +167,7 @@ throws LockingException
 public IEntityLock newReadLock(IBasicEntity entity, String owner)
 throws LockingException
 {
-    return lockService.newLock(entity.getEntityType(), entity.getEntityKey(), IEntityLockService.READ_LOCK, owner);
+    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.READ_LOCK, owner);
 }
 /**
  * Returns a read lock for the <code>IBasicEntity</code>, owner and duration.
@@ -180,7 +180,7 @@ throws LockingException
 public IEntityLock newReadLock(IBasicEntity entity, String owner, int durationSecs)
 throws LockingException
 {
-    return lockService.newLock(entity.getEntityType(), entity.getEntityKey(), IEntityLockService.READ_LOCK, owner, durationSecs);
+    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.READ_LOCK, owner, durationSecs);
 }
 /**
  * Returns a write lock for the entity type, entity key and owner.
@@ -219,7 +219,7 @@ throws LockingException
 public IEntityLock newWriteLock(IBasicEntity entity, String owner)
 throws LockingException
 {
-    return lockService.newLock(entity.getEntityType(), entity.getEntityKey(), IEntityLockService.WRITE_LOCK, owner);
+    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.WRITE_LOCK, owner);
 }
 /**
  * Returns a write lock for the <code>IBasicEntity</code>, owner and duration.
@@ -232,6 +232,6 @@ throws LockingException
 public IEntityLock newWriteLock(IBasicEntity entity, String owner, int durationSecs)
 throws LockingException
 {
-    return lockService.newLock(entity.getEntityType(), entity.getEntityKey(), IEntityLockService.WRITE_LOCK, owner, durationSecs);
+    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.WRITE_LOCK, owner, durationSecs);
 }
 }

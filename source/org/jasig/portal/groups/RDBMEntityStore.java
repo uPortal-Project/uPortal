@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
     Collection entities = new ArrayList();
     Connection conn = null;
     String groupID = group.getKey();
-    Class cls = group.getEntityType();
+    Class cls = group.getLeafType();
 
     try
     {

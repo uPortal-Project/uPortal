@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,25 +36,33 @@
 package org.jasig.portal.groups;
 
 import java.util.*;
+import org.jasig.portal.IBasicEntity;
 
 /**
- * An <code>IGroupMember</code> defines the common behavior for both its leaf
+ * An <code>IGroupMember</code> defines common behavior for both the leaf
  * <code>IEntity</code> and composite <code>IEntityGroup</code> sub-types
  * that together make up a Groups structure.
  * <p>
  * An <code>IGroupMember</code> can answer both its parents and its children but
  * has no api for adding or removing them.  These methods are defined on
- * the composite type, <code>IEntityGroup</code>, because you add a member
- * to a group, not vice versa.
+ * the composite type, <code>IEntityGroup</code>, since you add a member to a
+ * group and not vice versa.
  * <p>
- * Note that an <code>IGroupMember</code> must implement <code>equals()</code>
- * and <code>hashCode()</code> so that duplicates returned from "deep"
- * methods can be recognized.
+ * Because it extends <code>IBasicEntity</code>, an <code>IGroupMember</code>
+ * has a key and type that can be used to cache and lock it.  For a  group, the
+ * type will be <code>IEntityGroup</code>.  For an entity the type will be
+ * <code>IEntity</code>.  The <code>IGroupMember</code> also has an underlying
+ * <code>IBasicEntity</code> with its own key and type.  This underlying key
+ * and type are used to create and record group memberships.  Note that in the
+ * case of a group, the underlying entity is <code>this</code>.
+ * <p>
+ * Take care to implement <code>equals()</code> and <code>hashCode()</code> so
+ * that duplicates returned from "deep" methods can  be recognized.
  *
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public interface IGroupMember {
+public interface IGroupMember extends IBasicEntity {
 /**
  * Answers if <code>IGroupMember</code> gm is a member of <code>this</code>.
  * @return boolean
@@ -106,16 +114,25 @@ public Iterator getContainingGroups() throws GroupsException;
  */
 public Iterator getEntities() throws GroupsException;
 /**
- * Returns the <code>entityType</code> of the underlying entities.  This is analagous to
- * <code>Class</code>, as applied to <code>Arrays</code> and their elements.
+ * Returns the key of the underlying entity.
+ * @return String
+ * @deprecated use instead getUnderlyingEntity.getKey().
+ */
+public String getEntityKey();
+/**
+ * Returns the underlying entity type.  For an <code>IEntityGroup</code>, this is
+ * analagous to <code>Class</code> as applied to an <code>Array</code>; it is an
+ * attribute of the group object.  For an <code>IEntity</code>, it is the entity
+ * type of the group the entity belongs to, which may be any <code>Class</code>
+ * the underlying entity can be legally cast to.  Thus, an <code>IEntity</code>
+ * with an underlying entity of type <code>Manager</code> could have an entity
+ * type of <code>Employee</code> as long as <code>Employee</code> was a
+ * superclass of <code>Manager</code>.
  *
  * @return java.lang.Class
+ * @deprecated Use instead getUnderlyingEntity().getType().
  */
 public Class getEntityType();
-/**
- * @return String
- */
-String getKey();
 /**
  * Returns the named <code>IEntityGroup</code> from our members <code>Collection</code>.
  * @return org.jasig.portal.groups.IEntityGroup
@@ -129,14 +146,15 @@ public IEntityGroup getMemberGroupNamed(String name) throws GroupsException;
  */
 public Iterator getMembers() throws GroupsException;
 /**
- * Returns the type represented by the <code>IGroupMember</code>.  In the
- * case of an <code>IEntityGroup</code> this is <code>IEntityGroup</code>.  In
- * the case of an <code>IEntity</code> it is the <code>entityType</code> of
- * the <code>IEntity</code>.
+ * Returns the underlying <code>IBasicEntity</code> for this <code>IGroupMember</code>.
+ * In the case of an <code>IEntityGroup</code>, it will be <code>this</code>.  In
+ * the case of an <code>IEntity</code>, it will be an <code>IBasicEntity</code> that
+ * represents the underlying IPerson, ChannelDefinition, etc.  This could conceivably
+ * be a minimal implementation that only has a type and a key.
  *
- * @return java.lang.Class
+ * @return org.jasig.portal.IBasicEntity
  */
-public Class getType();
+public org.jasig.portal.IBasicEntity getUnderlyingEntity();
 /**
  * @return int
  */
@@ -166,4 +184,11 @@ public boolean isGroup();
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 public boolean isMemberOf(IGroupMember gm) throws GroupsException;
+
+/**
+ * If an <code>IEntityGroup</code>, returns the type of the underling leaf
+ * members.  If an <code>IEntity</code>, returns the type of the underlying
+ * entity.
+ */
+  public Class getLeafType();
 }
