@@ -54,6 +54,7 @@ import org.apache.pluto.om.servlet.ServletDefinition;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
+import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -77,6 +78,10 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     private String expirationCache = null;
     private ClassLoader portletClassLoader = null;
     private ChannelDefinition channelDefinition = null;
+    
+    public PortletDefinitionImpl() {
+        this.securityRoleRefs = new SecurityRoleRefSetImpl();
+    }
     
     // PortletDefinition methods
     
