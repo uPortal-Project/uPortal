@@ -100,7 +100,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <code>BIT, TINYINT, SMALLINT, INTEGER, BIGINT, FLOAT, REAL, DOUBLE,
  * NUMERIC, DECIMAL, CHAR, VARCHAR, LONGVARCHAR, DATE, TIME, TIMESTAMP,
  * BINARY, VARBINARY, LONGVARBINARY, NULL, OTHER, JAVA_OBJECT, DISTINCT,
- * STRUCT, ARRAY, BLOB, CLOB, REF</code>
+ * STRUCT, ARRAY, BLOB, CLOB, REF, DATALINK, BOOLEAN</code>
  *
  * <p><strong>WARNING: YOU MAY WANT TO MAKE A BACKUP OF YOUR DATABASE BEFORE RUNNING DbLoader</strong></p>
  *
@@ -587,6 +587,11 @@ public class DbLoader
       dataTypeCode = Types.CLOB; // 2005
     else if (genericDataTypeName.equalsIgnoreCase("REF"))
       dataTypeCode = Types.REF; // 2006
+    
+    else if (genericDataTypeName.equalsIgnoreCase("DATALINK"))
+        dataTypeCode = Types.DATALINK; // 70
+    else if (genericDataTypeName.equalsIgnoreCase("BOOLEAN"))
+        dataTypeCode = Types.BOOLEAN; // 16
 
     return dataTypeCode;
   }
