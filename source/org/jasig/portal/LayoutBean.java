@@ -127,8 +127,7 @@ public class LayoutBean extends GenericPortalBean
       String sTabColor = layout.getAttribute ("tabColor");
       String sChanColor = layout.getAttribute ("channelHeadingColor");
       out.println ("<style>");
-      out.println ("<!-- body { color: " + sFgColor + "; background: " + sBgColor + "; }");
-      out.println ("td { color: " + sFgColor + "}");
+      out.println ("body { color: " + sFgColor + "; background: " + sBgColor + "; }");
       out.println ("A:link { color: " + sATabColor + "}");
       out.println ("A:visited { color: " + sTabColor + "}");
       out.println ("A:active { color: " + sChanColor + "}");
@@ -136,7 +135,7 @@ public class LayoutBean extends GenericPortalBean
 	out.println ("font-weight:bold; font-family:arial,helvetica,times,courier; font-size:14pt}");
       out.println (".PortalText          { text-decoration:none; color: " + sFgColor + ";");
       out.println ("font-weight:plain; font-family:arial,helvetica,times,courier; font-size:12pt}");
-      out.println (" --></style></head>");
+      out.println ("</style></head>");
 
       /* <BODY> tag is deprecated.   However Netscape does not properly implement the style tag
          and ignores the color setting for the body.   When browser versions do handle this, you should remove
@@ -146,7 +145,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e);
+      Logger.log (Logger.ERROR, "LayoutBean: writeBodyStyle " + e);
     }
   }
 
