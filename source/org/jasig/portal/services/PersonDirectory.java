@@ -61,6 +61,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
@@ -499,6 +500,12 @@ public class PersonDirectory {
     IPerson person = (IPerson)persons.get(uid);
     if (person == null) {
       person = PersonFactory.createPerson();
+      person.setAttribute(IPerson.USERNAME, uid);
+      try {
+        person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person));
+      } catch (Exception e) {
+          // Do nothing
+      }
       instance().getUserDirectoryInformation(uid, person);
     }
     return new RestrictedPerson(person);
