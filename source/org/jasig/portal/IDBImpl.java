@@ -60,5 +60,8 @@ public interface IDBImpl {
   public void getUserRoles(Vector userRoles, int userId) throws Exception;
   public void addUserRoles(int userId, Vector roles) throws Exception;
   public void removeUserRoles(int userId, Vector roles) throws Exception;
+
+  /* Authorization */
+  public String[] getUserAccountInformation(String username) throws Exception;
 }
 

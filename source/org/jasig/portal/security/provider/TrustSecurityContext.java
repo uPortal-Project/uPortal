@@ -39,7 +39,6 @@ import org.jasig.portal.security.*;
 import org.jasig.portal.Logger;
 import org.jasig.portal.RdbmServices;
 import java.util.*;
-import java.sql.*;
 
 /**
  * <p>This is an implementation of a SecurityContext that merely checks to see
@@ -66,22 +65,14 @@ class TrustSecurityContext extends ChainingSecurityContext implements ISecurityC
 
   public synchronized void authenticate() throws PortalSecurityException{
     this.isauth = false;
-    RdbmServices rdbmservices = new RdbmServices();
     if (this.myPrincipal.UID != null) {
-      Connection conn = null;
-      PreparedStatement stmt = null;
-      ResultSet rset = null;
       try {
         String first_name, last_name;
-        String query = "SELECT FIRST_NAME, LAST_NAME " +
-            "FROM UP_USERS WHERE USER_NAME = ?";
-        conn = rdbmservices.getConnection();
-        stmt = conn.prepareStatement(query);
-        stmt.setString(1, this.myPrincipal.UID);
-        rset = stmt.executeQuery();
-        if (rset.next()) {
-          first_name = rset.getString("FIRST_NAME");
-          last_name  = rset.getString("LAST_NAME");
+        org.jasig.portal.IDBImpl dbImpl = new org.jasig.portal.DBImpl();
+        String acct[] = dbImpl.getUserAccountInformation(this.myPrincipal.UID);
+        if (acct[0] != null) {
+          first_name = acct[2];
+          last_name  = acct[3];
           this.myPrincipal.FullName = first_name + " " + last_name;
           Logger.log(Logger.INFO, "User " + this.myPrincipal.UID +
               " is authenticated");
@@ -95,11 +86,6 @@ class TrustSecurityContext extends ChainingSecurityContext implements ISecurityC
           ("SQL Database Error");
         Logger.log(Logger.ERROR, ep);
         throw(ep);
-      }
-      finally {
-        try { rset.close(); } catch (Exception e) { }
-        try { stmt.close(); } catch (Exception e) { }
-        rdbmservices.releaseConnection(conn);
       }
     }
     else

@@ -1083,7 +1083,41 @@ public class DBImpl implements IDBImpl {
     } finally {
       rdbmService.releaseConnection(con);
     }
-
-
   }
+
+    /**
+   *
+   * Authorization
+   *
+   */
+  public String[] getUserAccountInformation(String username) throws Exception
+  {
+    String[] acct = new String[] {null, null, null, null};
+    String query = "SELECT ID, FIRST_NAME, LAST_NAME, UP_SHADOW.PASSWORD " +
+      "FROM UP_USERS, UP_SHADOW WHERE " +
+      "UP_USERS.USER_NAME = UP_SHADOW.USER_NAME AND " +
+      "UP_USERS.USER_NAME = ?";
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = rdbmService.getConnection();
+    PreparedStatement stmt = null;
+    ResultSet rset  = null;
+    try {
+      stmt = con.prepareStatement(query);
+      stmt.setString(1, username);
+      rset = stmt.executeQuery();
+      if (rset.next()) {
+          acct[3] = rset.getString("LAST_NAME");
+          acct[2] = rset.getString("FIRST_NAME");
+          acct[1] = rset.getString("PASSWORD");
+          acct[0] = rset.getInt("ID") + "";
+      }
+    } finally {
+      try { rset.close(); } catch (Exception e) { }
+      try { stmt.close(); } catch (Exception e) { }
+      rdbmService.releaseConnection(con);
+    }
+
+    return acct;
+  }
+
 }

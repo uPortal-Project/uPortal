@@ -40,7 +40,6 @@ import org.jasig.portal.Logger;
 import org.jasig.portal.RdbmServices;
 import java.util.*;
 import java.security.MessageDigest;
-import java.sql.*;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -63,28 +62,18 @@ class SimpleSecurityContext extends ChainingSecurityContext implements ISecurity
 
   public synchronized void authenticate() throws PortalSecurityException {
     this.isauth = false;
-    RdbmServices rdbmservices = new RdbmServices();
     if (this.myPrincipal.UID != null &&
         this.myOpaqueCredentials.credentialstring != null) {
-      Connection conn = null;
-      PreparedStatement stmt = null;
-      ResultSet rset = null;
       String first_name = null, last_name = null, md5_passwd = null;
       int globalUID;
       try {
-        String query = "SELECT ID, FIRST_NAME, LAST_NAME, UP_SHADOW.PASSWORD " +
-            "FROM UP_USERS, UP_SHADOW WHERE " +
-            "UP_USERS.USER_NAME = UP_SHADOW.USER_NAME AND " +
-            "UP_USERS.USER_NAME = ?";
-        conn = rdbmservices.getConnection();
-        stmt = conn.prepareStatement(query);
-        stmt.setString(1, this.myPrincipal.UID);
-        rset = stmt.executeQuery();
-        if (rset.next()) {
-          globalUID  = rset.getInt("ID");
-          first_name = rset.getString("FIRST_NAME");
-          last_name  = rset.getString("LAST_NAME");
-          md5_passwd = rset.getString("PASSWORD");
+        org.jasig.portal.IDBImpl dbImpl = new org.jasig.portal.DBImpl();
+        String acct[] = dbImpl.getUserAccountInformation(this.myPrincipal.UID);
+        if (acct[0] != null) {
+          globalUID  = Integer.parseInt(acct[0]);
+          first_name = acct[2];
+          last_name  = acct[3];
+          md5_passwd = acct[1];
           if (!md5_passwd.substring(0, 5).equals("(MD5)")) {
             Logger.log(Logger.ERROR, "Password not an MD5 hash: " +
                 md5_passwd.substring(0, 5));
@@ -124,11 +113,6 @@ class SimpleSecurityContext extends ChainingSecurityContext implements ISecurity
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
         Logger.log(Logger.ERROR, ep);
         throw(ep);
-      }
-      finally {
-        try { rset.close(); } catch (Exception e) { }
-        try { stmt.close(); } catch (Exception e) { }
-        rdbmservices.releaseConnection(conn);
       }
     }
     else
