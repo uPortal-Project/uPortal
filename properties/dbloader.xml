@@ -37,6 +37,8 @@
     <db-version>1.4</db-version>
     <driver-name>HypersonicSQL Driver</driver-name>
     <driver-version>1.4</driver-version>
+    <type><generic>INTEGER</generic><local>INTEGER</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
     <type><generic>LONGVARCHAR</generic><local>LONGVARCHAR</local></type>
     <!-- map more types here -->
   </db-type-mapping>
