@@ -81,9 +81,13 @@ public class ChannelDefinition {
       this.value = value;
       this.override = override;
     }
-  }
 
-  public Date getchanApvlDt() { return chanApvlDt;}
+    // Getter methods
+    public String getName() { return name; }
+    public String getValue() { return value; }
+    public boolean getOverride() { return override; }
+
+  }
 
   public ChannelDefinition(int channelPublishId, String chanTitle) {
     this.channelPublishId = channelPublishId;
@@ -119,6 +123,24 @@ public class ChannelDefinition {
     this.chanName = chanName;
     this.chanFName =chanFName;
   }
+
+  // Getter methods
+  public int getPublishId() { return channelPublishId; }
+  public String getFName() { return chanFName; }
+  public String getName() { return chanName; }
+  public String getDescription() { return chanDesc; }
+  public String getTitle() { return chanTitle; }
+  public String getJavaClass() { return chanClass; }
+  public int getTimeout() { return chanTimeout; }
+  public int getTypeId() { return chanTypeId; }
+  public int getPublisherId() { return chanPupblUsrId; }
+  public int getApprovalId() { return chanApvlId; }
+  public Date getPublishDate() { return chanPublDt; }
+  public Date getApprovalDate() { return chanApvlDt;}
+  public boolean isEditable() { return chanEditable; }
+  public boolean hasHelp() { return chanHasHelp; }
+  public boolean hasAbout() { return chanHasAbout; }
+  public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.toArray(new ChannelParameter[0]); }
 
   public void addParameter(String name, String value, String override) {
     if (parameters == null) {
