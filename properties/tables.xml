@@ -84,6 +84,7 @@
     <not-null>USER_ID</not-null>
     <not-null>STRUCT_ID</not-null>
     <not-null>STRUCT_PARM_NM</not-null>
+    <not-null>STRUCT_PARM_VAL</not-null>
   </table>
 
   <table>
