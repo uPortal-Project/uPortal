@@ -443,7 +443,7 @@
 
       <tr>
         <td width="80"><img alt="interface image" src="{$mediaPath}/{$skin}/focused/focused_05.gif" width="80" height="33" border="0" usemap="#focused_05_Map" /></td>
-        <td width="100%" align="left" valign="bottom" class="uportal-channel-title" nowrap="nowrap"><xsl:value-of select="@name"/></td>
+        <td width="100%" align="left" valign="bottom" class="uportal-channel-title" nowrap="nowrap"><xsl:value-of select="@title"/></td>
         <td align="right" valign="bottom" nowrap="nowrap">
           <xsl:call-template name="controls"/>
         </td>
