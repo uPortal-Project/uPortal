@@ -270,4 +270,35 @@ public class Utility
       }
       return id;
    }
+
+   /**
+    * Determines if an object has a value other than null or blank.
+    * @param o Object
+    * @return boolean
+    */
+   protected static boolean hasValue (Object o) {
+      boolean rval = false;
+      if (o != null && !o.toString().trim().equals("")) {
+         rval = true;
+      }
+      return  rval;
+   }
+
+   /**
+    * Determines if an object has a value other than null or blank and is equal to
+    * the test parameter.
+    * @param o Object
+    * @param test String
+    * @return boolean
+    */
+   protected static boolean hasValue (Object o, String test) {
+      boolean rval = false;
+      if (hasValue(o)) {
+         if (String.valueOf(o).equals(test)) {
+            rval = true;
+         }
+      }
+      return  rval;
+   }
+
 }
