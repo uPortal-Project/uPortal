@@ -58,6 +58,8 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IALFolderDescription;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
+import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
@@ -825,6 +827,20 @@ public class UserInstance implements HttpSessionBindingListener {
            ulm.markMoveTargets(null);
            newNodeDescription = null;
         }
+        
+		param = req.getParameter("uP_fragment_action");
+		if ( param != null ) { 
+		  if ( ulm instanceof TransientUserLayoutManagerWrapper )
+		    ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
+		  if ( ulm instanceof IAggregatedUserLayoutManager ) {		
+			IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm;
+			String fragmentId = req.getParameter("uP_fragment_ID"); 
+			if ( param.equals("new") )
+		     alm.createFragment(IAggregatedUserLayoutManager.NEW_FRAGMENT,"New fragment");
+		    else if ( param.equals("edit") && fragmentId != null ) 
+		     alm.loadFragment(fragmentId); 
+		  }	  
+		}
 
 
       } catch ( Exception e ) {

@@ -80,7 +80,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     public final static String TRANSIENT_FOLDER_ID="ft1";
     // channel subscription prefix  <'c'hannel><'t'ransient><'f'older>
     public final static String SUBSCRIBE_PREFIX = "ctf";
-    IUserLayoutManager man=null;
+    
+    // The original user layout manager
+    private IUserLayoutManager man=null;
+    
     // contains fname --> subscribe id mappings (for transient channels only)
     private Map mFnameMap = Collections.synchronizedMap(new HashMap());
     private Map mSubIdMap = Collections.synchronizedMap(new HashMap());
@@ -98,6 +101,14 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             throw new PortalException("Cannot wrap a null IUserLayoutManager !");
         }
     }
+
+	public IUserLayoutManager getOriginalLayoutManager() throws PortalException {
+		   return man;
+	}
+
+	public void setOriginalLayoutManager(IUserLayoutManager man ) throws PortalException {
+		   this.man = man;
+	}
 
     public IUserLayout getUserLayout() throws PortalException {
         return man.getUserLayout();

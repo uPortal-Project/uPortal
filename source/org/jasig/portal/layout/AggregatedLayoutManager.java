@@ -1081,9 +1081,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
     public void saveUserLayout() throws PortalException {
       try {
-        if ( !isLayoutFragment() ) {
-         layoutStore.setAggregatedLayout(person,userProfile,layout);
-        }
+        if ( !isLayoutFragment() )
+          layoutStore.setAggregatedLayout(person,userProfile,layout);
+        else
+          saveFragment();
+          
          updateCacheKey();
       } catch ( Exception e ) {
         throw new PortalException(e.getMessage());
@@ -1093,18 +1095,25 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	public void createFragment( String fragmentName, String fragmentDesc ) throws PortalException {
 	  try {
 			 // Creating an empty layout with a root folder
-			 layout = new ALFragment (NEW_FRAGMENT,this);
+			 String newFragmentId = layoutStore.getNextFragmentId();
+			 ALFragment fragment = new ALFragment (newFragmentId,this);
 			 ALNode rootFolder = ALFolder.createRootFolder();
 			 Hashtable layoutData = new Hashtable();
 			 layoutData.put(getRootFolderId(),rootFolder);
-			 layout.setLayoutData(layoutData);
+			 fragment.setLayoutData(layoutData);
+			 fragment.setName(fragmentName+"_"+newFragmentId);
+			 fragment.setDescription(fragmentDesc+" (id="+newFragmentId+")");
 		
 		     // Getting the list of the fragments	
 			 fragments = (Hashtable) layoutStore.getFragments(person);
-			 this.fragmentId = NEW_FRAGMENT;
+		     if ( fragments != null && fragments.size() > 0 ) 
+			  fragment.setFragments(fragments);
+			  
+			 this.fragmentId = newFragmentId;
 			
-			 // Checking restrictions and move "wrong" nodes to the lost folder
-			 moveWrongNodesToLostFolder();
+			 // Setting the layout to the new fragment
+			 layout = fragment;
+			
 			 updateCacheKey();
 		  } catch ( Exception e ) {
 			throw new PortalException(e.getMessage());
@@ -1121,7 +1130,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		  layout.setFragments(fragments);
         this.fragmentId = fragmentId;
         // Checking restrictions and move "wrong" nodes to the lost folder
-        moveWrongNodesToLostFolder();
+        //moveWrongNodesToLostFolder();
         updateCacheKey();
       } catch ( Exception e ) {
         throw new PortalException(e.getMessage());

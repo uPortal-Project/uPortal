@@ -1598,30 +1598,46 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        throw new PortalException("The user layout fragment must have "+ALFragment.class.getName()+" type!");
 
     ALFragment layout = (ALFragment) fragment;
-
+  
     RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
     try {
 
        Statement stmt = con.createStatement();
-
-      // Check if the fragment is new
-      if ( IAggregatedUserLayoutManager.NEW_FRAGMENT.equals( fragmentId )) {
-      	fragmentId = getNextFragmentId();
-		String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+	
-		"VALUES ("+fragmentId+",1"+userId+","+layout.getName()+","+layout.getDescription()+",'N'";
-     	stmt.executeUpdate(sqlInsert);
-      } else {
-		 boolean isOwner = false;
+       
+	     boolean isOwner = false;
+	     boolean isNewFragment = false;
 		 // Check if the user was an owner
 		 ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-		 if ( rs.next() )
+		 if ( rs.next() ) {
 		  if ( rs.getInt(1) == userId )
-		   isOwner = true;
+		    isOwner = true;
+		 } else
+		    isNewFragment = true;  
 		 if ( rs != null ) rs.close();
-		 if ( !isOwner )
+		 
+		 if ( !isOwner && !isNewFragment )
 		  throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
-      	 
+
+      // Check if the fragment is new
+      if ( isNewFragment ) {
+      	ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
+      	String fragmentRootId = rootNode.getFirstChildNodeId();
+		String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+	
+		"VALUES (?,?,?,?,?,?)";
+		PreparedStatement ps = con.prepareStatement(sqlInsert);
+		ps.setInt(1,CommonUtils.parseInt(fragmentId));
+		if ( fragmentRootId != null )
+		 ps.setInt(2,CommonUtils.parseInt(fragmentRootId));
+		else
+		 ps.setNull(2,Types.INTEGER); 
+		ps.setInt(3,userId);
+		ps.setString(4,layout.getName());
+		ps.setString(5,layout.getDescription());
+		ps.setString(6,(layout.isPushedFragment())?"Y":"N");
+     	ps.executeUpdate();
+      } else {
+		 	 
 		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
 		 PreparedStatement ps = con.prepareStatement(sqlUpdate);
 		 ps.setString(1,layout.getName());
@@ -1629,7 +1645,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		 ps.setString(3,(layout.isPushedFragment())?"Y":"N");
 		 ps.setInt(4,userId);
 		 ps.setInt(5,CommonUtils.parseInt(fragmentId));
-		 ps.executeUpdate(sqlUpdate);
+		 ps.executeUpdate();
 		 
         }  
 
@@ -1651,9 +1667,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
          ALNode node = layout.getNode(strNodeId);
          int nodeId = CommonUtils.parseInt(node.getId());
+         
+         // Setting the fragment ID
+         node.getNodeDescription().setFragmentId(fragmentId);
 
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
-
+        
          if (  CommonUtils.parseInt(node.getFragmentId()) > 0 && fragmentNodeId <= 0 )
            addUserLayoutNode(userId,0,node,psAddFragmentNode,psAddFragmentRestriction,null,null);
 
@@ -2417,13 +2436,17 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         // Creating a root folder
         rootNode = ALFolder.createRootFolder();
-        // Setting the first layout node ID to the root folder
-        rootNode.setFirstChildNodeId(firstStructId+"");
 
         // Putting the root node
         layoutData.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
          // Putting the lost folder
         layoutData.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
+        
+	    // Setting the first layout node ID to the root folder
+	    if ( firstStructId > 0 )
+		 rootNode.setFirstChildNodeId(firstStructId+"");
+		else 
+	     rootNode.setFirstChildNodeId(null);
 
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+

@@ -101,5 +101,13 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public IALNodeDescription getNodeBeingMoved() throws PortalException;
+    
+	/**
+	  * Creates a new fragment and loads it as an user layout
+	  * @param fragmentName a fragment name
+	  * @param fragmentDesc a fragment description
+	  * @exception PortalException if an error occurs
+	  */
+	public void createFragment( String fragmentName, String fragmentDesc ) throws PortalException;
 
 }

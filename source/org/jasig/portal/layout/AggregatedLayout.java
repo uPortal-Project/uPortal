@@ -402,7 +402,7 @@ public class AggregatedLayout implements IAggregatedLayout {
              // Loop for all children
              String firstChildId = folder.getFirstChildNodeId();
                for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
-
+               	
                  // if necessary we add marking nodes
                  if ( layoutManager != null ) {
                   if ( !node.getNodeDescription().isHidden() && !getLayoutNode(nextNodeId).getNodeDescription().isHidden() ) {
