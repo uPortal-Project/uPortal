@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?><xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-<xsl:param name="activeTab">t01</xsl:param>
+<xsl:param name="activeTab">1</xsl:param>
 <xsl:param name="userLayoutRoot">root</xsl:param>
 
 <!-- document fragment template. See structure stylesheet for more comments -->
@@ -52,7 +52,7 @@
       <tab>
         <xsl:attribute name="ID"><xsl:value-of select="@ID"/></xsl:attribute>
       	<xsl:choose>
-      	  <xsl:when test="$activeTab=@ID">
+      	  <xsl:when test="$activeTab = position()">
       	    <xsl:attribute name="activeTab">true</xsl:attribute>
       	  </xsl:when>
       	  <xsl:otherwise>
@@ -67,7 +67,7 @@
 </xsl:template>
 
 <xsl:template match="folder">
-  <xsl:if test="$activeTab=@ID">
+  <xsl:if test="$activeTab = position()">
     <xsl:if test="child::folder">
       <xsl:for-each select="folder">
         <column>
