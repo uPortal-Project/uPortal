@@ -230,7 +230,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         }
 
         // Retrieve the information for the template user
-        query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID,CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
+        query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
         // DEBUG
         if (DEBUG>0) System.err.println(query);
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
@@ -292,13 +292,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         String Insert = new String();
         /* insert new user record in UP_USER */
         Insert = "INSERT INTO UP_USER "+
-          "(USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, CURR_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT) "+
+          "(USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT) "+
           " VALUES ("+
             newUID+", '"+
             person.getAttribute("username")+ "',"+
             templateUSER_DFLT_USR_ID+", "+
             templateUSER_DFLT_LAY_ID+", "+
-            "null, "+
             "null, "+
             "null)";
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
