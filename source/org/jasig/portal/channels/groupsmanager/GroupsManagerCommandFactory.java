@@ -77,6 +77,8 @@ public class GroupsManagerCommandFactory
          bindings.put("Select", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
          bindings.put("Unlock", Class.forName(COMMANDS_PACKAGE + ".UnlockGroup").newInstance());
          bindings.put("Update", Class.forName(COMMANDS_PACKAGE + ".UpdateGroup").newInstance());
+         bindings.put("ShowProperties", Class.forName(COMMANDS_PACKAGE + ".ShowProperties").newInstance());
+         bindings.put("HideProperties", Class.forName(COMMANDS_PACKAGE + ".HideProperties").newInstance());
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerCommandFactory::GroupsManagerCommandFactory(): \n"
                + e);
