@@ -84,14 +84,24 @@ public abstract class GroupsManagerCommand
    }
 
    /**
+    * Returns the userID from the user object
+    * @param runtimeData
+    * @return String
+    */
+   public String getUserID (CGroupsManagerSessionData sessionData) {
+      return  String.valueOf(sessionData.user.getID());
+   }
+
+   
+   /**
     * Returns the grpCommandIds parameter from runtimeData. The string usually
     * hold one element ID but could contain a string of delimited ids. (See
     * RemoveMember command).
     * @param runtimeData
     * @return String
     */
-   public String getCommandIds (org.jasig.portal.ChannelRuntimeData runtimeData) {
-      return  (String)runtimeData.getParameter("grpCommandIds");
+   public String getCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData) {
+      return  (String)runtimeData.getParameter("grpCommandArg");
    }
 
    /**
