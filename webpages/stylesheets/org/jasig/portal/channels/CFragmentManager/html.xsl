@@ -669,7 +669,7 @@ Version $Revision$
                                 <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-content">
                                     <tr>
                                         <td align="left" valign="top" nowrap="nowrap">
-                                            <span class="uportal-text">Insert Groups Manager Servant Here</span>
+                                            <xsl:call-template name="selectGroups"/>
                                         </td>
                                     </tr>
                                 </table>
@@ -680,4 +680,9 @@ Version $Revision$
             </tr>
         </table>
     </xsl:template>
+    <xsl:template name="selectGroups">
+    <xsl:variable name="groupID">
+      <xsl:value-of select="//browsingGroup[1]"/>
+    </xsl:variable>
+</xsl:template>
 </xsl:stylesheet>
