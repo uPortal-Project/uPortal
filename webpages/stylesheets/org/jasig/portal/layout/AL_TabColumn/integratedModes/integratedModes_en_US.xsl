@@ -2085,14 +2085,14 @@ Version $Revision$
 											</a>
 										</td>
 										<xsl:if test="count(../column)&gt;1">
-											<xsl:if test="number(@width)&gt;4">
+											<xsl:if test="number(@width)&gt;5">
 												<form name="formResizeColumn" method="post" action="{$baseActionURL}">
 													<td>
 														<xsl:call-template name="calculateShrinkColumn"/>
 													</td>
 												</form>
 											</xsl:if>
-											<xsl:if test="number(@width)&lt;96">
+											<xsl:if test="number(@width)&lt;95">
 												<form name="formResizeColumn" method="post" action="{$baseActionURL}">
 													<td>
 														<xsl:call-template name="calculateExpandColumn"/>
@@ -2162,7 +2162,7 @@ Version $Revision$
 	</xsl:template>
 	
 	<xsl:template name="calculateShrinkColumn">
-		<xsl:if test="number(@width)&gt;4">
+		<xsl:if test="number(@width)&gt;5">
 		    <xsl:call-template name="calculateAdjustColumn">
 		        <xsl:with-param name="increment" select="-5"/>
 		    </xsl:call-template>
@@ -2170,7 +2170,7 @@ Version $Revision$
 	</xsl:template>
 	
 	<xsl:template name="calculateExpandColumn">
-		<xsl:if test="number(@width)&lt;96">
+		<xsl:if test="number(@width)&lt;95">
 		    <xsl:call-template name="calculateAdjustColumn">
 		        <xsl:with-param name="increment" select="5"/>
 		    </xsl:call-template>
@@ -2186,13 +2186,20 @@ Version $Revision$
 	         column width to 61.11.  When the new values (61.11 and 50) are normalized,
 	         you end up with the desired effect: 2 columns at 55% and 45%.
 	    -->
-		<xsl:param name="increment">pass a number!</xsl:param>
+		<xsl:param name="increment">0</xsl:param>
 		<xsl:variable name="width" select="@width"/>
 		<xsl:variable name="sum" select="sum(../column/@width)"/>
 		<xsl:variable name="newWidth" select="$width + (($increment * $sum) div (100 - $width - $increment))"/>
 		<xsl:variable name="thisId" select="@ID"/>
 		
-		<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
+		<xsl:choose>
+			<xsl:when test="number($increment) &lt; 0">
+				<input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="Shrink this column by 5%" title="Shrink this column by 5%"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="Expand this column by 5%" title="Expand this column by 5%"/>
+			</xsl:otherwise>
+		</xsl:choose>
 		<input type="hidden" name="uP_sparam" value="mode"/>
 		<input type="hidden" name="mode" value="{$mode}"/>
 		<input type="hidden" name="uP_sparam" value="focusedTabID"/>
