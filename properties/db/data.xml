@@ -1047,7 +1047,7 @@
         <column><name>CHAN_FNAME</name><value>permissionsmanager</value></column>
         <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>CHAN_ID</name><value>96</value></column>
         <column><name>CHAN_TITLE</name><value>Session Locale Selector</value></column>
         <column><name>CHAN_NAME</name><value>Session Locale Selector</value></column>
@@ -1083,7 +1083,7 @@
         <column><name>CHAN_FNAME</name><value>portal/login/general</value></column>
         <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>CHAN_ID</name><value>80</value></column>
         <column><name>CHAN_TITLE</name><value>SkinSelector</value></column>
         <column><name>CHAN_NAME</name><value>Skin Selector</value></column>
@@ -1100,7 +1100,7 @@
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>skinselector</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>CHAN_ID</name><value>81</value></column>
         <column><name>CHAN_TITLE</name><value>ContentSubscriber</value></column>
         <column><name>CHAN_NAME</name><value>Content Subscriber</value></column>
@@ -3893,7 +3893,7 @@
         <column><name>TARGET</name><value>CHAN_ID.22</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
         <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
@@ -3901,7 +3901,7 @@
         <column><name>TARGET</name><value>CHAN_ID.80</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
         <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
@@ -3967,7 +3967,7 @@
         <column><name>TARGET</name><value>CHAN_ID.99</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
-      <row>
+      <row sinceMajor="2" sinceMinor="2">
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
         <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
