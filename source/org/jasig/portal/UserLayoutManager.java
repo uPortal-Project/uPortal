@@ -154,8 +154,7 @@ public class UserLayoutManager extends GenericPortalBean
 
   public void minimizeChannel (String str_ID) 
   {
-    //Element channel = uLayoutXML.getElementById (str_ID);
-    Element channel = ((org.apache.xerces.dom.DocumentImpl)uLayoutXML).getElementById (str_ID);
+    Element channel = uLayoutXML.getElementById (str_ID);
     
     if (channel != null) 
     {
@@ -165,22 +164,22 @@ public class UserLayoutManager extends GenericPortalBean
         channel.setAttribute ("minimized", "false");
     } 
     else 
-      Logger.log (Logger.ERROR,"UserLayoutManager::minimizeChannel() : unable to find a channel with ID=" + str_ID);
+      Logger.log (Logger.ERROR, "UserLayoutManager::minimizeChannel() : unable to find a channel with ID=" + str_ID);
   }
 
   public void removeChannel (String str_ID) 
   {
     Element channel = uLayoutXML.getElementById (str_ID);
     
-    if (channel!=null) 
+    if (channel != null) 
     {
-      Node parent=channel.getParentNode ();
+      Node parent = channel.getParentNode ();
       
-      if (parent!=null) 
+      if (parent != null) 
         parent.removeChild (channel);
       else 
-        Logger.log (Logger.ERROR,"UserLayoutManager::removeChannel() : attempt to remove a root node !");
+        Logger.log (Logger.ERROR, "UserLayoutManager::removeChannel() : attempt to remove a root node !");
     } 
-    else Logger.log (Logger.ERROR,"UserLayoutManager::removeChannel() : unable to find a channel with ID="+str_ID);
+    else Logger.log (Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID="+str_ID);
   }
 }
