@@ -8,6 +8,7 @@ package org.jasig.portal.ldap;
 import java.util.Hashtable;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
@@ -180,17 +181,8 @@ public class LdapServerImpl implements ILdapServer {
     }
     
     
-    public DirContext getConnection() {
-        DirContext conn = null;
-
-        try {
-            conn = new InitialDirContext(this.env);
-        }
-        catch ( Exception e ) {
-            log.error( "Error creating LDAP Connection to " + this.ldapName, e);
-        }
- 
-        return conn;
+    public DirContext getConnection() throws NamingException {
+        return new InitialDirContext(this.env);
     }
 
     public String getBaseDN() {

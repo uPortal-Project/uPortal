@@ -121,76 +121,82 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
           log.debug(
                      "SimpleLdapSecurityContext: Looking for " +
                      user.toString());
-      conn = ldapConn.getConnection();
       
-      // set up search controls
-      SearchControls searchCtls = new SearchControls();
-      searchCtls.setReturningAttributes(attributes);
-      searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-      
-      // do lookup
-      if (conn != null) {
-          try {
-            results = conn.search(ldapConn.getBaseDN(), user.toString(), searchCtls);
-            if (results != null) {
-              if (!results.hasMore())
+      try {
+          conn = ldapConn.getConnection();
+          
+          // set up search controls
+          SearchControls searchCtls = new SearchControls();
+          searchCtls.setReturningAttributes(attributes);
+          searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+          
+          // do lookup
+          if (conn != null) {
+              try {
+                results = conn.search(ldapConn.getBaseDN(), user.toString(), searchCtls);
+                if (results != null) {
+                  if (!results.hasMore())
+                    log.error(
+                                   "SimpleLdapSecurityContext: user not found , " +
+                                   this.myPrincipal.UID);
+                  Vector entries = new Vector();
+                  while (results != null && results.hasMore()) {
+                    SearchResult entry = (SearchResult)results.next();
+                    StringBuffer dnBuffer = new StringBuffer();
+                    dnBuffer.append(entry.getName()).append(", ");
+                    dnBuffer.append(ldapConn.getBaseDN());
+                    Attributes attrs = entry.getAttributes();
+                    first_name = getAttributeValue(attrs, ATTR_FIRSTNAME);
+                    last_name = getAttributeValue(attrs, ATTR_LASTNAME);
+                    // re-bind as user
+                    conn.removeFromEnvironment(javax.naming.Context.SECURITY_PRINCIPAL);
+                    conn.removeFromEnvironment(javax.naming.Context.SECURITY_CREDENTIALS);
+                    conn.addToEnvironment(javax.naming.Context.SECURITY_PRINCIPAL, dnBuffer.toString());
+                    conn.addToEnvironment(javax.naming.Context.SECURITY_CREDENTIALS, this.myOpaqueCredentials.credentialstring);
+                    searchCtls = new SearchControls();
+                    searchCtls.setReturningAttributes(new String[0]);
+                    searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
+    
+                    String attrSearch = "(" + ldapConn.getUidAttribute() + "=*)";
+                    log.debug(
+                                   "SimpleLdapSecurityContext: Looking in " +
+                                   dnBuffer.toString() + " for " + attrSearch);
+                    conn.search(dnBuffer.toString(), attrSearch, searchCtls);
+    
+                    this.isauth = true;
+                    this.myPrincipal.FullName = first_name + " " + last_name;
+                    log.debug(
+                                   "SimpleLdapSecurityContext: User " +
+                                   this.myPrincipal.UID + " (" +
+                                   this.myPrincipal.FullName + ") is authenticated");
+    
+                    // Since LDAP is case-insensitive with respect to uid, force
+                    // user name to lower case for use by the portal
+                    this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
+                  } // while (results != null && results.hasMore())
+                }
+                else {
+                  log.error(
+                                 "SimpleLdapSecurityContext: No such user: " +
+                                 this.myPrincipal.UID);
+                }
+              } catch (AuthenticationException ae) {
+                log.info("SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
+              } catch (Exception e) {
                 log.error(
-                               "SimpleLdapSecurityContext: user not found , " +
-                               this.myPrincipal.UID);
-              Vector entries = new Vector();
-              while (results != null && results.hasMore()) {
-                SearchResult entry = (SearchResult)results.next();
-                StringBuffer dnBuffer = new StringBuffer();
-                dnBuffer.append(entry.getName()).append(", ");
-                dnBuffer.append(ldapConn.getBaseDN());
-                Attributes attrs = entry.getAttributes();
-                first_name = getAttributeValue(attrs, ATTR_FIRSTNAME);
-                last_name = getAttributeValue(attrs, ATTR_LASTNAME);
-                // re-bind as user
-                conn.removeFromEnvironment(javax.naming.Context.SECURITY_PRINCIPAL);
-                conn.removeFromEnvironment(javax.naming.Context.SECURITY_CREDENTIALS);
-                conn.addToEnvironment(javax.naming.Context.SECURITY_PRINCIPAL, dnBuffer.toString());
-                conn.addToEnvironment(javax.naming.Context.SECURITY_CREDENTIALS, this.myOpaqueCredentials.credentialstring);
-                searchCtls = new SearchControls();
-                searchCtls.setReturningAttributes(new String[0]);
-                searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
-
-                String attrSearch = "(" + ldapConn.getUidAttribute() + "=*)";
-                log.debug(
-                               "SimpleLdapSecurityContext: Looking in " +
-                               dnBuffer.toString() + " for " + attrSearch);
-                conn.search(dnBuffer.toString(), attrSearch, searchCtls);
-
-                this.isauth = true;
-                this.myPrincipal.FullName = first_name + " " + last_name;
-                log.debug(
-                               "SimpleLdapSecurityContext: User " +
-                               this.myPrincipal.UID + " (" +
-                               this.myPrincipal.FullName + ") is authenticated");
-
-                // Since LDAP is case-insensitive with respect to uid, force
-                // user name to lower case for use by the portal
-                this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
-              } // while (results != null && results.hasMore())
-            }
-            else {
-              log.error(
-                             "SimpleLdapSecurityContext: No such user: " +
-                             this.myPrincipal.UID);
-            }
-          } catch (AuthenticationException ae) {
-            log.info("SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
-          } catch (Exception e) {
-            log.error(
-                           "SimpleLdapSecurityContext: LDAP Error with user: " +
-                           this.myPrincipal.UID + "; ", e);
-            throw new PortalSecurityException("SimpleLdapSecurityContext: LDAP Error" + e + " with user: " + this.myPrincipal.UID);
-          } finally {
-            ldapConn.releaseConnection(conn);
+                               "SimpleLdapSecurityContext: LDAP Error with user: " +
+                               this.myPrincipal.UID + "; ", e);
+                throw new PortalSecurityException("SimpleLdapSecurityContext: LDAP Error" + e + " with user: " + this.myPrincipal.UID);
+              } finally {
+                ldapConn.releaseConnection(conn);
+              }
+          }
+          else {
+            log.error("LDAP Server Connection unavalable");
           }
       }
-      else {
-        log.error("LDAP Server Connection unavalable");
+      catch (final NamingException ne) {
+          log.error("Error geting connection to LDAP server.", ne);
       }
     }
     else {

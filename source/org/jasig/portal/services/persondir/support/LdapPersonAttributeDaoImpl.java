@@ -71,7 +71,11 @@ public class LdapPersonAttributeDaoImpl implements PersonAttributeDao {
         NamingEnumeration userlist = null;
 
         try {
-           context = this.ldapServer.getConnection();
+            context = this.ldapServer.getConnection();
+            
+            if (context == null) {
+                throw new DataAccessResourceFailureException("No LDAP Connection could be obtained. Aborting ldap person attribute lookup.");
+            }
            
             // Search for the userid in the usercontext subtree of the directory
             // Use the uidquery substituting username for {0}
@@ -139,7 +143,8 @@ public class LdapPersonAttributeDaoImpl implements PersonAttributeDao {
             throw new DataAccessResourceFailureException("LDAP failure.", t);
         } finally {
             try {
-                userlist.close();
+                if (userlist != null)
+                    userlist.close();
             } catch (Exception e) {
                 this.log.error("Exception closing user list.", e);
             }
