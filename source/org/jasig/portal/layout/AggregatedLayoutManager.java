@@ -507,27 +507,26 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     int nodeDepth = getDepth(nodeId);
     int parentDepth = getDepth(newParentId);
     if ( nodeDepth == parentDepth+1 ) return true;
-    return checkDepthRestrictions(nodeId,newParentId,nodeDepth);
+    return checkDepthRestrictions(nodeId,parentDepth+1);
   }
 
 
   /**
      * Recursively checks the depth restrictions beginning with a given node
      * @param nodeId a <code>String</code> node ID
-     * @param newParentId a <code>String</code> new parent node ID
-     * @param parentDepth a parent depth
+     * @param depth a depth on which the node is going to be attached
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  private boolean checkDepthRestrictions(String nodeId,String newParentId,int parentDepth) throws PortalException {
+  private boolean checkDepthRestrictions( String nodeId, int depth ) throws PortalException {
     ALNode node = getLayoutNode(nodeId);
     // Checking restrictions for the node
-    if ( !checkRestriction(nodeId,RestrictionTypes.DEPTH_RESTRICTION,(parentDepth+1)+"") )
+    if ( !checkRestriction(nodeId,RestrictionTypes.DEPTH_RESTRICTION,depth+"") )
             return false;
     if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
      for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; nextId = node.getNextNodeId() ) {
       node = getLayoutNode(nextId);
-      if ( !checkDepthRestrictions(nextId,node.getParentNodeId(),parentDepth+1) )
+      if ( !checkDepthRestrictions(nextId,depth+1) )
             return false;
      }
     }
@@ -1438,8 +1437,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
          // Loop for all children
           String firstChildId = ((ALFolder)node).getFirstChildNodeId();
           for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
+           String id = getLayoutNode(nextNodeId).getNextNodeId();
            cleanLayoutData(nextNodeId,result);
-           nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
+           nextNodeId = id;
           } 
         }  
     }

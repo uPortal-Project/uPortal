@@ -39,7 +39,7 @@ public class UserLayoutRestrictionFactory {
         break;
     }
         if ( restriction == null )
-          throw new PortalException ("Cannot create restriction for the give type = " + restrictionType );
+          throw new PortalException ("Cannot create restriction for the given type = " + restrictionType );
     
         restriction.setRestrictionExpression(restrictionValue);
         return restriction;
