@@ -1927,8 +1927,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             if (rs.wasNull()) {
               themeSsId = 0;
             }
-            return new UserProfile(profileId, temp3,temp4, layoutId,
-                structSsId, themeSsId);
+            UserProfile userProfile = new UserProfile(profileId, temp3,temp4, layoutId, structSsId, themeSsId);
+            userProfile.setLocaleManager(new LocaleManager(person));
+            return userProfile;
           }
           else {
             throw new Exception("Unable to find User Profile for user " + userId + " and profile " + profileId);
