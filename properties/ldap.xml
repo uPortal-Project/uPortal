@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+ | Named LDAP connections may be defined here. A connection may be specified
+ | as the default connection. If ldap.properties exists the connection
+ | defined there will be the default, overridding the default specified here.
+ |
+ | If an element is missing it is assumed to be the same as being empty.
+ +-->
 <ldapConnections>
 	<!-- Example LDAP Connections -->
 	<!--

@@ -48,8 +48,8 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.jasig.portal.ILdapConnection;
-import org.jasig.portal.LdapServices;
+import org.jasig.portal.ldap.LdapServices;
+import org.jasig.portal.ldap.ILdapConnection;
 import org.jasig.portal.security.IConfigurableSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
