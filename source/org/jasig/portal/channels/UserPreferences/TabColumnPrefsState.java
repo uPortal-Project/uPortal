@@ -307,7 +307,9 @@ public class TabColumnPrefsState extends BaseState
             this.newColumnId = null;
           }
       } catch (Exception e){
-          log.debug("removeNewColumn failed to find new column with id " + this.newColumnId);
+          if (log.isDebugEnabled())
+              log.debug("removeNewColumn failed to find new column with id " 
+                      + this.newColumnId);
       }
   }
   
@@ -369,7 +371,8 @@ public class TabColumnPrefsState extends BaseState
       if (widthIsValid)
         ssup.setFolderAttributeValue(folderId, "width", newWidth);
       else
-        log.debug("User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
+        if (log.isDebugEnabled()) 
+            log.debug("User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
 
     }
 
