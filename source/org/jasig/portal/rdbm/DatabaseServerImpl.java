@@ -77,8 +77,8 @@ public class DatabaseServerImpl implements IDatabaseServer {
         this.dataSource = ds;
         
         this.runDatabaseTests();
-        
-        LOG.info(this.toString());
+        if (LOG.isInfoEnabled())
+            LOG.info(this.toString());
     }
 
     /**
@@ -359,11 +359,14 @@ public class DatabaseServerImpl implements IDatabaseServer {
                             RDBMServices.closeResultSet(rs);
                             
                             this.joinTest = joinTests[index];
-                            LOG.info("Using join test: " + this.joinTest.getClass().getName());
+                            if (LOG.isInfoEnabled())
+                                LOG.info("Using join test: " + 
+                                        this.joinTest.getClass().getName());
                             break;
                         }
                         catch (SQLException sqle) {
-                            LOG.info("Join test failed: " + joinTests[index], sqle);
+                            if (LOG.isInfoEnabled())
+                                LOG.info("Join test failed: " + joinTests[index], sqle);
                         }
                     }
                 }
