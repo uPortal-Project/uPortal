@@ -56,7 +56,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   protected Vector mySubContexts;
   protected ChainingPrincipal myPrincipal;
   protected ChainingOpaqueCredentials myOpaqueCredentials;
-  protected ChainingAdditionalDescriptor myAdditionalDescriptor;
+  protected IAdditionalDescriptor myAdditionalDescriptor;
   protected Comparator myOrder;
 
   public ChainingSecurityContext() {
