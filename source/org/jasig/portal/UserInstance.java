@@ -819,6 +819,14 @@ public class UserInstance implements HttpSessionBindingListener {
             }
         }
 
+        String param = req.getParameter("uP_cancel_targets");
+        if ( param != null && param.equals("true") ) {
+           ulm.markAddTargets(null);
+           ulm.markMoveTargets(null);
+           newNodeDescription = null;
+        }
+
+
       } catch ( Exception e ) {
           e.printStackTrace();
           throw new PortalException(e);
