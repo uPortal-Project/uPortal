@@ -29,14 +29,31 @@
     	// get the user sessionIDs so we can NOT invalidate them
     	Set sessionTypes = SessionManager.getSessionTypes();
     	HashSet userIdSet = new HashSet();
-    	userIdSet.add(sessionTypes);
-    
+        Iterator i = sessionTypes.iterator();
+        while(i.hasNext()) {
+            String type = (String)i.next();
+            userIdSet.addAll(SessionManager.getSessionIDs(type));
+        }
+        
     // go through all the sessionIds that the SessionContext has
     HttpSessionContext ctx = session.getSessionContext();
     Enumeration sessionIds = ctx.getIds();
     while(sessionIds.hasMoreElements()) {
         String currentId = (String)sessionIds.nextElement();
-        if(! userIdSet.contains(currentId)) {
+        // go through every session id and do a string test
+        boolean idFound = false;
+        
+        Iterator idIterator = userIdSet.iterator();
+        while(idIterator.hasNext()) {
+            String userId = (String)idIterator.next();
+            
+            if(currentId.equals(userId)) {
+                idFound = true;
+                break;
+            }
+        }
+        
+        if(!idFound) {
             // it's not a user, so zap 'em
             HttpSession curSession = ctx.getSession(currentId);
             curSession.invalidate();

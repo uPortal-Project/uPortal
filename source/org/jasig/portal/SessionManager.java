@@ -1,6 +1,6 @@
 /**
- *  $Author$ $Date$ $Id: SessionManager.java,v
- *  1.8 2001/05/30 00:54:55 zshaw Exp $ $Name$ $Revision$ Copyright (c)
+ *  $Author$ $Date$ $Id: SessionManager.java,v 1.8
+ *  2001/05/30 00:54:55 zshaw Exp $ $Name$ $Revision$ Copyright (c)
  *  2000 The JA-SIG Collaborative. All rights reserved. Redistribution and use
  *  in source and binary forms, with or without modification, are permitted
  *  provided that the following conditions are met: 1. Redistributions of source
@@ -193,7 +193,19 @@ public class SessionManager {
     }
 
 
-    // we default to 1MB
+    /**
+     *  Returns the Session that is associated by this ID. It returns null if it
+     *  doesn't know anything about this session.
+     *
+     *@param  sessionId  Description of Parameter
+     *@return            The Session value
+     *@since
+     */
+    public static HttpSession getSession(String sessionId) {
+        SessionWrapper sessionWrap = (SessionWrapper) sessionWrapTable.get(sessionId);
+        return sessionWrap.session;
+    }
+
 
     /**
      *  This method does configuration based on the session.properties file. If

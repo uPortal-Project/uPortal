@@ -42,11 +42,18 @@
      
 
     <p>&nbsp;</p>
+    
+    <h3>Your session has: </h3>
+    <ul>
+    <li>Inactivity Timeout: <%= session.getMaxInactiveInterval() %>
+    <li>Last Accessed Time: <%= new Date(session.getLastAccessedTime()) %>
+    <li>Creation Time: <%= new Date(session.getCreationTime()) %>
+    </ul>
 
     <form method="GET" action="kick_users_continue.jsp">
       <table border="0">
         <tr>
-          <td bgcolor="#999999"><b>Indicate the criteria used to for determining which
+          <td bgcolor="#999999"><b>Indicate the criteria used for determining which
           users to kick:</b></td>
 
           <td align="left">
@@ -55,19 +62,19 @@
 
         <tr>
           <td>
-          Creation time of user (<>): <input name="creationTime" size="3">
+          Creation time of user (>,<,=): <input name="creationTime" size="3">
           </td>
 
         </tr>
         <tr>
           <td>
-          Last accessed time (<>): <input name="lastAccessedTime" size="3">
+          Last accessed time (>,<,=): <input name="lastAccessedTime" size="3">
           </td>
         </tr>
         
         <tr>
             <td>
-            Inactivity time set to (<>) seconds: <input name="inactiveTime" size="7">
+            Inactivity timeout set to (>,<,=) seconds: <input name="inactiveTime" size="10">
             </td>
         </tr>
         <tr>
@@ -98,7 +105,7 @@
         <td>
         <input type="radio" name="kickType" value="invalidate"> Invalidate sessions immediately (DANGEROUS!)<br>
         <input type="radio" name="kickType" value="reset" selected> Reset inactive interval to (sec): 
-        <input size="3" name="resetTime">
+        <input size="10" name="resetTime">
         </td>
         </tr>
         
