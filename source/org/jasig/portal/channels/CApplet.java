@@ -40,7 +40,6 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.DocumentHandler;
 import java.io.StringWriter;
-import java.net.URL;
 
 /** <p>Displays an applet. To pass in applet parameters, construct
  * channel parameters whose keys start with the string "APPLET."</p>
@@ -92,7 +91,11 @@ public class CApplet extends BaseChannel
 
       w.write ("</applet>\n");
 
-      XSLT.transform(w.toString(), new URL(sslLocation), out, "main", runtimeData.getBrowserInfo());
+      XSLT xslt = new XSLT();
+      xslt.setXML(w.toString());
+      xslt.setSSL(sslLocation, "main", runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.transform();
     }
     catch (Exception e)
     {
