@@ -41,7 +41,7 @@ import java.util.Hashtable;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.utils.SoftHashMap;
 
 
 /**
@@ -55,11 +55,11 @@ public class PersonDirPropertyFinder
         implements IEntityPropertyFinder {
     private Class person = org.jasig.portal.security.IPerson.class;
     private PersonDirectory pd;
-    private SmartCache cache;
+    private SoftHashMap cache;
 
     public PersonDirPropertyFinder() {
         pd = new PersonDirectory();
-        cache = new SmartCache(120);
+        cache = new SoftHashMap(120);
     }
 
     public String[] getPropertyNames(EntityIdentifier entityID) {
