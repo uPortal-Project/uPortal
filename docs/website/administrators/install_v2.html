@@ -35,7 +35,8 @@
 <!-- main body goes in this table cell -->
    <TD valign="top">
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
-   <h2> uPortal 2.0.1: Getting Started  </h2>
+   
+<h2> uPortal 2.0.2: Getting Started </h2>
               
                
                   <h3>Table of Contents</h3>
@@ -132,6 +133,11 @@
                         </dt>
                      </dl>
                      </dd>
+							<dt>
+                     <a href="#issues">
+                         Issues and known problems 
+                     </a>
+                     </dt>
                   </dl>
                
                <hr noshade height=2>
@@ -216,35 +222,20 @@
         
             <ul type="disc">
                <li>
-               <p>
-               uPortal 2.0.1 - directory (
-               <tt>
-                  uPortal_rel-2.0.1
-               </tt>
-               ) containing
-               the uPortal source code, stylesheets, and other required files (essentially,
-               the uPortal-only distibution).
-               </p>
+               
+<p> uPortal 2.0.2 - directory ( <tt> uPortal_rel-2.0.2</tt> ) containing the uPortal 
+source code, stylesheets, and other required files (essentially, the uPortal-only 
+distibution). </p>
                </li>
                <li>
-               <p>
-               Tomcat 4.0.3 - a directory (
-               <tt>
-                  Tomcat_4-0-3
-               </tt>
-               ) containing
-               the Tomcat servlet container with the uPortal context preloaded.
-               </p>
+               
+<p> Tomcat 4.0.4 - a directory ( <tt> Tomcat_4-0-4</tt> ) containing the Tomcat 
+servlet container with the uPortal context preloaded. </p>
                </li>
                <li>
-               <p>
-                Ant 1.4.1 - a directory (
-               <tt>
-                  Ant_1-4-1
-               </tt>
-               ) containing
-               a distribution of the Jakart-Ant build tool.
-               </p>
+               
+<p> Ant 1-5 - a directory ( <tt> Ant_1-5</tt> ) containing a distribution of the 
+Jakart-Ant build tool. </p>
                </li>
                <li>
                <p>
@@ -406,7 +397,7 @@
                   <p>
                   Windows:
 <pre class="programlisting">
-./ant sql
+ant hsql
 </pre>
                   <p></p>
                   </li>
@@ -414,7 +405,7 @@
                   <p>
                   Unix:
 <pre class="programlisting">
-./ant.sh sql
+./ant.sh hsql
 </pre>
                   <p></p>
                   </li>
@@ -454,7 +445,7 @@
                   <p>
                   Windows:
 <pre class="programlisting">
-./ant tomcatstart
+ant tomcatstart
 </pre>
                   
                   
@@ -538,7 +529,7 @@
                   <p>
                   Windows:
    <pre class="programlisting">
-   ./ant tomcatstop
+   ant tomcatstop
    </pre>
                   <p></p>
                   </li>
@@ -687,9 +678,8 @@
                      </p>
                      </li>
                      <li>
-                     <p>
-                     The Jakarta-Ant build tool (version 1.4.1 or later).
-                     </p>
+                     
+<p> The Jakarta-Ant build tool (version 1.5 or later). </p>
                      </li>
                      <li>
                      <p>
@@ -751,18 +741,10 @@
                     <a name="uportal-tomcat"></a>
                     Setting up Tomcat
                     </h4>
-                   <p>
-                  Choose a directory location for tomcat and download the binaries zipfile. 
-                  Unzip the file to create the TOMCAT_HOME (for example: 
-                  <tt>
-                     /usr/loca/jakarta-tomcat-4_0_3
-                  </tt>
-                   on unix or 
-                  <tt>
-                     C:/Tomcat
-                  </tt>
-                  on windows.
-                  </p>
+                   
+<p> Choose a directory location for tomcat and download the binaries zipfile. 
+Unzip the file to create the TOMCAT_HOME (for example: <tt> /usr/loca/jakarta-tomcat-4_0_4</tt> 
+on unix or <tt> C:/Tomcat </tt> on windows. </p>
                
                <h4 class="title"> <a name="uportal-database"></a> Setting up A Database</h4>
                   
@@ -771,8 +753,14 @@
 				about databases can be found in the:</p>
 			<p><a href="database.html">Database Installation and Configuration Document</a></p>
 				
-        
+        <h4 class="title"> <a name="issues"></a> Issues and known problems</h4>
 
+        
+<p> Some people have encountered problems starting up uPortal on systems with 
+newer versions of the JDK. Typically it resultes in a NoClassDefFoundError exception. 
+The solution is to recompile uPortal with the JDK which resides on the system. 
+Go to the build directory (<code>uPortal_rel-2-0-2</code>) and type &quot;<code>ant 
+deploy</code>&quot; to recompile uPortal.</p>
    
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
 	
