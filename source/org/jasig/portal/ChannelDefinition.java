@@ -14,7 +14,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
