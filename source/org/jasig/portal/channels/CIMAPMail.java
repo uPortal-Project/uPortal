@@ -2548,6 +2548,10 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
     initialize(sUser, sPassword);
   }
   private void initialize (String username, String password) throws Exception, AuthenticationFailedException {
+    if (username == null && password == null) {
+      throw new AuthenticationFailedException ("");
+    }
+
     if (username == null || password == null) {
       throw new AuthenticationFailedException ("Invalid Username/Password");
     }
