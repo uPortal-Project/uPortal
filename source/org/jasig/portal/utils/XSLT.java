@@ -76,7 +76,8 @@ public class XSLT {
   // a modified XSLT stylesheet
   private static boolean cacheEnabled = false;
   private static final String mediaProps = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
-  private static Hashtable stylesheetRootCache = new Hashtable();
+  private static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
+  private static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
@@ -95,7 +96,7 @@ public class XSLT {
   public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
@@ -120,7 +121,7 @@ public class XSLT {
   public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
@@ -146,7 +147,7 @@ public class XSLT {
   public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
@@ -174,7 +175,7 @@ public class XSLT {
   public static void transform (String xml, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
@@ -296,7 +297,7 @@ public class XSLT {
   public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
@@ -321,7 +322,7 @@ public class XSLT {
   public static void transform (Document xmlDoc, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
@@ -347,7 +348,7 @@ public class XSLT {
   public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
@@ -372,7 +373,7 @@ public class XSLT {
   public static void transform (Document xmlDoc, URL sslUri, StringWriter out, Hashtable stylesheetParams, String stylesheetTitle, BrowserInfo browserInfo) throws SAXException, IOException, PortalException {
     XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
+    StylesheetSet set = getStylesheetSet(sslUri.toExternalForm());
     set.setMediaProps(mediaProps);
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, browserInfo));
@@ -630,7 +631,8 @@ public class XSLT {
    * This method caches compiled stylesheet objects, keyed by the stylesheet's URI.
    * @param stylesheetURI the URI of the XSLT stylesheet
    * @return the StlyesheetRoot object
-   * @exception SAXException, ResourceMissingException
+   * @throws SAXException
+   * @throws ResourceMissingException
    */
   public static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException {
     // First, check the cache...
@@ -648,6 +650,26 @@ public class XSLT {
   }
   
   /**
+   * This method caches compiled stylesheet set objects, keyed by the stylesheet list's URI.
+   * @param stylesheetListURI the URI of the XSLT stylesheet list file (.ssl)
+   * @return the StlyesheetSet object
+   * @throws PortalException
+   */
+  public static StylesheetSet getStylesheetSet (String stylesheetListURI) throws PortalException {
+    // First, check the cache...
+    StylesheetSet stylesheetSet = (StylesheetSet)stylesheetSetCache.get(stylesheetListURI);
+    if (stylesheetSet == null) {
+      // Get the StylesheetSet and cache it
+      stylesheetSet = new StylesheetSet(stylesheetListURI);
+      if (cacheEnabled) {
+        stylesheetSetCache.put(stylesheetListURI, stylesheetSet);
+        LogService.instance().log(LogService.INFO, "Caching StylesheetSet for: " + stylesheetListURI);
+      }
+    }
+    return  stylesheetSet;
+  }  
+  
+  /**
    * Returns a stylesheet URI.
    * @param sslUri the stylesheet list file URI
    * @param browserInfo the browser information
@@ -655,7 +677,7 @@ public class XSLT {
    * @throws org.jasig.portal.PortalException
    */
   public static String getStylesheetURI (String sslUri, BrowserInfo browserInfo) throws PortalException {
-    StylesheetSet set = new StylesheetSet(sslUri);
+    StylesheetSet set = getStylesheetSet(sslUri);
     String xslUri = set.getStylesheetURI(browserInfo);
     return  xslUri;
   }  
