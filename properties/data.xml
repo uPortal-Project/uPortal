@@ -2063,37 +2063,37 @@
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Guest layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>20</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Demo layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>9</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Admin layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>9</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_TITLE</name><value>Staff layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>7</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>LAYOUT_TITLE</name><value>Faculty layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>7</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
       </row>
       <row>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LAYOUT_TITLE</name><value>Student layout</value></column>
-        <column><name>INIT_STRUCT_ID</name><value>9</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
       </row>
     </rows>
   </table>
@@ -2104,11 +2104,11 @@
       <!-- Guest layout -->
       <!-- layout root node -->
       <row>
-        <column><name>STRUCT_ID</name><value>20</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Root folder</value></column>
         <column><name>TYPE</name><value>root</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
-        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>20</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
@@ -2116,7 +2116,7 @@
 
       <!-- Header -->
       <row>
-        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>20</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Header folder</value></column>
         <column><name>TYPE</name><value>header</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
@@ -2310,11 +2310,11 @@
       <!-- Demo Layout -->
       <!-- layout root node -->
       <row>
-        <column><name>STRUCT_ID</name><value>9</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Root folder</value></column>
         <column><name>TYPE</name><value>root</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
-        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>9</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
@@ -2322,7 +2322,7 @@
 
       <!-- Header -->
       <row>
-        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>9</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Header folder</value></column>
         <column><name>TYPE</name><value>header</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
@@ -2520,7 +2520,7 @@
             <column><name>LOCALE</name><value>en_US</value></column>
           </row>
 
-       <!-- CWebProxy Examples -->
+       <!-- ICC Demo -->
        <row>
         <column><name>STRUCT_ID</name><value>31</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>ICC Demo</value></column>
@@ -2584,14 +2584,15 @@
             <column><name>CHAN_ID</name><value>19</value></column>
             <column><name>LOCALE</name><value>en_US</value></column>
           </row>
+          
       <!-- Admin Layout -->
       <!-- layout root node -->
       <row>
-        <column><name>STRUCT_ID</name><value>9</value></column><column><name>USER_ID</name><value>7</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>7</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Root folder</value></column>
         <column><name>TYPE</name><value>root</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
-        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>9</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
@@ -2973,7 +2974,7 @@
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>9</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
         <column><name>NAME</name><value>Header folder</value></column>
@@ -2984,13 +2985,14 @@
         <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
+      <!-- Staff Layout -->
       <!-- layout root node -->
       <row>
-        <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>11</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>11</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Root folder</value></column>
         <column><name>TYPE</name><value>root</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
-        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>7</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
@@ -3044,7 +3046,7 @@
         <column><name>UNREMOVABLE</name><value>N</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
       </row>
-<!-- OKI -->
+
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
@@ -3124,7 +3126,7 @@
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>7</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
         <column><name>NAME</name><value>Header folder</value></column>
@@ -3135,13 +3137,14 @@
         <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
+      <!-- Faculty Layout -->
       <!-- layout root node -->
       <row>
-        <column><name>STRUCT_ID</name><value>7</value></column><column><name>USER_ID</name><value>12</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>12</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Root folder</value></column>
         <column><name>TYPE</name><value>root</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
-        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>7</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
@@ -3262,7 +3265,7 @@
       <row>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>7</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
         <column><name>NAME</name><value>Header folder</value></column>
@@ -3273,13 +3276,14 @@
         <column><name>LOCALE</name><value>en_US</value></column>
       </row>
 
+      <!-- Student Layout -->
       <!-- layout root node -->
       <row>
-        <column><name>STRUCT_ID</name><value>9</value></column><column><name>USER_ID</name><value>13</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>13</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Root folder</value></column>
         <column><name>TYPE</name><value>root</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
-        <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>9</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
@@ -3424,7 +3428,7 @@
       <row>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>9</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>4</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
         <column><name>NAME</name><value>Header folder</value></column>
