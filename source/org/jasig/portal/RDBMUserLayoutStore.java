@@ -1272,14 +1272,14 @@ public class RDBMUserLayoutStore
    * Get the roles that a channel belongs to
    * @param channelRoles
    * @param channelID
-   * @exception Exception
+   * @exception java.sql.SQLException
    */
-  public void getChannelRoles (Vector channelRoles, int channelID) throws Exception {
+  public void getChannelRoles (Vector channelRoles, int channelID) throws SQLException {
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
-        String query = "SELECT ROLE_TITLE, CHAN_ID FROM UP_ROLE_CHAN UCR, UP_ROLE UR, UP_CHANNEL UC " + "WHERE UC.CHAN_ID="
+        String query = "SELECT ROLE_TITLE, CHAN_ID FROM UP_ROLE_CHAN URC, UP_ROLE UR, UP_CHANNEL UC " + "WHERE UC.CHAN_ID="
             + channelID + " AND UC.CHAN_ID=URC.CHAN_ID AND URC.ROLE_ID=UR.ROLE_ID";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRoles(): " + query);
         ResultSet rs = stmt.executeQuery(query);
