@@ -1,5 +1,5 @@
 /**
- * Copyright Å© 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ?© 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,4 +53,13 @@ public class Constants
      * layout but are merged in via the fname functionality as needed.
      */
     public static final String FNAME_PARAM = "uP_fname";
+    
+    /**
+     * The request parameter name that can be appended to a baseActionURL along
+     * with its value, the locales to which the portal should assign priority.
+     * These locales will be a priority for the remainder of a user's session.
+     * The value of this parameter should be a comma-delimited list of locale
+     * codes.  For example, en_US,ja_JP,de_DE
+     */
+    public static final String LOCALES_PARAM = "uP_locales";
 }
