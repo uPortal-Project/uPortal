@@ -84,7 +84,7 @@ public class Logger extends GenericPortalBean
 
   private static final String fs = File.separator;
 
-  private static final String sLogRelativePath = "logs" + fs + "portal.log";
+  private static String sLogRelativePath = "logs";
 
   private static boolean bInitialized = false;
 
@@ -187,7 +187,36 @@ public class Logger extends GenericPortalBean
     {
       if(sPortalBaseDir != null && new File(sPortalBaseDir).exists())
       {
-        m_logFile = new PortalFileAppender(new PatternLayout("%-5p %-23d{ISO8601} %m%n"), sPortalBaseDir + sLogRelativePath);
+        PatternLayout patternLayout = new PatternLayout("%-5p %-23d{ISO8601} %m%n");
+        
+        // Make sure the relative path ends with a seperator
+        if(!sLogRelativePath.endsWith(File.separator))
+        {
+          sLogRelativePath = sLogRelativePath + File.separator;
+        }
+        
+        // Make sure the portal base directory path ends with a seperator
+        if(!sPortalBaseDir.endsWith(File.separator))
+        {
+          sPortalBaseDir = sPortalBaseDir + File.separator;
+        }
+        
+        // Create the log file directory path
+        String logFileDirectoryPath = sPortalBaseDir + sLogRelativePath;
+        
+        File logFileDirectory = new File(logFileDirectoryPath);
+        
+        // Make sure the log file directory exists
+        if(!logFileDirectory.exists())
+        {
+          if(!logFileDirectory.mkdir() || !logFileDirectory.exists() || !logFileDirectory.isDirectory())
+          {
+            System.out.println("Could not create log file directory!");
+          }
+        }
+        
+        // Create the file appender
+        m_logFile = new PortalFileAppender(patternLayout, logFileDirectoryPath + "portal.log");
 
         // Make sure to roll the logs to start fresh
         m_logFile.rollOver();
@@ -199,6 +228,10 @@ public class Logger extends GenericPortalBean
 
         // Insures that initialization is only done once
         bInitialized = true;
+      }
+      else
+      {
+        System.out.println("Logger.initialize(): PortalBaseDir is not set or does not exist!");
       }
     }
     catch(Exception e)
