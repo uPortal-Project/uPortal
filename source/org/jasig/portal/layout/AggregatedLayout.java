@@ -38,6 +38,8 @@ package org.jasig.portal.layout;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Vector;
 import java.util.Iterator;
 
@@ -313,10 +315,17 @@ public class AggregatedLayout implements IAggregatedLayout {
      /**
      * Returns a list of fragment Ids existing in the layout.
      *
-     * @return a <code>List</code> of <code>String</code> fragment Ids.
+     * @return a <code>Set</code> of <code>String</code> fragment Ids.
      * @exception PortalException if an error occurs
      */
-    public Enumeration getFragmentIds() throws PortalException {
+    public Set getFragmentIds() throws PortalException {
+      Set fragmentIds = new HashSet();
+      for ( Enumeration nodes = layout.elements(); nodes.hasMoreElements();) {
+         ALNode node = (ALNode) nodes.nextElement();
+         String fragmentId = node.getFragmentId();
+         if ( fragmentId != null && !fragmentIds.contains(fragmentId))
+          fragmentIds.add(fragmentId);
+      } 	
       return null;
     }
 
@@ -329,7 +338,7 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @exception PortalException if an error occurs
      */
     public String getFragmentId(String nodeId) throws PortalException {
-      return null;
+      return getNode(nodeId).getFragmentId();
     }
 
     /**
@@ -340,7 +349,12 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @exception PortalException if an error occurs
      */
     public String getFragmentRootId(String fragmentId) throws PortalException {
-       return null;
+	   ILayoutFragment fragment = layoutManager.getFragment(fragmentId);	
+	   if ( fragment != null && (fragment instanceof ALFragment)) {
+		 ALFolder rootFolder = (ALFolder) ((ALFragment)fragment).getNode(fragment.getRootId());
+		 return rootFolder.getFirstChildNodeId();	
+	   }
+	     throw new PortalException("Check that the fragment with ID="+fragmentId+" has "+ALFragment.class.getName()+" type and is not NULL!");
     }
 
 

@@ -37,7 +37,7 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Enumeration;
+import java.util.Set;
 import org.jasig.portal.PortalException;
 
 /**
@@ -63,10 +63,10 @@ public interface IAggregatedLayout extends IUserLayout {
     /**
      * Returns a list of fragment Ids existing in the layout.
      *
-     * @return a <code>List</code> of <code>String</code> fragment Ids.
+     * @return a <code>Set</code> of <code>String</code> fragment Ids.
      * @exception PortalException if an error occurs
      */
-    public Enumeration getFragmentIds() throws PortalException;
+    public Set getFragmentIds() throws PortalException;
 
     /**
      * Returns an fragment Id for a given node.

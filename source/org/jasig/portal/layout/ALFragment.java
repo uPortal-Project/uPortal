@@ -38,10 +38,12 @@
 package org.jasig.portal.layout;
 
 import org.jasig.portal.PortalException;
+import java.util.Set;
+import java.util.HashSet;
 
 
 /**
- * An interface representing the user layout fragment.
+ * The implementation of the user layout fragment.
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
@@ -135,5 +137,39 @@ public class ALFragment extends AggregatedLayout implements ILayoutFragment {
     public void setDescription( String description ) {
       this.description = description;	
     }
+    
+	/**
+		 * Returns a list of fragment Ids existing in the layout.
+		 *
+		 * @return a <code>Set</code> of <code>String</code> fragment Ids.
+		 * @exception PortalException if an error occurs
+		 */
+	public Set getFragmentIds() throws PortalException {
+		  Set set = new HashSet();
+		  set.add(getId());
+		  return set;
+	}
+
+		/**
+		 * Returns an fragment Id for a given node.
+		 * Returns null if the node is not part of any fragments.
+		 *
+		 * @param nodeId a <code>String</code> value
+		 * @return a <code>String</code> fragment Id
+		 * @exception PortalException if an error occurs
+		 */
+	public String getFragmentId(String nodeId) throws PortalException {
+		  return getId();
+	}
+
+		/**
+		 * Returns the fragment root Id.
+		 *
+		 * @return a <code>String</code> fragment root Id
+		 * @exception PortalException if an error occurs
+		 */
+	public String getFragmentRootId() throws PortalException {
+		  return getFragmentRootId(getId());
+	}
    
 }

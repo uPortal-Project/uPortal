@@ -35,6 +35,8 @@
 
 package org.jasig.portal.layout;
 
+import org.jasig.portal.PortalException;
+
 /**
  * An interface representing the user layout fragment.
  *
@@ -63,6 +65,14 @@ public interface ILayoutFragment extends IUserLayout {
 		 * @return an <code>String</code> fragment name
 		 */
 	public String getFunctionalName();
+	
+	/**
+			 * Returns the fragment root Id.
+			 *
+			 * @return a <code>String</code> fragment root Id
+			 * @exception PortalException if an error occurs
+			 */
+	public String getFragmentRootId() throws PortalException;
 	
 
 }

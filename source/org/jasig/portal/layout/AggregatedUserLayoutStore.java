@@ -2454,17 +2454,61 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
   }
 
 
+/**
+	 * Returns the layout fragment as a user layout
+	 * @param person an <code>IPerson</code> object specifying the user
+	 * @param fragmentId a fragment ID
+	 * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
+	 * @exception PortalException if an error occurs
+	 */
+ public ILayoutFragment getFragment (IPerson person, String fragmentId ) throws PortalException {
+	 int userId = person.getID();
+	 Connection con = RDBMServices.getConnection();
+	 boolean permitted = false;
+	 try {	
+		 String query = "SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId+ " AND OWNER_ID="+userId; 
+		 Statement stmt = con.createStatement();
+		 ResultSet rs = stmt.executeQuery(query);
+		 if ( rs.next() ) 
+		   permitted = true;
+		 rs.close();  
+		   
+		 if ( !permitted ) {  
+		   EntityIdentifier personIdentifier = person.getEntityIdentifier();
+		   IGroupMember groupPerson = GroupService.getGroupMember(personIdentifier);
+		   query = "SELECT GROUP_KEY FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId; 
+		   rs = stmt.executeQuery(query);
+		   while ( rs.next() ) {	
+			IEntityGroup group = GroupService.findGroup(rs.getString(1));
+		    if ( group != null && groupPerson.isDeepMemberOf(group) ) {
+		      permitted = true;
+		      break;	
+		    }			    
+		   } 
+		    rs.close(); 
+		 } 
+			if ( stmt != null ) stmt.close();
+	 } catch ( Exception e ) {
+			throw new PortalException(e);
+		} finally {
+			RDBMServices.releaseConnection(con);
+		  }	
+		  
+		if ( permitted )
+		  return getFragment(fragmentId);
+		  
+		throw new PortalException ( "The user with ID="+userId+" is not allowed to get the fragment with ID="+fragmentId);   
+		  
+  }
+
   /**
      * Returns the layout fragment as a user layout
-     * @param person an <code>IPerson</code> object specifying the user
      * @param fragmentIdStr a fragment ID
      * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
      * @exception PortalException if an error occurs
      */
- public ILayoutFragment getFragment (IPerson person, String fragmentIdStr ) throws PortalException {
-    int userId = person.getID();
+ protected ILayoutFragment getFragment (String fragmentIdStr ) throws PortalException {
     int fragmentId = CommonUtils.parseInt(fragmentIdStr);
-    int realUserId = userId;
     ResultSet rs;
 
     ALFragment layout = new ALFragment ( fragmentIdStr );
@@ -2491,7 +2535,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                       "WHERE FRAGMENT_ID=? AND NODE_ID=?";
 
         int firstStructId = -1;
-        String sQuery = "SELECT FRAGMENT_ROOT_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID=" + fragmentId + " AND OWNER_ID = " + userId;
+        String sQuery = "SELECT FRAGMENT_ROOT_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId;
         rs = stmt.executeQuery(sQuery);
         try {
           rs.next();
@@ -2528,11 +2572,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_OWNER_FRAGMENT UOF WHERE ";
         }
-        sqlFragment += " UF.FRAGMENT_ID=UOF.FRAGMENT_ID AND UOF.OWNER_ID=? AND UOF.FRAGMENT_ID=?";
+        sqlFragment += " UF.FRAGMENT_ID=UOF.FRAGMENT_ID AND UOF.FRAGMENT_ID=?";
         LogService.log(LogService.DEBUG, sqlFragment);
         PreparedStatement psFragment = con.prepareStatement(sqlFragment);
-        psFragment.setInt(1,userId);
-        psFragment.setInt(2,fragmentId);
+        psFragment.setInt(1,fragmentId);
 
 
         List chanIds = Collections.synchronizedList(new ArrayList());
@@ -2803,7 +2846,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           if ( stmt != null ) stmt.close();
 
           long stopTime = System.currentTimeMillis();
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getFragment(): Layout document for user " + userId + " took " +
+          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getFragment(): The fragment took " +
             (stopTime - startTime) + " milliseconds to create");
 
 
