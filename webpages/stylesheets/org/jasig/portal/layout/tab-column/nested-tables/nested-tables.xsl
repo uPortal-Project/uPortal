@@ -51,27 +51,38 @@
       <body>
         <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
-            <td>
+            <td valign="top">
               <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td height="100" valign="top">
                     <img alt="interface image" src="{$mediaPath}/{$skin}/uportal_logo.gif" border="0" />
                   </td>
 
-                  <td class="uportal-channel-subtitle" colspan="2" align="center" width="100%">Current skin: 
-                    <xsl:value-of select="$skin" />
-
-                    <br />
-
-                    Alternates: 
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=imm">imm,</a>
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=java">java,</a>
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=vsac">vsac,</a>
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=matrix">matrix,</a>
-                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=uosm">uosm</a>
+                  <td class="uportal-channel-subtitle" align="center" valign="top" width="10%">
+                    <u>Skins</u><br />
+                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=imm">
+                    <span><xsl:if test="$skin='imm'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
+                      IMM
+                    </span></a> |
+                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=java">
+                    <span><xsl:if test="$skin='java'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
+                      Java
+                    </span></a>
+                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=vsac">
+                    <span><xsl:if test="$skin='vsac'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
+                      VSAC
+                    </span></a> |
+                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=matrix">
+                    <span><xsl:if test="$skin='matrix'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
+                      Matrix
+                    </span></a><br/>
+                    <a href="{$baseActionURL}?uP_tparam=skin&amp;skin=uosm">
+                    <span><xsl:if test="$skin='uosm'"><xsl:attribute name="class">uportal-text-reversed</xsl:attribute></xsl:if>
+                      UOSM
+                    </span></a>
                   </td>
                 
-                  <td><xsl:apply-templates select="header"/></td>
+                  <xsl:apply-templates select="header"/>
                 
                 </tr>
               </table>
@@ -87,9 +98,10 @@
   </xsl:template>
 
   <xsl:template match="header">
-    <!-- this, obviously, is not a good way of incorporating header channels.  Please rewrite -->
     <xsl:for-each select="channel">
-      <xsl:copy-of select="."/>
+      <td align="center">
+        <xsl:copy-of select="."/>
+      </td>
     </xsl:for-each>
   </xsl:template>
 
