@@ -81,6 +81,8 @@ public class PortletStateManager {
     public static String PREV_STATE = "pstate";
     public static final String STATE = "state";
 	
+    public static final String UP_PARAM_PREFIX = "uP_";
+    
 	public static final String UP_ROOT = "uP_root";
 	public static final String UP_TCATTR = "uP_tcattr";
 	public static final String UP_HELP_TARGET = "uP_help_target";
