@@ -5,8 +5,8 @@
   ID ID #REQUIRED
   type (header|footer|regular) "regular"
   hidden (true|false) "false"
-  removable (true|false) "true"
-  immutable (true|false) "true"
+  unremovable (true|false) "false"
+  immutable (true|false) "false"
   name CDATA #IMPLIED>
 
 
