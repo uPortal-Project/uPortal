@@ -97,6 +97,10 @@ public class AggregatedLayout implements IAggregatedLayout {
       }
   }
 
+  public void setLayoutManager ( IAggregatedUserLayoutManager layoutManager ) {
+    this.layoutManager = layoutManager;
+  }
+
   public void setLayoutData ( Hashtable layout ) throws PortalException {
     this.layout = layout;
   }
@@ -131,7 +135,7 @@ public class AggregatedLayout implements IAggregatedLayout {
       }
   }
 
-  private ALNode getLayoutNode(String nodeId) {
+  public ALNode getLayoutNode(String nodeId) {
      try {
         return (ALNode)layout.get(nodeId);
      } catch ( Exception e ) {
@@ -139,7 +143,7 @@ public class AggregatedLayout implements IAggregatedLayout {
        }
   }
 
-  private ALFolder getLayoutFolder(String folderId) {
+  public ALFolder getLayoutFolder(String folderId) {
      try {
         return (ALFolder)layout.get(folderId);
      } catch (Exception e ) {
@@ -147,7 +151,7 @@ public class AggregatedLayout implements IAggregatedLayout {
        }
   }
 
-  private ALNode getLastSiblingNode ( String nodeId ) {
+  public ALNode getLastSiblingNode ( String nodeId ) {
      ALNode node = null;
      for ( String nextId = nodeId; nextId != null; ) {
        node = getLayoutNode(nextId);
@@ -156,7 +160,7 @@ public class AggregatedLayout implements IAggregatedLayout {
        return node;
   }
 
-  private ALNode getFirstSiblingNode ( String nodeId ) {
+  public ALNode getFirstSiblingNode ( String nodeId ) {
      ALNode node = null;
      for ( String prevId = nodeId; prevId != null; ) {
        node = getLayoutNode(prevId);
@@ -247,8 +251,9 @@ public class AggregatedLayout implements IAggregatedLayout {
 
 
             if ( layoutManager != null && parentId != null && layoutNode.getPreviousNodeId() == null ) {
-             if ( !layoutNode.getNodeDescription().isHidden() && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
-              String moveTargetsNodeId = layoutManager.getNodeBeingMoved().getId();
+             if ( !nodeDesc.isHidden() && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
+              IALNodeDescription moveTargetsNodeDesc = layoutManager.getNodeBeingMoved();
+              String moveTargetsNodeId = ( moveTargetsNodeDesc != null ) ? moveTargetsNodeDesc.getId() : null;
               IALNodeDescription addTargetsNodeDesc = layoutManager.getNodeBeingAdded();
               if ( addTargetsNodeDesc != null && layoutManager.canAddNode(addTargetsNodeDesc,parentId,nodeId) )
                createMarkingLeaf(domLayout,ADD_TARGET,parentId,nodeId,node);
@@ -270,7 +275,8 @@ public class AggregatedLayout implements IAggregatedLayout {
               isNodeMarkable = true;
 
             if ( layoutManager != null && isNodeMarkable && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
-              String moveTargetsNodeId = layoutManager.getNodeBeingMoved().getId();
+              IALNodeDescription moveTargetsNodeDesc = layoutManager.getNodeBeingMoved();
+              String moveTargetsNodeId = ( moveTargetsNodeDesc != null ) ? moveTargetsNodeDesc.getId() : null;
               IALNodeDescription addTargetsNodeDesc = layoutManager.getNodeBeingAdded();
              if ( addTargetsNodeDesc != null && layoutManager.canAddNode(addTargetsNodeDesc,parentId,nextId) )
                createMarkingLeaf(domLayout,ADD_TARGET,parentId,nextId,node);
@@ -394,12 +400,11 @@ public class AggregatedLayout implements IAggregatedLayout {
              String firstChildId = folder.getFirstChildNodeId();
                for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
 
-
-
                  // if necessary we add marking nodes
                  if ( layoutManager != null ) {
                   if ( !node.getNodeDescription().isHidden() && !getLayoutNode(nextNodeId).getNodeDescription().isHidden() ) {
-                    String moveTargetsNodeId = layoutManager.getNodeBeingMoved().getId();
+                    IALNodeDescription nodeDesc = layoutManager.getNodeBeingMoved();
+                    String moveTargetsNodeId = ( nodeDesc != null ) ? nodeDesc.getId() : null;
                     IALNodeDescription addTargetsNodeDesc = layoutManager.getNodeBeingAdded();
                     if ( addTargetsNodeDesc != null && layoutManager.canAddNode(addTargetsNodeDesc,nodeId,nextNodeId) )
                      createMarkingLeaf(contentHandler,ADD_TARGET,nodeId,nextNodeId);
@@ -415,7 +420,8 @@ public class AggregatedLayout implements IAggregatedLayout {
 
                   // if necessary we add marking nodes to the end of the sibling line
                   if ( layoutManager != null && !node.getNodeDescription().isHidden() ) {
-                   String moveTargetsNodeId = layoutManager.getNodeBeingMoved().getId();
+                   IALNodeDescription nodeDesc = layoutManager.getNodeBeingMoved();
+                   String moveTargetsNodeId = ( nodeDesc != null ) ? nodeDesc.getId() : null;
                    IALNodeDescription addTargetsNodeDesc = layoutManager.getNodeBeingAdded();
                    if ( addTargetsNodeDesc != null && layoutManager.canAddNode(addTargetsNodeDesc,nodeId,null) )
                     createMarkingLeaf(contentHandler,ADD_TARGET,nodeId,null);

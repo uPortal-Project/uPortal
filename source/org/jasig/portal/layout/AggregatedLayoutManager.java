@@ -64,6 +64,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.GuidGenerator;
+import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -78,10 +79,9 @@ import org.xml.sax.helpers.AttributesImpl;
 public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
   private IAggregatedUserLayoutStore layoutStore;
-  private Hashtable layout;
+  private AggregatedLayout layout;
   private UserProfile userProfile;
   private static final String lostFolderId = IALFolderDescription.LOST_FOLDER_ID;
-  private static final String rootNodeId= IALFolderDescription.ROOT_FOLDER_ID;
   private IPerson person;
 
   // Boolean flags for marking nodes
@@ -92,17 +92,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   private String moveTargetsNodeId;
   private int restrictionMask = 0;
   private boolean autoCommit = false;
-
-  // the tag names constants
-  private static final String LAYOUT = "layout";
-  private static final String LAYOUT_FRAGMENT = "layout_fragment";
-  private static final String FOLDER = "folder";
-  private static final String CHANNEL = "channel";
-  private static final String PARAMETER = "parameter";
-  private static final String RESTRICTION = "restriction";
-  // The names for marking nodes
-  private static final String ADD_TARGET = "add_target";
-  private static final String MOVE_TARGET = "move_target";
 
   // The ID of the current loaded fragment
   private String fragmentId;
@@ -119,7 +108,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   public AggregatedLayoutManager( IPerson person, UserProfile userProfile ) throws Exception {
     this.person = person;
     this.userProfile = userProfile;
-    layout = new Hashtable();
+    layout = new AggregatedLayout ( String.valueOf(getLayoutId()), this );
     autoCommit = false;
     if ( guid == null )
       guid = new GuidGenerator();
@@ -163,13 +152,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     }
 
   /**
-     * Sets the internal representation of the UserLayout.
+     * Sets the AggregatedLayout object.
      * The user layout root node always has ID="root"
      * @param layout a <code>Hashtable</code> object containing the UserLayout data
      * @exception PortalException if an error occurs
      */
-  public void setUserLayout(Hashtable layout) throws PortalException {
-    this.layout = layout;
+  public void setUserLayout(IAggregatedLayout layout) throws PortalException {
+    if ( !(layout instanceof AggregatedLayout) )
+     throw new PortalException ( "The user layout instance must have AggregatedLayout type!" );
+    this.layout = (AggregatedLayout) layout;
     updateCacheKey();
   }
 
@@ -188,31 +179,20 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getParentId(String nodeId) throws PortalException {
-    ALNode node = getLayoutNode(nodeId);
-    if ( node != null )
-      return node.getParentNodeId();
-    throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+    return layout.getParentId(nodeId);
   }
 
 
-  /**
-     * Returns the list of child node Ids for a given node.
+    /**
+     * Returns a list of child node Ids for a given node.
      *
      * @param nodeId a <code>String</code> value
-     * @return a <code>List</code> of <code>String</code> child node Ids.
+     * @return a <code>Enumeration</code> of <code>String</code> child node Ids.
      * @exception PortalException if an error occurs
      */
-  public List getChildIds(String nodeId) throws PortalException {
-    //return getLayoutFolder(nodeId).getChildNodes();
-    List childIds = Collections.synchronizedList(new LinkedList());
-    String firstChildId = getLayoutFolder(nodeId).getFirstChildNodeId();
-    for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
-      childIds.add(nextNodeId);
-      nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
+    public Enumeration getChildIds(String nodeId) throws PortalException {
+      return layout.getChildIds(nodeId);
     }
-    return childIds;
-  }
-
 
 
   /**
@@ -223,10 +203,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getPreviousSiblingId(String nodeId) throws PortalException {
-    ALNode node = getLayoutNode(nodeId);
-    if ( node != null )
-      return node.getPreviousNodeId();
-    throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+    return layout.getPreviousSiblingId(nodeId);
   }
 
 
@@ -238,10 +215,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getNextSiblingId(String nodeId) throws PortalException {
-    ALNode node = getLayoutNode(nodeId);
-    if ( node != null )
-      return node.getNextNodeId();
-    throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+    return layout.getNextSiblingId(nodeId);
   }
 
 
@@ -294,7 +268,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected void moveWrongNodesToLostFolder() throws PortalException {
-    moveWrongNodesToLostFolder(rootNodeId,0);
+    moveWrongNodesToLostFolder(getRootFolderId(),0);
   }
 
    /**
@@ -886,70 +860,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public void getUserLayout(ContentHandler contentHandler) throws PortalException {
-    getUserLayout(rootNodeId,contentHandler);
-  }
-
-  private void createMarkingLeaf(ContentHandler contentHandler, String leafName, String parentNodeId, String nextNodeId) throws PortalException {
-     try {
-      AttributesImpl attributes = new AttributesImpl();
-      attributes.addAttribute("","parentID","parentID","CDATA",parentNodeId);
-      attributes.addAttribute("","nextID","nextID","CDATA",CommonUtils.nvl(nextNodeId));
-      contentHandler.startElement("",leafName,leafName,attributes);
-      contentHandler.endElement("",leafName,leafName);
-     } catch ( SAXException saxe ) {
-         throw new PortalException(saxe.getMessage());
-       }
+    layout.writeTo(contentHandler);
   }
 
 
-   private void createMarkingLeaf(Document document, String leafName, String parentNodeId, String nextNodeId, Node node) throws PortalException {
-     try {
-      Element markingLeaf = document.createElement(leafName);
-      markingLeaf.setAttribute("parentID",parentNodeId);
-      markingLeaf.setAttribute("nextID",nextNodeId);
-      node.appendChild(markingLeaf);
-     } catch ( Exception saxe ) {
-         throw new PortalException(saxe.getMessage());
-       }
-   }
-
-
-   private void createFragmentList(Document document, Node rootNode) throws PortalException {
-     try {
-      Element alternateLayouts = document.createElement("alternateLayouts");
-      if ( fragments != null ) {
-       for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
-        Element alternate = document.createElement("alternate");
-        String key = (String) fragEnum.nextElement();
-        alternate.setAttribute("ID",key);
-        alternate.setAttribute("name",(String) fragments.get(key));
-        alternateLayouts.appendChild(alternate);
-       }
-      }
-        rootNode.appendChild(alternateLayouts);
-     } catch ( Exception saxe ) {
-         throw new PortalException(saxe.getMessage());
-       }
-   }
-
-  private void createFragmentList(ContentHandler contentHandler) throws PortalException {
-     try {
-       contentHandler.startElement("","alternateLayouts","alternateLayouts",new AttributesImpl());
-      if ( fragments != null ) {
-       for ( Enumeration fragEnum = fragments.keys(); fragEnum.hasMoreElements(); ) {
-        AttributesImpl attributes = new AttributesImpl();
-        String key = (String) fragEnum.nextElement();
-        attributes.addAttribute("","ID","ID","CDATA",key);
-        attributes.addAttribute("","name","name","CDATA",(String) fragments.get(key));
-        contentHandler.startElement("","alternate","alternate",attributes);
-        contentHandler.endElement("","alternate","alternate");
-       }
-      }
-       contentHandler.endElement("","alternateLayouts","alternateLayouts");
-     } catch ( SAXException saxe ) {
-         throw new PortalException(saxe.getMessage());
-       }
-  }
 
   /**
      * Output subtree of a user layout (with appropriate markings) defined by a particular node into
@@ -960,284 +874,38 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public void getUserLayout(String nodeId, ContentHandler contentHandler) throws PortalException {
-
-    IALFolderDescription folderDescription = null;
-    IALChannelDescription channelDescription = null;
-
-    if ( contentHandler != null && nodeId != null ) {
-      try {
-
-         ALNode node = getLayoutNode(nodeId);
-         AttributesImpl attributes = new AttributesImpl();
-
-         // If we have a folder
-         if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-
-           // Start document if we have the root node
-           if (nodeId.equals(rootNodeId)) contentHandler.startDocument();
-
-           if (nodeId.equals(rootNodeId)) {
-              contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
-              // Create a fragment list that the user owns
-              createFragmentList(contentHandler);
-           }
-
-             ALFolder folder = (ALFolder) node;
-             folderDescription = (IALFolderDescription) node.getNodeDescription();
-             attributes.addAttribute("","ID","ID","ID",nodeId);
-             attributes.addAttribute("","type","type","CDATA",
-                        IUserLayoutFolderDescription.folderTypeNames[folderDescription.getFolderType()]);
-             attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(folderDescription.isHidden()));
-             attributes.addAttribute("","unremovable","unremovable","CDATA",CommonUtils.boolToStr(folderDescription.isUnremovable()));
-             attributes.addAttribute("","immutable","immutable","CDATA",CommonUtils.boolToStr(folderDescription.isImmutable()));
-             attributes.addAttribute("","name","name","CDATA",folderDescription.getName());
-
-             //String tagName = (nodeId.equals(rootNodeId))?LAYOUT:FOLDER;
-
-             contentHandler.startElement("",FOLDER,FOLDER,attributes);
-
-
-             // Loop for all children
-             String firstChildId = folder.getFirstChildNodeId();
-               for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
-
-                 // if necessary we add marking nodes
-                 if ( !node.getNodeDescription().isHidden() && !getLayoutNode(nextNodeId).getNodeDescription().isHidden() ) {
-                  if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,nodeId,nextNodeId) )
-                    createMarkingLeaf(contentHandler,ADD_TARGET,nodeId,nextNodeId);
-                   if ( moveTargetsNodeId != null && !moveTargetsNodeId.equals(nextNodeId) && canMoveNode(moveTargetsNodeId,nodeId,nextNodeId) )
-                    createMarkingLeaf(contentHandler,MOVE_TARGET,nodeId,nextNodeId);
-                 }
-
-                // !!!!!!!!!!!
-                getUserLayout(nextNodeId,contentHandler);
-                nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
-               }
-
-                 // if necessary we add marking nodes at the end of the sibling line
-                 if ( !node.getNodeDescription().isHidden() ) {
-                  if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,nodeId,null) )
-                    createMarkingLeaf(contentHandler,ADD_TARGET,nodeId,null);
-                  if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,nodeId,null) )
-                    createMarkingLeaf(contentHandler,MOVE_TARGET,nodeId,null);
-                 }
-
-             // Putting restrictions to the content handler
-              if ( restrictionMask > 0 )
-                bindRestrictions(folderDescription,contentHandler);
-
-             contentHandler.endElement("",FOLDER,FOLDER);
-
-            // Start document if we have the root node
-            if (nodeId.equals(rootNodeId)) contentHandler.endElement("",LAYOUT,LAYOUT);
-            if (nodeId.equals(rootNodeId)) contentHandler.endDocument();
-
-
-
-          // If we have a channel
-         } else {
-
-              channelDescription = (IALChannelDescription) node.getNodeDescription();
-
-              attributes.addAttribute("","ID","ID","ID",nodeId);
-              attributes.addAttribute("","typeID","typeID","CDATA",channelDescription.getChannelTypeId());
-              attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(channelDescription.isHidden()));
-              attributes.addAttribute("","editable","editable","CDATA",CommonUtils.boolToStr(channelDescription.isEditable()));
-              attributes.addAttribute("","unremovable","unremovable","CDATA",CommonUtils.boolToStr(channelDescription.isUnremovable()));
-              attributes.addAttribute("","immutable","immutable","CDATA",CommonUtils.boolToStr(channelDescription.isImmutable()));
-              attributes.addAttribute("","name","name","CDATA",channelDescription.getName());
-              attributes.addAttribute("","description","description","CDATA",channelDescription.getDescription());
-              attributes.addAttribute("","title","title","CDATA",channelDescription.getTitle());
-              attributes.addAttribute("","class","class","CDATA",channelDescription.getClassName());
-              attributes.addAttribute("","chanID","chanID","CDATA",channelDescription.getChannelPublishId());
-              attributes.addAttribute("","fname","fname","CDATA",channelDescription.getFunctionalName());
-              attributes.addAttribute("","timeout","timeout","CDATA",String.valueOf(channelDescription.getTimeout()));
-              attributes.addAttribute("","hasHelp","hasHelp","CDATA",CommonUtils.boolToStr(channelDescription.hasHelp()));
-              attributes.addAttribute("","hasAbout","hasAbout","CDATA",CommonUtils.boolToStr(channelDescription.hasAbout()));
-              attributes.addAttribute("","secure","secure","CDATA",CommonUtils.boolToStr(channelDescription.isSecure()));
-
-              contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
-
-              if ( channelDescription.hasParameters() ) {
-                Enumeration paramNames = channelDescription.getParameterNames();
-                while ( paramNames.hasMoreElements() ) {
-                  String name = (String) paramNames.nextElement();
-                  String value = channelDescription.getParameterValue(name);
-                  AttributesImpl paramAttrs = new AttributesImpl();
-                  paramAttrs.addAttribute("","name","name","CDATA",name);
-                  paramAttrs.addAttribute("","value","value","CDATA",value);
-                  paramAttrs.addAttribute("","override","override","CDATA",
-                             channelDescription.canOverrideParameter(name)?"yes":"no");
-                  contentHandler.startElement("",PARAMETER,PARAMETER,paramAttrs);
-                  contentHandler.endElement("",PARAMETER,PARAMETER);
-                }
-
-              }
-
-              // Putting restrictions to the content handler
-              if ( restrictionMask > 0 )
-                bindRestrictions(channelDescription,contentHandler);
-
-              contentHandler.endElement("",CHANNEL,CHANNEL);
-
-         }
-
-      } catch ( SAXException saxe ) {
-         throw new PortalException(saxe.getMessage());
-        }
-
-    }
-
+     layout.writeTo(nodeId,contentHandler);
   }
 
-    private void bindRestrictions( IALNodeDescription nodeDesc, ContentHandler contentHandler ) throws SAXException {
-      Hashtable restrictions = nodeDesc.getRestrictions();
-      for ( Enumeration e = restrictions.keys(); e.hasMoreElements(); ) {
-       IUserLayoutRestriction restriction = (IUserLayoutRestriction ) e.nextElement();
-       if ( ( restriction.getRestrictionType() & restrictionMask ) > 0 ) {
-         AttributesImpl paramAttrs = new AttributesImpl();
-         paramAttrs.addAttribute("","path","path","CDATA",restriction.getRestrictionPath());
-         // we have to re-scale the priority restriction for the UI
-         if ( ( restriction.getRestrictionType() & RestrictionTypes.PRIORITY_RESTRICTION ) > 0 ) {
-          PriorityRestriction priorRestriction = (PriorityRestriction) restriction;
-          paramAttrs.addAttribute("","value","value","CDATA",((int)priorRestriction.getMinValue()/PRIORITY_COEFF)+"-"+
-                                                             ((int)priorRestriction.getMaxValue()/PRIORITY_COEFF));
-         } else
-          paramAttrs.addAttribute("","value","value","CDATA",restriction.getRestrictionExpression());
-
-         paramAttrs.addAttribute("","type","type","CDATA",restriction.getRestrictionType()+"");
-         contentHandler.startElement("",RESTRICTION,RESTRICTION,paramAttrs);
-         contentHandler.endElement("",RESTRICTION,RESTRICTION);
-       }
-      }
-    }
 
     private ALNode getLayoutNode(String nodeId) {
-     try {
-        return (ALNode)layout.get(nodeId);
-     } catch ( Exception e ) {
-        return null;
-       }
+     return layout.getLayoutNode(nodeId);
     }
 
     private ALFolder getLayoutFolder(String folderId) {
-     try {
-        return (ALFolder)layout.get(folderId);
-     } catch (Exception e ) {
-        return null;
-       }
+     return layout.getLayoutFolder(folderId);
     }
 
     private ALNode getLastSiblingNode ( String nodeId ) {
-     ALNode node = null;
-     for ( String nextId = nodeId; nextId != null; ) {
-       node = getLayoutNode(nextId);
-       nextId = node.getNextNodeId();
-     }
-       return node;
+     return layout.getLastSiblingNode(nodeId);
     }
 
     private ALNode getFirstSiblingNode ( String nodeId ) {
-     ALNode node = null;
-     for ( String prevId = nodeId; prevId != null; ) {
-       node = getLayoutNode(prevId);
-       prevId = node.getPreviousNodeId();
-     }
-       return node;
+     return layout.getFirstSiblingNode(nodeId);
     }
 
 
-    /**
-     * Build the DOM consistent of folders and channels using the internal representation
-     * @param domLayout a <code>Document</code> a user layout document.
-     * @param node a <code>Element</code> a node that will be used as a root for the tree construction
-     * @param nodeId a <code>String</code> a nodeId from the user layout internal representation
-     * @exception PortalException if an error occurs
-     */
-    private void appendDescendants(Document domLayout,Node node, String nodeId) throws PortalException {
-          ALNode layoutNode = getLayoutNode(nodeId);
-          IALNodeDescription nodeDesc = layoutNode.getNodeDescription();
-          Element markingMoveLeaf = null, markingAddLeaf = null;
-
-          Element newNode = domLayout.createElement((layoutNode.getNodeType()==IUserLayoutNodeDescription.FOLDER)?FOLDER:CHANNEL);
-
-          layoutNode.addNodeAttributes(newNode);
-
-          String parentId = layoutNode.getParentNodeId();
-          String nextId = layoutNode.getNextNodeId();
-
-           // If the node is the first node in the sibling line
-
-            if ( parentId != null && layoutNode.getPreviousNodeId() == null ) {
-             if ( !layoutNode.getNodeDescription().isHidden() && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
-              if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,parentId,nodeId) )
-               createMarkingLeaf(domLayout,ADD_TARGET,parentId,nodeId,node);
-
-              if ( moveTargetsNodeId != null && canMoveNode(moveTargetsNodeId,parentId,nodeId) )
-               createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nodeId,node);
-             }
-            }
-
-          // Appending a new node
-          node.appendChild(newNode);
-
-          if ( parentId != null ) {
-
-            boolean isNodeMarkable = false;
-            if ( nextId != null && !getLayoutNode(nextId).getNodeDescription().isHidden() )
-              isNodeMarkable = true;
-            else if ( nextId == null )
-              isNodeMarkable = true;
-
-            if ( isNodeMarkable && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
-
-             if ( addTargetsNodeDesc != null && canAddNode(addTargetsNodeDesc,parentId,nextId) )
-               createMarkingLeaf(domLayout,ADD_TARGET,parentId,nextId,node);
-
-             if ( moveTargetsNodeId != null && !moveTargetsNodeId.equals(nextId) && canMoveNode(moveTargetsNodeId,parentId,nextId) )
-               createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nextId,node);
-
-            }
-          }
-
-
-          // Adding restrictions to the node
-          nodeDesc.addRestrictionChildren(newNode,domLayout);
-          if ( layoutNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-           // Loop for all children
-           String firstChildId = ((ALFolder)layoutNode).getFirstChildNodeId();
-            for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
-             // !!!!!!!!!!!
-             appendDescendants(domLayout,newNode,nextNodeId);
-             nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
-            }
-          } else if ( layoutNode.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
-              ALChannelDescription channelDesc = (ALChannelDescription) nodeDesc;
-              // Adding channel parameters
-              channelDesc.addParameterChildren(newNode,domLayout);
-            }
-    }
 
 
     public Document getUserLayoutDOM() throws PortalException {
-      try {
-        Document domLayout = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        Element layoutNode = domLayout.createElement(LAYOUT);
-        domLayout.appendChild(layoutNode);
-        // Create a fragment list which the user owns
-        createFragmentList(domLayout,layoutNode);
-        // Build the DOM
-        appendDescendants(domLayout,layoutNode,rootNodeId);
-        return domLayout;
-      } catch ( Exception e ) {
-          e.printStackTrace();
-          throw new PortalException ("Couldn't create the DOM representation: " + e );
-        }
+      Document document = DocumentFactory.getNewDocument();
+      layout.writeTo(document);
+      return document;
     }
 
 
 
-    private void setUserLayoutDOM( Node n, String parentNodeId ) throws PortalException {
+    private void setUserLayoutDOM( Node n, String parentNodeId, Hashtable layoutData ) throws PortalException {
 
       Element node = (Element) n;
 
@@ -1267,7 +935,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
           Node childNode = childNodes.item(i);
           String nodeName = childNode.getNodeName();
           NamedNodeMap attributes = childNode.getAttributes();
-          if ( PARAMETER.equals(nodeName) && channelDesc != null ) {
+          if ( IAggregatedLayout.PARAMETER.equals(nodeName) && channelDesc != null ) {
            Node paramNameNode = attributes.getNamedItem("name");
            String paramName = (paramNameNode!=null)?paramNameNode.getFirstChild().getNodeValue():null;
            Node paramValueNode = attributes.getNamedItem("value");
@@ -1279,7 +947,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             channelDesc.setParameterValue(paramName, paramValue);
             channelDesc.setParameterOverride(paramName, "yes".equalsIgnoreCase(overParam)?true:false);
            }
-          } else if ( RESTRICTION.equals(nodeName) ) {
+          } else if ( IAggregatedLayout.RESTRICTION.equals(nodeName) ) {
              Node restrPathNode = attributes.getNamedItem("path");
              String restrPath = (restrPathNode!=null)?restrPathNode.getFirstChild().getNodeValue():null;
              Node restrValueNode = attributes.getNamedItem("value");
@@ -1340,32 +1008,34 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
           }
 
           // Putting the LayoutNode object into the layout
-          layout.put(nodeDesc.getId(), layoutNode);
+          layoutData.put(nodeDesc.getId(), layoutNode);
 
           // Recurrence for all children
           for ( int i = 0; i < childNodes.getLength() && (layoutNode.getNodeType()==IUserLayoutNodeDescription.FOLDER); i++ ) {
             Element childNode = (Element) childNodes.item(i);
             if ( isNodeFolderOrChannel ( childNode ) )
-             setUserLayoutDOM ( childNode, nodeDesc.getId() );
+             setUserLayoutDOM ( childNode, nodeDesc.getId(), layoutData );
           }
 
     }
 
     public void setUserLayoutDOM( Document domLayout ) throws PortalException {
-      layout.clear();
+      Hashtable layoutData = new Hashtable();
+      String rootId = getRootFolderId();
       Element rootNode = (Element) domLayout.getDocumentElement().getFirstChild();
       ALFolder rootFolder = new ALFolder((IALFolderDescription)ALNode.createUserLayoutNodeDescription(rootNode));
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID"));
-      layout.put(rootNodeId,rootFolder);
+      layoutData.put(rootId,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
       for ( int i = 0; i < childNodes.getLength(); i++ )
-       setUserLayoutDOM ( childNodes.item(i), rootNodeId );
+       setUserLayoutDOM ( childNodes.item(i), rootId, layoutData );
+      layout.setLayoutData(layoutData);
       updateCacheKey();
     }
 
     private boolean isNodeFolderOrChannel ( Element node ) {
       String nodeName = node.getNodeName();
-      return ( FOLDER.equals(nodeName) || CHANNEL.equals(nodeName) );
+      return ( IAggregatedLayout.FOLDER.equals(nodeName) || IAggregatedLayout.CHANNEL.equals(nodeName) );
     }
 
     public void setLayoutStore(IUserLayoutStore layoutStore ) {
@@ -1377,7 +1047,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      try {
       if ( layoutStore != null ) {
        fragmentId = null;
-       layout = ((AggregatedLayout)layoutStore.getAggregatedLayout(person,userProfile)).getLayoutData();
+       layout = (AggregatedLayout) layoutStore.getAggregatedLayout(person,userProfile);
+       layout.setLayoutManager(this);
        fragments = (Hashtable) layoutStore.getFragments(person);
        // Checking restrictions and move "wrong" nodes to the lost folder
        moveWrongNodesToLostFolder();
@@ -1391,9 +1062,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     public void saveUserLayout() throws PortalException {
       try {
         if ( !isLayoutFragment() ) {
-         AggregatedLayout layoutImpl = new AggregatedLayout(userProfile.getLayoutId()+"");
-         layoutImpl.setLayoutData(layout);
-         layoutStore.setAggregatedLayout(person,userProfile,layoutImpl);
+         layoutStore.setAggregatedLayout(person,userProfile,layout);
         }
          updateCacheKey();
       } catch ( Exception e ) {
@@ -1406,11 +1075,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         if ( fragmentId.equals(NEW_FRAGMENT) ) {
          // Creating an empty layout with a root folder
-         layout = new Hashtable();
+         layout = new AggregatedLayout(String.valueOf(getLayoutId()),this);
          ALNode rootFolder = ALFolder.createRootFolder();
-         layout.put(rootNodeId,rootFolder);
-        } else
-           layout = ((AggregatedLayout)layoutStore.getFragment(person,fragmentId)).getLayoutData();
+         Hashtable layoutData = new Hashtable();
+         layoutData.put(getRootFolderId(),rootFolder);
+         layout.setLayoutData(layoutData);
+        } else {
+           layout = (AggregatedLayout) layoutStore.getFragment(person,fragmentId);
+           layout.setLayoutManager(this);
+          }
 
         fragments = (Hashtable) layoutStore.getFragments(person);
         this.fragmentId = fragmentId;
@@ -1424,9 +1097,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     public void saveFragment() throws PortalException {
       try {
        if ( isLayoutFragment() ) {
-        AggregatedLayout layoutImpl = new AggregatedLayout(userProfile.getLayoutId()+"");
-        layoutImpl.setLayoutData(layout);
-        layoutStore.setFragment(person,fragmentId,layoutImpl);
+        layoutStore.setFragment(person,fragmentId,layout);
        }
         updateCacheKey();
       } catch ( Exception e ) {
@@ -1439,10 +1110,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     }
 
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
-        ALNode node = getLayoutNode(nodeId);
-        if ( node != null )
-          return node.getNodeDescription();
-        throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+      return layout.getNodeDescription(nodeId);
     }
 
 
@@ -1577,7 +1245,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
          result = layoutStore.deleteUserLayoutNode(person,userProfile,node);
 
        // Deleting the nodefrom the hashtable and returning the result value
-       result = (layout.remove(nodeId)!=null) && ((autoCommit)?result:true);
+       result = (layout.getLayoutData().remove(nodeId)!=null) && ((autoCommit)?result:true);
 
        updateCacheKey();
        return result;
@@ -1618,7 +1286,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         String nodeId = layoutNode.getId();
 
         // Putting the new node into the hashtable
-        layout.put(nodeId,layoutNode);
+        layout.getLayoutData().put(nodeId,layoutNode);
 
 
         if ( prevNode != null ) prevNode.setNextNodeId(nodeId);
@@ -1869,7 +1537,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public IALNodeDescription getNodeBeingMoved() throws PortalException {
-      return getLayoutNode(moveTargetsNodeId).getNodeDescription();
+      ALNode node = getLayoutNode(moveTargetsNodeId);
+      return (node != null ) ? node.getNodeDescription() : null;
     }
 
 
@@ -1906,7 +1575,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @return a <code>String</code> value
      */
     public String getRootFolderId() {
-        return rootNodeId;
+        return layout.getRootId();
     }
 
     /**
@@ -1914,17 +1583,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @param fname  the functional name to lookup.
      * @return a <code>String</code> subscription id.
      */
-    public String getSubscribeId (String fname) {
-        for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
-          String nodeId = nodeIds.nextElement().toString();
-          ALNode node  = getLayoutNode(nodeId);
-          if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
-              ALChannelDescription channelDesc = (ALChannelDescription) node.getNodeDescription();
-              if ( fname.equals(channelDesc.getFunctionalName()) )
-                return node.getId();
-          }
-        }
-                return null;
+    public String getSubscribeId (String fname) throws PortalException {
+      return layout.getNodeId(fname);
     }
 
 
