@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Vector;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.node.ILayoutNode;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.w3c.dom.Element;
 

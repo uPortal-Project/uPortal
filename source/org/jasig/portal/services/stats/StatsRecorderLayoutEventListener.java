@@ -6,11 +6,11 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.StatsRecorder;
 

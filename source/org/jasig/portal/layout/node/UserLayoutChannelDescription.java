@@ -3,7 +3,7 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.layout;
+package org.jasig.portal.layout.node;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -489,7 +489,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         return node;
     }
 
-    protected void addParameterChildren(Element node, Document root) {
+    public void addParameterChildren(Element node, Document root) {
         for(Enumeration enum = this.getParameterNames(); enum.hasMoreElements();) {
             Element pElement=root.createElement("parameter");
             String pName=(String)enum.nextElement();

@@ -5,6 +5,8 @@
 
 package org.jasig.portal.layout;
 
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+
 /**
  * An interface describing an Aggregated Layout folder descriptions
  *

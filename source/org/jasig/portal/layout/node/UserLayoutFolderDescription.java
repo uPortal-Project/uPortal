@@ -3,7 +3,7 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.layout;
+package org.jasig.portal.layout.node;
 
 import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;

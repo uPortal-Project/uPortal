@@ -7,8 +7,8 @@ package org.jasig.portal.services.stats;
 
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.IUserLayoutFolderDescription;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 
 /**

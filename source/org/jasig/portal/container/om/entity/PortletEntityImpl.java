@@ -25,7 +25,7 @@ import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.window.PortletWindowListImpl;
 import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

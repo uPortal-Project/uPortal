@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.Vector;
 
 
+import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.restrictions.IALRestrictionManager;
 import org.jasig.portal.layout.restrictions.RestrictionManagerFactory;
 import org.jasig.portal.IUserLayoutStore;

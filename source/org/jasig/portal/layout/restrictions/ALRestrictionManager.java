@@ -12,11 +12,11 @@ import java.util.Iterator;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.ALFolder;
 import org.jasig.portal.layout.ALNode;
-import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.IALNodeDescription;
 import org.jasig.portal.layout.IAggregatedLayout;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.ILayoutNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -15,9 +15,9 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ReferenceGroupServiceFactory;
-import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.IALNodeDescription;
+import org.jasig.portal.layout.node.ILayoutNode;
 
 
 /**

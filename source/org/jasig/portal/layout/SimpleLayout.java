@@ -10,6 +10,8 @@ import java.util.Vector;
 
 import org.apache.xpath.XPathAPI;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
+import org.jasig.portal.layout.node.UserLayoutNodeDescription;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

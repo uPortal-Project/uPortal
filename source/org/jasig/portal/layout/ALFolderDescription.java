@@ -9,6 +9,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
+import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -6,7 +6,7 @@
 package org.jasig.portal.layout.restrictions;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ILayoutNode;
+import org.jasig.portal.layout.node.ILayoutNode;
 
 /**
  * UserLayoutRestriction summary sentence goes here.

@@ -9,8 +9,8 @@ package org.jasig.portal.layout.restrictions;
 import java.util.StringTokenizer;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.node.ILayoutNode;
 import org.jasig.portal.utils.CommonUtils;
 
 /**

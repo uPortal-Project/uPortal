@@ -6,9 +6,9 @@
 package org.jasig.portal.layout.restrictions;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.ILayoutNode;
 
 
 /**

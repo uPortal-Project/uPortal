@@ -3,12 +3,13 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.layout;
+package org.jasig.portal.layout.node;
 
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

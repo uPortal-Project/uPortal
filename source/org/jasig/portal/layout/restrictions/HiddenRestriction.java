@@ -6,8 +6,8 @@
 package org.jasig.portal.layout.restrictions;
 
 
-import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.ILayoutNode;
 
 /**
  * HiddenRestriction checks the restriction on the "hidden" property for a given ALNode object.

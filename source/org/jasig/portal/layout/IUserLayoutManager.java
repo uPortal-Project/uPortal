@@ -43,7 +43,7 @@ public interface IUserLayoutManager {
      * @param ch a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
-    public void getUserLayout(ContentHandler ch) throws PortalException ;
+    public void getUserLayout(ContentHandler ch) throws PortalException;
 
     /**
      * Output subtree of a user layout (with appropriate markings) defined by a particular node into

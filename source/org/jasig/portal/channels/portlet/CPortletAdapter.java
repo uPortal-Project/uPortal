@@ -69,7 +69,7 @@ import org.jasig.portal.container.services.property.PropertyManagerServiceImpl;
 import org.jasig.portal.container.servlet.EmptyRequestImpl;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
-import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
