@@ -8,19 +8,13 @@ CREATE TABLE PORTAL_USERS (
 	LAYOUT_XML LONGVARCHAR
 	);
 
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('guest', 'Guest', 'Guest');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('default', 'Default', 'User');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('demo', 'Demo', 'Lish');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('kweiner', 'Ken', 'Weiner');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('arybicki', 'Adam', 'Rybicki');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('tholderith', 'Tony', 'Holderith');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('jk', 'John', 'Kliszewski');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('tim', 'Tim', 'O Neil');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('curtis', 'Curtis', 'Martin');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('venky', 'Sridhar', 'Venkatesh');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('stan', 'Stan', 'Schwartz');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('amenendez', 'Al', 'Menendez');
-INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('jing', 'Jing', 'Chen');
+INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('guest', 'Guest', 'Guest');
+INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('default', 'Default', 'User');
+INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('demo', 'Demo', 'Dude');
+INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('prez', 'Lester', 'Young');
+INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('bird', 'Charlie', 'Parker');
+INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('duke', 'Duke', 'Ellington');
+INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('trane', 'John', 'Coltrane');
 
 UPDATE PORTAL_USERS SET LAYOUT_XML='
 <?xml version="1.0"?>
