@@ -180,13 +180,13 @@ Version $Revision$
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="{$baseActionURL}?uPcFM_action=edit&amp;uPcFM_selectedID={$uPcFM_selectedID}">
+                                        <a href="{$baseActionURL}?uPcFM_action=edit&amp;uPcFM_selectedID={$uPcFM_selectedID}&amp;uP_root=root">
                                             <img src="{$mediaPath}/editContent.gif" alt="edit" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
                                         <span class="uportal-label">
-                                            <a href="{$baseActionURL}?uPcFM_action=edit&amp;uPcFM_selectedID={$uPcFM_selectedID}" class="uportal-channel-subtitle-reversed">Edit content</a>
+                                            <a href="{$baseActionURL}?uPcFM_action=edit&amp;uPcFM_selectedID={$uPcFM_selectedID}&amp;uP_root=root" class="uportal-channel-subtitle-reversed">Edit content</a>
                                         </span>
                                     </td>
                                 </tr>
