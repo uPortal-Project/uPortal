@@ -86,4 +86,108 @@ public class UtilitiesBean extends GenericPortalBean
 
     return "&nbsp;";
   }
+
+  /**
+   * Allows the hrefs in each .ssl file to be entered in one
+   * of 3 ways:
+   * 1) http://...
+   * 2) An absolute file system path optionally beginning with file://
+   *    e.g. C:\WinNT\whatever.xsl or /usr/local/whatever.xsl
+   *    or file://C:\WinNT\whatever.xsl or file:///usr/local/whatever.xsl
+   * 3) A path relative to the portal base dir as determined from
+   *    GenericPortalBean.getPortalBaseDir()
+   */
+  public static String fixURI (String str)
+  {
+    boolean bWindows = (System.getProperty ("os.name").indexOf ("Windows") != -1) ? true : false;
+    char ch0 = str.charAt (0);
+    char ch1 = str.charAt (1);
+
+    if (str.indexOf ("://") == -1 && ch1 != ':')
+    {
+      // Relative path was specified, so prepend portal base dir
+      str = (bWindows ? "file:/" : "file://") + GenericPortalBean.getPortalBaseDir () + str;
+    }
+    else if (bWindows && str.startsWith ("file://"))
+    {
+      // Replace "file://" with "file:/" on Windows machines
+      str = "file:/" + str.substring (7);
+    }
+    else if (ch0 == java.io.File.separatorChar || ch1 == ':')
+    {
+      // It's a full path without "file://"
+      str = (bWindows ? "file:/" : "file://") + str;
+    }
+
+    // Handle platform-dependent strings
+    str = str.replace (java.io.File.separatorChar, '/');
+
+    return str;
+  }
+
+  public static String escapeString(String source)
+  {
+    StringBuffer sb = new StringBuffer ();
+
+    for (int i = 0 ; i < source.length() ; i++)
+    {
+      sb.append(escapeChar(source.charAt (i)));
+    }
+
+    return sb.toString ();
+  }
+
+  private static String escapeChar(char ch)
+  {
+    StringBuffer sb = new StringBuffer ();
+    String charRef;
+
+    // If there is a suitable entity reference for this character, print it.
+    charRef = getEntityRef (ch);
+
+    if ( charRef != null )
+    {
+      sb.append ('&');
+      sb.append (charRef);
+      sb.append (';');
+    }
+    else
+    {
+      if(( ch >= ' ' && ch <= 0x7E && ch != 0xF7 ) || ch == '\n' || ch == '\r' || ch == '\t' )
+      {
+        // If the character is not printable, print as character reference.
+        // Non printables are below ASCII space but not tab or line
+        // terminator, ASCII delete, or above a certain Unicode threshold.
+        sb.append (ch);
+      }
+      else
+      {
+        sb.append ("&#");
+        sb.append (Integer.toString (ch));
+        sb.append (';');
+      }
+    }
+
+    return sb.toString ();
+  }
+
+  private static String getEntityRef (char ch)
+  {
+    // Encode special XML characters into the equivalent character references.
+    // These five are defined by default for all XML documents.
+    switch( ch )
+    {
+      case '<':
+        return "lt";
+      case '>':
+        return "gt";
+      case '"':
+        return "quot";
+      case '\'':
+        return "apos";
+      case '&':
+        return "amp";
+    }
+    return null;
+  }
 }
