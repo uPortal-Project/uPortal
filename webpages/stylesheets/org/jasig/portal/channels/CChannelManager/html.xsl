@@ -686,6 +686,11 @@
           <td>
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header" valign="bottom">
+<td align="center" nowrap="nowrap">
+<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
+<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+                
+
                 <td align="center" nowrap="nowrap">User can<br/> Modify?</td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
@@ -693,7 +698,7 @@
                 <td width="100%">General Settings</td>
               </tr>
               <tr class="uportal-channel-table-header">
-                <td align="center" colspan="3">
+                <td align="center" colspan="4">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
@@ -742,6 +747,9 @@
   <xsl:template match="parameter">
     <xsl:if test="@modify != 'subscribe-only'">
       <tr>
+<td align="center" valign="top">
+<xsl:call-template name="help"/>
+</td>
         <xsl:choose>
           <xsl:when test="type/@input='text'">
             <xsl:call-template name="text"/>
@@ -755,7 +763,7 @@
         </xsl:choose>
       </tr>
       <tr class="uportal-channel-table-header">
-                <td align="center" colspan="3">
+                <td align="center" colspan="4">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
@@ -798,7 +806,7 @@
           <select name="{name}" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
               <option value="{.}">
-                <xsl:if test="@default='true'">
+                <xsl:if test=". = ../defaultValue[1]">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
                 <xsl:choose>
@@ -822,7 +830,7 @@
           <br/>
           <xsl:for-each select="type/restriction/value">
             <input type="radio" name="{name}" value="{.}" class="uportal-input-text">
-              <xsl:if test="@default='true'">
+              <xsl:if test=". = ../defaultValue[1]">
                 <xsl:attribute name="checked">checked</xsl:attribute>
               </xsl:if>
             </input>
@@ -846,7 +854,7 @@
             <xsl:for-each select="type/restriction/value">
               <xsl:call-template name="subscribe"/>
               <option value="{.}">
-                <xsl:if test="@default='true'">
+                <xsl:if test=". = ../defaultValue[1]">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
                 <xsl:choose>
@@ -876,7 +884,7 @@
           <select name="{name}" size="6" multiple="multiple" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
               <option value="{.}">
-                <xsl:if test="@default='true'">
+                <xsl:if test=". = ../defaultValue[1]">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
                 <xsl:choose>
@@ -900,7 +908,7 @@
           <br/>
           <xsl:for-each select="type/restriction/value">
             <input type="checkbox" name="{name}" value="{.}">
-              <xsl:if test="@default='true'">
+              <xsl:if test=". = ../defaultValue[1]">
                 <xsl:attribute name="checked">checked</xsl:attribute>
               </xsl:if>
             </input>
@@ -924,7 +932,7 @@
           <select name="{name}" size="6" multiple="multiple" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
               <option value="{.}">
-                <xsl:if test="@default='true'">
+                <xsl:if test=". = ../defaultValue[1]">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
                 <xsl:choose>
@@ -968,12 +976,19 @@
 
 
           <input type="text" name="{name}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text">
-          <xsl:if test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
+          <xsl:choose>
+          <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
           <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
           <xsl:attribute name="value"><xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
           </xsl:attribute>
-          </xsl:if>
-          </input>              
+          </xsl:when>
+          <xsl:otherwise>
+          <xsl:attribute name="value"><xsl:value-of select="defaultValue"/></xsl:attribute>
+          </xsl:otherwise>
+          </xsl:choose>
+          </input>
+          <xsl:apply-templates select="units"/>
+                       
 
         </td>
       </xsl:when>
@@ -984,7 +999,15 @@
           <xsl:apply-templates select="example"/>
           <br/>
           <textarea rows="{$defaultTextRows}" cols="{$defaultTextCols}" class="uportal-input-text">
-            <xsl:value-of select="defaultValue"/>
+          <xsl:choose>
+          <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
+          <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
+          <xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
+          </xsl:when>
+          <xsl:otherwise>
+          <xsl:value-of select="defaultValue"/>
+          </xsl:otherwise>
+          </xsl:choose>
           </textarea>
         </td>
       </xsl:when>
@@ -997,7 +1020,18 @@
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
           <br/>
-          <input type="text" name="{name}" value="{defaultValue}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text"/>
+          <input type="text" name="{name}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text">
+          <xsl:choose>
+          <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
+          <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
+          <xsl:attribute name="value"><xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
+          </xsl:attribute>
+          </xsl:when>
+          <xsl:otherwise>
+          <xsl:attribute name="value"><xsl:value-of select="defaultValue"/></xsl:attribute>
+          </xsl:otherwise>
+          </xsl:choose>
+          </input>
         </td>
       </xsl:otherwise>
     </xsl:choose>
@@ -1010,6 +1044,19 @@
   <xsl:template match="example">
     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small">[example - <xsl:value-of select="."/>]</span>
+  </xsl:template>
+
+    <xsl:template match="units">
+    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <span class="uportal-text-small"><xsl:value-of select="."/></span>
+  </xsl:template>
+
+      <xsl:template name="help">
+    <a>
+    <xsl:attribute name="href">
+    javascript:alert('Name: <xsl:value-of select="name"/>/rExample: <xsl:value-of select="example"/>')</xsl:attribute>
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+    </a>
   </xsl:template>
 
   <xsl:template name="selectControls">
@@ -2389,6 +2436,7 @@
 
 
 </xsl:stylesheet>
+
 
 
 
