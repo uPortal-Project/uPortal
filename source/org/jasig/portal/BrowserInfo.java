@@ -98,6 +98,24 @@ public class BrowserInfo {
   public String getUserAgent () {
     return  (String)headers.get("user-agent");
   }
+  
+  /**
+   * Overrides Object's toString().  The string form of this object is
+   * sometimes used to generate a key for caching objects in the portal.
+   * @return state the state of this object in string form
+   */  
+  public String toString() {
+    StringBuffer sb = new StringBuffer(1024);
+    // Skip cookies for now and just print out headers
+    Enumeration e = headers.keys();
+    while (e.hasMoreElements()) {
+      String header = (String)e.nextElement();
+      sb.append("[").append(header).append("]");
+      sb.append("=");
+      sb.append("[").append(headers.get(header)).append("] ");
+    }
+    return sb.toString();
+  }
 }
 
 
