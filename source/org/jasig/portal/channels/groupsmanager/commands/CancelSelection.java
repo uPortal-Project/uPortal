@@ -83,6 +83,12 @@ public class CancelSelection extends GroupsManagerCommand {
          GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);
       }
       else {
+        // @todo refactor into separate servant finish command
+        if (sessionData.lockedGroup!=null){
+          try{
+            sessionData.lockedGroup.getLock().release();
+          }catch(Exception e){} 
+        }
          staticData.setParameter("groupManagerFinished", "true");
       }
    }
