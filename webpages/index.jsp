@@ -35,6 +35,6 @@
 
 <%@ page errorPage="error.jsp" %>
 <%
-  response.sendRedirect("http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/render.uP");
+  response.sendRedirect(request.getContextPath() + "/render.uP");
 %>
 
