@@ -1516,8 +1516,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="20" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
-              <xsl:variable name="myID"><xsl:value-of select="./ID"/></xsl:variable>
-              <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_fragmentID={$myID}">
+              <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_fragmentID={@ID}">
                 <xsl:value-of select="@title"/>
               </a>
             </td>
@@ -1628,8 +1627,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="20" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
-              <xsl:variable name="myID"><xsl:value-of select="./ID"/></xsl:variable>
-              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_fragmentID={$myID}">
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_fragmentID={@ID}">
                 <xsl:value-of select="./name"/>
               </a>
             </td>
