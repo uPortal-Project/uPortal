@@ -5,36 +5,19 @@
 
 package org.jasig.portal.services.stats;
 
-import org.apache.log4j.Priority;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * Logs portal statistics to the portal's log.  Contains
- * set and get methods to control the log priority.
+ * Logs portal statistics to the portal's log as info. 
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class LoggingStatsRecorder extends MessageStatsRecorder {
 
-  // Unfortunately this is tied to Apache's Log4J.
-  // It would be nice if the LogService was 
-  // logger implementation agnostic!
-  private Priority priority;
-  
+  private static final Log log = LogFactory.getLog(LoggingStatsRecorder.class);
+
   public LoggingStatsRecorder() {
-    this.priority = LogService.INFO;
-  }
-  
-  public LoggingStatsRecorder(Priority priority) {
-    this.priority = priority;
-  }  
-  
-  public void setPriority(Priority priority) {
-    this.priority = priority;
-  }
-  
-  public Priority getPriority() {
-    return this.priority;
   }
   
   /**
@@ -42,9 +25,8 @@ public class LoggingStatsRecorder extends MessageStatsRecorder {
    * @param message, the message to print
    */   
   protected void outputMessage(String message) {
-    LogService.log(priority, message);
+    log.info(message);
   }
-     
 }
 
 
