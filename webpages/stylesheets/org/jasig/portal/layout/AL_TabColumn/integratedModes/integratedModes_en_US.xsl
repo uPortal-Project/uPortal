@@ -818,8 +818,11 @@ Version $Revision$
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td width="100%">
-								<xsl:copy-of select="."/>
-							</td>
+							    <!-- Don't render any content for a minimized channel -->
+                                <xsl:if test="@minimized != 'true'">
+                                    <xsl:copy-of select="."/>
+                                </xsl:if>							
+                            </td>
 							<td>
 								<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
 							</td>
