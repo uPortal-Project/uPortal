@@ -5,7 +5,6 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IMultithreadedChannel;
 import org.jasig.portal.IServant;
