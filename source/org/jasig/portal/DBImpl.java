@@ -531,7 +531,7 @@ public class DBImpl implements IDBImpl
       String chanId = "NULL";
       String structName = "NULL";
       if (node.getNodeName().equals("channel")) {
-        chanId = "'" + system.getAttribute("chanID") + "'";
+        chanId = system.getAttribute("chanID");
       } else {
         structName = "'" + sqlEscape(structure.getAttribute("name")) + "'";
       }
