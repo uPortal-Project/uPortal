@@ -12,6 +12,7 @@ function xml(nodelist){
 	<xsl:param name="currentStep" select="1"/>
 	<xsl:param name="specialStep" select="none"/>
 	<xsl:param name="numSteps" select="count(*/params/step)"/>
+        <xsl:param name="totSteps" select="$numSteps + 3"/>
 	<xsl:param name="modified">false</xsl:param>
 	<xsl:param name="mode">publish</xsl:param>
 	<xsl:param name="profileName">default profile</xsl:param>
@@ -42,6 +43,8 @@ function xml(nodelist){
 	
 	<!-- Display the channel categories available for publish-->
 	<xsl:template match="channelCats">
+                <p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
+		</p>
 		<p align="center">Pick the channel categories you wish to publish this channel in.		
 		<form action="{$baseActionURL}" method="post">
 			<input type="hidden" name="action" value="publishCats"/>
@@ -52,6 +55,51 @@ function xml(nodelist){
    					 <td>
      					<xsl:value-of select="@name"/></td>
    					
+  					</tr>
+				</xsl:for-each>
+			<input type="submit" name="next" value="Next"/>
+			</table>
+		</form>
+		<br/>
+		</p>
+	</xsl:template>
+
+	<!-- Display the roles available for publish-->
+	<xsl:template match="roles">
+                <p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
+		</p>
+		<p align="center">Pick what roles will be able to subscribe to your channel.		
+		<form action="{$baseActionURL}" method="post">
+			<input type="hidden" name="action" value="publishRoles"/>
+			<table align="center" border="1" cellspacing="0" cellpadding="5">
+				<xsl:for-each select="role">
+					<tr>
+   					 <td align="right"><input type="checkbox" name="role" value="{@name}"/></td>
+   					 <td>
+     					<xsl:value-of select="@name"/></td>
+   					
+  					</tr>
+				</xsl:for-each>
+			<input type="submit" name="next" value="Next"/>
+			</table>
+		</form>
+		<br/>
+		</p>
+	</xsl:template>
+
+	<!-- Name the channel-->
+	<xsl:template match="name">
+                <p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
+		</p>
+		<p align="center">Enter a name for your channel.		
+		<form action="{$baseActionURL}" method="post">
+			<input type="hidden" name="action" value="publishName"/>
+			<table align="center" border="1" cellspacing="0" cellpadding="5">
+				<xsl:for-each select="field">
+					<tr>
+                                         <td>Channel Name: </td>
+   					 <td align="right"><input type="text" name="chanName" sixe="30"/></td>
+   					 
   					</tr>
 				</xsl:for-each>
 			<input type="submit" name="next" value="Next"/>
@@ -76,7 +124,7 @@ function xml(nodelist){
 		<p align="center">
 			<xsl:value-of select="description"/>
 		</p>
-		<p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$numSteps"/>
+		<p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
 		</p>
 		<xsl:apply-templates select="params/step[ID=$currentStep]"/>
       	  <p align="center"><input type="submit" value="Next"/></p>
