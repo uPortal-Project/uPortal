@@ -278,13 +278,15 @@ public class MediaManager
       }
       else if (serializerName.equals ("XHTML"))
       {
-        OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", false);
+        OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
+        frmt.setPreserveSpace(true);
         return new XHTMLSerializer (out, frmt);
       }
       else
       {
         // default case is HTML, such as that for netscape and explorer
-        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", false);
+        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+        frmt.setPreserveSpace(true);
         return new HTMLSerializer (out, frmt);
       }
     }
@@ -310,13 +312,15 @@ public class MediaManager
             return new XMLSerializer (out, frmt);
         }
       else if (serializerName.equals ("XHTML")) {
-          OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", false);
+          OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
+          frmt.setPreserveSpace(true);
           return new XHTMLSerializer (out, frmt);
       }
       else
       {
         // default case is HTML, such as that for netscape and explorer
-        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", false);
+        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+        frmt.setPreserveSpace(true);
         return new HTMLSerializer (out, frmt);
       }
     }
@@ -336,13 +340,15 @@ public class MediaManager
             return new XMLSerializer (out, frmt);
         }
       else if (serializerName.equals ("XHTML")) {
-          OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", false);
+          OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
+          frmt.setPreserveSpace(true);
           return new XHTMLSerializer (out, frmt);
       }
       else
       {
         // default case is HTML, such as that for netscape and explorer
-        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", false);
+        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+        frmt.setPreserveSpace(true);
         return new HTMLSerializer (out, frmt);
       }
     }
@@ -384,13 +390,15 @@ public class MediaManager
       }
       else if (serializerName.equals ("XHTML"))
       {
-        OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", false);
+        OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
+        frmt.setPreserveSpace(true);
         return new XHTMLSerializer (out, frmt);
       }
       else
       {
         // default case is HTML, such as that for netscape and explorer
-        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", false);
+        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+        frmt.setPreserveSpace(true);
         return new HTMLSerializer (out, frmt);
       }
     }
