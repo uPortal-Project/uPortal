@@ -56,13 +56,7 @@ Version $Revision$
     <xsl:param name="channelManager" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
     <!--These variables and parameters are used in fragment mode-->
-    <xsl:variable name="pushedFragmentFoundation">
-        <layout>
-            <folder ID="userLayoutRootNode" type="regular" hidden="false" unremovable="false" immutable="false" name="root">
-                <folder ID="newFragment" type="regular" hidden="false" unremovable="false" immutable="false" name="Please Name" width="100%"/>
-            </folder>
-        </layout>
-    </xsl:variable>
+    <xsl:param name="fragmentAuthor" select="'true'"/>
     <!--These variables and parameters are used in preferences mode-->
     <xsl:param name="moveID" select="/layout/@selectedID"/>
     <xsl:param name="selectedID" select="/layout/@selectedID"/>
@@ -1587,11 +1581,13 @@ Version $Revision$
                                 </select>
                                 <input type="hidden" name="uP_fragment_action" value="edit"/>
                                 <!--<option><xsl:value-of select="New fragment"/></option>-->
-                                <input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/>
+                                <input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Load selected fragment" title="Load selected fragment"/>
                                 <!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> -->
-                                <span> |<xsl:text>&#160;</xsl:text>
-                                </span>
-                                <a href="{$baseActionURL}?uP_fragment_action=new">New Tab Fragment</a>
+                                <xsl:if test="$fragmentAuthor='true'">
+                                    <span> |<xsl:text>&#160;</xsl:text>
+                                    </span>
+                                    <a href="{$baseActionURL}?uP_fragment_action=new">New Tab Fragment</a>
+                                </xsl:if>
                             </form>
                         </xsl:if>
                     </span>
