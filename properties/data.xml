@@ -19,7 +19,7 @@
         <column><name>FIRST_NAME</name><value /></column>
         <column><name>LAST_NAME</name><value /></column>
         <column><name>USER_LAYOUT_XML</name><value><![CDATA[
-	
+
           <?xml version="1.0"?>
           <!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
           <layout>
@@ -333,7 +333,7 @@
         <column><name>DESCR</name><value>RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.</value></column>
         <column><name>DEF_URI</name><value>properties/channel_defs/RSS.xml</value></column>
       </row>
-      
+
       <row>
         <column><name>NAME</name><value>XSL Channel</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
@@ -648,6 +648,11 @@
       <row>
         <column><name>TABLE_NAME</name><value>UP_CHANNEL</value></column>
         <column><name>ID</name><value>100</value></column>
+      </row>
+
+      <row>
+        <column><name>TABLE_NAME</name><value>UP_USER</value></column>
+        <column><name>ID</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
     </rows>
   </table>
