@@ -194,7 +194,8 @@ public class CHeader extends BaseChannel
   public boolean isCacheValid (Object validity) {
     if (validity instanceof Long) {
       Long oldtime = (Long)validity;
-      if (staticData.getPerson().isGuest()) {
+      if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
+        // cache entries for unauthenticated users don't expire
         return  true;
       }
       if (System.currentTimeMillis() - oldtime.longValue() < 1*60*1000) {

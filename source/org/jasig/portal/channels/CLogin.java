@@ -157,8 +157,8 @@ public class CLogin implements IPrivilegedChannel, ICacheable
       xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-      if (staticData.getPerson().isGuest()) {
-        xslt.setStylesheetParameter("guest", "true");
+      if (!staticData.getPerson().getSecurityContext().isAuthenticated()) {
+        xslt.setStylesheetParameter("unauthenticated", "true");
       }
       xslt.transform();
     }
@@ -179,6 +179,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
       k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
     }
     sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+    sbKey.append("authenticated:").append(staticData.getPerson().getSecurityContext().isAuthenticated()).append(", ");
 
     if(xslUriForKey == null) {
       try {
