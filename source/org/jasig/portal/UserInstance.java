@@ -648,7 +648,9 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
-        channelManager.finishedSession();
+        if(channelManager!=null) {
+            channelManager.finishedSession();
+        }
     }
 
     /**
