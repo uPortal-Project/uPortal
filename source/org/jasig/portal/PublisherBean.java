@@ -352,7 +352,7 @@ public class PublisherBean extends GenericPortalBean
       out.println ("          <td>");
       out.println ("            <font face=arial color=#000000><b>&nbsp;" + m_sChanName + "</b></font>");
       out.println ("          </td>");
-      out.println ("          <td nowrap valign=center align=right>");
+      out.println ("          <td nowrap valign=\"middle\" align=right>");
       out.println ("            &nbsp;");
 
       // Channel control buttons
