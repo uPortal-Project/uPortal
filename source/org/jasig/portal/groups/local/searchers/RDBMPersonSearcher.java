@@ -8,6 +8,7 @@ package org.jasig.portal.groups.local.searchers;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
@@ -34,12 +35,7 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
   private Class personDef;
 
   public RDBMPersonSearcher() {
-    try{
-      personDef = Class.forName("org.jasig.portal.security.IPerson");
-    }
-    catch(Exception e){
-      log.error(e, e);
-    }
+    personDef = org.jasig.portal.security.IPerson.class;
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
     //System.out.println("searching for channel");
@@ -100,8 +96,8 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
             while (uprs.next()){
                 ar.add(new EntityIdentifier(uprs.getString(1),personDef));
             }
-        } catch (Exception e) {
-            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
+        } catch (SQLException e) {
+            throw new GroupsException("RDBMChannelDefSearcher.searchForEntities(): " + ps,e);
         } finally {
             RDBMServices.closeResultSet(rs);
             RDBMServices.closeResultSet(urs);
