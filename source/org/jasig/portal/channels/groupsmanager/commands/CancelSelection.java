@@ -86,8 +86,7 @@ public class CancelSelection extends GroupsManagerCommand {
          sessionData.mode = EDIT_MODE;
          sessionData.highlightedGroupID = parentId;
          sessionData.rootViewGroupID="0";
-         staticData.remove("groupParentId");
-         // Parent was locked so no other thread or process could have changed it, but
+         // Parent is locked so no other thread or process could have changed it, but
          // child members could have changed.
          Element parentElem = GroupsManagerXML.getElementById(model, parentId);
          GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(model, parentElem);

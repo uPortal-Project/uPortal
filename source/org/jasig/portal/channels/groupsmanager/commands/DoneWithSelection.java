@@ -132,7 +132,6 @@ public class DoneWithSelection extends GroupsManagerCommand {
          sessionData.mode=EDIT_MODE;
          sessionData.highlightedGroupID = parentId;
          sessionData.rootViewGroupID="0";
-         staticData.remove("groupParentId");
       }
       else {
          princResults = (IGroupMember[])gmCollection.toArray(new IGroupMember[0]);

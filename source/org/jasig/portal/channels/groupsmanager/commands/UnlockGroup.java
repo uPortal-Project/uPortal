@@ -66,6 +66,7 @@ public class UnlockGroup extends GroupsManagerCommand{
       // Parent element id is not always set.
       if (!Utility.areEqual(parentID, "")){
          parentElem = GroupsManagerXML.getElementById(model, parentID);
+         sessionData.staticData.remove("groupParentId");
       }
       Utility.logMessage("DEBUG", "UnlockGroup::execute(): parentElem = " + parentElem);
       if (parentElem != null){
