@@ -297,6 +297,7 @@ public class LayoutBean
       {
         String pName= (String) e.nextElement ();
         String pValue= (String) spTable.get (pName);
+	Logger.log(Logger.DEBUG,"LayoutBean::s "+pName+"="+pValue);
         sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
       }
 
@@ -306,6 +307,8 @@ public class LayoutBean
 
       // all the parameters are set up, fire up the filter transforms
       uLayoutProcessor.process (new XSLTInputSource (rElement),userLayoutSS.getStylesheet (),new XSLTResultTarget (taif));
+      uLayoutProcessor.reset();
+      sLayoutProcessor.reset();
     }
     catch (Exception e)
     {
