@@ -38,7 +38,6 @@ package org.jasig.portal.channels;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
@@ -67,11 +66,8 @@ public class CSnoop implements IPrivilegedChannel
   private PortalControlStructures pcs;
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
-  private StylesheetSet set;
 
-  private static final String fs = File.separator;
-  private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
-  private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CSnoop";
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CSnoop/CSnoop.ssl");
 
   /**
    * No-argument constructor for CSnoop.
@@ -80,8 +76,6 @@ public class CSnoop implements IPrivilegedChannel
   {
     this.staticData = new ChannelStaticData ();
     this.runtimeData = new ChannelRuntimeData ();
-    this.set = new StylesheetSet (stylesheetDir + fs + "CSnoop.ssl");
-    this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
   }
 
   /**
@@ -180,7 +174,7 @@ public class CSnoop implements IPrivilegedChannel
 
     try
     {
-      XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(set.getStylesheetURI(runtimeData.getBrowserInfo()))), out);
+      XSLT.transform(sb.toString(), new URL(sslLocation), out, runtimeData.getBrowserInfo());
     }
     catch (Exception e)
     {
