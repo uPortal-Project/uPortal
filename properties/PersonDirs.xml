@@ -212,6 +212,7 @@
         <url>ldap://yu.yale.edu:389/dc=itstp, dc=yale, dc=edu</url>
         <logonid>cn=bogus,cn=Users,dc=itstp,dc=yale,dc=edu</logonid>
         <logonpassword>foobar</logonpassword>
+        <usercontext>cn=Users</usercontext>
 
         2) Specify the name of an LDAP server as set up in uPortal's ldap.xml.  For example,
         
@@ -228,7 +229,6 @@
         <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 
         <uidquery>(cn={0})</uidquery>
-        <usercontext>cn=Users</usercontext>
 
         <attributes>
 
