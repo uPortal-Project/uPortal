@@ -115,18 +115,25 @@ files as <tt>deploy.home</tt>. </p>
                is usually refered to with an environment variable called <tt>TOMCAT_HOME</tt>. 
             </p>
 <p> Before deploying <i>uPortal</i> you may need to modify the <tt>build.properties</tt>. 
-Edit the file and find the <tt>deploy.home</tt> property. Change the value such 
+Edit the file and find the <tt>server.home</tt> and <tt>deploy.home</tt> properties. 
+Change the value of <tt>deploy.home</tt> such
 that it points to the location where <i>uPortal </i>will be deployed. For a <i>Tomcat</i> 
-servlet container that would typically be <tt>$TOMCAT_HOME/webapps/{app.name}</tt>, 
-for example: 
+servlet container that would typically be <tt>$TOMCAT_HOME/webapps/{app.name}</tt>.
+Change the value of <tt>server.home</tt> such that it points to your Tomcat, i.e. $TOMCAT_HOME. 
+  For example: 
 <p>
 <blockquote>
 <tt>deploy.home=/usr/local/jakarta-tomcat-4.0.4/webapps/uPortal</tt>
+<br />
+<tt>server.home=/usr/local/jakarta-tomcat-4.0.4/</tt>
 </blockquote>
             <p> <b>Note</b>: if you are working with the quick-start release, 
                the deployment directory is relative to the <tt>uPortal_rel-2-1-3</tt> 
                directory (<tt>../tomcat-4.1.24/webapps/uPortal</tt>) and should 
                not be changed. </p>
+			   
+
+			   
 <p> Now you're ready to deploy <i>uPortal</i> to the servlet container. Simply 
 type <tt>&quot;ant deploy</tt>&quot; to invoke the &quot;deploy&quot; target. 
 If everything worked correctly you will see a BUILD SUCCESSFULL message.
