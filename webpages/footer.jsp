@@ -40,9 +40,9 @@
     <td colspan="8">&nbsp;</td>
   </tr>
   <tr>
-    <td align="left"><img src="images/myibs.gif" width="428" height="37" border="0" alt="MyIBS"></td>
+    <td align="left"><img src="images/MyIBS.gif" width=100 height=50 border="0" alt="MyIBS"></td>
     <td align="center"><font size="-1" color="#63188C">MyIBS</font></td>
     <td align="center"><font size="-1" color="#63188C"><a href="mailto:">Feedback</a></font><td>
-    <td align="right"><a href="http://www.mis2.udel.edu/ja-sig/portal.html"><img src="images/powered_by_uPortal.gif" width="149" height="35" border="0" alt="Powered By uPortal"></a></td>
+    <td align="right"><a href="http://www.mis2.udel.edu/ja-sig/portal.html"><img src="images/powered_by_uPortal1_0.gif" width="149" border="0" alt="Powered By uPortal"></a></td>
   </tr>
 </table>
