@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet title="browse" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/browse_full.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="moveTo" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferencesr/moveTo_full.xsl" type="text/xsl" media="netscape"?>
+<?xml-stylesheet title="moveTo" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/moveTo_full.xsl" type="text/xsl" media="netscape"?>
 <?xml-stylesheet title="editItem" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/editElement_full.xsl" type="text/xsl" media="netscape"?>
 <?xml-stylesheet title="firstScreen" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/firstScreen_full.xsl" type="text/xsl" media="netscape"?>
 <?xml-stylesheet title="editGPrefs" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/editGPref_full.xsl" type="text/xsl" media="netscape"?>
