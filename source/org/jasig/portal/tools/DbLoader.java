@@ -116,7 +116,7 @@ public class DbLoader
     try
     {
       setPortalBaseDir();
-      propertiesUri = portalBaseDir + "properties" + File.separator + "dbloader.xml";
+      propertiesUri = UtilitiesBean.fixURI("properties" + File.separator + "dbloader.xml");
       con = rdbmService.getConnection ();
 
       if (con != null)
@@ -191,7 +191,7 @@ public class DbLoader
     PropertiesHandler propertiesHandler = new PropertiesHandler();
     parser.setContentHandler(propertiesHandler);
     parser.setErrorHandler(propertiesHandler);
-    parser.parse(UtilitiesBean.fixURI(propertiesUri));
+    parser.parse(propertiesUri);
   }
 
   private static void doScriptFile()
