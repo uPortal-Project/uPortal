@@ -1009,7 +1009,7 @@ public class DBImpl2
     String[] acct = new String[] {
       null, null, null, null
     };
-    String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD FROM UP_USER, UP_SHADOW WHERE UP_USER.USER_ID = UP_SHADOW.USER_ID AND "
+    String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME FROM UP_USER, UP_SHADOW WHERE UP_USER.USER_ID = UP_SHADOW.USER_ID AND "
         + "UP_USER.USER_NAME = '" + username + "'";
     Logger.log(Logger.DEBUG, query);
     Connection con = rdbmService.getConnection();
@@ -1019,8 +1019,10 @@ public class DBImpl2
       stmt = con.createStatement();
       rset = stmt.executeQuery(query);
       if (rset.next()) {
-       acct[1] = rset.getString("ENCRPTD_PSWD");
        acct[0] = rset.getInt("USER_ID") + "";
+       acct[1] = rset.getString("ENCRPTD_PSWD");
+       acct[2] = rset.getString("FIRST_NAME");
+       acct[3] = rset.getString("LAST_NAME");
       }
     } finally {
       try {
