@@ -18,7 +18,9 @@
  *    "This product includes software developed by the JA-SIG Collaborative
  *    (http://www.jasig.org/)."
  *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG package org.jasig.portal.services;
+
+COLLABORATIVE "AS IS" AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
@@ -259,16 +261,16 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         /* put new user in groups that template is in */
         try{
           IEntityGroup everyone = GroupService.getEveryoneGroup();
-          IGroupMember me = new EntityImpl(String.valueOf(newUID), Class.forName("org.jasig.portal.security.IPerson"));
+          IGroupMember me = GroupService.findGroupMember(String.valueOf(newUID), Class.forName("org.jasig.portal.security.IPerson"));
 
-          IGroupMember template = new EntityImpl(String.valueOf(templateUID), Class.forName("org.jasig.portal.security.IPerson"));
+          IGroupMember template = GroupService.findGroupMember(String.valueOf(templateUID), Class.forName("org.jasig.portal.security.IPerson"));
           java.util.Iterator templateGroups =  template.getContainingGroups();
-	  while (templateGroups.hasNext())
-	  {
-		IEntityGroup eg = (IEntityGroup) templateGroups.next();
+          while (templateGroups.hasNext())
+          {
+                IEntityGroup eg = (IEntityGroup) templateGroups.next();
                 eg.addMember(me);
                 eg.updateMembers();
-	  }
+          }
         }
         catch (Exception e) {
           LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
