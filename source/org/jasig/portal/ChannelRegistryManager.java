@@ -40,6 +40,7 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XML;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.IPermission;
@@ -56,6 +57,7 @@ import java.util.Iterator;
 import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xpath.XPathAPI;
+import org.apache.xerces.dom.DocumentImpl;
 
 /**
  * Manages the channel registry which is a listing of published channels
@@ -67,23 +69,32 @@ import org.apache.xpath.XPathAPI;
  */
 public class ChannelRegistryManager {
   protected static final IChannelRegistryStoreOld chanRegStore = ChannelRegistryStoreFactoryOld.getChannelRegistryStoreOldImpl();
+   
+  // Cache timeout properties
   protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
   protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
   protected static final int cpdCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.cpd_cache_timeout");
+   
+  // Caches
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);
   protected static final SmartCache channelTypesCache = new SmartCache(chanTypesCacheTimeout);
   protected static final SmartCache cpdCache = new SmartCache(cpdCacheTimeout);
+
+  // Cache keys
   private static final String CHANNEL_REGISTRY_CACHE_KEY = "channelRegistryCacheKey";
   private static final String CHANNEL_TYPES_CACHE_KEY = "channelTypesCacheKey";
   private static final String CPD_CACHE_KEY = "cpdCacheKey";
+  
+  // Permission constants
   private static final String FRAMEWORK_OWNER = "UP_FRAMEWORK";
   private static final String SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
   private static final String GRANT_PERMISSION_TYPE = "GRANT";
 
   /**
-   * Returns the channel registry as a Document.  This list is not filtered
-   * according to a user's channel permissions.
-   * @return the channel registry as a Document
+   * Returns a copy of the channel registry as a Document.  
+   * This document is not filtered according to a user's channel permissions.
+   * For a filtered list, see  <code>getChannelRegistry(IPerson person)</code>
+   * @return a copy of the channel registry as a Document
    */
   public static Document getChannelRegistry() throws PortalException {
     Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
@@ -100,11 +111,13 @@ public class ChannelRegistryManager {
         LogService.instance().log(LogService.INFO, "Caching channel registry.");
       }
     }
-    return channelRegistry;
+    
+    // Clone the original registry document so that it doesn't get modified
+    return XML.cloneDocument((DocumentImpl)channelRegistry); 
   }
 
   /**
-   * Returns the channel registry as a Document.  This list is filtered
+   * Returns the channel registry as a Document.  This document is filtered
    * according to a user's channel permissions.
    * @return the filtered channel registry as a Document
    */
@@ -260,7 +273,9 @@ public class ChannelRegistryManager {
         LogService.instance().log(LogService.INFO, "Caching channel types.");
       }
     }
-    return channelTypes;
+    
+    // Clone the original channel types document so that it doesn't get modified
+    return XML.cloneDocument((DocumentImpl)channelTypes);      
   }
 
   /**
@@ -320,7 +335,9 @@ public class ChannelRegistryManager {
         LogService.instance().log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
       }
     }
-    return cpd;
+    
+    // Clone the original CPD document so that it doesn't get modified
+    return XML.cloneDocument((DocumentImpl)cpd);     
   }
 }
 
