@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
-    "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
-
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+    
 <web-app>
+
   <servlet>
     <servlet-name>uPortal</servlet-name>
     <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
@@ -32,9 +33,7 @@
   <servlet>
     <servlet-name>AdminServlet</servlet-name>
     <display-name>Axis Admin Servlet</display-name>
-    <servlet-class>
-        org.apache.axis.transport.http.AdminServlet
-    </servlet-class>
+    <servlet-class>org.apache.axis.transport.http.AdminServlet</servlet-class>
     <load-on-startup>100</load-on-startup>
   </servlet>
 
@@ -55,7 +54,7 @@
 
   <servlet-mapping>
     <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>servlet/AxisServlet</url-pattern>
+    <url-pattern>/servlet/AxisServlet</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
@@ -70,7 +69,7 @@
 
   <servlet-mapping>
     <servlet-name>AdminServlet</servlet-name>
-    <url-pattern>servlet/AdminServlet</url-pattern>
+    <url-pattern>/servlet/AdminServlet</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
