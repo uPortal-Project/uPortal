@@ -54,14 +54,14 @@ import org.apache.pluto.util.StringUtils;
  */
 public class PortalControlParameter {
 
-    static public final String ACTION = "ac";
-    static public final String MODE = "md";
+    static public final String ACTION = "action";
+    static public final String MODE = "mode";
     static public final String PORTLET_ID = "pid";
-    static public final String PREFIX = "_";
-    static public final String PREV_MODE = "pm";
-    static public final String PREV_STATE = "ps";
-    static public final String RENDER_PARAM = "rp";
-    static public final String STATE = "st";
+    static public final String PREFIX = "uP_";
+    static public final String PREV_MODE = "prevMode";
+    static public final String PREV_STATE = "prevState";
+    static public final String RENDER_PARAM = "renderParam";
+    static public final String STATE = "state";
 
     private Map requestParameters = new HashMap();
     private Map statefulControlParameters = new HashMap();
@@ -319,7 +319,7 @@ public class PortalControlParameter {
     }
 
     public void setAction(PortletWindow window) {
-        getstatefulControlParameters().put(getActionKey(window), ACTION.toUpperCase());
+        getstatefulControlParameters().put(getActionKey(window), ACTION );
     }
 
     public void setMode(PortletWindow window, PortletMode mode) {

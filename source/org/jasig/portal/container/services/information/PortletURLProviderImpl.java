@@ -59,7 +59,6 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private WindowState windowState;
     private boolean action;
     private boolean secure;
-    private boolean clearParameters;
     private Map parameters;
 
     public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow) {
@@ -86,7 +85,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     }
 
     public void clearParameters() {
-        clearParameters = true;
+        parameters = null;
     }
 
     public void setParameters(Map parameters) {
