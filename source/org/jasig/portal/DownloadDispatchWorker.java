@@ -1,5 +1,39 @@
-package org.jasig.portal;
+/**
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
 
+package org.jasig.portal;
 
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -22,12 +56,12 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
     public void processWorkerDispatch(PortalControlStructures pcs) throws PortalException {
         HttpServletRequest req=pcs.getHttpServletRequest();
         HttpServletResponse res=pcs.getHttpServletResponse();
-        
+
         // determine the channel, follow the same logic as the standard uPortal processing.
         // (although, in general, worker processors can make their own rules
         String channelTarget=null;
         Hashtable targetParams = new Hashtable();
-        
+
         // check if the uP_channelTarget parameter has been passed
         channelTarget=req.getParameter("uP_channelTarget");
         if(channelTarget==null) {
@@ -60,7 +94,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                     }
                 }
             }
-            
+
             IChannel ch = pcs.getChannelManager().getChannelInstance(channelTarget);
 
             if(ch!=null) {
@@ -76,11 +110,11 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 // just give a default baseActionURL
                 rd.setBaseActionURL(PortalSessionManager.RENDER_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.CHANNEL_URL_ELEMENT+PortalSessionManager.PORTAL_URL_SEPARATOR+channelTarget+PortalSessionManager.PORTAL_URL_SEPARATOR+PortalSessionManager.PORTAL_URL_SUFFIX);
                 ch.setRuntimeData(rd);
-                
+
                 if (ch instanceof org.jasig.portal.IMimeResponse) {
                     try {
                         org.jasig.portal.IMimeResponse ds = (org.jasig.portal.IMimeResponse)ch;
-                    
+
                         // Set the headers if available
                         Map httpHeaders = ds.getHeaders();
                         if (httpHeaders != null) {
@@ -93,10 +127,10 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                             }
                             httpHeaders.clear();
                         }
-                    
+
                         // Set the MIME content type
                         res.setContentType (ds.getContentType());
-                    
+
                         // Set the data
                         javax.servlet.ServletOutputStream out = res.getOutputStream();
                         java.io.InputStream ios = ds.getInputStream();
