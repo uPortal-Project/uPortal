@@ -66,16 +66,15 @@ import org.w3c.tidy.*;
  *		    <code>xmlUri</code>.
  *  <li>"tidy" 	    - output from <code>xmlUri</code> will be passed though Jtidy
  * </ol>
- * <p>The static parameters above can be overridden by including
+ * <p>The static parameters above can be updated by including
  * parameters of the same name (<code>xmlUri</code>, <code>sslUri</code>,
  * <code>xslTitle</code> and/or <code>xslUri</code> in the HttpRequest string.</p>
  * <p>This channel can be used for all XML formats including RSS.
- * Any other parameters passed to this channel via HttpRequest will get
- * passed in turn to the XSLT stylesheet as stylesheet parameters. They can be
- * read in the stylesheet as follows:
+ * All static data parameters as well as additional runtime data parameters
+ * passed to this channel via HttpRequest will in turn be passed on to the
+ * XSLT stylesheet as stylesheet parameters.  They can be read in the
+ * stylesheet as follows:
  * <code>&lt;xsl:param name="yourParamName"&gt;aDefaultValue&lt;/xsl:param&gt;</code></p>
- * @author Steve Toth, stoth@interactivebusiness.com
- * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Andrew Draskoy, andrew@mun.ca
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
@@ -165,16 +164,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
       StringBuffer newXML = new StringBuffer().append(this.xmlUri);
       String appendchar = "?";
 
-      String teststr = (String) runtimeData.getParameter("commentText");
-      Logger.log (Logger.DEBUG, "CWebProxy: commentText is " + teststr);
-
       Enumeration e=runtimeData.getParameterNames ();
       if (e!=null)
         {
           while (e.hasMoreElements ())
             {
               String pName = (String) e.nextElement ();
-              Logger.log (Logger.DEBUG, "CWebProxy: got reqparam " + pName);
               if ( !pName.equals("inChannelLink") )
               {
                 newXML.append(appendchar);
@@ -281,9 +276,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     tidy.setQuiet(true);
     tidy.setShowWarnings(false);
     tidy.setNumEntities(true);
-    tidy.setMakeClean(true);
     tidy.setWord2000(true);
-    tidy.setXmlSpace(true);
     if ( System.getProperty("os.name").indexOf("Windows") != -1 )
        tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
     else
