@@ -84,8 +84,8 @@ public class RunXSLT {
         xslt.setTarget(ostream);
         xslt.transform();
         } catch (PortalException pe) {
-          System.err.println("Error on transform");
-          pe.printStackTrace();
+          System.err.println("RunXSLT: Error on transform");
+          pe.getRecordedException().printStackTrace();
           }
 
   }
