@@ -16,11 +16,8 @@ import org.jasig.portal.layout.*;
  */
 public class DispatchBean extends GenericPortalBean
 {    
-  private static final String sDispatchChannel = "dispatchChannel";
-    
   /**
-   * Returns the current channel and stores it in the session
-   * until DispatchBean.finish () is called by the channel
+   * Returns an instance of the current channel
    * @param the servlet request object
    * @return the channel to call
    */
@@ -32,20 +29,12 @@ public class DispatchBean extends GenericPortalBean
     {
       HttpSession session = req.getSession (false);
       ILayoutBean layoutBean = (ILayoutBean) session.getAttribute ("layoutBean");
-      ch = (org.jasig.portal.IChannel) session.getAttribute (sDispatchChannel);
-
-      if (ch == null)
-      {
-        String sChannelID = req.getParameter ("channelID");
+      String sChannelID = req.getParameter ("channelID");
         
-        if (sChannelID != null)
-        {
-          ch = layoutBean.getChannelInstance (sChannelID);
-          session.setAttribute (sDispatchChannel, ch);
-        }
-        else
-          Logger.log (Logger.ERROR, "To dispatch properly, a channel ID must be included in the query string in the form: \"...&channelID=...\"");
-      }
+      if (sChannelID != null)
+        ch = layoutBean.getChannelInstance (sChannelID);
+      else
+        Logger.log (Logger.ERROR, "To dispatch properly, a channel ID must be included in the query string in the form: \"...&channelID=...\"");
     }
     catch (Exception e)
     {
@@ -63,8 +52,6 @@ public class DispatchBean extends GenericPortalBean
   {
     try
     {
-      HttpSession session = req.getSession (false);
-      session.removeAttribute (sDispatchChannel);
       res.sendRedirect ("layout.jsp");
     }
     catch (Exception e)
