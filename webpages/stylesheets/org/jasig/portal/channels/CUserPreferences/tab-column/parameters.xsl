@@ -4,7 +4,6 @@
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
-  <xsl:param name="errorID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
@@ -24,11 +23,63 @@
         <tr>
           <td>
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
-
               <xsl:choose>
-                <xsl:when test="not(/userPrefParams/channelDef)">
+                <xsl:when test="$errorMessage = 'no parameter passed'">
+                  <xsl:choose>
+                    <xsl:when test="not(/userPrefParams/channelDef)">
+                      <tr class="uportal-channel-table-header" valign="bottom">
+                        <td width="100%">Custom Channel Settings</td>
+                      </tr>
+                      <tr class="uportal-channel-table-header">
+                        <td align="center">
+                          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                            <tr>
+                              <td>
+                                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <xsl:for-each select="/userPrefParams/paramNames/paramName">
+                        <tr class="uportal-channel-table-header" valign="bottom">
+                          <td width="100%">
+                            <span class="uportal-label">
+                              <xsl:value-of select="."/>:</span>
+                            <br/>
+                            <input type="text" name="{.}" size="40" class="uportal-input-text"/>
+                          </td>
+                        </tr>
+                      </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+
+                      <tr class="uportal-channel-table-header" valign="bottom">
+                        <td align="center" nowrap="nowrap">
+                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+
+
+                        <td width="100%">Channel Settings</td>
+                      </tr>
+                      <tr class="uportal-channel-table-header">
+                        <td align="center" colspan="4">
+                          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                            <tr>
+                              <td>
+                                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+
+                      <xsl:apply-templates select="//parameter[child::name=/userPrefParams/paramNames/paramName]"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
                   <tr class="uportal-channel-table-header" valign="bottom">
-                    <td width="100%">Custom Channel Settings</td>
+                    <td width="100%">Error Message</td>
                   </tr>
                   <tr class="uportal-channel-table-header">
                     <td align="center">
@@ -41,41 +92,12 @@
                       </table>
                     </td>
                   </tr>
-                  <xsl:for-each select="/userPrefParams/paramNames/paramName">
-                    <tr class="uportal-channel-table-header" valign="bottom">
-                      <td width="100%">
-                        <span class="uportal-label">
-                          <xsl:value-of select="."/>:</span><br/>
-                          <input type="text" name="{.}" size="40" class="uportal-input-text"/>
-                        
-                      </td>
-                    </tr>
-                  </xsl:for-each>
-                </xsl:when>
-                <xsl:otherwise>
-
                   <tr class="uportal-channel-table-header" valign="bottom">
-                    <td align="center" nowrap="nowrap">
-                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
-
-
-                    <td width="100%">Channel Settings</td>
-                  </tr>
-                  <tr class="uportal-channel-table-header">
-                    <td align="center" colspan="4">
-                      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                        <tr>
-                          <td>
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                          </td>
-                        </tr>
-                      </table>
+                    <td width="100%">
+                      <xsl:value-of select="$errorMessage"/>
                     </td>
                   </tr>
-
-                  <xsl:apply-templates select="//parameter[child::name=/userPrefParams/paramNames/paramName]"/>
-                </xsl:otherwise>
-              </xsl:choose>
+                </xsl:otherwise> </xsl:choose>
             </table>
           </td>
         </tr>
@@ -437,3 +459,4 @@
   </xsl:template>
 
 </xsl:stylesheet>
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
