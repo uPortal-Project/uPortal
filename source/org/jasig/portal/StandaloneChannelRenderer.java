@@ -183,6 +183,7 @@ public class StandaloneChannelRenderer
         rd.setBrowserInfo(binfo);
         rd.setLocales(lm.getLocales());
         rd.setHttpRequestMethod(req.getMethod());
+        rd.setRemoteAddress(req.getRemoteAddr());
         if(channelTarget!=null && chanID.equals(channelTarget)) {
             rd.setParameters(targetParams);
         }
