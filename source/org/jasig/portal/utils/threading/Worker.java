@@ -44,6 +44,7 @@ package org.jasig.portal.utils.threading;
 
 
 public final class Worker extends Thread {
+
 	private ThreadPool pool;
 	private Queue work;
 	private WorkerTask task;
@@ -76,6 +77,7 @@ public final class Worker extends Thread {
                                 // Lock this thread
                                 pool.lockThread(this);
 
+                                task.setWorker(this);
 				tracker = task.getWorkTracker();
 
 				//check to make sure this job hasn't been killed before we got it
@@ -120,7 +122,8 @@ public final class Worker extends Thread {
 	 */
 	public void stopWorker() {
 		continueWorking = false;
-		Thread.currentThread().interrupt();
+                if ( !this.isInterrupted() )
+		 this.interrupt();
                 pool.destroyThread(this);
 	}
 
