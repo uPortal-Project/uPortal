@@ -28,7 +28,6 @@ import org.jasig.portal.services.persondir.support.merger.MultivaluedAttributeMe
  * @version $Revision$ $Date$
  */
 public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
-    private static final Log LOG = LogFactory.getLog(MergingPersonAttributeDaoImpl.class);
     
     /**
      * A List of child IPersonAttributeDao instances which we will poll in order.
@@ -76,10 +75,10 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
                 final String msg = "Exception thrown by DAO: " + currentlyConsidering;
 
                 if (this.recoverExceptions) {
-                    LOG.warn("Recovering From " + msg, rte);
+                    log.warn("Recovering From " + msg, rte);
                 }
                 else {
-                    LOG.error(msg, rte);
+                    log.error(msg, rte);
                     throw rte;
                 }
             }
@@ -118,10 +117,10 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
                 final String msg = "Exception thrown by DAO: " + currentDao;
 
                 if (this.recoverExceptions) {
-                    LOG.warn(msg, rte);
+                    log.warn(msg, rte);
                 }
                 else {
-                    LOG.error(msg, rte);
+                    log.error(msg, rte);
                     throw rte;
                 }
             }

@@ -23,8 +23,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ldap.ILdapServer;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -42,7 +40,6 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
  * @version $Revision$ $Date$
  */
 public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
-    private static final Log LOG = LogFactory.getLog(LdapPersonAttributeDaoImpl.class);
     
     /**
      * Time limit, in milliseconds, for LDAP query.  
@@ -179,7 +176,7 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
                     userlist.close();
                 }
                 catch (final NamingException ne) {
-                    LOG.warn("Error closing ldap person attribute search results.", ne);
+                    log.warn("Error closing ldap person attribute search results.", ne);
                 }
             }
         } 
