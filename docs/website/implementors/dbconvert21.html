@@ -96,8 +96,37 @@ For example, change<br>
           <code>stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl</code><br>
 to<br>
           <code>/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl<br>
-          </code></li>
+          </code>
+          <br>
+       </li>
+
+       <li>To turn on functionality of &quot;Site Map&quot; in the header,
+       three tables need to be changed, as follows:<br>
+       <br>
+       1) Retrieve the 'sequence_value' from the <code>UP_SEQUENCE table where sequence_name='UP_CHANNEL'</code>:<br>
+       <br>
+       <code>SELECT sequence_value FROM UP_SEQUENCE WHERE sequence_name='UP_CHANNEL';</code><br>
+       <br>
+       2) Use this retrieved value (denoted as 'x' in the statement below)
+       to do an insert into the <code>UP_CHANNEL</code> table:<br>
+       <br>
+       <code>INSERT INTO UP_CHANNEL VALUES (x, 'Site Map','Site Map','A quick view of all your tabs and channels', 'org.jasig.portal.layout.channels.sitemap.CSiteMap', -1, 0, sysdate, 0, sysdate, 30000, 'N', 'N', 'N', 'layout-sitemap', 'N');</code><br>
+       <br>
+       3) Insert a row into the <code>UP_PERMISSION</code> table to allow all users 
+       access to the Site Map channel (where 'x' in the statement below is 
+       the same chan_id used in the insert statement in #2):<br>
+       <br>
+       <code>INSERT INTO UP_PERMISSION VALUES
+       ('UP_FRAMEWORK', 3, 'local.0', 'SUBSCRIBE', 'CHAN_ID.x', 'GRANT', null, null);</code><br>
+       <br>
+       4) Update the sequence_value for UP_CHANNEL in the UP_SEQUENCE table 
+       for the next incremental value:<br>
+       <br>
+       <code>UPDATE UP_SEQUENCE SET sequence_value = sequence_value+1
+       WHERE sequence_name='UP_CHANNEL';</code><br>
+       <br>
       </ul>
+
       <h3>Changes to portal.properties</h3>
       <ul>
         <li>Disable aggregated layouts by setting the following
