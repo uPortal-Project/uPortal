@@ -270,7 +270,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
     int messagesDownloaded = 0;
     int attachmentsViewed = 0;
     int messagesSent = 0;
-    boolean showMetrics = false;
+    boolean showMetrics = true;
 
     public String toString() {
       return "Read " + messagesRead + ", Deleted " + messagesDeleted +
@@ -500,12 +500,13 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
     public void doit(ChannelRuntimeData rd) {
       if (DEBUG) System.err.println("doit for " + weAre);
       runtimeData = rd;
+      /*
       if (false && sUser == null) { // Get password from authentication stack
         HttpSession httpSession = rd.getHttpRequest().getSession (false);
         sUser = (String) httpSession.getAttribute (config.sSessionUsername);
         sPassword = (String) httpSession.getAttribute (config.sSessionPassword);
       }
-
+      */
       username = runtimeData.getParameter("username");
       password = runtimeData.getParameter("password");
     }
@@ -810,8 +811,8 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
             // From
             Address[] addresses;
 
+            xml.write("<from>\n");
             if ( (addresses = msg.getFrom ()) != null) {
-              xml.write("<from>\n");
               for (int iAddr = 0; iAddr < addresses.length; iAddr++) {
                 InternetAddress ia = (InternetAddress) addresses[iAddr];
                 String sPersonal = ia.getPersonal ();
@@ -823,8 +824,8 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
                 xml.write("<email>" + HTMLescape(ia.getAddress()) + "</email>");
                 xml.write("</address>\n");
               }
-              xml.write("</from>\n");
             }
+            xml.write("</from>\n");
 
             // Subject
             String sSubject = msg.getSubject ();
@@ -918,9 +919,24 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
     private String replyAllMessageButtonTxt = "Reply All";
     private String forwardMessageButtonTxt = "Forward";
     private String deleteMessageButtonTxt = "Delete";
+    private Tidy tidy = new Tidy(); // We have to make sure the html is XML compliant
 
     public DisplayMessage() {
       weAre = xslTag;
+      tidy.setXHTML (true);
+      tidy.setDocType ("omit");
+      tidy.setQuiet(true);
+      tidy.setShowWarnings(false);
+      tidy.setNumEntities(true);
+      tidy.setWord2000(true);
+      try {
+        if ( System.getProperty("os.name").indexOf("Windows") != -1 ) {
+          tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
+        } else {
+          tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
+        }
+      } catch (FileNotFoundException fnfe) { /* Ignore */}
+
     }
 
     private int msgIndex;
@@ -1112,19 +1128,9 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         if (textPart == null) {
           xml.write("<msgtext><strong>Message has no displayable text</strong></msgtext>\n");
         } else if (textPart.isMimeType ("text/html")) {
-          if (true) {
-            xml.write("<msgtext><strong>Can't display html text (yet)!</strong></msgtext>\n");
-          } else {
-          Tidy tidy = new Tidy(); // We have to make sure the html is XML compliant
-          tidy.setQuiet(true);
-          tidy.setShowWarnings(false);
-          tidy.setXmlOut(true);   // or the XSL transformation may abort the whole thing
-
           ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
           tidy.parse(textPart.getInputStream (), out);
           xml.write("<msgtext>\n" + out.toString() + "\n</msgtext>");
-          System.err.println(out.toString());
-          }
         } else {
           BufferedReader in = new BufferedReader (new InputStreamReader (textPart.getInputStream ()));
 
@@ -2199,7 +2205,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
                 xmlString =  activeMethod.renderString();
             } else {
               if (DEBUG) System.err.println("renderXML authorized");
-              checkIMAPConnection(runtimeData.getHttpRequest());
+              checkIMAPConnection();
               xmlString =  activeMethod.renderString();
             }
           } catch (CIMAPLostConnectionException clce) {
@@ -2653,13 +2659,13 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
    * Attempt to restore our state with the imap server
    * @param the servlet request object
    */
-  private void reconnect (HttpServletRequest req) throws Exception, AuthenticationFailedException {
+  private void reconnect () throws Exception, AuthenticationFailedException {
     System.err.println("reconnecting");
     cleanup ();
     initialize ();
   }
 
-  private void checkIMAPConnection (HttpServletRequest req) throws Exception, CIMAPLostConnectionException, AuthenticationFailedException {
+  private void checkIMAPConnection () throws Exception, CIMAPLostConnectionException, AuthenticationFailedException {
     Thread.yield ();
     try {
       if (inbox != null) {
@@ -2683,7 +2689,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
       Logger.log(Logger.DEBUG, "Lost connection to store, re-initializing.");
 
       try {
-        reconnect (req);
+        reconnect ();
         throw new CIMAPLostConnectionException ();
       } catch (Exception e) {
         if (e instanceof CIMAPLostConnectionException) {
@@ -3566,13 +3572,15 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         for (int i = 0; i < mPart.getCount (); i++) {
           part = mPart.getBodyPart (i);
           if (DEBUG) System.err.println("disposition: " + part.getDisposition());
-          if (bodyText == null && (part.getDisposition() == null ||  part.getDisposition().equals("inline")) &&
+          if (bodyText == null && (part.getDisposition() == null ||  part.getDisposition().equalsIgnoreCase("inline")) &&
             (part.isMimeType ("text/plain") || part.isMimeType ("text/html"))) {
             bodyText = part;
-          } else if (bodyText != null && (part.getDisposition() == null ||  part.getDisposition().equals("inline")) &&
+            if (DEBUG) System.err.println("Found text bodytext at " + i);
+          } else if (bodyText != null && (part.getDisposition() == null ||  part.getDisposition().equalsIgnoreCase("inline")) &&
                 bodyText.isMimeType ("text/plain") && part.isMimeType ("text/html")) {
             bodyText = part; // Choose html over plain text
-          } else if ((part.getDisposition() != null && part.getDisposition().equals("attachment")) ||
+            if (DEBUG) System.err.println("Found html bodytext at " + i);
+          } else if ((part.getDisposition() != null && part.getDisposition().equalsIgnoreCase("attachment")) ||
                   !(bodyText != null && bodyText.isMimeType ("text/html") && part.isMimeType ("text/plain"))) {
             if (DEBUG) System.err.println("Found attachment " + i + "=" + part.getFileName());
             attachments.add (part);
@@ -3587,7 +3595,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
         }
       } else {
           if (DEBUG) System.err.println("disposition (single): " + part.getDisposition());
-          if (bodyText == null && (part.getDisposition() == null || part.getDisposition().equals("inline")) &&
+          if (bodyText == null && (part.getDisposition() == null || part.getDisposition().equalsIgnoreCase("inline")) &&
             (part.isMimeType ("text/plain") || part.isMimeType ("text/html"))) {
             bodyText = part;    // Grab the first displayable body part
           } else {
