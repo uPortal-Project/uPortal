@@ -42,7 +42,7 @@ import java.io.Writer;
  * A simple wrapper to present {@link IWriteable} interface for a regular <code>java.io.Writer</code>.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class WriteableWriterWrapper implements IWriteable {
     protected final Writer out;

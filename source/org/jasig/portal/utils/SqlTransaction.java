@@ -8,7 +8,7 @@ import org.jasig.portal.services.LogService;
 
 /**
  * This type is a place to centralize the portal's sql transaction code.
- * @author: Dan Ellentuck
+ * @author Dan Ellentuck
  * @version $Revision$
  */
 public class SqlTransaction {

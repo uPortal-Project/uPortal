@@ -149,7 +149,7 @@ public abstract class AbstractPool implements ThreadPool {
 	/**
 	 * Gives the total number of threads in the pool
 	 *
-	 * @retur the total number of worker threads (busy and idle) in the pool
+	 * @return the total number of worker threads (busy and idle) in the pool
 	 */
 	public int totalThreads() throws IllegalStateException {
 		if (isDestroyed) {

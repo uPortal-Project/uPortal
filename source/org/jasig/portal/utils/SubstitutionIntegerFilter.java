@@ -41,7 +41,7 @@ import java.io.IOException;
  * Performs substitution operation on a stream of integer write requests.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class SubstitutionIntegerFilter {
     private final static int DEFAULT_BUFFER_SIZE=2048;

@@ -44,7 +44,7 @@ import java.io.Writer;
  * word substitution (search&replace) on the fly.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class SubstitutionWriter extends Writer {
     SubstitutionIntegerFilter filter;

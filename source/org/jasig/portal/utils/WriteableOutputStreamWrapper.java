@@ -42,7 +42,7 @@ import java.io.OutputStream;
  * A simple wrapper to present {@link IWriteable} interface for a regular <code>java.io.OutputStream</code>.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class WriteableOutputStreamWrapper implements IWriteable {
     protected final OutputStream out;
