@@ -68,6 +68,7 @@ public class GroupsManagerCommandFactory
          bindings.put("Delete", Class.forName(COMMANDS_PACKAGE + ".DeleteGroup").newInstance());
          bindings.put("Deselect", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
          bindings.put("Done", Class.forName(COMMANDS_PACKAGE + ".DoneWithSelection").newInstance());
+         bindings.put("Edit", Class.forName(COMMANDS_PACKAGE + ".EditGroup").newInstance());
          bindings.put("Expand", Class.forName(COMMANDS_PACKAGE + ".ExpandGroup").newInstance());
          //bindings.put("Find", Class.forName(COMMANDS_PACKAGE + ".FindEntities").newInstance());
          bindings.put("Remove", Class.forName(COMMANDS_PACKAGE + ".RemoveMember").newInstance());
