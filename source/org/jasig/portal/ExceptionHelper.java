@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2004 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -21,7 +21,7 @@ public class ExceptionHelper {
     // List of strings to match in traceback for various containers
 	// This array must be expanded as additional Application Server
 	// containers become better known
-    public static final String boundaries[] =
+    private static final String boundaries[] =
         {
     		"at javax.servlet.http.HttpServlet."
     	};
@@ -153,14 +153,8 @@ public class ExceptionHelper {
         traceToLog(eid, parm, ex);
 
         // Create a derived PortalException chained to this
-        PortalException nex;
-        if (ex instanceof Exception) {
-            nex = new PortalException(eid, (Exception) ex);
-        } else {
-        	// Sorry, at this point PortalExceptions don't chain to 
-        	// non-Exception subclasses of Throwable
-            nex = new PortalException(eid);
-        }
+        PortalException nex = new PortalException(eid, ex);
+        
         nex.setLogPending(false);    
         ProblemsTable.store(nex);    
         throw nex;
@@ -275,28 +269,25 @@ public class ExceptionHelper {
      * (doesn't rethrow exception)
      * @param eid Error ID
      * @param parm Parameter string
-     * @param ex Exception caught
+     * @param t Exception caught
      */
-    public static void genericTopHandler(ErrorID eid, String parm, Throwable ex) {
+    public static void genericTopHandler(ErrorID eid, String parm, Throwable t) {
 
  
         // If this is an already logged Portal Exception, we are done
-        if (ex instanceof PortalException &&
-        	!((PortalException)ex).isLogPending()) {
+        if (t instanceof PortalException &&
+        	!((PortalException)t).isLogPending()) {
         	return;
         }
 
-        traceToLog(eid, parm, ex);  
+        traceToLog(eid, parm, t);  
         
-        if (ex instanceof PortalException) // already in the table
+        if (t instanceof PortalException) // already in the table
         	return;
         
 		// Create a derived PortalException (just for Problems Table)
 		PortalException nex=null;
-		if (ex instanceof Exception)
-			nex = new PortalException(eid, (Exception) ex);
-		else
-			nex = new PortalException(eid);
+		nex = new PortalException(eid, t);
 		ProblemsTable.store(nex);    
     }
 
