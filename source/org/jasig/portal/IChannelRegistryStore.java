@@ -86,16 +86,6 @@ public interface IChannelRegistryStore {
   public Document getChannelTypesXML () throws Exception;
 
 
-
-  /**
-   * put your documentation comment here
-   * @param role
-   * @return
-   */
-  public Document getCategoryXML (String role);
-
-
-
   /**
    * Removes a channel from the channel registry.
    * @param chanID, the ID of the channel to remove.

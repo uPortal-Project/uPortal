@@ -958,30 +958,6 @@ public class RDBMUserLayoutStore
   }
   /**
    * put your documentation comment here
-   * @param chanId
-   * @param userId
-   * @param con
-   * @return
-   * @exception java.sql.SQLException
-   */
-  protected static boolean channelInUserRole (int chanId, int userId, Connection con) throws java.sql.SQLException {
-    Statement stmt = con.createStatement();
-    try {
-      String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " + "WHERE UUR.USER_ID="
-          + userId + " AND UC.CHAN_ID=" + chanId + " AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::channelInUserRole(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      try {
-        return  rs.next();
-      } finally {
-        rs.close();
-      }
-    } finally {
-      stmt.close();
-    }
-  }
-  /**
-   * put your documentation comment here
    * @param connection
    */
   static final protected void commit (Connection connection) throws SQLException {
@@ -1098,76 +1074,7 @@ public class RDBMUserLayoutStore
     }
     dumpDoc(node.getNextSibling(), indent);
   }
-  /**
-   * put your documentation comment here
-   * @return
-   * @exception java.sql.SQLException
-   */
-  public Vector getAllRoles () throws SQLException {
-    Vector roles = new Vector();
-    Connection con = rdbmService.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT ROLE_TITLE, ROLE_DESC FROM UP_ROLE";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getAllRolessQuery(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          IRole role = null;
-          // Add all of the roles in the portal database to to the vector
-          while (rs.next()) {
-            role = new org.jasig.portal.security.provider.RoleImpl(rs.getString(1));
-            role.setAttribute("description", rs.getString(2));
-            roles.add(role);
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-    return  (roles);
-  }
-  /** Returns a string of XML which describes the channel categories.
-   * @param role role of the current user
-   */
-  public void getCategoryXML (Document catsDoc, Element root, String role) throws Exception {
-    Connection con = rdbmService.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT UC.CAT_ID, UC.CAT_TITLE " + "FROM UP_CATEGORY UC ";
-        if (role != null && !role.equals("")) {
-          sQuery += ", UP_CAT_CHAN, UCC, UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR" + " WHERE UR.ROLE_TITLE='" + role +
-              "' AND URC.ROLE_ID = UR.ROLE_ID AND URC.CHAN_ID = UC.CHAN_ID" + " AND UC.CHAN_ID = UCC.CHAN_ID AND UCC.CAT_ID = UC.CAT_ID";
-        }
-        sQuery += " ORDER BY UC.CAT_TITLE";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getCategoryXML(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          Element cat = null;
-          while (rs.next()) {
-            String catnm = rs.getString(2);
-            String id = rs.getString(1);
-            cat = catsDoc.createElement("category");
-            cat.setAttribute("ID", id);
-            cat.setAttribute("name", catnm);
-            root.appendChild(cat);
-          }
-          catsDoc.appendChild(root);
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-  }
+
     /**
      * Manage the Channel cache
      */
@@ -1367,35 +1274,7 @@ public class RDBMUserLayoutStore
     }
     return doc;
   }
-  /**
-   * Get the roles that a channel belongs to
-   * @param channelRoles
-   * @param channelID
-   * @exception java.sql.SQLException
-   */
-  public void getChannelRoles (Vector channelRoles, int channelID) throws SQLException {
-    Connection con = rdbmService.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String query = "SELECT UR.ROLE_TITLE, UC.CHAN_ID FROM UP_ROLE_CHAN URC, UP_ROLE UR, UP_CHANNEL UC " + "WHERE UC.CHAN_ID="
-            + channelID + " AND UC.CHAN_ID=URC.CHAN_ID AND URC.ROLE_ID=UR.ROLE_ID";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRoles(): " + query);
-        ResultSet rs = stmt.executeQuery(query);
-        try {
-          while (rs.next()) {
-            channelRoles.addElement(rs.getString("ROLE_TITLE"));
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-  }
+
   /**
    * Get channel types xml.
    * It will look something like this:
@@ -2721,42 +2600,6 @@ public class RDBMUserLayoutStore
   }
   /**
    * put your documentation comment here
-   * @param person
-   * @param roles
-   * @exception Exception
-   */
-  public void removeUserRoles (IPerson person, Vector roles) throws Exception {
-    int userId = person.getID();
-    Connection con = rdbmService.getConnection();
-    try {
-      // Set autocommit false for the connection
-      setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        int deleteCount = 0;
-        for (int i = 0; i < roles.size(); i++) {
-          String delete = "DELETE FROM UP_USER_ROLE WHERE USER_ID=" + userId + " AND ROLE_ID=" + roles.elementAt(i);
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeUserRoles(): " + delete);
-          deleteCount = stmt.executeUpdate(delete);
-          if (deleteCount != 1) {
-            LogService.instance().log(LogService.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
-          }
-        }
-        // Commit the transaction
-        commit(con);
-      } catch (Exception e) {
-        // Roll back the transaction
-        rollback(con);
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-  }
-  /**
-   * put your documentation comment here
    * @param connection
    */
   static final protected void rollback (Connection connection) throws SQLException {
@@ -2890,58 +2733,6 @@ public class RDBMUserLayoutStore
   static final protected void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
     if (supportsTransactions) {
       connection.setAutoCommit(autocommit);
-    }
-  }
-  /**
-   * put your documentation comment here
-   * @param channelID
-   * @param roles
-   * @return
-   * @exception Exception
-   */
-  public int setChannelRoles (int channelID, org.jasig.portal.security.IAuthorization.RoleAuthorization[] roles) throws Exception {
-    Connection con = rdbmService.getConnection();
-    try {
-      // Set autocommit false for the connection
-      setAutoCommit(con, false);
-      int recordsInserted = 0;
-      Statement stmt = con.createStatement();
-      try {
-        // First delete existing roles for this channel
-        String sDelete = "DELETE FROM UP_ROLE_CHAN WHERE CHAN_ID=" + channelID;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sDelete);
-        int recordsDeleted = stmt.executeUpdate(sDelete);
-        // Count the number of records inserted
-        for (int i = 0; i < roles.length; i++) {
-          org.jasig.portal.security.IAuthorization.RoleAuthorization ra = roles[i];
-          String sQuery = "SELECT ROLE_ID FROM UP_ROLE WHERE ROLE_TITLE = '" + ra.getRoleName() + "'";
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sQuery);
-          ResultSet rs = stmt.executeQuery(sQuery);
-          try {
-            rs.next();
-            int roleId = rs.getInt(1);
-            String sInsert = "INSERT INTO UP_ROLE_CHAN (CHAN_ID, ROLE_ID, RELEASE_DT, APPROVAL_FLG) " +
-              "VALUES (" + channelID + "," + roleId + "," +
-              tsStart + "'" + new java.sql.Timestamp(ra.getAuthorizedDate().getTime()) + "'" + tsEnd + "," +
-              "'" + (ra.getAuthorized() ? "Y" : "N") + "'" + ")";
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sInsert);
-            recordsInserted += stmt.executeUpdate(sInsert);
-          } finally {
-            rs.close();
-          }
-        }
-      } finally {
-        stmt.close();
-      }
-      // Commit the transaction
-      commit(con);
-      return  (recordsInserted);
-    } catch (Exception e) {
-      // Roll back the transaction
-      rollback(con);
-      throw  e;
-    } finally {
-      rdbmService.releaseConnection(con);
     }
   }
   /**

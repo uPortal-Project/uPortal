@@ -73,7 +73,6 @@ public interface IUserLayoutStore {
   public void removeChannel(String chanID) throws Exception;
   public Document getChannelRegistryXML(IPerson person) throws Exception;
   public Document getChannelTypesXML() throws Exception;
-  public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;
   public String getNextStructChannelId(IPerson person) throws Exception;
   public String getNextStructFolderId(IPerson person) throws Exception;
   public void approveChannel(int chanId, IPerson approver, java.util.Date approveDate) throws Exception;

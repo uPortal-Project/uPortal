@@ -77,22 +77,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     return UserLayoutStoreFactory.getUserLayoutStoreImpl().getChannelTypesXML();
   }
 
-  /** Returns a string of XML which describes the channel categories.
-   * @param role role of the current user
-   * @return Document
-   */
-  public Document getCategoryXML (String role) {
-    Document catsDoc = null;
-    try {
-      catsDoc = new org.apache.xerces.dom.DocumentImpl();
-      Element root = catsDoc.createElement("channelCats");
-      UserLayoutStoreFactory.getUserLayoutStoreImpl().getCategoryXML(catsDoc, root, role);
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-    }
-    return  catsDoc;
-  }
-
   /** A method for adding a channel to the channel registry.
    * This would be called by a publish channel.
    * @param id the identifier for the channel
