@@ -267,9 +267,8 @@ public class LdapServices
                                         
                                         if (isDefaultConn) {
                                             defaultConn = newConn;
-                                            log.info("LdapServices::initConnections(): Replaced '" +
-                                        LDAP_PROPERTIES_FILE + "' connection with default connection " + name + " from " +
-                                        "'" + LDAP_XML_FILE + "'");
+                                            if (log.isInfoEnabled())
+                                                log.info("Replaced '" + LDAP_PROPERTIES_FILE + "' connection with default connection '" + name + "' from '" + LDAP_XML_FILE + "'");
                                         }
                                     }
                                     catch (IllegalArgumentException iae) {
