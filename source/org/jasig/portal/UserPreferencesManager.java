@@ -98,8 +98,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
-            if(userAgent==null || userAgent.equals("")) { 
-                userAgent=MediaManager.NULL_USER_AGENT; 
+            if(userAgent==null || userAgent.equals("")) {
+                userAgent=MediaManager.NULL_USER_AGENT;
             }
             UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
             if (upl == null) {
@@ -314,7 +314,12 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         String fname = req.getParameter( Constants.FNAME_PARAM );
         if (fname != null) {
             // get a subscribe id for the fname
-            String subId = ulm.getSubscribeId(fname);
+            String subId = null;
+            try {
+             subId = ulm.getSubscribeId(fname);
+            } catch ( PortalException pe ) {
+               LogService.log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters(): Unable to get subscribe ID for fname="+fname);
+              }
             if ( ulm instanceof TransientUserLayoutManagerWrapper ){
                 // get wrapper implementation for focusing
                 TransientUserLayoutManagerWrapper iulm =

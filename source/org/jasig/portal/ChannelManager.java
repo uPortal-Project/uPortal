@@ -32,7 +32,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 package org.jasig.portal;
 
 import java.io.IOException;
@@ -101,7 +101,7 @@ public class ChannelManager implements LayoutEventListener {
 
     private Context portalContext;
     private Context channelContext;
-    
+
     // inter-channel communication tables
     private HashMap iccTalkers;
     private HashMap iccListeners;
@@ -115,11 +115,11 @@ public class ChannelManager implements LayoutEventListener {
     private IAuthorizationPrincipal ap;
 
     /** Factory used to build all channel renderer objects. */
-    private static final IChannelRendererFactory cChannelRendererFactory = 
+    private static final IChannelRendererFactory cChannelRendererFactory =
         ChannelRendererFactory.newInstance(
             ChannelManager.class.getName()
             );
-    
+
     public UPFileSpec uPElement;
 
     // global channel rendering cache
@@ -139,7 +139,7 @@ public class ChannelManager implements LayoutEventListener {
         channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
         groupedRendering=false;
     }
-    
+
     /**
      * Creates a new <code>ChannelManager</code> instance.
      *
@@ -192,10 +192,10 @@ public class ChannelManager implements LayoutEventListener {
     public void commitToRenderingChannelSet() {
         if(groupedRendering) {
             // separate out the dependency group in s0
-            
+
             HashSet s0=new HashSet();
             Set children;
-            
+
             s0.add(channelTarget);
             pendingChannels.remove(channelTarget);
             children=getListeningChannels(channelTarget);
@@ -217,7 +217,7 @@ public class ChannelManager implements LayoutEventListener {
                     children=newChildren;
                 }
             }
-            
+
             // now s0 group must be synchronized at renderXML(), while the remaining pendingChildren can be rendered freely
             SetCheckInSemaphore s0semaphore= new SetCheckInSemaphore(new HashSet(s0));
             for(Iterator gi=s0.iterator();gi.hasNext();) {
@@ -297,7 +297,7 @@ public class ChannelManager implements LayoutEventListener {
                 LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : Encountered a portal exception while trying to start channel rendering! :"+pe);
             }
         }
-        
+
         // complete rendering and check status
         int renderingStatus=-1;
         try {
@@ -354,7 +354,7 @@ public class ChannelManager implements LayoutEventListener {
                     } else {
                         handleRenderingError(channelSubscribeId,ch,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
                         return;
-                    }                    
+                    }
                 } else { // non-null characterContent case
                     // output character content
                     try {
@@ -382,7 +382,7 @@ public class ChannelManager implements LayoutEventListener {
                     return;
                 }
             }
-            
+
             // Obtain the channel description
             IUserLayoutChannelDescription channelDesc = null;
             try {
@@ -390,7 +390,7 @@ public class ChannelManager implements LayoutEventListener {
             } catch (PortalException pe) {
               // Do nothing
             }
-            
+
             // Tell the StatsRecorder that this channel has rendered
             StatsRecorder.recordChannelRendered(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
         } else {
@@ -457,7 +457,7 @@ public class ChannelManager implements LayoutEventListener {
             } else {
                 // check status
                 message=message+" channelRenderingStatus=";
-                    
+
                 switch( renderingStatus )
                 {
                     case IChannelRenderer.RENDERING_SUCCESSFUL:
@@ -585,7 +585,7 @@ public class ChannelManager implements LayoutEventListener {
         channelTable.put(channelSubscribeId,secureInfoChannel);
         return secureInfoChannel;
     }
-    
+
     /**
      * <code>getChannelContext</code> generates a JNDI context that
      * will be passed to the regular channels. The context is pieced
@@ -630,7 +630,7 @@ public class ChannelManager implements LayoutEventListener {
 
     /**
      * Instantiates a channel given just the channel subscribe Id.
-     * 
+     *
      * @param channelSubscribeId a channel instance Id in the userLayout
      * @return an <code>IChannel</code> object
      */
@@ -643,7 +643,7 @@ public class ChannelManager implements LayoutEventListener {
         IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
         if(channel!=null)
             return instantiateChannel(channel);
-        else 
+        else
             return null;
     }
 
@@ -658,7 +658,7 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
-          
+
             // Instantiate the channel and notify the StatsRecorder
             ch = ChannelFactory.instantiateLayoutChannel(cd,this.pcs.getHttpServletRequest().getSession(false).getId());
             StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
@@ -674,7 +674,7 @@ public class ChannelManager implements LayoutEventListener {
             sd.setChannelPublishId(cd.getChannelPublishId());
 
             ch.setStaticData(sd);
-   
+
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
@@ -716,13 +716,13 @@ public class ChannelManager implements LayoutEventListener {
         // clear the previous settings
         channelTarget = null;
         targetParams = new Hashtable();
-        
+
         // see if this is targeted at an fname channel. if so then it takes
         // precedence. This is done so that a baseActionURL can be used for
         // the basis of an fname targeted channel with the fname query parm
         // appended to direct all query parms to the fname channel
         String fname = req.getParameter( Constants.FNAME_PARAM );
-        
+
         if ( fname != null )
         {
             // need to get to wrapper for obtaining a subscribe id
@@ -730,7 +730,11 @@ public class ChannelManager implements LayoutEventListener {
                 (TransientUserLayoutManagerWrapper) upm
                 .getUserLayoutManager();
             // get a subscribe id for the fname
-            channelTarget = iulm.getSubscribeId(fname);
+            try {
+             channelTarget = iulm.getSubscribeId(fname);
+            } catch ( PortalException pe ) {
+               LogService.log(LogService.ERROR, "ChannelManager::processRequestChannelParameters(): Unable to get subscribe ID for fname="+fname);
+              }
         }
         if ( channelTarget == null )
         {
@@ -751,11 +755,11 @@ public class ChannelManager implements LayoutEventListener {
               channelDesc = (IUserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelTarget);
             } catch (PortalException pe) {
               // Do nothing
-            }          
-          
+            }
+
             // Tell StatsRecorder that a user has interacted with the channel
             StatsRecorder.recordChannelTargeted(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
-            
+
             // process parameters
             Enumeration en = req.getParameterNames();
             if (en != null) {
@@ -963,10 +967,10 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     /**
-     * Initiate channel rendering cycle, possibly disabling timeout. 
+     * Initiate channel rendering cycle, possibly disabling timeout.
      *
      * @param channelSubscribeId a <code>String</code> value
-     * @param noTimeout a <code>boolean</code> value specifying if the 
+     * @param noTimeout a <code>boolean</code> value specifying if the
      *                  time out rendering control should be disabled.
      * @return a <code>IChannelRenderer</code> value
      * @exception PortalException if an error occurs
@@ -976,19 +980,19 @@ public class ChannelManager implements LayoutEventListener {
         // see if the channel is cached
         IChannel ch;
         long timeOut=0;
-        
+
         IUserLayoutNodeDescription node=upm.getUserLayoutManager().getNode(channelSubscribeId);
         if(!(node instanceof IUserLayoutChannelDescription)) {
             throw new PortalException("\""+channelSubscribeId+"\" is not a channel node !");
         }
-        
+
         IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) node;
         timeOut=channel.getTimeout();
 
         ch = (IChannel) channelTable.get(channelSubscribeId);
-        
+
         // replace channels that are specified as needing to be
-        // rendered securely with CSecureInfo.        
+        // rendered securely with CSecureInfo.
         if (!pcs.getHttpServletRequest().isSecure() && channel.isSecure()){
             if (ch == null || !(ch instanceof CSecureInfo)){
                 ch = replaceWithSecureInfoChannel(channelSubscribeId,false);
@@ -1072,7 +1076,7 @@ public class ChannelManager implements LayoutEventListener {
             ch,
             rd
             );
-        
+
         cr.setCharacterCacheable(this.isCharacterCaching());
         if(ch instanceof ICacheable) {
             cr.setCacheTables(this.channelCacheTable);
@@ -1092,7 +1096,7 @@ public class ChannelManager implements LayoutEventListener {
         }
         rendererTable.put(channelSubscribeId,cr);
 
-        return cr;        
+        return cr;
     }
 
     synchronized void registerChannelDependency(String listenerChannelSubscribeId, String talkerChannelSubscribeId) {
@@ -1111,7 +1115,7 @@ public class ChannelManager implements LayoutEventListener {
         listeners.add(listenerChannelSubscribeId);
     }
 
-    
+
     private Set getListeningChannels(String talkerChannelSubscribeId) {
         return (Set)iccTalkers.get(talkerChannelSubscribeId);
     }
@@ -1123,7 +1127,7 @@ public class ChannelManager implements LayoutEventListener {
     private boolean hasListeningChannels(String talkerChannelSubscribeId) {
         return (iccTalkers.get(talkerChannelSubscribeId)!=null);
     }
-    
+
     synchronized void removeChannelDependency(String listenerChannelSubscribeId, String talkerChannelSubscribeId) {
         Set talkers=(Set)iccListeners.get(listenerChannelSubscribeId);
         if(talkers!=null) {
@@ -1141,7 +1145,7 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
     }
-    
+
 
     // LayoutEventListener interface implementation
     public void channelAdded(LayoutEvent ev) {}
