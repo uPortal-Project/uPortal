@@ -38,8 +38,37 @@
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
    
 <h3>RegisterStyleSheet: Add/Delete/Modify/Register Stylesheet tool</h3>
-<blockquote> Documentation for this section is not available. You can contribute to uPortal
-by <a href="../getinv.html">Getting Involved</a>.</blockquote>
+<p> Documentation for this section is not available. You can contribute to uPortal 
+by <a href="../getinv.html">Getting Involved</a>.</p>
+<p>uPortal comes with a reference structure and theme stylesheet. To change the 
+final rendering of a uPortal layout, it may be necessary to author and install 
+new stylesheets. The RegisterStylesheet tool can be used to install new stylesheets 
+and their accompanying stylesheet description files.</p>
+<p><br>
+Usage: <code>registerStylesheet -(s|t) [-(u|d)] [stylesheetURI] [stylesheetDescriptionURI] 
+[stylesheetId]</code></p>
+<p>The stylesheetId must be specified for update and delete operations.The URIs 
+must be specified for add and update operations.The CLASSPATH environment variable 
+should be set up to include both &quot;uPortal/build&quot; and &quot;<code>uPortal/build/WEB-INF/classes</code>&quot; 
+dirs.</p>
+<p>
+For deployment all stylesheets are moved under the &quot;<code>/stylesheet/</code>&quot; 
+directory, so the URI for a stylesheet will always begin with &quot;<code>/stylesheet/</code>&quot;, 
+unless you're specifying a global URL (which is not recommended).</p>
+<p>
+Stylesheet description files (.sdf) are moved to the same location, so their URI 
+should be specified in the same manner. For example to specify a URI for a tab-column.xsl 
+(part of the distribution), use &quot;<code>/stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl</code>&quot;.</p>
+<p><br>
+Flag specification: </p>
+<p>-s : process structure stylesheet (either &quot;-t&quot; or &quot;-s&quot; 
+are required on the command line <br>
+<p>-t : process theme stylesheet (either &quot;-t&quot; or &quot;-s&quot; are 
+required on the command line <br>
+<p>-u : update stylesheet definition <br>
+<p>-d : remove stylesheet</p>
+<p></p>
+<p>&nbsp;</p>
    
    
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">

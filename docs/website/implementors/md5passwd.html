@@ -38,13 +38,38 @@
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
    
 <h3>MD5passwd: user password creation tool</h3>
-<blockquote> Documentation for this section is not available. You can contribute to uPortal
-by <a href="../getinv.html">Getting Involved</a>.</blockquote>
-   
-   
-   <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
-	
-   </TD> 
+<p>The MD5passwd program is used for creating encrypted passwords in the UP_PERSON_DIR 
+table in the database used by the uPortal reference implementation. </p>
+<p>
+MD5passwd can be invoked using the ant build tool thusly:
+</p>
+<p><code>ant md5passwd -Dusername=ken</code> </p>
+<p>The following contains sample output:</p>
+<code>
+Buildfile: build.xml<br>
+<br>
+prepare:<br>
+<br>
+compile:<br>
+<br>
+md5passwd:<br>
+     [echo] Invoking md5passwd<br>
+     [java] Working directory ignored when same JVM is used.<br>
+     [java] Enter Password for ken:<br> 
+*****<br>
+     [java] Password Updated...<br>
+<br>
+BUILD SUCCESSFUL<br>
+<br>
+Total time: 9 seconds<br>
+
+</code>
+<p>&nbsp;</p> 
+
+
+<IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT="."> 
+
+</TD> 
 
 </TR> 
 

@@ -38,10 +38,24 @@
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
    
 <h3>RegisterChannelType: Register Channel Types tool</h3>
-<blockquote> Documentation for this section is not available. You can contribute to uPortal
-by <a href="../getinv.html">Getting Involved</a>.</blockquote>
-   
-   
+
+<p>The publishing process makes use of channel publishing documents (.cpd files) 
+to <br>
+determine what parameters and restrictions on parameters are necessary to <br>
+collect for the use by a published channel. A set of serveral channel types, <br>
+each of which references a channel publishing document, is supplied with <br>
+uPortal. </p>
+<p>To add additional channel types, it is necessary to use <br>
+the RegisterChannelTypes tool.</p>
+<p> To run this tool, type<br>
+&quot;ant regchantype&quot; followed by a set of parameters. For example:</p>
+<p><br>
+<code>ant regchantype -Dclass=org.jasig.portal.channels.CImage \<br>
+ -Dname=&quot;ImageChannel&quot;</code> \<br>
+<code>-Ddescription=&quot;Displays image with optional title and subtitle&quot; \<br>
+-Duri=/org/jasig/portal/channels/CImage/CImage.cpd</code></p>
+<p></p>
+<p>&nbsp;</p>  
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
 	
    </TD> 
