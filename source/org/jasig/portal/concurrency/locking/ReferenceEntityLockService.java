@@ -299,7 +299,8 @@ throws LockingException
 public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner, int durationSecs)
 throws LockingException
 {
-    Date expires = getNewExpiration(durationSecs);
+    int expirationSecs = durationSecs; 
+    Date expires = getNewExpiration(expirationSecs);
     IEntityLock newLock = new EntityLockImpl(entityType, entityKey, lockType, expires, owner, this);
 
     // retrieve potentially conflicting locks:
@@ -331,7 +332,8 @@ throws LockingException
                 if ( locks[i].equals(newLock) ) 
                 { 
                     // another read lock from the same owner; bump the expiration time.
-                    expires = getNewExpiration(durationSecs + 1);
+                    expirationSecs++;
+                    expires = getNewExpiration(expirationSecs);
                     newLock = new EntityLockImpl(entityType, entityKey, lockType, expires, owner, this);
                 }
             }
