@@ -165,7 +165,7 @@
                        in certain web containers including Tomcat 4.0.1.
                        For information, see http://www.mun.ca/cc/portal/cw/#depend or
                        download tidy.jar directly from http://www.mun.ca/cc/portal/cw/tidy.jar
-                       Used by the CWebProxy and the CIMAPMail channels.
+                       Used by the CWebProxy channel.
                        Version: 04aug2000r6 or fixed version     (see above)
                        URL: http://lempinen.net/sami/jtidy/
                             http://www.mun.ca/cc/portal/cw/#depend   (see above)
@@ -174,13 +174,7 @@
                        Version: 0.9.7.0
                        URL: http://tyrex.exolab.org/
 
-  mail.jar             JavaMail, a set of abstract classes that model a mail system.
-                       The CIMAPMail channel uses this API.
-                       Version: 1.2
-                       URL: http://java.sun.com/products/javamail/
-
-  activation.jar       JavaBeans Activation Framework.  This library is required
-                       by JavaMail.
+  activation.jar       JavaBeans Activation Framework. Used by MultiPartDataSource.
                        Version: 1.0.1
                        URL: http://java.sun.com/products/javabeans/glasgow/jaf.html
 
@@ -225,7 +219,6 @@
   <property name="bsf.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
   <property name="tyrex.jar" value="(set this in build.properties!)"/>
-  <property name="mail.jar" value="(set this in build.properties!)"/>
   <property name="activation.jar" value="(set this in build.properties!)"/>
   <property name="log4j.jar" value="(set this in build.properties!)"/>
   <property name="jaas.jar" value="(set this in build.properties!)"/>
@@ -257,7 +250,6 @@
     <pathelement location="${bsf.jar}"/>
     <pathelement location="${tidy.jar}"/>
     <pathelement location="${tyrex.jar}"/>
-    <pathelement location="${mail.jar}"/>
     <pathelement location="${activation.jar}"/>
     <pathelement location="${log4j.jar}"/>
     <pathelement location="${jaas.jar}"/>
@@ -377,7 +369,6 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${bsf.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${mail.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${log4j.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jaas.jar}"/>
@@ -605,4 +596,121 @@
     </java>
   </target>
 
+
+<!-- ==================== addstylesheet Target ============================ -->
+
+<!--
+
+  The "addstylesheet" target runs uPortal's RegisterStylesheet program to
+  add core framework stylesheets used to create structures and themes.
+          
+  Example:
+  
+  ant regstylesheet
+    -DstylesheetType=-t
+    -DstylesheetUri=/org/jasig/portal/layout/tab-column/tab-column.xsl
+    -DdescriptionUri=/org/jasig/portal/layout/tab-column/tab-column.sdf
+
+  where -s = specify structure stylesheet
+        -t = specify theme stylesheet
+        
+-->
+
+
+  <target name="addstylesheet" depends="compile">
+    <echo message="Invoking RegisterStylesheet (add)"/>
+    <property name="stylesheetType" value=" "/>
+    <property name="stylesheetUri" value=" "/>
+    <property name="descriptionUri" value=" "/>    
+    <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+      <arg value="${stylesheetType}"/>
+      <arg value="${stylesheetUri}"/>
+      <arg value="${descriptionUri}"/>
+    </java>
+  </target>
+
+
+<!-- ==================== modstylesheet Target ============================ -->
+
+<!--
+
+  The "modstylesheet" target runs uPortal's RegisterStylesheet program to
+  update core framework stylesheets used to create structures and themes.
+      
+  Example:
+  
+  ant modstylesheet
+    -DstylesheetType=-t
+    -DstylesheetUri=/org/jasig/portal/layout/tab-column/tab-column.xsl
+    -DdescriptionUri=/org/jasig/portal/layout/tab-column/tab-column.sdf
+    -DstylesheetId=1
+    
+  where -s = specify structure stylesheet
+        -t = specify theme stylesheet
+          
+-->
+
+
+  <target name="modstylesheet" depends="compile">
+    <echo message="Invoking RegisterStylesheet (modify)"/>
+    <property name="stylesheetType" value=" "/>
+    <property name="stylesheetUri" value=" "/>
+    <property name="descriptionUri" value=" "/>    
+    <property name="stylesheetId" value=" "/>
+    <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+      <arg value="${stylesheetType}"/>
+      <arg value="-u"/>
+      <arg value="${stylesheetUri}"/>
+      <arg value="${descriptionUri}"/>
+      <arg value="${stylesheetId}"/>
+    </java>
+  </target>
+  
+  
+<!-- ==================== delstylesheet Target ============================ -->
+
+<!--
+
+  The "delstylesheet" target runs uPortal's RegisterStylesheet program to
+  delete core framework stylesheets used to create structures and themes.
+            
+  Example:
+  
+  ant delstylesheet -DstylesheetType=-t -DstylesheetId=1
+    
+  where -s = specify structure stylesheet
+        -t = specify theme stylesheet 
+
+-->
+
+
+  <target name="delstylesheet" depends="compile">
+    <echo message="Invoking RegisterStylesheet (delete)"/>
+    <property name="stylesheetType" value=" "/>   
+    <property name="stylesheetId" value=" "/>
+    <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+      <arg value="${stylesheetType}"/>
+      <arg value="-d"/>
+      <arg value="${stylesheetId}"/>
+    </java>
+  </target> 
+   
 </project>
