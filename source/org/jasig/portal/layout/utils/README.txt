@@ -1,4 +1,5 @@
 
+
 HOW TO CONFIGURE AGGREGATED LAYOUTS:
 
 
@@ -21,7 +22,7 @@ org.jasig.portal.layout.utils.ALMigrationUtil
 
 2) There is the property file al.properties for setting up the stylesheet
 URIs/descriptions  and
-default system stylesheet ID in the $PORTAL_HOME/properties directory. The
+default system stylesheet ID in the $PORTAL_HOME/properties/al directory. The
 "alinstall" target uses these properties as well.
 
 3) When switching to AL in the portal.properties file
@@ -33,7 +34,7 @@ org.jasig.portal.UserLayoutStoreFactory.implementation
 = org.jasig.portal.layout.AggregatedUserLayoutStore
 
 org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation
-= org.jasig.portal.layout.AggregatedUserLayoutImpl
+= org.jasig.portal.layout.AggregatedLayoutManager
 
 4) restart the tomcat and get the new uPortal UI with
 integrated modes.

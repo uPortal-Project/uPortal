@@ -61,7 +61,7 @@ public class ALMigrationUtil {
   public ALMigrationUtil() throws Exception {
     if ( ulsdb == null )
      ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-     InputStream is = this.getClass().getResourceAsStream( "/properties/al.properties");
+     InputStream is = this.getClass().getResourceAsStream( "/properties/al/al.properties");
      props.load(is);
   }
 
