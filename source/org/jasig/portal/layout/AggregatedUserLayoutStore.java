@@ -1379,10 +1379,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 	  String sQuery = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
 	  ResultSet rs = stmt.executeQuery(sQuery);
-	  if ( rs.next() && rs.wasNull() ) {
+	 if (rs.next()) {
+	 	int layout_id = rs.getInt(1);
+		if ( rs.wasNull() ) {
 	  	sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID="+layoutId+" WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
 		stmt.executeUpdate(sQuery);
 	  }
+	 }
 	  rs.close();	
 
       sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
@@ -2841,9 +2844,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                  for ( int j = 0; j < channelParams.length; j++ ) {
                   String paramName = channelParams[j].getName();
-                  if ( channelDesc.getParameterValue(paramName) == null ) {
+                  String paramValue = channelParams[j].getValue();
+                  if ( paramName != null && paramValue != null && channelDesc.getParameterValue(paramName) == null ) {
                    channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
-                   channelDesc.setParameterValue(paramName,channelParams[j].getValue());
+                   channelDesc.setParameterValue(paramName,paramValue);
                   }
                  }
                  channelDesc.setTimeout(channelDef.getTimeout());
