@@ -288,7 +288,7 @@ public class CSubscriber
    * @return String
    */
   public void setNextInstanceID (Node channel) throws Exception {
-    String sInstanceID = GenericPortalBean.getUserLayoutStore().getNextStructId(staticData.getPerson().getID());
+    String sInstanceID = GenericPortalBean.getUserLayoutStore().getNextStructChannelId(staticData.getPerson().getID());
     ((Element)channel).setAttribute("ID", sInstanceID);
   }
 }

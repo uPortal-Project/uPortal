@@ -70,7 +70,8 @@ public interface IUserLayoutStore {
   public Element getRegistryXML(org.apache.xerces.dom.DocumentImpl chanDoc, Element root, String catID, String role) throws Exception;
   public void getTypesXML(Document types, Element root, String role) throws Exception;
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;
-  public int getNextStructId(int userId) throws Exception;
+  public String getNextStructChannelId(int userId) throws Exception;
+  public String getNextStructFolderId(int userId) throws Exception;
 
   /* CoreStylesheetDescription */
     public Integer getStructureStylesheetId(String ssName) throws Exception;
