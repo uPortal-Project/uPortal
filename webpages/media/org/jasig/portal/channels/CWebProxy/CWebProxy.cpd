@@ -27,7 +27,7 @@
 					<length>40</length>
 					<maxlength>2000</maxlength>
 				</type>
-				<defaultValue>http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</defaultValue>
+				<defaultValue>webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</defaultValue>
 			</parameter>
 
 			<parameter modify="publish-only">
@@ -57,5 +57,7 @@
 	        </step>
     
 	</params>
-	<controls/>
+	<controls timeout="7000" minimized="false" editable="false"
+		hasHelp="false" hasAbout="false" removable="true"
+		detachable="true" />
 </channelDef>
