@@ -59,107 +59,151 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         con=null;
     }
 
-    public UserPreferences getUserPreferences(String userName, String media) {
-        UserPreferences up=null;
-        String[] stylesheetNames=this.getStylesheetNames(userName,media);
-        if(stylesheetNames!=null) {
-            up=new UserPreferences(media);
-            up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(userName,stylesheetNames[0]));
-            up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(userName,stylesheetNames[1]));
-            up.setCoreCSSStylesheetUserPreferences(getCSSStylesheetUserPreferences(userName,stylesheetNames[2]));
-        }
+
+    public UserPreferences getUserPreferences(String userName, UserProfile profile) {
+	String pName=profile.getProfileName();
+	UserPreferences up=new UserPreferences(profile);
+	up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(userName,pName,profile.getStructureStylesheetName()));
+	up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(userName,pName,profile.getThemeStylesheetName()));
         return up;
     }
-
-    public void putUserPreferences(String userName, UserPreferences up) {
-        String[] stylesheetNames=new String[3];
-        StructureStylesheetUserPreferences fsup=up.getStructureStylesheetUserPreferences();
-        ThemeStylesheetUserPreferences ssup=up.getThemeStylesheetUserPreferences();
-        CoreCSSStylesheetUserPreferences cssup=up.getCoreCSSStylesheetUserPreferences();
-        stylesheetNames[0]=fsup.getStylesheetName();
-        stylesheetNames[1]=ssup.getStylesheetName();
-        stylesheetNames[2]=cssup.getStylesheetName();
-        String media=up.getMedia();
-        this.setStylesheetNames(stylesheetNames,userName,media);
-        this.setStructureStylesheetUserPreferences(userName,fsup);
-        this.setThemeStylesheetUserPreferences(userName,ssup);
-        this.setCSSStylesheetUserPreferences(userName,cssup);
+	
+    public UserPreferences getUserPreferences(String userName, String profileName) {
+	UserPreferences up=null;
+	UserProfile profile=this.getUserProfileByName(userName,profileName);
+	if(profile!=null) {
+	    up=getUserPreferences(userName,profile);
+	}
+	return up;
     }
 
-    public String getStructureStylesheetName(String userName, String media)  {
-        return (this.getStylesheetNames(userName,media))[0];
-    }
-
-    public String getThemeStylesheetName(String userName, String media)  {
-        return (this.getStylesheetNames(userName,media))[1];
-    }
-    public String getCSSStylesheetName(String userName, String media)  {
-        return (this.getStylesheetNames(userName,media))[2];
-    }
-
-    private String[] getStylesheetNames(String userName,String media) {
-        String[] stylesheetNames=new String[3];
+    public String getUserBrowserMapping(String userName,String userAgent) {
+	String profileName=null;
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            String sQuery = "SELECT STRUCTURE_STYLESHEET_NAME, THEME_STYLESHEET_NAME, CSS_STYLESHEET_NAME  FROM UP_USER_PREFS WHERE USER_NAME='"+userName+"' AND MEDIA='"+media+"'";
+            String sQuery = "SELECT PROFILE_NAME FROM UP_USER_UA_MAP WHERE USER_NAME='"+userName+"' AND USER_AGENT='"+userAgent+"'";
             Logger.log(Logger.DEBUG,sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-                stylesheetNames[0]=rs.getString("STRUCTURE_STYLESHEET_NAME");
-                stylesheetNames[1]=rs.getString("THEME_STYLESHEET_NAME");
-                stylesheetNames[2]=rs.getString("CSS_STYLESHEET_NAME");
-        } else { return null; }
+		profileName=rs.getString("PROFILE_NAME");
+            } else { return null; }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         } finally {
             rdbmService.releaseConnection (con);
         }
-        return stylesheetNames;
+        return profileName;
     }
 
-    public void setStructureStylesheetName(String stylesheetName,String userName, String media) {
-        String[] stylesheetNames= new String[3];
-        stylesheetNames[0]=stylesheetName;
-        this.setStylesheetNames(stylesheetNames,userName,media);
+    public void setUserBrowserMapping(String userName,String userAgent, String profileName) {
+        try {
+            con=rdbmService.getConnection();
+	    // remove the old mapping and add the new one
+            Statement stmt=con.createStatement();
+            String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_NAME='"+userName+"' AND USER_AGENT='"+userAgent+"'; INSERT INTO UP_USER_UA_MAP (USER_NAME,USER_AGENT,PROFILE_NAME) VALUES ('"+userName+"','"+userAgent+"','"+profileName+"')";
+            Logger.log(Logger.DEBUG,sQuery);
+            ResultSet rs=stmt.executeQuery(sQuery);
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
     }
 
-    public void setThemeStylesheetName(String stylesheetName,String userName, String media) {
-        String[] stylesheetNames= new String[3];
-        stylesheetNames[1]=stylesheetName;
-        this.setStylesheetNames(stylesheetNames,userName,media);
+    public void setSystemBrowserMapping(String userAgent,String profileName) {
+	this.setUserBrowserMapping("",userAgent,profileName);
     }
 
-    public void setCSSStylesheetName(String stylesheetName,String userName, String media) {
-        String[] stylesheetNames= new String[3];
-        stylesheetNames[2]=stylesheetName;
-        this.setStylesheetNames(stylesheetNames,userName,media);
+    public String getSystemBrowserMapping(String userAgent) {
+	return getUserBrowserMapping("",userAgent);
+    }
+    
+    public UserProfile getUserProfile(String userName,String userAgent) {
+	return this.getUserProfileByName(userName,getUserBrowserMapping(userName,userAgent));
+    }
+    
+    public UserProfile getSystemProfile(String userAgent) {
+	UserProfile up= this.getUserProfileByName("",getSystemBrowserMapping(userAgent));
+	up.setSystemProfile(true);
+	return up;
     }
 
-    private void setStylesheetNames(String stylesheetNames[],String userName, String media) {
+
+    public UserProfile getSystemProfileByName(String profileName) {
+	UserProfile up=this.getUserProfileByName("",profileName);
+	up.setSystemProfile(true);
+	return up;
+    }
+
+    public UserProfile getUserProfileByName(String userName, String profileName) {
+	UserProfile upl=null;
+	if(profileName!=null) {
+	    try {
+		con=rdbmService.getConnection();
+		Statement stmt=con.createStatement();
+		String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME,DESCRIPTION FROM UP_USER_PROFILES WHERE USER_NAME='"+userName+"' AND PROFILE_NAME='"+profileName+"'";
+		Logger.log(Logger.DEBUG,sQuery);
+		ResultSet rs=stmt.executeQuery(sQuery);
+		if(rs.next()) {
+		    upl=new UserProfile(profileName,rs.getString("STRUCTURE_SS_NAME"),rs.getString("THEME_SS_NAME"),rs.getString("DESCRIPTION"));
+		} else { return null; }
+	    } catch (Exception e) {
+		Logger.log(Logger.ERROR,e);
+	    } finally {
+		rdbmService.releaseConnection (con);
+	    }
+	}
+        return upl;
+    }
+
+
+    public Hashtable getUserProfileList(String userName) {
+	Hashtable pv=new Hashtable();
+	try {
+	    con=rdbmService.getConnection();
+	    Statement stmt=con.createStatement();
+	    String sQuery = "SELECT PROFILE_NAME,STRUCTURE_SS_NAME, THEME_SS_NAME, DESCRIPTION FROM UP_USER_PROFILES WHERE USER_NAME='"+userName+"'";
+	    Logger.log(Logger.DEBUG,sQuery);
+	    ResultSet rs=stmt.executeQuery(sQuery);
+	    while(rs.next()) {
+		UserProfile upl=new UserProfile(rs.getString("PROFILE_NAME"),rs.getString("STRUCTURE_SS_NAME"),rs.getString("THEME_SS_NAME"),rs.getString("DESCRIPTION"));
+		pv.put(upl.getProfileName(),upl);
+	    } 
+	} catch (Exception e) {
+	    Logger.log(Logger.ERROR,e);
+	} finally {
+	    rdbmService.releaseConnection (con);
+	}
+	return pv;
+    }
+
+    public Hashtable getSystemProfileList() {
+	Hashtable pl=this.getUserProfileList("");
+	for(Enumeration e=pl.elements(); e.hasMoreElements(); ) {
+	    UserProfile up=(UserProfile) e.nextElement();
+	    up.setSystemProfile(true);
+	}
+	return pl;
+    }
+
+    public void setUserProfile(String userName,UserProfile profile) {
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            // determien wether to do an insert or an update
-            // note that stylesheet names passed as "null" will be substituted for with the current database entries when an UPDATE is done
-            String sQuery = "SELECT STRUCTURE_STYLESHEET_NAME, THEME_STYLESHEET_NAME, CSS_STYLESHEET_NAME  FROM UP_USER_PREFS WHERE USER_NAME='"+userName+"' AND MEDIA='"+media+"'";
-            Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStylesheetNames() : "+sQuery);
+            // this is ugly, but we have to know wether to do INSERT or UPDATE
+            String sQuery = "SELECT PROFILE_NAME FROM UP_USER_PROFILES WHERE USER_NAME='"+userName+"' AND PROFILE_NAME='"+profile.getProfileName()+"'";
+            Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-                if(stylesheetNames[0]==null) stylesheetNames[0]=rs.getString("STRUCTURE_STYLESHEET_NAME");
-                if(stylesheetNames[1]==null) stylesheetNames[1]=rs.getString("THEME_STYLESHEET_NAME");
-                if(stylesheetNames[2]==null) stylesheetNames[2]=rs.getString("CSS_STYLESHEET_NAME");
-
-                sQuery = "UPDATE UP_USER_PREFS SET STRUCTURE_STYLESHEET_NAME='" + stylesheetNames[0] + "', THEME_STYLESHEET_NAME='" + stylesheetNames[1] + "', CSS_STYLESHEET_NAME='" + stylesheetNames[2] + "' WHERE USER_NAME='" + userName + "' AND MEDIA='" + media + "'";
-                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStylesheetNames() : "+sQuery);
+                sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_NAME='"+profile.getThemeStylesheetName()+"', STRUCTURE_SS_NAME='"+profile.getStructureStylesheetName()+"', DESCRIPTION='"+profile.getProfileDescription()+"' WHERE USER_NAME = '"+userName+"' AND PROFILE_NAME='"+profile.getProfileName()+"'";
+                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
                 stmt.executeUpdate(sQuery);
             }
-            else if(stylesheetNames[0]!=null && stylesheetNames[1]!=null && stylesheetNames[2]!=null) {
-                sQuery = "INSERT INTO UP_USER_PREFS (USER_NAME, MEDIA, STRUCTURE_STYLESHEET_NAME, THEME_STYLESHEET_NAME, CSS_STYLESHEET_NAME) VALUES ('"+userName+"','"+media+"','"+stylesheetNames[0]+"','"+stylesheetNames[1]+"','"+stylesheetNames[2]+"')";
-                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStylesheetNames() : "+sQuery);
+            else {
+                sQuery = "INSERT INTO UP_USER_PROFILES (USER_NAME,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ('"+userName+"','"+profile.getProfileName()+"','"+profile.getStructureStylesheetName()+"','"+profile.getThemeStylesheetName()+"','"+profile.getProfileDescription()+"')";
+                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setUserProfile() : "+sQuery);
                 stmt.executeQuery(sQuery);
-            } else {
-                Logger.log(Logger.ERROR,"UserPreferencesDBInpl::setStylesheetNames() : Trying to initialize UserPreferences with a null stylesheet name !");
             }
         }
         catch (Exception e) {
@@ -167,16 +211,28 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         } finally {
             rdbmService.releaseConnection (con);
         }
-
     }
 
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(String userName,String stylesheetName) {
+    public void setSystemProfile(UserProfile profile) {
+	this.setUserProfile("",profile);
+    }
+
+    public void putUserPreferences(String userName, UserPreferences up) {
+	// store profile
+	UserProfile profile=up.getProfile();
+	this.setUserProfile(userName,profile);
+
+        this.setStructureStylesheetUserPreferences(userName,profile.getProfileName(),up.getStructureStylesheetUserPreferences());
+        this.setThemeStylesheetUserPreferences(userName,profile.getProfileName(),up.getThemeStylesheetUserPreferences());
+    }
+
+    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(String userName,String profileName,String stylesheetName) {
         StructureStylesheetUserPreferences fsup=new StructureStylesheetUserPreferences();
         fsup.setStylesheetName(stylesheetName);
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::getStylesheetNames() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             String str_upXML=null;
@@ -190,7 +246,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
                 this.populateUserParameterChannelAttributes(upXML,fsup);
                 this.populateUserParameterFolderAttributes(upXML,fsup);
             } else {
-                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getStructureStylesheetUserPreferences() : Couldn't find stylesheet preferences for userName=\""+userName+"\" and stylesheetName=\""+stylesheetName+"\".");
+                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getStructureStylesheetUserPreferences() : Couldn't find stylesheet preferences for userName=\""+userName+"\", profileName=\""+profileName+"\" and stylesheetName=\""+stylesheetName+"\".");
             }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -200,13 +256,13 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         return fsup;
     }
 
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(String userName,String stylesheetName) {
+    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(String userName,String profileName,String stylesheetName) {
         ThemeStylesheetUserPreferences ssup=new ThemeStylesheetUserPreferences();
         ssup.setStylesheetName(stylesheetName);
         try {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::getThemeStylesheetUserPreferences() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             String str_upXML=null;
@@ -219,7 +275,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
                 this.populateUserParameterPreferences(upXML,ssup);
                 this.populateUserParameterChannelAttributes(upXML,ssup);
             } else {
-                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getThemeStylesheetUserPreferences() : Couldn't find stylesheet preferences for userName=\""+userName+"\" and stylesheetName=\""+stylesheetName+"\".");
+                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getThemeStylesheetUserPreferences() : Couldn't find stylesheet preferences for userName=\""+userName+"\", profileName=\""+profileName+"\" and stylesheetName=\""+stylesheetName+"\".");
             }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -229,35 +285,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         return ssup;
     }
 
-    public CoreCSSStylesheetUserPreferences getCSSStylesheetUserPreferences(String userName,String stylesheetName) {
-        CoreCSSStylesheetUserPreferences cssup=new CoreCSSStylesheetUserPreferences();
-        cssup.setStylesheetName(stylesheetName);
-        try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
-            Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::getCSSStylesheetUserPreferences() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            String str_upXML=null;
-            if(rs.next()) str_upXML=rs.getString("USER_PREFERENCES_XML");
-            if(str_upXML!=null) {
-                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::getCSSStylesheetUserPreferences() : "+str_upXML);
-                DOMParser parser = new DOMParser ();
-                parser.parse (new org.xml.sax.InputSource (new StringReader (str_upXML)));
-                Document upXML=parser.getDocument();
-                this.populateUserParameterPreferences(upXML,cssup);
-            } else {
-                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getCSSStylesheetUserPrefernces() : Couldn't find stylesheet preferences for userName=\""+userName+"\" and stylesheetName=\""+stylesheetName+"\".");
-            }
-        } catch (Exception e) {
-            Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
-        }
-        return cssup;
-    }
-
-    public void setStructureStylesheetUserPreferences(String userName,StructureStylesheetUserPreferences fsup) {
+    public void setStructureStylesheetUserPreferences(String userName,String profileName,StructureStylesheetUserPreferences fsup) {
         String stylesheetName=fsup.getStylesheetName();
         // construct a DOM tree
         Document doc = new org.apache.xerces.dom.DocumentImpl();
@@ -277,16 +305,16 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
             // this is ugly, but we have to know wether to do INSERT or UPDATE
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStructureStylesheetUserPreferences() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE USER_NAME = '"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
+                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE USER_NAME = '"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStructureStylesheetUserPreferences() : "+sQuery);
                 stmt.executeUpdate(sQuery);
             }
             else {
-                sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ('"+userName+"','"+stylesheetName+"','"+outString.toString()+"')";
+                sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_NAME,PROFILE_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ('"+userName+"','"+profileName+"','"+stylesheetName+"','"+outString.toString()+"')";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setStructureStylesheetUserPreferences() : "+sQuery);
                 stmt.executeQuery(sQuery);
             }
@@ -298,7 +326,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         }
     }
 
-    public void setThemeStylesheetUserPreferences(String userName, ThemeStylesheetUserPreferences ssup) {
+    public void setThemeStylesheetUserPreferences(String userName, String profileName,ThemeStylesheetUserPreferences ssup) {
         String stylesheetName=ssup.getStylesheetName();
         // construct a DOM tree
         Document doc = new org.apache.xerces.dom.DocumentImpl();
@@ -317,57 +345,17 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
             con=rdbmService.getConnection();
             Statement stmt=con.createStatement();
             // this is ugly, but we have to know wether to do INSERT or UPDATE
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
+            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
             Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setThemeStylesheetUserPreferences() : "+sQuery);
             ResultSet rs=stmt.executeQuery(sQuery);
             if(rs.next()) {
-                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE USER_NAME = '"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
+                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE USER_NAME = '"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"' AND PROFILE_NAME='"+profileName+"'";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setThemeStylesheetUserPreferences() : "+sQuery);
                 stmt.executeUpdate(sQuery);
             }
             else {
-                sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ('"+userName+"','"+stylesheetName+"','"+outString.toString()+"')";
+                sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_NAME,PROFILE_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ('"+userName+"','"+profileName+"','"+stylesheetName+"','"+outString.toString()+"')";
                 Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setThemeStylesheetUserPreferences() : "+sQuery);
-                stmt.executeQuery(sQuery);
-            }
-        }
-        catch (Exception e) {
-            Logger.log (Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
-        }
-    }
-
-
-    public void setCSSStylesheetUserPreferences(String userName, CoreCSSStylesheetUserPreferences cssup) {
-        String stylesheetName=cssup.getStylesheetName();
-        // construct a DOM tree
-        Document doc = new org.apache.xerces.dom.DocumentImpl();
-        Element spEl = doc.createElement("stylesheetuserpreferences");
-        spEl.appendChild(constructParametersElement(cssup,doc));
-        doc.appendChild(spEl);
-
-        // update the database
-        StringWriter outString = new StringWriter ();
-        try {
-            OutputFormat format=new OutputFormat(doc);
-            format.setOmitXMLDeclaration(true);
-            XMLSerializer xsl = new XMLSerializer (outString,format);
-            xsl.serialize (doc);
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-            // this is ugly, but we have to know wether to do INSERT or UPDATE
-            String sQuery = "SELECT USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_NAME='"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
-            Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setCSSStylesheetUserPreferences() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            if(rs.next()) {
-                sQuery = "UPDATE UP_USER_SS_PREFS SET USER_PREFERENCES_XML='"+outString.toString()+"' WHERE USER_NAME = '"+userName+"' AND STYLESHEET_NAME='"+stylesheetName+"'";
-                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setCSSStylesheetUserPreferences() : "+sQuery);
-                stmt.executeUpdate(sQuery);
-            }
-            else {
-                sQuery = "INSERT INTO UP_USER_SS_PREFS (USER_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) VALUES ('"+userName+"','"+stylesheetName+"','"+outString.toString()+"')";
-                Logger.log(Logger.DEBUG,"UserPreferencesDBImpl::setCSSStylesheetUserPreferences() : "+sQuery);
                 stmt.executeQuery(sQuery);
             }
         }

@@ -155,8 +155,23 @@ public class LayoutBean
       Node rElement;
 
       // get the layout manager
-      if (uLayoutManager == null)
+      if (uLayoutManager == null) {
         uLayoutManager = new UserLayoutManager (req, getPerson(req));
+      }
+      if(uLayoutManager.userAgentUnmapped()) {
+	  // do the redirect
+	  // for debug purposes, we do the fake mapping to the "netscape" layout
+	  IUserPreferencesDB updb=new UserPreferencesDBImpl();
+	  IPerson person=getPerson(req);
+	  if(person==null) {
+	      person=new org.jasig.portal.security.provider.PersonImpl();
+	      person.setID("guest");
+	  }
+	  // establish mapping
+	  updb.setUserBrowserMapping(person.getID(),req.getHeader("user-Agent"),"netscape");
+	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : establishing UA mapping for user=\""+person.getID()+"\" and UA=\""+req.getHeader("user-Agent")+"\".");
+	  uLayoutManager = new UserLayoutManager(req,getPerson(req));
+      }
 
       // process events that have to be handed directly to the userLayoutManager.
       // (examples of such events are "remove channel", "minimize channel", etc.
@@ -297,7 +312,6 @@ public class LayoutBean
       {
         String pName= (String) e.nextElement ();
         String pValue= (String) spTable.get (pName);
-	Logger.log(Logger.DEBUG,"LayoutBean::s "+pName+"="+pValue);
         sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
       }
 

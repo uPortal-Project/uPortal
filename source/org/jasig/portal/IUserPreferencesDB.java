@@ -6,25 +6,40 @@ package org.jasig.portal;
  * @version $Revision$
  */
 
+import java.util.Hashtable;
+
 public interface IUserPreferencesDB {
     
-    public UserPreferences getUserPreferences(String userName, String media);
+    public UserProfile getUserProfile(String userName, String userAgent);
+    public void setUserProfile(String userName,UserProfile profile);
+    
+    public UserProfile getUserProfileByName(String userName,String profileName);
+    public Hashtable getUserProfileList(String userName);
+
+
+    public UserProfile getSystemProfile(String userAgent);
+    public void setSystemProfile(UserProfile profile);
+    public UserProfile getSystemProfileByName(String profileName);
+    public Hashtable getSystemProfileList();
+
+    public void setUserBrowserMapping(String userName,String userAgent,String profileName);
+    public void setSystemBrowserMapping(String userAgent,String systemProfileName);
+    
+    public String getUserBrowserMapping(String userName,String userAgent);
+    public String getSystemBrowserMapping(String userAgent);
+    
+
+    //    public UserPreferences getUserPreferences(String userName, String profileName);
+    public UserPreferences getUserPreferences(String userName, UserProfile profile);
+    
     public void putUserPreferences(String userName, UserPreferences up);
 
-    public String getStructureStylesheetName(String userName, String media);
-    public String getThemeStylesheetName(String userName, String media);
-    public String getCSSStylesheetName(String userName, String media);
+    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(String userName,String profileName,String stylesheetName);
+    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(String userName,String profileName,String stylesheetName);
 
-    public void setStructureStylesheetName(String stylesheetName,String userName, String media);
-    public void setThemeStylesheetName(String stylesheetName,String userName, String media);
-    public void setCSSStylesheetName(String stylesheetName,String userName, String media);
 
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(String userName,String stylesheetName);
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(String userName,String stylesheetName);
-    public CoreCSSStylesheetUserPreferences getCSSStylesheetUserPreferences(String userName,String stylesheetName);
+    public void setStructureStylesheetUserPreferences(String userName,String profileName, StructureStylesheetUserPreferences fsup);
+    public void setThemeStylesheetUserPreferences(String userName,String profileName, ThemeStylesheetUserPreferences ssup);
 
-    public void setStructureStylesheetUserPreferences(String userName,StructureStylesheetUserPreferences fsup);
-    public void setThemeStylesheetUserPreferences(String userName, ThemeStylesheetUserPreferences ssup);
-    public void setCSSStylesheetUserPreferences(String userName, CoreCSSStylesheetUserPreferences cssup);
 
 }

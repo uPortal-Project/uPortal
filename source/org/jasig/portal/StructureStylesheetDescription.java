@@ -12,7 +12,6 @@ import java.util.Vector;
 
 public class StructureStylesheetDescription extends CoreXSLTStylesheetDescription {
     Hashtable folderAttributeTable;
-    protected Vector mediaList;
 
     public StructureStylesheetDescription() {
 	super();
@@ -43,9 +42,4 @@ public class StructureStylesheetDescription extends CoreXSLTStylesheetDescriptio
 	folderAttributeTable.put(name,pair);
     }
 
-    public Vector getStylesheetMediaList() { return mediaList; }
-    public void setStylesheetMediaList(Vector list) {
-	mediaList=list;
-    }
-    
 }

@@ -9,11 +9,10 @@ package org.jasig.portal;
 
 public class UserPreferences {
 
-    protected String media;
+    protected UserProfile profile;
     
     protected StructureStylesheetUserPreferences fsup;
     protected ThemeStylesheetUserPreferences ssup;
-    protected CoreCSSStylesheetUserPreferences cssup;    
 
     /*
      * Copy-constructor
@@ -21,15 +20,14 @@ public class UserPreferences {
     public UserPreferences(UserPreferences up) {
 	fsup=new StructureStylesheetUserPreferences(up.getStructureStylesheetUserPreferences());
  	ssup=new ThemeStylesheetUserPreferences(up.getThemeStylesheetUserPreferences());
- 	cssup=new CoreCSSStylesheetUserPreferences(up.getCoreCSSStylesheetUserPreferences());
-	media=up.getMedia();
+	profile=up.getProfile();
     }
 
     
-    public void setMedia(String m) { media=m; }
-    public String getMedia() { return media; }
+    public void setProfile(UserProfile p) { profile=p; }
+    public UserProfile getProfile() { return profile; }
 
-    public UserPreferences(String mediaName) { this.media=mediaName; }
+    public UserPreferences(UserProfile p) { this.profile=p; }
 
     public void setStructureStylesheetUserPreferences(StructureStylesheetUserPreferences up) {
 	this.fsup=up;
@@ -39,20 +37,12 @@ public class UserPreferences {
 	this.ssup=up;
     }
 
-    public void setCoreCSSStylesheetUserPreferences(CoreCSSStylesheetUserPreferences up) {
-	this.cssup=up;
-    }
-
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences() {
 	return this.fsup;
     }
 
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences() {
 	return this.ssup;
-    }
-
-    public CoreCSSStylesheetUserPreferences getCoreCSSStylesheetUserPreferences() {
-	return this.cssup;
     }
 
 }

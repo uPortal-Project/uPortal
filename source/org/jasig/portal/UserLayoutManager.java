@@ -73,7 +73,9 @@ public class UserLayoutManager {
   private UserPreferences up;
   private UserPreferences complete_up;
 
-  private String str_userName;
+    private boolean unmapped_user_agent=false;
+
+    private IPerson person;
 
   /**
    * Constructor does the following
@@ -88,33 +90,35 @@ public class UserLayoutManager {
     String propertiesDir = GenericPortalBean.getPortalBaseDir () + "properties" + fs;
     MediaManager mediaM = new MediaManager (propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
 
-    String str_uLayoutXML = null;
     uLayoutXML = null;
 
     try
     {
+	this.person=person;
         // read uLayoutXML
-
-        HttpSession session = req.getSession (false);
-        uLayoutXML = (Document) session.getAttribute ("userLayoutXML");
-
-        if (person == null)
-          str_userName = "guest";
-        else
-          str_userName = person.getID();
-
-
-        if (uLayoutXML == null) {
-            IUserLayoutDB uldb = new UserLayoutDBImpl();
-            uLayoutXML = uldb.getUserLayout(str_userName,"netscape");
-        }
+        if (this.person == null) {
+	    // determine the default user
+	    this.person=new org.jasig.portal.security.provider.PersonImpl();
+	    this.person.setID("guest");
+	}
 
         // load user preferences
         IUserPreferencesDB updb=new UserPreferencesDBImpl();
-        UserPreferences temp_up=updb.getUserPreferences(str_userName,mediaM.getMedia(req));
-        if(temp_up==null) temp_up=updb.getUserPreferences(str_userName,mediaM.getDefaultMedia());
-        this.setCurrentUserPreferences(temp_up);
 
+	// determine user profile
+	String userAgent=req.getHeader("user-Agent");
+	UserProfile upl=updb.getUserProfile(this.person.getID(),userAgent);
+	if(upl!=null) {
+	    IUserLayoutDB uldb = new UserLayoutDBImpl();
+	    uLayoutXML = uldb.getUserLayout(this.person.getID(),upl.getProfileName());
+	    if(uLayoutXML==null) Logger.log(Logger.ERROR,"UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\""+this.person.getID()+"\", profile=\""+upl.getProfileName()+"\".");
+	    this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(),upl));
+	} else {
+	    // there is no user-defined mapping for this particular browser.
+	    // user should be redirected to a browser-registration page.
+	    unmapped_user_agent=true;
+	    Logger.log(Logger.DEBUG,"UserLayoutManager::UserLayoutManager() : unable to find a profile for user \""+this.person.getID()+"\" and userAgent=\""+userAgent+"\".");
+	};
     }
     catch (Exception e)
     {
@@ -122,8 +126,13 @@ public class UserLayoutManager {
     }
   }
 
+    public IPerson getPerson() { 
+	return person; 
+    }
 
-    private void synchUserPreferencesWithLayout(UserPreferences someup) {
+    public boolean userAgentUnmapped() { return unmapped_user_agent; }
+
+    public void synchUserPreferencesWithLayout(UserPreferences someup) {
 
         StructureStylesheetUserPreferences fsup=someup.getStructureStylesheetUserPreferences();
         ThemeStylesheetUserPreferences ssup=someup.getThemeStylesheetUserPreferences();
@@ -219,18 +228,10 @@ public class UserLayoutManager {
             ssup.synchronizeWithDescription(sssd);
         }
 
-        CoreCSSStylesheetUserPreferences cssup=up.getCoreCSSStylesheetUserPreferences();
-        CoreCSSStylesheetDescription csssd=csddb.getCSSStylesheetDescription(cssup.getStylesheetName());
-        if(csssd==null) {
-            // assign a default stylesheet instead
-        } else {
-            cssup.synchronizeWithDescription(csssd);
-        }
 
         // in case something was reset to default
         up.setStructureStylesheetUserPreferences(fsup);
         up.setThemeStylesheetUserPreferences(ssup);
-        up.setCoreCSSStylesheetUserPreferences(cssup);
 
 
         // now generate "filled-out copies"
@@ -239,18 +240,14 @@ public class UserLayoutManager {
         synchUserPreferencesWithLayout(complete_up);
         StructureStylesheetUserPreferences complete_fsup=complete_up.getStructureStylesheetUserPreferences();
         ThemeStylesheetUserPreferences complete_ssup=complete_up.getThemeStylesheetUserPreferences();
-        CoreCSSStylesheetUserPreferences complete_cssup=complete_up.getCoreCSSStylesheetUserPreferences();
         complete_fsup.completeWithDescriptionInformation(fssd);
         complete_ssup.completeWithDescriptionInformation(sssd);
-        complete_cssup.completeWithDescriptionInformation(csssd);
         complete_up.setStructureStylesheetUserPreferences(complete_fsup);
         complete_up.setThemeStylesheetUserPreferences(complete_ssup);
-        complete_up.setCoreCSSStylesheetUserPreferences(complete_cssup);
 
         // complete user preferences are used to:
         //  1. fill out userLayoutXML with attributes required for the first transform
         //  2. contruct a filter that will fill out attributes required for the second transform
-        //  3. revamp the CSS stylesheet to include user parameters
 
         //	argumentedUserLayoutXML=(Document) uLayoutXML.cloneNode(true);
         argumentedUserLayoutXML= UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl) uLayoutXML);
@@ -290,12 +287,12 @@ public class UserLayoutManager {
         if(newLayout!=null) {
             uLayoutXML=newLayout;
             IUserLayoutDB uldb=new UserLayoutDBImpl();
-            uldb.setUserLayout(str_userName,"netscape",uLayoutXML);
+            uldb.setUserLayout(person.getID(),up.getProfile().getProfileName(),uLayoutXML);
         }
         if(newPreferences!=null) {
             this.setCurrentUserPreferences(newPreferences);
             IUserPreferencesDB updb=new UserPreferencesDBImpl();
-            updb.putUserPreferences(str_userName,up);
+            updb.putUserPreferences(person.getID(),up);
         }
 
     }
@@ -309,6 +306,9 @@ public class UserLayoutManager {
         return new UserPreferences(up);
     }
 
+    public UserProfile getCurrentProfile() {
+	return up.getProfile();
+    }
 
   public Node getNode (String elementID)
   {
