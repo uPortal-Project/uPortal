@@ -19,6 +19,7 @@ import org.jasig.portal.layout.al.common.node.INodeDescription;
 public interface ILayoutManager {
 	
 	public ILayoutNode addNode ( INodeDescription nodeDesc, INodeId parentId, INodeId nextId );
+	public ILayoutNode addNodes ( ILayoutNode node, INodeId parentId, INodeId nextId );
 	
 	public boolean moveNode ( INodeId nodeId, INodeId parentId, INodeId nextId );
 	
