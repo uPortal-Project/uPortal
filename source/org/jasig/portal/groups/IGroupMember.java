@@ -1,6 +1,3 @@
-package org.jasig.portal.groups;
-
-import java.util.*;
 /**
  * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
  *
@@ -35,23 +32,27 @@ import java.util.*;
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
+package org.jasig.portal.groups;
+
+import java.util.*;
+
 /**
- * An <code>IGroupMember</code> defines the common behavior for both its leaf 
- * <code>IEntity</code> and composite <code>IEntityGroup</code> sub-types 
- * that together make up a Groups structure.  
+ * An <code>IGroupMember</code> defines the common behavior for both its leaf
+ * <code>IEntity</code> and composite <code>IEntityGroup</code> sub-types
+ * that together make up a Groups structure.
  * <p>
- * An <code>IGroupMember</code> can answer both its parents and its children but 
- * has no api for adding or removing them.  These methods are defined on 
- * the composite type, <code>IEntityGroup</code>, because you add a member 
- * to a group, not vice versa. 
+ * An <code>IGroupMember</code> can answer both its parents and its children but
+ * has no api for adding or removing them.  These methods are defined on
+ * the composite type, <code>IEntityGroup</code>, because you add a member
+ * to a group, not vice versa.
  * <p>
- * Note that an <code>IGroupMember</code> must implement <code>equals()</code> 
- * and <code>hashCode()</code> so that duplicates returned from "deep" 
- * methods can be recognized. 
+ * Note that an <code>IGroupMember</code> must implement <code>equals()</code>
+ * and <code>hashCode()</code> so that duplicates returned from "deep"
+ * methods can be recognized.
  *
  * @author Dan Ellentuck
- * @version 1.0, 11/29/01 
+ * @version $Revision$
  */
 public interface IGroupMember {
 /**
@@ -61,34 +62,34 @@ public interface IGroupMember {
  */
 public boolean contains(IGroupMember gm) throws GroupsException;
 /**
- * Answers if <code>IGroupMember</code> gm is a recursive member of <code>this</code>.   
+ * Answers if <code>IGroupMember</code> gm is a recursive member of <code>this</code>.
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 public boolean deepContains(IGroupMember gm) throws GroupsException;
 /**
- * Answers if Object o is an <code>IGroupMember</code> that refers to the same underlying 
+ * Answers if Object o is an <code>IGroupMember</code> that refers to the same underlying
  * entity(ies) as <code>this</code>.
  * @return boolean
  * @param Object o
  */
 public boolean equals(Object o);
 /**
- * Returns an <code>Iterator</code> over the <code>Set</code> of this 
+ * Returns an <code>Iterator</code> over the <code>Set</code> of this
  * <code>IGroupMember's</code> recursively-retrieved parent groups.
  *
  * @return java.util.Iterator
  */
 public Iterator getAllContainingGroups() throws GroupsException;
 /**
- * Returns an <code>Iterator</code> over the <code>Set</code> of this 
- * <code>IGroupMember's</code> recursively-retrieved members that are 
+ * Returns an <code>Iterator</code> over the <code>Set</code> of this
+ * <code>IGroupMember's</code> recursively-retrieved members that are
  * <code>IEntities</code>.
  * @return java.util.Iterator
  */
 public Iterator getAllEntities() throws GroupsException;
 /**
- * Returns an <code>Iterator</code> over the <code>Set</code> of recursively-retrieved 
+ * Returns an <code>Iterator</code> over the <code>Set</code> of recursively-retrieved
  * <code>IGroupMembers</code> that are members of <code>this</code>.
  * @return java.util.Iterator
  */
@@ -105,12 +106,12 @@ public Iterator getContainingGroups() throws GroupsException;
  */
 public Iterator getEntities() throws GroupsException;
 /**
- * Returns the <code>entityType</code> of the underlying entities.  This is analagous to 
- * <code>Class</code>, as applied to <code>Arrays</code> and their elements.  
+ * Returns the <code>entityType</code> of the underlying entities.  This is analagous to
+ * <code>Class</code>, as applied to <code>Arrays</code> and their elements.
  *
  * @return java.lang.Class
  */
-Class getEntityType();
+public Class getEntityType();
 /**
  * @return String
  */
@@ -122,7 +123,7 @@ String getKey();
  */
 public IEntityGroup getMemberGroupNamed(String name) throws GroupsException;
 /**
- * Returns an <code>Iterator</code> over the <code>IGroupMembers</code> in our 
+ * Returns an <code>Iterator</code> over the <code>IGroupMembers</code> in our
  * member <code>Collection</code>.
  * @return java.util.Iterator
  */

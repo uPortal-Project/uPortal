@@ -1,7 +1,3 @@
-package org.jasig.portal.groups;
-
-import java.util.Iterator;
-
 /**
  * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
  *
@@ -37,11 +33,15 @@ import java.util.Iterator;
  *
  */
 
+package org.jasig.portal.groups;
+
+import java.util.Iterator;
+
 /**
- * An <code>IEntityGroup</code> is a composite <code>IGroupMember</code>.  
+ * An <code>IEntityGroup</code> is a composite <code>IGroupMember</code>.
  * It contains <code>IEntities</code> and other <code>IEntityGroups</code>.
  * <p>
- * A member is always added to or removed from its group, not vice versa.  
+ * A member is always added to or removed from its group, not vice versa.
  * The following methods are used to maintain the group structure in memory:
  * <p>
  *   <code>addMember(IGroupMember gm)</code><br>
@@ -55,7 +55,7 @@ import java.util.Iterator;
  *   <code>updateMembers()</code> - insert/update/delete group memberships as appropriate<br>
  *
  * @author Dan Ellentuck
- * @version 1.0, 11/29/01 
+ * @version $Revision$
  */
 public interface IEntityGroup extends IGroupMember
 {
@@ -63,15 +63,15 @@ public interface IEntityGroup extends IGroupMember
  * Adds <code>IGroupMember</code> gm to this group, but does not commit it to the
  * data store.  Use <code>updateMembers()</code> to commit memberships to the data store.
  * @param gm org.jasig.portal.groups.IGroupMember
- * @exception GroupsException is thrown if the member is a group and 
+ * @exception GroupsException is thrown if the member is a group and
  * this group already has a group with the same name or if the addition
- * of the group creates a circular reference.  
+ * of the group creates a circular reference.
  */
-void addMember(IGroupMember gm) throws GroupsException;
+  public void addMember(IGroupMember gm) throws GroupsException;
 /**
- * Deletes the <code>IEntityGroup</code> from the data store.  
+ * Deletes the <code>IEntityGroup</code> from the data store.
  */
-void delete() throws GroupsException;
+  public void delete() throws GroupsException;
   public String getCreatorID();
   public String getDescription();
   public String getName();
@@ -80,21 +80,21 @@ void delete() throws GroupsException;
  * membership from the data store.
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-void removeMember(IGroupMember gm);
+  public void removeMember(IGroupMember gm);
   public void setCreatorID(String userID);
   public void setDescription(String name);
 /**
  * A group name must be unique within any of its containing groups
- * otherwise throw a GroupsException. 
+ * otherwise throw a GroupsException.
  */
- public void setName(String name) throws GroupsException;
+  public void setName(String name) throws GroupsException;
 /**
  * Commit the <code>IEntityGroup</code> BUT NOT ITS MEMBERSHIPS to the data store.
- * Use <code>updateMembers()</code> to commit the memberships.  
+ * Use <code>updateMembers()</code> to commit the memberships.
  */
-void update() throws GroupsException;
+  public void update() throws GroupsException;
 /**
  * Commit this <code>IEntityGroup's</code> memberships to the data store.
  */
-void updateMembers() throws GroupsException;
+  public void updateMembers() throws GroupsException;
 }
