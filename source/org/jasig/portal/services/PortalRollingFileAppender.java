@@ -189,6 +189,25 @@ public class PortalRollingFileAppender extends FileAppender {
    * @exception IOException
    */
   public synchronized void setFile (String fileName, boolean append) throws IOException {
+    // Create the log file if it doesn't exist
+    File logFile = new File(fileName);
+    if(!logFile.exists())
+    {
+      try
+      {
+        // Make all of the directories up to the log file
+        logFile.getParentFile().mkdirs();
+      
+        // Create the log file
+        logFile.createNewFile();
+      }
+      catch(Exception e)
+      {
+        System.err.println("Could not create the log file: " + fileName);
+        e.printStackTrace();
+      }
+    }
+
     super.setFile(fileName, append);
     if (append) {
       File f = new File(fileName);
