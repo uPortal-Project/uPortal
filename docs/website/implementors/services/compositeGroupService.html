@@ -304,15 +304,18 @@ fully-qualified service name and its key in the local service.&nbsp; The
 nodes of the service name, and the final node of the name and the local
 key, are separated by a <span style="font-style: italic;">node separator</span>.&nbsp;
 For example, a group with a local key of "English_Department" in a
-service named "ldap" with a node separator of "%" would have a key of
-"ldap%English_Department".&nbsp; <br>
+service named "ldap" with a node separator of "!" would have a key of
+"ldap!English_Department".&nbsp; <br>
       </p>
       <p><span style="font-style: italic;">Node Separators.</span>&nbsp;
-The default node separator is the period, or ".", but it can be any <code>String</code>
-not found within the nodes of a group key.&nbsp; For example, if local
-group keys include "Latin.101.Section01" and "chefs@columbia.edu", valid
-separators would include "$", "%", and "@@", but not "." or "@".&nbsp;
-For instructions on changing the node separator see <a
+The default node separator is a String containing a period, or ".", but 
+it can be any String not found within the nodes of a group key.&nbsp; 
+However, group keys can find their way into portal content and urls
+and are subject to xsl transformations.  Therefore, the separator should not 
+contain a character like '%' that has a special meaning and must be escaped
+to preserve its literal value.  If local group keys include "Latin.101.Section01" 
+and "chefs@columbia.edu", valid separators would include "$", and "_x", but not 
+"." or "@".&nbsp; For instructions on changing the node separator see <a
  href="#Configuring_the_Composite">Configuring the Composite</a>.&nbsp; <br>
       </p>
       <p><span style="font-style: italic;">Groups and their Service
