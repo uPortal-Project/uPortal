@@ -35,6 +35,9 @@
 
 package org.jasig.portal.container.services.information;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.ResourceURLProvider;
 
@@ -66,8 +69,17 @@ public class ResourceURLProviderImpl implements ResourceURLProvider {
     }
     
     public String toString() {
-        // TODO: Implement this!
-        return null;
+        URL url = null;
+
+        if (!stringUrl.equals("")) {
+            try {
+                url = new URL(stringUrl);
+            } catch (MalformedURLException e) {
+                throw new java.lang.IllegalArgumentException("A malformed URL has occured");
+            }
+        }
+
+        return ((url == null) ? "" : url.toString());
     }
 
 }
