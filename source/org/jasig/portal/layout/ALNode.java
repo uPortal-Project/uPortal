@@ -46,11 +46,12 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p>Title: IALNode </p>
- * <p>Description: </p>
- * <p>Company: Instructional Media & Magic</p>
+ * IALNode summary sentence goes here.
+ * <p>
+ * Company: Instructional Media &amp; Magic
+ * 
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.2
+ * @version $Revision$
  */
 
 public abstract class ALNode implements ALNodeTypes {

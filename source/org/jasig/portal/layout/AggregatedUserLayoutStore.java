@@ -73,11 +73,12 @@ import org.jasig.portal.utils.CommonUtils;
 
 
 /**
- * <p>Title: The AggregatedUserLayoutStore class</p>
- * <p>Description: The Aggregated UserLayoutStore implementation using the relational database with SQL 92 </p>
- * <p>Company: Instructional Media & Magic</p>
+ * AggregatedUserLayoutStore implementation using the relational database with SQL 92.
+ * <p>
+ * Company: Instructional Media &amp; Magic
+ * 
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.0
+ * @version $Revision$
  */
 
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {

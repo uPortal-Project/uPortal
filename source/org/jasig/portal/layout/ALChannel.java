@@ -39,11 +39,12 @@ package org.jasig.portal.layout;
 
 
 /**
- * <p>Title: UserLayoutFolder </p>
- * <p>Description: </p>
- * <p>Company: Instructional Media & Magic</p>
+ * UserLayoutFolder summary sentence goes here.
+ * <p>
+ * Company: Instructional Media &amp; Magic
+ * 
  * @author Michael Ivanov mailto:mvi@immagic.com
- * @version 1.1
+ * @version $Revision$
  */
 
 

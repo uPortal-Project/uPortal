@@ -37,14 +37,14 @@
 
 package org.jasig.portal.layout;
 
-import java.util.*;
 
 /**
- * <p>Title: UserLayoutFolder </p>
- * <p>Description: </p>
- * <p>Company: Instructional Media & Magic</p>
+ * UserLayoutFolder summary sentence goes here.
+ * <p>
+ * Company: Instructional Media &amp; Magic
+ * 
  * @author Michael Ivanov mailto:mvi@immagic.com
- * @version 1.2
+ * @version $Revision$
  */
 
 

@@ -41,12 +41,12 @@ import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
- * <p>Title: Boolean Restriction class</p>
- * <p>Description: This class checks the restriction on the boolean property for a given ALNode object</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic </p>
+ * BooleanRestriction checks the restriction on the boolean property for a given ALNode object.
+ * <p>
+ * Company: Instructional Media &amp; Magic
+ * 
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.0
+ * @version $Revision$
  */
 
 public abstract class BooleanRestriction extends UserLayoutRestriction {
