@@ -33,7 +33,6 @@
  *
  */
 
-
 package org.jasig.portal.layout;
 
 import java.util.Collections;
@@ -42,14 +41,12 @@ import java.util.Set;
 
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 
-
 /**
- * UserLayoutNode summary description sentence goes here.
+ * Represents a node in the user layout tree.
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
-
 public class UserLayoutNode {
 
      protected String parentNodeId;
@@ -63,13 +60,11 @@ public class UserLayoutNode {
      // this object contains the restrictions for this node of ICachingRestrictions type
      protected Set restrictions = Collections.synchronizedSet(new HashSet());
 
-
      public UserLayoutNode() {}
 
      public UserLayoutNode ( IUserLayoutNodeDescription nd ) {
        nodeDescription = nd;
      }
-
 
      public String getId() {
         return nodeDescription.getId();
@@ -82,7 +77,6 @@ public class UserLayoutNode {
      public IUserLayoutNodeDescription getNodeDescription() {
        return nodeDescription;
      }
-
 
      public void setParentNodeId ( String parentNodeId ) {
       this.parentNodeId = parentNodeId;
@@ -108,75 +102,73 @@ public class UserLayoutNode {
        return previousNodeId;
      }
 
-
      /**
-     * Sets the hashtable of restrictions bound to this node
-     * @param restrictions a <code>Hashtable</code> hashtable of restriction expressions
-     */
+      * Sets the hashtable of restrictions bound to this node
+      * @param restrictions a <code>Hashtable</code> hashtable of restriction expressions
+      */
      public void setRestrictions ( Set restrictions ) {
        this.restrictions = restrictions;
      }
 
      /**
-     * Gets the hashtable of restrictions bound to this node
-     * @return a hashtable of restriction expressions
-     */
+      * Gets the hashtable of restrictions bound to this node
+      * @return a hashtable of restriction expressions
+      */
      public Set getRestrictions () {
        return restrictions;
      }
 
-
      /**
-     * Adds the restriction for this node.
-     * @param restrictionName a <code>String</code> name of the restriction
-     * @param restriction a <code>IUserLayoutRestriction</code> a restriction
-     */
+      * Adds the restriction for this node.
+      * @param restriction a <code>IUserLayoutRestriction</code> a restriction
+      */
      public void addRestriction( IUserLayoutRestriction restriction ) {
        restrictions.add(restriction);
      }
 
-
      /**
-     * Sets the priority for this node.
-     * @param priority a <code>int</code> priority value
-     */
+      * Sets the priority for this node.
+      * @param priority a <code>int</code> priority value
+      */
      public void setPriority ( int priority ) {
        this.priority = priority;
      }
 
      /**
-     * Gets the priority value for this node.
-     */
+      * Gets the priority value for this node.
+      */
      public int getPriority() {
        return priority;
      }
 
-      /**
-     * Sets the tree depth for this node.
-     * @param depth a <code>int</code> depth value
-     */
-     public void setDepth ( int priority ) {
-       this.priority = priority;
+     /**
+      * Sets the tree depth for this node.
+      * @param depth a <code>int</code> depth value
+      */
+     public void setDepth ( int depth ) {
+       this.depth = depth;
      }
 
      /**
-     * Gets the depth value for this node.
-     */
+      * Gets the depth value for this node.
+      * @return the depth of this node
+      */
      public int getDepth() {
        return depth;
      }
 
      /**
-     * Sets the group name for this node.
-     * @param groupName a <code>String</code> group name value
-     */
+      * Sets the group name for this node.
+      * @param groupName a <code>String</code> group name value
+      */
      public void setGroupName ( String groupName ) {
        this.groupName = groupName;
      }
 
      /**
-     * Gets the priority value for this node.
-     */
+      * Gets the group name for this node.
+      * @return the group name
+      */
      public String getGroupName() {
        return groupName;
      }
