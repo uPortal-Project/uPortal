@@ -50,6 +50,7 @@ Version $Revision$
     <!--<xsl:param name="selectedID" select="'10'"/>-->
     <xsl:param name="userLayoutRoot" select="'root'"/>
     <!--<xsl:param name="userLayoutRoot" select="'29'"/>-->
+    <xsl:param name="newNodeID" select="no newNodeID parameter"/>
     <xsl:param name="focusedTabID">
         <!--Check if lastSession-->
         <xsl:choose>
@@ -63,6 +64,9 @@ Version $Revision$
     </xsl:param>
     <xsl:variable name="validFocusedTabID">
         <xsl:choose>
+            <xsl:when test="not($newNodeID='no newNodeID parameter')">
+                <xsl:value-of select="$newNodeID"/>
+            </xsl:when>
             <xsl:when test="$focusedTabID = /layout/folder/folder[@type='regular' and @hidden='false']/@ID">
                 <xsl:value-of select="$focusedTabID"/>
             </xsl:when>
@@ -85,7 +89,7 @@ Version $Revision$
     <!--Create root element - call child templates-->
     <!-- -->
     <xsl:template match="layout">
-        <layout  unremovable="{folder[@ID='userLayoutRootNode']/@unremovable}" immutable="{folder[@ID='userLayoutRootNode']/@immutable}" lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
+        <layout unremovable="{folder[@ID='userLayoutRootNode']/@unremovable}" immutable="{folder[@ID='userLayoutRootNode']/@immutable}" lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
             <!--             <xsl:if test="$mode='preferences'">
                 <xsl:apply-templates select="fragments"/>
             </xsl:if> -->
