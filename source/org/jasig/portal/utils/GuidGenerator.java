@@ -89,6 +89,22 @@ public class GuidGenerator {
     // Random generator
     private static Random random = new Random();
 
+    /**
+     * Returns the hexidecimal representation of byte values in the array.
+     * Uses Integer.toHexString on each byte, so is relatively expensive.
+     * This could easily be ameliorated with some trivial byte-packing
+     * but for now I'm just going to do the Simplest Thing Possible.
+     */
+    private static final void bytesToHex(byte[] bytes, StringBuffer buffer) {
+      for (int i = 0; i < bytes.length; i++) {
+        String s = Integer.toHexString(0x00ff & bytes[i]);
+        if (s.length() < 2) {
+          buffer.append('0');
+        }
+        buffer.append(s);
+      }
+    }
+
     // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     //
     // methods
@@ -103,15 +119,12 @@ public class GuidGenerator {
         byte[] bytes = ip.getAddress();
 
         StringBuffer buffer = new StringBuffer(12);
-        buffer.append(new String(bytes));
-        int actualSize = buffer.toString().length();
-        if ( actualSize < 12 ) {
-            byte[] tailBytes = new byte[12-actualSize];
+        byte[] tailBytes = new byte[2];
             random.nextBytes(tailBytes);
-            sun.io.ByteToCharConverter converter = sun.io.ByteToCharConverter.getConverter ( "ASCII" );
-            char[] tailChars = converter.convertAll(tailBytes);
-            buffer.append(tailChars);
-        }
+
+        bytesToHex(bytes, buffer);
+        bytesToHex(tailBytes, buffer);
+
         initGuid ( buffer.toString() );
     }
 
