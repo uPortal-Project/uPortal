@@ -76,7 +76,7 @@ Version $Revision$
     <table width="100%" border="0" cellspacing="0" cellpadding="2">
       <tr>
         <td>
-          <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+          <img alt="bullet point" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
         </td>
 
         <td width="100%" class="uportal-channel-subtitle-reversed">
