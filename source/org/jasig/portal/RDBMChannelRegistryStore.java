@@ -640,8 +640,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Get a channel from the cache (it better be there)
    */
-  public ChannelStoreDefinition getChannel(int chanId) {
-    return (ChannelStoreDefinition)channelCache.get(new Integer(chanId));
+  public ChannelDefinition getChannel(int chanId) {
+    return (ChannelDefinition)channelCache.get(new Integer(chanId));
   }
 
 
@@ -650,7 +650,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * Get a channel from the cache (it better be there)
    */
   public Element getChannelXML(int chanId, Document doc, String idTag) {
-    ChannelStoreDefinition channel = getChannel(chanId);
+    ChannelDefinition channel = getChannel(chanId);
     if (channel != null) {
       return channel.getDocument(doc, idTag);
     } else {
@@ -661,15 +661,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Get a channel from the cache or the store
    */
-  public ChannelStoreDefinition getChannel(int chanId, boolean cacheChannel, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+  public ChannelDefinition getChannel(int chanId, boolean cacheChannel, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
     Integer chanID = new Integer(chanId);
     boolean inCache = true;
-    ChannelStoreDefinition channel = (ChannelStoreDefinition)channelCache.get(chanID);
+    ChannelDefinition channel = (ChannelDefinition)channelCache.get(chanID);
     if (channel == null) {
       synchronized (channelLock) {
-        channel = (ChannelStoreDefinition)channelCache.get(chanID);
+        channel = (ChannelDefinition)channelCache.get(chanID);
         if (channel == null || cacheChannel && channel.refreshMe()) {  // Still undefined or stale, let's get it
-          channel = getChannelStoreDefinition(chanId, pstmtChannel, pstmtChannelParm);
+          channel = getChannelDefinition(chanId, pstmtChannel, pstmtChannelParm);
           inCache = false;
           if (cacheChannel) {
             channelCache.put(chanID, channel);
@@ -683,7 +683,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
     if (inCache) {
       LogService.instance().log(LogService.DEBUG,
-        "RDBMChannelRegistryStore.getChannelStoreDefinition(): Got channel " + chanId + " from the cache");
+        "RDBMChannelRegistryStore.getChannelDefinition(): Got channel " + chanId + " from the cache");
     }
 
     return channel;
@@ -692,8 +692,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   /**
    * Read a channel definition from the data store
    */
-  protected ChannelStoreDefinition getChannelStoreDefinition (int chanId, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
-    ChannelStoreDefinition channel = null;
+  protected ChannelDefinition getChannelDefinition (int chanId, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+    ChannelDefinition channel = null;
 
     pstmtChannel.clearParameters();
     pstmtChannel.setInt(1, chanId);
@@ -718,7 +718,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         if (rs.wasNull()) {
           timeout = 0;
         }
-        channel = new ChannelStoreDefinition(chanId, rs.getString(1), rs.getString(2), rs.getString(3),
+        channel = new ChannelDefinition(chanId, rs.getString(1), rs.getString(2), rs.getString(3),
         chanType, publisherId, approverId, rs.getTimestamp(7), rs.getTimestamp(8), timeout,
           rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
           rs.getString(14));
@@ -753,7 +753,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     }
 
     LogService.instance().log(LogService.DEBUG,
-      "RDBMChannelRegistryStore.getChannelStoreDefinition(): Read channel " + chanId + " from the store");
+      "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + chanId + " from the store");
 
     return  channel;
   }
@@ -772,7 +772,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     try {
       RDBMServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
       try {
-        ChannelStoreDefinition cd = getChannel(chanId, false, pstmtChannel, pstmtChannelParm);
+        ChannelDefinition cd = getChannel(chanId, false, pstmtChannel, pstmtChannelParm);
         if (cd != null) {
           return cd.getDocument(doc, idTag);
         } else {

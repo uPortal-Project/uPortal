@@ -124,7 +124,7 @@ public interface IChannelRegistryStore {
   /**
    * Get a channel definition
    */
-  public ChannelStoreDefinition getChannel(int chanId);
+  public ChannelDefinition getChannel(int channelPublishId);
 
   /**
    * Invalidate a channel definition
@@ -134,7 +134,7 @@ public interface IChannelRegistryStore {
   /**
    * Get a channel definition (from the store if necessary)
    */
-  public ChannelStoreDefinition getChannel(int chanId, boolean cacheChannel, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException;
+  public ChannelDefinition getChannel(int channelPublishId, boolean cacheChannel, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException;
 
   /**
    * Get an XML representation of a channel
