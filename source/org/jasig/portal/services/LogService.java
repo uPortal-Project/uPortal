@@ -31,25 +31,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
-package org.jasig.portal.services;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.io.FileInputStream;
 
-import java.util.Properties;
+package  org.jasig.portal.services;
 
-import org.apache.log4j.Category;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.Priority;
-import org.apache.log4j.Appender;
+import  java.io.File;
+import  java.io.StringWriter;
+import  java.io.PrintWriter;
+import  java.io.FileInputStream;
+import  java.util.Properties;
+import  org.apache.log4j.Category;
+import  org.apache.log4j.FileAppender;
+import  org.apache.log4j.PatternLayout;
+import  org.apache.log4j.Priority;
+import  org.apache.log4j.Appender;
+import  org.jasig.portal.GenericPortalBean;
+import  org.jasig.portal.services.PortalFileAppender;
 
-import org.jasig.portal.GenericPortalBean;
-
-import org.jasig.portal.services.PortalFileAppender;
 
 /**
  * The Logger class is used to output messages to a log file.
@@ -67,9 +68,7 @@ import org.jasig.portal.services.PortalFileAppender;
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-
-public class LogService extends GenericPortalBean
-{
+public class LogService extends GenericPortalBean {
   // Log levels
   public static final int NONE = 0;
   public static final int SEVERE = 1;
@@ -77,49 +76,33 @@ public class LogService extends GenericPortalBean
   public static final int WARN = 3;
   public static final int INFO = 4;
   public static final int DEBUG = 5;
-
   private static int iLogLevelSetting = DEBUG;
-
   private static String sLogLevelSetting = "DEBUG";
-
   private static final String sIllArgExMessage = "Log level must be NONE, SEVERE, ERROR, WARN, INFO, or DEBUG";
-
   private static final String fs = File.separator;
-
   private static String sLogRelativePath = "logs";
-
   private static boolean bInitialized = false;
-
   private static Category m_catFramework = null;
-
   private static PortalFileAppender m_logFile = null;
-
   // Maximum number of log files (Default is 10)
   private static int m_maxBackupIndex = 10;
-
   // Maximum size of each log file (Default is 500k)
   private static int m_maxFileSize = 500000;
-
   private static LogService m_logger;
 
   /**
    * Protected constructor to make this class a singleton
    */
-  protected void LogService()
-  {
-  }
+  protected void LogService () {}
 
   /**
    * Return an instance of logger
    */
-  public static LogService instance()
-  {
-    if(m_logger == null)
-    {
+  public static LogService instance () {
+    if (m_logger == null) {
       m_logger = new LogService();
     }
-
-    return(m_logger);
+    return  (m_logger);
   }
 
   /**
@@ -132,19 +115,15 @@ public class LogService extends GenericPortalBean
    *
    * @todo The appender must be abstracted out so that other can be swapped in.
    */
-  public void setLogLevel(int iLogLevel)
-  {
-    if(!bInitialized)
-    {
+  public void setLogLevel (int iLogLevel) {
+    if (!bInitialized) {
       initialize();
     }
-    if(iLogLevel <= DEBUG)
-    {
+    if (iLogLevel <= DEBUG) {
       iLogLevelSetting = iLogLevel;
-    }
-    else
-    {
-      throw new IllegalArgumentException(sIllArgExMessage);
+    } 
+    else {
+      throw  new IllegalArgumentException(sIllArgExMessage);
     }
   }
 
@@ -153,9 +132,8 @@ public class LogService extends GenericPortalBean
    *
    * @return the current log level setting
    */
-  public int getLogLevel()
-  {
-    return(iLogLevelSetting);
+  public int getLogLevel () {
+    return  (iLogLevelSetting);
   }
 
   /**
@@ -164,93 +142,62 @@ public class LogService extends GenericPortalBean
    *
    * @todo If the file cannot be created, the log write should be pointed at stdout
    */
-  public void initialize()
-  {
+  public void initialize () {
     String sPortalBaseDir = getPortalBaseDir();
     File propertiesFile = null;
-
-    try
-    {
+    try {
       // Load the portal properties file
       propertiesFile = new File(sPortalBaseDir + "/properties/portal.properties");
-
-      if(propertiesFile != null && propertiesFile.exists())
-      {
+      if (propertiesFile != null && propertiesFile.exists()) {
         Properties portalProperties = new Properties();
         portalProperties.load(new FileInputStream(propertiesFile));
-
-        if(portalProperties.getProperty("logger.level") != null)
-        {
+        if (portalProperties.getProperty("logger.level") != null) {
           sLogLevelSetting = portalProperties.getProperty("logger.level");
-        }
-        else
-        {
+        } 
+        else {
           System.out.println("Defaulting to " + sLogLevelSetting + " for portal log level.");
         }
-
-        if(portalProperties.getProperty("logger.maxLogFiles") != null)
-        {
+        if (portalProperties.getProperty("logger.maxLogFiles") != null) {
           m_maxBackupIndex = Integer.parseInt(portalProperties.getProperty("logger.maxLogFiles"));
-        }
-        else
-        {
+        } 
+        else {
           System.out.println("Defaulting to " + m_maxBackupIndex + " for maximum number of portal log files.");
         }
-
-        if(portalProperties.getProperty("logger.maxFileSize") != null)
-        {
+        if (portalProperties.getProperty("logger.maxFileSize") != null) {
           m_maxFileSize = Integer.parseInt(portalProperties.getProperty("logger.maxFileSize"));
-        }
-        else
-        {
+        } 
+        else {
           System.out.println("Defaulting to " + m_maxFileSize + " for maximum log file size.");
         }
-      }
-      else
-      {
+      } 
+      else {
         System.out.println("The file portal.properties could not be loaded, using default properties.");
       }
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       e.printStackTrace();
     }
-
-    try
-    {
-      if(sPortalBaseDir != null && new File(sPortalBaseDir).exists())
-      {
+    try {
+      if (sPortalBaseDir != null && new File(sPortalBaseDir).exists()) {
         PatternLayout patternLayout = new PatternLayout("%-5p %-23d{ISO8601} %m%n");
-
         // Make sure the relative path ends with a seperator
-        if(!sLogRelativePath.endsWith(File.separator))
-        {
+        if (!sLogRelativePath.endsWith(File.separator)) {
           sLogRelativePath = sLogRelativePath + File.separator;
         }
-
         // Make sure the portal base directory path ends with a seperator
-        if(!sPortalBaseDir.endsWith(File.separator))
-        {
+        if (!sPortalBaseDir.endsWith(File.separator)) {
           sPortalBaseDir = sPortalBaseDir + File.separator;
         }
-
         // Create the log file directory path
         String logFileDirectoryPath = sPortalBaseDir + sLogRelativePath;
-
         File logFileDirectory = new File(logFileDirectoryPath);
-
         // Make sure the log file directory exists
-        if(!logFileDirectory.exists())
-        {
-          if(!logFileDirectory.mkdir() || !logFileDirectory.exists() || !logFileDirectory.isDirectory())
-          {
+        if (!logFileDirectory.exists()) {
+          if (!logFileDirectory.mkdir() || !logFileDirectory.exists() || !logFileDirectory.isDirectory()) {
             System.out.println("Could not create log file directory!");
           }
         }
-
         // Create the file appender
         m_logFile = new PortalFileAppender(patternLayout, logFileDirectoryPath + "portal.log");
-
         // Make sure to roll the logs to start fresh
         m_logFile.rollOver();
         m_logFile.setMaxBackupIndex(m_maxBackupIndex);
@@ -258,25 +205,30 @@ public class LogService extends GenericPortalBean
         m_catFramework = Category.getRoot();
         m_catFramework.addAppender(m_logFile);
         m_catFramework.setPriority(Priority.toPriority(sLogLevelSetting));
-
         // Insures that initialization is only done once
         bInitialized = true;
-      }
-      else
-      {
+      } 
+      else {
         System.out.println("Logger.initialize(): PortalBaseDir is not set or does not exist!");
       }
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
-    }
-    catch(Error er)
-    {
+    } catch (Error er) {
       System.err.println("Problem writing to log.");
       er.printStackTrace();
     }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param iLogLevel
+   * @param sMessage
+   * @param ex
+   */
+  public void log (int iLogLevel, String sMessage, Throwable ex) {
+    log(iLogLevel, sMessage);
+    log(iLogLevel, ex);
   }
 
   /**
@@ -286,51 +238,36 @@ public class LogService extends GenericPortalBean
    * @param Message to send to the log
    *
    */
-  public void log(int iLogLevel, String sMessage)
-  {
-    try
-    {
-      if(!bInitialized)
-      {
+  public void log (int iLogLevel, String sMessage) {
+    try {
+      if (!bInitialized) {
         initialize();
       }
-
-      switch(iLogLevel)
-      {
+      switch (iLogLevel) {
         case NONE:
-          return ;
-
+          return;
         case SEVERE:
           m_catFramework.fatal(sMessage);
-          return ;
-
+          return;
         case ERROR:
           m_catFramework.error(sMessage);
-          return ;
-
+          return;
         case WARN:
           m_catFramework.warn(sMessage);
-          return ;
-
+          return;
         case INFO:
           m_catFramework.info(sMessage);
-          return ;
-
+          return;
         case DEBUG:
           m_catFramework.debug(sMessage);
-          return ;
-
+          return;
         default:
-          throw new IllegalArgumentException();
+          throw  new IllegalArgumentException();
       }
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
-    }
-    catch(Error er)
-    {
+    } catch (Error er) {
       System.err.println("Problem writing to log.");
       er.printStackTrace();
     }
@@ -341,54 +278,38 @@ public class LogService extends GenericPortalBean
    * @param the log level
    * @param an exception to log
    */
-  public void log(int iLogLevel, Throwable ex)
-  {
-    try
-    {
-      if(!bInitialized)
-      {
+  public void log (int iLogLevel, Throwable ex) {
+    try {
+      if (!bInitialized) {
         initialize();
       }
-
       StringWriter stackTrace = new StringWriter();
       ex.printStackTrace(new PrintWriter(stackTrace));
-
-      switch(iLogLevel)
-      {
+      switch (iLogLevel) {
         case NONE:
-          return ;
-
+          return;
         case SEVERE:
           m_catFramework.fatal(stackTrace.toString());
-          return ;
-
+          return;
         case ERROR:
           m_catFramework.error(stackTrace.toString());
-          return ;
-
+          return;
         case WARN:
           m_catFramework.warn(stackTrace.toString());
-          return ;
-
+          return;
         case INFO:
           m_catFramework.info(stackTrace.toString());
-          return ;
-
+          return;
         case DEBUG:
           m_catFramework.debug(stackTrace.toString());
-          return ;
-
+          return;
         default:
-          throw new IllegalArgumentException();
+          throw  new IllegalArgumentException();
       }
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
-    }
-    catch(Error er)
-    {
+    } catch (Error er) {
       System.err.println("Problem writing to log.");
       er.printStackTrace();
     }
@@ -402,38 +323,33 @@ public class LogService extends GenericPortalBean
    * @return a string representation of the log level
    * @throws IllegalArgumentException if the log level is not one of the acceptable log levels
    */
-  private String getLogLevel(int iLogLevel)
-  {
+  private String getLogLevel (int iLogLevel) {
     String sLogLevel = null;
-    switch(iLogLevel)
-    {
+    switch (iLogLevel) {
       case NONE:
         sLogLevel = "NONE  ";
         break;
-
       case SEVERE:
         sLogLevel = "SEVERE";
         break;
-
       case ERROR:
         sLogLevel = "ERROR ";
         break;
-
       case WARN:
         sLogLevel = "WARN  ";
         break;
-
       case INFO:
         sLogLevel = "INFO  ";
         break;
-
       case DEBUG:
         sLogLevel = "DEBUG ";
         break;
-
       default:
-        throw new IllegalArgumentException();
+        throw  new IllegalArgumentException();
     }
-    return sLogLevel;
+    return  sLogLevel;
   }
 }
+
+
+
