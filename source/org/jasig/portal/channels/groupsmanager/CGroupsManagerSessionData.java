@@ -64,4 +64,5 @@ public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public String feedback; // use to display info to user (eg. "Unable to lock...")
    public String customMessage;
    public boolean isAdminUser;
+   public IPermissible permissible;
 }
