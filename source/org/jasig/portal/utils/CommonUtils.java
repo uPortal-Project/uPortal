@@ -137,6 +137,30 @@ public class CommonUtils {
       return strwrt.toString();
     }
 
+    /**
+  * This method gets a Properties object by fileName parameter.
+  * @param fileName - the file name for this properties file
+  * @return a Properties object
+  **/
+ public static Properties getProperties ( Object object, String fileName ) {
+     Properties props = new Properties();
+     try {
+     if ( object != null ) {
+        InputStream in = object.getClass().getClassLoader().getResourceAsStream(fileName);
+      if ( in != null )
+        props.load( in );
+      else
+        System.err.println( "Util::getProperties: Couldn't load \""+fileName+"\"" );
+     } else
+        System.err.println( "Util::getProperties: object is null!" );
+     } catch ( IOException ioe ) {
+        System.err.println( "Util::getProperties: " + ioe );
+       }
+
+      return props;
+ }
+
+
  /**
   * This method gets an array of strings from given string splitted by commas.
   * @param str - a string value
@@ -280,15 +304,15 @@ public class CommonUtils {
     return st;
  }
 
-   public static boolean parseBoolean(String str, boolean defaultValue) {
-    try {
+
+  // parse "yes" and "no"
+  public static boolean parseBoolean(String str, boolean defaultValue) {
        boolean res = defaultValue;
-       if ("yes".equalsIgnoreCase(str)) { res = true; }
-       if ("no".equalsIgnoreCase(str)) { res = false; }
+       if ("yes".equalsIgnoreCase(str))
+          res = true;
+       if ("no".equalsIgnoreCase(str))
+          res = false;
        return res;
-    } catch ( Exception e ) {
-       return defaultValue;
-      }
   }
 
 
@@ -301,6 +325,14 @@ public class CommonUtils {
     return (bool)?"true":"false";
   }
 
+  /**
+  * This method returns the boolean value for the given String representation ("true"-"false").
+  * @param bool - a value of boolean type
+  * @return true if bool is "true", false - otherwise
+  **/
+  public static boolean strToBool ( String bool ) {
+    return ("true".equalsIgnoreCase(bool))?true:false;
+  }
 
   public static boolean parseBoolean(String str) {
     return parseBoolean(str,false);
