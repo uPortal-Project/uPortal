@@ -2,8 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta name="generator"
-    content="HTML Tidy for Linux/x86 (vers 1st September 2002), see www.w3.org" />
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>CWebProxy 2.1</title>
   </head>
   <body bgcolor="#ffffff">
@@ -70,7 +69,7 @@
     supported: 
     </p>
       <ul>
-	<li><b>all</b>: all links stay in the channel.
+	<li><b>all</b>: all links stay in the channel.</li>
 
         <li><b>application</b>: references to the application
 	stay in the channel.  Other links go outside the portal
@@ -78,9 +77,9 @@
 	portal in the browser window.</li>
 
 	<li><b>marked</b>: the application indicates which
-	links should stay in channel by adding a tag to those URLs.
+	links should stay in channel by adding a tag to those URLs.</li>
 
-	<li><b>none</b>: all links will leave the portal framework.
+	<li><b>none</b>: all links will leave the portal framework.</li>
       </ul>
     <p>
     Note that it is possible to change the pass-through type at
@@ -97,16 +96,16 @@
     <ol>
       <li><b>JTidy</b>:  If the cw_tidy attribute is on, the application's
           output is run through JTidy to convert it from HTML to well-formed
-          XHTML.
+          XHTML.</li>
       <li><b>AbsoluteURLFilter</b>:  This converts relative URLs to absolute
-          ones.
+          ones.</li>
       <li><b>CWebProxyURLFilter</b>:  Rewrites URLs according to cw_passThrough
-          or cw_download.
+          or cw_download.</li>
       <li><b>XSL/T</b>:  The XML is passed through a stylesheet according
           to the channel parameters and the media type.  Static and runtime
 	  data parameters are passed to the stylesheet.  This feature is
 	  not used by the distributed stylesheets, but may prove useful to
-	  custom-written stylesheets, particularly those with no URL Filters.
+	  custom-written stylesheets, particularly those with no URL Filters.</li>
     </ol>
 
     <p>
@@ -194,10 +193,10 @@
     </p>
       <ul>
         <li><b>Mode</b>: To cache or not to cache.  May be <b>none</b>
-	  (normally don't cache), or <b>all</b> (cache by default).
+	  (normally don't cache), or <b>all</b> (cache by default).</li>
 
         <li><b>Scope</b>: Affects which instances of this channel share
-	  cached data.  At this time only instance caching is available.
+	  cached data.  At this time only instance caching is available.</li>
 
 	<!--
 	  <ul>
@@ -210,7 +209,7 @@
           </ul>
 	-->
 
-        <li><b>Timeout</b>:  How long cached output is valid in "all" mode.
+        <li><b>Timeout</b>:  How long cached output is valid in "all" mode.</li>
       </ul>
 
     <p>
@@ -276,7 +275,7 @@
         </ul>
       </li>
 
-      <li><b>cw_cacheDefaultTimeout</b> - Default timeout in seconds.
+      <li><b>cw_cacheDefaultTimeout</b> - Default timeout in seconds.</li>
 
       <li><b>cw_cacheDefaultMode</b> - Default caching mode.
 	May be <i>none</i> (normally don't cache), or
@@ -325,7 +324,7 @@
       <li><b>person_allow</b>:  Default value for <i>cw_personAllow</i>.  
           An empty value means everything is restricted, disabling
 	  this mechanism.  A special value of <i>*</i> means no
-	  restrictions.
+	  restrictions.</li>
     </ul>
 
     <h2>Controlling CWebProxy Channels</h2>
@@ -436,12 +435,13 @@
       by which the channel was invoked by the browser.  Previously GET was
       always used.</li>
       <li>URL-rewriting is done via SAX filters rather than
-      XSL stylesheet.
+      XSL stylesheet.</li>
       <li>Communication with applications goes through the new
       LocalConnectionContext, allowing local interface technology
       and policy to be implemented without modifying CWebProxy</li>
-      <li>IPerson attributes may now optionally be passed to the application
-      automatically.
+      <li>IPerson attributes may now optionally be passed to the
+      application automatically.</li>
+
     </ul>
 
     <h2>Examples</h2>
@@ -503,7 +503,7 @@
     Documentation author Andrew Drask&oacute;y.
     </p>
     <p>
-    Last Modified December 2, 2002.
+    Last Modified December 3, 2002.
     </p>
   </body>
 </html>
