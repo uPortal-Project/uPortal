@@ -57,10 +57,8 @@ import org.jasig.portal.utils.ResourceLoader;
  * Simple servlet to handle user logout. When a user
  * logs out, their session gets invalidated and they
  * are returned to the guest page.
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @author Don Fracapane, df7@columbia.edu
- * Added feature where a logout redirect string can be read from the security
- * properties file. Also removed static initializers to add maintenance and debugging.
  * @version $Revision$
  */
 public class LogoutServlet extends HttpServlet {
@@ -72,7 +70,7 @@ public class LogoutServlet extends HttpServlet {
     * Initialize the LogoutServlet
     * @throws ServletException
     */
-   public void init () {
+   public void init () throws ServletException {
       if (!INITIALIZED) {
          String upFile = UPFileSpec.RENDER_URL_ELEMENT + UPFileSpec.PORTAL_URL_SEPARATOR
                + UserInstance.USER_LAYOUT_ROOT_NODE + UPFileSpec.PORTAL_URL_SEPARATOR
@@ -126,20 +124,22 @@ public class LogoutServlet extends HttpServlet {
     String redirect = getRedirectionUrl(request);
     HttpSession session = request.getSession(false);
 
-    // Record that the user is requesting to log out
-    try {
-      IPerson person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
-      StatsRecorder.recordLogout(person);
-    } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
+    if (session != null) {
+        // Record that an authenticated user is requesting to log out
+        try {
+            IPerson person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
+            if (person != null && person.getSecurityContext().isAuthenticated()) {
+                StatsRecorder.recordLogout(person);
+            }
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
+        }
+        
+        // Clear out the existing session for the user
+        session.invalidate();
     }
 
-    // Clear out the existing session for the user
-    if (session != null)
-      session.invalidate();
-
     // Send the user back to the guest page
-    //response.sendRedirect(request.getContextPath() + '/' + DEFAULT_REDIRECT);
     response.sendRedirect(redirect);
   }
 
@@ -165,7 +165,6 @@ public class LogoutServlet extends HttpServlet {
    * @param request
    * @return String representing the redirection URL
    */
-
    private String getRedirectionUrl (HttpServletRequest request) {
       String redirect = null;
       String defaultRedirect = request.getContextPath() + '/' + DEFAULT_REDIRECT;
