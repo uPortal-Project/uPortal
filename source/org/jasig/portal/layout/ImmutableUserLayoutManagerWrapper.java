@@ -59,13 +59,13 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
             throw new PortalException("Can not wrap a null IUserLayoutManager !");
         }
     }
-    
-    public IUserLayout getUserLayout() {
+
+    public IUserLayout getUserLayout() throws PortalException {
         // TODO: Implement this!
         return null;
     }
-    
-    public void setUserLayout(IUserLayout userLayout) {
+
+    public void setUserLayout(IUserLayout userLayout) throws PortalException {
         // TODO: Implement this!
     }
 

@@ -114,13 +114,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         this.markingMode=null;
         this.markingNode=null;
     }
-    
-    public IUserLayout getUserLayout() {
+
+    public IUserLayout getUserLayout() throws PortalException {
         // Temporary until we use IUserLayout for real
         return new SimpleLayout(String.valueOf(profile.getLayoutId()), this.userLayoutDocument);
     }
-    
-    public void setUserLayout(IUserLayout userLayout) {
+
+    public void setUserLayout(IUserLayout userLayout) throws PortalException {
         // Temporary until we use IUserLayout for real
         Document doc = DocumentFactory.getNewDocument();
         try {

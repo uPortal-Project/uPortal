@@ -98,13 +98,13 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             throw new PortalException("Cannot wrap a null IUserLayoutManager !");
         }
     }
-    
-    public IUserLayout getUserLayout() {
+
+    public IUserLayout getUserLayout() throws PortalException {
         return man.getUserLayout();
     }
-    
-    public void setUserLayout(IUserLayout userLayout) { 
-        man.setUserLayout(userLayout);  
+
+    public void setUserLayout(IUserLayout userLayout) throws PortalException {
+        man.setUserLayout(userLayout);
     }
 
 
