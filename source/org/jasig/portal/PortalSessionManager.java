@@ -31,27 +31,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
 package  org.jasig.portal;
 
-import  java.io.*;
-import  java.util.*;
-import  java.net.URL;
-import  java.lang.SecurityManager;
-import  javax.naming.Context;
-import  javax.naming.InitialContext;
-import  javax.servlet.*;
-import  javax.servlet.http.*;
-import  java.security.AccessController;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.jndi.JNDIManager;
-import  com.oreilly.servlet.multipart.MultipartParser;
-import  com.oreilly.servlet.multipart.FilePart;
-import  com.oreilly.servlet.multipart.ParamPart;
+import java.io.Serializable;
+import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.net.URL;
+import java.lang.SecurityManager;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.security.AccessController;
+import org.jasig.portal.services.ExternalServices;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.jndi.JNDIManager;
+import com.oreilly.servlet.multipart.MultipartParser;
+import com.oreilly.servlet.multipart.FilePart;
+import com.oreilly.servlet.multipart.ParamPart;
 
 
 /**
@@ -60,9 +65,9 @@ import  com.oreilly.servlet.multipart.ParamPart;
  * @version: $Revision$
  */
 public class PortalSessionManager extends HttpServlet {
-  public static String renderBase = "render.uP";
-  public static String detachBaseStart = "detach_";
-  private static int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
+  public static final String renderBase = "render.uP";
+  public static final String detachBaseStart = "detach_";
+  private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
 
@@ -82,6 +87,15 @@ public class PortalSessionManager extends HttpServlet {
       servletContext = sc.getServletContext();
 
       JNDIManager.initializePortalContext();
+
+      // Start any portal services configured in services.xml
+      try {
+        ExternalServices.startServices();
+      } catch (Exception ex) {
+        LogService.instance().log(LogService.ERROR, ex);
+        throw new ServletException ("Failed to start external portal services.");
+      }
+
       // Flag that the portal has been initialized
       initialized = true;
 
