@@ -22,7 +22,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.w3c.dom.NodeList;
 
 
 import org.jasig.portal.IUserLayoutStore;
@@ -424,7 +423,6 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     public synchronized boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
-        boolean isChannel=false;
         if(canUpdateNode(node)) {
             // normally here, one would determine what has changed
             // but we'll just make sure that the node type has not
@@ -442,9 +440,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             IUserLayoutNodeDescription oldNode=getNode(nodeId);
 
             if(oldNode instanceof IUserLayoutChannelDescription) {
-                IUserLayoutChannelDescription oldChannel=(IUserLayoutChannelDescription) oldNode;
                 if(node instanceof IUserLayoutChannelDescription) {
-                    isChannel=true;
                     Document ulm=this.getUserLayoutDOM();
                     // generate new XML Element
                     Element newChannelElement=node.getXML(ulm);
@@ -468,7 +464,6 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 }
             } else {
                  // must be a folder
-                IUserLayoutFolderDescription oldFolder=(IUserLayoutFolderDescription) oldNode;
                 if(node instanceof IUserLayoutFolderDescription) {
                     Document ulm=this.getUserLayoutDOM();
                     // generate new XML Element
