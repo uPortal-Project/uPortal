@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 /**
  * PermissionsSessionData
  *
- * A lightwieht object used to store all values associated with a single channel
+ * A lightweight object used to store all values associated with a single channel
  * session of CPermissionsManager
  *
  * @author Alex Vigdor
