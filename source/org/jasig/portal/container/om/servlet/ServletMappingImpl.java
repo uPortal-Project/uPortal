@@ -47,12 +47,13 @@ import java.io.Serializable;
  */
 public class ServletMappingImpl implements Serializable {
 
-    private String servletName = null;
-    private String urlPattern = null;
+    private String servletName;
+    private String urlPattern;
     
     public ServletMappingImpl() {
         
     }
+    
     public ServletMappingImpl(String servletName, String urlPattern) {
         this();
         setServletName(servletName);
