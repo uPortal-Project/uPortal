@@ -44,8 +44,10 @@ $Revision$
 <!ELEMENT parameter (name,label,type,example,description,units,(defaultValue)?)>
 
 <!--
-  Descriptions of the possible values for the modify 
-  attribute of the parameter element.
+
+  The modify attribute is set in the CPD document and affects the output of the
+  Publish and Subscribe interfaces based on the possible values described below:
+
 
   publish
   -------
@@ -72,7 +74,8 @@ $Revision$
 -->
 <!ATTLIST parameter modify  (publish|subscribe|publish-only|subscribe-only) #REQUIRED>
 
-
+<!ELEMENT arbitrary-parameters (paramName-prefix)*>
+<!ELEMENT paramName-prefix (#PCDATA)*>
 <!ELEMENT label (#PCDATA)*>
 <!ELEMENT defaultValue (#PCDATA)*>
 <!ELEMENT example (#PCDATA)*>
