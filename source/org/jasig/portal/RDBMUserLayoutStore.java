@@ -533,67 +533,6 @@ public class RDBMUserLayoutStore
     public int getChildId () {return childId;}
     public int getChanId () {return chanId;}
 
-    public Element getStructureDocument(DocumentImpl doc, UserInChannelRole uir) throws Exception {
-      Element structure = null;
-
-      if (isChannel()) {
-        if (uir.isAllowed(chanId)) {
-          structure = getChannel(chanId, doc, channelPrefix + structId);
-        } else {            // No access
-          ChannelDefinition channel= getChannel(chanId);
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureDocument(): no access to channel "
-            + chanId);
-          if (channel != null) {
-            structure = channel.getDocument(doc, channelPrefix + structId,
-              "You do not have permission to access this channel.", CError.CHANNEL_AUTHORIZATION_EXCEPTION);
-          }
-        }
-
-        if (structure == null) {
-          // Can't find channel
-          ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
-          structure = cd.getDocument(doc, channelPrefix + structId,
-           "This channel no longer exists. You should remove it from your layout.",
-           CError.CHANNEL_MISSING_EXCEPTION);
-        }
-      } else {
-        structure = doc.createElement("folder");
-        doc.putIdentifier(folderPrefix + structId, structure);
-        structure.setAttribute("ID", folderPrefix + structId);
-        structure.setAttribute("name", name);
-        structure.setAttribute("type", (type != null ? type : "regular"));
-      }
-
-      structure.setAttribute("hidden", (hidden ? "true" : "false"));
-      structure.setAttribute("immutable", (immutable ? "true" : "false"));
-      structure.setAttribute("unremovable", (unremovable ? "true" : "false"));
-
-      if (parameters != null) {
-        for (int i = 0; i < parameters.size(); i++) {
-          StructureParameter sp = (StructureParameter)parameters.get(i);
-
-          if (!isChannel()) {        // Folder
-            structure.setAttribute(sp.name, sp.value);
-          } else {                    // Channel
-            NodeList nodeListParameters = structure.getElementsByTagName("parameter");
-            for (int j = 0; j < nodeListParameters.getLength(); j++) {
-              Element parmElement = (Element)nodeListParameters.item(j);
-              NamedNodeMap nm = parmElement.getAttributes();
-
-              String nodeName = nm.getNamedItem("name").getNodeValue();
-              if (nodeName.equals(sp.name)) {
-                Node override = nm.getNamedItem("override");
-                if (override != null && override.getNodeValue().equals("yes")) {
-                  Node valueNode = nm.getNamedItem("value");
-                  valueNode.setNodeValue(sp.value);
-                }
-              }
-            }
-          }
-        }
-      }
-      return structure;
-    }
     public Element getStructureDocument(DocumentImpl doc, IAuthorizationPrincipal ap) throws Exception {
       Element structure = null;
 
@@ -1170,33 +1109,7 @@ public class RDBMUserLayoutStore
       rdbmService.releaseConnection(con);
     }
   }
-  /**
-   * put your documentation comment here
-   * @param con
-   * @param doc
-   * @param stmt
-   * @param root
-   * @param userId
-   * @param profileId
-   * @param layoutId
-   * @param structId
-   * @exception java.sql.SQLException
-   */
-   protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
-        Element root, int structId, UserInChannelRole uir) throws java.sql.SQLException, Exception {
-      while (structId != 0) {
-        if (DEBUG>1) {
-          System.err.println("CreateLayout(" + structId + ")");
-        }
-        LayoutStructure ls = (LayoutStructure) layoutStructure.get(new Integer(structId));
-        Element structure = ls.getStructureDocument(doc, uir);
-        root.appendChild(structure);
-        if (!ls.isChannel()) {          // Folder
-          createLayout(layoutStructure, doc,  structure, ls.getChildId(), uir);
-        }
-        structId = ls.getNextId();
-      }
-  }
+
   /**
    * put your documentation comment here
    * @param doc
@@ -1206,7 +1119,7 @@ public class RDBMUserLayoutStore
    * @param profileId
    * @param layoutId
    * @param structId
-   * @param ap 
+   * @param ap
    * @exception java.sql.SQLException
    */
    protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
@@ -1699,7 +1612,7 @@ public class RDBMUserLayoutStore
              * Assume a concurrent update. Try again after some random amount of microseconds.
              */
             Thread.sleep(java.lang.Math.round(java.lang.Math.random()*3000 * 1000)); // Retry in up to 3 seconds
-//          Thread.sleep(java.lang.StrictMath.round(java.lang.StrictMath.random()*3000 * 1000)); // Retry in up to 3 seconds          
+//          Thread.sleep(java.lang.StrictMath.round(java.lang.StrictMath.random()*3000 * 1000)); // Retry in up to 3 seconds
           }
         }
       } finally {
