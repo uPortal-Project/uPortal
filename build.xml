@@ -202,7 +202,7 @@
 
   axis.jar             Web services support. Axis is the next generation of the
                        Apache SOAP project which itself followed IBM's SOAP4J.
-                       Version: beta1
+                       Version: beta2
                        URL: http://xml.apache.org/axis/
 
   jaxrpc.jar           Java API for XML-Based RPC - needed for Axis.
@@ -347,6 +347,7 @@
    description="Delete old build and dist directories">
     <delete dir="${build.home}"/>
     <delete dir="${dist.home}"/>
+    <!--<delete dir="${deploy.home}"/>-->
   </target>
 
 
