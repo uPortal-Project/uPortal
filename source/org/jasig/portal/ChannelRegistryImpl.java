@@ -97,7 +97,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return a string of XML
  */
     public Document getRegistryXML(String catID, String role) {
-        System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
+        //System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
         RdbmServices rdbmService = new RdbmServices ();
         Connection con = null;
         String chanXML = null;
@@ -126,13 +126,13 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             {
                 //String catid = "";
                 String catnm = rs.getString(2);
-                System.out.println("catnm: " + catnm);
+                //System.out.println("catnm: " + catnm);
                 String chxml = rs.getString(3);
-                System.out.println("chxml: " +  chxml);
+                //System.out.println("chxml: " +  chxml);
                 Node chan = null;
                 
                 String s = rs.getString(1);
-                System.out.println("s: " + s);
+                //System.out.println("s: " + s);
                 if (!s.equals(catid)) {
                     if(catid.length() > 0) root.appendChild(cat);
                     catid = s;
@@ -143,7 +143,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
                 org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
                 parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
                 parser.setFeature ("http://apache.org/xml/features/dom/create-entity-ref-nodes", true);
-                System.out.println("parser: "+ parser.getCreateEntityReferenceNodes());
+                //System.out.println("parser: "+ parser.getCreateEntityReferenceNodes());
                 parser.parse (new org.xml.sax.InputSource (new StringReader (chxml)));
                 chan = parser.getDocument().getDocumentElement();
                 cat.appendChild(chanDoc.importNode(chan, false));
@@ -166,7 +166,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return a string of XML
  */
     public Document getTypesXML(String role) {
-        System.out.println("Enterering ChannelRegistryImpl::getTypesXML()");
+        //System.out.println("Enterering ChannelRegistryImpl::getTypesXML()");
         RdbmServices rdbmService = new RdbmServices ();
         Connection con = null;
         String chanXML = null;
@@ -190,9 +190,9 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             {
                 //String catid = "";
                 String name = rs.getString(1);
-                System.out.println("name: " + name);
+                //System.out.println("name: " + name);
                 String uri = rs.getString(2);
-                System.out.println("uri: " +  uri);
+                //System.out.println("uri: " +  uri);
                 Node chan = null;
                 
                 Element type = types.createElement("channelType");
@@ -208,7 +208,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             stmt.close();
             
             
-            System.out.println( "STRXML = " + serializeDOM(types) );
+            //System.out.println( "STRXML = " + serializeDOM(types) );
             
             //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
         } catch (Exception e) {
@@ -233,7 +233,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @param chanXML XML that describes the channel
  */
     public void addChannel(String id, String title, Document doc) {
-        System.out.println("Enterering ChannelRegistryImpl::addChannel()");
+        //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
         RdbmServices rdbmService = new RdbmServices ();
         Connection con = null;
         Statement stmt = null;
@@ -271,7 +271,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * This would be called by a publish channel.
  */
     public String getNextId() {
-        System.out.println("Enterering ChannelRegistryImpl::getNextId()");
+        //System.out.println("Enterering ChannelRegistryImpl::getNextId()");
         RdbmServices rdbmService = new RdbmServices ();
         Connection con = null;
         Statement stmt = null;
@@ -347,7 +347,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             serial.serialize( chanDoc.getDocumentElement() );
         }
         catch (java.io.IOException ioe) {
-            System.out.println("ioe thrown: "+ ioe.getMessage());
+            Logger.log(Logger.ERROR, "ioe thrown: "+ ioe.getMessage());
         }
         
         return stringOut.toString();

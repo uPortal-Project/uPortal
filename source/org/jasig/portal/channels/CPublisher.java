@@ -53,7 +53,8 @@ import java.util.*;
  */
 public class CPublisher implements IPrivilegedChannel
 {
-
+  private boolean DEBUG = false
+   
   ChannelStaticData staticData = null;
   ChannelRuntimeData runtimeData = null;
   StylesheetSet set = null;
@@ -159,7 +160,7 @@ public class CPublisher implements IPrivilegedChannel
     if (channelTypes==null) channelTypes = chanReg.getTypesXML(role);
 
     action = runtimeData.getParameter ("action");
-    System.out.println("action: "+ action);
+    //System.out.println("action: "+ action);
     if (action != null)
     {
       if (action.equals ("choose"))
@@ -245,7 +246,7 @@ public class CPublisher implements IPrivilegedChannel
     try{
         org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
         parser.parse(UtilitiesBean.fixURI(declURI));
-        System.out.println("declURI: "+ UtilitiesBean.fixURI(declURI));
+        //System.out.println("declURI: "+ UtilitiesBean.fixURI(declURI));
         channelDecl = parser.getDocument();
     }
     catch (Exception e) {}
@@ -269,16 +270,16 @@ public class CPublisher implements IPrivilegedChannel
             currentStep = "end";
     }
 
-    System.out.println("numSteps: "+ numSteps);
-    System.out.println("currentStep: "+ currentStep);
+    //System.out.println("numSteps: "+ numSteps);
+    //System.out.println("currentStep: "+ currentStep);
 
     while(e.hasMoreElements()) {
         String s = (String)e.nextElement();
 
         if(!vReservedParams.contains(s)){
             if (runtimeData.getParameter(s)!=null) {
-                System.out.println("adding param: "+ s);
-                System.out.println("adding param value: "+ runtimeData.getParameter(s));
+                //System.out.println("adding param: "+ s);
+                //System.out.println("adding param value: "+ runtimeData.getParameter(s));
             hParams.put(s, runtimeData.getParameter(s));
             }
         }
