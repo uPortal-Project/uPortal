@@ -751,7 +751,15 @@
   </target>
 
 
-<!-- ----------       The push fragment loader for aggregated layouts          -------------- -->
+<!-- =============================== The push fragment loader for aggregated layouts ================================  -->
+<!--
+     
+     The variable fragmentFile points to the XML file of the push fragments definition
+
+     ant pushfragment -DfragmentFile=/properties/al/pushfragments.xml
+
+-->
+
 
 <target name="pushfragment" depends="compile">
     <property name="tempDataXML" value="/properties/al/push.fragment.temp.data.xml"/>
@@ -795,7 +803,6 @@
     <delete file="${build.home}/WEB-INF/classes/${tempDataXML}"/>
     <echo message="Done updating fragment configuration."/>
 </target>
-
 
 
 <!-- ==================== md5passwd Target ================================ -->
