@@ -62,11 +62,23 @@ public class XSLT
    * @param media the media type
    * @param xml a string representing the xml document
    * @param sslUrl the URL of the stylesheet list file (.ssl)
-   * @param stylesheetName the name (or title) that identifies the stylsheet in the stylesheet list file (.ssl)
+   * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
    */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetName) throws org.xml.sax.SAXException, java.io.IOException
+  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetTitle) throws org.xml.sax.SAXException, java.io.IOException
   {
-    transform(out, media, xml, sslUrl, stylesheetName, null);
+    transform(out, media, xml, sslUrl, stylesheetTitle, null);
+  }
+
+  /**
+   * Performs an XSL transformation.
+   * @param out a document handler
+   * @param media the media type
+   * @param xml a string representing the xml document
+   * @param sslUrl the URL of the stylesheet list file (.ssl)
+   */
+  public static void transform (DocumentHandler out, String media, String xml, String sslUrl) throws org.xml.sax.SAXException, java.io.IOException
+  {
+    transform(out, media, xml, sslUrl, null, null);
   }
 
   /**
@@ -76,10 +88,24 @@ public class XSLT
    * @param media the media type
    * @param xml a string representing the xml document
    * @param sslUrl the URL of the stylesheet list file (.ssl)
-   * @param stylesheetName the name (or title) that identifies the stylsheet in the stylesheet list file (.ssl)
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetName, Hashtable stylesheetParams) throws org.xml.sax.SAXException, java.io.IOException
+  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, Hashtable stylesheetParams) throws org.xml.sax.SAXException, java.io.IOException
+  {
+    transform(out, media, xml, sslUrl, null, stylesheetParams);
+  }
+
+  /**
+   * Performs an XSL transformation. Accepts stylesheet parameters
+   * (key, value pairs) stored in a Hashtable.
+   * @param out a document handler
+   * @param media the media type
+   * @param xml a string representing the xml document
+   * @param sslUrl the URL of the stylesheet list file (.ssl)
+   * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
+   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
+   */
+  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetTitle, Hashtable stylesheetParams) throws org.xml.sax.SAXException, java.io.IOException
   {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
@@ -87,7 +113,7 @@ public class XSLT
     set.setMediaProps (mediaProps);
 
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetName, media));
+    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
     processor.reset();
     setStylesheetParams(processor, stylesheetParams);
     stylesheetRoot.process(processor, xmlSource, xmlResult);
