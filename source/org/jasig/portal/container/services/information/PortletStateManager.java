@@ -1,5 +1,5 @@
 /**
- * Copyright � 2004 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,15 +35,11 @@
 
 package org.jasig.portal.container.services.information;
 
-
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Hashtable;
-import java.util.Vector;
 import java.util.StringTokenizer;
-import java.net.URLDecoder;
-
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -53,10 +49,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
-import org.jasig.portal.UPFileSpec;
-
-//import com.oreilly.servlet.Base64Decoder;
-//import com.oreilly.servlet.Base64Encoder;
 
 
 /**
@@ -125,16 +117,6 @@ public class PortletStateManager {
 		analyzeRequestInformation();
 	}
 	
-	public static synchronized Hashtable getURLDecodedParameters ( HttpServletRequest request ) {
-		String url = request.getRequestURL().toString();
-		if ( url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG) > 0 ) {
-		  int offset = UPFileSpec.PORTLET_PARAMS_DELIM_BEG.length();	
-			 String encodedParams = url.substring(url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG)+offset,
-									url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_END));	
-			return decodeURLParameters(URLDecoder.decode(encodedParams));
-		}	
-			return new Hashtable();	
-	}
 	
 	/**
 	  * Sets the next portlet mode for the current PortletWindow
@@ -167,10 +149,10 @@ public class PortletStateManager {
     private void analyzeRequestInformation() {
         params.clear();
         String windowId = windowOfAction.getId().toString();
-        for (Iterator i = runtimeData.getParameters().keySet().iterator(); i.hasNext();) {
-            String paramName = (String)i.next();
+        for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
+            String paramName = (String)names.nextElement();
             String[] values = runtimeData.getParameterValues(paramName);
-        
+
             if (ACTION.equals(paramName)) {
                 if ("true".equals(values[0]))
                     isAction = true;
@@ -238,63 +220,6 @@ public class PortletStateManager {
 	}
 	
 	
-	private static String encodeQueryString ( String text ) {
-		String result = text.replaceAll("&","_and_");
-		result = result.replaceAll("=","_eq_");
-		if ( UPFileSpec.PORTAL_URL_SEPARATOR.equals(".") )
-		 result = result.replaceAll("\\.","__");
-		else
-		 result = result.replaceAll(UPFileSpec.PORTAL_URL_SEPARATOR,"__"); 
-		return result;
-	}
-
-
-	private static String decodeQueryString ( String text ) {
-		String result = text.replaceAll("_and_","&");
-		result = result.replaceAll("_eq_","=");
-		result = result.replaceAll("__",UPFileSpec.PORTAL_URL_SEPARATOR);
-		return result;
-	}		
-	
-	
-	public static Hashtable decodeURLParameters ( String encodedParameters ) {
-	  Hashtable params = new Hashtable();		
-	  if ( encodedParameters == null || encodedParameters.length() <= 0 )
-	    return params;	
-	  StringTokenizer tokenizer = new StringTokenizer(decodeQueryString(encodedParameters),"&");
-	  while ( tokenizer.hasMoreTokens() ) {
-	  	String param = tokenizer.nextToken();
-	  	String paramName = param.substring(0,param.indexOf('='));
-	  	String paramValue = param.substring(param.indexOf("=")+1);
-	  	if ( params.containsKey(paramName) ){
-	  	  Vector values = (Vector) params.get(paramName);
-	  	  values.add(paramValue);	
-	  	} else {
-	  	   Vector values = new Vector();
-	  	   values.add(paramValue);	
-	  	   params.put(paramName,values);
-	  	}
-	  }
-	  for ( Iterator i = params.keySet().iterator(); i.hasNext(); ) {
-	  	Object key = i.next();
-	  	Vector values = (Vector) params.get(key);
-	  	int size = values.size();
-	  	String[] strValues = new String[size];
-	  	for ( int j = 0; j < size; j++ )
-	  	 strValues[j] = (String) values.get(j);
-	  	params.put(key,strValues);
-	  }
-	    return params;   
-	}
-	
-	
-	public static String encodeURLParameters ( String urlParameters ) {
-		if ( urlParameters == null || urlParameters.length() <= 0 )
-		  return "";
-		return encodeQueryString(urlParameters);
-	}	
-		
-	
 	/**
 	  * Generates the hash key for the given PortletWindow
 	  * based on the user session ID and portlet window ID
@@ -302,10 +227,10 @@ public class PortletStateManager {
 	  * @return a String hash key
 	  */ 
 	public static String getKey(PortletWindow window) {
-		    PortletWindowImpl windowImpl = (PortletWindowImpl) window; 
-		    HttpSession session = windowImpl.getHttpServletRequest().getSession();
-		    String sessionId = (session!=null)?session.getId():null;
-			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
+            PortletWindowImpl windowImpl = (PortletWindowImpl)window; 
+            HttpSession session = windowImpl.getHttpServletRequest().getSession();
+            String sessionId = (session!=null) ? session.getId() : null;
+            return ((sessionId!=null) ? sessionId + "_" : "") + window.getId().toString() + "_"; 
 	}
 	
 	
@@ -334,15 +259,14 @@ public class PortletStateManager {
 	  * @param request a <code>HttpServletRequest</code> instance
 	  */  
 	public static void clearState( HttpServletRequest request ) {
-	 HttpSession session = request.getSession();	
-	 if ( session == null ) 
-	 	return;
+         HttpSession session = request.getSession();	
+         if ( session == null ) 
+             return;
 	 Map map = windowStates;	
 	 for ( int i = 0; i < 2; i++ )	{
 	  Iterator keyIterator = map.keySet().iterator();
 	  while ( keyIterator.hasNext() ) {
 		  String name = (String) keyIterator.next();
-		  
 		  if (name.startsWith(session.getId())) {
 			  keyIterator.remove();
 		  }
@@ -458,10 +382,10 @@ public class PortletStateManager {
 		
 		String windowId = windowOfAction.getId().toString();
 		
-        if ( nextAction )
-            url.append(ACTION+"=true&");
+		if ( nextAction )
+		  url.append(ACTION+"=true&");
         else
-            url.append(ACTION+"=false&");
+          url.append(ACTION+"=false&");
 		
 		// Window state
 		if ( nextState != null ) {
@@ -509,27 +433,10 @@ public class PortletStateManager {
 			} 
 		}
    
-        String strURL = url.toString();
-        while ( strURL.endsWith("&") )
-         strURL = strURL.substring(0,strURL.lastIndexOf("&"));
+		String strURL = url.toString();
+		while ( strURL.endsWith("&") )
+		 strURL = strURL.substring(0,strURL.lastIndexOf("&"));
 		
 		return strURL;
 	} 
-	
-	public String getActionURL() {
-		String baseActionURL;
-		if ( nextState != null && nextState.equals(PortalContextProviderImpl.EXCLUSIVE) ) {
-		    baseActionURL = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
-		}        
-		else {
-		    baseActionURL = runtimeData.getBaseActionURL();
-		}
-        
-		String encodedURLParams = encodeURLParameters(this.toString());
-        StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
-				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+java.net.URLEncoder.encode(encodedURLParams)+
-				  UPFileSpec.PORTLET_PARAMS_DELIM_END+
-				  UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
-		return url.toString();
-	}
 }
