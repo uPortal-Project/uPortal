@@ -348,7 +348,7 @@ public class PersonDirectory {
         
         log.debug("PersonDirectory::processLdapDir(): Looking in "+pdi.LdapRefName+
           " for person attributes of "+username);
-      }
+    }
     
     //Either no named ldap reference specified or it wasn't found
     if (context == null) {
@@ -384,11 +384,13 @@ public class PersonDirectory {
     try {
         String userCtx = pdi.usercontext;
         
-        //ILdapServer instances have no DN in the connect string
-        //Append the baseDN for the server here.
-        String baseDN = srvr.getBaseDN();
-        if (fromLdapServices && baseDN != null && baseDN.trim().length() > 0) {
-            userCtx = userCtx + "," + baseDN;
+        // ILdapServer instances have no DN in the connect string.
+        // Append the baseDN for the server here.
+        if (fromLdapServices && srvr != null) {
+            String baseDN = srvr.getBaseDN();
+            if (baseDN != null && baseDN.trim().length() > 0) {
+                userCtx = userCtx + "," + baseDN;
+            }
         }
         
         userlist = context.search(userCtx,pdi.uidquery,args,sc);
