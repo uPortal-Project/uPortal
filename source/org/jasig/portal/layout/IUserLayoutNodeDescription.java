@@ -76,6 +76,13 @@ public interface IUserLayoutNodeDescription {
      */
     public String getName();
 
+     /**
+     * Returns a type of the node, could be FOLDER or CHANNEL integer constant.
+     *
+     * @return a type
+     */
+    public int getType();
+
     public void setName(String name);
 
     public boolean isUnremovable();

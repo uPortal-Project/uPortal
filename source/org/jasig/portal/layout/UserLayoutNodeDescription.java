@@ -117,6 +117,13 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         this.hidden=setting;
     }
 
+    /**
+     * Returns a type of the node, could be FOLDER or CHANNEL integer constant.
+     *
+     * @return a type
+     */
+    public abstract int getType();
+
 
     /**
      * Creates a <code>org.w3c.dom.Element</code> representation of the current node.

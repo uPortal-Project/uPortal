@@ -45,7 +45,7 @@ import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 
 /**
  * UserLayoutNode summary description sentence goes here.
- * 
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
@@ -73,10 +73,6 @@ public class UserLayoutNode {
 
      public String getId() {
         return nodeDescription.getId();
-     }
-
-     public String getNodeType() {
-       return "channel";
      }
 
      public void setNodeDescription ( IUserLayoutNodeDescription nd ) {

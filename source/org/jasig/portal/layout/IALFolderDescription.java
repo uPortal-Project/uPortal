@@ -36,11 +36,11 @@
 package org.jasig.portal.layout;
 
 /**
- * An interface describing an Aggregated Layout folder descriptions 
+ * An interface describing an Aggregated Layout folder descriptions
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
 public interface IALFolderDescription extends IUserLayoutFolderDescription, IALNodeDescription {
     public static final String LOST_FOLDER_ID="lost_folder";
-};
+}

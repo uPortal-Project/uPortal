@@ -61,6 +61,15 @@ public class ALFolder extends ALNode {
     }
 
     /**
+     * Gets the node type
+     * @return a node type
+     */
+     public int getNodeType() {
+       return IUserLayoutNodeDescription.FOLDER;
+     }
+
+
+    /**
      * Sets the first child node ID
      */
     public void setFirstChildNodeId( String firstChildNodeId ) {
@@ -75,12 +84,6 @@ public class ALFolder extends ALNode {
         return firstChildNodeId;
     }
 
-	/*
-	 * @see org.jasig.portal.layout.ALNode#getNodeType()
-	 */
-    public int getNodeType() {
-        return IUserLayoutNodeDescription.FOLDER;
-    }
 
     public static ALFolder createLostFolder() {
         ALFolder lostFolder = new ALFolder();

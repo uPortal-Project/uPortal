@@ -36,9 +36,9 @@
 package org.jasig.portal.layout;
 
 /**
- * An interface describing an Aggregated Layout folder descriptions 
+ * An interface describing an Aggregated Layout folder descriptions
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
-public interface IALChannelDescription extends IUserLayoutChannelDescription, IALNodeDescription {};
+public interface IALChannelDescription extends IUserLayoutChannelDescription, IALNodeDescription {}

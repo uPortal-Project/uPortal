@@ -62,7 +62,7 @@ public class ALChannel extends ALNode {
      * Gets the node type
      * @return a node type
      */
-    public int getNodeType() {
-        return IUserLayoutNodeDescription.CHANNEL;
-    }
+     public int getNodeType() {
+       return IUserLayoutNodeDescription.CHANNEL;
+     }
 }

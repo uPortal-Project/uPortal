@@ -40,7 +40,7 @@ package org.jasig.portal.layout;
 
 /**
  * UserLayoutFolder summary decription sentence goes here.
- * 
+ *
  * @author Michael Ivanov
  * @version 1.1
  */
@@ -76,29 +76,5 @@ package org.jasig.portal.layout;
      public String getFirstChildNodeId() {
        return firstChildNodeId;
      }
-
-
-     public String getNodeType() {
-       return "folder";
-     }
-
-     /*public void setChildNodes ( List childNodes ) {
-      this.childNodes = childNodes;
-     }
-
-
-     public List getChildNodes() {
-       return childNodes;
-     }
-
-
-     public void addChildNode ( String nodeId ) {
-       childNodes.add ( nodeId );
-     }
-
-     public void deleteChildNode ( String nodeId ) {
-       childNodes.remove( nodeId );
-     }
-     */
 
   }

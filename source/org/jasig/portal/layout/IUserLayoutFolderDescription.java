@@ -46,6 +46,7 @@ import org.w3c.dom.Element;
  * @version 1.0
  */
 public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription {
+
     public static final int REGULAR_TYPE=0;
     public static final int HEADER_TYPE=1;
     public static final int FOOTER_TYPE=2;
@@ -76,4 +77,4 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      */
     public Element getXML(Document root);
 
-};
+}

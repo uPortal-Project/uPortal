@@ -474,4 +474,14 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         node.setAttribute("hasAbout",(new Boolean(this.hasAbout())).toString());
     }
 
+    /**
+     * Returns a type of the node, could be FOLDER or CHANNEL integer constant.
+     *
+     * @return a type
+     */
+    public int getType() {
+      return CHANNEL;
+    }
+
+
 }

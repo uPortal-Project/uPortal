@@ -97,6 +97,15 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
     }
 
     /**
+     * Returns a type of the node, could be FOLDER or CHANNEL integer constant.
+     *
+     * @return a type
+     */
+    public int getType() {
+      return FOLDER;
+    }
+
+    /**
      * Returns folder type.
      *
      * @return an <code>int</code> value corresponding
