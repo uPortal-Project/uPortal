@@ -129,6 +129,8 @@ public class ReferenceAuthorization
     if (roles == null || roles.size() < 1) {
       return  (0);
     }
+    // When changing the channel's roles, we must dump the cache!
+    chanRolesCache.remove("" + channelID);
     try {
       return  GenericPortalBean.getUserLayoutStore().setChannelRoles(channelID, roles);
     } catch (Exception e) {
