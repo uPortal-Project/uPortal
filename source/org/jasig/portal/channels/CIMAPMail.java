@@ -158,7 +158,7 @@ import java.util.zip.*;
 
 import org.w3c.tidy.Tidy;
 
-public final class CIMAPMail extends GenericPortalBean implements IChannel, HttpSessionBindingListener
+public final class CIMAPMail implements IChannel, HttpSessionBindingListener
 {
   private static String rcsVersion = "$Revision$"; // from rcs/cvs
   private static String clientVersion = "2.00c";
