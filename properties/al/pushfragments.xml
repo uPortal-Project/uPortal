@@ -89,6 +89,26 @@
 		</folder>
 	</fragment>	
 
+	<fragment name="Portlet-examples">
+		<description>Channels that demonstrate the portlet adapter</description>
+		<groups>
+			<group>Developers</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="10000-15000"/>
+			<restriction path="local" name="depth" value="1"/>
+			<restriction path="parent" name="priority" value="1-10"/>
+		</restrictions>
+		<folder name="Portlet Examples" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="test-portlet-1" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="test-portlet-2" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>	
+
 	<fragment name="CWebProxy-examples">
 		<description>Channels that demonstrate CWebProxy</description>
 		<groups>
