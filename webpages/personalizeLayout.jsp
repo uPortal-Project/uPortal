@@ -108,19 +108,14 @@ function getActionAndSubmit(theForm, buttonValue)
 
 <% layoutBean.writePersonalizeLayoutPage (request, response, out); %>
 
-<%-- Revert to default layout xml --%>
-<form action="personalizeLayout.jsp" method=post>
-<input type=hidden name="action" value="revertToDefaultLayoutXml">
-<input type=submit name=revert value="Revert to default layout">
-</form>
-
 <%-- Finished and Cancel Changes buttons --%>
-<form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+
+<table border=0 cellspacing=5 cellpadding=5 width="100%">
+  <form><tr bgcolor="#dddddd"><td>
   <input type=button name=finished value="Finished" onClick="location='personalizeLayout.jsp?action=save'">
   <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeLayout.jsp?action=cancel'">
-</td></tr></table>
-</form>
+</td></tr></form></table>
+
 
 <jsp:include page="footer.jsp" flush="true" />
 
