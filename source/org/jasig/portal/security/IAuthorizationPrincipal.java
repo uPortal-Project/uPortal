@@ -55,7 +55,7 @@ public interface IAuthorizationPrincipal {
  */
     boolean canRender(int chanID) throws AuthorizationException;
 /**
- * Answers if this <code>IAuthoriztionPrincipal</code> has permission to subscribe to this channel.
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to subscribe to this channel.
  * @return boolean
  * @param chanID int - the Channel ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
@@ -140,4 +140,11 @@ public interface IAuthorizationPrincipal {
  */
     public boolean hasPermission(String owner, String activity, String target) throws 
     AuthorizationException;
+
+/**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish.
+ * @return boolean
+ * @exception AuthorizationException thrown when authorization information could not be retrieved.
+ */
+    boolean canPublish() throws AuthorizationException;
 }

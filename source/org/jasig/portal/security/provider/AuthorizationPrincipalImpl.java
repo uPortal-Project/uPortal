@@ -66,7 +66,7 @@ public AuthorizationPrincipalImpl(String newKey, Class newType, IAuthorizationSe
     authorizationService = authService;
 }
 /**
- * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to render this channel.
  * @return boolean
  * @param chanID int - the Channel ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
@@ -75,7 +75,7 @@ public boolean canRender(int chanID) throws org.jasig.portal.AuthorizationExcept
     return getAuthorizationService().canPrincipalRender(this, chanID);
 }
 /**
- * Answers if this <code>IAuthoriztionPrincipal</code> has permission to subscribe to this channel.
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to subscribe to this channel.
  * @return boolean
  * @param chanID int - the Channel ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
@@ -260,5 +260,14 @@ private void setPrincipalString(java.lang.String newPrincipalString) {
 public String toString() 
 {
     return getPrincipalString();
+}
+
+/**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish.
+ * @return boolean
+ * @exception AuthorizationException thrown when authorization information could not be retrieved.
+ */
+public boolean canPublish() throws org.jasig.portal.AuthorizationException {
+    return getAuthorizationService().canPrincipalPublish(this);
 }
 }

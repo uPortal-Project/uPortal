@@ -25,6 +25,7 @@ public class AuthorizationImpl implements IAuthorizationService {
     protected String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
     protected String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
     protected String PERIOD_STRING = ".";
+    protected String PORTAL_FRAMEWORK = "UP_FRAMEWORK";
 
     private static AuthorizationImpl singleton;
   /**
@@ -78,14 +79,13 @@ private void addToPermissionsCache(IPermission[] permissions, IAuthorizationPrin
     }
 }
 /**
- * This checks if the principal has ANY right to publish, so it's not very useful.  How
- * should this be implemented?  (Dan)
+ * This checks if the framework has granted principal a right to publish.  DO WE WANT SOMETHING THIS COARSE (de)?
  * @param principal IAuthorizationPrincipal
  * @return boolean
  */
 public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws AuthorizationException
 {
-    return doesPrincipalHavePermission(principal, null, CHANNEL_PUBLISHER_ACTIVITY, null);
+    return doesPrincipalHavePermission(principal, PORTAL_FRAMEWORK, CHANNEL_PUBLISHER_ACTIVITY, null);
 }
 /**
  * Answers if the principal has permission to RENDER this Channel.
@@ -109,8 +109,8 @@ throws AuthorizationException
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID) 
 throws AuthorizationException
 {
-    String owner = "*";
-    String target = "CHAN_ID" + "." + channelID;
+    String owner = PORTAL_FRAMEWORK;
+    String target = "CHAN_ID." + channelID;
     return doesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, target);
 }
 /**
