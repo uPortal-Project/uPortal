@@ -46,7 +46,7 @@ import java.util.Map;
  */
 
 public interface IMultithreadedMimeResponse {
-  
+
     /**
      * Returns the MIME type of the content.
      */
@@ -74,6 +74,13 @@ public interface IMultithreadedMimeResponse {
      * Returns null if no headers need to be set.
      */
     public Map getHeaders (String uid);
+
+    /**
+     * Let the channel now that there were problems with the download
+     *
+     * @param e
+     */
+    public void reportDownloadError(Exception e);
 }
 
 

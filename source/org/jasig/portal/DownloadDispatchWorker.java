@@ -105,8 +105,8 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 ch.setRuntimeData(rd);
 
                 if (ch instanceof org.jasig.portal.IMimeResponse) {
+                  org.jasig.portal.IMimeResponse ds = (org.jasig.portal.IMimeResponse)ch;
                     try {
-                        org.jasig.portal.IMimeResponse ds = (org.jasig.portal.IMimeResponse)ch;
 
                         // Set the headers if available
                         Map httpHeaders = ds.getHeaders();
@@ -142,8 +142,8 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                             ds.downloadData(out);
                         }
                         out.flush();
-                    } catch (IOException ioe) {
-                        throw new PortalException(ioe);
+                    } catch (Exception e) {
+                        ds.reportDownloadError(e);
                     }
                 } else {
                     LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");

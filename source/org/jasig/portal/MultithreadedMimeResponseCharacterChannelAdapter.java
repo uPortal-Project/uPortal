@@ -71,4 +71,8 @@ implements IMimeResponse {
     public Map getHeaders () {
         return  ((IMultithreadedMimeResponse)channel).getHeaders(uid);
     }
+
+    public void reportDownloadError(Exception e) {
+      ((IMultithreadedMimeResponse)channel).reportDownloadError(e);
+    }
 }

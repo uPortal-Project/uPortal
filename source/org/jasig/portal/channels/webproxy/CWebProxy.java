@@ -263,10 +263,10 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         while ( st.hasMoreElements () ) {
           String pName = st.nextToken();
           if (pName!=null) {
-	    pName = pName.trim();
-	    if (!pName.equals(""))
-	      state.personAllow_set.add(pName);
-	  }
+            pName = pName.trim();
+            if (!pName.equals(""))
+              state.personAllow_set.add(pName);
+          }
         }
       }
     }
@@ -336,15 +336,15 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
        if ( rd.isEmpty() && (state.refresh != -1) ) {
          // A refresh-- State remains the same.
          if ( state.buttonxmlUri != null ) {
-	   state.key = state.buttonxmlUri;
+           state.key = state.buttonxmlUri;
            state.fullxmlUri = state.buttonxmlUri;
-	   state.refresh = 0;
-	 } else {
-	   if ( state.refresh == 0 )
-	     state.key = state.fullxmlUri;
-	   state.fullxmlUri = state.xmlUri;
-	   state.refresh = 1;
-	 }
+           state.refresh = 0;
+         } else {
+           if ( state.refresh == 0 )
+             state.key = state.fullxmlUri;
+           state.fullxmlUri = state.xmlUri;
+           state.refresh = 1;
+         }
        } else {
 
        state.refresh = 0;
@@ -474,16 +474,16 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
          {
            // keyword and parameter processing
            // NOTE: if both exist, only keywords are appended
-	   String keywords = rd.getKeywords();
-	   if (keywords != null)
-	   {
-	     if (appendchar.equals("&"))
-	       newXML.append("&keywords=" + keywords);
-	     else
-	       newXML.append(keywords);
-	   }
-	   else
-	   {
+           String keywords = rd.getKeywords();
+           if (keywords != null)
+           {
+             if (appendchar.equals("&"))
+               newXML.append("&keywords=" + keywords);
+             else
+               newXML.append(keywords);
+           }
+           else
+           {
              // want all runtime parameters not specific to WebProxy
              Enumeration e=rd.getParameterNames ();
              if (e!=null)
@@ -568,7 +568,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             state.buttonxmlUri = state.infoUri;
           break;
         case PortalEvent.SESSION_DONE:
-	  stateTable.remove(uid);
+          stateTable.remove(uid);
           break;
         // case PortalEvent.UNSUBSCRIBE:
         default:
@@ -613,7 +613,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         if (state.tidy != null && state.tidy.equals("on"))
           tidiedXml = getTidiedXml(state.fullxmlUri, state);
         else
-	  xml = getXml(state.fullxmlUri, state);
+          xml = getXml(state.fullxmlUri, state);
       }
       catch (Exception e)
       {
@@ -694,12 +694,12 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     return  docBuilder.parse(urlConnect.getInputStream());
   }
 
-  /**   
-    * Get the contents of a URI as a String but send it through tidy first.   
-    * Also includes support for cookies.   
-    * @param uri the URI   
-    * @return the data pointed to by a URI as a String   
-    */   
+  /**
+    * Get the contents of a URI as a String but send it through tidy first.
+    * Also includes support for cookies.
+    * @param uri the URI
+    * @return the data pointed to by a URI as a String
+    */
   private String getTidiedXml(String uri, ChannelState state) throws Exception
   {
     URLConnection urlConnect = getConnection(uri, state);
@@ -1033,6 +1033,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       i++;
     }
     return rhdrs;
+  }
+
+  public void reportDownloadError(Exception e) {
+    // We really should report this to the user somehow??
+    LogService.log(LogService.ERROR, "CWebProxy::reportDownloadError(): " + e.getMessage());
   }
 
 }

@@ -46,6 +46,7 @@ import org.jasig.portal.IMultithreadedMimeResponse;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
@@ -111,10 +112,10 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
     xslt.transform();
   }
 
-  
+
   // IMimeResponse implementation -- ys2n@virginia.edu
     /**
-     * Returns the MIME type of the content.  
+     * Returns the MIME type of the content.
      */
     public java.lang.String getContentType (String uid) {
         // In the future we will need some sort of way of grokking the
@@ -131,7 +132,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
         // runtime parameter "attribute" determines which attribute to return when
         // called as an IMimeResponse.
         String attrName = runtimeData.getParameter("attribute");
-        
+
         if ("jpegPhoto".equals(attrName)) {
             mimetype="image/jpeg";
         }
@@ -150,28 +151,28 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelStaticData staticData = channelState.getStaticData();
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
-        
+
         String attrName = runtimeData.getParameter("attribute");
         IPerson person = staticData.getPerson();
-        
+
         if ( attrName == null ) {
             attrName = "";
         }
-        
+
         // get the image out of the IPerson as a byte array.
         // Note:  I am assuming here that the only thing that this
         // IMimeResponse will return is a jpegPhoto.  Some other
         // generalized mechanism will need to be inserted here to
         // support other mimetypes and IPerson attributes.
         byte[] imgBytes = (byte [])person.getAttribute(attrName);
-        
+
         // need to create a ByteArrayInputStream()
-        
+
         if ( imgBytes == null ) {
             imgBytes = new byte[0]; // let's avoid a null pointer
         }
         java.io.InputStream is = (java.io.InputStream) new java.io.ByteArrayInputStream(imgBytes);
-        
+
         return is;
     }
 
@@ -188,14 +189,14 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
     public java.lang.String getName (String uid) {
         // As noted above the only attribute we support right now is "image/jpeg" for
         // the jpegPhoto attribute.
-        
+
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelStaticData staticData = channelState.getStaticData();
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
         String payloadName;
         if ("jpegPhoto".equals(runtimeData.getParameter("attribute")))
-            payloadName = "image.jpg";  
-        else    
+            payloadName = "image.jpg";
+        else
             payloadName = "unknown";
         return payloadName;
     }
@@ -207,4 +208,14 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
     public Map getHeaders (String uid) {
         return null;
     }
+
+    /**
+     * Let the channel now that there were problems with the download
+     *
+     * @param e
+     */
+    public void reportDownloadError(Exception e) {
+      LogService.log(LogService.ERROR, "CPersonAttributes::reportDownloadError(): " + e.getMessage());
+    }
+
 }

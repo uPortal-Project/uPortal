@@ -42,7 +42,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 /**
- * Internal adapter for a multithreaded channel that is also cacheable and 
+ * Internal adapter for a multithreaded channel that is also cacheable and
  * implements IMimeResponse (capable of using DonwloadWorker)
  * @author Alex Vigdor
  * @version $Revision$
@@ -52,7 +52,7 @@ import java.util.Map;
 public class MultithreadedCacheableMimeResponseChannelAdapter extends MultithreadedCacheableChannelAdapter
         implements IMimeResponse {
 
-    public MultithreadedCacheableMimeResponseChannelAdapter (IMultithreadedChannel channel, 
+    public MultithreadedCacheableMimeResponseChannelAdapter (IMultithreadedChannel channel,
             String uid) throws PortalException
     {
         super(channel, uid);
@@ -80,6 +80,10 @@ public class MultithreadedCacheableMimeResponseChannelAdapter extends Multithrea
 
     public Map getHeaders () {
         return  ((IMultithreadedMimeResponse)channel).getHeaders(uid);
+    }
+
+    public void reportDownloadError(Exception e) {
+      ((IMultithreadedMimeResponse)channel).reportDownloadError(e);
     }
 }
 

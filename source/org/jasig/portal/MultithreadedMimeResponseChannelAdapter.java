@@ -41,7 +41,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 /**
- * Internal adapter for a multithreaded channel that also 
+ * Internal adapter for a multithreaded channel that also
  * implements IMimeResponse (capable of using DonwloadWorker)
  * @author Alex Vigdor
  * @version $Revision$
@@ -51,7 +51,7 @@ import java.util.Map;
 public class MultithreadedMimeResponseChannelAdapter extends MultithreadedChannelAdapter
         implements IMimeResponse {
 
-    public MultithreadedMimeResponseChannelAdapter (IMultithreadedChannel channel, 
+    public MultithreadedMimeResponseChannelAdapter (IMultithreadedChannel channel,
             String uid) throws PortalException
     {
         super(channel, uid);
@@ -79,6 +79,10 @@ public class MultithreadedMimeResponseChannelAdapter extends MultithreadedChanne
 
     public Map getHeaders () {
         return  ((IMultithreadedMimeResponse)channel).getHeaders(uid);
+    }
+
+    public void reportDownloadError(Exception e) {
+      ((IMultithreadedMimeResponse)channel).reportDownloadError(e);
     }
 }
 
