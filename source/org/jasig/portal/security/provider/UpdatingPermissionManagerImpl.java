@@ -34,25 +34,25 @@ package org.jasig.portal.security.provider;
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 import  java.util.*;
-import  org.jasig.portal.groups.EntityTypes;
+import  org.jasig.portal.EntityTypes;
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.AuthorizationException;
 
 /**
  * @author Dan Ellentuck (de3@columbia.edu)
- * @version $Revision$ 
+ * @version $Revision$
  */
 public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
-implements IUpdatingPermissionManager 
+implements IUpdatingPermissionManager
 {
 
   /**
    * This constructor ensures that the PermissionManager will be created with an owner specified
    * @param owner
    */
-  public UpdatingPermissionManagerImpl (String newOwner, AuthorizationImpl authService) 
+  public UpdatingPermissionManagerImpl (String newOwner, AuthorizationImpl authService)
   {
     super(newOwner, authService);
   }
@@ -65,7 +65,7 @@ public void addPermissions (IPermission[] newPermissions) throws AuthorizationEx
     getAuthorizationService().addPermissions(newPermissions);
 }
   /**
-   * Retrieve an array of <code>IPermission</code> objects based on the given parameters. 
+   * Retrieve an array of <code>IPermission</code> objects based on the given parameters.
    * Includes inherited <code>IPermissions</code>.  Any null parameters will be ignored.
    *
    * @param principal IAuthorizationPrincipal
@@ -74,8 +74,8 @@ public void addPermissions (IPermission[] newPermissions) throws AuthorizationEx
    * @return IPermission[]
    * @exception AuthorizationException
    */
-public IPermission[] getAllPermissions (IAuthorizationPrincipal principal, String activity, String target) 
-throws AuthorizationException 
+public IPermission[] getAllPermissions (IAuthorizationPrincipal principal, String activity, String target)
+throws AuthorizationException
 {
     return principal.getAllPermissions(getOwner(), activity, target);
 }
@@ -89,14 +89,14 @@ throws AuthorizationException
    * @return IPermission[]
    * @exception AuthorizationException
    */
-public IPermission[] getPermissions (IAuthorizationPrincipal principal, String activity, String target) 
-throws AuthorizationException 
+public IPermission[] getPermissions (IAuthorizationPrincipal principal, String activity, String target)
+throws AuthorizationException
 {
     return getAuthorizationService().getUncachedPermissionsForPrincipal(principal, getOwner(), activity, target);
 }
 /**
- * Creates a new <code>IPermission</code> for the <code>principal</code> on behalf of the 
- * owner of this <code>IPermissionManager</code>.   
+ * Creates a new <code>IPermission</code> for the <code>principal</code> on behalf of the
+ * owner of this <code>IPermissionManager</code>.
  *
  * @param principal IAuthorizationPrincipal
  */

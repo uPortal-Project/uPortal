@@ -46,7 +46,10 @@ package  org.jasig.portal.channels.groupsmanager;
  */
 import  java.util.*;
 import  java.io.*;
-import  org.jasig.portal.groups.*;
+import  org.jasig.portal.EntityTypes;
+import  org.jasig.portal.groups.IEntity;
+import  org.jasig.portal.groups.IEntityGroup;
+import  org.jasig.portal.groups.IGroupMember;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.security.*;

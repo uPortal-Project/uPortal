@@ -43,7 +43,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.EntityTypes;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
@@ -257,7 +257,7 @@ private static java.lang.String getFindPermissionSql()
         sqlBuff.append("WHERE ");
         sqlBuff.append(OWNER_COLUMN);
         sqlBuff.append(" = ? AND ");
-	    sqlBuff.append(PRINCIPAL_COLUMN);
+        sqlBuff.append(PRINCIPAL_COLUMN);
         sqlBuff.append(" = ? AND ");
         sqlBuff.append(ACTIVITY_COLUMN);
         sqlBuff.append(" = ? AND ");
@@ -406,7 +406,7 @@ private void primAdd(IPermission[] perms) throws SQLException, AuthorizationExce
 
                 if ( rc != 1 )
                 {
-    	            String errMsg = "Problem adding " + perms[i] + " RC: " + rc;
+                    String errMsg = "Problem adding " + perms[i] + " RC: " + rc;
                     LogService.log (LogService.ERROR, errMsg);
                     RDBMServices.rollback(conn);
                     throw new AuthorizationException(errMsg);
@@ -450,13 +450,13 @@ private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws
     ps.setString(4, perm.getTarget());
     // TYPE:
     if ( perm.getType() == null )
-    	{ ps.setNull(5, Types.VARCHAR); }
+        { ps.setNull(5, Types.VARCHAR); }
     else
         { ps.setString(5, perm.getType()); }
     // EFFECTIVE:
     if ( perm.getEffective() == null )
-   	    { ps.setNull(6, Types.DATE); }
-	else
+        { ps.setNull(6, Types.DATE); }
+    else
         {
             date = new java.sql.Date(perm.getEffective().getTime());
             ps.setDate(6, date);
