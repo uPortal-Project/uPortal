@@ -63,7 +63,8 @@ public class PermissionsXML {
                     }
 
                     for (int i = 0; i < session.owners.length; i++) {
-                        log.debug("PermissionsXML.getViewDoc(): Configuring element for owner "+session.owners[i].getOwnerName());
+                        if (log.isDebugEnabled())
+                            log.debug("PermissionsXML.getViewDoc(): Configuring element for owner "+session.owners[i].getOwnerName());
                         Element owner = rDoc.createElement("owner");
                         owner.setAttribute("name", session.owners[i].getOwnerName());
                         owner.setAttribute("token", session.owners[i].getOwnerToken());
@@ -101,7 +102,8 @@ public class PermissionsXML {
     }
     
     public static void setSelected(PermissionsSessionData session, String ipermissible, String type, String token, boolean selected){
-        log.debug("PermissionsXML.setSelected(): processing "+ipermissible+" / "+type+" / "+token+" / "+selected);
+        if (log.isDebugEnabled())
+            log.debug("PermissionsXML.setSelected(): processing "+ipermissible+" / "+type+" / "+token+" / "+selected);
         Element owner = getOwner(session,ipermissible);
         Element s = owner;
         String otoken = owner.getAttribute("token");
@@ -233,7 +235,8 @@ public class PermissionsXML {
     }
 
     public static String[] getSelectedTargets(PermissionsSessionData session, Element owner){
-      log.debug("PermissionsXML.getSelectedTargets(): processing for "+owner.getAttribute("name"));
+      if (log.isDebugEnabled())
+          log.debug("PermissionsXML.getSelectedTargets(): processing for "+owner.getAttribute("name"));
       ArrayList targets = new ArrayList();
       Element o =owner;
       if (o != null){
@@ -242,7 +245,8 @@ public class PermissionsXML {
           Element target = (Element)tl.item(i);
           if ((target.getAttribute("selected") != null) && (target.getAttribute("selected").equals("true"))){
             targets.add(target.getAttribute("token"));
-            log.debug("PermissionsXML.getSelectedTargets(): adding "+target.getAttribute("token"));
+            if (log.isDebugEnabled())
+                log.debug("PermissionsXML.getSelectedTargets(): adding "+target.getAttribute("token"));
           }
          }
       }
@@ -250,7 +254,8 @@ public class PermissionsXML {
     }
 
     public static String[] getSelectedActivities(PermissionsSessionData session, Element owner){
-      log.debug("PermissionsXML.getSelectedActivities(): processing for "+owner.getAttribute("name"));
+      if (log.isDebugEnabled())
+          log.debug("PermissionsXML.getSelectedActivities(): processing for "+owner.getAttribute("name"));
       ArrayList activities = new ArrayList();
       Element o = owner;
       if (o != null){
@@ -259,7 +264,8 @@ public class PermissionsXML {
           Element activity = (Element)al.item(i);
           if ((activity.getAttribute("selected") != null) && (activity.getAttribute("selected").equals("true"))){
             activities.add(activity.getAttribute("token"));
-            log.debug("PermissionsXML.getSelectedActivities(): adding "+activity.getAttribute("token"));
+            if (log.isDebugEnabled())
+                log.debug("PermissionsXML.getSelectedActivities(): adding "+activity.getAttribute("token"));
           }
          }
       }
@@ -280,14 +286,16 @@ public class PermissionsXML {
     }
 
     public static Element getOwner(PermissionsSessionData session, String ipermissible){
-       log.debug("PermissionsXML.getOwner(): looking for owner of class "+ipermissible);
+       if (log.isDebugEnabled())
+           log.debug("PermissionsXML.getOwner(): looking for owner of class "+ipermissible);
        Document doc = getViewDoc(session);
        Element ro = null;
        NodeList ol = doc.getElementsByTagName("owner");
         for (int i=0;i<ol.getLength();i++){
           Element o = (Element)ol.item(i);
           if(o.getAttribute("ipermissible").equals(ipermissible)){
-            log.debug("PermissionsXML.getOwner(): found owner of class "+ipermissible+" and token "+o.getAttribute("token"));
+            if (log.isDebugEnabled())
+                log.debug("PermissionsXML.getOwner(): found owner of class "+ipermissible+" and token "+o.getAttribute("token"));
             ro = o;
             break;
           }

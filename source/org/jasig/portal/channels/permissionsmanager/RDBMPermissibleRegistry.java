@@ -55,7 +55,8 @@ public class RDBMPermissibleRegistry {
                     Class newowner = Class.forName(classname);
                     owners.put(classname, newowner);
                 } catch (Exception e) {
-                    log.debug("PermissibleRegistryRDBM(): Could not instantiate IPermissible "
+                    if (log.isDebugEnabled())
+                        log.debug("PermissibleRegistryRDBM(): Could not instantiate IPermissible "
                             + e);
                     unregister(classname);
                 }
@@ -104,7 +105,8 @@ public class RDBMPermissibleRegistry {
             prms.add(ip);
           }
           catch (Exception e){
-            log.debug("RDBMPermissibleRegistry.igetAllPermissible(): Unable to instantiate IPermissible "+e);
+            if (log.isDebugEnabled())
+                log.debug("RDBMPermissibleRegistry.igetAllPermissible(): Unable to instantiate IPermissible "+e);
           }
         }
         return  (IPermissible[])prms.toArray(new IPermissible[prms.size()]);
@@ -132,7 +134,8 @@ public class RDBMPermissibleRegistry {
      * @param classname
      */
     protected void iregisterPermissible (String classname) {
-        log.debug("PermissibleRegistryRDBM.registerpermissible():: processing "
+        if (log.isDebugEnabled())
+            log.debug("PermissibleRegistryRDBM.registerpermissible():: processing "
                 + classname);
         if (!owners.containsKey(classname)) {
             try {
@@ -152,7 +155,8 @@ public class RDBMPermissibleRegistry {
                     releaseConnection(conn);
                 }
             } catch (Throwable th) {
-                log.debug("PermissibleRegistryRDBM.registerPermissible(): error while registering "
+                if (log.isDebugEnabled())
+                    log.debug("PermissibleRegistryRDBM.registerPermissible(): error while registering "
                         + classname + " : " + th);
             }
         }

@@ -108,9 +108,12 @@ public class CPermissionsManagerServantFactory {
         if (!isOK) {
             throw  (new PortalException("CPermissionsServantFactory.getPermissionsServant():: unable to properly initialize servant, check that mast staticData is being properly passed to this method"));
         }
-        long time2 = Calendar.getInstance().getTime().getTime();
-        log.info( "CPermissionsManagerFactory took  "
-                + String.valueOf((time2 - time1)) + " ms to instantiate");
+        if (log.isInfoEnabled()) {
+            long time2 = Calendar.getInstance().getTime().getTime();
+            log.info( "CPermissionsManagerFactory took  "
+                    + String.valueOf((time2 - time1)) + " ms to instantiate");
+        }
+
         return  servant;
     }
 
