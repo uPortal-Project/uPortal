@@ -173,7 +173,7 @@ public class CSnoop implements IPrivilegedChannel
 
     XSLT xslt = new XSLT();
     xslt.setXML(sb.toString());
-    xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.transform();
   }

@@ -2220,7 +2220,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
 
           XSLT xslt = new XSLT();
           xslt.setXML(xmlString);
-          xslt.setSSL(UtilitiesBean.fixURI(sslLocation), weAre, runtimeData.getBrowserInfo());
+          xslt.setXSL(UtilitiesBean.fixURI(sslLocation), weAre, runtimeData.getBrowserInfo());
           xslt.setTarget(out);
           xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
           xslt.transform();

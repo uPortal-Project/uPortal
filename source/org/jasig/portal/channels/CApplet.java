@@ -93,7 +93,7 @@ public class CApplet extends BaseChannel
 
       XSLT xslt = new XSLT();
       xslt.setXML(w.toString());
-      xslt.setSSL(sslLocation, "main", runtimeData.getBrowserInfo());
+      xslt.setXSL(sslLocation, "main", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.transform();
     }

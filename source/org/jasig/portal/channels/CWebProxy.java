@@ -310,7 +310,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     if (xslUri != null)
       xslt.setXSL(xslUri);
     else 
-      xslt.setSSL(UtilitiesBean.fixURI(sslUri), xslTitle, runtimeData.getBrowserInfo());
+      xslt.setXSL(UtilitiesBean.fixURI(sslUri), xslTitle, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameters(runtimeData);
     xslt.transform();

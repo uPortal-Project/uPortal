@@ -597,7 +597,7 @@ public class CBookmarks extends BaseChannel {
     // Use the XSLT utility to perform the transformation
     XSLT xslt = new XSLT();
     xslt.setXML(inputXML);
-    xslt.setSSL(sslLocation, stylesheetName, runtimeData.getBrowserInfo());
+    xslt.setXSL(sslLocation, stylesheetName, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameters(parameters);
     xslt.transform();

@@ -119,7 +119,7 @@ public class CImage extends BaseChannel
 
     XSLT xslt = new XSLT();
     xslt.setXML(sb.toString());
-    xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
     xslt.transform();

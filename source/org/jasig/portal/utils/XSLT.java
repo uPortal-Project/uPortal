@@ -138,7 +138,7 @@ public class XSLT {
    * @param browserInfo the browser info object
    * @throws org.jasig.portal.PortalException
    */  
-  public void setSSL(String sslUri, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
+  public void setXSL(String sslUri, String stylesheetTitle, BrowserInfo browserInfo) throws PortalException {
     StylesheetSet set = getStylesheetSet(sslUri);
     set.setMediaProps(mediaProps);
     String xslUri = set.getStylesheetURI(stylesheetTitle, browserInfo);
@@ -152,8 +152,8 @@ public class XSLT {
    * @param browserInfo the browser info object
    * @throws org.jasig.portal.PortalException
    */  
-  public void setSSL(String sslUri, BrowserInfo browserInfo) throws PortalException {
-    setSSL(sslUri, (String)null, browserInfo);
+  public void setXSL(String sslUri, BrowserInfo browserInfo) throws PortalException {
+    setXSL(sslUri, (String)null, browserInfo);
   }
   
   /**

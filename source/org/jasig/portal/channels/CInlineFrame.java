@@ -87,7 +87,7 @@ public class CInlineFrame extends BaseChannel {
     
     XSLT xslt = new XSLT();
     xslt.setXML(sbXML.toString());
-    xslt.setSSL(sslLocation, getStylesheetTitle(), runtimeData.getBrowserInfo());
+    xslt.setXSL(sslLocation, getStylesheetTitle(), runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.transform();
   }

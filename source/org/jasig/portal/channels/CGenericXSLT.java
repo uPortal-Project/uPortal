@@ -217,7 +217,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       if (state.xslUri != null)
         xslt.setXSL(state.xslUri);
       else 
-        xslt.setSSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
+        xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameters(state.runtimeData);
       xslt.transform();

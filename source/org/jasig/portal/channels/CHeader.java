@@ -86,7 +86,7 @@ public class CHeader extends BaseChannel implements ICacheable {
     // Perform the transformation
     XSLT xslt = new XSLT();
     xslt.setXML(getUserXML());
-    xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
     if (staticData.getPerson().getFullName() != null && staticData.getPerson().getFullName().equals("Guest"))

@@ -946,7 +946,7 @@ final class TabColumnPrefsState extends BaseState
 
         XSLT xslt = new XSLT ();
         xslt.setXML(SkinsInfoDocument);
-        xslt.setSSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
+        xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         if(currentSkin!=null)
@@ -1119,7 +1119,7 @@ final class TabColumnPrefsState extends BaseState
 
       XSLT xslt = new XSLT();
       xslt.setXML(doc);
-      xslt.setSSL(sslLocation, "newChannel", runtimeData.getBrowserInfo());
+      xslt.setXSL(sslLocation, "newChannel", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       xslt.setStylesheetParameter("elementID", elementID);
