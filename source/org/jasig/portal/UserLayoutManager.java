@@ -427,7 +427,7 @@ public class UserLayoutManager {
 		GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
 	    } catch (Exception e) {
 		Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
-		throw GeneralRenderingException("Unable to save layout changes.");
+		throw new GeneralRenderingException("Unable to save layout changes.");
 	    }
 	    //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+str_ID+"\"");
 	}	
