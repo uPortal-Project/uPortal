@@ -32,7 +32,6 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -50,12 +49,16 @@ import  org.jasig.portal.utils.DocumentFactory;
 import  org.jasig.portal.utils.ResourceLoader;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.services.GroupService;
+import  org.jasig.portal.services.AuthorizationService;
 import  org.jasig.portal.groups.IGroupMember;
 import  org.jasig.portal.groups.IEntityGroup;
 import  org.jasig.portal.groups.GroupsException;
+import  org.jasig.portal.security.IPermissionManager;
+import  org.jasig.portal.security.IAuthorizationPrincipal;
 import  org.jasig.portal.IServant;
 import  org.jasig.portal.IChannel;
 import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.services.EntityNameFinderService;
 import  org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import  org.jasig.portal.channels.permissionsmanager.CPermissionsManagerServantFactory;
 import  org.xml.sax.ContentHandler;
@@ -70,7 +73,7 @@ import  java.util.List;
 import  java.util.ArrayList;
 import  java.util.Map;
 import  java.util.HashMap;
-import java.util.HashSet;
+import  java.util.HashSet;
 import  java.util.Iterator;
 import  java.sql.SQLException;
 import  javax.xml.parsers.ParserConfigurationException;
@@ -82,7 +85,6 @@ import  javax.xml.parsers.ParserConfigurationException;
  * @version $Revision$
  */
 public class CChannelManager extends BaseChannel {
-    protected static final boolean useGroupsManagerServant = true;
     protected static final String sslLocation = "CChannelManager/CChannelManager.ssl";
     protected static final Document emptyDoc = DocumentFactory.getNewDocument();
     protected short state;
@@ -100,19 +102,18 @@ public class CChannelManager extends BaseChannel {
     protected String stepID;
     protected Document channelManagerDoc;
     protected ChannelDefinition channelDef = new ChannelDefinition();
-    protected CategorySettings categorySettings = new CategorySettings();
-    protected GroupSettings groupSettings = new GroupSettings();
     protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
     protected IPerson person;
+    protected IServant categoryServant;
     protected IServant groupServant;
 
     // Called after publishing so that you won't see any previous settings
     // on the next publish attempt
     protected void resetSettings () {
         channelDef = new ChannelDefinition();
-        categorySettings = new CategorySettings();
-        groupSettings = new GroupSettings();
         modChanSettings = new ModifyChannelSettings();
+        categoryServant = null;
+        groupServant = null;
     }
 
     /**
@@ -133,31 +134,19 @@ public class CChannelManager extends BaseChannel {
     public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
         runtimeData = rd;
         action = runtimeData.getParameter("uPCM_action");
-        if (action != null && action.equals("selectCategories") && useGroupsManagerServant) {
-          if(groupServant==null){
-            try {
-              if (channelDef.ID == null){
-                groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,"Please select channel categories for this channel:",GroupService.CHANNEL_CATEGORIES,false,false);
-              }
-              else {
-                IGroupMember thisChan = GroupService.getEntity(channelDef.ID.substring(4),
-                                    Class.forName(GroupService.CHANNEL_CATEGORIES));
-                groupServant = CGroupsManagerServantFactory.getGroupsServantforGroupMemberships(this.staticData,
-                        "Please select channel categories for this channel:", thisChan,false);
-              }
-            }
-            catch(Exception e){
-              LogService.instance().log(LogService.ERROR,e);
-            }
-          }
+        // handle category selection servant
+        if ((action != null && action.equals("selectCategories")) || (action ==
+                null && state == CHANNEL_CATEGORIES_STATE)) {
+            action = "selectCategories";
+            state = CHANNEL_CATEGORIES_STATE;
+            ((IChannel)getCategoryServant()).setRuntimeData(rd);
         }
-        if (groupServant != null) {
-            if (action == null){
-              action = "selectCategories";
-            }
-            if (action.equals("selectCategories")){
-              ((IChannel)groupServant).setRuntimeData(rd);
-            }
+        // handle group selection servant
+        if ((action != null && action.equals("selectGroups")) || (action == null
+                && state == CHANNEL_GROUPS_STATE)) {
+            action = "selectGroups";
+            state = CHANNEL_GROUPS_STATE;
+            ((IChannel)getGroupServant()).setRuntimeData(rd);
         }
         // Capture information that the user entered on previous screen
         doCapture();            // Keep after "action = " because action might change inside doCapture()
@@ -171,57 +160,123 @@ public class CChannelManager extends BaseChannel {
      * @exception PortalException
      */
     public void renderXML (ContentHandler out) throws PortalException {
-
-            XSLT xslt = new XSLT(this);
-            xslt.setXML(channelManagerDoc);
-            xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
-            xslt.setTarget(out);
-            xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-            String action = null;
-            switch (state) {
-                case DEFAULT_STATE:
-                    action = "none";
-                    break;
-                case CHANNEL_TYPE_STATE:
-                    action = "selectChannelType";
-                    break;
-                case GENERAL_SETTINGS_STATE:
-                    action = "selectGeneralSettings";
-                    break;
-                case CUSTOM_SETTINGS_STATE:
-                    action = "customSettings";
-                    break;
-                case CHANNEL_DEF_STATE:
-                    action = "channelDef";
-                    xslt.setStylesheetParameter("stepID", fixStepID(stepID));
-                    break;
-                case CHANNEL_CONTROLS_STATE:
-                    action = "selectControls";
-                    break;
-                case CHANNEL_CATEGORIES_STATE:
-                    action = "selectCategories";
-                    break;
-                case CHANNEL_GROUPS_STATE:
-                    action = "selectGroups";
-                    break;
-                case CHANNEL_REVIEW_STATE:
-                    action = "reviewChannel";
-                    break;
-                case MODIFY_CHANNEL_STATE:
-                    action = "selectModifyChannel";
-                    break;
-                default:
-                    action = "none";
-                    break;
-            }
-            xslt.setStylesheetParameter("action", action);
-            if (groupServant != null && action.equals("selectCategories")) {
-               xslt.setStylesheetParameter("groupServantInUse", "true");
-            }
+        XSLT xslt = new XSLT(this);
+        xslt.setXML(channelManagerDoc);
+        xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
+        xslt.setTarget(out);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        String action = null;
+        switch (state) {
+            case DEFAULT_STATE:
+                action = "none";
+                break;
+            case CHANNEL_TYPE_STATE:
+                action = "selectChannelType";
+                break;
+            case GENERAL_SETTINGS_STATE:
+                action = "selectGeneralSettings";
+                break;
+            case CUSTOM_SETTINGS_STATE:
+                action = "customSettings";
+                break;
+            case CHANNEL_DEF_STATE:
+                action = "channelDef";
+                xslt.setStylesheetParameter("stepID", fixStepID(stepID));
+                break;
+            case CHANNEL_CONTROLS_STATE:
+                action = "selectControls";
+                break;
+            case CHANNEL_CATEGORIES_STATE:
+                action = "selectCategories";
+                break;
+            case CHANNEL_GROUPS_STATE:
+                action = "selectGroups";
+                break;
+            case CHANNEL_REVIEW_STATE:
+                action = "reviewChannel";
+                break;
+            case MODIFY_CHANNEL_STATE:
+                action = "selectModifyChannel";
+                break;
+            default:
+                action = "none";
+                break;
+        }
+        xslt.setStylesheetParameter("action", action);
+        xslt.transform();
+        if (categoryServant != null && action.equals("selectCategories")) {
+            ((IChannel)categoryServant).renderXML(out);
+            xslt.setStylesheetParameter("action", "selectCategoriesButtons");
             xslt.transform();
-            if (groupServant != null && action.equals("selectCategories")) {
-              ((IChannel)groupServant).renderXML(out);
+        }
+        if (groupServant != null && action.equals("selectGroups")) {
+            ((IChannel)groupServant).renderXML(out);
+            xslt.setStylesheetParameter("action", "selectGroupsButtons");
+            xslt.transform();
+        }
+    }
+
+    /**
+     * put your documentation comment here
+     * @return
+     */
+    protected synchronized IServant getGroupServant () {
+        if (groupServant == null) {
+            try {
+                // create the appropriate servant
+                if (channelDef.ID == null) {
+                    groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
+                            "Please select groups who should have access to this channel:",
+                            GroupService.EVERYONE, false, false);
+                }
+                else {
+                    IGroupMember[] members;
+                    IPermissionManager pm = AuthorizationService.instance().newPermissionManager("UP_FRAMEWORK");
+                    IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals("SUBSCRIBE",
+                            "CHAN_ID." + channelDef.ID.substring(4));
+                    members = new IGroupMember[prins.length];
+                    for (int mp = 0; mp < prins.length; mp++) {
+                        members[mp] = AuthorizationService.instance().getGroupMember(prins[mp]);
+                    }
+                    groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
+                            "Please select groups who should have access to this channel:",
+                            GroupService.EVERYONE, false, false, members);
+                }
+                ((IChannel)groupServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
+            } catch (Exception e) {
+                LogService.instance().log(LogService.ERROR, e);
             }
+            LogService.instance().log(LogService.DEBUG, "CChannelManager.getGroupServant():  created new servant");
+        }
+        return  groupServant;
+    }
+
+    /**
+     * put your documentation comment here
+     * @return
+     */
+    protected synchronized IServant getCategoryServant () {
+        if (categoryServant == null) {
+            try {
+                if (channelDef.ID == null) {
+                    categoryServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
+                            "Please select channel categories for this channel:",
+                            GroupService.CHANNEL_CATEGORIES, false, false);
+                }
+                else {
+                    IGroupMember thisChan = GroupService.getEntity(channelDef.ID.substring(4),
+                            Class.forName(GroupService.CHANNEL_CATEGORIES));
+                    categoryServant = CGroupsManagerServantFactory.getGroupsServantforGroupMemberships(this.staticData,
+                            "Please select channel categories for this channel:",
+                            thisChan, false);
+                }
+                ((IChannel)categoryServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
+            } catch (Exception e) {
+                LogService.instance().log(LogService.ERROR, e);
+            }
+            LogService.instance().log(LogService.DEBUG, "CChannelManager.getCategoryServant():  created new servant");
+        }
+        return  categoryServant;
     }
 
     /**
@@ -326,31 +381,6 @@ public class CChannelManager extends BaseChannel {
                 channelDef.setHasAbout(hasAbout != null ? "true" : "false");
                 // Categories
             }
-            else if (capture.equals("selectCategories")) {
-                String selectedCategory = runtimeData.getParameter("selectedCategory");
-                if (selectedCategory != null && selectedCategory.trim().length() > 0) {
-                    if (runtimeData.getParameter("uPCM_browse") != null)
-                        categorySettings.setBrowsingCategory(selectedCategory);
-                    else        // runtimeData.getParameter("uPCM_select") != null
-                         categorySettings.addSelectedCategory(selectedCategory);
-                }
-                String removeCategory = runtimeData.getParameter("removeCategory");
-                if (removeCategory != null)
-                    categorySettings.removeCategory(removeCategory);
-                // Groups
-            }
-            else if (capture.equals("selectGroups")) {
-                String selectedGroup = runtimeData.getParameter("selectedGroup");
-                if (selectedGroup != null && selectedGroup.trim().length() > 0) {
-                    if (runtimeData.getParameter("uPCM_browse") != null)
-                        groupSettings.setBrowsingGroup(selectedGroup);
-                    else        // runtimeData.getParameter("uPCM_select") != null
-                         groupSettings.addSelectedGroup(selectedGroup);
-                }
-                String removeGroup = runtimeData.getParameter("removeGroup");
-                if (removeGroup != null)
-                    groupSettings.removeGroup(removeGroup);
-            }
         }
     }
 
@@ -416,32 +446,6 @@ public class CChannelManager extends BaseChannel {
                 workflow.setControlsSection(controlsSection);
                 channelManagerDoc = workflow.toXML();
             }
-            else if (action.equals("selectCategories")) {
-                state = CHANNEL_CATEGORIES_STATE;
-                Workflow workflow = new Workflow();
-                // Add channel registry
-                WorkflowSection catSection = new WorkflowSection("selectCategories");
-                workflow.setCategoriesSection(catSection);
-                WorkflowStep step = new WorkflowStep("1", "Categories");
-                step.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
-                // Add user settings with previously chosen categories
-                step.addDataElement(categorySettings.toXML());
-                catSection.addStep(step);
-                channelManagerDoc = workflow.toXML();
-            }
-            else if (action.equals("selectGroups")) {
-                state = CHANNEL_GROUPS_STATE;
-                Workflow workflow = new Workflow();
-                // Add groups document with all IPerson members of "Everyone"
-                WorkflowSection groupSection = new WorkflowSection("selectGroups");
-                workflow.setGroupsSection(groupSection);
-                WorkflowStep step = new WorkflowStep("1", "Groups");
-                step.addDataElement(groupSettings.getGroups().getDocumentElement());
-                // Add user settings with previously chosen groups
-                step.addDataElement(groupSettings.toXML());
-                groupSection.addStep(step);
-                channelManagerDoc = workflow.toXML();
-            }
             else if (action.equals("reviewChannel")) {
                 state = CHANNEL_REVIEW_STATE;
                 Workflow workflow = new Workflow();
@@ -454,15 +458,13 @@ public class CChannelManager extends BaseChannel {
                 // Selected categories
                 WorkflowSection regSection = new WorkflowSection("selectCategories");
                 WorkflowStep regStep = new WorkflowStep("1", "Categories");
-                regStep.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
-                regStep.addDataElement(categorySettings.toXML());
+                regStep.addDataElement(getCategoriesXML());
                 regSection.addStep(regStep);
                 workflow.setCategoriesSection(regSection);
                 // Selected groups
                 WorkflowSection groupsSection = new WorkflowSection("selectGroups");
                 WorkflowStep groupsStep = new WorkflowStep("1", "Groups");
-                groupsStep.addDataElement(groupSettings.getGroups().getDocumentElement());
-                groupsStep.addDataElement(groupSettings.toXML());
+                groupsStep.addDataElement(getGroupsXML());
                 groupsSection.addStep(groupsStep);
                 workflow.setGroupsSection(groupsSection);
                 // Review (with channel definition)
@@ -475,20 +477,23 @@ public class CChannelManager extends BaseChannel {
             }
             else if (action.equals("finished")) {
                 state = DEFAULT_STATE;          // we need to add a confirmation and channel preview screen
+                // collect select channel categories
                 String[] catIDs;
-                if(this.useGroupsManagerServant && groupServant !=null){
-                  IGroupMember[] gms = (IGroupMember[]) groupServant.getResults();
-                  catIDs = new String[gms.length];
-                  for(int g = 0; g < gms.length; g++){
-                    catIDs[g]=gms[g].getKey();
-                  }
-                  groupServant = null;
+                IGroupMember[] ctgs = (IGroupMember[])getCategoryServant().getResults();
+                catIDs = new String[ctgs.length];
+                for (int c = 0; c < ctgs.length; c++) {
+                    catIDs[c] = ctgs[c].getKey();
                 }
-                else {
-                 catIDs = (String[])(categorySettings.getSelectedCategories()).toArray(
-                        new String[0]);
+                // collect groups that can subscribe
+                IEntityGroup[] groups;
+                IGroupMember[] gms = (IGroupMember[])getGroupServant().getResults();
+                groups = new IEntityGroup[gms.length];
+                int gc = 0;
+                for (int g = 0; g < gms.length; g++) {
+                    if (gms[g].isGroup()) {
+                        groups[gc++] = (IEntityGroup)gms[g];
+                    }
                 }
-                IEntityGroup[] groups = groupSettings.getSelectedGroupsAsIEntityGroups();
                 try {
                     Element channelE = channelDef.toXML();
                     ChannelRegistryManager.publishChannel(channelE, catIDs, groups,
@@ -528,25 +533,6 @@ public class CChannelManager extends BaseChannel {
                 String str_channelPublishId = runtimeData.getParameter("channelID");
                 // Set the channel definition
                 channelDef.setChannelDefinition(ChannelRegistryManager.getChannel(str_channelPublishId));
-                // Set the groups
-                int int_channelPublishId = Integer.parseInt(str_channelPublishId.startsWith("chan") ?
-                        str_channelPublishId.substring(4) : str_channelPublishId);
-                org.jasig.portal.security.IPermission[] permissions = staticData.getAuthorizationPrincipal().getAllPermissions("UP_FRAMEWORK",
-                        "SUBSCRIBE", "CHAN_ID." + int_channelPublishId);
-                for (int i = 0; i < permissions.length; i++) {
-                    String principal = permissions[i].getPrincipal();
-                    String groupKey = principal.substring(principal.indexOf(".")
-                            + 1);
-                    groupSettings.addSelectedGroup(GroupService.findGroup(groupKey));
-                }
-                // Set the categories
-                Set categories = new TreeSet();
-                org.w3c.dom.NodeList nl = ChannelRegistryManager.getCategories(str_channelPublishId);
-                for (int i = 0; i < nl.getLength(); i++) {
-                    Element category = (Element)nl.item(i);
-                    categories.add(category.getAttribute("ID"));
-                }
-                categorySettings.setSelectedCategories(categories);
                 action = "reviewChannel";
                 doAction();
             }
@@ -566,8 +552,7 @@ public class CChannelManager extends BaseChannel {
             state = DEFAULT_STATE;
             channelManagerDoc = emptyDoc;
             channelDef = new ChannelDefinition();
-            categorySettings = new CategorySettings();
-            groupSettings = new GroupSettings();
+            categoryServant = null;
             groupServant = null;
         }
     }
@@ -595,6 +580,62 @@ public class CChannelManager extends BaseChannel {
         // Add a <userSettings> fragment to <manageChannels>
         appendModifyChannelSettings(channelManager, modChanSettings);
         return  channelManagerDoc;
+    }
+
+    /**
+     * put your documentation comment here
+     * @return
+     */
+    protected Element getGroupsXML () {
+        Element el = emptyDoc.createElement("userSettings");
+        Element browsingGroupE = emptyDoc.createElement("browsingGroup");
+        browsingGroupE.appendChild(emptyDoc.createTextNode("top"));
+        el.appendChild(browsingGroupE);
+        IGroupMember[] gms = (IGroupMember[])getGroupServant().getResults();
+        // Add selected groups if there are any
+        if (gms != null && gms.length > 0) {
+            Element selectedGroupsE = emptyDoc.createElement("selectedGroups");
+            try {
+                for (int c = 0; c < gms.length; c++) {
+                    Element selectedGroupE = emptyDoc.createElement("selectedGroup");
+                    selectedGroupE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
+                    selectedGroupE.appendChild(emptyDoc.createTextNode(gms[c].getKey()));
+                    selectedGroupsE.appendChild(selectedGroupE);
+                }
+            } catch (Exception e) {
+                LogService.instance().log(LogService.ERROR, e);
+            }
+            el.appendChild(selectedGroupsE);
+        }
+        return  el;
+    }
+
+    /**
+     * put your documentation comment here
+     * @return
+     */
+    protected Element getCategoriesXML () {
+        Element userSettingsE = emptyDoc.createElement("userSettings");
+        Element browsingCategoryE = emptyDoc.createElement("browsingCategory");
+        browsingCategoryE.appendChild(emptyDoc.createTextNode("top"));
+        userSettingsE.appendChild(browsingCategoryE);
+        IGroupMember[] gms = (IGroupMember[])getCategoryServant().getResults();
+        // Add selected categories if there are any
+        if (gms != null && gms.length > 0) {
+            Element selectedCategoriesE = emptyDoc.createElement("selectedCategories");
+            try {
+                for (int c = 0; c < gms.length; c++) {
+                    Element selectedCategoryE = emptyDoc.createElement("selectedCategory");
+                    selectedCategoryE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
+                    selectedCategoryE.appendChild(emptyDoc.createTextNode((gms[c].getKey())));
+                    selectedCategoriesE.appendChild(selectedCategoryE);
+                }
+            } catch (Exception e) {
+                LogService.instance().log(LogService.ERROR, e);
+            }
+            userSettingsE.appendChild(selectedCategoriesE);
+        }
+        return  userSettingsE;
     }
 
     /**
@@ -1333,230 +1374,6 @@ public class CChannelManager extends BaseChannel {
                 channelE.appendChild(parameterE);
             }
             return  channelE;
-        }
-    }
-
-    protected class CategorySettings {
-        protected String browsingCategory;
-        protected Set selectedCategories;
-
-        /**
-         * put your documentation comment here
-         */
-        protected CategorySettings () {
-            browsingCategory = "top";
-            selectedCategories = new TreeSet();
-        }
-
-        /**
-         * put your documentation comment here
-         * @return
-         */
-        protected Set getSelectedCategories () {
-            return  selectedCategories;
-        }
-
-        /**
-         * put your documentation comment here
-         * @param browsingCategory
-         */
-        protected void setBrowsingCategory (String browsingCategory) {
-            this.browsingCategory = browsingCategory;
-        }
-
-        /**
-         * put your documentation comment here
-         * @param category
-         */
-        protected void addSelectedCategory (String category) {
-            selectedCategories.add(category);
-        }
-
-        /**
-         * put your documentation comment here
-         * @param selectedCategories
-         */
-        protected void setSelectedCategories (Set selectedCategories) {
-            this.selectedCategories = selectedCategories;
-        }
-
-        /**
-         * put your documentation comment here
-         * @param category
-         */
-        protected void removeCategory (String category) {
-            selectedCategories.remove(category);
-        }
-
-        /**
-         * put your documentation comment here
-         * @return
-         */
-        protected Element toXML () {
-            Element userSettingsE = emptyDoc.createElement("userSettings");
-            Element browsingCategoryE = emptyDoc.createElement("browsingCategory");
-            browsingCategoryE.appendChild(emptyDoc.createTextNode(browsingCategory));
-            userSettingsE.appendChild(browsingCategoryE);
-            // Add selected categories if there are any
-            if (selectedCategories.size() > 0) {
-                Element selectedCategoriesE = emptyDoc.createElement("selectedCategories");
-                Iterator iter = selectedCategories.iterator();
-                while (iter.hasNext()) {
-                    Element selectedCategoryE = emptyDoc.createElement("selectedCategory");
-                    selectedCategoryE.appendChild(emptyDoc.createTextNode((String)iter.next()));
-                    selectedCategoriesE.appendChild(selectedCategoryE);
-                }
-                userSettingsE.appendChild(selectedCategoriesE);
-            }
-            return  userSettingsE;
-        }
-    }
-
-    protected class GroupSettings {
-        protected String browsingGroup;
-        protected Set selectedGroups;           // a set of Strings, each String is a group ID
-        protected final String groupIDPrefix = "g";             // XML IDs have to start with a letter
-
-        /**
-         * put your documentation comment here
-         */
-        protected GroupSettings () {
-            browsingGroup = "top";
-            selectedGroups = new TreeSet();
-        }
-
-        /**
-         * put your documentation comment here
-         * @param browsingGroup
-         */
-        protected void setBrowsingGroup (String browsingGroup) {
-            this.browsingGroup = browsingGroup;
-        }
-
-        /**
-         * put your documentation comment here
-         * @return
-         */
-        protected Set getSelectedGroups () {
-            return  selectedGroups;
-        }
-
-        /**
-         * put your documentation comment here
-         * @return
-         * @exception GroupsException
-         */
-        protected IEntityGroup[] getSelectedGroupsAsIEntityGroups () throws GroupsException {
-            IEntityGroup[] selectedEntityGroups = new IEntityGroup[selectedGroups.size()];
-            Iterator iter = selectedGroups.iterator();
-            for (int i = 0; iter.hasNext(); i++) {
-                String key = (String)iter.next();
-                IEntityGroup group = GroupService.findGroup(key.substring(groupIDPrefix.length()));
-                if (group != null)
-                    selectedEntityGroups[i] = group;
-                else
-                    throw  new GroupsException("Unable to find group '" + key +
-                            "'");
-            }
-            return  selectedEntityGroups;
-        }
-
-        /**
-         * put your documentation comment here
-         * @param selectedGroups
-         */
-        protected void setSelectedGroups (Set selectedGroups) {
-            this.selectedGroups = selectedGroups;
-        }
-
-        /**
-         * put your documentation comment here
-         * @param group
-         */
-        protected void addSelectedGroup (String group) {
-            selectedGroups.add(group);
-        }
-
-        /**
-         * put your documentation comment here
-         * @param group
-         */
-        protected void addSelectedGroup (IEntityGroup group) {
-            selectedGroups.add(groupIDPrefix + group.getKey());
-        }
-
-        /**
-         * put your documentation comment here
-         * @param group
-         */
-        protected void removeGroup (String group) {
-            selectedGroups.remove(group);
-        }
-
-        /**
-         * put your documentation comment here
-         * @return
-         */
-        protected Element toXML () {
-            Element userSettingsE = emptyDoc.createElement("userSettings");
-            Element browsingGroupE = emptyDoc.createElement("browsingGroup");
-            browsingGroupE.appendChild(emptyDoc.createTextNode(browsingGroup));
-            userSettingsE.appendChild(browsingGroupE);
-            // Add selected groups if there are any
-            if (selectedGroups.size() > 0) {
-                Element selectedGroupsE = emptyDoc.createElement("selectedGroups");
-                Iterator iter = selectedGroups.iterator();
-                while (iter.hasNext()) {
-                    Element selectedGroupE = emptyDoc.createElement("selectedGroup");
-                    selectedGroupE.appendChild(emptyDoc.createTextNode((String)iter.next()));
-                    selectedGroupsE.appendChild(selectedGroupE);
-                }
-                userSettingsE.appendChild(selectedGroupsE);
-            }
-            return  userSettingsE;
-        }
-
-        // This method needs some caching!
-        protected Document getGroups () throws GroupsException {
-            Document groupsDoc = DocumentFactory.getNewDocument();
-            Element groupsE = groupsDoc.createElement("groups");
-            IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
-            // Create a top-level group representing everyone
-            Element everyoneGroupE = groupsDoc.createElement("group");
-            everyoneGroupE.setAttribute("ID", groupIDPrefix + everyoneGroup.getKey());
-            everyoneGroupE.setAttribute("name", everyoneGroup.getName());
-            everyoneGroupE.setAttribute("description", everyoneGroup.getDescription());
-            groupsE.appendChild(everyoneGroupE);
-            processGroupsRecursively(everyoneGroup, everyoneGroupE);
-            groupsDoc.appendChild(groupsE);
-            return  groupsDoc;
-        }
-
-        /**
-         * put your documentation comment here
-         * @param group
-         * @param parentGroup
-         * @exception GroupsException
-         */
-        protected void processGroupsRecursively (IEntityGroup group, Element parentGroup) throws GroupsException {
-            Iterator iter = group.getMembers();
-            while (iter.hasNext()) {
-                IGroupMember member = (IGroupMember)iter.next();
-                if (member.isGroup()) {
-                    IEntityGroup memberGroup = (IEntityGroup)member;
-                    String key = memberGroup.getKey();
-                    String name = memberGroup.getName();
-                    String description = memberGroup.getDescription();
-                    // Create group element and append it to its parent
-                    Document groupsDoc = parentGroup.getOwnerDocument();
-                    Element groupE = groupsDoc.createElement("group");
-                    groupE.setAttribute("ID", groupIDPrefix + key);
-                    groupE.setAttribute("name", name);
-                    groupE.setAttribute("description", description);
-                    parentGroup.appendChild(groupE);
-                    processGroupsRecursively(memberGroup, groupE);
-                }
-            }
         }
     }
 }

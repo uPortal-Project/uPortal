@@ -70,6 +70,49 @@ public class CGroupsManagerServantFactory {
       return getGroupsServantforSelection(staticData,message,null);
     }
 
+    public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect, IGroupMember[] members) throws PortalException{
+      long time1 = Calendar.getInstance().getTime().getTime();
+      IServant servant;
+      String typeKey = null;
+      if (type!=null && !type.equals("")){
+        try{
+          typeKey = GroupService.getDistinguishedGroup(type).getKey();
+        }
+        catch(Exception e){
+          ;
+        }
+      }
+      try {
+        servant = getGroupsServant();
+        ChannelStaticData slaveSD =  cloneStaticData(staticData);
+        slaveSD.setParameter("grpView","tree");
+        slaveSD.setParameter("grpMode","select");
+        if (typeKey!=null){
+           slaveSD.setParameter("grpViewKey",typeKey);
+        }
+        if(!allowFinish){
+           slaveSD.setParameter("grpAllowFinish","false");
+        }
+        if(!allowEntitySelect){
+           slaveSD.setParameter("grpBlockEntitySelect","true");
+        }
+        if (message != null){
+          slaveSD.setParameter("grpServantMessage",message);
+        }
+        if (members!=null && members.length>0){
+           slaveSD.put("grpPreSelectedMembers",members);
+        }
+        ((IChannel)servant).setStaticData(slaveSD);
+      }
+      catch (Exception e){
+          throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
+      }
+      long time2 = Calendar.getInstance().getTime().getTime();
+                LogService.instance().log(LogService.INFO, "CGroupsManagerFactory took  "
+                        + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
+      return servant;
+    }
+
     public static IServant getGroupsServantforGroupMemberships(ChannelStaticData staticData, String message, IGroupMember member, boolean allowFinish) throws PortalException{
       IServant servant = null;
       String typeKey = null;
@@ -83,8 +126,8 @@ public class CGroupsManagerServantFactory {
 
       try {
         servant = getGroupsServant();
-        ChannelStaticData slaveSD = (ChannelStaticData) staticData.clone();
-        zeroStaticData(slaveSD);
+        ChannelStaticData slaveSD = cloneStaticData(staticData);
+
         slaveSD.setParameter("grpView","tree");
         slaveSD.setParameter("grpMode","select");
         slaveSD.setParameter("grpBlockEntitySelect","true");
@@ -110,44 +153,7 @@ public class CGroupsManagerServantFactory {
         return getGroupsServantforSelection(staticData, message, type, true,true);
     }
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect) throws PortalException{
-      long time1 = Calendar.getInstance().getTime().getTime();
-      IServant servant;
-      String typeKey = null;
-      if (type!=null && !type.equals("")){
-        try{
-          typeKey = GroupService.getDistinguishedGroup(type).getKey();
-        }
-        catch(Exception e){
-          ;
-        }
-      }
-      try {
-        servant = getGroupsServant();
-        ChannelStaticData slaveSD = (ChannelStaticData) staticData.clone();
-        zeroStaticData(slaveSD);
-        slaveSD.setParameter("grpView","tree");
-        slaveSD.setParameter("grpMode","select");
-        if (typeKey!=null){
-           slaveSD.setParameter("grpViewKey",typeKey);
-        }
-        if(!allowFinish){
-           slaveSD.setParameter("grpAllowFinish","false");
-        }
-        if(!allowEntitySelect){
-           slaveSD.setParameter("grpBlockEntitySelect","true");
-        }
-        if (message != null){
-          slaveSD.setParameter("grpServantMessage",message);
-        }
-        ((IChannel)servant).setStaticData(slaveSD);
-      }
-      catch (Exception e){
-          throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
-      }
-      long time2 = Calendar.getInstance().getTime().getTime();
-                LogService.instance().log(LogService.INFO, "CGroupsManagerFactory took  "
-                        + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
-      return servant;
+      return getGroupsServantforSelection(staticData, message, type, allowFinish, allowEntitySelect, new IGroupMember[0]);
     }
 
     public static IServant getGroupsServantforAddRemove(ChannelStaticData staticData, String groupKey) throws PortalException{
@@ -157,8 +163,7 @@ public class CGroupsManagerServantFactory {
         IEntityGroup testgroup = GroupService.findGroup(groupKey);
         testgroup.getClass();
         servant = getGroupsServant();
-        ChannelStaticData slaveSD = (ChannelStaticData) staticData.clone();
-        zeroStaticData(slaveSD);
+        ChannelStaticData slaveSD = cloneStaticData(staticData);
         slaveSD.setParameter("grpView","edit");
         slaveSD.setParameter("grpViewKey",groupKey);
         ((IChannel)servant).setStaticData(slaveSD);
@@ -172,11 +177,13 @@ public class CGroupsManagerServantFactory {
         return servant;
     }
 
-    protected static void zeroStaticData(ChannelStaticData sd){
-        Enumeration srd = sd.keys();
+    protected static ChannelStaticData cloneStaticData(ChannelStaticData sd){
+        ChannelStaticData rsd = (ChannelStaticData) sd.clone();
+        Enumeration srd = rsd.keys();
         while (srd.hasMoreElements()) {
-            sd.remove(srd.nextElement());
+            rsd.remove(srd.nextElement());
         }
+        return rsd;
     }
 
     protected IServant getServant(String name){

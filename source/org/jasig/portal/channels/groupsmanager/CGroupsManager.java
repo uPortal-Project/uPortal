@@ -457,14 +457,13 @@ public class CGroupsManager
          if (hasValue(staticData.get("grpPreSelectForMember"))){
             DocumentImpl viewDoc = getViewDoc();
             Element rootElem = viewDoc.getDocumentElement();
-            Element parentElem;
             try{
               IGroupMember gm = (IGroupMember) staticData.get("grpPreSelectForMember");
               Iterator parents = gm.getContainingGroups();
               IEntityGroup parent;
               while (parents.hasNext()){
                  parent = (IEntityGroup) parents.next();
-                 parentElem = GroupsManagerXML.getGroupMemberXml(parent,false,null,viewDoc);
+                 Element parentElem = GroupsManagerXML.getGroupMemberXml(parent,false,null,viewDoc);
                  parentElem.setAttribute("selected","true");
                  rootElem.appendChild(parentElem);
               }
@@ -473,6 +472,23 @@ public class CGroupsManager
               LogService.instance().log(LogService.ERROR,e);
             }
             staticData.remove("grpPreSelectForMember");
+         }
+         if (hasValue(staticData.get("grpPreSelectedMembers"))){
+            DocumentImpl viewDoc = getViewDoc();
+            Element rootElem = viewDoc.getDocumentElement();
+            try{
+                IGroupMember[] mems = (IGroupMember[])staticData.get("grpPreSelectedMembers");
+                for (int mm = 0; mm< mems.length;mm++){
+                  IGroupMember mem = mems[mm];
+                  Element memelem = GroupsManagerXML.getGroupMemberXml(mem,false,null,viewDoc);
+                  memelem.setAttribute("selected","true");
+                  rootElem.appendChild(memelem);
+                }
+            }
+            catch (Exception e){
+              LogService.instance().log(LogService.ERROR,e);
+            }
+            staticData.remove("grpPreSelectedMembers");
          }
          if (!hasValue(runtimeData.getParameter("grpViewId"))) {
             if (hasValue(staticData.get("grpViewId"))) {
