@@ -37,6 +37,7 @@ package org.jasig.portal;
 
 import org.xml.sax.*;
 import org.jasig.portal.utils.*;
+import java.util.Map;
 
 
 /**
@@ -48,6 +49,7 @@ import org.jasig.portal.utils.*;
 public class ChannelRenderer
 {
     public static final boolean POOL_THREADS=true;
+    public static final boolean CACHE_CHANNELS=true;
 
     public static final int RENDERING_SUCCESSFUL=0;
     public static final int RENDERING_FAILED=1;
@@ -56,7 +58,7 @@ public class ChannelRenderer
 
     protected IChannel channel;
     protected ChannelRuntimeData rd;
-    protected SAXBufferImpl buffer;
+    protected Map channelCache;
     
     protected boolean rendering;
     protected boolean donerendering;
@@ -70,6 +72,7 @@ public class ChannelRenderer
     protected long timeOut = java.lang.Long.MAX_VALUE;
 
     protected static ThreadPool tp=null;
+    protected static Map systemCache=null;
 
   /**
    * Default constructor.
@@ -86,6 +89,9 @@ public class ChannelRenderer
 	// note the lack of an upper limit
 	tp=new ThreadPool("renderers",rl);
     }
+    if(systemCache==null) {
+	systemCache=ChannelManager.systemCache;
+    }
   }
 
   /**
@@ -97,6 +103,10 @@ public class ChannelRenderer
     timeOut = value;
   }
 
+    public void setChannelCache(Map cache) {
+	this.channelCache=cache;
+    }
+
   /**
    * Start rendering of the channel in a new thread.
    * Note that rendered information will be accumulated in a
@@ -106,8 +116,8 @@ public class ChannelRenderer
   public void startRendering ()
   {
     // start the rendering thread
-    buffer = new SAXBufferImpl ();
-    worker = new Worker (channel,rd,buffer);
+
+    worker = new Worker (channel,rd);
     if(POOL_THREADS) {
 	// use thread pooling
 	try {
@@ -160,7 +170,7 @@ public class ChannelRenderer
     }
 
     // by this point, if the job is not done, we have to kill it.
-    // peterk: would be nice to put it on a "death raw" instead of
+    // peterk: would be nice to put it on a "death row" instead of
     // stop()ing it instantly. (sorry for the analogy). That way
     // we could try poking it with interrupt() a few times, give it
     // a low priority and see if it can come back up. stop() can 
@@ -187,13 +197,13 @@ public class ChannelRenderer
     
     if (!abandoned && worker.done ()) 
     {
-      if (worker.successful ())
+	SAXBufferImpl buffer;
+      if (worker.successful() && ((buffer=worker.getBuffer())!=null))
       {
         // unplug the buffer :)
         try
         {
-            buffer.setDocumentHandler(out);
-            buffer.stopBuffering();
+	    buffer.outputBuffer(out);
             return RENDERING_SUCCESSFUL;
         }
         catch (SAXException e) {
@@ -235,21 +245,108 @@ public class ChannelRenderer
         private boolean done;
         private IChannel channel;
         private ChannelRuntimeData rd;
-        private DocumentHandler documentHandler;
+	private SAXBufferImpl buffer;
         private Exception exc=null;
 
-        public Worker (IChannel ch, ChannelRuntimeData runtimeData,DocumentHandler dh) {
-            this.channel=ch; this.documentHandler=dh; this.rd=runtimeData;
+	protected class ChannelCacheEntry {
+	    private final SAXBufferImpl buffer;
+	    private final Object validity;
+	    public ChannelCacheEntry() {
+		buffer=null;
+		validity=null;
+	    }
+	    public ChannelCacheEntry(SAXBufferImpl buffer,Object validity) {
+		this.buffer=buffer;
+		this.validity=validity;
+	    }
+	}
+
+        public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
+            this.channel=ch;  this.rd=runtimeData;
+	    buffer=null;
         }
 
         public void run () {
             successful = false;
             done = false;
+	    String complete_key=null;
+
 
             try {
                 if(rd!=null)
                     channel.setRuntimeData(rd);
-                channel.renderXML (documentHandler);
+		
+		if(CACHE_CHANNELS) {
+		    // try to obtain rendering from cache
+		    if(channel instanceof ICacheable && channelCache!=null) {
+			ChannelCacheKey key=((ICacheable)channel).generateKey();
+			if(key!=null) {
+			    if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+				// system-level keys are prepended with the class name
+				// If you trust your channels to construct a unique system key, and
+				// you need cross-class caching functionality, remove the prepend operation.
+				complete_key=channel.getClass().getName() + key.getKey();
+				ChannelCacheEntry entry=(ChannelCacheEntry)systemCache.get(complete_key);
+				if(entry!=null) {
+				    // found cached page
+				    // check page validity
+				    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
+					// use it
+					buffer=entry.buffer;
+					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+complete_key+"\"");
+				    } else {
+					// remove it
+					systemCache.remove(complete_key);
+					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+complete_key+"\"");
+				    }
+				}
+			    } else {
+				// by default we assume INSTANCE_KEY_SCOPE
+				ChannelCacheEntry entry=(ChannelCacheEntry)channelCache.get(key.getKey());
+				if(entry!=null) {
+				    // found cached page
+				    // check page validity
+				    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
+					// use it
+					buffer=entry.buffer;
+					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
+				    } else {
+					// remove it
+					channelCache.remove(key.getKey());
+					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
+				    }
+				}
+			    } 
+			}
+			
+			if(buffer==null) {
+			    // need to render again and cache the output
+			    buffer = new SAXBufferImpl ();
+			    buffer.startBuffering();
+			    channel.renderXML (buffer);
+			    
+			    // save cache
+			    if(key!=null) {
+				if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+				    systemCache.put(complete_key,new ChannelCacheEntry(buffer,key.getKeyValidity()));
+				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+complete_key+"\"");
+				} else {
+				    channelCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
+				}
+			    }
+			}
+		    } else {
+			buffer = new SAXBufferImpl ();
+			buffer.startBuffering();
+			channel.renderXML (buffer);
+		    }
+		} else  {
+		    // in the case when channel cache is not enabled
+		    buffer = new SAXBufferImpl ();
+		    buffer.startBuffering();
+		    channel.renderXML (buffer);
+		}
                 successful = true;
             } catch (Exception e) {
                 this.exc=e;
@@ -260,6 +357,10 @@ public class ChannelRenderer
         public boolean successful () {
             return this.successful;
         }
+
+	public SAXBufferImpl getBuffer() {
+	    return this.buffer;
+	}
 
         public boolean done () {
             return this.done;

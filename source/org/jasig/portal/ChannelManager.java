@@ -42,6 +42,9 @@ import javax.servlet.http.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.WeakHashMap;
+import org.jasig.portal.utils.SoftHashMap;
+import java.util.Collections;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 import java.io.*;
@@ -70,10 +73,15 @@ public class ChannelManager {
 
     private Hashtable channelTable;
     private Hashtable rendererTable;
+    private Map channelCacheTable;
 
     private String channelTarget;
     private Hashtable targetParams;
     private BrowserInfo binfo;
+
+    // global channel rendering cache
+    public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
+    public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
     public String uPElement;
@@ -81,6 +89,7 @@ public class ChannelManager {
     public ChannelManager () {
         channelTable = new Hashtable ();
         rendererTable = new Hashtable ();
+	channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
     }
 
     public ChannelManager (HttpServletRequest request, HttpServletResponse response, UserLayoutManager manager,String uPElement) {
@@ -253,6 +262,10 @@ public class ChannelManager {
         sd.setParameters (params);
         ch.setStaticData (sd);
         channelTable.put (chanID,ch);
+	if(ch instanceof ICacheable) {
+	    channelCacheTable.put(ch,new SoftHashMap(1));
+	}
+	
         // get person object from UsreLayoutManager
         sd.setPerson(ulm.getPerson());
         // security context is saved in the session as well
@@ -322,6 +335,9 @@ public class ChannelManager {
         }
 
         ChannelRenderer cr = new ChannelRenderer (ch,rd);
+	if(ch instanceof ICacheable) {
+	    cr.setChannelCache((SoftHashMap)channelCacheTable.get(ch));
+	}
         cr.setTimeout (timeOut);
         cr.startRendering ();
         rendererTable.put (chanID,cr);

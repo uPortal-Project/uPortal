@@ -72,12 +72,12 @@ public class ChannelCacheKey {
      */
     public String getKey() { return key; }
 
-    public void setKeyScope(int scope) { this.keyScope=keyScope; }
+    public void setKeyScope(int scope) { this.keyScope=scope; }
     /**
      * Returns a specification of the scope in which the cache to be used.
      * Possible values are : INSTANCE_KEY_SCOPE and SYSTEM_KEY_SCOPE.
      */
-    public int getKeyScoe() { return keyScope; }
+    public int getKeyScope() { return keyScope; }
 
     public void setKeyValidity(Object validity) {
 	this.keyValidity=validity; 
