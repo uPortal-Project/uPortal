@@ -42,10 +42,10 @@ import java.io.StringReader;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.net.URL;
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
-
 
 /**
  * <p>This utility provides methods for transforming XML documents
@@ -72,71 +72,23 @@ public class XSLT
   private static Hashtable stylesheetRootCache = new Hashtable();
 
   /**
-   * Performs an XSL transformation.
-   * @param out a document handler
-   * @param media the media type
-   * @param xml a string representing the xml document
-   * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUri, String stylesheetTitle) throws SAXException, IOException, ResourceMissingException
-  {
-    transform(out, media, xml, sslUri, stylesheetTitle, (Hashtable)null);
-  }
-
-  /**
-   * Performs an XSL transformation.
-   * @param out a document handler
-   * @param media the media type
-   * @param xml a string representing the xml document
-   * @param sslUri the URI of the stylesheet list file (.ssl)
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUri) throws SAXException, IOException, ResourceMissingException
-  {
-    transform(out, media, xml, sslUri, (String)null, (Hashtable)null);
-  }
-
-  /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param out a document handler
-   * @param media the media type
    * @param xml a string representing the xml document
    * @param sslUri the URI of the stylesheet list file (.ssl)
+   * @param out a document handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
-   * @throws org.xml.sax.SAXException
-   * @throws java.io.IOException
-   * @throws org.jasig.portal.ResourceMissingException
-   */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUri, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
-  {
-    transform(out, media, xml, sslUri, (String)null, stylesheetParams);
-  }
-
-  /**
-   * Performs an XSL transformation. Accepts stylesheet parameters
-   * (key, value pairs) stored in a Hashtable.
-   * @param out a document handler
-   * @param media the media type
-   * @param xml a string representing the xml document
-   * @param sslUri the URI of the stylesheet list file (.ssl)
    * @param stylesheetTitle the title that identifies the stylesheet in the stylesheet list file (.ssl), <code>null</code> if no title
-   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
+   * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
    * @throws org.jasig.portal.ResourceMissingException
    */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUri, String stylesheetTitle, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
+  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException
   {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    StylesheetSet set = new StylesheetSet(UtilitiesBean.fixURI(sslUri));
+    StylesheetSet set = new StylesheetSet(sslUri.toExternalForm());
     set.setMediaProps (mediaProps);
 
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
@@ -148,36 +100,107 @@ public class XSLT
 
   /**
    * Performs an XSL transformation.
-   * @param out a document handler
    * @param xml a string representing the xml document
-   * @param xslUri the URI of the stylesheet file
+   * @param sslUri the URI of the stylesheet list file (.ssl)
+   * @param out a document handler
+   * @param stylesheetTitle the title that identifies the stylsheet in the stylesheet list file (.ssl)
+   * @param media the media type
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
    * @throws org.jasig.portal.ResourceMissingException
    */
-  public static void transform (DocumentHandler out, String xml, String xslUri) throws SAXException, IOException, ResourceMissingException
+  public static void transform (String xml, URL sslUri, DocumentHandler out, String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException
   {
-    transform(out, xml, xslUri, (Hashtable)null);
+    transform(xml, sslUri, out, (Hashtable)null, stylesheetTitle, media);
   }
 
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
+   * @param xml a string representing the xml document
+   * @param sslUri the URI of the stylesheet list file (.ssl)
    * @param out a document handler
+   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
+   * @param media the media type
+   * @throws org.xml.sax.SAXException
+   * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
+   */
+  public static void transform (String xml, URL sslUri, DocumentHandler out, Hashtable stylesheetParams, String media) throws SAXException, IOException, ResourceMissingException
+  {
+    transform(xml, sslUri, out, stylesheetParams, (String)null, media);
+  }
+
+  /**
+   * Performs an XSL transformation.
+   * @param xml a string representing the xml document
+   * @param sslUri the URI of the stylesheet list file (.ssl)
+   * @param out a document handler
+   * @param media the media type
+   * @throws org.xml.sax.SAXException
+   * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
+   */
+  public static void transform (String xml, URL sslUri, DocumentHandler out, String media) throws SAXException, IOException, ResourceMissingException
+  {
+    transform(xml, sslUri, out, (Hashtable)null, (String)null, media);
+  }
+
+  /**
+   * Performs an XSL transformation. Accepts stylesheet parameters
+   * (key, value pairs) stored in a Hashtable.
    * @param xml a string representing the xml document
    * @param xslUri the URI of the stylesheet file (.xsl)
+   * @param out a document handler
    * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
    * @throws org.jasig.portal.ResourceMissingException
    */
-  public static void transform (DocumentHandler out, String xml, String xslUri, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
+  public static void transform (String xml, URL xslUri, DocumentHandler out, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
   {
     XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(UtilitiesBean.fixURI(xslUri));
+    StylesheetRoot stylesheetRoot = getStylesheetRoot(xslUri.toExternalForm());
+    processor.reset();
+    setStylesheetParams(processor, stylesheetParams);
+    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  }
+
+  /**
+   * Performs an XSL transformation.
+   * @param xml a string representing the xml document
+   * @param xslUri the URI of the stylesheet file
+   * @param out a document handler
+   * @throws org.xml.sax.SAXException
+   * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
+   */
+  public static void transform (String xml, URL xslUri, DocumentHandler out) throws SAXException, IOException, ResourceMissingException
+  {
+    transform(xml, xslUri, out, (Hashtable)null);
+  }
+
+  /**
+   * Performs an XSL transformation. Accepts stylesheet parameters
+   * (key, value pairs) stored in a Hashtable.
+   * @param doc the xml document
+   * @param xslUri the URI of the stylesheet file (.xsl)
+   * @param out a document handler
+   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
+   * @throws org.xml.sax.SAXException
+   * @throws java.io.IOException
+   * @throws org.jasig.portal.ResourceMissingException
+   */
+  public static void transform (Document doc, URL xslUri, DocumentHandler out, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
+  {
+    XSLTInputSource xmlSource = new XSLTInputSource(doc);
+    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
+
+    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
+    StylesheetRoot stylesheetRoot = getStylesheetRoot(xslUri.toExternalForm());
     processor.reset();
     setStylesheetParams(processor, stylesheetParams);
     stylesheetRoot.process(processor, xmlSource, xmlResult);
@@ -186,27 +209,17 @@ public class XSLT
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
-   * @param out a document handler
    * @param doc the xml document
    * @param xslUri the URI of the stylesheet file (.xsl)
-   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
+   * @param out a document handler
    * @throws org.xml.sax.SAXException
    * @throws java.io.IOException
    * @throws org.jasig.portal.ResourceMissingException
    */
-  public static void transform (DocumentHandler out, Document doc, String xslUri, Hashtable stylesheetParams) throws SAXException, IOException, ResourceMissingException
+  public static void transform (Document doc, URL xslUri, DocumentHandler out) throws SAXException, IOException, ResourceMissingException
   {
-    XSLTInputSource xmlSource = new XSLTInputSource(doc);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-    StylesheetRoot stylesheetRoot = getStylesheetRoot(UtilitiesBean.fixURI(xslUri));
-    processor.reset();
-    setStylesheetParams(processor, stylesheetParams);
-    stylesheetRoot.process(processor, xmlSource, xmlResult);
+    transform(doc, xslUri, out, (Hashtable)null);
   }
-
-
 
   private static void setStylesheetParams (XSLTProcessor processor, Hashtable stylesheetParams)
   {
@@ -234,16 +247,19 @@ public class XSLT
     // First, check the cache...
     StylesheetRoot stylesheetRoot = (StylesheetRoot)stylesheetRootCache.get(stylesheetURI);
 
-    if (stylesheetRoot == null || developmentMode)
+    if (stylesheetRoot == null)
     {
       // Get the StylesheetRoot and cache it
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
       stylesheetRoot = processor.processStylesheet(stylesheetURI);
-      stylesheetRootCache.put(stylesheetURI, stylesheetRoot);
-      Logger.log(Logger.INFO, "Caching StylesheetRoot for: " + stylesheetURI);
+
+      if (!developmentMode)
+      {
+        stylesheetRootCache.put(stylesheetURI, stylesheetRoot);
+        Logger.log(Logger.INFO, "Caching StylesheetRoot for: " + stylesheetURI);
+      }
     }
 
     return stylesheetRoot;
   }
-
 }
