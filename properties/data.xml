@@ -3735,9 +3735,9 @@
 
       <row>
         <column><name>TYPE_ID</name><value>1</value></column>
-        <column><name>TYPE_NAME</name><value>Simple XML Transformation</value></column>
+        <column><name>TYPE_NAME</name><value>XML Transformation</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
-        <column><name>TYPE_DESCR</name><value>Performs a transformation given an XML and XSLT document</value></column>
+        <column><name>TYPE_DESCR</name><value>Transforms an XML document into a fragment of markup language given a set of XSLT stylesheets specified in a uPortal stylesheet list (SSL) file.</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</value></column>
       </row>
 
