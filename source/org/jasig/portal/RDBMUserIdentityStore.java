@@ -165,8 +165,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     // Get a connection to the database
     Connection con = rdbmService.getConnection();
     Statement stmt = null;
-    
-    try 
+
+    try
     {
       // Create the JDBC statement
       stmt = con.createStatement();
@@ -179,22 +179,22 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         rdbmService.releaseConnection(con);
       }
       catch(Exception e) {}
-      
+
       // Log the exception
       LogService.instance().log(LogService.ERROR, "RDBMUserIdentityStore: Could not create database statement", se);
       throw new AuthorizationException("RDBMUserIdentityStore: Could not create database statement");
     }
-    
+
     try
     {
       // Retrieve the USER_ID that is mapped to their portal UID
       String query = "SELECT USER_ID, USER_NAME FROM UP_USER WHERE USER_NAME = '" + person.getAttribute("username") + "'";
-      
+
       // DEBUG
       LogService.log(LogService.DEBUG, query);
       // Execute the query
       ResultSet rset = stmt.executeQuery(query);
-      
+
       // Check to see if we've got a result
       if (rset.next())
       {
@@ -206,7 +206,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         throw new AuthorizationException("No portal information exists for user " + person.getAttribute("username"));
       }
       else
-      {           
+      {
         /* attempt to create portal data for a new user */
         int newUID;
         int templateUID;
@@ -242,22 +242,22 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           templateCURR_LAY_ID = rset.getInt("CURR_LAY_ID");
           templateNEXT_STRUCT_ID = rset.getInt("NEXT_STRUCT_ID");
         }
-        else 
+        else
         {
           throw new AuthorizationException("No information found for template user = " + templateName + ". Cannot create new account for " + person.getAttribute("username"));
         }
 
         /* get a new uid for the person */
-        try 
+        try
         {
-          newUID = GenericPortalBean.getUserLayoutStore().getIncrementIntegerId("UP_USER");
+          newUID = UserLayoutStoreFactory.getUserLayoutStoreImpl().getIncrementIntegerId("UP_USER");
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
           LogService.log(LogService.ERROR, "RDBMUserIdentityStore error getting next sequence: ", e);
           throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
         }
-            
+
         try
         {
           // Turn off autocommit if the database supports it
@@ -271,7 +271,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           // Log the exception
           LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
         }
-        
+
         String Insert = new String();
         /* insert new user record in UP_USER */
         Insert = "INSERT INTO UP_USER "+
@@ -299,7 +299,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           " SELECT "+newUID+", USER_PARAM_NAME, USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
-  
+
         /* insert row into up_user_profiles */
         Insert = "INSERT INTO UP_USER_PROFILES (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
           " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID "+
@@ -312,14 +312,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           " SELECT "+newUID+", ROLE_ID, PRIM_ROLE_IND FROM UP_USER_ROLE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
-  
+
         /* insert row into up_user_ss_atts */
         Insert = "INSERT INTO UP_USER_SS_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
           " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
           " FROM UP_USER_SS_ATTS WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
         stmt.executeUpdate(Insert);
-  
+
         /* insert row into up_user_ss_parms */
         Insert = "INSERT INTO UP_USER_SS_PARMS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
           " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
@@ -333,7 +333,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           " FROM UP_STRUCT_PARAM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, Insert);
         stmt.executeUpdate(Insert);
-  
+
         /* insert row into up_user_ua_map */
         Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
           " SELECT "+newUID+", USER_AGENT, PROFILE_ID"+
@@ -347,7 +347,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           " FROM UP_LAYOUT_STRUCT WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore " + Insert);
         stmt.executeUpdate(Insert);
-        
+
         // Check to see if the database supports transactions
         boolean supportsTransactions = false;
         try
@@ -355,9 +355,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
            supportsTransactions = con.getMetaData().supportsTransactions();
         }
         catch(Exception e)  {}
-        
+
         if(supportsTransactions)
-        { 
+        {
           // Commit the transaction
           con.commit();
           // Use our new ID if we made it through all of the SQL
@@ -377,7 +377,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       // Rollback the transaction
       try
       {
-        if (con.getMetaData().supportsTransactions()) 
+        if (con.getMetaData().supportsTransactions())
         {
           con.rollback();
         }

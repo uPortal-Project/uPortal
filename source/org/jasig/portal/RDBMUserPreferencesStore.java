@@ -65,9 +65,9 @@ public class RDBMUserPreferencesStore
 
       public Enumeration getAttributes () {return null;}
       public Enumeration getAttributeNames () {return null;}
-      
+
       public boolean isGuest() {return(false);}
-      
+
       public ISecurityContext getSecurityContext() { return(null); }
       public void setSecurityContext(ISecurityContext context) {}
     }
@@ -112,7 +112,7 @@ public class RDBMUserPreferencesStore
    */
   public int getUserBrowserMapping (IPerson person, String userAgent) {
     try {
-      return  GenericPortalBean.getUserLayoutStore().getUserBrowserMapping(person, userAgent);
+      return  UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserBrowserMapping(person, userAgent);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -127,7 +127,7 @@ public class RDBMUserPreferencesStore
    */
   public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) {
     try {
-      GenericPortalBean.getUserLayoutStore().setUserBrowserMapping(person, userAgent, profileId);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserBrowserMapping(person, userAgent, profileId);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -198,7 +198,7 @@ public class RDBMUserPreferencesStore
   public UserProfile getUserProfileById (IPerson person, int profileId) {
     UserProfile upl = null;
     try {
-      upl = GenericPortalBean.getUserLayoutStore().getUserProfileById(person, profileId);
+      upl = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserProfileById(person, profileId);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -213,7 +213,7 @@ public class RDBMUserPreferencesStore
   public Hashtable getUserProfileList (IPerson person) {
     Hashtable pv = null;
     try {
-      pv = GenericPortalBean.getUserLayoutStore().getUserProfileList(person);
+      pv = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserProfileList(person);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -240,7 +240,7 @@ public class RDBMUserPreferencesStore
    */
   public void updateUserProfile (IPerson person, UserProfile profile) {
     try {
-      GenericPortalBean.getUserLayoutStore().updateUserProfile(person, profile);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().updateUserProfile(person, profile);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -262,7 +262,7 @@ public class RDBMUserPreferencesStore
    */
   public UserProfile addUserProfile (IPerson person, UserProfile profile) {
     try {
-      profile = GenericPortalBean.getUserLayoutStore().addUserProfile(person, profile);
+      profile = UserLayoutStoreFactory.getUserLayoutStoreImpl().addUserProfile(person, profile);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -285,7 +285,7 @@ public class RDBMUserPreferencesStore
    */
   public void deleteUserProfile (IPerson person, int profileId) {
     try {
-      GenericPortalBean.getUserLayoutStore().deleteUserProfile(person, profileId);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().deleteUserProfile(person, profileId);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -321,7 +321,7 @@ public class RDBMUserPreferencesStore
    */
   public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) {
     try {
-      return  GenericPortalBean.getUserLayoutStore().getStructureStylesheetUserPreferences(person, profileId, stylesheetId);
+      return  UserLayoutStoreFactory.getUserLayoutStoreImpl().getStructureStylesheetUserPreferences(person, profileId, stylesheetId);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -337,7 +337,7 @@ public class RDBMUserPreferencesStore
    */
   public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) {
     try {
-      return  GenericPortalBean.getUserLayoutStore().getThemeStylesheetUserPreferences(person, profileId, stylesheetId);
+      return  UserLayoutStoreFactory.getUserLayoutStoreImpl().getThemeStylesheetUserPreferences(person, profileId, stylesheetId);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -353,7 +353,7 @@ public class RDBMUserPreferencesStore
   public void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences fsup) {
     // update the database
     try {
-      GenericPortalBean.getUserLayoutStore().setStructureStylesheetUserPreferences(person, profileId, fsup);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().setStructureStylesheetUserPreferences(person, profileId, fsup);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }
@@ -368,7 +368,7 @@ public class RDBMUserPreferencesStore
   public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences ssup) {
     // update the database
     try {
-      GenericPortalBean.getUserLayoutStore().setThemeStylesheetUserPreferences(person, profileId, ssup);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().setThemeStylesheetUserPreferences(person, profileId, ssup);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
     }

@@ -62,7 +62,7 @@ public class RDBMCoreStylesheetDescriptionStore
   public Hashtable getMimeTypeList () {
     Hashtable list = new Hashtable();
     try {
-      GenericPortalBean.getUserLayoutStore().getMimeTypeList(list);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().getMimeTypeList(list);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -77,7 +77,7 @@ public class RDBMCoreStylesheetDescriptionStore
   public Hashtable getStructureStylesheetList (String mimeType) {
     Hashtable list = null;
     try {
-      list = GenericPortalBean.getUserLayoutStore().getStructureStylesheetList(mimeType);
+      list = UserLayoutStoreFactory.getUserLayoutStoreImpl().getStructureStylesheetList(mimeType);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -92,7 +92,7 @@ public class RDBMCoreStylesheetDescriptionStore
   public Hashtable getThemeStylesheetList (int structureStylesheetId) {
     Hashtable list = null;
     try {
-      list = GenericPortalBean.getUserLayoutStore().getThemeStylesheetList(structureStylesheetId);
+      list = UserLayoutStoreFactory.getUserLayoutStoreImpl().getThemeStylesheetList(structureStylesheetId);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -105,7 +105,7 @@ public class RDBMCoreStylesheetDescriptionStore
    public StructureStylesheetDescription getStructureStylesheetDescription(String stylesheetName) {
    StructureStylesheetDescription fssd=null;
    try {
-   String[] db = GenericPortalBean.getUserLayoutStore().getStructureStylesheetDescription(stylesheetName);
+   String[] db = UserLayoutStoreFactory.getUserLayoutStoreImpl().getStructureStylesheetDescription(stylesheetName);
    String dbStylesheetName=db[0];
    String dbStylesheetDescriptionText=db[1];
    String dbURI=db[2];
@@ -140,7 +140,7 @@ public class RDBMCoreStylesheetDescriptionStore
   public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) {
     StructureStylesheetDescription fssd = null;
     try {
-      fssd = GenericPortalBean.getUserLayoutStore().getStructureStylesheetDescription(stylesheetId);
+      fssd = UserLayoutStoreFactory.getUserLayoutStoreImpl().getStructureStylesheetDescription(stylesheetId);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -155,7 +155,7 @@ public class RDBMCoreStylesheetDescriptionStore
   public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) {
     ThemeStylesheetDescription fssd = null;
     try {
-      fssd = GenericPortalBean.getUserLayoutStore().getThemeStylesheetDescription(stylesheetId);
+      fssd = UserLayoutStoreFactory.getUserLayoutStoreImpl().getThemeStylesheetDescription(stylesheetId);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -166,7 +166,7 @@ public class RDBMCoreStylesheetDescriptionStore
    public ThemeStylesheetDescription getThemeStylesheetDescription(String stylesheetName) {
    ThemeStylesheetDescription sssd=null;
    try {
-   String[] db = GenericPortalBean.getUserLayoutStore().getThemeStylesheetDescription(stylesheetName);
+   String[] db = UserLayoutStoreFactory.getUserLayoutStoreImpl().getThemeStylesheetDescription(stylesheetName);
    String dbStylesheetName=db[0];
    String dbStylesheetDescriptionText=db[1];
    String dbURI=db[2];
@@ -207,7 +207,7 @@ public class RDBMCoreStylesheetDescriptionStore
    */
   public void removeStructureStylesheetDescription (int stylesheetId) {
     try {
-      GenericPortalBean.getUserLayoutStore().removeStructureStylesheetDescription(stylesheetId);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().removeStructureStylesheetDescription(stylesheetId);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -219,7 +219,7 @@ public class RDBMCoreStylesheetDescriptionStore
    */
   public void removeThemeStylesheetDescription (int stylesheetId) {
     try {
-      GenericPortalBean.getUserLayoutStore().removeThemeStylesheetDescription(stylesheetId);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().removeThemeStylesheetDescription(stylesheetId);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -242,7 +242,7 @@ public class RDBMCoreStylesheetDescriptionStore
       if (ssName == null)
         return  false;
       // determine id of the parent structure stylesheet
-      Integer ssId = GenericPortalBean.getUserLayoutStore().getStructureStylesheetId(ssName);
+      Integer ssId = UserLayoutStoreFactory.getUserLayoutStoreImpl().getStructureStylesheetId(ssName);
       // stylesheet not found, should thrown an exception here
       if (ssId == null)
         return  false;
@@ -268,7 +268,7 @@ public class RDBMCoreStylesheetDescriptionStore
       // populate parameter and attriute tables
       this.populateParameterTable(stylesheetDescriptionXML, sssd);
       this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
-      GenericPortalBean.getUserLayoutStore().updateThemeStylesheetDescription(sssd);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().updateThemeStylesheetDescription(sssd);
     } catch (Exception e) {
       LogService.instance().log(LogService.DEBUG, e);
       return  false;
@@ -301,7 +301,7 @@ public class RDBMCoreStylesheetDescriptionStore
       this.populateFolderAttributeTable(stylesheetDescriptionXML, fssd);
       this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
       // now write out the database record
-      GenericPortalBean.getUserLayoutStore().updateStructureStylesheetDescription(fssd);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().updateStructureStylesheetDescription(fssd);
     } catch (Exception e) {
       LogService.instance().log(LogService.DEBUG, e);
       return  false;
@@ -334,8 +334,8 @@ public class RDBMCoreStylesheetDescriptionStore
       this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
       // now write out the database record
       // first the basic record
-      //GenericPortalBean.getUserLayoutStore().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
-      return  GenericPortalBean.getUserLayoutStore().addStructureStylesheetDescription(fssd);
+      //UserLayoutStoreFactory.getUserLayoutStoreImpl().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
+      return  UserLayoutStoreFactory.getUserLayoutStoreImpl().addStructureStylesheetDescription(fssd);
     } catch (Exception e) {
       LogService.instance().log(LogService.DEBUG, e);
     }
@@ -363,7 +363,7 @@ public class RDBMCoreStylesheetDescriptionStore
       if (ssName == null)
         return  null;
       // determine id of the parent structure stylesheet
-      Integer ssId = GenericPortalBean.getUserLayoutStore().getStructureStylesheetId(ssName);
+      Integer ssId = UserLayoutStoreFactory.getUserLayoutStoreImpl().getStructureStylesheetId(ssName);
       // stylesheet not found, should thrown an exception here
       if (ssId == null)
         return  null;
@@ -388,8 +388,8 @@ public class RDBMCoreStylesheetDescriptionStore
       // populate parameter and attriute tables
       this.populateParameterTable(stylesheetDescriptionXML, sssd);
       this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
-      //            GenericPortalBean.getUserLayoutStore().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
-      return  GenericPortalBean.getUserLayoutStore().addThemeStylesheetDescription(sssd);
+      //            UserLayoutStoreFactory.getUserLayoutStoreImpl().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
+      return  UserLayoutStoreFactory.getUserLayoutStoreImpl().addThemeStylesheetDescription(sssd);
     } catch (Exception e) {
       LogService.instance().log(LogService.DEBUG, e);
     }
