@@ -32,7 +32,7 @@
 
   <servlet-mapping>
     <servlet-name>Authentication</servlet-name>
-    <url-pattern>authentication.jsp</url-pattern>
+    <url-pattern>Authentication</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
