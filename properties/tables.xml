@@ -193,7 +193,7 @@
 			<column>
 				<name>PROFILE_NAME</name>
 				<type>VARCHAR</type>
-				<param>30</param>
+				<param>50</param>
 			</column>
 			<column>
 				<name>DESCRIPTION</name>
