@@ -74,14 +74,7 @@ public class PermissionsXML {
      * @return
      */
     public static Document getViewDoc (PermissionsSessionData session){
-        Document doc = null;
-        try{
-         doc = getViewDoc(session, false);
-        }
-        catch(ParserConfigurationException pce){
-          throw new NullPointerException("Unable to initialize permissions session XML document");
-        }
-        return  doc;
+        return getViewDoc(session, false);
     }
 
     /**
@@ -90,10 +83,10 @@ public class PermissionsXML {
      * @param sd
      * @return
      */
-    public static Document getViewDoc (PermissionsSessionData session, boolean forceRefresh) throws ParserConfigurationException{
+    public static Document getViewDoc (PermissionsSessionData session, boolean forceRefresh){
         synchronized (session) {
             if (session.XML == null || forceRefresh) {
-                Document rDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                Document rDoc = org.jasig.portal.utils.DocumentFactory.getNewDocument();
                 session.XML = rDoc;
                 IPermissible[] owners = new IPermissible[0];
                 IAuthorizationPrincipal[] principals;
