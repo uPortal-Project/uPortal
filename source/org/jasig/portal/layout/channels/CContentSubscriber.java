@@ -87,6 +87,7 @@ public class CContentSubscriber extends FragmentManager {
 		    String channelId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_channelID"));
 		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
 			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
+		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channelState"));
 			boolean allFragments = false, 
 			        allChannels = false, 
 			        allCategories = false;
@@ -157,24 +158,25 @@ public class CContentSubscriber extends FragmentManager {
 			 for ( int i = 0; i < expandedItems.length; i++ ) {	 
 			   Vector list = expandedItems[i];
 			   for ( int j = 0; j < list.size(); j++ )
-			    registry.getElementById((String)list.get(j)).setAttribute("view","expand");
+			    registry.getElementById((String)list.get(j)).setAttribute("view","expanded");
 			 }  
 			  
 			 for ( int i = 0; i < condensedItems.length; i++ ) {	 
 			   Vector list = condensedItems[i];
 			   for ( int j = 0; j < list.size(); j++ )
-				registry.getElementById((String)list.get(j)).setAttribute("view","condense");
+				registry.getElementById((String)list.get(j)).setAttribute("view","condensed");
 			 }    
 			 
 		     for ( int i = 0; i < tagNames.size(); i++ ) {
 			  NodeList nodeList = registry.getElementsByTagName((String)tagNames.get(i));
 			  for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				Element node = (Element) nodeList.item(k);
-				node.setAttribute("view",action);
+				node.setAttribute("view",(action.equals("expand"))?"expanded":"condensed");
 			  } 
 		     } 
 		     
-		     String channelState = CommonUtils.nvl(runtimeData.getParameter("channelState"));
+		    
+		     xslt.setStylesheetParameter("uPcCS_action", action );
 		     xslt.setStylesheetParameter("channelState", channelState );
 		     xslt.setStylesheetParameter("uPcCS_fragmentID", fragmentId );
 		     xslt.setStylesheetParameter("uPcCS_channelID", channelId );

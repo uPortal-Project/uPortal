@@ -707,6 +707,7 @@ public class UserInstance implements HttpSessionBindingListener {
      try {
 
        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
+       String newNodeId = null;
 
         // Sending the theme stylesheets parameters based on the user security context
         UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
@@ -781,17 +782,11 @@ public class UserInstance implements HttpSessionBindingListener {
             value = values1[0];
          if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
           if (  newNodeDescription != null ) {
-            if ( CommonUtils.nvl(value).trim().length() == 0 ) value = null;
-            /*if ( newNodeDescription == null ) {
-             newNodeDescription = ulm.createNodeDescription(nodeType);
-             newNodeDescription.setName("Unnamed");
-            }*/
-             // Adding a new node
-             String nodeId = ulm.addNode(newNodeDescription,values2[0],value).getId();
+            if ( CommonUtils.nvl(value).trim().length() == 0 ) 
+             value = null;
             
-             // If we have created a new node we need to let the structure XSL know about it
-             if ( nodeId != null )
-			   structPrefs.putParameterValue("newNodeID",nodeId);
+            // Adding a new node
+            newNodeId = ulm.addNode(newNodeDescription,values2[0],value).getId();
 			 
           }
          }
@@ -858,6 +853,9 @@ public class UserInstance implements HttpSessionBindingListener {
 			}
 		  }	  
 		}
+		
+		// If we have created a new node we need to let the structure XSL know about it
+		structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
 
 
       } catch ( Exception e ) {
