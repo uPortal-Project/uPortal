@@ -38,7 +38,6 @@ import org.jasig.portal.IPrivileged;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.layout.IAggregatedLayout;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
