@@ -169,7 +169,17 @@ public void remove(Class type, String key) throws CachingException
  */
 public void remove(EntityIdentifier entityID) throws CachingException
 {
-    cache.remove(entityID.getType(), entityID.getKey());
+    remove(entityID.getType(), entityID.getKey());
+}
+/**
+ * Removes the <code>IBasicEntity</code> from the cache and notifies peer
+ * caches.
+ * @param ent org.jasig.portal.IBasicEntity
+ * @exception org.jasig.portal.concurrency.CachingException
+ */
+public void remove(IBasicEntity ent) throws CachingException
+{
+    remove(ent.getEntityIdentifier());
 }
 public static synchronized EntityCachingService start() throws CachingException
 {
