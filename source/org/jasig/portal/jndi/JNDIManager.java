@@ -49,9 +49,10 @@ import  javax.naming.NamingEnumeration;
 import  javax.servlet.http.HttpSession;
 import  javax.servlet.http.HttpSessionBindingListener;
 import  javax.servlet.http.HttpSessionBindingEvent;
-import  org.jasig.portal.InternalPortalException;
+import  org.jasig.portal.PortalException;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.services.ExternalServices;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Node;
@@ -61,7 +62,7 @@ import  org.w3c.dom.Node;
  * JNDIManager.
  *
  * uPortal's JNDI tree has the following basic structure:
- *
+ * <tt>
  * root context
  *    |
  *    +--services--*[service name]*...
@@ -82,7 +83,7 @@ import  org.w3c.dom.Node;
  *                                    +--channel-obj--*[chanId]*...
  *                                    |
  *                                    +--[layoutId]
- *
+ * </tt>
  * Notation:
  *  [something] referes to a value of something
  *  *[something]* refers to a set of values
@@ -104,16 +105,25 @@ public class JNDIManager {
   /**
    * Initializes root context node
    */
-  public static void initializePortalContext () {
+  public static void initializePortalContext () throws PortalException {
     try {
       Context context = getContext();
-      // Create a subcontext for portal-wide services
-      context.createSubcontext("services");
 
+      // Create a subcontext for portal-wide services, initialize services 
+      // Start any portal services configured in services.xml
+      try {
+          ExternalServices.startServices(context.createSubcontext("services"));
+      } catch (Exception ex) {
+        LogService.instance().log(LogService.ERROR, ex);
+        throw new PortalException ("Failed to start external portal services.",ex);
+      }
+
+      /*
       // Note: this should be moved into a common service init
       // Bind in the logger service
       LogService logger = LogService.instance();
       context.bind("/services/logger", logger);
+      */
 
       // Create a subcontext for user specific bindings
       context.createSubcontext("users");
@@ -133,7 +143,7 @@ public class JNDIManager {
    * Create and populate contexts for a new user sesions
    * @param sessionID
    */
-  public static void initializeSessionContext (HttpSession session, String userId,String layoutId, Document userLayout) throws InternalPortalException {
+  public static void initializeSessionContext (HttpSession session, String userId,String layoutId, Document userLayout) throws PortalException {
 
       Context topContext=null;
 
@@ -164,7 +174,7 @@ public class JNDIManager {
           usersContext = (Context)topContext.lookup("/users");
       } catch (NamingException ne) {
           LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Could not find /users context - " + ne.getMessage());
-          throw  new InternalPortalException(ne);
+          throw  new PortalException("JNDIManager.initializeSessionContext(): Could not find /users context",ne);
       }
 
       // get or create /users/[userId] context
@@ -198,7 +208,7 @@ public class JNDIManager {
               LogService.instance().log(LogService.DEBUG, "JNDIManager.initializeSessionContext(): initialized context for a userId=\""+userId+"\".");
           } catch (NamingException ne2) {
               LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception encountered while trying to create  /users/"+userId+" and layouts/sessions contexts ! "+ne2.getMessage());
-              throw new InternalPortalException(ne2);
+              throw new PortalException("JNDIManager.initializeSessionContext(): exception encountered while trying to create  /users/"+userId+" and layouts/sessions contexts !",ne2);
           }
       }
 
@@ -209,10 +219,10 @@ public class JNDIManager {
       } catch (NameAlreadyBoundException nabe) {
           LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): trying to initialize session twice. sessionId=\""+sessionId+"\"");
           //          sessionIdContext=(Context)sessionsContext.lookup(sessionId);
-          throw new InternalPortalException(nabe);
+          throw new PortalException("JNDIManager.initializeSessionContext(): trying to initialize session twice. sessionId=\""+sessionId+"\"",nabe);
       } catch (Exception e) {
           LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): error encountered while trying to create context /users/"+userId+"/sessions/"+sessionId+" "+e.getMessage());
-          throw new InternalPortalException(e);
+          throw new PortalException("JNDIManager.initializeSessionContext(): error encountered while trying to create context /users/"+userId+"/sessions/"+sessionId,e);
       }
 
       // bind layoutId
@@ -220,7 +230,7 @@ public class JNDIManager {
           sessionIdContext.bind("layoutId",layoutId);
       } catch (Exception e) {
           LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): error encountered while trying to bind /users/"+userId+"/sessions/"+sessionId+"/layoutId "+e.getMessage());
-          throw new InternalPortalException(e);
+          throw new PortalException("JNDIManager.initializeSessionContext(): error encountered while trying to bind /users/"+userId+"/sessions/"+sessionId+"/layoutId",e);
       }
 
       // make sure channel-obj context exists
@@ -274,7 +284,7 @@ public class JNDIManager {
               }
           } catch (NamingException ne) {
               LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context. "+ne.getMessage());
-              throw new InternalPortalException(ne);
+              throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context.",ne);
           }
       } catch (NameAlreadyBoundException nabe) {
           // assume layouts/[layoutId]/ has already been populated
@@ -288,11 +298,11 @@ public class JNDIManager {
 
           } catch (Exception e) {
               LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed ! "+e.getMessage());
-              throw new InternalPortalException(e);
+              throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed !",e);
           }
       } catch (Exception e) {
           LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): exception occured while pupulating context /users/"+userId+"/layouts/"+layoutId+"  "+e.getMessage());
-          throw new InternalPortalException(e);
+          throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while pupulating context /users/"+userId+"/layouts/"+layoutId,e);
       }
   }
 
