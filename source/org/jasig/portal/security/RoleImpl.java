@@ -35,25 +35,65 @@
 
 package org.jasig.portal.security;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-import com.objectspace.xml.*;
+import org.jasig.portal.Logger;
+
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.IRole;
+
+import java.util.Hashtable;
+import java.util.Enumeration;
 
 /**
  * @author Bernie Durfee
  */
-public interface IRole
+public class RoleImpl implements IRole
 {
+  private String m_roleTitle;
+  private Hashtable m_roleAttributes;
+
+  public RoleImpl(String roleTitle)
+  {
+    m_roleTitle = new String(roleTitle);
+
+    m_roleAttributes = new Hashtable();
+  }
+
   // Get the title of this role
-  public String getRoleTitle();
+  public String getRoleTitle()
+  {
+    return(m_roleTitle);
+  }
 
   // Get an attribute for this role
-  public Object getAttribute(String key);
+  public Object getAttribute(String key)
+  {
+    return(m_roleAttributes.get(key));
+  }
 
   // Set an attribute for this role
-  public boolean setAttribute(String key, Object value);
+  public boolean setAttribute(String key, Object value)
+  {
+    if(key == null)
+    {
+      return(false);
+    }
+    else
+    {
+      m_roleAttributes.put(key, value);
+      return(true);
+    }
+  }
 
   // Get all attributes for this role
-  public Enumeration getAttributes();
+  public Enumeration getAttributes()
+  {
+    if(m_roleAttributes == null)
+    {
+      return(null);
+    }
+    else
+    {
+      return(m_roleAttributes.keys());
+    }
+  }
 }

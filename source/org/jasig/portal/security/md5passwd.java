@@ -127,7 +127,7 @@ public class md5passwd {
       throws IOException, NoSuchAlgorithmException, SQLException {
     md5passwd me;
 
-    GenericPortalBean.setPortalBaseDir("/home/newman/projects/bullshit/");
+    GenericPortalBean.setPortalBaseDir("d:\\projects\\holycross\\myhc\\");
 
     if (args.length == 1 && args[0].charAt(0) != '-')
       me = new md5passwd(args[0], false, false);

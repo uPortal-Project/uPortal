@@ -35,25 +35,19 @@
 
 package org.jasig.portal.security;
 
-import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-import com.objectspace.xml.*;
-
 /**
- * @author Bernie Durfee
+ * <p>A context-specific factory class interface that should be implemented
+ * by factory classes defined for each context provider. The provider's
+ * constructor should not be public to discourage it's instantiation through
+ * means other than the corresponding factory. This formalism should be
+ * followed for consistency even when the factory performs no additional
+ * value-add than instantiating the appropriate context class.</p>
+ *
+ * @author Andrew Newman
+ * @version $Revision$
  */
-public interface IRole
+
+public interface IAuthorizationFactory
 {
-  // Get the title of this role
-  public String getRoleTitle();
-
-  // Get an attribute for this role
-  public Object getAttribute(String key);
-
-  // Set an attribute for this role
-  public boolean setAttribute(String key, Object value);
-
-  // Get all attributes for this role
-  public Enumeration getAttributes();
+  public IAuthorization getAuthorization();
 }

@@ -42,22 +42,14 @@ import java.util.Enumeration;
  */
 public interface IPerson extends AdditionalDescriptor
 {
-  // A must have an ID that makes them a unique entity in within the portal
-  public void setPortalUserID(int sPortalUserID);
-  public int  getPortalUserID();
+  public void setID(String sID);
+  public String getID();
 
-  // This is the string that the user has logged in with
-  public void   setPortalLoginName(String sPortalLoginName);
-  public String getPortalLoginName();
+  public void setFullName(String sFullName);
+  public String getFullName();
 
-  // This is the string that the portal will use as the 'user friendly' name of the user
-  public void   setPreferredName(String sfirstName);
-  public String getPreferredName();
+  public Object getAttribute (String key);
+  public void setAttribute (String key, Object value);
 
-  // This will retrieve an attribute associated with the user
-  public Object getAttribute(String key);
-  public void   setAttribute(String key, Object value);
-
-  // This will return an enumeration of all of the attribute keys stored for the user
-  public Enumeration getAttributeKeys();
+  public Enumeration getAttributes ();
 }
