@@ -25,8 +25,7 @@ if (sAction != null)
   // Go back to default layout xml
   else if (sAction.equals ("revertToDefaultLayoutXml"))
   {
-    IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
-    layoutXml = layoutBean.getDefaultLayoutXml (request, layoutBean.getUserName (request));
+    IXml layoutXml = layoutBean.getDefaultLayoutXml (request);
   }
   else if (sAction.equals ("changeLayout"))
   {

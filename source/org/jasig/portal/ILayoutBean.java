@@ -17,7 +17,7 @@ public interface ILayoutBean
   // Helper methods
   public IXml getLayoutXml (HttpServletRequest req, String sUserName);
   public void setLayoutXml (String sUserName, IXml layoutXml);
-  public IXml getDefaultLayoutXml (HttpServletRequest req, String sUserName);
+  public IXml getDefaultLayoutXml (HttpServletRequest req);
   public ITab[] getTabs (HttpServletRequest req);
   public ITab getTab (HttpServletRequest req, int iTab);
   public IColumn getColumn (HttpServletRequest req, int iTab, int iCol);
