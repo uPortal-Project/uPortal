@@ -290,10 +290,9 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
     for (int i = 0; i < catID.length; i++) {
       catID[i] = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
       int iCatID = Integer.parseInt(catID[i]);
-      ChannelCategory category = new ChannelCategory(iCatID);
+      ChannelCategory category = crs.getChannelCategory(iCatID);
       crs.addChannelToCategory(channelDef, category);
     }
-
 
     flushChannelEntry(id);
   }
