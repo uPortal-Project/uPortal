@@ -76,6 +76,21 @@ Version $Revision$
     serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
     deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
     encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:ChannelRuntimeData"
+    type="java:org.jasig.portal.ChannelRuntimeData"
+    serializer="org.jasig.portal.webservices.ser.ChannelRuntimeDataSerializerFactory"
+    deserializer="org.jasig.portal.webservices.ser.ChannelRuntimeDataDeserializerFactory"
+    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:BrowserInfo"
+    type="java:org.jasig.portal.BrowserInfo"
+    serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+    deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:UPFileSpec"
+    type="java:org.jasig.portal.UPFileSpec"
+    serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+    deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
   <typeMapping xmlns:ns="urn:RemoteChannel" qname="ns:PortalEvent"
     type="java:org.jasig.portal.PortalEvent"
     serializer="org.jasig.portal.webservices.ser.PortalEventSerializerFactory"
