@@ -36,19 +36,16 @@
 package org.jasig.portal.tools;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
 /**
- * Title:        DbConvert21
- * Description:  Adjusts stored layouts in 2.1 database to work in 2.2+
- * @author  	 Susan Bramhall susan.bramhall@yale.edu
- * @version $Revision:
+ * Adjusts stored layouts in 2.1 database to work in 2.2+.
+ * @author Susan Bramhall, susan.bramhall@yale.edu
+ * @version $Revision$
  */
-
 public class DbConvert21 {
 
    public static void main(String[] args) {
