@@ -1,0 +1,27 @@
+<?xml encoding="UTF-8" ?>
+
+<!ELEMENT registry (category|channel)*>
+
+<!ELEMENT category (channel)*>
+<!ATTLIST category
+  ID ID #REQUIRED
+  name CDATA #IMPLIED>
+
+<!ELEMENT channel (parameter)*>
+<!ATTLIST channel 
+  ID ID #REQUIRED
+  priority CDATA #REQUIRED
+  name CDATA #REQUIRED 
+  timeout CDATA "5000"
+  minimized (true|false) "true"
+  detachable (true|false) "true"
+  editable (true|false) "true"
+  hasHelp (true|false) "true"
+  removable (true|false) "true"
+  class CDATA #REQUIRED>
+
+
+<!ELEMENT parameter EMPTY>
+<!ATTLIST parameter 
+  name CDATA #REQUIRED
+  value CDATA #REQUIRED>
