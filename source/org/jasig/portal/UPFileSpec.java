@@ -41,20 +41,20 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * This helper class allows for easy access to the information contained in the ever-changing 
- * .uP file URL spec. The .uP file syntax is likely to change often, therefore we encourage developers
- * to use this class instead of trying to parse the .uP file on your own.
- * <p>Note: in case you're wondering what in the world ".uP file" is, take a look at the portal URLs. 
+ * uP file URL spec. The uP file syntax is likely to change often, therefore we encourage developers
+ * to use this class instead of trying to parse the uP file on your own.
+ * <p>Note: in case you're wondering what in the world "uP file" is, take a look at the portal URLs. 
  * The context path ends with a file-like specification that always has ".uP" at the end ... 
- * that's what we call a ".uP" file. It is used to provide information on how different requests
+ * that's what we call a "uP" file. It is used to provide information on how different requests
  * should be processed.</p>
- * <p>Current .uP file syntax looks like this: <code><b>"[tag.tagId.]{method}.methodId.[target.targetId.][*.]uP"</b></code>, 
+ * <p>Current uP file syntax looks like this: <code><b>"[tag.tagId.]{method}.methodId.[target.targetId.][*.]uP"</b></code>, 
  * where "[]" denote optional expressions and "{}" choice-defined expressions. The "{method}" field, at the moment has
  * two choices: "render" and "worker".</p>
  * <p> uPortal will assume that the .uP file spec is always well-formed, so don't try to construct it on your own, use 
  * <code>baseActionURL</code> or one of the <code>workerActionURL</code>s. </p>
  * 
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version: $Revision$
+ * @version $Revision$
  */
 public class UPFileSpec {
     // some URL construction elements
@@ -125,10 +125,10 @@ public class UPFileSpec {
      * A building constructor.
      *
      * @param tagId a tag id <code>String</code> value (can be <code>null</code>)
-     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link RENDER_METHOD} or {@link WORKER_METHOD})
+     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link #RENDER_METHOD} or {@link #WORKER_METHOD})
      * @param methodNodeId a method node id <code>String</code> value (required value, can <b>not</b> be <code>null</code>)
      * @param targetNodeId a target id <code>String</code> value (can be <code>null</code>)
-     * @param extraElements a <code>String</code> to be incorporated into the file name before the suffix (".uP"). These values will be available from the {@link getUPFileExras()} result when .uP file is parsed. (can be <code>null</code>)
+     * @param extraElements a <code>String</code> to be incorporated into the file name before the suffix (".uP"). These values will be available from the {@link #getUPFileExtras()} result when .uP file is parsed. (can be <code>null</code>)
      * @exception PortalException if an invalid method code is passed or no methodNodeId is present.
      */
     public UPFileSpec(String tagId,int method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
@@ -151,7 +151,7 @@ public class UPFileSpec {
     /**
      * Set a method.
      *
-     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link RENDER_METHOD} or {@link WORKER_METHOD})
+     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link #RENDER_METHOD} or {@link #WORKER_METHOD})
      * @exception PortalException if an invalid method id is passed.
      */
     public void setMethod(int method) throws PortalException {
@@ -238,10 +238,9 @@ public class UPFileSpec {
     }
 
     /**
-     * Returns a "cleaned-up" version of the .uP file with all known 
-     * fields (i.e. tag, method and target) removed. This can be used by
+     * Returns a "cleaned-up" version of the uP file with all known 
+     * fields such as tag, method, and target, removed. This can be used by...
      * 
-     *
      * @return a <code>String</code> value, <code>null</code> if none were encountered.
      */
     public String getUPFileExtras() {
@@ -253,10 +252,10 @@ public class UPFileSpec {
      * Constructs a .uP file
      *
      * @param tagId a tag id <code>String</code> value (can be <code>null</code>)
-     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link RENDER_METHOD} or {@link WORKER_METHOD})
+     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link #RENDER_METHOD} or {@link #WORKER_METHOD})
      * @param methodNodeId a method node id <code>String</code> value (required value, can <b>not</b> be <code>null</code>)
      * @param targetNodeId a target id <code>String</code> value (can be <code>null</code>)
-     * @param extraElements a <code>String</code> to be incorporated into the file name before the suffix (".uP"). These values will be available from the {@link getUPFileExras()} result when .uP file is parsed. (can be <code>null</code>)
+     * @param extraElements a <code>String</code> to be incorporated into the file name before the suffix (".uP"). These values will be available from the {@link #getUPFileExtras()} result when .uP file is parsed. (can be <code>null</code>)
      * @return a <code>String</code> value
      * @exception PortalException if an invalid method code is passed or no methodNodeId is present.
      */
@@ -269,10 +268,10 @@ public class UPFileSpec {
      * Constructs a .uP file, without the suffix (actual ".uP") so it can be extended further.
      *
      * @param tagId a tag id <code>String</code> value (can be <code>null</code>)
-     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link RENDER_METHOD} or {@link WORKER_METHOD})
+     * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link #RENDER_METHOD} or {@link #WORKER_METHOD})
      * @param methodNodeId a method node id <code>String</code> value (required value, can <b>not</b> be <code>null</code>)
      * @param targetNodeId a target id <code>String</code> value (can be <code>null</code>)
-     * @param extraElements a <code>String</code> to be incorporated into the file name before the suffix (".uP"). These values will be available from the {@link getUPFileExras()} result when .uP file is parsed. (can be <code>null</code>)
+     * @param extraElements a <code>String</code> to be incorporated into the file name before the suffix (".uP"). These values will be available from the {@link #getUPFileExtras()} result when .uP file is parsed. (can be <code>null</code>)
      * @return a <code>String</code> value
      * @exception PortalException if an invalid method code is passed or no methodNodeId is present.
      */
