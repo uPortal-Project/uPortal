@@ -131,7 +131,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 unmapped_user_agent = true;
-                log.debug("UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
+                if (log.isDebugEnabled())
+                    log.debug("UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
             }
         } catch (PortalException pe) {
             throw pe;
@@ -218,7 +219,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 unmapped_user_agent = true;
-                log.debug("UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
+                if (log.isDebugEnabled())
+                    log.debug("UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
             }
         } catch (PortalException pe) {
             throw pe;
@@ -258,7 +260,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     ulsdb.putUserPreferences(m_person, complete_up);
                     ulm.saveUserLayout();
                   }
-                log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
+                if (log.isDebugEnabled())
+                    log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
 
             } catch (Exception e) {
                 log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
@@ -304,7 +307,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
             complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot",
                                                                                   subId);
-            log.debug(
+            if (log.isDebugEnabled())
+                log.debug(
                            "UserPreferencesManager::processUserPreferencesParameters() : " +
                            "setting sfname \" userLayoutRoot" + "\"=\"" + subId + "\".");
         }
@@ -322,7 +326,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             for (int i = 0; i < sparams.length; i++) {
                 String pValue = req.getParameter(sparams[i]);
                 complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i], pValue);
-                log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i] + "\"=\"" + pValue + "\".");
+                if (log.isDebugEnabled())
+                    log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i] + "\"=\"" + pValue + "\".");
             }
         }
         String[] tparams = req.getParameterValues("uP_tparam");
@@ -330,7 +335,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             for (int i = 0; i < tparams.length; i++) {
                 String pValue = req.getParameter(tparams[i]);
                 complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i], pValue);
-                log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]+ "\"=\"" + pValue + "\".");
+                if (log.isDebugEnabled())
+                    log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]+ "\"=\"" + pValue + "\".");
             }
         }
         // attribute processing
@@ -344,7 +350,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting sfattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        if (log.isDebugEnabled())
+                            log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting sfattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -358,7 +365,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting scattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        if (log.isDebugEnabled())
+                            log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting scattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -373,7 +381,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        if (log.isDebugEnabled())
+                            log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }

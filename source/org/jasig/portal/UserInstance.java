@@ -355,7 +355,8 @@ public class UserInstance implements HttpSessionBindingListener {
                             CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
                             if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
                                 ccache_exists=true;
-                                log.debug("UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
+                                if (log.isDebugEnabled())
+                                    log.debug("UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
                                 // start channel threads
                                 for(int i=0;i<cCache.channelIds.size();i++) {
                                     String channelSubscribeId=(String) cCache.channelIds.get(i);
@@ -408,7 +409,8 @@ public class UserInstance implements HttpSessionBindingListener {
                             SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) this.systemCache.get(cacheKey);
                             if(cachedBuffer!=null) {
                                 // replay the buffer to channel incorporation filter
-                                log.debug("UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
+                                if (log.isDebugEnabled())
+                                    log.debug("UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
                                 // attach rendering buffer downstream of the cached buffer
                                 ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader)cachedBuffer,channelManager,ccaching);
                                 // attach channel incorporation filter downstream of the channel rendering buffer
@@ -451,7 +453,8 @@ public class UserInstance implements HttpSessionBindingListener {
                         for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
                             String pValue = (String)supTable.get(pName);
-                            log.debug("UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
+                            if (log.isDebugEnabled())
+                                log.debug("UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
                             sst.setParameter(pName, pValue);
                         }
 
@@ -501,7 +504,8 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         // Debug piece to print out the recorded pre-structure transformation XML
                         if (logXMLBeforeStructureTransformation) {
-                            log.debug("UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
+                            if (log.isDebugEnabled())
+                                log.debug("UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
                         }
 
                         // prepare for the theme transformation
@@ -514,7 +518,8 @@ public class UserInstance implements HttpSessionBindingListener {
                         for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
                             String pName = (String)e.nextElement();
                             String pValue = (String)tupTable.get(pName);
-                            log.debug("UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
+                            if (log.isDebugEnabled())
+                                log.debug("UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
                         }
                         tst.setParameter("uP_productAndVersion", Version.getProductAndVersion());
@@ -547,7 +552,8 @@ public class UserInstance implements HttpSessionBindingListener {
 
                             systemCache.put(cacheKey,newCache);
                             newCache.setOutputAtDocumentEnd(true);
-                            log.debug("UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
+                            if (log.isDebugEnabled())
+                                log.debug("UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
                         } else {
                             // attach channel incorporation filter downstream of the theme transformer
                             tsth.setResult(new SAXResult(cif));
@@ -558,7 +564,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         crb.clearBuffer();
 
                         // Debug piece to print out the recorded pre-theme transformation XML
-                        if (logXMLBeforeThemeTransformation) {
+                        if (logXMLBeforeThemeTransformation && log.isDebugEnabled()) {
                             log.debug("UserInstance::renderState() : XML incoming to the theme transformation :\n\n" + dbwr2.toString() + "\n\n");
                         }
 
@@ -573,7 +579,8 @@ public class UserInstance implements HttpSessionBindingListener {
                             } else {
                                 // record cache
                                 systemCharacterCache.put(cacheKey,ce);
-                                log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
+                                if (log.isDebugEnabled())
+                                    log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
 
                                 /*
                                   LogService.log(LogService.DEBUG,"Printing transformation cache system blocks:");
