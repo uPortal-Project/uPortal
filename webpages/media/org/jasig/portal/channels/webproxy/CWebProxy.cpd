@@ -55,19 +55,18 @@ Version $Revision$
 
       <parameter modify="publish-only">
         <name>cw_xml</name>
-        <label>Application URI</label>
+        <label>Application URI (cw_xml)</label>
         <type base="string" input="text" display="text">
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
-        <defaultValue></defaultValue>
         <example>http://localhost:8080/examples/jsp/num/numguess.jsp</example>
       </parameter>
 
       <parameter modify="publish-only">
         <name>cw_ssl</name>
-        <label>Application SSL</label>
-        <type base="string" input="text" display="hidden">
+        <label>Application SSL (cw_ssl)</label>
+        <type base="string" input="text" display="text">
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
@@ -75,41 +74,53 @@ Version $Revision$
       </parameter>
 
       <parameter modify="publish-only">
-        <name>cw_help</name>
-        <label>Help URI</label>
+        <name>cw_xslTitle</name>
+        <label>XSL Title (cw_xslTitle)</label>
         <type base="string" input="text" display="text">
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
-        <defaultValue></defaultValue>
-        <example></example>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_xsl</name>
+        <label>Application XSL (cw_xsl)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_help</name>
+        <label>Help URI (cw_help)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
       </parameter>
 
       <parameter modify="publish-only">
         <name>cw_info</name>
-        <label>Info URI</label>
+        <label>Info URI (cw_info)</label>
         <type base="string" input="text" display="text">
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
-        <defaultValue></defaultValue>
-        <example></example>
       </parameter>
 
       <parameter modify="publish-only">
         <name>cw_edit</name>
-        <label>Edit URI</label>
+        <label>Edit URI (cw_edit)</label>
         <type base="string" input="text" display="text">
                 <length>40</length>
                 <maxlength>2000</maxlength>
         </type>
-        <defaultValue></defaultValue>
-        <example></example>
       </parameter>
 
       <parameter modify="publish-only">
         <name>cw_tidy</name>
-        <label>Enable HTML Filter?</label>
+        <label>Enable HTML Filter? (cw_tidy)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
             <value default="true">off</value>
@@ -120,7 +131,7 @@ Version $Revision$
 
       <parameter modify="publish-only">
         <name>cw_passThrough</name>
-        <label>Pass-through Type</label>
+        <label>Pass-through Type (cw_passThrough)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
             <value default="true">none</value>
@@ -134,7 +145,7 @@ Version $Revision$
       <!-- added for cacheable CWebProxy -->
       <parameter modify="publish-only">
       	<name>cw_cacheDefaultTimeout</name>
-	<label>Default Cache Timeout (in seconds)</label>
+	<label>Default Cache Timeout (in seconds) (cw_cacheDefaultTimeout)</label>
         <type base="string" input="text" display="text">
           <length>7</length>
           <maxlength>10</maxlength>
@@ -144,7 +155,7 @@ Version $Revision$
 
       <parameter modify="publish-only">
         <name>cw_cacheDefaultMode</name>
-	<label>Default Cache Mode</label>
+	<label>Default Cache Mode (cw_cacheDefaultMode)</label>
 	<type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
 	    <value default="true">none</value>
@@ -155,17 +166,16 @@ Version $Revision$
 
       <parameter modify="publish-only">
         <name>cw_cacheTimeout</name>
-	<label>Cache Timeout for initial request only</label>
+	<label>Cache Timeout for initial request only (cw_cacheTimeout)</label>
 	<type base="string" input="text" display="text">
 	  <length>7</length>
 	  <maxlength>10</maxlength>
 	</type>
-	<defaultValue></defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
         <name>cw_cacheMode</name>
-	<label>Cache Mode for initial request only</label>
+	<label>Cache Mode for initial request only (cw_cacheMode)</label>
 	<type base="string" input="single-choice" display="drop-down">
 	  <restriction type="enumeration">
 	    <value default="true"></value>
@@ -177,34 +187,32 @@ Version $Revision$
 
       <parameter modify="publish-only">
         <name>cw_person</name>
-	<label>Default IPerson Attributes to Pass</label>
+	<label>Default IPerson Attributes to Pass (cw_person)</label>
 	<type base="string" input="text" display="text">
 	  <length>40</length>
 	  <maxlength>500</maxlength>
 	</type>
-	<defaultValue></defaultValue>
 	<example>uid,eduPersonPrimaryAffiliation</example>
       </parameter>
 
       <parameter modify="publish-only">
         <name>cw_personAllow</name>
-	<label>Restrict IPerson Attributes Passing to These</label>
+	<label>Restrict IPerson Attributes Passing to These (cw_personAllow)</label>
 	<type base="string" input="text" display="text">
 	  <length>40</length>
 	  <maxlength>500</maxlength>
 	</type>
-	<defaultValue></defaultValue>
 	<example>uid,eduPersonNickName,cn,eduPersonPrimaryAffiliation</example>
       </parameter>
 
       <parameter modify="publish-only">
         <name>upc_localConnContext</name>
-        <label>Class name of the LocalConnectionContext implementation (optional)</label>
+        <label>LocalConnectionContext implementation (upc_localConnContext)</label>
         <type base="string" input="text" display="text">
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
-        <defaultValue></defaultValue>
+        <example>org.jasig.portal.security.provider.CasConnectionContext</example>
       </parameter>
 
     </step>
