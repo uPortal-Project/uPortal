@@ -186,7 +186,7 @@
   cos.jar              Servlet support classes including file upload package
                        MultipartRequest and MultipartParser. Used by the portal
                        to make file uploads possible.
-                       Version: 27May2002
+                       Version: 05Nov2002
                        URL: http://www.servlets.com/cos/
 
   oro.jar              A set of text-processing Java classes that provide Perl5
@@ -245,7 +245,12 @@
                        more robust like Oracle or PostgreSQL.
                        Version: (depends on your database)
                        URL: (depends on your database)
-
+                       
+  junit.jar            JUnit is a regression testing framework.  It is used 
+                       to implement unit tests in Java.
+                       Version: 3.8.1
+                       URL: http://www.junit.org/                       
+                       
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
@@ -267,6 +272,7 @@
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
+  <property name="junit.jar" value="(set this in build.properties!)"/>
 
 
 <!-- ==================== Compilation Classpath =========================== -->
