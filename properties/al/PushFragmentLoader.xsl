@@ -48,12 +48,12 @@
 								<xsl:value-of select="@id"/>
 							</value>
 						</column>
-<!-- owner id is not being currently used
 						<column>
 							<name>OWNER_ID</name>
-							<value>1</value>
+							<value>
+								<xsl:value-of select="@owner"/>
+							</value>
 						</column>
--->
 
                                                 <column>
 							<name>PUSHED_FRAGMENT</name>

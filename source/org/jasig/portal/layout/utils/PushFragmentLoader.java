@@ -295,15 +295,16 @@ public class PushFragmentLoader {
      *
      */
     private static class ConfigFilter extends SAX2FilterImpl {
-        Map rMap;
-        boolean groupMode=false;
-        AttributesImpl groupAtts;
-        String groupLocalName;
-        String groupUri;
-        String groupData=null;
+        private Map rMap;
+        private boolean groupMode=false;
+        private AttributesImpl groupAtts;
+        private String groupLocalName;
+        private String groupUri;
+        private String groupData=null;
         private Map fragmentIds;
         private static IAggregatedUserLayoutStore layoutStore = null;
         private static IChannelRegistryStore channelStore = null;
+        private static String adminId = null;
 
         public ConfigFilter(ContentHandler ch,Map rMap) throws PortalException {
             super(ch);
@@ -319,6 +320,19 @@ public class PushFragmentLoader {
              channelStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
         }
 
+        private String getAdminId() throws Exception {
+           if ( adminId == null ) {
+           	Connection con = RDBMServices.getConnection();
+           	ResultSet rs = con.createStatement().executeQuery("SELECT USER_ID FROM UP_USER WHERE USER_NAME='admin'");
+           	if ( rs.next() )
+           	  adminId = rs.getString(1);
+           	rs.close();
+           	con.close();
+           }
+           return adminId;
+        }
+        
+        
         public Set getFragmentNames() {
            return fragmentIds.keySet();
         }
@@ -353,7 +367,8 @@ public class PushFragmentLoader {
               if ( !fragmentIds.containsKey(name) )
                 fragmentIds.put(name,id);
               ai.addAttribute(uri,"id","id","CDATA",id);
-             } catch ( PortalException pe ) {
+              ai.addAttribute(uri,"owner","owner","CDATA",getAdminId());
+             } catch ( Exception pe ) {
                  throw new SAXException(pe.getMessage());
                }
             } // Getting the channel ID by the fname
