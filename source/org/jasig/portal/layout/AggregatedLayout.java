@@ -81,7 +81,6 @@ public class AggregatedLayout implements IAggregatedLayout {
   private void bindRestrictions( IALNodeDescription nodeDesc, ContentHandler contentHandler ) throws SAXException {
       Hashtable restrictions = nodeDesc.getRestrictions();
       if ( restrictions != null ) {
-       System.out.println ( "restr="+restrictions );	
        for ( Enumeration e = restrictions.elements(); e.hasMoreElements(); ) {
         IUserLayoutRestriction restriction = (IUserLayoutRestriction ) e.nextElement();
          AttributesImpl paramAttrs = new AttributesImpl();

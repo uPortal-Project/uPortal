@@ -1428,9 +1428,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             newNode = new ALFolder((IALFolderDescription)nodeDesc);
         } else
             newNode = layout.getLayoutNode(newNodeId);
-
-        return restrictionManager.checkAddRestrictions(newNode,parentId,nextSiblingId)?
-     		    changeSiblingNodesPriorities(newNode,parentId,nextSiblingId):false;
+        
+        boolean result = restrictionManager.checkAddRestrictions(newNode,parentId,nextSiblingId);
+        return ( result && newNodeId != null ) ? changeSiblingNodesPriorities(newNode,parentId,nextSiblingId):result;
     }
 
     public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {

@@ -203,10 +203,6 @@ public class ALRestrictionManager implements IALRestrictionManager {
             return false;
      }
 
-      // Checking sibling nodes order in the line where the node is being moved to
-      //String firstChildId = newParentNode.getFirstChildNodeId();
-      //return (firstChildId!=null)?changeSiblingNodesPriorities(firstChildId):true;
-      //return changeSiblingNodesPriorities(node,newParentId,nextSiblingId);
      return true;
 
     } else
