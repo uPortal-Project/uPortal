@@ -196,7 +196,7 @@
 
   axis.jar             Web services support. Axis is the next generation of the
                        Apache SOAP project which itself followed IBM's SOAP4J.
-                       Version: beta3
+                       Version: 1.0
                        URL: http://xml.apache.org/axis/
 
   jaxrpc.jar           Java API for XML-Based RPC - needed for Axis.
@@ -215,15 +215,18 @@
                        Version: (depends on Axis version)
                        URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
 
+  commons-discovery.jar  
+                       The Discovery component, from the Apache Commons project, 
+                       is about discovering, or finding, implementations for 
+                       pluggable interfaces - needed for Axis. 
+                       Use the version that comes with Axis.
+                       Version: (depends on Axis version)
+                       URL: http://jakarta.apache.org/commons/discovery.html                       
+                       
   commons-logging.jar  Logging components from the Apache Commons project - needed
                        for Axis. Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://jakarta.apache.org/commons/logging.html
-
-  tt-bytecode.jar      A library for creating and manipulating java bytecode - needed
-                       for Axis. Use the version that comes with Axis.
-                       Version: (depends on Axis version)
-                       URL: http://tt-bytecode.sourceforge.net
 
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
@@ -259,8 +262,8 @@
   <property name="jaxrpc.jar" value="(set this in build.properties!)"/>
   <property name="saaj.jar" value="(set this in build.properties!)"/>
   <property name="wsdl4j.jar" value="(set this in build.properties!)"/>
+  <property name="commons-discovery.jar" value="(set this in build.properties!)"/>
   <property name="commons-logging.jar" value="(set this in build.properties!)"/>
-  <property name="tt-bytecode.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
@@ -296,8 +299,8 @@
     <pathelement location="${jaxrpc.jar}"/>
     <pathelement location="${saaj.jar}"/>
     <pathelement location="${wsdl4j.jar}"/>
+    <pathelement location="${commons-discovery.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
-    <pathelement location="${tt-bytecode.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${jdbc2_0-stdext.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
@@ -435,8 +438,8 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jaxrpc.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${saaj.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-discovery.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${tt-bytecode.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
 
