@@ -76,16 +76,17 @@ public class PropertiesManager {
   }
   
   /**
-   * Returns the value of a property for a given name.
+   * Returns the value of a property for a given name. A runtime exception is
+   * throws in the property cannot be found
    * @param name the name of the requested property
-   * @return value the value of the property matching the requested name, <code>null</code> if proeprty doesn't exist
+   * @return value the value of the property matching the requested name
    */
   public static String getProperty(String name) {
     String val = props.getProperty(name);
     if (val == null)
       throw new RuntimeException("Property " + name + " not found!");
     return val;
-  }
+  }    
   
   /**
    * Returns the value of a property for a given name.
@@ -97,9 +98,9 @@ public class PropertiesManager {
    * @param name the name of the requested property
    * @return value <code>true</code> if property is set to "true", "yes", "y", or "on" regardless of case, otherwise <code>false</code>
    */
-  public static boolean getBooleanProperty(String name) {
+  public static boolean getPropertyAsBoolean(String name) {
     boolean retValue = false;
-    String value = props.getProperty(name);
+    String value = getProperty(name);
     if (value != null) {
       if (value.equalsIgnoreCase("true") ||
           value.equalsIgnoreCase("yes") ||
@@ -109,6 +110,60 @@ public class PropertiesManager {
     }
     return retValue;
   }  
+  
+  /**
+   * Returns the value of a property for a given name as a <code>byte</code>
+   * @param name the name of the requested property
+   * @return value the property's value as a <code>byte</code>
+   */
+  public static byte getPropertyAsByte(String name) {
+    return Byte.parseByte(getProperty(name));
+  }   
+ 
+  /**
+   * Returns the value of a property for a given name as a <code>short</code>
+   * @param name the name of the requested property
+   * @return value the property's value as a <code>short</code>
+   */
+  public static short getPropertyAsShort(String name) {
+    return Short.parseShort(getProperty(name));
+  }  
+  
+  /**
+   * Returns the value of a property for a given name as an <code>int</code>
+   * @param name the name of the requested property
+   * @return value the property's value as an <code>int</code>
+   */
+  public static int getPropertyAsInt(String name) {
+    return Integer.parseInt(getProperty(name));
+  }   
+  
+  /**
+   * Returns the value of a property for a given name as a <code>long</code>
+   * @param name the name of the requested property
+   * @return value the property's value as a <code>long</code>
+   */
+  public static long getPropertyAsLong(String name) {
+    return Long.parseLong(getProperty(name));
+  }   
+  
+  /**
+   * Returns the value of a property for a given name as a <code>float</code>
+   * @param name the name of the requested property
+   * @return value the property's value as a <code>float</code>
+   */
+  public static float getPropertyAsFloat(String name) {
+    return Float.parseFloat(getProperty(name));
+  }     
+  
+  /**
+   * Returns the value of a property for a given name as a <code>long</code>
+   * @param name the name of the requested property
+   * @return value the property's value as a <code>long</code>
+   */
+  public static double getPropertyAsDouble(String name) {
+    return Double.parseDouble(getProperty(name));
+  }     
 }
 
 
