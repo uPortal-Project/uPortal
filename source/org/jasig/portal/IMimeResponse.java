@@ -75,7 +75,7 @@ public interface IMimeResponse {
     public Map getHeaders();
 
     /**
-     * Let the channel now that there were problems with the download
+     * Let the channel know that there were problems with the download
      *
      * @param e
      */

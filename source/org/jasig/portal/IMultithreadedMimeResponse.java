@@ -76,8 +76,7 @@ public interface IMultithreadedMimeResponse {
     public Map getHeaders (String uid);
 
     /**
-     * Let the channel now that there were problems with the download
-     *
+     * Let the channel know that there were problems with the download
      * @param e
      */
     public void reportDownloadError(Exception e);
