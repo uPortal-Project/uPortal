@@ -34,7 +34,7 @@ import org.xml.sax.ContentHandler;
  *
  * @author Ken Weiner, kweiner@unicon.net
  * @author Yuji Shinozaki, ys2n@virginia.edu
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 public class CPersonAttributes extends BaseMultithreadedChannel implements IMultithreadedMimeResponse {
   private static final Log log = LogFactory.getLog(CPersonAttributes.class);
@@ -65,8 +65,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
       if (person.getAttributeValues(attName) != null) {
         Object[] values = person.getAttributeValues(attName);
         for (int i = 0; i < values.length; i++) {
-           log.debug("type of value["+i+"] is ...");
-           log.debug(values[i].getClass().getName());
+           log.trace("type of value["+i+"] is " + values[i].getClass().getName());
            String value = values[i].toString();
            Element valueE = doc.createElement("value");
            valueE.appendChild(doc.createTextNode(value));
