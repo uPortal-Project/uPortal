@@ -57,6 +57,7 @@
 framework?</a> 
 <dt><a href="#2_4">Will uPortal run on all platforms?</a> 
 <dt><a href="#2_5">What differentiates uPortal from other portal solutions?</a> 
+<dt><a href="#2_6">Does uPortal support Portlets (JSR-168) and WSRP?</a> 
 </dl>
 <br/>
 
@@ -69,6 +70,7 @@ instance?</a>
 <dt><a href="#3_3">Does uPortal support single-sign on?</a> 
 <dt><a href="#3_4">Does uPortal support LDAP authentication?</a> 
 <dt><a href="#3_5">Why doesn't uPortal use JAAS for authentication and/or authorization?</a> 
+<dt><a href="#3_6">How do I upgrade from one version of uPortal to another?</a> 
 </dl>
 <br/>
 <dt><a href="#4_0">Developing your campus portal</a> 
@@ -176,6 +178,27 @@ don't have to run advertising in your portal, but if you wish to, your campus
 can keep the revenue produced. Last but not least, uPortal is also available free 
 to member universities, most commercial portal "solutions" cost upwards of $50,000 
 per year for a typical campus' license.</p>
+<li>
+  <b>Does uPortal support Portlets (JSR-168) and WSRP?<a name="2_6"></a></b>
+  <p>
+    <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsrp">
+    Web Services for Remote Portlets (WSRP)</a> is supported by uPortal as of
+    uPortal 2.2.  The WSRP Proxy channel type replaces the Remote Channel
+    that was introduced in uPortal 2.1.  This WSRP Proxy acts as a WSRP
+    consumer that can consume content from any WSRP producer, including
+    another uPortal channel.  uPortal 2.2 also implements WSRP as a producer.
+    Note that as of uPortal 2.2, WSRP authentication is not supported.
+  </p>
+  <p>
+    uPortal will support <a href="http://www.jcp.org/en/jsr/detail?id=168">
+    JSR-168 Portlets</a> in uPortal 2.3 through a Portlet-to-Channel
+    adapter.  The Portlets will be managed by Apache's 
+    <a href="http://jakarta.apache.org/pluto/">Pluto</a> portlet container.
+    Beginning in uPortal 3.0, Portlets will become uPortal's native content
+    module, replacing the Channel.  Support for IChannel's will continue though a 
+    Channel-to-Portlet adapter.
+  </p>
+</li>
 </ol>
 <h4>Deploying, administering and maintaining your portal<a name="3_0"></a></h4>
 <ol>
@@ -236,6 +259,18 @@ implementation of single sign-on in uPortal until Sun publishes a later revision
 of the JAAS specification which decouples them. Perhaps in the future JAAS could 
 provide uPortal with security services, but in it's current state it does not 
 have the flexibility nor the functionality to be incorporated well into uPortal.</p>
+<li>
+  <b>How do I upgrade from one version of uPortal to another?<a name="3_6"></a></b>
+  <p>
+    uPortal 2.1 comes with a database upgrade tool.  See <code>convert.xml</code> which is
+    an Ant build file that contains upgrade targets.  Unfortunately, there is not yet
+    a similar tool to help upgrade an existing uPortal installation to uPortal 2.2.
+    The project desperately needs a volunteer to write such a tool.  If you are interested,
+    please email 
+    <a href="mailto:kweiner@unicon.net?subject=I would like to volunteer to write a uPortal 2.2 upgrade tool">
+    Ken Weiner</a>.
+  </p>
+</li>
 </ol>
 <h4>Developing your campus portal<a name="4_0"></a> </h4>
 <ol>
