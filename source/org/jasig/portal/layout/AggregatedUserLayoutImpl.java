@@ -393,7 +393,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     if ( !(parentNode.getNodeType()==IUserLayoutNodeDescription.FOLDER ) )
       throw new PortalException ("The target parent node should be a folder!");
 
-    if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
+    if ( !checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") ) {
 
 
      // Checking children related restrictions
@@ -443,8 +443,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     ALNode oldParentNode = getLayoutNode(node.getParentNodeId());
     ALNode newParentNode = getLayoutNode(newParentId);
 
-    if ( checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") &&
-         checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
+    if ( !checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") &&
+         !checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") ) {
 
      if ( !oldParentNode.equals(newParentNode) ) {
       // Checking children related restrictions
@@ -1093,7 +1093,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
           IALNodeDescription nodeDesc = layoutNode.getNodeDescription();
           Element markingMoveLeaf = null, markingAddLeaf = null;
 
-          Element newNode = domLayout.createElement((node.getNodeType()==IUserLayoutNodeDescription.FOLDER)?FOLDER:CHANNEL);
+          Element newNode = domLayout.createElement((layoutNode.getNodeType()==IUserLayoutNodeDescription.FOLDER)?FOLDER:CHANNEL);
 
           layoutNode.addNodeAttributes(newNode);
 
@@ -1169,10 +1169,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       nodeDesc.setId(nodeId);
       nodeDesc.setName(node.getAttribute("name"));
       nodeDesc.setFragmentId(node.getAttribute("fragmentID"));
-      nodeDesc.setHidden((node.getAttribute("hidden").equalsIgnoreCase("true"))?true:false);
-      nodeDesc.setImmutable((node.getAttribute("immutable").equalsIgnoreCase("true"))?true:false);
-      nodeDesc.setUnremovable((node.getAttribute("unremovable").equalsIgnoreCase("true"))?true:false);
-      nodeDesc.setHidden((node.getAttribute("hidden").equalsIgnoreCase("true"))?true:false);
+      nodeDesc.setHidden(CommonUtils.strToBool(node.getAttribute("hidden")));
+      nodeDesc.setImmutable(CommonUtils.strToBool(node.getAttribute("immutable")));
+      nodeDesc.setUnremovable(CommonUtils.strToBool(node.getAttribute("unremovable")));
+      nodeDesc.setHidden(CommonUtils.strToBool(node.getAttribute("hidden")));
 
 
       ALNode layoutNode = null;
@@ -1219,9 +1219,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         channelDesc.setChannelTypeId(node.getAttribute("typeID"));
         channelDesc.setClassName(node.getAttribute("class"));
         channelDesc.setDescription(node.getAttribute("description"));
-        channelDesc.setEditable((node.getAttribute("editable").equalsIgnoreCase("true"))?true:false);
-        channelDesc.setHasAbout((node.getAttribute("hasAbout").equalsIgnoreCase("true"))?true:false);
-        channelDesc.setHasHelp((node.getAttribute("hasHelp").equalsIgnoreCase("true"))?true:false);
+        channelDesc.setEditable(CommonUtils.strToBool(node.getAttribute("editable")));
+        channelDesc.setHasAbout(CommonUtils.strToBool(node.getAttribute("hasAbout")));
+        channelDesc.setHasHelp(CommonUtils.strToBool(node.getAttribute("hasHelp")));
         channelDesc.setFunctionalName(node.getAttribute("fname"));
         channelDesc.setTimeout(Long.parseLong(node.getAttribute("timeout")));
         channelDesc.setTitle(node.getAttribute("title"));
@@ -1635,7 +1635,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         if ( !nodeId.equals(currentNodeDesc.getId()) ) return false;
 
         // Checking the immutable node restriction
-        if ( !checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") )
+        if ( checkRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,"true") )
             return false;
         // Checking the immutable parent node related restriction
         if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"children","true") )
