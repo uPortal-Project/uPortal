@@ -244,7 +244,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         String sQuery = "INSERT INTO UP_SS_STRUCT (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("
             + id + ",'" + ssd.getStylesheetName() + "','" + ssd.getStylesheetURI() + "','" + ssd.getStylesheetDescriptionURI()
             + "','" + ssd.getStylesheetWordDescription() + "')";
-        log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // insert all stylesheet params
         for (Enumeration e = ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
@@ -252,7 +253,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
               + "',1)";
-          log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all folder attributes
@@ -261,7 +263,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
               + "',2)";
-          log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all channel attributes
@@ -270,7 +273,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
               + "',3)";
-          log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
@@ -309,7 +313,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             + "','" + tsd.getStylesheetWordDescription() + "'," + tsd.getStructureStylesheetId() + ",'" + tsd.getSamplePictureURI()
             + "','" + tsd.getSampleIconURI() + "','" + tsd.getMimeType() + "','" + tsd.getDeviceType() + "','" + tsd.getSerializerName()
             + "','" + tsd.getCustomUserPreferencesManagerClass() + "')";
-        log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // insert all stylesheet params
         for (Enumeration e = tsd.getStylesheetParameterNames(); e.hasMoreElements();) {
@@ -317,7 +322,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
               ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
               + "',1)";
-          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all channel attributes
@@ -326,7 +332,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
               ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
               + "',3)";
-          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
@@ -373,10 +380,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
       sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
       sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
-      log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : setting mimetype=\""
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : setting mimetype=\""
           + sssd.getMimeType() + "\"");
       sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
-      log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : setting serializerName=\""
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : setting serializerName=\""
           + sssd.getSerializerName() + "\"");
       sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
       sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
@@ -387,9 +396,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
       updateThemeStylesheetDescription(sssd);
     } catch (Exception e) {
-      log.debug("Exception updating theme stylesheet description=" +
-            "[" + stylesheetDescriptionURI + "] stylesheetUri=["+ stylesheetURI +
-            "] stylesheetId=["+ stylesheetId + "]", e);
+        if (log.isDebugEnabled())
+            log.debug("Exception updating theme stylesheet description=" +
+                    "[" + stylesheetDescriptionURI + "] stylesheetUri=["+ stylesheetURI +
+                    "] stylesheetId=["+ stylesheetId + "]", e);
       return  false;
     }
     return  true;
@@ -423,8 +433,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       updateStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
-      log.debug("Exception updating structure stylesheet description " +
-            "stylesheetDescriptionUri=[" + stylesheetDescriptionURI + "]" +
+        if (log.isDebugEnabled())
+            log.debug("Exception updating structure stylesheet description " +
+                    "stylesheetDescriptionUri=[" + stylesheetDescriptionURI + "]" +
                     " stylesheetUri=[" + stylesheetURI +
                     "] stylesheetId=" + stylesheetId , e);
       return  false;
@@ -462,8 +473,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  addStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
-      log.debug("Error adding stylesheet: " +
-            "description Uri=[" + stylesheetDescriptionURI + "] " +
+        if (log.isDebugEnabled())
+            log.debug("Error adding stylesheet: " +
+                    "description Uri=[" + stylesheetDescriptionURI + "] " +
                     "stylesheetUri=[" + stylesheetURI + "]", e);
     }
     return  null;
@@ -480,8 +492,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     // need to read iN the description file to obtain information such as name, word description and mime type list
     try {
       Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
-      log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : stylesheet name = " + this.getName(stylesheetDescriptionXML));
-      log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : stylesheet description = " + this.getDescription(stylesheetDescriptionXML));
+      if (log.isDebugEnabled()){
+          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : stylesheet name = " + this.getName(stylesheetDescriptionXML));
+          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : stylesheet description = " + this.getDescription(stylesheetDescriptionXML));
+      }
       String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
       // should thrown an exception
       if (ssName == null)
@@ -500,11 +514,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
       sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
       sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
-      log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : setting mimetype=\""
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : setting mimetype=\""
           + sssd.getMimeType() + "\"");
       sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
-      log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : setting serializerName=\""
-          + sssd.getSerializerName() + "\"");
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : setting serializerName=\""
+                  + sssd.getSerializerName() + "\"");
       sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
       sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
       sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML, "sampleIconURI"));
@@ -517,9 +533,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  addThemeStylesheetDescription(sssd);
 
     } catch (Exception e) {
-      log.debug("Exception adding theme stylesheet description " +
-              "description uri=[" + stylesheetDescriptionURI + "] " +
-              "stylesheet uri=[" + stylesheetURI + "]", e);
+        if (log.isDebugEnabled())
+                log.debug("Exception adding theme stylesheet description " +
+                        "description uri=[" + stylesheetDescriptionURI + "] " +
+                        "stylesheet uri=[" + stylesheetURI + "]", e);
     }
     return  null;
   }
@@ -543,7 +560,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         String sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
             + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
             + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
-        log.debug("RDBMUserLayoutStore::addUserProfile(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::addUserProfile(): " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -627,21 +645,25 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
 
         // remove profile mappings
         sQuery= "DELETE FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
 
         // remove parameter information
         sQuery= "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
 
         sQuery= "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
 
       } finally {
@@ -695,7 +717,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPE A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
-        log.debug("RDBMUserLayoutStore::getMimeTypeList() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getMimeTypeList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           Hashtable list = new Hashtable();
@@ -749,7 +772,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       try {
         String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
         for (int i = 0; i < 25; i++) {
-          log.debug("RDBMUserLayoutStore::getNextStructId(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           int currentStructId;
           try {
@@ -762,7 +786,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           try {
             String sUpdate = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + userId + " AND NEXT_STRUCT_ID="
                 + currentStructId;
-            log.debug("RDBMUserLayoutStore::getNextStructId(): " + sUpdate);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sUpdate);
             stmt.executeUpdate(sUpdate);
             RDBMServices.commit(con);
             return  prefix + nextStructId;
@@ -816,7 +841,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       }
       sQuery += " USS.SS_ID=" + stylesheetId;
 
-      log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (rs.next()) {
@@ -832,7 +858,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
-          log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
         }
 
@@ -858,8 +885,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             ssd.addChannelAttribute(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
           }
           else {
-            log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
+                          + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
           }
           if (RDBMServices.supportsOuterJoins && !rs.next()) {
             break;
@@ -919,7 +947,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT A.SS_ID FROM UP_SS_STRUCT A, UP_SS_THEME B WHERE B.MIME_TYPE='" + mimeType + "' AND B.STRUCT_SS_ID=A.SS_ID";
-        log.debug("RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -951,6 +980,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           Statement stmt = con.createStatement();
           try {
               String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT";
+              if (log.isDebugEnabled())
                   log.debug("RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               try {
@@ -989,7 +1019,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
-          log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
@@ -1001,7 +1032,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1";
-        log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1029,7 +1061,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // get user preferences
         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID";
-        log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1098,7 +1131,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         sQuery += " FROM UP_SS_THEME UTS WHERE";
       }
       sQuery += " UTS.SS_ID=" + stylesheetId;
-      log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (rs.next()) {
@@ -1125,7 +1159,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
-          log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
         }
         while (true) {
@@ -1206,7 +1241,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE STRUCT_SS_ID=" + structureStylesheetId;
-        log.debug("RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1238,7 +1274,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SS_ID FROM UP_SS_THEME";
-        log.debug("RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1274,7 +1311,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
-          log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
@@ -1286,7 +1324,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1310,7 +1349,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // get user preferences
         sQuery = "SELECT PARAM_TYPE, PARAM_NAME, PARAM_VAL, ULS.STRUCT_ID, CHAN_ID FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID";
-        log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1376,7 +1416,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  this.getTextChildNodeValue(name);
     }
     else {
-      log.debug("RDBMUserLayoutStore::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
       return  null;
     }
   }
@@ -1396,7 +1437,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  this.getTextChildNodeValue(name);
     }
     else {
-      log.debug("RDBMUserLayoutStore::getRootElementTextValue() : no \"" + elementName + "\" element was found under the \"stylesheetdescription\" node!");
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getRootElementTextValue() : no \"" + elementName + "\" element was found under the \"stylesheetdescription\" node!");
       return  null;
     }
   }
@@ -1415,7 +1457,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  this.getTextChildNodeValue(description);
     }
     else {
-      log.debug("RDBMUserLayoutStore::getDescription() : no \"description\" element was found under the \"stylesheetdescription\" node!");
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getDescription() : no \"description\" element was found under the \"stylesheetdescription\" node!");
       return  null;
     }
   }
@@ -1452,8 +1495,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               }
             }
           }
-          log.debug("RDBMUserLayoutStore::populateParameterTable() : adding a stylesheet parameter : (\""
-              + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::populateParameterTable() : adding a stylesheet parameter : (\""
+                      + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
           csd.addStylesheetParameter(name, defaultvalue, description);
         }
       }
@@ -1493,8 +1537,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               }
             }
           }
-          log.debug("RDBMUserLayoutStore::populateFolderAttributeTable() : adding a stylesheet folder attribute : (\""
-              + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::populateFolderAttributeTable() : adding a stylesheet folder attribute : (\""
+                      + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
           cxsd.addFolderAttribute(name, defaultvalue, description);
         }
       }
@@ -1533,8 +1578,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               }
             }
           }
-          log.debug("RDBMUserLayoutStore::populateChannelAttributeTable() : adding a stylesheet channel attribute : (\""
-              + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::populateChannelAttributeTable() : adding a stylesheet channel attribute : (\""
+                      + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
           cxsd.addChannelAttribute(name, defaultvalue, description);
         }
       }
@@ -1585,7 +1631,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         pstmt.setInt(1, userId);
         pstmt.setString(2, userAgent);
 
-        log.debug("RDBMUserLayoutStore::getUserBrowserMapping(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getUserBrowserMapping(): " + sQuery);
         ResultSet rs = pstmt.executeQuery();
         try {
           if (rs.next()) {
@@ -1634,7 +1681,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
        if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-          log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
@@ -1646,7 +1694,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
           // Make sure the next struct id is set in case the user adds a channel
           sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-          log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
           int nextStructId;
           rs = stmt.executeQuery(sQuery);
           try {
@@ -1662,7 +1711,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             // But never make the existing value SMALLER, change it only to make it LARGER
             // (so, get existing value)
             sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
-            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
             rs = stmt.executeQuery(sQuery);
             try {
               rs.next();
@@ -1674,7 +1724,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
           if (nextStructId > realNextStructId) {
             sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
-            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
 
@@ -1693,7 +1744,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         //the layout is searched for again. This loop should only ever loop once.
         do {
             String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
             rs = stmt.executeQuery(sQuery);
             try {
               if (rs.next()) {
@@ -1720,7 +1772,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
             }
             sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
-            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
             rs = stmt.executeQuery(sql);
 
             //check for rows in the result set
@@ -1733,7 +1786,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
                 //Get the default user ID and layout ID
                 sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
                 rs = stmt.executeQuery(sQuery);
                 try {
                   rs.next();
@@ -1838,7 +1892,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             " AND LAYOUT_ID=" + layoutId +
             " AND CHAN_ID IN (" + structChanIds.toString() + ") ORDER BY STRUCT_ID";
 
-          log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
           StringBuffer structIdsSB = new StringBuffer( "" );
           String sep = "";
           rs = stmt.executeQuery(sql);
@@ -1855,7 +1910,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
           sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structIdsSB.toString() + ") ORDER BY STRUCT_ID";
-          log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
           rs = stmt.executeQuery(sql);
           try {
             if (rs.next()) {
@@ -1880,9 +1936,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           createLayout(layoutStructure, doc, root, firstStructId);
           layoutStructure.clear();
 
-          long stopTime = System.currentTimeMillis();
-          log.debug("RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
-            (stopTime - startTime) + " milliseconds to create");
+          if (log.isDebugEnabled()) {
+              long stopTime = System.currentTimeMillis();
+              log.debug("RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
+                (stopTime - startTime) + " milliseconds to create");
+          }
+        
           doc.appendChild(root);
 
           if (DEBUG > 1) {
@@ -1909,7 +1968,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
             + userId + " AND PROFILE_ID=" + profileId;
-        log.debug("RDBMUserLayoutStore::getUserProfileById(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getUserProfileById(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
@@ -1955,7 +2015,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
             + userId;
-        log.debug("RDBMUserLayoutStore::getUserProfileList(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::getUserProfileList(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2000,12 +2061,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       String sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId + " AND TYPE=3 AND PARAM_NAME='" + pName
           + "'";
-      log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=3 AND PARAM_NAME='"
           + pName + "'";
-      log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2023,12 +2086,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       String sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId + " AND TYPE=2 AND PARAM_NAME='" + pName
           + "'";
-      log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=2 AND PARAM_NAME='"
           + pName + "'";
-      log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2042,7 +2107,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       try {
         // detele all associated theme stylesheets
         String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE STRUCT_SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2052,11 +2118,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
         }
         sQuery = "DELETE FROM UP_SS_STRUCT WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // delete params
         sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         RDBMServices.commit(con);
       } catch (Exception e) {
@@ -2082,12 +2150,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       String sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId + " AND TYPE=1 AND PARAM_NAME='" + pName
           + "'";
-      log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=1 AND PARAM_NAME='"
           + pName + "'";
-      log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2105,12 +2175,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       String sQuery = "DELETE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId + " AND TYPE=3 AND PARAM_NAME='" + pName
           + "'";
-      log.debug("RDBMUserLayoutStore::removeThemeChannelAttribute() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeThemeChannelAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=3 AND PARAM_NAME='"
           + pName + "'";
-      log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2123,16 +2195,19 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_SS_THEME WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // delete params
         sQuery = "DELETE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
 
         // nuke all of the profiles that use it
         sQuery = "SELECT USER_ID,PROFILE_ID FROM UP_USER_PROFILE WHERE THEME_SS_ID="+stylesheetId;
-        log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
             while (rs.next()) {
@@ -2144,10 +2219,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         // clean up user preferences - directly ( in case of loose params )
         sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
 
 
@@ -2175,12 +2252,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       String sQuery = "DELETE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId + " AND TYPE=1 AND PARAM_NAME='" + pName
           + "'";
-      log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=1 AND PARAM_NAME='"
           + pName + "'";
-      log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
+      if (log.isDebugEnabled())
+          log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2231,7 +2310,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
     structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
 
-    log.debug("RDBMUserLayoutStore::saveStructure(): " + structStmt);
+    if (log.isDebugEnabled())
+        log.debug("RDBMUserLayoutStore::saveStructure(): " + structStmt);
     structStmt.executeUpdate();
 
     NodeList parameters = node.getChildNodes();
@@ -2257,7 +2337,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               parmStmt.setInt(1, saveStructId);
               parmStmt.setString(2, nodeName);
               parmStmt.setString(3, nodeValue);
-              log.debug("RDBMUserLayoutStore::saveStructure(): " + parmStmt);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::saveStructure(): " + parmStmt);
               parmStmt.executeUpdate();
             }
           }
@@ -2287,7 +2368,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           // see if the parameter was already there
           String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
-          log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
@@ -2302,12 +2384,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           }
           rs.close();
           rs = null;
-          log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
 
         String sSql = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId;
-        log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sSql);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sSql);
         stmt.executeUpdate(sSql);
 
         // write out folder attributes
@@ -2321,7 +2405,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=2";
-              log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -2337,7 +2422,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               }
               rs.close();
               rs = null;
-              log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -2353,7 +2439,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
-              log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -2369,7 +2456,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               }
               rs.close();
               rs = null;
-              log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -2407,7 +2495,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
           //Check to see if the user has a matching layout
           String sSql = "SELECT * FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
-          log.debug("RDBMUserLayoutStore::setUserLayout(): " + sSql);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::setUserLayout(): " + sSql);
           ResultSet rs = stmt.executeQuery(sSql);
 
           try {
@@ -2417,7 +2506,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                   int defaultUserId;
 
                   String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
-                  log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+                  if (log.isDebugEnabled())
+                      log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
 
                   ResultSet rs2 = stmt.executeQuery(sQuery);
                   try {
@@ -2430,7 +2520,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
                   // Add to UP_USER_LAYOUT
                   sQuery =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + defaultUserId;
-                  log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+                  if (log.isDebugEnabled())
+                      log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
 
                   rs2 = stmt.executeQuery(sQuery);
 
@@ -2445,7 +2536,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                                   "'" + rs2.getString("LAYOUT_TITLE") + "'," +
                                   rs2.getInt("INIT_STRUCT_ID") + ")";
 
-                          log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+                          if (log.isDebugEnabled())
+                              log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
                           stmt.executeUpdate(sQuery);
                       }
                   }
@@ -2464,7 +2556,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           // see if the parameter was already there
           String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
-          log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
@@ -2477,7 +2570,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                 + "," + profileId + "," + stylesheetId + ",2,'" + pName + "','" + tsup.getParameterValue(pName) + "')";
           }
-          log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // write out channel attributes
@@ -2491,7 +2585,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
-              log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
               rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -2505,7 +2600,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                     + userId + "," + profileId + "," + stylesheetId + ",2," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
                     + "')";
               }
-              log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -2517,7 +2613,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             int defaultLayoutId;
             // Have to copy some of data over from the default user
             String sQuery = "SELECT USER_DFLT_USR_ID,USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-            log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
             rs = stmt.executeQuery(sQuery);
             try {
               rs.next();
@@ -2528,7 +2625,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             }
 
             sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-            log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
 
@@ -2557,11 +2655,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND USER_AGENT='" + userAgent + "'";
-        log.debug("RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "',"
             + profileId + ")";
-        log.debug("RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // Commit the transaction
         RDBMServices.commit(con);
@@ -2611,7 +2711,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               pstmt.clearParameters();
               pstmt.setInt(1, userId);
               pstmt.setInt(2, layoutId);
-              log.debug(sql);
+              if (log.isDebugEnabled())
+                  log.debug(sql);
               pstmt.executeUpdate();
           } finally {
               pstmt.close();
@@ -2623,7 +2724,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               pstmt.clearParameters();
               pstmt.setInt(1, userId);
               pstmt.setInt(2, layoutId);
-              log.debug(sql);
+              if (log.isDebugEnabled())
+                log.debug(sql);
               pstmt.executeUpdate();
           } finally {
               pstmt.close();
@@ -2651,7 +2753,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               pstmt.clearParameters();
               pstmt.setInt(1, userId);
               pstmt.setInt(2, layoutId);
-              log.debug(sql);
+              if (log.isDebugEnabled())
+                  log.debug(sql);
               rs = pstmt.executeQuery();
 
               try {
@@ -2664,7 +2767,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                       try {
                           pstmt2.clearParameters();
                           pstmt2.setInt(1, userId);
-                          log.debug(sql);
+                          if (log.isDebugEnabled())
+                              log.debug(sql);
                           ResultSet rs2 = null;
                           try {
                               rs2 = pstmt2.executeQuery();
@@ -2683,7 +2787,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                       try {
                           pstmt2.clearParameters();
                           pstmt2.setInt(1, defaultUserId);
-                          log.debug(sql);
+                          if (log.isDebugEnabled())
+                              log.debug(sql);
                           ResultSet rs2 = pstmt2.executeQuery();
                           try {
                               while (rs2.next()) {
@@ -2695,7 +2800,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                                       pstmt3.setInt(2, rs2.getInt("LAYOUT_ID"));
                                       pstmt3.setString(3, rs2.getString("LAYOUT_TITLE"));
                                       pstmt3.setInt(4, rs2.getInt("INIT_STRUCT_ID"));
-                                      log.debug(sql);
+                                      if (log.isDebugEnabled())
+                                          log.debug(sql);
                                       pstmt3.executeUpdate();
                                   } finally {
                                       pstmt3.close();
@@ -2724,7 +2830,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               pstmt.setInt(1, firstStructId);
               pstmt.setInt(2, userId);
               pstmt.setInt(3, layoutId);
-              log.debug(sql);
+              if (log.isDebugEnabled())
+                  log.debug(sql);
               pstmt.executeUpdate();
           } finally {
               pstmt.close();
@@ -2819,9 +2926,11 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       } finally {
           RDBMServices.releaseConnection(con);
       }
-      long stopTime = System.currentTimeMillis();
-      log.debug("RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to save");
-  }
+      if (log.isDebugEnabled()) {
+          long stopTime = System.currentTimeMillis();
+          log.debug("RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to save");
+      }
+     }
 
   /**
    * Updates an existing structure stylesheet description with a new one. Old stylesheet
@@ -2839,14 +2948,16 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         String sQuery = "UPDATE UP_SS_STRUCT SET SS_NAME='" + ssd.getStylesheetName() + "',SS_URI='" + ssd.getStylesheetURI()
             + "',SS_DESCRIPTION_URI='" + ssd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + ssd.getStylesheetWordDescription()
             + "' WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // first, see what was there before
         HashSet oparams = new HashSet();
         HashSet ofattrs = new HashSet();
         HashSet ocattrs = new HashSet();
         sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
         Statement stmtOld = con.createStatement();
         ResultSet rsOld = stmtOld.executeQuery(sQuery);
         try {
@@ -2865,7 +2976,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 sQuery = "UPDATE UP_SS_STRUCT_PAR SET PARAM_DEFAULT_VAL='" + ssd.getStylesheetParameterDefaultValue(pName)
                     + "',PARAM_DESCRIPT='" + ssd.getStylesheetParameterWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=1";
-                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
@@ -2882,7 +2994,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 sQuery = "UPDATE UP_SS_STRUCT_PAR SET PARAM_DEFAULT_VAL='" + ssd.getFolderAttributeDefaultValue(pName) +
                     "',PARAM_DESCRIPT='" + ssd.getFolderAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "'AND TYPE=2";
-                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
@@ -2899,14 +3012,16 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 sQuery = "UPDATE UP_SS_STRUCT_PAR SET PARAM_DEFAULT_VAL='" + ssd.getChannelAttributeDefaultValue(pName) +
                     "',PARAM_DESCRIPT='" + ssd.getChannelAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=3";
-                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
             else {
-              log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                  + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
-                  ").");
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
+                            + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
+                        ").");
             }
           }
         } finally {
@@ -2921,7 +3036,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
                 + "',1)";
-            log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2932,7 +3048,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
                 + "',2)";
-            log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2943,7 +3060,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
                 + "',3)";
-            log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2976,13 +3094,15 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         int stylesheetId = tsd.getId();
 
         String sQuery = "UPDATE UP_SS_THEME SET SS_NAME='" + tsd.getStylesheetName() + "',SS_URI='" + tsd.getStylesheetURI()+ "',SS_DESCRIPTION_URI='" + tsd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + tsd.getStylesheetWordDescription() + "',SAMPLE_ICON_URI='"+tsd.getSampleIconURI()+"',SAMPLE_URI='"+tsd.getSamplePictureURI()+"',MIME_TYPE='"+tsd.getMimeType()+"',DEVICE_TYPE='"+tsd.getDeviceType()+"',SERIALIZER_NAME='"+tsd.getSerializerName()+"',UP_MODULE_CLASS='"+tsd.getCustomUserPreferencesManagerClass()+"' WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // first, see what was there before
         HashSet oparams = new HashSet();
         HashSet ocattrs = new HashSet();
         sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
-        log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
         Statement stmtOld = con.createStatement();
         ResultSet rsOld = stmtOld.executeQuery(sQuery);
         try {
@@ -3001,14 +3121,16 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 sQuery = "UPDATE UP_SS_THEME_PARM SET PARAM_DEFAULT_VAL='" + tsd.getStylesheetParameterDefaultValue(pName)
                     + "',PARAM_DESCRIPT='" + tsd.getStylesheetParameterWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=1";
-                log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
             else if (type == 2) {
-              log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! DB is corrupt. (stylesheetId="
-                  + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
-                  ").");
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! DB is corrupt. (stylesheetId="
+                            + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
+                            ").");
             }
             else if (type == 3) {
               // channel attribute
@@ -3023,14 +3145,16 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 sQuery = "UPDATE UP_SS_THEME_PARM SET PARAM_DEFAULT_VAL='" + tsd.getChannelAttributeDefaultValue(pName) +
                     "',PARAM_DESCRIPT='" + tsd.getChannelAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=3";
-                log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
             else {
-              log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                  + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
-                  ").");
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
+                            + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
+                            ").");
             }
           }
         } finally {
@@ -3045,7 +3169,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
                 + ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
                 + "',1)";
-            log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -3056,7 +3181,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
                 + ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
                 + "',3)";
-            log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription(): " + sQuery);
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -3084,7 +3210,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             + ", THEME_SS_ID=" + profile.getThemeStylesheetId() + ", STRUCTURE_SS_ID="
             + profile.getStructureStylesheetId() + ", DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
             + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        log.debug("RDBMUserLayoutStore::updateUserProfile() : " + sQuery);
+        if (log.isDebugEnabled())
+            log.debug("RDBMUserLayoutStore::updateUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -3216,7 +3343,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           PreparedStatement pstmt = con.prepareStatement(query);
 
           try {
-              log.debug("RDBMUserLayoutStore::getLayoutID(userId=" + userId + ", profileId=" + profileId + " ): " + query);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::getLayoutID(userId=" + userId + ", profileId=" + profileId + " ): " + query);
 
               pstmt.setInt(1, userId);
               pstmt.setInt(2, profileId);

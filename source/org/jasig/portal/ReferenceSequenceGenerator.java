@@ -83,7 +83,8 @@ private void createCounter (String tableName, Connection conn) throws SQLExcepti
         stmt = conn.createStatement();
         String sql = getCreateCounterSql(tableName);
 
-        log.debug("ReferenceSequenceGenerator.createCounter: " + sql);
+        if (log.isDebugEnabled())
+            log.debug("ReferenceSequenceGenerator.createCounter: " + sql);
 
         int rc = stmt.executeUpdate(getCreateCounterSql(tableName));
         if (rc != 1)
@@ -138,8 +139,9 @@ throws SQLException
         try
         {
             ps.setString(1, tableName);
-            log.debug(
-                "ReferenceSequenceGenerator.getNextInt(): " + ps + " (" + tableName + ")");
+            if (log.isDebugEnabled())
+                log.debug("ReferenceSequenceGenerator.getNextInt(): " + ps + 
+                        " (" + tableName + ")");
             rs = ps.executeQuery();
             int currentInt = ( rs.next() ) ? rs.getInt(VALUE_COLUMN) : NO_COUNTER_VALUE;
             return currentInt;
@@ -304,8 +306,8 @@ throws SQLException
             ps.setInt(1, nextCounterValue);
             ps.setString(2, tableName);
             ps.setInt(3, currentCounterValue);
-            log.debug(
-                "ReferenceSequenceGenerator.primIncrementCounter(): " + ps +
+            if (log.isDebugEnabled())
+                log.debug( "ReferenceSequenceGenerator.primIncrementCounter(): " + ps +
                   "(" + nextCounterValue + ", " + tableName + ", " + currentCounterValue + ")");
             int rc = ps.executeUpdate();
             if (rc != 1)
@@ -368,8 +370,9 @@ throws SQLException
         {
             ps.setInt(1, newCounterValue);
             ps.setString(2, tableName);
-            log.debug(
-                "ReferenceSequenceGenerator.setCounter(): " + ps + "(" + newCounterValue + ", " + tableName + ")");
+            if (log.isDebugEnabled())
+                log.debug("ReferenceSequenceGenerator.setCounter(): " + ps + 
+                        "(" + newCounterValue + ", " + tableName + ")");
             int rc = ps.executeUpdate();
             if (rc != 1)
                 { throw new SQLException("Data integrity error; could not update counter."); }
