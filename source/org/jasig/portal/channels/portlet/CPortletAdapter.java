@@ -92,11 +92,11 @@ import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
 
 /**
- * A JSR-168 Portlet-to-Channel adapter that presents a portlet
+ * A JSR 168 Portlet adapter that presents a portlet
  * through the uPortal channel interface. 
  * There is a related channel type called
  * "Portlet Adapter" that is included with uPortal, so to use
- * this channel, just select "Portlet Adapter" when publishing.
+ * this channel, just select the "Portlet" type when publishing.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
@@ -360,20 +360,20 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         
         ChannelData cd = channelState.getChannelData();
         
-        
-        
         try {
             PortletContainerServices.prepare(uniqueContainerName);
             
             if (cd.isPortletWindowInitialized()) {
 				PortalControlStructures pcs = channelState.getPortalControlStructures();
 				ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
-                // Put the current runtime data into the portlet window
+                
+                // Put the current runtime data and wrapped request into the portlet window
                 PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
                 portletWindow.setChannelRuntimeData(rd);
                 portletWindow.setHttpServletRequest(wrappedRequest);
+                
                 // Get the portlet url manager which will analyze the request parameters
-                DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
+                DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(wrappedRequest);
                 PortletStateManager psm = ((DynamicInformationProviderImpl)dip).getPortletStateManager(portletWindow);
                 
                 // If portlet is rendering as root, change mode to maximized, otherwise minimized
@@ -484,7 +484,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
 
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
-            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest());
+            HttpServletRequest wrappedRequest = ((PortletWindowImpl)cd.getPortletWindow()).getHttpServletRequest();
             HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             
             // Check if this portlet has just processed an action during this request.
@@ -495,7 +495,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             // and redirecting, but we have overidden that behavior in our own version of PortletContainerImpl.
             if (cd.hasProcessedAction()) {
                 InternalActionResponse actionResponse = ((PortletWindowImpl)cd.getPortletWindow()).getInternalActionResponse();
-                PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest()).getPortletActionProvider(cd.getPortletWindow());
+                PortletActionProvider pap = InformationProviderAccess.getDynamicProvider(wrappedRequest).getPortletActionProvider(cd.getPortletWindow());
                 // Change modes
                 if (actionResponse.getChangedPortletMode() != null) {
                     pap.changePortletMode(actionResponse.getChangedPortletMode());
