@@ -30,6 +30,17 @@ public class CApplet implements org.jasig.portal.IChannel
 
   private static Vector params = null;
 
+  public CApplet()
+  {
+    params = new Vector();
+    params.addElement(new ParameterField("Name", "name", "30", "40", "This channel requires a name parameter. Please enter the name below.") );
+    params.addElement(new ParameterField("Code", "code", "50", "70", "This channel also requires a name for the code file it uses. Please enter the name of the code file for the channel you wish to publish below.") );
+    params.addElement(new ParameterField("Code Base", "codeBase", "50", "70", "This channel also requires a \'Code Base\' which is typically a URL. Please enter the Code Base for the channel you wish to publish below.") );
+    params.addElement(new ParameterField("Archive", "archive", "50", "70", "This channel also requires a name for the archive file it uses. Please enter the name of the archive file for the channel you wish to publish below.") );
+    params.addElement(new ParameterField("Width", "width", "3", "3", "This channel requires a width parameter. Please enter the width below.") );
+    params.addElement(new ParameterField("Height", "height", "3", "3", "This channel requires a height parameter. Please enter the height below.") );
+  }
+
   public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
   public String getName () {return (String) chConfig.get ("name");}
   public boolean isMinimizable () {return true;}
@@ -40,6 +51,7 @@ public class CApplet implements org.jasig.portal.IChannel
 
   public int getDefaultDetachWidth () {return 250;}
   public int getDefaultDetachHeight () {return 350;}
+
 
   public Vector getParameters()
   {
