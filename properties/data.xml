@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
+
 <data>
+
 	<table>
 		<name>UP_USERS</name>
 		<rows>
@@ -28,9 +30,8 @@
           <!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
           <layout>
             <folder ID="t01" priority="1" name="Main">
-              <folder ID="col01" priority="0" width="40%" name="Column 1">
-                <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login">
-                </channel>
+              <folder ID="col01" priority="0" name="Column 1">
+                <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login"/>
                 <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
                   <parameter value="webpages/rss/netscape.rss" name="xml"/>
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
@@ -40,22 +41,19 @@
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
                 </channel>
               </folder>
-              <folder ID="col02" priority="0" width="60%" name="Column 2">
-                <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
-                </channel>
-                <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
+              <folder ID="col02" priority="0" name="Column 2">
+                 <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks"/>
+                <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false" hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CSnoop" name="Snooper"/>
+                <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="false" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
                   <parameter value="webpages/rss/news.rss" name="xml"/>
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
                 </channel>
               </folder>
             </folder>
             <folder ID="t02" priority="0" name="uPortal Tools">
-              <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe">
-                </channel>
-              <channel ID="chan92" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish">
-                </channel>
-              <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences">
-                </channel>
+              <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe"/>
+              <channel ID="chan92" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish"/>
+              <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences"/>
             </folder>
             <folder ID="t03" priority="0" name="More">
               <folder ID="col03" priority="0" width="50%" name="Column 1">
@@ -125,10 +123,8 @@
               </folder>
             </folder>
             <folder ID="t02" priority="0" name="uPortal Tools">
-              <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe">
-                </channel>
-              <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences">
-                </channel>
+              <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe"/>
+              <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences"/>
             </folder>
           </layout>
 
@@ -152,6 +148,7 @@
 			</row>
 		</rows>
 	</table>
+	
 	<table>
 		<name>UP_CHANNELS</name>
 		<rows>
@@ -174,12 +171,13 @@
 				</column>
 				<column>
 					<name>CHANNEL_XML</name>
-					<value><![CDATA[
-					<channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
-     <parameter value="webpages/rss/netscape.rss" name="xml"/>
-     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-   </channel>
-        				]]></value>
+					<value>
+					  <![CDATA[
+					  <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
+              <parameter value="webpages/rss/netscape.rss" name="xml"/>
+              <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+            </channel>
+        		]]></value>
 				</column>
 			</row>
 			<row>
@@ -201,12 +199,14 @@
 				</column>
 				<column>
 					<name>CHANNEL_XML</name>
-					<value><![CDATA[
-					<channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
-     <parameter value="webpages/rss/stockcharts.rss" name="xml"/>
-     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-   </channel>       				 
-					]]></value>
+					<value>
+					  <![CDATA[
+					  <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
+              <parameter value="webpages/rss/stockcharts.rss" name="xml"/>
+              <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+            </channel>       				 
+					  ]]>
+					</value>
 				</column>
 			</row>
 			<row>
@@ -228,37 +228,40 @@
 				</column>
 				<column>
 					<name>CHANNEL_XML</name>
-					<value><![CDATA[
-					<channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
-   </channel>      				 
-					]]></value>
-				</column>
+					<value>
+					  <![CDATA[
+					  <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
+            </channel>      				 
+					  ]]></value>
+			  </column>
 			</row>
 			<row>
-				<column>
-					<name>CHAN_ID</name>
-					<value>4</value>
+			  <column>
+				  <name>CHAN_ID</name>
+				  <value>4</value>
 				</column>
 				<column>
-					<name>TITLE</name>
-					<value>XML.com</value>
+				  <name>TITLE</name>
+				  <value>XML.com</value>
 				</column>
 				<column>
-					<name>PUB_ID</name>
-					<value>0</value>
-				</column>
+				  <name>PUB_ID</name>
+				  <value>0</value>
+			  </column>
 				<column>
 					<name>APPROVED</name>
 					<value>0</value>
 				</column>
 				<column>
 					<name>CHANNEL_XML</name>
-					<value><![CDATA[
-					<channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
-     <parameter value="webpages/rss/news.rss" name="xml"/>
-     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-   </channel>     				 
-					]]></value>
+					<value>
+					  <![CDATA[
+					  <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
+              <parameter value="webpages/rss/news.rss" name="xml"/>
+              <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+            </channel>     				 
+					  ]]>
+					</value>
 				</column>
 			</row>
 			<row>
@@ -280,12 +283,14 @@
 				</column>
 				<column>
 					<name>CHANNEL_XML</name>
-					<value><![CDATA[
-					<channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
-      <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-    </channel>     				 
-					]]></value>
+					<value>
+					  <![CDATA[
+					  <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
+              <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
+              <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+            </channel>     				 
+					  ]]>
+					</value>
 				</column>
 			</row>
 			<row>
@@ -307,12 +312,13 @@
 				</column>
 				<column>
 					<name>CHANNEL_XML</name>
-					<value><![CDATA[
-					<channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
-      <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-    </channel>    				 
-					]]></value>
+					<value>
+					  <![CDATA[
+					  <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
+              <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
+              <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+            </channel>    				 
+					  ]]></value>
 				</column>
 			</row>
 			<row>
@@ -334,12 +340,13 @@
 				</column>
 				<column>
 					<name>CHANNEL_XML</name>
-					<value><![CDATA[
-					<channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
-      <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-    </channel>    				 
-					]]></value>
+					<value>
+					  <![CDATA[
+					  <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
+              <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
+              <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+            </channel>    				 
+            ]]></value>
 				</column>
 			</row>
 		</rows>
@@ -603,10 +610,10 @@
             </parameters>
             <folderattributes>
               <attribute name="width" defaultvalue="100%">
-                <folder folderid="col01" value="70%"/>
-                <folder folderid="col02" value="30%"/>
-                <folder folderid="col03" value="30%"/>
-                <folder folderid="col04" value="70%"/>
+                <folder folderid="col01" value="30%"/>
+                <folder folderid="col02" value="70%"/>
+                <folder folderid="col03" value="50%"/>
+                <folder folderid="col04" value="50%"/>
               </attribute>
             </folderattributes>
             <channelattributes>
@@ -635,7 +642,7 @@
 
           <themestylesheetuserpreferences>
             <parameters>
-              <parameter name="activeTab">2</parameter>
+              <parameter name="activeTab">1</parameter>
               <parameter name="borderWidth">2</parameter>
             </parameters>
             <channelattributes>
@@ -705,7 +712,7 @@
 
           <themestylesheetuserpreferences>
             <parameters>
-              <parameter name="activeTab">2</parameter>
+              <parameter name="activeTab">1</parameter>
               <parameter name="borderWidth">2</parameter>
             </parameters>
             <channelattributes>
