@@ -34,7 +34,7 @@
  */
 
 package org.jasig.portal.security;
-
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -45,7 +45,8 @@ import java.util.Hashtable;
  * @author Adam Rybicki
  */
 
-public class PersonImpl implements IPerson
+public class PersonImpl implements IPerson, 
+                                   Serializable 
 {
   protected Hashtable m_Attributes = null;
   protected String m_FullName = null;
