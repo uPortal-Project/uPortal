@@ -38,6 +38,7 @@ package  org.jasig.portal;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -67,14 +68,16 @@ public class ChannelRegistryManager {
    * Returns the channel registry as a Document.  This list is not filtered by roles.
    * @return the channel registry as a Document
    */
-  public static Document getChannelRegistry() throws PortalException {
+  public static Document getChannelRegistry(IPerson person) throws PortalException {
     Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
     if (channelRegistry == null)
     {
       // Channel registry has expired, so get it and cache it
       try {
-        channelRegistry = chanRegStore.getChannelRegistryXML();
+        channelRegistry = chanRegStore.getChannelRegistryXML(person);
       } catch (Exception e) {
+        System.err.println(e);
+        e.printStackTrace();
         throw new GeneralRenderingException(e.getMessage());
       }
 

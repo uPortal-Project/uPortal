@@ -456,7 +456,7 @@ final class TabColumnPrefsState extends BaseState
   {
     Element layout = userLayout.getDocumentElement();
 
-    Document channelRegistry = ChannelRegistryManager.getChannelRegistry();
+    Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
     Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
     String instanceId = ulStore.getNextStructChannelId(staticData.getPerson());
     newChannel.setAttribute("ID", instanceId);
@@ -933,7 +933,7 @@ final class TabColumnPrefsState extends BaseState
 
           // Incorporate channel registry document into userLayout if user is in the subscribe process
           if (action.equals("newChannel")) {
-            Node channelRegistry = ChannelRegistryManager.getChannelRegistry().getDocumentElement();
+            Node channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson()).getDocumentElement();
             userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));
           }
 
@@ -1103,7 +1103,7 @@ final class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      Document doc = ChannelRegistryManager.getChannelRegistry();
+      Document doc = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
 
       XSLT xslt = new XSLT(this);
       xslt.setXML(doc);

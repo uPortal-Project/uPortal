@@ -36,6 +36,7 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.ResourceMissingException;
@@ -45,6 +46,7 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.Authorization;
+import org.jasig.portal.security.IPerson;
 import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
@@ -86,6 +88,11 @@ public class CChannelManager extends BaseChannel {
   protected CategorySettings categorySettings = new CategorySettings();
   protected RoleSettings roleSettings = new RoleSettings();
   protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
+  protected IPerson person;
+
+  public void setStaticData (ChannelStaticData sd) {
+    person = sd.getPerson();
+  }
 
   public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
     runtimeData = rd;
@@ -340,7 +347,7 @@ public class CChannelManager extends BaseChannel {
         WorkflowSection catSection = new WorkflowSection("selectCategories");
         workflow.setCategoriesSection(catSection);
         WorkflowStep step = new WorkflowStep("1", "Categories");
-        step.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
+        step.addDataElement(ChannelRegistryManager.getChannelRegistry(person).getDocumentElement());
         // Add user settings with previously chosen categories
         step.addDataElement(categorySettings.toXML());
         catSection.addStep(step);
@@ -378,7 +385,7 @@ public class CChannelManager extends BaseChannel {
         // Selected categories
         WorkflowSection regSection = new WorkflowSection("selectCategories");
         WorkflowStep regStep = new WorkflowStep("1", "Categories");
-        regStep.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
+        regStep.addDataElement(ChannelRegistryManager.getChannelRegistry(person).getDocumentElement());
         regStep.addDataElement(categorySettings.toXML());
         regSection.addStep(regStep);
         workflow.setCategoriesSection(regSection);
@@ -485,7 +492,7 @@ public class CChannelManager extends BaseChannel {
     channelManagerDoc.appendChild(channelManager);
 
     // Get the channel registry
-    Document channelRegistryDoc = ChannelRegistryManager.getChannelRegistry();
+    Document channelRegistryDoc = ChannelRegistryManager.getChannelRegistry(person);
 
     // Set the registry ID attribute to "-1"
     Element registry = channelRegistryDoc.getDocumentElement();

@@ -38,6 +38,7 @@
 
 package  org.jasig.portal;
 
+import org.jasig.portal.security.IPerson;
 import  org.w3c.dom.*;
 
 
@@ -64,7 +65,7 @@ public interface IChannelRegistryStore {
    * @return the channel registry XML
    * @throws java.lang.Exception
    */
-  public Document getChannelRegistryXML () throws Exception;
+  public Document getChannelRegistryXML (IPerson person) throws Exception;
 
 
 

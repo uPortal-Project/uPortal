@@ -721,9 +721,9 @@ public class RDBMUserLayoutStore
   private final class UserInRole {
     MyPreparedStatement pstmtUserInRole;
     MyPreparedStatement pstmtReadAll;
-    public UserInRole(Connection con, String roleIds) throws SQLException {
-      String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR " +
-        "WHERE UC.CHAN_ID=? AND UR.ROLE_ID IN (" + roleIds + ") AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
+    public UserInRole(Connection con, int userId) throws SQLException {
+      String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " +
+        "WHERE UC.CHAN_ID=? AND UUR.USER_ID=" + userId + " AND UR.ROLE_ID = UUR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
       pstmtUserInRole = new MyPreparedStatement(con, sQuery);
       sQuery = "SELECT COUNT(ROLE_ID) FROM UP_ROLE_CHAN WHERE CHAN_ID=?";
       pstmtReadAll = new MyPreparedStatement(con, sQuery);
@@ -1073,22 +1073,7 @@ public class RDBMUserLayoutStore
         }
 
         if (layoutStructure.size() > 0) { // We have a layout to work with
-          String roleIds = ""; // Roles that this user belongs to
-
-          sQuery = " SELECT ROLE_ID FROM UP_USER_ROLE WHERE USER_ID=" + userId;
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-          rs = stmt.executeQuery(sQuery);
-          try {
-            String sep = "";
-            while (rs.next()) {
-              roleIds += sep + rs.getInt(1);
-              sep = ",";
-            }
-          } finally {
-            rs.close();
-          }
-
-          UserInRole uir = new UserInRole(con, roleIds);
+          UserInRole uir = new UserInRole(con, realUserId);
           try {
             createLayout(layoutStructure, doc, root, firstStructId, uir);
           } finally {
@@ -1621,7 +1606,7 @@ public class RDBMUserLayoutStore
     }
   }
 
-  public Document getChannelRegistryXML () throws SQLException {
+  public Document getChannelRegistryXML (IPerson person) throws SQLException {
     Document doc = new org.apache.xerces.dom.DocumentImpl();
     Element registry = doc.createElement("registry");
     doc.appendChild(registry);
@@ -1631,28 +1616,33 @@ public class RDBMUserLayoutStore
       try {
         Statement stmt = con.createStatement();
         try {
-          String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
-          ResultSet rs = stmt.executeQuery(query);
+          UserInRole uir = new UserInRole(con, person.getID());
           try {
-            while (rs.next()) {
-              int catId = rs.getInt(1);
-              String catTitle = rs.getString(2);
-              String catDesc = rs.getString(3);
+            String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
+            ResultSet rs = stmt.executeQuery(query);
+            try {
+              while (rs.next()) {
+                int catId = rs.getInt(1);
+                String catTitle = rs.getString(2);
+                String catDesc = rs.getString(3);
 
-              // Top level <category>
-              Element category = doc.createElement("category");
-              category.setAttribute("ID", "cat" + catId);
-              category.setAttribute("name", catTitle);
-              category.setAttribute("description", catDesc);
-              ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(category.getAttribute("ID"), category);
-              registry.appendChild(category);
+                // Top level <category>
+                Element category = doc.createElement("category");
+                category.setAttribute("ID", "cat" + catId);
+                category.setAttribute("name", catTitle);
+                category.setAttribute("description", catDesc);
+                ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(category.getAttribute("ID"), category);
+                registry.appendChild(category);
 
-              // Add child categories and channels
-              appendChildCategoriesAndChannels(con, chanStmt, category, catId);
+                  // Add child categories and channels
+                appendChildCategoriesAndChannels(con, uir, chanStmt, category, catId);
+              }
+            } finally {
+              rs.close();
             }
           } finally {
-            rs.close();
+            uir.close();
           }
         } finally {
           stmt.close();
@@ -1666,7 +1656,7 @@ public class RDBMUserLayoutStore
     return doc;
   }
 
-  protected void appendChildCategoriesAndChannels (Connection con, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException {
+  protected void appendChildCategoriesAndChannels (Connection con, UserInRole uir, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException {
     Document doc = category.getOwnerDocument();
     Statement stmt = null;
     ResultSet rs = null;
@@ -1689,7 +1679,7 @@ public class RDBMUserLayoutStore
         category.appendChild(childCategory);
 
         // Append child categories and channels recursively
-        appendChildCategoriesAndChannels(con, chanStmt, childCategory, childCatId);
+        appendChildCategoriesAndChannels(con, uir, chanStmt, childCategory, childCatId);
       }
 
       // Append children channels
@@ -1700,12 +1690,14 @@ public class RDBMUserLayoutStore
       try {
         while (rs.next()) {
           int chanId = rs.getInt(1);
-          Element channel = getChannelNode (chanId, con, (org.apache.xerces.dom.DocumentImpl)doc, "chan" + chanId);
-          if (channel == null) {
-            LogService.instance().log(LogService.WARN, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): channel " + chanId +
-              " in category " + catId + " does not exist in the store");
-          } else {
-            category.appendChild(channel);
+          if (uir.isAllowed(chanId)) {
+            Element channel = getChannelNode (chanId, con, (org.apache.xerces.dom.DocumentImpl)doc, "chan" + chanId);
+            if (channel == null) {
+              LogService.instance().log(LogService.WARN, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): channel " + chanId +
+                " in category " + catId + " does not exist in the store");
+            } else {
+              category.appendChild(channel);
+            }
           }
         }
       } finally {
