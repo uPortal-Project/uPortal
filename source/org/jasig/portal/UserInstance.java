@@ -684,6 +684,7 @@ public class UserInstance implements HttpSessionBindingListener {
          String[] values1, values2;
          int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
          if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
+            if ( values1[0].trim().length() == 0 ) values1[0] = null;
             IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
             nodeDesc.setName("Unnamed");
             nodeDesc = ulm.addNode(nodeDesc,values2[0],values1[0]);
@@ -693,6 +694,7 @@ public class UserInstance implements HttpSessionBindingListener {
         if ((values = req.getParameterValues("uP_move_target")) != null) {
          String[] values1, values2;
          if ( (values1 = req.getParameterValues("targetNextID")) != null && (values2 = req.getParameterValues("targetParentID")) != null) {
+            if ( values1[0].trim().length() == 0 ) values1[0] = null;
             ulm.moveNode(values[0],values2[0],values1[0]);
          }
         }
