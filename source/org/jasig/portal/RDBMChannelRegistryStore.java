@@ -100,8 +100,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Get the channel type associated with a particular identifier.
-   * @param channelTypeId, the channel type identifier
-   * @return channelType, the channel type
+   * @param channelTypeId the channel type identifier
+   * @return channelType the channel type
    * @throws java.sql.SQLException
    */
   public ChannelType getChannelType(int channelTypeId) throws SQLException {
@@ -761,7 +761,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Creates a new channel category.
-   * @param category, the channel category to create
    * @return channelCategory the new channel category
    * @throws org.jasig.portal.groups.GroupsException
    */
@@ -882,7 +881,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Persists a channel category.
-   * @param channelCategory, the channel category to persist
+   * @param category the channel category to persist
    * @throws org.jasig.portal.groups.GroupsException
    */
   public void saveChannelCategory(ChannelCategory category) throws GroupsException {
@@ -895,7 +894,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Deletes a channel category.
-   * @param channelCategory, the channel category to delete
+   * @param category the channel category to delete
    * @throws org.jasig.portal.groups.GroupsException
    */
   public void deleteChannelCategory(ChannelCategory category) throws GroupsException {
@@ -906,8 +905,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Makes one category a child of another.
-   * @param child, the source category
-   * @param parent, the destination category
+   * @param child the source category
+   * @param parent the destination category
    * @throws org.jasig.portal.groups.GroupsException
    */
   public void addCategoryToCategory(ChannelCategory child, ChannelCategory parent) throws GroupsException {
@@ -921,8 +920,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Makes one category a child of another.
-   * @param child, the category to remove
-   * @param parent, the category to remove from
+   * @param child the category to remove
+   * @param parent the category to remove from
    * @throws org.jasig.portal.groups.GroupsException
    */
   public void removeCategoryFromCategory(ChannelCategory child, ChannelCategory parent) throws GroupsException {
@@ -936,8 +935,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Associates a channel definition with a category.
-   * @param channelDef, the channel definition
-   * @param category, the channel category to which to associate the channel definition
+   * @param channelDef the channel definition
+   * @param category the channel category to which to associate the channel definition
    * @throws org.jasig.portal.PortalException
    */
   public void addChannelToCategory(ChannelDefinition channelDef, ChannelCategory category) throws PortalException {
@@ -950,8 +949,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Disassociates a channel definition from a category.
-   * @param channelDef, the channel definition
-   * @param category, the channel category from which to disassociate the channel definition
+   * @param channelDef the channel definition
+   * @param category the channel category from which to disassociate the channel definition
    * @throws org.jasig.portal.PortalException
    */
   public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws PortalException {

@@ -84,12 +84,13 @@ public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsExcept
     else
         { throw new GroupsException("Unknown entity type: " + newEntityIdentifier.getType()); }
 }
+
 /**
  * Adds the key of the <code>IEntityGroup</code> to our <code>Set</code> of group keys
  * by copying the keys, updating the copy, and replacing the old keys with the copy.
  * This lets us confine synchronization to the getter and setter methods for the keys.
  * @return void
- * @param gm org.jasig.portal.groups.IEntityGroup
+ * @param eg org.jasig.portal.groups.IEntityGroup
  */
 public void addGroup(IEntityGroup eg) throws GroupsException
 {
@@ -97,21 +98,24 @@ public void addGroup(IEntityGroup eg) throws GroupsException
     newGroupKeys.add(eg.getEntityIdentifier().getKey());
     setGroupKeys(newGroupKeys);
 }
+
 /**
  * @return boolean
  */
 private boolean areGroupKeysInitialized() {
     return groupKeysInitialized;
 }
+
 /**
  * Default implementation, overridden on EntityGroupImpl.
- * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
+ * @return boolean
  */
 public boolean contains(IGroupMember gm) throws GroupsException
 {
     return false;
 }
+
 /**
  * Clone the group keys.
  * @return Set
@@ -120,6 +124,7 @@ private Set copyGroupKeys() throws GroupsException
 {
    return castAndCopyHashSet(getGroupKeys());
 }
+
 /**
  * Cast a Set to a HashSet, clone it, and down cast back to Set.
  * @return HashSet
@@ -128,15 +133,17 @@ protected Set castAndCopyHashSet(Set s)
 {
    return (Set)((HashSet)s).clone(); 
 }
+
 /**
  * Default implementation, overridden on EntityGroupImpl.
- * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
+ * @return boolean
  */
 public boolean deepContains(IGroupMember gm) throws GroupsException
 {
     return false;
 }
+
 /**
  * Returns an <code>Iterator</code> over the <code>Set</code> of this
  * <code>IGroupMember's</code> recursively-retrieved parent groups.
@@ -147,6 +154,7 @@ public java.util.Iterator getAllContainingGroups() throws GroupsException
 {
     return primGetAllContainingGroups(new HashSet()).iterator();
 }
+
 /**
  * Default implementation, overridden on EntityGroupImpl.
  * @return java.util.Iterator
@@ -296,6 +304,7 @@ private void initializeContainingGroupKeys() throws GroupsException
     setGroupKeys(keys);
     setGroupKeysInitialized(true);
 }
+
 /**
  * Answers if this <code>IGroupMember</code> is, recursively, a member of <code>IGroupMember</code> gm.
  * @return boolean
@@ -339,10 +348,11 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
 {
     return ( org.jasig.portal.EntityTypes.getEntityTypeID(anEntityType) != null );
 }
+
 /**
  * Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm.
- * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
+ * @return boolean
  */
 public boolean isMemberOf(IGroupMember gm) throws GroupsException
 {
@@ -372,8 +382,7 @@ protected java.util.Set primGetAllContainingGroups(Set s) throws GroupsException
  * Removes the key of the <code>IEntityGroup</code> from our <code>Set</code> of group keys
  * by copying the keys, updating the copy, and replacing the old keys with the copy.
  * This lets us confine synchronization to the getter and setter methods for the keys.
- * @return void
- * @param gm org.jasig.portal.groups.IEntityGroup
+ * @param eg org.jasig.portal.groups.IEntityGroup
  */
 public void removeGroup(IEntityGroup eg) throws GroupsException
 {

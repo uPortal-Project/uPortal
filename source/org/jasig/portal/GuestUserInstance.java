@@ -138,9 +138,8 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
 
     /**
      * Prepares for and initates the rendering cycle.
-     * @param the servlet request object
-     * @param the servlet response object
-     * @param the JspWriter object
+     * @param req the servlet request object
+     * @param res the servlet response object
      */
     public void writeContent (HttpServletRequest req, HttpServletResponse res) throws PortalException {
         String sessionId=req.getSession(false).getId();

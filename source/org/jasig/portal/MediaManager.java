@@ -194,8 +194,8 @@ public class MediaManager {
   }
 
   /**
-   * Determines a media name from the request object.
-   * @param req the request object
+   * Determines a media name from the browser info object.
+   * @param bi the browser info
    * @return media name
    */
   public String getMedia (BrowserInfo bi) {
@@ -234,8 +234,8 @@ public class MediaManager {
   }
 
   /**
-   * Determines a mime name from a media name.
-   * @param media name
+   * Determines a mime name from a media type name.
+   * @param mediaType the media type name
    * @return mime type string
    */
   public String getReturnMimeType (String mediaType) {

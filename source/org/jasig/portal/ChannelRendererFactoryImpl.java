@@ -78,9 +78,8 @@ public final class ChannelRendererFactoryImpl
      *
      * @param keyBase configuration base key
      *
-     * @return new instance of a channel renderer for the specified channel,
      * or <code>null</code>
-     **/
+     */
     public ChannelRendererFactoryImpl(
         String keyBase
         )

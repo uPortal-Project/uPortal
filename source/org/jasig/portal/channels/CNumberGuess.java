@@ -105,10 +105,10 @@ public class CNumberGuess implements IChannel
     if(logger==null) {
         try {
             logger=(LogService)sd.getJNDIContext().lookup("/services/org.jasig.portal.services.LogService");
-            logger.log(LogService.DEBUG,"CNumberGuess::setStaticData() : obtained LogService instance from JNDI");
+            LogService.log(LogService.DEBUG,"CNumberGuess::setStaticData() : obtained LogService instance from JNDI");
         } catch (javax.naming.NamingException ne) {
             logger=LogService.instance();
-            logger.log(LogService.ERROR, "CNumberGuess()::setStaticData() : unable to botain LogService instance from JNDI: "+ne);
+            LogService.log(LogService.ERROR, "CNumberGuess()::setStaticData() : unable to botain LogService instance from JNDI: "+ne);
         }
     }
 
@@ -131,7 +131,7 @@ public class CNumberGuess implements IChannel
       iMinNum = 0;
       iMaxNum = 100;
 
-      logger.log(LogService.WARN, "CNumberGuess::setStaticData() : either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
+      LogService.log(LogService.WARN, "CNumberGuess::setStaticData() : either " + sMinNum + " or " + sMaxNum + " (minNum, maxNum) is not a valid integer. Defaults " + iMinNum + " and " + iMaxNum + " will be used instead.");
     }
    }
 

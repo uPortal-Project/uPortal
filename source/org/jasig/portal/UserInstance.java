@@ -146,9 +146,8 @@ public class UserInstance implements HttpSessionBindingListener {
 
     /**
      * Prepares for and initates the rendering cycle.
-     * @param the servlet request object
-     * @param the servlet response object
-     * @param the JspWriter object
+     * @param req the servlet request object
+     * @param res the servlet response object
      */
     public void writeContent (HttpServletRequest req, HttpServletResponse res) throws PortalException {
         // instantiate user layout manager and check to see if the profile mapping has been established

@@ -57,7 +57,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @return a <code>ALNode</code> object specifying the node with the generated node ID
      * @exception PortalException if an error occurs
      */
-    public ALNode addUserLayoutNode (IPerson Person, UserProfile profile, ALNode node ) throws PortalException;
+    public ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node) throws PortalException;
 
     /**
      * Update the new user layout node.
@@ -67,7 +67,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @return a boolean result of this operation
      * @exception PortalException if an error occurs
      */
-    public boolean updateUserLayoutNode (IPerson Person, UserProfile profile, ALNode node ) throws PortalException;
+    public boolean updateUserLayoutNode (IPerson person, UserProfile profile, ALNode node) throws PortalException;
 
     /**
      * Update the new user layout node.
@@ -77,7 +77,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @return a boolean result of this operation
      * @exception PortalException if an error occurs
      */
-    public boolean deleteUserLayoutNode (IPerson Person, UserProfile profile, ALNode node ) throws PortalException;
+    public boolean deleteUserLayoutNode (IPerson person, UserProfile profile, ALNode node) throws PortalException;
 
     /**
      * Gets the user layout node.
@@ -88,7 +88,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @exception PortalException if an error occurs
      */
 
-    public ALNode getUserLayoutNode (IPerson person, UserProfile profile, String nodeId ) throws PortalException;
+    public ALNode getUserLayoutNode (IPerson person, UserProfile profile, String nodeId) throws PortalException;
 
     /**
      * Returns the user layout internal representation.
@@ -126,7 +126,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @return a <code>Object</code> object containing the internal representation of the user fragment
      * @exception PortalException if an error occurs
      */
-    public Object getFragment (IPerson person, String fragmentId ) throws Exception;
+    public Object getFragment (IPerson person, String fragmentId) throws Exception;
 
      /**
      * Returns the fragment IDs/names which the user is an owner of

@@ -137,9 +137,12 @@ public class JNDIManager {
 
   /**
    * Create and populate contexts for a new user sesions
-   * @param sessionID
+   * @param session
+   * @param userId
+   * @param layoutId
+   * @param userLayout
    */
-  public static void initializeSessionContext (HttpSession session, String userId,String layoutId, Document userLayout) throws PortalException {
+  public static void initializeSessionContext (HttpSession session, String userId, String layoutId, Document userLayout) throws PortalException {
 
       Context topContext=null;
 

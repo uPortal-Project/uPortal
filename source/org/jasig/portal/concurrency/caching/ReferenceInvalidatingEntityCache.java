@@ -117,7 +117,7 @@ throws CachingException
 }
 /**
  * Wrap the incoming entity and add to the cache.
- * @param IBasicEntity entity - the entity to be added to the cache.
+ * @param entity the entity to be added to the cache.
  */
 public void add(IBasicEntity entity) throws CachingException
 {
@@ -155,7 +155,7 @@ protected void finalize() throws Throwable
 }
 /**
  * Unwraps and returns the cached entity.
- * @param String key - the key of the entity.
+ * @param key - the key of the entity.
  * @return org.jasig.portal.IBasicEntity
  */
 public IBasicEntity get(String key) {
@@ -181,23 +181,26 @@ public void invalidate(IBasicEntity entity) throws CachingException
         new CachedEntityInvalidation(entity.getEntityIdentifier(), new Date(), getCacheID());
     getInvalidationStore().add(cei);
 }
+
 /**
  * Returns the WRAPPED cached entity.
- * @param String key - the key of the entity.
+ * @param key - the key of the entity.
  * @return org.jasig.portal.IBasicEntity
  */
 private IBasicEntity primGet(String key) {
     return super.get(key);
 }
+
 /**
- * @param IEntity entity - the entity to be un-cached.
+ * @param key the entity to be un-cached.
  */
 private void primRemove(String key) throws CachingException
 {
     super.remove(key);
 }
+
 /**
- * @param String key - the key of the entity to be un-cached.
+ * @param key - the key of the entity to be un-cached.
  */
 public void remove(String key) throws CachingException
 {
@@ -208,6 +211,7 @@ public void remove(String key) throws CachingException
         primRemove(key);
     }
 }
+
 /**
  * Retrieves invalidations that were added to the store by other caches 
  * since the last time we checked (fudged with the clockTolerance).  
@@ -266,6 +270,7 @@ public void removeInvalidEntities()
 
     lastUpdateMillis = nowMillis;
 }
+
 /**
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver
@@ -273,15 +278,17 @@ public void removeInvalidEntities()
 public String toString() {
     return "ReferenceInvalidatingEntityCache for " + getEntityType().getName();
 }
+
 /**
  * First invalidate, then cache the incoming entity.
- * @param IBasicEntity entity - the entity to be updated in the cache.
+ * @param entity the entity to be updated in the cache.
  */
 public void update(IBasicEntity entity) throws CachingException
 {
     invalidate(entity);
     add(entity);
 }
+
 /**
  * @return int
  */
@@ -289,6 +296,7 @@ public int getCacheID()
 {
     return cacheID;
 }
+
 private void initializeCacheID() throws CachingException
 {
     try
@@ -303,4 +311,5 @@ private void initializeCacheID() throws CachingException
         throw new CachingException(ex.getMessage());
     }
 }
+
 }

@@ -51,7 +51,7 @@ import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 
 /**
- * <p>A channel for selecting skins</p>
+ * A channel for selecting skins.
  * @author Michael Ivanov
  * @version $Revision$
  */

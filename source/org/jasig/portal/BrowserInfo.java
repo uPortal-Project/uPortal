@@ -62,8 +62,8 @@ public class BrowserInfo {
         
     /**
      * Constructs a new browser info with supplied cookies and header info
-     * @param cookies, an array of cookies
-     * @param headers, a Map of headers
+     * @param cookies an array of cookies
+     * @param headers a Map of headers
      */
     public BrowserInfo(Cookie[] cookies, Map headers) {
       this.cookies = cookies;
@@ -111,7 +111,7 @@ public class BrowserInfo {
 
     /**
      * Sets the headers.
-     * @param headers, a Map of headers
+     * @param headers a Map of headers
      */
     public void setHeaders(Map headers) {
         this.headers = headers;

@@ -52,14 +52,13 @@ import org.xml.sax.ContentHandler;
 
 /**
  * CSecureInfo is designed to replace channel instances that are required
- * to be rendered securely, yet the request does not warrant it (i.e. http
- * vs. https).
- *
+ * to be rendered securely, yet the request does not warrant it.
+ * <p>
  * CSecureInfo provides information in place of the actual channel content
  * as it relates to rendering channels that are tagged as secure.
- *
+ * <p>
  * The channel is modeled after CError and borrows code from it liberally.
- *
+ * 
  * @author Keith Stacks, kstacks@sct.com
  * @version $Revision$
  */

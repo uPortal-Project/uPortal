@@ -285,7 +285,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
 
     /**
      * Sets the portal control structures.
-     * @param rd the channel runtime data
+     * @param pcs the portal control structures
      * @param uid a unique ID used to identify the state of the channel
      * @throws org.jasig.portal.PortalException
      */

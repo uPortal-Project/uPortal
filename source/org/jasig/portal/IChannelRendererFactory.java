@@ -45,7 +45,7 @@ package org.jasig.portal;
  * implementation may use this argument to retrieve additional configuration
  * parameters, if necessary.</p>
  *
- * @see {@link ChannelRendererFactory}
+ * @see org.jasig.portal.ChannelRendererFactory
  *
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  *

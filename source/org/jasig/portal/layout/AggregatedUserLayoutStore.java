@@ -1352,12 +1352,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     }
 
    /**
-     * @param Person an <code>IPerson</code> object specifying the user
+     * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @param layout a <code>Document</code> containing an aggregated user layout
+     * @param layoutObject a <code>Document</code> containing an aggregated user layout
      * @exception Exception if an error occurs
      */
- public void setAggregatedUserLayout (IPerson person, UserProfile  profile, Object layoutObject ) throws Exception {
+ public void setAggregatedUserLayout (IPerson person, UserProfile profile, Object layoutObject ) throws Exception {
 
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -1539,7 +1539,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
  /**   Gets the fragment IDs/names for a given user
-     * @param Person an <code>IPerson</code> object specifying the user
+     * @param person an <code>IPerson</code> object specifying the user
      * @return a <code>Object</code> object containing the IDs of the fragments the user owns
      * @exception Exception if an error occurs
      */
@@ -1562,9 +1562,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
  /**   Sets the fragment
-     * @param Person an <code>IPerson</code> object specifying the user
+     * @param person an <code>IPerson</code> object specifying the user
      * @param fragmentId a fragment ID
-     * @param layout a <code>Object</code> containing a fragment
+     * @param layoutObject a <code>Object</code> containing a fragment
      * @exception Exception if an error occurs
      */
  public void setFragment (IPerson person, String fragmentId, Object layoutObject ) throws Exception {

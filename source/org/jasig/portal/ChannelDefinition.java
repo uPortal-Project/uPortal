@@ -191,7 +191,7 @@ public class ChannelDefinition implements IBasicEntity {
 
   /**
    * Adds a parameter to this channel definition
-   * @param parameter, the channel parameter to add
+   * @param parameter the channel parameter to add
    */      
   public void addParameter(ChannelParameter parameter) {
     addParameter(parameter.getName(), parameter.getValue(), String.valueOf(parameter.getOverride()));
@@ -199,9 +199,9 @@ public class ChannelDefinition implements IBasicEntity {
   
   /**
    * Adds a parameter to this channel definition
-   * @param name, the channel parameter name
-   * @param value, the channel parameter value
-   * @param override, the channel parameter override setting
+   * @param name the channel parameter name
+   * @param value the channel parameter value
+   * @param override the channel parameter override setting
    */   
   public void addParameter(String name, String value, String override) {
     parameters.put(name, new ChannelParameter(name, value, override));
@@ -209,7 +209,7 @@ public class ChannelDefinition implements IBasicEntity {
   
   /**
    * Removes a parameter from this channel definition
-   * @param parameter, the channel parameter to remove
+   * @param parameter the channel parameter to remove
    */    
   public void removeParameter(ChannelParameter parameter) {
     removeParameter(parameter.getName());
@@ -217,7 +217,7 @@ public class ChannelDefinition implements IBasicEntity {
   
   /**
    * Removes a parameter from this channel definition
-   * @param name, the parameter name
+   * @param name the parameter name
    */  
   public void removeParameter(String name) {
     parameters.remove(name);

@@ -108,7 +108,7 @@ public LRUCache(int size)
 }
 /**
  * @param size int
- * @param maxAge int
+ * @param maxUnusedAge int
  */
 public LRUCache(int size, int maxUnusedAge)
 {

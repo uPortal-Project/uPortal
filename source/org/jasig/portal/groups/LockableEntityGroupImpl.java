@@ -56,6 +56,7 @@ public class LockableEntityGroupImpl extends EntityGroupImpl implements ILockabl
 public LockableEntityGroupImpl(String groupKey, Class groupType) throws GroupsException {
     super(groupKey, groupType);
 }
+
 /**
  * Delegates to the factory.
  */
@@ -63,12 +64,14 @@ public void delete() throws GroupsException
 {
     getLockableGroupService().deleteGroup(this);
 }
+
 /**
  * @return org.jasig.portal.concurrency.IEntityLock
  */
 public IEntityLock getLock() {
     return lock;
 }
+
 /**
  * @return org.jasig.portal.groups.ILockableGroupService
  */
@@ -76,6 +79,7 @@ protected ILockableGroupService getLockableGroupService() throws GroupsException
 {
     return (ILockableGroupService) super.getLocalGroupService();
 }
+
 /**
  * Ask the service to update this group (in the store), update the 
  * back-pointers of the updated members, and force the retrieval of 
@@ -88,6 +92,7 @@ private void primUpdate(boolean renewLock) throws GroupsException
     clearPendingUpdates();
     setGroupKeysInitialized(false);
 }
+
 /**
  * Ask the service to update this group (in the store), update the 
  * back-pointers of the updated members, and force the retrieval of 
@@ -100,19 +105,22 @@ private void primUpdateMembers(boolean renewLock) throws GroupsException
     clearPendingUpdates();
     setGroupKeysInitialized(false);
 }
+
 /**
- * @param lock org.jasig.portal.concurrency.IEntityLock
+ * @param newLock org.jasig.portal.concurrency.IEntityLock
  */
 public void setLock(IEntityLock newLock)
 {
     lock = newLock;
 }
+
 /**
  */
 public String toString()
 {
     return "LockableEntityGroupImpl (" + getKey() + ") "  + getName();
 }
+
 /**
  *
  */
@@ -120,6 +128,7 @@ public void update() throws GroupsException
 {
     primUpdate(false);
 }
+
 /**
  *
  */
@@ -127,6 +136,7 @@ public void updateAndRenewLock() throws GroupsException
 {
     primUpdate(true);
 }
+
 /**
  *
  */
@@ -134,6 +144,7 @@ public void updateMembers() throws GroupsException
 {
     primUpdateMembers(false);
 }
+
 /**
  *
  */
@@ -141,4 +152,5 @@ public void updateMembersAndRenewLock() throws GroupsException
 {
     primUpdateMembers(true);
 }
+
 }

@@ -96,7 +96,7 @@ throws CachingException
  * Checks that <code>entity</code> is the same type as, i.e., could be cast
  * to, the cache type.
  *
- * @param IBasicEntity entity - the entity to be added to the cache.
+ * @param entity the entity to be added to the cache.
  */
 public void add(IBasicEntity entity) throws CachingException
 {
@@ -142,7 +142,7 @@ void debug(String msg)
     LogService.log(LogService.DEBUG, ts + " : " + msg);
 }
 /**
- * @param String key - the key of the entity.
+ * @param key the key of the entity.
  * @return org.jasig.portal.concurrency.IBasicEntity
  */
 public IBasicEntity get(String key) {
@@ -161,7 +161,7 @@ public final java.lang.Class getEntityType() {
     return entityType;
 }
 /**
- * @param String key - the key of the entity to be un-cached.
+ * @param key the key of the entity to be un-cached.
  */
 public void remove(String key) throws CachingException
 {
@@ -199,7 +199,7 @@ private String getSimpleTypeName()
 }
 
 /**
- * @param IBasicEntity entity - the entity to be updated in the cache.
+ * @param entity the entity to be updated in the cache.
  */
 public void update(IBasicEntity entity) throws CachingException
 {

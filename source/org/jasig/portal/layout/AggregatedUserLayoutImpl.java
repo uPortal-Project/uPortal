@@ -942,10 +942,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * a <code>ContentHandler</code>
      *
      * @param nodeId a <code>String</code> a node determining a user layout subtree.
-     * @param ch a <code>ContentHandler</code> value
+     * @param contentHandler a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
-  public void getUserLayout(String nodeId,ContentHandler contentHandler) throws PortalException {
+  public void getUserLayout(String nodeId, ContentHandler contentHandler) throws PortalException {
 
     IALFolderDescription folderDescription = null;
     IALChannelDescription channelDescription = null;

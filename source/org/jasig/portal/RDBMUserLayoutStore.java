@@ -253,7 +253,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Registers a NEW structure stylesheet with the database.
-   * @param tsd the Stylesheet description object
+   * @param ssd the Stylesheet description object
    * @return an <code>Integer</code> id for the registered Stylesheet description object
    */
   public Integer addStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
@@ -582,14 +582,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Create a layout
+   * @param layoutStructure
    * @param doc
-   * @param stmt
    * @param root
-   * @param userId
-   * @param profileId
-   * @param layoutId
    * @param structId
-   * @param ap
    * @exception java.sql.SQLException
    */
    protected final void createLayout (HashMap layoutStructure, Document doc,
@@ -736,7 +732,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Return the next available channel structure id for a user
-   * @param userId
+   * @param person
    * @return the next available channel structure id
    */
   public String generateNewChannelSubscribeId (IPerson person) throws Exception {
@@ -817,7 +813,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Obtain structure stylesheet description object for a given structure stylesheet id.
-   * @param id the id of the structure stylesheet
+   * @param stylesheetId the id of the structure stylesheet
    * @return structure stylesheet description
    */
   public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception {
@@ -1107,7 +1103,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Obtain theme stylesheet description object for a given theme stylesheet id.
-   * @param id the id of the theme stylesheet
+   * @param stylesheetId the id of the theme stylesheet
    * @return theme stylesheet description
    */
   public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) throws Exception {
@@ -1196,7 +1192,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Obtain ID for known theme stylesheet name
-   * @param ssName name of the theme stylesheet
+   * @param tsName name of the theme stylesheet
    * @return id or null if no theme matches the name given.
    */
   public Integer getThemeStylesheetId (String tsName) throws Exception {
@@ -1221,7 +1217,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Obtain a list of theme stylesheet descriptions for a given structure stylesheet
-   * @param structureStylesheetName
+   * @param structureStylesheetId
    * @return a map of stylesheet names to  theme stylesheet description objects
    * @exception Exception
    */
@@ -2489,7 +2485,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   /**
    * Save the user layout
    * @param person
-   * @param profileId
+   * @param profile
    * @param layoutXML
    * @throws Exception
    */
@@ -2753,7 +2749,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   /**
    * Updates an existing structure stylesheet description with a new one. Old stylesheet
    * description is found based on the Id provided in the parameter structure.
-   * @param ssd new stylesheet description
+   * @param tsd new theme stylesheet description
    */
   public void updateThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
     Connection con = RDBMServices.getConnection();

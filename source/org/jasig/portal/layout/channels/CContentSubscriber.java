@@ -47,13 +47,11 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
-/**
- * <p>A channel for selecting skins</p>
- * @author Michael Ivanov
- * @version $Revision$
- */
-
-
+  /**
+   * A channel for selecting skins.
+   * @author Michael Ivanov
+   * @version $Revision$
+   */
   public class CContentSubscriber extends BaseChannel implements IPrivileged {
 
     private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
@@ -65,7 +63,7 @@ import org.xml.sax.ContentHandler;
        super();
     }
 
-     /**
+    /**
      * Passes portal control structure to the channel.
      * @see PortalControlStructures
      */
@@ -79,7 +77,6 @@ import org.xml.sax.ContentHandler;
        if ( channelRegistry == null )
         channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
     }
-
 
     public void renderXML (ContentHandler out) throws PortalException {
 

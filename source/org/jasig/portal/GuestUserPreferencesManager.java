@@ -93,8 +93,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
 
     /**
      * Initializing constructor.
-     *  @param the servlet request object
-     *  @param person object
+     * @param person object
      */
     public GuestUserPreferencesManager (IPerson person) {
         super(person);

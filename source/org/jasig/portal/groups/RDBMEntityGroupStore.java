@@ -104,6 +104,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String searchGroups = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" = ?";
 
     private IGroupService groupService;
+    
 /**
  * RDBMEntityGroupStore constructor.
  */
@@ -112,6 +113,7 @@ public RDBMEntityGroupStore()
     super();
     initialize();
 }
+
 /**
  * Get the node separator character from the GroupServiceConfiguration.  
  * Default it to IGroupConstants.NODE_SEPARATOR.
@@ -126,6 +128,7 @@ private void initialize() {
     String msg = "RDBMEntityGroupStore.initialize(): Node separator set to " + sep;
     LogService.log (LogService.INFO, msg);
 }
+
 /**
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
@@ -134,6 +137,7 @@ protected static void commit(Connection conn) throws java.sql.SQLException
 {
     SqlTransaction.commit(conn);
 }
+
 /**
  * If this entity exists, delete it.
  * @param group org.jasig.portal.groups.IEntityGroup
@@ -148,6 +152,7 @@ public void delete(IEntityGroup group) throws GroupsException
             { throw new GroupsException("Problem deleting " + group + ": " + sqle.getMessage()); }
     }
 }
+
 /**
  * Answer if the IEntityGroup entity exists in the database.
  * @return boolean
@@ -158,19 +163,21 @@ private boolean existsInDatabase(IEntityGroup group) throws GroupsException
     IEntityGroup ug = this.find(group.getLocalKey());
     return ug != null;
 }
+
 /**
  * Find and return an instance of the group.
+ * @param groupID the group ID
  * @return org.jasig.portal.groups.IEntityGroup
- * @param key java.lang.Object
  */
 public IEntityGroup find(String groupID) throws GroupsException
 {
     return primFind(groupID, false);
 }
+
 /**
  * Find the groups that this entity belongs to.
+ * @param ent the entity in question
  * @return java.util.Iterator
- * @param group org.jasig.portal.groups.IEntity
  */
 public java.util.Iterator findContainingGroups(IEntity ent) throws GroupsException
 {
@@ -178,10 +185,11 @@ public java.util.Iterator findContainingGroups(IEntity ent) throws GroupsExcepti
     Integer type = EntityTypes.getEntityTypeID(ent.getLeafType());
     return findContainingGroupsForEntity(memberKey, type.intValue(), false);
 }
+
 /**
  * Find the groups that this group belongs to.
- * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
+ * @return java.util.Iterator
  */
 public java.util.Iterator findContainingGroups(IEntityGroup group) throws GroupsException
 {
@@ -190,10 +198,11 @@ public java.util.Iterator findContainingGroups(IEntityGroup group) throws Groups
     Integer type = EntityTypes.getEntityTypeID(group.getLeafType());
     return findContainingGroupsForGroup(serviceName, memberKey, type.intValue(), true);
 }
+
 /**
  * Find the groups that this group member belongs to.
+ * @param gm the group member in question
  * @return java.util.Iterator
- * @param group org.jasig.portal.groups.IGroupMember
  */
 public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
 {
@@ -208,10 +217,13 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
         return findContainingGroups(ent);
     }
 }
+
 /**
  * Find the groups associated with this member key.
+ * @param memberKey
+ * @param type
+ * @param isGroup
  * @return java.util.Iterator
- * @param String memberKey
  */
 private java.util.Iterator findContainingGroupsForEntity(String memberKey, int type, boolean isGroup)
 throws GroupsException
@@ -260,10 +272,14 @@ throws GroupsException
 
     return groups.iterator();
 }
+
 /**
  * Find the groups associated with this member key.
+ * @param serviceName
+ * @param memberKey
+ * @param type
+ * @param isGroup
  * @return java.util.Iterator
- * @param String memberKey
  */
 private java.util.Iterator findContainingGroupsForGroup(String serviceName, String memberKey, int type, boolean isGroup)
 throws GroupsException
@@ -313,10 +329,11 @@ throws GroupsException
 
     return groups.iterator();
 }
+
 /**
  * Find the <code>IEntities</code> that are members of the <code>IEntityGroup</code>.
+ * @param group the entity group in question
  * @return java.util.Iterator
- * @param group org.jasig.portal.groups.IEntityGroup
  */
 public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 {
@@ -360,10 +377,11 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
 
     return entities.iterator();
 }
+
 /**
  * Find the groups with this creatorID.
+ * @param creatorID
  * @return java.util.Iterator
- * @param String creatorID
  */
 public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsException
 {
@@ -406,19 +424,21 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
 
     return groups.iterator();
 }
+
 /**
  * Find and return an instance of the group.
+ * @param groupID the group ID
  * @return org.jasig.portal.groups.ILockableEntityGroup
- * @param key java.lang.Object
  */
 public ILockableEntityGroup findLockable(String groupID) throws GroupsException
 {
     return (ILockableEntityGroup) primFind(groupID, true);
 }
+
 /**
  * Find the keys of groups that are members of group.
+ * @param group the org.jasig.portal.groups.IEntityGroup
  * @return String[]
- * @param group org.jasig.portal.groups.IEntityGroup
  */
 public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
 {
@@ -463,8 +483,8 @@ public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
 }
 /**
  * Find the IUserGroups that are members of the group.
- * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
+ * @return java.util.Iterator
  */
 public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
 {
@@ -922,10 +942,11 @@ private static java.lang.String getUpdateGroupSql()
     }
     return updateGroupSql;
 }
+
 /**
  * Find and return an instance of the group.
+ * @param rs the SQL result set
  * @return org.jasig.portal.groups.IEntityGroup
- * @param key java.lang.Object
  */
 private IEntityGroup instanceFromResultSet(java.sql.ResultSet rs)
 throws  SQLException,
@@ -945,10 +966,11 @@ throws  SQLException,
 
     return eg;
 }
+
 /**
  * Find and return an instance of the group.
+ * @param rs the SQL result set
  * @return org.jasig.portal.groups.ILockableEntityGroup
- * @param key java.lang.Object
  */
 private ILockableEntityGroup lockableInstanceFromResultSet(java.sql.ResultSet rs)
 throws  SQLException,
@@ -1040,6 +1062,7 @@ private static java.lang.String prependGroupTableAlias(String column)
 {
     return GROUP_TABLE_ALIAS + "." + column;
 }
+
 /**
  * @return java.lang.String
  */
@@ -1047,9 +1070,11 @@ private static java.lang.String prependMemberTableAlias(String column)
 {
     return MEMBER_TABLE_ALIAS + "." + column;
 }
+
 /**
  * Insert the entity into the database.
  * @param group org.jasig.portal.groups.IEntityGroup
+ * @param conn the database connection
  */
 private void primAdd(IEntityGroup group, Connection conn) throws SQLException, GroupsException
 {
@@ -1136,9 +1161,9 @@ private void primDelete(IEntityGroup group) throws SQLException
 }
 /**
  * Find and return an instance of the group.
- * @return org.jasig.portal.groups.IEntityGroup
- * @param key java.lang.Object
+ * @param groupID the group ID
  * @param lockable boolean
+ * @return org.jasig.portal.groups.IEntityGroup
  */
 private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsException
 {
@@ -1180,9 +1205,11 @@ private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsExc
 
     return eg;
 }
+
 /**
  * Update the entity in the database.
  * @param group org.jasig.portal.groups.IEntityGroup
+ * @param conn the database connection
  */
 private void primUpdate(IEntityGroup group, Connection conn) throws SQLException, GroupsException
 {
@@ -1224,10 +1251,12 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
         throw sqle;
     }
 }
+
 /**
  * Insert and delete group membership rows.  The transaction is maintained by
  * the caller.
- * @param group org.jasig.portal.groups.EntityGroupImpl
+ * @param egi org.jasig.portal.groups.EntityGroupImpl
+ * @param conn the database connection
  */
 private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java.sql.SQLException
 {
@@ -1358,6 +1387,7 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
         throw sqle;
     }
 }
+
 /**
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
@@ -1366,6 +1396,7 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
 {
     SqlTransaction.rollback(conn);
 }
+
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
     EntityIdentifier[] r = new EntityIdentifier[0];
     ArrayList ar = new ArrayList();
@@ -1413,6 +1444,7 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
         }
       return (EntityIdentifier[]) ar.toArray(r);
   }
+  
 /**
  * @param conn java.sql.Connection
  * @param newValue boolean
@@ -1422,12 +1454,14 @@ protected static void setAutoCommit(Connection conn, boolean newValue) throws ja
 {
     SqlTransaction.setAutoCommit(conn, newValue);
 }
+
 /**
  * @param newGroupService org.jasig.portal.groups.IGroupService
  */
 public void setGroupService(IGroupService newGroupService) {
     groupService = newGroupService;
 }
+
 /**
  * @return org.jasig.portal.groups.RDBMEntityGroupStore
  */
@@ -1438,6 +1472,7 @@ throws GroupsException
         { singleton = new RDBMEntityGroupStore(); }
     return singleton;
 }
+
 /**
  * Commit this entity AND ITS MEMBERSHIPS to the underlying store.
  * @param group org.jasig.portal.groups.IEntityGroup
@@ -1480,9 +1515,10 @@ public void update(IEntityGroup group) throws GroupsException
         RDBMServices.releaseConnection(conn);
     }
 }
+
 /**
  * Insert and delete group membership rows inside a transaction.
- * @param group org.jasig.portal.groups.IEntityGroup
+ * @param eg org.jasig.portal.groups.IEntityGroup
  */
 public void updateMembers(IEntityGroup eg) throws GroupsException
 {

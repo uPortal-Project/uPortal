@@ -63,7 +63,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     /**
      * Reconstruct channel information from an xml <code>Element</code>
      *
-     * @param nodeXML a user layout channel <code>Element</code> value
+     * @param xmlNode a user layout channel <code>Element</code> value
      * @exception PortalException if xml is malformed
      */
     public UserLayoutChannelDescription(Element xmlNode) throws PortalException {

@@ -698,7 +698,7 @@ public void setDescription(java.lang.String newDescription) {
     description = newDescription;
 }
 /**
- * @param newLocalGroupService IIndividualGroupService
+ * @param newIndividualGroupService IIndividualGroupService
  */
 public void setLocalGroupService(IIndividualGroupService newIndividualGroupService)
 throws GroupsException

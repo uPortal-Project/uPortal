@@ -70,8 +70,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
  /**
    * getuPortalUID -  return a unique uPortal key for a user.
    *    calls alternate signature with createPortalData set to false.
-   * @param   IPerson object
-   * @return  uPortalUID number
+   * @param person the person object
+   * @return uPortalUID number
    * @throws Authorization exception if no user is found.
    */
   public int getPortalUID (IPerson person) throws AuthorizationException {
@@ -159,15 +159,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     }
 
-    /**
-   *
-   * getuPortalUID
-   * @param   IPerson object, boolean createPortalData indicating whether to  try to create
-   *  all uPortal data for this user from temp[late prototype
-   * @return  uPortalUID number or -1 if unable to create user.
-   * @throws Authorization exception if createPortalData is false and no user is found
-   *  or if a sql error is encountered
-   */
+   /**
+    * Get the portal user ID for this person object.
+    * @param person 
+    * @param createPortalData indicating whether to try to create all uPortal data for this user from template prototype
+    * @return uPortalUID number or -1 if unable to create user.
+    * @throws Authorization exception if createPortalData is false and no user is found
+    *  or if a sql error is encountered
+    */
    public synchronized int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
     int uPortalUID=-1;
     // Get a connection to the database

@@ -33,31 +33,31 @@
  *
  */
 
- package org.jasig.portal;
+package org.jasig.portal;
+
+import org.jasig.portal.security.IPerson;
+
 /**
  * Interface for managing creation and removal of User Portal Data
  * @author Susan Bramhall
  * @version 1.0
  */
-
- import org.jasig.portal.security.IPerson;
-
 public interface IUserIdentityStore {
   /**
-   * getuPortalUID -  return a unique uPortal key for a user.
-   * @param   IPerson object
-   * @return  uPortalUID number
+   * Returns a unique uPortal key for a user.
+   * @param person the person object
+   * @return uPortalUID number
    * @throws Authorization exception if no user is found.
    */
   public int getPortalUID(IPerson person) throws AuthorizationException;
-    /**
-   *
-   * getuPortalUID
-   * @param   IPerson object, boolean createPortalData indicating whether to  try to create
-   *  all uPortal data for this user.
-   * @return  uPortalUID number or -1 if no user found and unable to create user.
+
+  /**
+   * Returns a unique uPortal key for a user.  A boolean flag
+   * determines whether or not to auto-create data for a new user.
+   * @param person object, boolean createPortalData indicating whether to try to create all uPortal data for this user.
+   * @return uPortalUID number or -1 if no user found and unable to create user.
    * @throws Authorization exception if createPortalData is false and no user is found
-   *  or if a sql error is encountered
+   *         or if a sql error is encountered
    */
   public int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
 

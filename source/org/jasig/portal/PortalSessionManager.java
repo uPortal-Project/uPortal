@@ -566,7 +566,7 @@ public class PortalSessionManager extends HttpServlet {
 
         /**
          * Overloaded method
-         * @param name
+         * @param name the parameter name
          * @return parameter
          */
         public String getParameter(String name) {
@@ -588,7 +588,7 @@ public class PortalSessionManager extends HttpServlet {
 
         /**
          * Return a String[] for this parameter
-         * @param parameter name
+         * @param name the parameter name
          * @return String[] if parameter is not an Object[]
          */
         public String[] getParameterValues(String name) {
@@ -611,7 +611,7 @@ public class PortalSessionManager extends HttpServlet {
 
         /**
          * Return the Object represented by this parameter name
-         * @param parameter name
+         * @param name the parameter name
          * @return Object
          */
         public Object[] getObjectParameterValues(String name) {

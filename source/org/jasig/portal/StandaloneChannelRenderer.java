@@ -120,7 +120,6 @@ public class StandaloneChannelRenderer
      * This request will cause setRuntimeData() method called on the channel. If this method is invoked,
      * the render() method, which usually invokes setRuntimeData() method will omit the call.
      * @param req http request
-     * @param res http response
      */
     public void prepare(HttpServletRequest req) throws Exception {
         if(this instanceof IPrivilegedChannel) {
@@ -138,7 +137,7 @@ public class StandaloneChannelRenderer
      * @param req http request
      * @param res http response
      */
-    public void render(HttpServletRequest req,HttpServletResponse res) throws Throwable {
+    public void render(HttpServletRequest req, HttpServletResponse res) throws Throwable {
         ChannelRuntimeData rd=null;
         if(!dataIsSet) {
             if(this instanceof IPrivilegedChannel) {

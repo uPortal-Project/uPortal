@@ -762,9 +762,9 @@ throws GroupsException
  * Returns an EntityIdentifier[] of groups of the given leaf type whose names
  * match the query string according to the search method.
  *
- * @param query String - the string used to match group names.
- * @param int searchMethod - see org.jasig.portal.groups.IGroupConstants.
- * @param leafType Class - the leaf type of the groups we are searching for.
+ * @param query String the string used to match group names.
+ * @param searchMethod see org.jasig.portal.groups.IGroupConstants.
+ * @param leafType the leaf type of the groups we are searching for.
  * @return EntityIdentifier[]
  */
 public EntityIdentifier[] searchForGroups(String query, int searchMethod, Class leafType)

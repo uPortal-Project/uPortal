@@ -118,10 +118,11 @@ public void convert(IEntityLock lock, int newType, int newDuration) throws Locki
     ((EntityLockImpl)lock).setLockType(newType);
     ((EntityLockImpl)lock).setExpirationTime(newExpiration);
 }
+
 /**
  * Answer if this <code>IEntityLock</code> exists in the store.
+ * @param lock
  * @return boolean
- * @param IEntityLock lock
  */
 public boolean existsInStore(IEntityLock lock) throws LockingException
 {
@@ -134,6 +135,7 @@ public boolean existsInStore(IEntityLock lock) throws LockingException
 
     return (lockArray.length == 1);
 }
+
 /**
  * @return int
  */
@@ -258,12 +260,14 @@ private boolean isValidLockType(int lockType)
 {
     return ( (lockType == READ_LOCK) || (lockType == WRITE_LOCK) );
 }
+
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
+ * @param entityType
+ * @param entityKey
+ * @param lockType
+ * @param owner
  * @return org.jasig.portal.groups.IEntityLock
- * @param ent org.jasig.portal.groups.IEntity
- * @param lockType int
- * @param owner String
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
 public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner)
@@ -271,13 +275,15 @@ throws LockingException
 {
     return newLock(entityType, entityKey, lockType, owner, defaultLockPeriod);
 }
+
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
+ * @param entityType
+ * @param entityKey
+ * @param lockType
+ * @param owner
+ * @param durationSecs
  * @return org.jasig.portal.groups.IEntityLock
- * @param ent org.jasig.portal.groups.IEntity
- * @param lockType int
- * @param owner String
- * @param durationSecs int
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
 public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner, int durationSecs)

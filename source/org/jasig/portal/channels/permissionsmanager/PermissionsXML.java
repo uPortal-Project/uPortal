@@ -63,8 +63,6 @@ public class PermissionsXML {
     }
 
     /**
-     * put your documentation comment here
-     * 
      * @param session
      * @return a <code>Document</code>
      */
@@ -72,13 +70,6 @@ public class PermissionsXML {
         return getViewDoc(session, false);
     }
 
-    /**
-     * put your documentation comment here
-     * 
-     * @param rd
-     * @param sd
-     * @return a <code>Document</code>
-     */
     public static Document getViewDoc (PermissionsSessionData session, boolean forceRefresh){
         synchronized (session) {
             if (session.XML == null || forceRefresh) {

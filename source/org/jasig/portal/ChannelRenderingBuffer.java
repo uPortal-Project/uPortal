@@ -72,8 +72,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
 
   /**
    * Default constructor.
-   * @param handler output document handler
-   * @param chanman channel manager
+   * @param chanman the channel manager
    */
   public ChannelRenderingBuffer(ChannelManager chanman) {
     super();
@@ -83,7 +82,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     this.setContentHandler(null);
   }
 
-  public ChannelRenderingBuffer(ContentHandler ch,ChannelManager chanman) {
+  public ChannelRenderingBuffer(ContentHandler ch, ChannelManager chanman) {
     super(ch);
     ccaching=false;
     this.cm = chanman;
@@ -91,7 +90,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     this.setContentHandler(null);
   }
 
-  public ChannelRenderingBuffer(XMLReader parent,ChannelManager chanman) {
+  public ChannelRenderingBuffer(XMLReader parent, ChannelManager chanman) {
     super(parent);
     ccaching=false;
     this.cm = chanman;
@@ -99,16 +98,16 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     this.setContentHandler(null);
   }
 
-  public ChannelRenderingBuffer(ChannelManager chanman,boolean ccaching) {
+  public ChannelRenderingBuffer(ChannelManager chanman, boolean ccaching) {
     this(chanman);
     this.setCharacterCaching(ccaching);
   }
 
-  public ChannelRenderingBuffer(ContentHandler ch,ChannelManager chanman,boolean ccaching) {
+  public ChannelRenderingBuffer(ContentHandler ch, ChannelManager chanman, boolean ccaching) {
     this(ch,chanman);
     this.setCharacterCaching(ccaching);
   }
-  public ChannelRenderingBuffer(XMLReader parent,ChannelManager chanman,boolean ccaching) {
+  public ChannelRenderingBuffer(XMLReader parent, ChannelManager chanman, boolean ccaching) {
     this(parent,chanman);
     this.setCharacterCaching(ccaching);
   }
@@ -125,13 +124,9 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
   public void endDocument() throws SAXException {
     cm.commitToRenderingChannelSet();
     super.endDocument();
-
-    // buffer will be unplugged by the LayoutBean
-    //    this.stopBuffering();
   }
 
-  public void startElement(String url, String localName, String qName, Attributes atts) throws SAXException
-  {
+  public void startElement(String url, String localName, String qName, Attributes atts) throws SAXException {
     if (!insideChannelElement) {
       // recognizing "channel"
       if (qName.equals("channel")) {
@@ -152,8 +147,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     super.startElement(url,localName,qName,atts);
   }
 
-  public void endElement(String url, String localName, String qName) throws SAXException
-  {
+  public void endElement(String url, String localName, String qName) throws SAXException {
     if (insideChannelElement) {
       if (qName.equals("channel")) {
           try {

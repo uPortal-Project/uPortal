@@ -45,38 +45,47 @@ import org.jasig.portal.IBasicEntity;
   * @version $Revision$
   */
 public interface IEntityCache {
-/**
- * @param IBasicEntity entity - the entity to be cached.
- */
-public void add(IBasicEntity entity) throws CachingException;
-/**
- * Purge stale entries from the cache.
- */
-public void cleanupCache() throws CachingException;
-/**
- * Remove all entries from the cache.
- */
-public void clearCache() throws CachingException;
-/**
- * @param String key - the key of the entity.
- * @return org.jasig.portal.concurrency.IBasicEntity
- */
-public IBasicEntity get(String key);
-/**
- * @see org.jasig.portal.groups.EntityTypes for known types.
- * @return java.lang.Class
- */
-public Class getEntityType();
-/**
- * @param String entityKey - the key of the entity to be un-cached.
- */
-public void remove(String entityKey) throws CachingException;
-/**
- * Answers the number of entries in the cache.
- */
-public int size();
-/**
- * @param IBasicEntity entity - the entity to be updated in the cache.
- */
-public void update(IBasicEntity entity) throws CachingException;
+    
+    /**
+     * @param entity - the entity to be cached.
+     */
+    public void add(IBasicEntity entity) throws CachingException;
+    
+    /**
+     * Purge stale entries from the cache.
+     */
+    public void cleanupCache() throws CachingException;
+    
+    /**
+     * Remove all entries from the cache.
+     */
+    public void clearCache() throws CachingException;
+    
+    /**
+     * @param key the key of the entity.
+     * @return org.jasig.portal.concurrency.IBasicEntity
+     */
+    public IBasicEntity get(String key);
+    
+    /**
+     * @see org.jasig.portal.groups.EntityTypes for known types.
+     * @return java.lang.Class
+     */
+    public Class getEntityType();
+    
+    /**
+     * @param entityKey - the key of the entity to be un-cached.
+     */
+    public void remove(String entityKey) throws CachingException;
+    
+    /**
+     * Answers the number of entries in the cache.
+     */
+    public int size();
+    
+    /**
+     * @param entity - the entity to be updated in the cache.
+     */
+    public void update(IBasicEntity entity) throws CachingException;
+
 }

@@ -148,11 +148,12 @@ public void deleteAll() throws CachingException
     finally
         { RDBMServices.releaseConnection(conn); }
 }
+
 /**
  * Delete invalid entities the underlying store whose invalidation time is
  * before <code>invalidation</code>.
  *
- * @param invalidation java.util.Date
+ * @param expiration java.util.Date
  */
 public void deleteBefore(Date expiration) throws CachingException
 {
@@ -168,6 +169,7 @@ public void deleteBefore(Date expiration) throws CachingException
     finally
         { RDBMServices.releaseConnection(conn); }
 }
+
 /**
  * Answers if this entity is represented in the store.
  * @param group org.jasig.portal.concurrency.CachedEntityInvalidation ent

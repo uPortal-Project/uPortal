@@ -100,11 +100,11 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
 
     /**
      * Returns folder attribute value only if it has been assigned specifically.
-     * @folderID folder id
-     * @attributeName name of the attribute
+     * @param folderID folder id
+     * @param attributeName name of the attribute
      * @return attribute value or null if the value is determined by the attribute default
      */
-    public String getDefinedFolderAttributeValue(String folderID,String attributeName) {
+    public String getDefinedFolderAttributeValue(String folderID, String attributeName) {
         Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::hasDefinedFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");

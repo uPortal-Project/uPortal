@@ -89,14 +89,14 @@ public void convert(IEntityLock lock, int newType) throws LockingException;
  * Attempts to change the lock's <code>lockType</code> to <code>newType</code>.
  * @param lock IEntityLock
  * @param newType int
- * @param new duration int
+ * @param newDuration int
  * @exception org.jasig.portal.concurrency.LockingException
  */
 public void convert(IEntityLock lock, int newType, int newDuration) throws LockingException;
 /**
  * Answer if this <code>IEntityLock</code> exists in the store.
  * @return boolean
- * @param IEntityLock lock
+ * @param lock
  */
 public boolean existsInStore(IEntityLock lock) throws LockingException;
 /**
@@ -151,25 +151,27 @@ throws LockingException;
  * @param durationSecs int
  * @exception org.jasig.portal.concurrency.LockingException
  */
-public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner,
-  int durationSecs)
+public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner, int durationSecs)
 throws LockingException;
+
 /**
  * Releases the <code>IEntityLock</code>.
  * @param lock IEntityLock
  * @exception org.jasig.portal.concurrency.LockingException
  */
 public void release(IEntityLock lock) throws LockingException;
+
 /**
  * Extends the expiration time of the lock by the default increment.
  * @param lock IEntityLock
  * @exception org.jasig.portal.concurrency.LockingException
  */
 public void renew(IEntityLock lock) throws LockingException;
+
 /**
  * Extends the expiration time of the lock by <code>duration</code> seconds.
  * @param lock IEntityLock
- * @param int duration
+ * @param duration
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
 public void renew(IEntityLock lock, int duration) throws LockingException;

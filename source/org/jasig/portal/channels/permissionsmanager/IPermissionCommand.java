@@ -32,13 +32,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-
 package  org.jasig.portal.channels.permissionsmanager;
-
-
 
 /**
  *  Defines the interface for a command object to be used by CPermissionsManager
@@ -47,12 +43,6 @@ package  org.jasig.portal.channels.permissionsmanager;
  * @version $Revision$
  */
 public interface IPermissionCommand {
-
-    /**
-     * put your documentation comment here
-     * @param rd
-     * @param sd
-     */
     public void execute (PermissionsSessionData session) throws Exception;
 }
 

@@ -57,7 +57,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
     /**
      * Reconstruct folder information from an xml <code>Element</code>
      *
-     * @param nodeXML a user layout channel <code>Element</code> value
+     * @param xmlNode a user layout channel <code>Element</code> value
      * @exception PortalException if xml is malformed
      */
     public UserLayoutFolderDescription(Element xmlNode) throws PortalException {

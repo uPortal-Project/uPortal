@@ -229,9 +229,9 @@ public class ChannelRegistryManager {
    * ChannelRegistryManager since this XML fragment is
    * related more to a channel instance, but we'll hold
    * it here for now and find a better place for it later :)
-   * @param subscribeId, the channel subscibe ID, formerly called instance ID
+   * @param subscribeId the channel subscibe ID, formerly called instance ID
    * @param channelDef a channel definition
-   * @return channelXML, the XML representing this channel definition
+   * @return the XML representing this channel definition
    */
   public static Element getChannelXML(String subscribeId, ChannelDefinition channelDef) {
     Document doc = DocumentFactory.getNewDocument();
@@ -282,8 +282,8 @@ public class ChannelRegistryManager {
    * and find a better place for it later :)
    * Note that this method does not set the ID, publisher ID,
    * approver ID, pubish date, or approval date.
-   * @param channelE, an XML element representing a channel definition
-   * @param channelDef, the channel definition to update
+   * @param channelE an XML element representing a channel definition
+   * @param channelDef the channel definition to update
    */
   public static void setChannelXML(Element channelE, ChannelDefinition channelDef) {
     channelDef.setFName(channelE.getAttribute("fname"));
@@ -527,8 +527,8 @@ public class ChannelRegistryManager {
 
   /**
    * Removes a channel from the channel registry.
-   * @param channel ID, the channel ID
-   * @param person, the person removing the channel
+   * @param channelID the channel ID
+   * @param person the person removing the channel
    * @throws java.lang.Exception
    */
   public static void removeChannel (String channelID, IPerson person) throws Exception {

@@ -232,8 +232,7 @@ private void loadDefaultProperties()
  * for <code>type</code>.
  * @param type Class
  * @param maxSize int - the maximum size of the cache.
- * @param maxIdleSize int - the idle time in milliseconds after which a cache entry
- * may be purged.
+ * @param maxIdleTime int - the idle time in milliseconds after which a cache entry may be purged.
  * @param sweepInterval int - the period of time in milliseconds between cache sweeps.
  * @return IEntityCache
  * @exception org.jasig.portal.concurrency.CachingException

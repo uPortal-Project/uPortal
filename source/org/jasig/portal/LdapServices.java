@@ -140,7 +140,7 @@ public class LdapServices
 
   /**
    * Releases an LDAP directory context.
-   * @param an LDAP directory context object
+   * @param conn an LDAP directory context object
    */
   public void releaseConnection (DirContext conn) {
     if (conn == null)

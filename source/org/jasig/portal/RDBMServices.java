@@ -313,7 +313,7 @@ public class RDBMServices {
 
   /**
    * Releases database connection
-   * @param a database Connection object
+   * @param con a database Connection object
    */
   public static void releaseConnection (Connection con) {
     try {
@@ -387,18 +387,18 @@ public class RDBMServices {
   }
 
   /**
-   * return DB format of a boolean
-   * @param boolean
-   * @return String
+   * Return DB format of a boolean. "Y" for true and "N" for false.
+   * @param flag true or false
+   * @return either "Y" or "N"
    */
   public static final String dbFlag(boolean flag) {
     return (flag ? "Y" : "N");
   }
 
   /**
-   * return boolean value of DB flag
-   * @param String
-   * @return boolean
+   * Return boolean value of DB flag, "Y" or "N".
+   * @param flag either "Y" or "N"
+   * @return boolean true or false
    */
   public static final boolean dbFlag(String flag) {
     return (flag != null && (flag.equalsIgnoreCase("Y") || flag.equalsIgnoreCase("T")) ? true : false);
@@ -435,7 +435,7 @@ public class RDBMServices {
 
   /**
    * Make a string SQL safe
-   * @param string
+   * @param sql
    * @return SQL safe string
    */
   public static final String sqlEscape (String sql) {

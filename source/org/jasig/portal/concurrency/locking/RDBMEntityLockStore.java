@@ -90,9 +90,10 @@ public RDBMEntityLockStore() throws LockingException
     super();
     initialize();
 }
+
 /**
  * Adds the lock to the underlying store.
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
+ * @param lock
  */
 public void add(IEntityLock lock) throws LockingException
 {
@@ -110,9 +111,10 @@ public void add(IEntityLock lock) throws LockingException
     finally
         { RDBMServices.releaseConnection(conn); }
 }
+
 /**
  * If this IEntityLock exists, delete it.
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
+ * @param lock
  */
 public void delete(IEntityLock lock) throws LockingException
 {
@@ -128,6 +130,7 @@ public void delete(IEntityLock lock) throws LockingException
     finally
         { RDBMServices.releaseConnection(conn); }
 }
+
 /**
  * Delete all IEntityLocks from the underlying store.
  */
@@ -158,14 +161,16 @@ public void deleteAll() throws LockingException
     finally
         { RDBMServices.releaseConnection(conn); }
 }
+
 /**
  * Delete all expired IEntityLocks from the underlying store.
- * @param expiration java.util.Date
+ * @param expiration 
  */
 public void deleteExpired(Date expiration) throws LockingException
 {
     deleteExpired(expiration, null, null);
 }
+
 /**
  * Delete IEntityLocks from the underlying store that have expired as of
  * <code>expiration</code>.  Params <code>entityType</code> and
@@ -190,6 +195,7 @@ throws LockingException
     finally
         { RDBMServices.releaseConnection(conn); }
 }
+
 /**
  * Delete all expired IEntityLocks from the underlying store.
  * @param lock IEntityLock
@@ -198,6 +204,7 @@ public void deleteExpired(IEntityLock lock) throws LockingException
 {
     deleteExpired(new Date(), lock.getEntityType(), lock.getEntityKey());
 }
+
  /**
  * Retrieve IEntityLocks from the underlying store.  Any or all of the parameters
  * may be null.
@@ -218,6 +225,7 @@ throws LockingException
 {
     return select(entityType, entityKey, lockType, expiration, lockOwner);
 }
+
  /**
  * Retrieve IEntityLocks from the underlying store.  Expiration must not be null.
  * @param expiration Date
@@ -238,6 +246,7 @@ throws LockingException
     Timestamp ts = new Timestamp(expiration.getTime());
     return selectUnexpired(ts, entityType, entityKey, lockType, lockOwner);
 }
+
 /**
  * SQL for inserting a row into the lock table.
  */
@@ -250,6 +259,7 @@ private static String getAddSql()
     }
     return addSql;
 }
+
 /**
  * @return java.lang.String
  */
@@ -272,6 +282,7 @@ private static java.lang.String getAllLockColumns()
     }
     return allLockColumns;
 }
+
 /**
  * SQL for deleting a row on the lock table.
  */
@@ -288,6 +299,7 @@ private static String getDeleteLockSql()
     }
     return deleteLockSql;
 }
+
 /**
  * @return java.lang.String
  */
@@ -295,6 +307,7 @@ private static java.lang.String getSelectSql()
 {
     return ( "SELECT " + getAllLockColumns() + " FROM " + LOCK_TABLE);
 }
+
 /**
  * SQL for updating a row on the lock table.
  */
@@ -312,6 +325,7 @@ private static String getUpdateSql()
     }
     return updateSql;
 }
+
 /**
  * Cleanup the store by deleting locks expired an hour ago.
  */
@@ -320,6 +334,7 @@ private void initialize()throws LockingException
     Date expiration = new Date(System.currentTimeMillis() - (60*60*1000));
     deleteExpired(expiration, null, null);
 }
+
 /**
  * Extract values from ResultSet and create a new lock.
  * @return org.jasig.portal.groups.IEntityLock
@@ -339,6 +354,7 @@ throws  SQLException, LockingException
 
     return newInstance(entityType, key, lockType, ts, lockOwner);
 }
+
 /**
  * @return org.jasig.portal.concurrency.locking.IEntityLock
  */
@@ -351,6 +367,7 @@ private IEntityLock newInstance (
 {
     return new EntityLockImpl(entityType, entityKey, lockType, expirationTime, lockOwner);
 }
+
 /**
  * Add the lock to the underlying store.
  * @param lock org.jasig.portal.concurrency.locking.IEntityLock
@@ -397,9 +414,11 @@ throws SQLException, LockingException
         throw sqle;
     }
 }
+
 /**
  * Delete the IEntityLock from the underlying store.
- * @param lock org.jasig.portal.concurrency.locking.IEntityLock
+ * @param lock
+ * @param conn the database connection
  */
 private void primDelete(IEntityLock lock, Connection conn) throws LockingException, SQLException
 {
@@ -436,6 +455,7 @@ private void primDelete(IEntityLock lock, Connection conn) throws LockingExcepti
         throw sqle;
     }
 }
+
 /**
  * Delete IEntityLocks from the underlying store that have expired as of
  * <code>expiration</code>.  Params <code>entityType</code> and
@@ -530,9 +550,9 @@ private IEntityLock[] primSelect(String sql) throws LockingException
  * Updates the lock's <code>expiration</code> and <code>lockType</code> in the
  * underlying store.  The SQL is over-qualified to make sure the row has not been
  * updated since the lock was last checked.
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
- * @param expiration java.util.Date
- * @param lockType Integer
+ * @param lock
+ * @param newExpiration java.util.Date
+ * @param newType Integer
  * @param conn Connection
  */
 private void primUpdate(IEntityLock lock, Date newExpiration, Integer newType, Connection conn)
@@ -690,8 +710,8 @@ private static java.lang.String sqlQuote(Object o)
     return QUOTE + o + QUOTE;
 }
 /**
- * @param group org.jasig.portal.groups.IEntityLock
- * @param expiration java.util.Date
+ * @param lock org.jasig.portal.groups.IEntityLock
+ * @param newExpiration java.util.Date
  */
 public void update(IEntityLock lock, java.util.Date newExpiration)
 throws LockingException
@@ -701,9 +721,9 @@ throws LockingException
 /**
  * Updates the lock's <code>expiration</code> and <code>lockType</code> in the
  * underlying store.  Param <code>lockType</code> may be null.
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
- * @param expiration java.util.Date
- * @param lockType Integer
+ * @param lock
+ * @param newExpiration java.util.Date
+ * @param newLockType Integer
  */
 public void update(IEntityLock lock, Date newExpiration, Integer newLockType)
 throws LockingException

@@ -687,9 +687,9 @@ public class ChannelManager implements LayoutEventListener {
 
 
     /**
-     * passes Layout-level event to a channel
-     * @param channelSubscribeId channel subscribe id
-     * @param PortalEvent object
+     * Passes a layout-level event to a channel.
+     * @param channelSubscribeId the channel subscribe id
+     * @param le the portal event
      */
     public void passPortalEvent(String channelSubscribeId, PortalEvent le) {
         IChannel ch= (IChannel) channelTable.get(channelSubscribeId);

@@ -44,6 +44,7 @@ package org.jasig.portal;
 public class EntityIdentifier {
     protected String key;
     protected Class type;
+    
 /**
  * KeyTypePair constructor.
  */
@@ -52,8 +53,9 @@ public EntityIdentifier(String entityKey, Class entityType) {
     key = entityKey;
     type = entityType;
 }
+
 /**
- * @param obj the Object to compare with
+ * @param o the Object to compare with
  * @return true if these Objects are equal; false otherwise.
  */
 public boolean equals(Object o) {
@@ -65,24 +67,28 @@ public boolean equals(Object o) {
     return ei.getType() == getType() &&
         ei.getKey().equals(key);
 }
+
 /**
  * @return java.lang.String
  */
 public String getKey() {
     return key;
 }
+
 /**
  * @return java.lang.Class
  */
 public Class getType() {
     return type;
 }
+
 /**
  * @return an integer hash code for the receiver
  */
 public int hashCode() {
     return getType().hashCode() + getKey().hashCode();
 }
+
 /**
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver
@@ -90,4 +96,5 @@ public int hashCode() {
 public String toString() {
     return "EntityIdentifier (" + type + "(" + key + "))";
 }
+
 }

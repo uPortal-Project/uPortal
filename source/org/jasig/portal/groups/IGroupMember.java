@@ -78,8 +78,8 @@ public boolean deepContains(IGroupMember gm) throws GroupsException;
 /**
  * Answers if Object o is an <code>IGroupMember</code> that refers to the same underlying
  * entity(ies) as <code>this</code>.
+ * @param o
  * @return boolean
- * @param Object o
  */
 public boolean equals(Object o);
 /**

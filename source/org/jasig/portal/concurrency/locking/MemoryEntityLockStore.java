@@ -57,6 +57,7 @@ public class MemoryEntityLockStore implements IEntityLockStore
 
     // The lock store is a Map that contains a SmartCache for each entity type:
     private Map lockCache;
+    
 /**
  * MemoryEntityLockStore constructor comment.
  */
@@ -64,17 +65,19 @@ public MemoryEntityLockStore() {
     super();
     initializeCache();
 }
+
 /**
  * Adds this IEntityLock to the store.
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
+ * @param lock
  */
 public void add(IEntityLock lock) throws LockingException
 {
     primAdd(lock, lock.getExpirationTime());
 }
+
 /**
  * Deletes this IEntityLock from the store.
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
+ * @param lock
  */
 public void delete(IEntityLock lock) throws LockingException
 {
@@ -83,10 +86,12 @@ public void delete(IEntityLock lock) throws LockingException
         m.remove(getCacheKey(lock));
     }
 }
+
 public void deleteAll()
 {
     initializeCache();
 }
+
 /**
  * Deletes the expired IEntityLocks from the underlying store.
  * @param expiration java.util.Date
@@ -95,6 +100,7 @@ public void deleteExpired(java.util.Date expiration) throws LockingException
 {
     // let SmartCache handle it.
 }
+
 /**
  * Returns an IEntityLock[] based on the params, any or all of which may be null.  A
  * null param means any value, so <code>find(myType,myKey,null,null,null)</code> will
@@ -163,10 +169,11 @@ throws LockingException
     }
     return ((IEntityLock[])locks.toArray(new IEntityLock[locks.size()]));
 }
+
 /**
  * Returns this lock if it exists in the store.
+ * @param lock
  * @return IEntityLock
- * @param key IEntityLock
  */
 public IEntityLock find(IEntityLock lock) throws LockingException
 {
@@ -183,6 +190,7 @@ public IEntityLock find(IEntityLock lock) throws LockingException
 
     return foundLock;
 }
+
 /**
  * Returns an IEntityLock[] containing unexpired locks, based on the params,
  * any or all of which may be null EXCEPT FOR <code>expiration</code>.  A null
@@ -214,12 +222,14 @@ throws LockingException
     }
     return ((IEntityLock[])lockAL.toArray(new IEntityLock[lockAL.size()]));
 }
+
 /**
  * @param lock org.jasig.portal.concurrency.locking.IEntityLock
  */
 private String getCacheKey(IEntityLock lock) {
     return lock.getEntityKey() + lock.getLockOwner();
 }
+
 /**
  * @return java.util.Map
  */
@@ -227,6 +237,7 @@ private java.util.Map getLockCache()
 {
     return lockCache;
 }
+
 /**
  * @return java.util.Map
  */
@@ -240,12 +251,14 @@ private synchronized Map getLockCache(Class type)
     }
     return m;
 }
+
 private IEntityLock getLockFromCache(Object cacheKey, Map cache)
 {
     synchronized (cache) {
         return (IEntityLock) cache.get(cacheKey);
     }
 }
+
 /**
  *
  */
@@ -253,12 +266,14 @@ private void initializeCache()
 {
     lockCache = new HashMap(10);
 }
+
 /**
  * @param newLockCache java.util.Map
  */
 private void setLockCache(java.util.Map newLockCache) {
     lockCache = newLockCache;
 }
+
 /**
  * @return org.jasig.portal.concurrency.locking.IEntityLockStore
  */
@@ -268,21 +283,23 @@ public static synchronized IEntityLockStore singleton()
         { singleton = new MemoryEntityLockStore(); }
     return singleton;
 }
+
 /**
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
- * @param expiration java.util.Date
+ * @param lock
+ * @param newExpiration
  */
 public void update(IEntityLock lock, java.util.Date newExpiration)
 throws LockingException
 {
     update(lock, newExpiration, null);
 }
+
 /**
  * Make sure the store has a reference to the lock, and then add the lock 
  * to refresh the SmartCache wrapper.  
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
- * @param expiration java.util.Date
- * @param lockType Integer
+ * @param lock org.jasig.portal.concurrency.locking.IEntityLock
+ * @param newExpiration java.util.Date
+ * @param newLockType Integer
  */
 public void update(IEntityLock lock, java.util.Date newExpiration, Integer newLockType)
 throws LockingException
@@ -294,7 +311,8 @@ throws LockingException
 
 /**
  * Adds this IEntityLock to the store.
- * @param group org.jasig.portal.concurrency.locking.IEntityLock
+ * @param lock
+ * @param expiration
  */
 private void primAdd(IEntityLock lock, Date expiration) throws LockingException
 {

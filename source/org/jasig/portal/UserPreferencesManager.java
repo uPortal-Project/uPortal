@@ -86,8 +86,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * Constructor does the following
      *  1. Read layout.properties
      *  2. read userLayout from the database
-     *  @param the servlet request object
-     *  @param person object
+     *  @param req the servlet request object
+     *  @param person the person object
      */
     public UserPreferencesManager (HttpServletRequest req, IPerson person) throws PortalException {
         ulm=null;
@@ -171,9 +171,9 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * Constructor does the following
      *  1. Read layout.properties
      *  2. read userLayout from the database
-     *  @param the servlet request object
-     *  @param person object
-     *  @param locale manager
+     *  @param req the servlet request object
+     *  @param person the person object
+     *  @param localeManager the locale manager
      */
     public UserPreferencesManager (HttpServletRequest req, IPerson person, LocaleManager localeManager) throws PortalException {
         ulm=null;
