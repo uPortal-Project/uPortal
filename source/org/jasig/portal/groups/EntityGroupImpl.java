@@ -503,7 +503,7 @@ public boolean hasDeletes()
  */
 public int hashCode()
 {
-    return getGroupID().hashCode() + getName().hashCode();
+    return getKey().hashCode();
 }
 /**
  * @return boolean
