@@ -63,6 +63,7 @@ import org.jasig.portal.security.InitialSecurityContextFactory;
 import org.jasig.portal.security.PortalSecurityException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
+import org.apache.axis.handlers.SimpleSessionHandler;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
