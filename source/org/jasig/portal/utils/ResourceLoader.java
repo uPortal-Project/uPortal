@@ -63,6 +63,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class ResourceLoader {
 
+  private static DocumentBuilderFactory f;
+  static {
+    f = DocumentBuilderFactory.newInstance();
+    f.setNamespaceAware(true);
+  }
+
   /**
    * Finds a resource with a given name.  This is a convenience method for accessing a resource
    * from a channel or from the uPortal framework.  If a well-formed URL is passed in,
@@ -164,7 +170,7 @@ public class ResourceLoader {
    */
   public static Document getResourceAsDocument (Class requestingClass, String resource) throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
     InputStream inputStream = getResourceAsStream(requestingClass, resource);
-    return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+    return f.newDocumentBuilder().parse(inputStream);
   }
 
   /**
@@ -199,6 +205,3 @@ public class ResourceLoader {
     return sbText.toString ();
   }
 }
-
-
-
