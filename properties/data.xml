@@ -2202,7 +2202,7 @@
         <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/tab-column/nested-tables/sample_full.gif</value></column>
         <column><name>MIME_TYPE</name><value>text/html</value></column>
         <column><name>DEVICE_TYPE</name><value>workstation</value></column>
-        <column><name>SERIALIZER_NAME</name><value>XHTML</value></column>
+        <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
         <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column>
       </row>
       <row>
@@ -2280,78 +2280,6 @@
     </rows>
   </table>
 
-  <!-- Temporary until portal can deal with unrecognized browsers -->
-  <table>
-    <name>UP_USER_UA_MAP</name>
-    <rows>
-      <row>
-        <column><name>USER_ID</name><value>0</value></column>
-        <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 4.0)</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>0</value></column>
-        <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>0</value></column>
-        <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 4.0)</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>0</value></column>
-        <column><name>USER_AGENT</name><value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>0</value></column>
-        <column><name>USER_AGENT</name><value>Mozilla/4.76 [en] (Windows NT 5.0; U)</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-SH UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-UPG1 UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>USER_AGENT</name><value>Nokia7110 (DeckIt/1.2.3)</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-SH UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>UP.Browser/3.1-UPG1 UP.Link/3.2</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>USER_AGENT</name><value>Nokia7110 (DeckIt/1.2.3)</value></column>
-        <column><name>PROFILE_ID</name><value>3</value></column>
-      </row>
-    </rows>
-  </table>
-
   <table>
     <name>UP_MIME_TYPE</name>
     <rows>
@@ -2398,8 +2326,9 @@
       </row>
     </rows>
   </table>
+  
   <!-- Groups tables SAMPLE DATA --> 
-<table>
+  <table>
     <name>UP_GROUP</name>
     <rows>
       <row>
@@ -2489,7 +2418,7 @@
     </rows>
   </table>
 
-<table>
+  <table>
     <name>UP_GROUP_MEMBERSHIP</name>
     <rows>
       <row>
@@ -2624,7 +2553,6 @@
         <column><name>PORTAL_USER_ID</name><value>0</value></column>
         <column><name>BOOKMARK_XML</name><value><![CDATA[
           <?xml version="1.0"?>
-          <!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Bernard Durfee (Interactive Business Solutions) -->
           <!DOCTYPE xbel PUBLIC "+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML" "file:/xbel-1.0.dtd">
           <xbel>
             <title>Default Bookmarks</title>
