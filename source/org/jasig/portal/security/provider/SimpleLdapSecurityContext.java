@@ -109,9 +109,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
         != null && !creds.trim().equals("")) {
       DirContext conn = null;
       NamingEnumeration results = null;
-      String baseDN = null;
       StringBuffer user = new StringBuffer("(");
-      String passwd = null;
       String first_name = null;
       String last_name = null;
       
@@ -139,7 +137,6 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
                     log.error(
                                    "SimpleLdapSecurityContext: user not found , " +
                                    this.myPrincipal.UID);
-                  Vector entries = new Vector();
                   while (results != null && results.hasMore()) {
                     SearchResult entry = (SearchResult)results.next();
                     StringBuffer dnBuffer = new StringBuffer();

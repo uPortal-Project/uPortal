@@ -111,7 +111,6 @@ public void deleteAll() throws LockingException
 {
     Connection conn = null;
     Statement stmnt = null;
-    ResultSet rs = null;
     try
     {
         String sql = "DELETE FROM " + LOCK_TABLE;
@@ -319,8 +318,6 @@ private void initialize()throws LockingException
 private IEntityLock instanceFromResultSet(java.sql.ResultSet rs)
 throws  SQLException, LockingException
 {
-    IEntityLock lock = null;
-
     Integer entityTypeID = new Integer(rs.getInt(1));
     Class entityType = EntityTypes.getEntityType(entityTypeID);
     String key = rs.getString(2);
@@ -449,7 +446,6 @@ private void primDeleteExpired(Date expiration, Class entityType, String entityK
 throws LockingException, SQLException
 {
     Statement stmnt = null;
-    ResultSet rs = null;
     Timestamp ts = new Timestamp(expiration.getTime());
 
     StringBuffer buff = new StringBuffer(100);
