@@ -678,9 +678,15 @@ public class RDBMUserLayoutStore
       setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
+        // First delete existing categories for this channel
+        String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + id;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sDelete);
+        int recordsDeleted = stmt.executeUpdate(sDelete);
+
         for (int i = 0; i < catID.length; i++) {
           // Take out "cat" prefix if its there
           String categoryID = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
+
           String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + categoryID + ")";
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
           stmt.executeUpdate(sInsert);
@@ -784,20 +790,65 @@ public class RDBMUserLayoutStore
     setAutoCommit(con, false);
     Statement stmt = con.createStatement();
     try {
-      java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
-      String sysdate = "{ts '" + rightNow.toString() + "'}";
       String sqlTitle = sqlEscape(title);
+      String sqlDescription = sqlTitle + " Channel";
+      String sqlClass = channel.getAttribute("class");
+      String sqlTypeID = channel.getAttribute("typeID");
+      String sysdate = "{ts '" + new Timestamp(System.currentTimeMillis()).toString() + "'}";
+      String sqlTimeout = channel.getAttribute("timeout");
+      String sqlMinimizable = dbBool(channel.getAttribute("minimizable"));
+      String sqlEditable = dbBool(channel.getAttribute("editable"));
+      String sqlHasHelp = dbBool(channel.getAttribute("hasHelp"));
+      String sqlHasAbout = dbBool(channel.getAttribute("hasAbout"));
+      String sqlUnremovable = dbBool(channel.getAttribute("unremovable"));
+      String sqlDetachable = dbBool(channel.getAttribute("detachable"));
       String sqlName = sqlEscape(channel.getAttribute("name"));
       String sqlFName = sqlEscape(channel.getAttribute("fname"));
-      String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
-          + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
-      sInsert += "VALUES (" + id + ",'" + sqlTitle + "','" + sqlTitle + " Channel','" + channel.getAttribute("class") + "', " + channel.getAttribute("typeID") + ","
-          + publisherId + "," + sysdate + ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable"))
-          + "'" + ",'" + dbBool(channel.getAttribute("editable")) + "'" + ",'" + dbBool(channel.getAttribute("hasHelp"))
-          + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" + ",'" + dbBool(channel.getAttribute("unremovable"))
-          + "'," + "'" + dbBool(channel.getAttribute("detachable")) + "'" + ",'" + sqlName + "','" + sqlFName + "')";
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
-      stmt.executeUpdate(sInsert);
+
+      String sQuery = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + id;
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sQuery);
+      ResultSet rs = stmt.executeQuery(sQuery);
+
+      // If channel is already there, do an update, otherwise do an insert
+      if (rs.next()) {
+        String sUpdate = "UPDATE UP_CHANNEL SET " +
+        "CHAN_TITLE='" + sqlTitle + "', " +
+        "CHAN_DESC='" + sqlDescription + "', " +
+        "CHAN_CLASS='" + sqlClass + "', " +
+        "CHAN_TYPE_ID=" + sqlTypeID + ", " +
+        "CHAN_PUBL_ID=" + publisherId + ", " +
+        "CHAN_PUBL_DT=" + sysdate + ", " +
+        "CHAN_APVL_ID=NULL, " +
+        "CHAN_APVL_DT=NULL, " +
+        "CHAN_TIMEOUT='" + sqlTimeout + "', " +
+        "CHAN_MINIMIZABLE='" + sqlMinimizable + "', " +
+        "CHAN_EDITABLE='" + sqlEditable + "', " +
+        "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
+        "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
+        "CHAN_UNREMOVABLE='" + sqlUnremovable + "', " +
+        "CHAN_DETACHABLE='" + sqlDetachable + "', " +
+        "CHAN_NAME='" + sqlName + "', " +
+        "CHAN_FNAME='" + sqlFName + "' " +
+        "WHERE CHAN_ID=" + id;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sUpdate);
+        stmt.executeUpdate(sUpdate);
+      } else {
+        String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
+            + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
+        sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
+            + publisherId + ", " + sysdate + ", '" + sqlTimeout + "', '" + sqlMinimizable
+            + "', '" + sqlEditable + "', '" + sqlHasHelp
+            + "', '" + sqlHasAbout + "', '" + sqlUnremovable
+            + "', '" + sqlDetachable + "', '" + sqlName + "', '" + sqlFName + "')";
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
+        stmt.executeUpdate(sInsert);
+      }
+
+      // First delete existing parameters for this channel
+      String sDelete = "DELETE FROM UP_CHAN_PARAM WHERE CHAN_ID=" + id;
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sDelete);
+      int recordsDeleted = stmt.executeUpdate(sDelete);
+
       NodeList parameters = channel.getChildNodes();
       if (parameters != null) {
         for (int i = 0; i < parameters.getLength(); i++) {
@@ -825,7 +876,7 @@ public class RDBMUserLayoutStore
             if (paramName == null && paramValue == null) {
               throw new RuntimeException("Invalid parameter node");
             }
-            sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
+            String sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
                 ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
             stmt.executeUpdate(sInsert);
@@ -1238,6 +1289,10 @@ public class RDBMUserLayoutStore
       int recordsInserted = 0;
       Statement stmt = con.createStatement();
       try {
+        // First delete existing roles for this channel
+        String sDelete = "DELETE FROM UP_ROLE_CHAN WHERE CHAN_ID=" + channelID;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sDelete);
+        int recordsDeleted = stmt.executeUpdate(sDelete);
         // Count the number of records inserted
         for (int i = 0; i < roles.size(); i++) {
           String sQuery = "SELECT ROLE_ID FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
