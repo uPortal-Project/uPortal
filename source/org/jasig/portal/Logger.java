@@ -35,10 +35,33 @@
 
 package org.jasig.portal;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintStream;
+import java.io.StringWriter;
+import java.io.FileInputStream;
+
 import java.util.Date;
+import java.util.Properties;
+
 import java.text.SimpleDateFormat;
+
+import org.apache.log4j.Category;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.Priority;
+
+import org.apache.xerces.parsers.DOMParser;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.NamedNodeMap;
+
+import org.xml.sax.InputSource;
 
 /**
  * The Logger class is used to output messages to a log file.
@@ -65,10 +88,18 @@ public class Logger extends GenericPortalBean
   public static final int DEBUG  = 5;
 
   private static int iLogLevelSetting = DEBUG;
+
+  private static String sLogLevelSetting = "DEBUG";
+
   private static final String sIllArgExMessage = "Log level must be NONE, SEVERE, ERROR, WARN, INFO, or DEBUG";
-  private static final String sLogRelativePath = "logs/portal.log";
+  private static final String fs = File.separator;
+  private static final String sLogRelativePath = "logs" + fs + "portal.log";
   private static int iMaxLogFiles = 5;
   private static boolean bInitialized = false;
+
+  private static Category     m_catFramework = null;
+
+  private static FileAppender m_logFile = null;
 
   /**
    * Sets the current log level.  Use one of the static integer members
@@ -80,13 +111,17 @@ public class Logger extends GenericPortalBean
    */
   public static void setLogLevel (int iLogLevel)
   {
-		if (!bInitialized)
-		  initialize ();
+    if (!bInitialized)
+      initialize ();
 
     if (iLogLevel <= DEBUG)
+    {
       iLogLevelSetting = iLogLevel;
+    }
     else
+    {
       throw new IllegalArgumentException (sIllArgExMessage);
+    }
   }
 
   /**
@@ -104,8 +139,8 @@ public class Logger extends GenericPortalBean
    */
   public static void setMaxBackupLogFiles (int iMaxBackupLogFiles)
   {
-		if (!bInitialized)
-		  initialize ();
+    if (!bInitialized)
+      initialize ();
 
     iMaxLogFiles = iMaxBackupLogFiles;
   }
@@ -125,31 +160,174 @@ public class Logger extends GenericPortalBean
    */
   public static void initialize ()
   {
+    String sPortalBaseDir = getPortalBaseDir();
+    File propertiesFile = null;
+
     try
-		{
-      String sPortalBaseDir = getPortalBaseDir ();
+    {
+      // Load the portal properties file
+      propertiesFile = new File(sPortalBaseDir + "/properties/portal.properties");
 
-      if (sPortalBaseDir != null && new File (sPortalBaseDir).exists ())
-		  {
-			  // Advance logs
-		    advanceLogs ();
+      if(propertiesFile != null)
+      {
+        Properties portalProperties = new Properties();
 
-		    // Print a header to the log containing the current time and log level
+        portalProperties.load(new FileInputStream(propertiesFile));
+
+        if(portalProperties.getProperty("logger.level") != null)
+        {
+          sLogLevelSetting = portalProperties.getProperty("logger.level");
+        }
+        else
+        {
+          System.out.println("Defaulting to " + sLogLevelSetting + " for portal log level.");
+        }
+
+        if(portalProperties.getProperty("logger.maxLogFiles") != null)
+        {
+          iMaxLogFiles = Integer.parseInt(portalProperties.getProperty("logger.maxLogFiles"));
+        }
+        else
+        {
+          System.out.println("Defaulting to " + iMaxLogFiles + " for maximum number of portal log files.");
+        }
+      }
+      else
+      {
+        System.out.println("The file portal.properties could not be loaded, using default properties.");
+      }
+    }
+    catch(Exception e)
+    {
+      e.printStackTrace();
+    }
+
+    try
+    {
+      if(sPortalBaseDir != null && new File(sPortalBaseDir).exists())
+      {
+        // Advance logs
+        advanceLogs();
+
+        m_logFile = new FileAppender(new PatternLayout("%-5p %-23d{ISO8601} %m%n"), sPortalBaseDir + sLogRelativePath);
+
+        m_catFramework = Category.getRoot();
+        m_catFramework.addAppender(m_logFile);
+
+        m_catFramework.setPriority(Priority.toPriority(sLogLevelSetting));
+
+        // Print a header to the log containing the current time and log level
         String sDate = getLogTimeStamp ();
-		    PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
-			  out.println ("Portal log service initiating on " + sDate + "  Log level: " + getLogLevel (iLogLevelSetting));
-			  out.println ();
-			  out.close ();
+        PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
+        out.println("Portal log service initiating on " + sDate + "  Log level: " + getLogLevel (iLogLevelSetting));
+        out.println();
+        out.close();
 
-			  // Insures that initialization is only done once
-			  bInitialized = true;
-			}
-		}
-		catch (Exception e)
-		{
-		  System.err.println ("Problem writing to log.");
-		  e.printStackTrace ();
-		}
+        // Insures that initialization is only done once
+        bInitialized = true;
+      }
+    }
+    catch(Exception e)
+    {
+      System.err.println("Problem writing to log.");
+      e.printStackTrace();
+    }
+    catch(Error er)
+    {
+      System.err.println("Problem writing to log.");
+      er.printStackTrace();
+    }
+  }
+
+  public static void log (int iLogLevel, String sMessage)
+  {
+    try
+    {
+      if (!bInitialized)
+      {
+        initialize();
+      }
+
+      switch(iLogLevel)
+      {
+        case NONE:
+          return;
+        case SEVERE:
+          m_catFramework.fatal(sMessage);
+          return;
+        case ERROR:
+          m_catFramework.error(sMessage);
+          return;
+        case WARN:
+          m_catFramework.warn(sMessage);
+          return;
+        case INFO:
+          m_catFramework.info(sMessage);
+          return;
+        case DEBUG:
+          m_catFramework.debug(sMessage);
+          return;
+        default:
+          throw new IllegalArgumentException();
+      }
+    }
+    catch(Exception e)
+    {
+      System.err.println("Problem writing to log.");
+      e.printStackTrace();
+    }
+    catch(Error er)
+    {
+      System.err.println("Problem writing to log.");
+      er.printStackTrace();
+    }
+  }
+
+  public static void log (int iLogLevel, Throwable ex)
+  {
+    try
+    {
+      if(!bInitialized)
+      {
+        initialize();
+      }
+
+      StringWriter stackTrace = new StringWriter();
+      ex.printStackTrace(new PrintWriter(stackTrace));
+
+      switch(iLogLevel)
+      {
+        case NONE:
+          return;
+        case SEVERE:
+          m_catFramework.fatal(stackTrace.toString());
+          return;
+        case ERROR:
+          m_catFramework.error(stackTrace.toString());
+          return;
+        case WARN:
+          m_catFramework.warn(stackTrace.toString());
+          return;
+        case INFO:
+          m_catFramework.info(stackTrace.toString());
+          return;
+        case DEBUG:
+          m_catFramework.debug(stackTrace.toString());
+          return;
+        default:
+          throw new IllegalArgumentException ();
+      }
+    }
+    catch(Exception e)
+    {
+      System.err.println ("Problem writing to log.");
+      e.printStackTrace();
+    }
+    catch(Error er)
+    {
+      System.err.println ("Problem writing to log.");
+      er.printStackTrace();
+    }
   }
 
   /**
@@ -157,12 +335,13 @@ public class Logger extends GenericPortalBean
    * @param the log level
    * @param the message to write
    */
+  /*
   public static void log (int iLogLevel, String sMessage)
   {
     try
-		{
-		  if (!bInitialized)
-		    initialize ();
+    {
+      if (!bInitialized)
+        initialize ();
 
       if (iLogLevel <= iLogLevelSetting)
       {
@@ -170,23 +349,24 @@ public class Logger extends GenericPortalBean
         String sPortalBaseDir = getPortalBaseDir ();
 
         if (sPortalBaseDir != null && new File (sPortalBaseDir).exists ())
-		    {
-		      PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
-			    out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + sMessage);
-			    out.close ();
-			  }
-			}
-		}
-		catch (IllegalArgumentException iae)
-		{
-		  throw new IllegalArgumentException (sIllArgExMessage);
-		}
-		catch (Exception e)
-		{
-		  System.err.println ("Problem writing to log.");
-		  e.printStackTrace ();
-		}
+        {
+          PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
+          out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + sMessage);
+          out.close ();
+        }
+      }
+    }
+    catch (IllegalArgumentException iae)
+    {
+      throw new IllegalArgumentException (sIllArgExMessage);
+    }
+    catch (Exception e)
+    {
+      System.err.println ("Problem writing to log.");
+      e.printStackTrace ();
+    }
   }
+  */
 
   /**
    * Writes an exception's stack trace to the log
@@ -194,12 +374,13 @@ public class Logger extends GenericPortalBean
    * @param an exception
    * @throws IllegalArgumentException if the log level is not one of the acceptable log levels
    */
+  /*
   public static void log (int iLogLevel, Throwable ex)
   {
     try
-		{
-		  if (!bInitialized)
-		    initialize ();
+    {
+      if (!bInitialized)
+        initialize ();
 
       if (iLogLevel <= iLogLevelSetting)
       {
@@ -207,26 +388,27 @@ public class Logger extends GenericPortalBean
         String sPortalBaseDir = getPortalBaseDir ();
 
         if (sPortalBaseDir != null && new File (sPortalBaseDir).exists ())
-		    {
-		      PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
-			    out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + "Stack trace:");
-			    out.println ();
-			    ex.printStackTrace (out);
-			    out.println ();
-			    out.close ();
-			  }
-			}
-		}
-		catch (IllegalArgumentException iae)
-		{
-		  throw new IllegalArgumentException (sIllArgExMessage);
-		}
-		catch (Exception e)
-		{
-		  System.err.println ("Problem writing to log.");
-		  e.printStackTrace ();
-		}
+        {
+          PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
+          out.println (getLogLevel (iLogLevel) + " - " + sDate + " - " + "Stack trace:");
+          out.println ();
+          ex.printStackTrace (out);
+          out.println ();
+          out.close ();
+        }
+      }
+    }
+    catch (IllegalArgumentException iae)
+    {
+      throw new IllegalArgumentException (sIllArgExMessage);
+    }
+    catch (Exception e)
+    {
+      System.err.println ("Problem writing to log.");
+      e.printStackTrace ();
+    }
   }
+  */
 
   /**
    * Translates integer version of log level into
