@@ -59,6 +59,8 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserLayoutStore;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -149,6 +151,196 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       } else {
         throw new Exception("Unknown database!");
       }
+    }
+  }
+
+   /**
+   * Return the Structure ID tag (Overloaded)
+   * @param  structId
+   * @param  chanId
+   * @return ID tag
+   */
+  protected String getStructId(int structId, int chanId) {
+      return structId+"";
+  }
+
+  public void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences ssup) throws Exception {
+    int userId = person.getID();
+    Connection con = RDBMServices.getConnection();
+    try {
+      // Set autocommit false for the connection
+      int stylesheetId = ssup.getStylesheetId();
+      RDBMServices.setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+      try {
+        // write out params
+        for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
+          String pName = (String)e.nextElement();
+          // see if the parameter was already there
+          String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
+              + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
+          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          if (rs.next()) {
+            // update
+            sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + ssup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
+                + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName
+                + "'";
+          }
+          else {
+            // insert
+            sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
+                + "," + profileId + "," + stylesheetId + ",1,'" + pName + "','" + ssup.getParameterValue(pName) + "')";
+          }
+          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          stmt.executeUpdate(sQuery);
+        }
+        // write out folder attributes
+        for (Enumeration e = ssup.getFolders(); e.hasMoreElements();) {
+          String folderId = (String)e.nextElement();
+          for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
+            String pName = (String)attre.nextElement();
+            String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
+            if (pValue != null) {
+              // store user preferences
+              String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
+                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId + " AND PARAM_NAME='" + pName
+                  + "' AND PARAM_TYPE=2";
+              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              ResultSet rs = stmt.executeQuery(sQuery);
+              if (rs.next()) {
+                // update
+                sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
+                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId + " AND PARAM_NAME='"
+                    + pName + "' AND PARAM_TYPE=2";
+              }
+              else {
+                // insert
+                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                    + userId + "," + profileId + "," + stylesheetId + ",1," + folderId + ",'" + pName + "',2,'" + pValue
+                    + "')";
+              }
+              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              stmt.executeUpdate(sQuery);
+            }
+          }
+        }
+        // write out channel attributes
+        for (Enumeration e = ssup.getChannels(); e.hasMoreElements();) {
+          String channelId = (String)e.nextElement();
+          for (Enumeration attre = ssup.getChannelAttributeNames(); attre.hasMoreElements();) {
+            String pName = (String)attre.nextElement();
+            String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
+            if (pValue != null) {
+              // store user preferences
+              String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
+                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId + " AND PARAM_NAME='" + pName
+                  + "' AND PARAM_TYPE=3";
+              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              ResultSet rs = stmt.executeQuery(sQuery);
+              if (rs.next()) {
+                // update
+                sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
+                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId + " AND PARAM_NAME='"
+                    + pName + "' AND PARAM_TYPE=3";
+              }
+              else {
+                // insert
+                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                    + userId + "," + profileId + "," + stylesheetId + ",1," + channelId + ",'" + pName + "',3,'" + pValue
+                    + "')";
+              }
+              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              stmt.executeUpdate(sQuery);
+            }
+          }
+        }
+        // Commit the transaction
+        RDBMServices.commit(con);
+      } catch (Exception e) {
+        // Roll back the transaction
+        RDBMServices.rollback(con);
+        throw  e;
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+  }
+
+  public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
+    int userId = person.getID();
+    Connection con = RDBMServices.getConnection();
+    try {
+      // Set autocommit false for the connection
+      int stylesheetId = tsup.getStylesheetId();
+      RDBMServices.setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+      try {
+        // write out params
+        for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
+          String pName = (String)e.nextElement();
+          // see if the parameter was already there
+          String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
+              + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
+          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          ResultSet rs = stmt.executeQuery(sQuery);
+          if (rs.next()) {
+            // update
+            sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + tsup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
+                + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName
+                + "'";
+          }
+          else {
+            // insert
+            sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
+                + "," + profileId + "," + stylesheetId + ",2,'" + pName + "','" + tsup.getParameterValue(pName) + "')";
+          }
+          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          stmt.executeUpdate(sQuery);
+        }
+        // write out channel attributes
+        for (Enumeration e = tsup.getChannels(); e.hasMoreElements();) {
+          String channelId = (String)e.nextElement();
+          for (Enumeration attre = tsup.getChannelAttributeNames(); attre.hasMoreElements();) {
+            String pName = (String)attre.nextElement();
+            String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
+            if (pValue != null) {
+              // store user preferences
+              String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
+                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
+                  + "' AND PARAM_TYPE=3";
+              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              ResultSet rs = stmt.executeQuery(sQuery);
+              if (rs.next()) {
+                // update
+                sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
+                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='"
+                    + pName + "' AND PARAM_TYPE=3";
+              }
+              else {
+                // insert
+                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                    + userId + "," + profileId + "," + stylesheetId + ",2," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
+                    + "')";
+              }
+              LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              stmt.executeUpdate(sQuery);
+            }
+          }
+        }
+        // Commit the transaction
+        RDBMServices.commit(con);
+      } catch (Exception e) {
+        // Roll back the transaction
+        RDBMServices.rollback(con);
+        throw  e;
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
     }
   }
 
