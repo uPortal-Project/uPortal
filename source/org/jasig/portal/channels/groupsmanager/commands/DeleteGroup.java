@@ -185,7 +185,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          String grpKey = grpMbr.getKey();
          // first we retrieve all permissions for which the group is the principal
          IAuthorizationPrincipal iap = AuthorizationService.instance().newPrincipal(grpMbr);
-         IPermission[] perms1 = iap.getAllPermissions();
+         IPermission[] perms1 = iap.getPermissions();
 
          // next we retrieve all permissions for which the group is the target
          IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
