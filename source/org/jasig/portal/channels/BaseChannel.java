@@ -36,7 +36,17 @@
 package org.jasig.portal.channels;
 
 import org.xml.sax.DocumentHandler;
-import org.jasig.portal.*;
+
+import org.jasig.portal.IChannel;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.PortalEvent;
+
+import javax.naming.InitialContext;
+import javax.naming.Context;
+import java.util.Hashtable;
 
 /**
  * A base class from which channels implementing IChannel interface can be derived.
@@ -70,5 +80,25 @@ public abstract class BaseChannel implements IChannel
 
   public void renderXML (DocumentHandler out) throws PortalException
   {
+  }
+  
+  protected InitialContext getPortalContext()
+  {
+    Hashtable environment = new Hashtable(1);
+
+    // Set up the path
+    environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
+    
+    try
+    {
+      InitialContext ctx = new InitialContext(environment);
+      
+      return(ctx);
+    }
+    catch(Exception e)
+    {
+      e.printStackTrace(System.err);
+      return(null);
+    }
   }
 }
