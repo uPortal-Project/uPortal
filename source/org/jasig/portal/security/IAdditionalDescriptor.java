@@ -35,6 +35,8 @@
 
 package org.jasig.portal.security;
 
+import java.io.Serializable;
+
 /**
  * <p>A marker interface that should be extended by security providers that
  * have some incidental additional information that should be associated with
@@ -44,5 +46,5 @@ package org.jasig.portal.security;
  * @version $Revision$
  */
 
-public interface IAdditionalDescriptor {
+public interface IAdditionalDescriptor extends Serializable {
 }

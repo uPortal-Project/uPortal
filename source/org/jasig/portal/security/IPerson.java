@@ -31,24 +31,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
-
 
 package  org.jasig.portal.security;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 
 import org.jasig.portal.IBasicEntity;
-
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public interface IPerson extends IAdditionalDescriptor, IBasicEntity
-{
+public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializable {
+    
   // string used as a key for the eduPerson username attribute
   public static final String USERNAME = "username";
 
@@ -58,15 +55,11 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity
    */
   public void setID (int sID);
 
-
-
   /**
    * Gets the ID of the user
    * @return ID of the user
    */
   public int getID ();
-
-
 
   /**
    * Sets the full name of the user
@@ -74,15 +67,11 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity
    */
   public void setFullName (String sFullName);
 
-
-
   /**
    * Gets the full name of the user
    * @return full name of the user
    */
   public String getFullName ();
-
-
 
   /**
    * Gets an attribute associated with the user
@@ -91,8 +80,6 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity
    */
   public Object getAttribute (String key);
 
-
-
   /**
    * Associates an attribute with the user
    * @param key
@@ -100,15 +87,11 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity
    */
   public void setAttribute (String key, Object value);
 
-
-
   /**
    * Gets all of the attributes associated with the user
    * @return all of the attributes associated with the user
    */
   public Enumeration getAttributes ();
-
-
 
   /**
    * Returns the names of all of the attributes stored for the user
@@ -116,23 +99,17 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity
    */
   public Enumeration getAttributeNames ();
 
-
-
   /**
    * Associates a security context object with the user
    * @param securityContext
    */
   public void setSecurityContext (ISecurityContext securityContext);
 
-
-
   /**
    * Gets the security context object associated with the user
    * @return security context object associated with the user
    */
   public ISecurityContext getSecurityContext ();
-
-
 
   /**
    * Checks to see if this user is considered a guest

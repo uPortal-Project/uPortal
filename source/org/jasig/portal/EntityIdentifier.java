@@ -35,13 +35,15 @@
 
 package org.jasig.portal;
 
+import java.io.Serializable;
+
 /**
  * A key and type that uniquely identify a portal entity.
  * @author Dan Ellentuck
  * @version $Revision$
  * @see IBasicEntity
  */
-public class EntityIdentifier {
+public class EntityIdentifier implements Serializable {
     protected String key;
     protected Class type;
     

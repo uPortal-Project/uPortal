@@ -38,6 +38,7 @@
 
 package  org.jasig.portal.jndi;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -330,7 +331,7 @@ public class JNDIManager {
    * not all servlet containers properly unbind objects from the session when it expires!
    */
   private static class JNDISessionListener
-      implements HttpSessionBindingListener {
+      implements HttpSessionBindingListener, Serializable {
 
  
     public void valueBound(HttpSessionBindingEvent bindingEvent) {

@@ -35,6 +35,8 @@
 
 package org.jasig.portal.security;
 
+import java.io.Serializable;
+
 /**
  * <p>Our OpaqueCredentials interface stores password or passphrase information
  * for authentication. The same structure stores information that can
@@ -44,8 +46,7 @@ package org.jasig.portal.security;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-
-public interface IOpaqueCredentials {
+public interface IOpaqueCredentials extends Serializable {
 
   /**
    * Set the credentials value.

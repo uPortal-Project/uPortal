@@ -35,6 +35,8 @@
 
 package org.jasig.portal.security;
 
+import java.io.Serializable;
+
 /**
  * <p>An interface that defines the required methods for assigning and
  * retrieving information about the authenticated principal (user). Providers
@@ -44,8 +46,7 @@ package org.jasig.portal.security;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-
-public interface IPrincipal {
+public interface IPrincipal extends Serializable {
 
   /**
    * Returns the locally unique username or user identifier for this
