@@ -73,7 +73,7 @@
    Rename folder <xsl:value-of select="@oldname"/> to:
    <input type="hidden" name="oldFolderName"><xsl:attribute name="value"><xsl:value-of select="@oldname"/></xsl:attribute></input>
   </xsl:when>
-  <xsl:otherwise>New folder name:"</xsl:otherwise>
+  <xsl:otherwise>New folder name:</xsl:otherwise>
  </xsl:choose>
  <input type="text" name="newFolderName" size="30" maxlength="64"/>
  <input type="submit" name="submit"><xsl:attribute name="value"><xsl:value-of select="@mode"/></xsl:attribute></input>
