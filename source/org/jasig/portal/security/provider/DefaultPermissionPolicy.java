@@ -115,7 +115,7 @@ private boolean permissionIsGranted(IPermission p)
     Date now = new Date();
     return
         (p.getType().equals(IPermission.PERMISSION_TYPE_GRANT)) &&
-        (p.getEffective() == null || p.getEffective().after(now)) &&
+        (p.getEffective() == null || ! p.getEffective().after(now)) &&
         (p.getExpires() == null || p.getExpires().after(now));
 }
 /**
