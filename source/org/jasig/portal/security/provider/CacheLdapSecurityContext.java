@@ -109,18 +109,27 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
       String passwd = null;
       String first_name = null;
       String last_name = null;
+      
       user.append(ldapservices.getUidAttribute()).append("=");
       user.append(this.myPrincipal.UID).append(")");
-      LogService.log(LogService.DEBUG, "Looking for " + user.toString());
+      LogService.log(LogService.DEBUG,
+                     "CacheLdapSecurityContext: Looking for " +
+                     user.toString());
       conn = ldapservices.getConnection();
+      
       // set up search controls
       SearchControls searchCtls = new SearchControls();
       searchCtls.setReturningAttributes(attributes);
       searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+      
       // do lookup
       try {
         results = conn.search(ldapservices.getBaseDN(), user.toString(), searchCtls);
         if (results != null) {
+          if (!results.hasMore())
+            LogService.log(LogService.ERROR,
+                           "CacheLdapSecurityContext: user not found , " +
+                           this.myPrincipal.UID);          
           Vector entries = new Vector();
           while (results != null && results.hasMore()) {
             SearchResult entry = (SearchResult)results.next();
@@ -138,28 +147,39 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
             searchCtls = new SearchControls();
             searchCtls.setReturningAttributes(new String[0]);
             searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
+            
+            String attrSearch = "(" + ldapservices.getUidAttribute() + "=*)";
+            LogService.log(LogService.DEBUG,
+                           "SimpleLdapSecurityContext: Looking in " +
+                           dnBuffer.toString() + " for " + attrSearch);            
             conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
+            
             // Save our credentials so that the parent's authenticate()
             // method doesn't blow them away.
             this.cachedcredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
             System.arraycopy(this.myOpaqueCredentials.credentialstring, 0, this.cachedcredentials, 0, this.myOpaqueCredentials.credentialstring.length);
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            LogService.log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
+            LogService.log(LogService.DEBUG,
+                           "CacheLdapSecurityContext: User " +
+                           this.myPrincipal.UID + " (" +
+                           this.myPrincipal.FullName + ") is authenticated");
 
             // Since LDAP is case-insensitive with respect to uid, force
             // user name to lower case for use by the portal
             this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
-
           } // while (results != null && results.hasMore())
         }
         else {
-          LogService.log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
+          LogService.log(LogService.ERROR,
+                         "CacheLdapSecurityContext: No such user: " +
+                         this.myPrincipal.UID);
         }
       } catch (Exception e) {
-        LogService.log(LogService.ERROR, "LDAP Error with user: " + this.myPrincipal.UID);
-        LogService.log(LogService.ERROR, e);
-        throw new PortalSecurityException("LDAP Error" + e + " with user: " + this.myPrincipal.UID);
+        LogService.log(LogService.ERROR,
+                       "CacheLdapSecurityContext: LDAP Error with user: " +
+                       this.myPrincipal.UID + "; " + e);
+        throw new PortalSecurityException("SimpleLdapSecurityContext: LDAP Error" + e + " with user: " + this.myPrincipal.UID);
       } finally {
         ldapservices.releaseConnection(conn);
       }
