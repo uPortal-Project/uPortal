@@ -1719,14 +1719,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
         }
 
-	String sql;
-	if (localeAware) {
-	    sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+        String sql;
+        if (localeAware) {
+            sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE,ULS.LOCALE";
-	}  else {
-	    sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+        }  else {
+            sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE";
-	}
+        }
         if (RDBMServices.supportsOuterJoins) {
           sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout");
         } else {
@@ -1766,17 +1766,17 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               String temp5=rs.getString(5); // Some JDBC drivers require columns accessed in order
               String temp6=rs.getString(6); // Access 5 and 6 now, save till needed.
 
-	      // uPortal i18n 
+              // uPortal i18n 
               int name_index, value_index;
-	      if (localeAware) {
-		  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocale(rs.getString(10)));
+              if (localeAware) {
+                  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocale(rs.getString(10)));
                   name_index=11;
                   value_index=12;
-	      }  else {
-		  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
+              }  else {
+                  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
                   name_index=10;
                   value_index=11;
-	      }
+              }
               layoutStructure.put(new Integer(structId), ls);
               lastStructId = structId;
               if (!ls.isChannel()) {
@@ -2216,7 +2216,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
 
     if (localeAware) { 
-	structStmt.setString(11, RDBMServices.dbFlag(xmlBool(structure.getAttribute("locale")))); // for i18n by Shoji
+        structStmt.setString(11, RDBMServices.dbFlag(xmlBool(structure.getAttribute("locale")))); // for i18n by Shoji
     }
     LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + structStmt);
     structStmt.executeUpdate();
@@ -2516,19 +2516,19 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           System.err.println("<--");
         }
 
-	// uPortal i18n 
-	RDBMServices.PreparedStatement structStmt;
-	if (localeAware) { 
-	    structStmt = new RDBMServices.PreparedStatement(con,
-							    "INSERT INTO UP_LAYOUT_STRUCT " +
-							    "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,LOCALE) " +
-							    "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?,?)");
-	}  else {
-	    structStmt = new RDBMServices.PreparedStatement(con,
-							    "INSERT INTO UP_LAYOUT_STRUCT " +
-							    "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
-							    "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
-	}
+        // uPortal i18n 
+        RDBMServices.PreparedStatement structStmt;
+        if (localeAware) { 
+            structStmt = new RDBMServices.PreparedStatement(con,
+                                                            "INSERT INTO UP_LAYOUT_STRUCT " +
+                                                            "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,LOCALE) " +
+                                                            "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?,?)");
+        }  else {
+            structStmt = new RDBMServices.PreparedStatement(con,
+                                                            "INSERT INTO UP_LAYOUT_STRUCT " +
+                                                            "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
+                                                            "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
+        }
         try {
           RDBMServices.PreparedStatement parmStmt = new RDBMServices.PreparedStatement(con,
             "INSERT INTO UP_LAYOUT_PARAM " +

@@ -405,12 +405,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           channelDef.setHasAbout(RDBMServices.dbFlag(rs.getString(12)));
           channelDef.setName(rs.getString(13));
           channelDef.setFName(rs.getString(14));
+          channelDef.setIsSecure(RDBMServices.dbFlag(rs.getString(15)));
+        
           // Don't use the following line to attain DB compatibility
           // channelDef.setLocale("en_US");
   
           int dbOffset = 0;
           if (pstmtChannelParam == null) { // we are using a join statement so no need for a new query
-            dbOffset = 14;
+            dbOffset = 15;
           } else {
             rs.close();
             pstmtChannelParam.clearParameters();
@@ -442,7 +444,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelMdata);
               try {
                   rs = pstmtChannelMdata.executeQuery();
-	  
+          
                   String locale;
                   while (true) {
                       if (pstmtChannelMdata != null && !rs.next()) {
@@ -585,7 +587,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sqlHasAbout = RDBMServices.dbFlag(channelDef.hasAbout());
         String sqlName = RDBMServices.sqlEscape(channelDef.getName());
         String sqlFName = RDBMServices.sqlEscape(channelDef.getFName());
-
+        String sqlIsSecure = RDBMServices.dbFlag(channelDef.isSecure());
+        
         String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
         LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + query);
         ResultSet rs = stmt.executeQuery(query);
@@ -606,17 +609,18 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
           "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
           "CHAN_NAME='" + sqlName + "', " +
-          "CHAN_FNAME='" + sqlFName + "' " +
+          "CHAN_FNAME='" + sqlFName + "', " +
+          "CHAN_SECURE='" + sqlIsSecure + "' " +                  
           "WHERE CHAN_ID=" + channelPublishId;
           LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + update);
           stmt.executeUpdate(update);
         } else {
           String insert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT, "
-              + "CHAN_APVL_ID, CHAN_APVL_DT, CHAN_TIMEOUT, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
+              + "CHAN_APVL_ID, CHAN_APVL_DT, CHAN_TIMEOUT, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME, CHAN_SECURE) ";
           insert += "VALUES (" + channelPublishId + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
               + chanPublisherId + ", " + chanPublishDate + ", " + chanApproverId + ", " + chanApprovalDate + ", " + sqlTimeout
               + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
-              + "', '" + sqlName + "', '" + sqlFName + "')";
+              + "', '" + sqlName + "', '" + sqlFName + "', '" + sqlIsSecure + "')";
           LogService.log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
           stmt.executeUpdate(insert);
         }
@@ -969,7 +973,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     String sql = "SELECT UC.CHAN_TITLE, UC.CHAN_DESC, UC.CHAN_CLASS, UC.CHAN_TYPE_ID, " +
                  "UC.CHAN_PUBL_ID, UC.CHAN_APVL_ID, UC.CHAN_PUBL_DT, UC.CHAN_APVL_DT, " +
                  "UC.CHAN_TIMEOUT, UC.CHAN_EDITABLE, UC.CHAN_HAS_HELP, UC.CHAN_HAS_ABOUT, " +
-                 "UC.CHAN_NAME, UC.CHAN_FNAME";
+                 "UC.CHAN_NAME, UC.CHAN_FNAME, UC.CHAN_SECURE";
 
     if (RDBMServices.supportsOuterJoins) {
       sql += ", CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD, CHAN_PARM_DESC FROM " + RDBMServices.joinQuery.getQuery("channel");
