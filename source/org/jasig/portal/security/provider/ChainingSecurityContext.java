@@ -57,12 +57,10 @@ import org.jasig.portal.services.LogService;
  * Added a new method named getSubContextNames() that returns an Enumeration of names
  * for the subcontexts.
  */
-
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
   protected static boolean stopWhenAuthenticated = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated");
   protected boolean isauth = false;
-//  protected Hashtable mySubContexts;
   protected Vector mySubContexts;
   protected ChainingPrincipal myPrincipal;
   protected ChainingOpaqueCredentials myOpaqueCredentials;
@@ -104,11 +102,11 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     while (e.hasMoreElements()) {
       ISecurityContext sctx = ((Entry) e.nextElement()).getCtx();
       // The principal and credential are now set for all subcontexts in Authentication
-      //IPrincipal sp = sctx.getPrincipalInstance();
-      //IOpaqueCredentials op = sctx.getOpaqueCredentialsInstance();
-      //sp.setUID(this.myPrincipal.UID);
-      //op.setCredentials(this.myOpaqueCredentials.credentialstring);
-      sctx.authenticate();
+      try {
+        sctx.authenticate();
+      } catch (Exception ex) {
+        LogService.log(LogService.ERROR, ex);
+      }
       // Stop attempting to authenticate if authenticated and if the property flag is set
       if(stopWhenAuthenticated && sctx.isAuthenticated()) {
         break;
