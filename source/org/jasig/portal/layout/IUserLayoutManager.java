@@ -3,8 +3,16 @@ package org.jasig.portal.layout;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.xml.sax.ContentHandler;
+import java.util.List;
 
+import  org.apache.xerces.dom.DocumentImpl;
 
+/**
+ * An interface for abstracting operations performed on the user layout.
+ *
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @version 1.0
+ */
 public interface IUserLayoutManager {
     /**
      * Output user layout (with appropriate markings) into
@@ -14,6 +22,16 @@ public interface IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public void getUserLayout(ContentHandler ch) throws PortalException ;
+
+    /**
+     * Output subtree of a user layout (with appropriate markings) defined by a particular node into
+     * a <code>ContentHandler</code>
+     *
+     * @param nodeId a <code>String</code> a node determining a user layout subtree.
+     * @param ch a <code>ContentHandler</code> value
+     * @exception PortalException if an error occurs
+     */
+    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException;
 
     /**
      * Set a user layout store implementation.
@@ -56,6 +74,7 @@ public interface IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public UserLayoutNodeDescription addNode(UserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException;
+
 
     /**
      * Move a node (channel or folder) from one location to another.
@@ -141,6 +160,42 @@ public interface IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public void markMoveTargets(String nodeId) throws PortalException;
+
+    /**
+     * Returns an Id of a parent user layout node.
+     * The user layout root node always has ID="root"
+     *
+     * @param nodeId a <code>String</code> value
+     * @return a <code>String</code> value
+     * @exception PortalException if an error occurs
+     */
+    public String getParentId(String nodeId) throws PortalException;
+
+    /**
+     * Determine a list of child node Ids for a given node.
+     *
+     * @param nodeId a <code>String</code> value
+     * @return a <code>List</code> of <code>String</code> child node Ids.
+     * @exception PortalException if an error occurs
+     */
+    public List getChildIds(String nodeId) throws PortalException;
+
+    /**
+     * Determine an Id of a next sibling node.
+     *
+     * @param nodeId a <code>String</code> value
+     * @return a <code>String</code> Id value of a next sibling node, or <code>null</code> if this is the last sibling.
+     * @exception PortalException if an error occurs
+     */
+    public String getNextSiblingId(String nodeId) throws PortalException;
+
+
+    // temp methods, to be removed (getDOM() might actually stay)
+    // This method should be removed whenever it becomes possible
+    public void setUserLayoutDOM(DocumentImpl doc);
+
+    // This method should be removed whenever it becomes possible
+    public DocumentImpl getUserLayoutDOM();
 
 
 }
