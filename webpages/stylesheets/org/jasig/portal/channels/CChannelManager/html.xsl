@@ -1282,13 +1282,12 @@
                 </td>
                 <td width="100%">Description</td>
               </tr>
+              
               <tr class="uportal-channel-table-header">
                 <td align="center" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                      </td>
+                      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1314,36 +1313,33 @@
                   </xsl:choose>
                   </input> 
                 </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>
-                  <strong>Editable</strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/edit.gif" width="16" height="16"/>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Editable</strong></td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="interface image" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
                 <td>when selected, passes edit events</td>
               </tr>
               
               </xsl:when>
               <xsl:otherwise>
-              <tr><td colspan="7">
-                Not configurable: 
-                <xsl:choose>
-                  <xsl:when test="/channelDef/controls/control[@type='edit']/@include='yes'">
-                    <input type="hidden" name="editable" value="true"/>
-                    edit control included
-                  </xsl:when>
-                  <xsl:otherwise>edit control not included</xsl:otherwise>
-                </xsl:choose>
-              </td></tr>  
+                <tr class="uportal-channel-text">
+                  <td align="center" valign="top">
+                    <xsl:choose>
+                      <xsl:when test="/manageChannels/channelDef/controls/control[@type='edit']/@include='yes'">
+                        <input type="hidden" name="editable" value="true"/>
+                        <img alt="checked" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/>
+                      </xsl:when>
+                      <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
+                    </xsl:choose>                  
+                  </td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Editable</strong></td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="interface image" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>when selected, passes edit events</td>
+                </tr>
               </xsl:otherwise>
               </xsl:choose>
               
@@ -1353,9 +1349,7 @@
                 <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                      </td>
+                      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1380,37 +1374,34 @@
                     </xsl:otherwise>
                   </xsl:choose>
                   </input>
-                   </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
-                <td>
-                  <strong>Has Help</strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/help.gif" width="16" height="16"/>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Has Help</strong></td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="interface image" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
                 <td>when selected, passes help events</td>
               </tr>             
               
               </xsl:when>
               <xsl:otherwise>
-              <tr><td colspan="7">
-                Not configurable: 
-                <xsl:choose>
-                  <xsl:when test="/channelDef/controls/control[@type='help']/@include='yes'">
-                    <input type="hidden" name="hasHelp" value="true"/>
-                    help control included
-                  </xsl:when>
-                  <xsl:otherwise>help control not included</xsl:otherwise>
-                </xsl:choose>
-              </td></tr>  
+                <tr class="uportal-channel-text">
+                  <td align="center" valign="top">
+                     <xsl:choose>
+                      <xsl:when test="/manageChannels/channelDef/controls/control[@type='help']/@include='yes'">
+                        <input type="hidden" name="hasHelp" value="true"/>
+                        <img alt="checked" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/>
+                      </xsl:when>
+                      <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
+                    </xsl:choose>                  
+                  </td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Has Help</strong></td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="interface image" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>when selected, passes help events</td>
+                </tr>              
               </xsl:otherwise>
               </xsl:choose>
               
@@ -1420,9 +1411,7 @@
                 <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                      </td>
+                      <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1447,69 +1436,36 @@
                     </xsl:otherwise>
                   </xsl:choose>
                   </input>
-
-                   </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
-                <td>
-                  <strong>Has About</strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/about.gif" width="16" height="16"/>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Has About</strong></td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="interface image" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
+                <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
                 <td>when selected, passes about events</td>
               </tr>
               
               </xsl:when>
               <xsl:otherwise>
-              <tr><td colspan="7">
-                Not configurable: 
-                <xsl:choose>
-                  <xsl:when test="/channelDef/controls/control[@type='about']/@include='yes'">
-                    <input type="hidden" name="hasAbout" value="true"/>
-                    about control included
-                  </xsl:when>
-                  <xsl:otherwise>about control not included</xsl:otherwise>
-                </xsl:choose>
-              </td></tr>  
+                <tr class="uportal-channel-text">
+                  <td align="center" valign="top">
+                    <xsl:choose>
+                      <xsl:when test="/manageChannels/channelDef/controls/control[@type='about']/@include='yes'">
+                        <input type="hidden" name="hasAbout" value="true"/>
+                        <img alt="checked" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/>
+                      </xsl:when>
+                      <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
+                    </xsl:choose>                  
+                  </td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Has About</strong></td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="interface image" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
+                  <td><img alt="interface image" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>when selected, passes about events</td>
+                </tr>   
               </xsl:otherwise>
-              </xsl:choose>                          
-                            
-              <!-- Printable control -->
-              <!--
-              <tr class="uportal-channel-text">
-                <td align="center" valign="top">
-                  <input type="checkbox" name="printable" value="true">
-                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@printable='true'">
-                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input>
-
-                   </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>
-                  <strong>Printable</strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/print.gif" width="16" height="16"/>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>when selected, passes print events</td>
-              </tr>
-              -->
+              </xsl:choose>                                                    
               
             </table>
           </td>
