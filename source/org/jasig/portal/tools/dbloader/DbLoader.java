@@ -47,6 +47,8 @@ import java.io.StringReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Hashtable;
+import java.util.Enumeration;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -102,7 +104,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * <li>Get database connection from RDBMServices
  *     (reads JDBC database settings from rdbm.properties).</li>
  * <li>Read tables.xml and issue corresponding DROP TABLE and CREATE TABLE SQL statements.</li>
- * <li>Read data.xml and issue corresponding INSERT SQL statements.</li>
+ * <li>Read data.xml and issue corresponding INSERT/UPDATE/DELETE SQL statements.</li>
  * </ol>
  * </p>
  *
@@ -115,6 +117,7 @@ public class DbLoader
 {
   private static URL propertiesURL;
   private static URL tablesURL;
+  private static URL dataURL;
   private static String tablesXslUri;
   private static Connection con;
   private static Statement stmt;
@@ -155,6 +158,53 @@ public class DbLoader
         if (createScript)
           initScript();
 
+        // read command line arguements to override properties in dbloader.xml
+
+        boolean usetable = false;
+        boolean usedata  = false;
+
+        for (int i = 0; i < args.length; i++) {
+           //System.out.println("args["+i+"]: "+args[i]);
+           if (!args[i].startsWith("-")) {
+              if (usetable) {
+                 PropertiesHandler.properties.setTablesUri(args[i]);
+                 usetable=false;
+              } else if (usedata) {
+                 PropertiesHandler.properties.setDataUri(args[i]);
+                 usedata=false;
+              }
+           } else if (args[i].equals("-t")) {
+              usetable = true;
+           } else if (args[i].equals("-d")) {
+              usedata= true;
+           } else if (args[i].equals("-c")) {
+              createScript = true;
+           } else if (args[i].equals("-nc")) {
+              createScript = false;
+           } else if (args[i].equals("-D")) {
+              dropTables = true;
+           } else if (args[i].equals("-nD")) {
+              dropTables = false;
+           } else if (args[i].equals("-C")) {
+              createTables = true;
+           } else if (args[i].equals("-nC")) {
+              createTables = false;
+           } else if (args[i].equals("-P")) {
+              populateTables = true;
+           } else if (args[i].equals("-nP")) {
+              populateTables = false;
+           } else {
+           }
+        }
+
+        // okay, start processing
+
+        // get tablesURL and dataURL here 
+        tablesURL = DbLoader.class.getResource(PropertiesHandler.properties.getTablesUri());
+        dataURL = DbLoader.class.getResource(PropertiesHandler.properties.getDataUri());
+        System.out.println("Getting tables from: "+tablesURL);
+        System.out.println("Getting data from: "+dataURL);
+
         try
         {
             // Read tables.xml
@@ -164,7 +214,7 @@ public class DbLoader
             // Eventually, write and validate against a DTD
             //domParser.setFeature ("http://xml.org/sax/features/validation", true);
             //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
-            tablesURL = DbLoader.class.getResource(PropertiesHandler.properties.getTablesUri());
+            //tablesURL = DbLoader.class.getResource(PropertiesHandler.properties.getTablesUri());
             tablesDoc = domParser.parse(new InputSource(tablesURL.openStream()));
         } catch (ParserConfigurationException pce) {
             System.out.println("Unable to instantiate DOM parser. Pease check your JAXP configuration.");
@@ -438,14 +488,12 @@ public class DbLoader
       dataTypeCode = Types.INTEGER; // 4
     else if (genericDataTypeName.equalsIgnoreCase("BIGINT"))
       dataTypeCode = Types.BIGINT; // -5
-
     else if (genericDataTypeName.equalsIgnoreCase("FLOAT"))
       dataTypeCode = Types.FLOAT; // 6
     else if (genericDataTypeName.equalsIgnoreCase("REAL"))
       dataTypeCode = Types.REAL; // 7
     else if (genericDataTypeName.equalsIgnoreCase("DOUBLE"))
       dataTypeCode = Types.DOUBLE; // 8
-
     else if (genericDataTypeName.equalsIgnoreCase("NUMERIC"))
       dataTypeCode = Types.NUMERIC; // 2
     else if (genericDataTypeName.equalsIgnoreCase("DECIMAL"))
@@ -839,6 +887,8 @@ public class DbLoader
     static Table table;
     static Row row;
     static Column column;
+    static String action;  //determines sql function for a table row
+    static String type;    //determines type of column
 
     public void startDocument ()
     {
@@ -865,6 +915,7 @@ public class DbLoader
       {
         insideTable = true;
         table = new Table();
+        action = atts.getValue("action");
       }
       else if (qName.equals("name"))
         insideName = true;
@@ -877,6 +928,7 @@ public class DbLoader
       {
         insideColumn = true;
         column = new Column();
+        type = atts.getValue("type");
       }
       else if (qName.equals("value"))
         insideValue = true;
@@ -901,12 +953,22 @@ public class DbLoader
       {
         insideRow = false;
 
-        if (populateTables)
-          insertRow(table, row);
+        if (action != null)
+        {
+          if ( action.equals("delete") )
+            executeSQL(table, row, "delete");
+          else if ( action.equals("modify") )
+            executeSQL(table, row, "modify");
+          else if ( action.equals("add") )
+            executeSQL(table, row, "insert");
+        }
+        else if (populateTables)
+          executeSQL(table, row, "insert");
       }
       else if (qName.equals("column"))
       {
         insideColumn = false;
+        if (type != null) column.setType(type);
         row.addColumn(column);
       }
       else if (qName.equals("value"))
@@ -986,6 +1048,106 @@ public class DbLoader
       return sb.toString();
     }
 
+    private String prepareDeleteStatement (Row row, boolean preparedStatement)
+    {
+
+      StringBuffer sb = new StringBuffer("DELETE FROM ");
+      sb.append(table.getName()).append(" WHERE ");
+
+      ArrayList columns = row.getColumns();
+      Iterator iterator = columns.iterator();
+      Column column;
+
+      while (iterator.hasNext())
+      {
+        column = (Column) iterator.next();
+        if (preparedStatement)
+          sb.append(column.getName() + " = ? and ");
+        else if (getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName()) == Types.INTEGER)
+          sb.append(column.getName() + " = " + sqlEscape(column.getValue().trim()) + " and ");
+        else
+          sb.append(column.getName() + " = " + "'" + sqlEscape(column.getValue().trim()) + "' and ");
+      }
+
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+
+      if (!preparedStatement)
+        sb.deleteCharAt(sb.length() - 1);
+
+                 return sb.toString();
+
+    }
+
+    private String prepareUpdateStatement (Row row, boolean preparedStatement)
+    {
+
+      StringBuffer sb = new StringBuffer("UPDATE ");
+      sb.append(table.getName()).append(" SET ");
+
+      ArrayList columns = row.getColumns();
+      Iterator iterator = columns.iterator();
+
+      Hashtable setPairs = new Hashtable();
+      Hashtable wherePairs = new Hashtable();
+      String type;
+      Column column;
+
+      while (iterator.hasNext())
+      {
+        column = (Column) iterator.next();
+        type = column.getType();
+
+                   if (type != null && type.equals("select"))
+        {
+          if (getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName()) == Types.INTEGER)
+            wherePairs.put(column.getName(), column.getValue().trim());
+          else
+            wherePairs.put(column.getName(), "'" + column.getValue().trim() + "'");
+        }
+        else
+        {
+          if (getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName()) == Types.INTEGER)
+            setPairs.put(column.getName(), column.getValue().trim());
+          else
+            setPairs.put(column.getName(), "'" + column.getValue().trim() + "'");
+        }
+      }
+
+      String nm;
+      String val;
+
+      Enumeration sKeys = setPairs.keys();
+      while (sKeys.hasMoreElements())
+      {
+        nm = (String) sKeys.nextElement();
+        val = (String) setPairs.get(nm);
+        sb.append( nm + " = " + sqlEscape(val) + ", ");
+      }
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+
+      sb.append(" WHERE ");
+
+      Enumeration wKeys = wherePairs.keys();
+      while (wKeys.hasMoreElements())
+      {
+        nm = (String) wKeys.nextElement();
+        val = (String) wherePairs.get(nm);
+        sb.append( nm + "=" + sqlEscape(val) + " and ");
+      }
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+      sb.deleteCharAt(sb.length() - 1);
+
+      return sb.toString();
+
+    }
+
     /**
      * Make a string SQL safe
      * @param string
@@ -1015,21 +1177,31 @@ public class DbLoader
       }
     }
 
-
-    private void insertRow (Table table, Row row)
+    private void executeSQL (Table table, Row row, String action)
     {
       System.out.print("...");
 
       if (createScript)
-        scriptOut.println(prepareInsertStatement(row, false) + PropertiesHandler.properties.getStatementTerminator());
-
+      {
+        if (action.equals("delete"))
+          scriptOut.println(prepareDeleteStatement(row, false) + PropertiesHandler.properties.getStatementTerminator());
+        else if (action.equals("modify"))
+          scriptOut.println(prepareUpdateStatement(row, false) + PropertiesHandler.properties.getStatementTerminator());
+        else if (action.equals("insert"))
+          scriptOut.println(prepareInsertStatement(row, false) + PropertiesHandler.properties.getStatementTerminator());
+      }
 
       if (supportsPreparedStatements)
       {
         String preparedStatement = "";
         try
         {
-          preparedStatement = prepareInsertStatement(row, true);
+          if (action.equals("delete"))
+            preparedStatement = prepareDeleteStatement(row, true);
+          else if (action.equals("modify"))
+            preparedStatement = prepareUpdateStatement(row, true);
+          else if (action.equals("insert"))
+            preparedStatement = prepareInsertStatement(row, true);
           //System.out.println(preparedStatement);
           pstmt = con.prepareStatement(preparedStatement);
           pstmt.clearParameters ();
@@ -1118,19 +1290,26 @@ public class DbLoader
       }
       else
       {
-        // If prepared statements aren't supported, try a normal insert statement
-        String insertStatement = prepareInsertStatement(row, false);
-        //System.out.println(insertStatement);
+
+        // If prepared statements aren't supported, try a normal sql statement
+        String statement = "";
+        if (action.equals("delete"))
+          statement = prepareDeleteStatement(row, false);
+        else if (action.equals("modify"))
+          statement = prepareUpdateStatement(row, false);
+        else if (action.equals("insert"))
+          statement = prepareInsertStatement(row, false);
+        //System.out.println(statement);
 
         try
         {
           stmt = con.createStatement();
-          stmt.executeUpdate(insertStatement);
+          stmt.executeUpdate(statement);
         }
         catch (Exception e)
         {
           System.err.println();
-          System.err.println(insertStatement);
+          System.err.println(statement);
           e.printStackTrace();
         }
         finally
@@ -1205,11 +1384,14 @@ public class DbLoader
     {
       private String name;
       private String value;
+      private String type;
 
       public String getName() { return name; }
       public String getValue() { return value; }
+      public String getType() { return type; }
       public void setName(String name) { this.name = name; }
       public void setValue(String value) { this.value = value; }
+      public void setType(String type) { this.type = type; }
     }
   }
 
