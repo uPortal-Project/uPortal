@@ -1,4 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!--
+Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+   
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+   
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Justin Tilton, jet@immagic.com
+Version $Revision$
+-->
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
 
@@ -23,7 +60,7 @@
   <xsl:variable name="pushedFragmentFoundation">
     <layout>
       <folder ID="userLayoutRootNode" type="regular" hidden="false" unremovable="false" immutable="false" name="root">
-        <folder ID="newFragment" type="regular" hidden="false" unremovable="false" immutable="false" name="名前を入力してください" width="100%"></folder>
+        <folder ID="newFragment" type="regular" hidden="false" unremovable="false" immutable="false" name="�??�?を入力�?��?��??�?��?��?�" width="100%"></folder>
       </folder>
     </layout>
   </xsl:variable>
@@ -115,7 +152,7 @@
                   <xsl:if test="$channelManager='true'">
                     <td>
                       <a href="{$baseActionURL}?uP_fname=portal/channelmanager/general">
-                        <img width="24" height="24" alt="チャネル管理" title="チャネル管理" src="{$mediaPathIcons}/channelmanager.gif" border="0"/>
+                        <img width="24" height="24" alt="�?ャ�?ル管�?�" title="�?ャ�?ル管�?�" src="{$mediaPathIcons}/channelmanager.gif" border="0"/>
                       </a>
                     </td>
                   </xsl:if>
@@ -132,12 +169,12 @@
                     <xsl:when test="$mode='preferences'">
                       <td>
                         <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
-                          <img width="24" height="24" alt="プリファレンスを非表示" title="プリファレンスを非表示" src="{$mediaPathIcons}/preferencesoff.gif" border="0"/>
+                          <img width="24" height="24" alt="プリファレンスを�?�表示" title="プリファレンスを�?�表示" src="{$mediaPathIcons}/preferencesoff.gif" border="0"/>
                         </a>
                       </td>
                       <td>
                         <a href="{$baseActionURL}?uP_sparam=uP_save&amp;uP_save=all">
-                          <img width="24" height="24" alt="変更を保存" title="変更を保存" src="{$mediaPathIcons}/save.gif" border="0"/>
+                          <img width="24" height="24" alt="変更を�?存" title="変更を�?存" src="{$mediaPathIcons}/save.gif" border="0"/>
                         </a>
                       </td>
                     </xsl:when>
@@ -240,7 +277,7 @@
           <table border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td>
-                <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}" class="uportal-label">プリファレンスを非表示</a>
+                <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}" class="uportal-label">プリファレンスを�?�表示</a>
               </td>
               <td style="background-image: url({$mediaPathMainBorder}/iconbardivider.gif); background-repeat:repeat-y;" valign="bottom">
                 <img src="{$mediaPathMainBorder}/iconbardividerbottom.gif" width="12" height="1"/>
@@ -252,31 +289,31 @@
                 <img src="{$mediaPathMainBorder}/iconbardividerbottom.gif" width="12" height="1"/>
               </td>
               <td>
-                <a href="javascript:alert('[カラムを追加] 機能はまだ利用できません')" class="uportal-label">カラムを追加</a>
+                <a href="javascript:alert('[カラムを追加] 機能�?��?��?�利用�?��??�?��?�ん')" class="uportal-label">カラムを追加</a>
               </td>
               <td style="background-image: url({$mediaPathMainBorder}/iconbardivider.gif); background-repeat:repeat-y;" valign="bottom">
                 <img src="{$mediaPathMainBorder}/iconbardividerbottom.gif" width="12" height="1"/>
               </td>
               <td>
-                <a href="javascript:alert('[コンテンツを追加] 機能はまだ利用できません')" class="uportal-label">コンテンツを追加</a>
+                <a href="javascript:alert('[コンテンツを追加] 機能�?��?��?�利用�?��??�?��?�ん')" class="uportal-label">コンテンツを追加</a>
               </td>
               <td style="background-image: url({$mediaPathMainBorder}/iconbardivider.gif); background-repeat:repeat-y;" valign="bottom">
                 <img src="{$mediaPathMainBorder}/iconbardividerbottom.gif" width="12" height="1"/>
               </td>
               <td>
-                <a href="javascript:alert('[スキンを選択] 機能はまだ利用できません')#" class="uportal-label">スキン</a>
+                <a href="javascript:alert('[スキンを�?�択] 機能�?��?��?�利用�?��??�?��?�ん')#" class="uportal-label">スキン</a>
               </td>
               <td style="background-image: url({$mediaPathMainBorder}/iconbardivider.gif); background-repeat:repeat-y;" valign="bottom">
                 <img src="{$mediaPathMainBorder}/iconbardividerbottom.gif" width="12" height="1"/>
               </td>
               <td>
-                <a href="javascript:alert('[言語を選択] 機能はまだ利用できません')" class="uportal-label">言語</a>
+                <a href="javascript:alert('[言語を�?�択] 機能�?��?��?�利用�?��??�?��?�ん')" class="uportal-label">言語</a>
               </td>
               <td style="background-image: url({$mediaPathMainBorder}/iconbardivider.gif); background-repeat:repeat-y;" valign="bottom">
                 <img src="{$mediaPathMainBorder}/iconbardividerbottom.gif" width="12" height="1"/>
               </td>
               <td>
-                <a href="javascript:alert('[プロファイルを編集] 機能はまだ利用できません')" class="uportal-label">プロファイル</a>
+                <a href="javascript:alert('[プロファイルを編集] 機能�?��?��?�利用�?��??�?��?�ん')" class="uportal-label">プロファイル</a>
               </td>
             </tr>
           </table>
@@ -839,20 +876,20 @@
     <xsl:choose>
       <xsl:when test="$selectedID=@ID and $targetAction='Channel Move'">
         <a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
-          <img src="{$mediaPathIcons}/contentcancelmove.gif" width="26" height="23" alt="チャネルの移動をキャンセル" title="チャネルの移動をキャンセル" border="0"/>
+          <img src="{$mediaPathIcons}/contentcancelmove.gif" width="26" height="23" alt="�?ャ�?ル�?�移動をキャンセル" title="�?ャ�?ル�?�移動をキャンセル" border="0"/>
         </a>
       </xsl:when>
       <xsl:otherwise>
         <a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel&amp;uP_sparam=targetAction&amp;targetAction=Channel Move">
-          <img src="{$mediaPathIcons}/contentmove.gif" width="26" height="23" alt="チャネルを移動" title="チャネルを移動" border="0"/>
+          <img src="{$mediaPathIcons}/contentmove.gif" width="26" height="23" alt="�?ャ�?ルを移動" title="�?ャ�?ルを移動" border="0"/>
         </a>
       </xsl:otherwise>
     </xsl:choose>
     <a href="#">
-      <img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="チャネルの言語を変更" title="チャネルの言語を変更" border="0"/>
+      <img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="�?ャ�?ル�?�言語を変更" title="�?ャ�?ル�?�言語を変更" border="0"/>
     </a>
     <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
-      <img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="チャネルを削除" title="チャネルを削除" border="0"/>
+      <img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="�?ャ�?ルを削除" title="�?ャ�?ルを削除" border="0"/>
     </a>
   </xsl:template>
 
@@ -867,7 +904,7 @@
     </xsl:if>
     <xsl:if test="not(@hasAbout='false')">
       <a href="{$baseActionURL}?uP_about_target={@ID}">
-        <img alt="このチャネルについて" title="このチャネルについて" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
+        <img alt="�?��?��?ャ�?ル�?��?��?��?�" title="�?��?��?ャ�?ル�?��?��?��?�" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
       </a>
     </xsl:if>
     <xsl:if test="not(@editable='false')">
@@ -877,7 +914,7 @@
     </xsl:if>
     <xsl:if test="@printable='true'">
       <a href="{$baseActionURL}?uP_print_target={@ID}">
-        <img alt="印刷" title="印刷" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
+        <img alt="�?�刷" title="�?�刷" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
       </a>
     </xsl:if>
   </xsl:template>
@@ -890,7 +927,7 @@
     </xsl:if>
     <xsl:if test="not(@hasAbout='false')">
       <a href="{$baseActionURL}?uP_about_target={@ID}">
-        <img alt="このチャネルについて" title="このチャネルについて" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
+        <img alt="�?��?��?ャ�?ル�?��?��?��?�" title="�?��?��?ャ�?ル�?��?��?��?�" src="{$mediaPathIcons}/contentabout.gif" width="26" height="23" border="0"/>
       </a>
     </xsl:if>
     <xsl:if test="not(@editable='false')">
@@ -900,7 +937,7 @@
     </xsl:if>
     <xsl:if test="@printable='true'">
       <a href="{$baseActionURL}?uP_print_target={@ID}">
-        <img alt="印刷" title="印刷" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
+        <img alt="�?�刷" title="�?�刷" src="{$mediaPathIcons}/contentprint.gif" width="26" height="23" border="0"/>
       </a>
     </xsl:if>
     <a href="{$baseActionURL}?uP_root={@ID}">
@@ -914,7 +951,7 @@
       </xsl:when>
       <xsl:otherwise>
         <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true">
-          <img alt="最小化" title="最小化" src="{$mediaPathIcons}/contentminimize.gif" width="26" height="23" border="0"/>
+          <img alt="最�?化" title="最�?化" src="{$mediaPathIcons}/contentminimize.gif" width="26" height="23" border="0"/>
         </a>
       </xsl:otherwise>
     </xsl:choose>
@@ -923,7 +960,7 @@
       <img alt="個別表示" title="個別表示" src="{$mediaPathIcons}/contentdetach.gif" width="26" height="23" border="0"/>
     </a>
     <xsl:if test="not(@unremovable='true')">
-      <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to reチャネルを移動?')">
+      <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to re�?ャ�?ルを移動?')">
         <img alt="削除" title="削除" src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" border="0"/>
       </a>
     </xsl:if>
@@ -937,7 +974,7 @@
     </xsl:if>
     <xsl:if test="not(@hasAbout='false')">
       <a href="{$baseActionURL}?uP_about_target={@ID}">
-        <img alt="このチャネルについて" title="このチャネルについて" src="{$mediaPath}/{$skin}/controls/about.gif" width="16" height="16" border="0"/>
+        <img alt="�?��?��?ャ�?ル�?��?��?��?�" title="�?��?��?ャ�?ル�?��?��?��?�" src="{$mediaPath}/{$skin}/controls/about.gif" width="16" height="16" border="0"/>
       </a>
     </xsl:if>
     <xsl:if test="not(@editable='false')">
@@ -947,7 +984,7 @@
     </xsl:if>
     <xsl:if test="@printable='true'">
       <a href="{$baseActionURL}?uP_print_target={@ID}">
-        <img alt="印刷" title="印刷" src="{$mediaPath}/{$skin}/controls/print.gif" width="16" height="16" border="0"/>
+        <img alt="�?�刷" title="�?�刷" src="{$mediaPath}/{$skin}/controls/print.gif" width="16" height="16" border="0"/>
       </a>
     </xsl:if>
   </xsl:template>
@@ -956,7 +993,7 @@
     <table width="100%" cols="2" border="0" cellspacing="9" cellpadding="0">
       <tr>
         <td valign="top" width="100%" class="uportal-background-dark">
-          <xsl:apply-templates/>
+          <xsl:apply-templates select="*[1]"/>
         </td>
       </tr>
     </table>
@@ -1327,7 +1364,7 @@
                             <input type="hidden" name="mode" value="{$mode}"/>
                             <input type="hidden" name="uP_sparam" value="focusedTabID"/>
                             <input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-                            <input name="renameTab" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="新規タブの名前を送信" title="新規タブの名前を送信"/>
+                            <input name="renameTab" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="新�?タブ�?��??�?を�?信" title="新�?タブ�?��??�?を�?信"/>
                           </xsl:when>
                           <xsl:otherwise>
                             <span class="uportal-navigation-category-selected">
@@ -1340,7 +1377,7 @@
                           <img alt="タブを移動" title="タブを移動" src="{$mediaPathIcons}/moveicon.gif" width="22" height="18" border="0"/>
                         </a>
                         <a href="#">
-                          <img alt="このタブの言語を変更" title="このタブの言語を変更" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
+                          <img alt="�?��?�タブ�?�言語を変更" title="�?��?�タブ�?�言語を変更" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
                         </a>
                         <xsl:if test="@unremovable='false'">
                           <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
@@ -1561,7 +1598,7 @@
                   </span>
                   <img src="{$mediaPathSkin}/transparent.gif" width="8" height="8"/>
                   <a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
-                    <img src="{$mediaPathIcons}/cancelmoveicon.gif" width="20" height="17" alt="タブの移動をキャンセル" title="タブの移動をキャンセル" border="0"/>
+                    <img src="{$mediaPathIcons}/cancelmoveicon.gif" width="20" height="17" alt="タブ�?�移動をキャンセル" title="タブ�?�移動をキャンセル" border="0"/>
                   </a>
                 </td>
               </tr>
@@ -1686,7 +1723,7 @@
               </td>
               <td valign="middle" width="100%">
                 <a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
-                  <img alt="クリックすると目標の場所を選択できます" title="クリックすると目標の場所を選択できます" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
+                  <img alt="クリック�?�る�?�目標�?�場所を�?�択�?��??�?��?�" title="クリック�?�る�?�目標�?�場所を�?�択�?��??�?��?�" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
                 </a>
               </td>
               <td>
@@ -1722,7 +1759,7 @@
       <xsl:when test="$type='column'">
         <td valign="top">
           <a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
-            <img alt="クリックするとカラムをここへ移動できます" title="クリックするとカラムをここへ移動できます" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
+            <img alt="クリック�?�る�?�カラムを�?��?��?�移動�?��??�?��?�" title="クリック�?�る�?�カラムを�?��?��?�移動�?��??�?��?�" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
           </a>
         </td>
       </xsl:when>
@@ -1731,7 +1768,7 @@
           <tr>
             <td align="center">
               <a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
-                <img alt="クリックするとチャネルをここへ移動できます" title="クリックするとチャネルをここへ移動できます" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
+                <img alt="クリック�?�る�?��?ャ�?ルを�?��?��?�移動�?��??�?��?�" title="クリック�?�る�?��?ャ�?ルを�?��?��?�移動�?��??�?��?�" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
               </a>
             </td>
           </tr>
@@ -1752,7 +1789,7 @@
             </td>
             <td valign="middle">
               <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter">
-                <img alt="クリックすると新規タブをここに追加できます" title="クリックすると新規タブをここに追加できます" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
+                <img alt="クリック�?�る�?�新�?タブを�?��?��?�追加�?��??�?��?�" title="クリック�?�る�?�新�?タブを�?��?��?�追加�?��??�?��?�" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
               </a>
             </td>
             <td>
@@ -1793,7 +1830,7 @@
           <tr>
             <td valign="top">
               <a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter">
-                <img alt="クリックすると新規カラムをここに追加できます" title="クリックすると新規カラムをここに追加できます" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
+                <img alt="クリック�?�る�?�新�?カラムを�?��?��?�追加�?��??�?��?�" title="クリック�?�る�?�新�?カラムを�?��?��?�追加�?��??�?��?�" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
               </a>
             </td>
           </tr>
@@ -1808,7 +1845,7 @@
         <tr>
           <td align="center">
             <a href="{$baseActionURL}?uP_add_target=channel&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter">
-              <img alt="クリックすると新規チャネルをここに追加できます" title="クリックすると新規チャネルをここに追加できます" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
+              <img alt="クリック�?�る�?�新�?�?ャ�?ルを�?��?��?�追加�?��??�?��?�" title="クリック�?�る�?�新�?�?ャ�?ルを�?��?��?�追加�?��??�?��?�" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
             </a>
           </td>
         </tr>
@@ -2030,7 +2067,7 @@
               <a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter"><xsl:value-of select="$targetAction"/>をキャンセル</a>
               <span>&#160;|<xsl:text> </xsl:text></span>
             </xsl:if>
-            <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">プリファレンスを非表示</a>
+            <a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">プリファレンスを�?�表示</a>
             <span>&#160;|<xsl:text> </xsl:text></span>
             <a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">タブを追加</a>
             <span>&#160;|<xsl:text> </xsl:text></span>
@@ -2040,13 +2077,13 @@
             <span>&#160;|<xsl:text> </xsl:text></span>
             <a href="{$baseActionURL}?uP_fname=skinselector">スキン</a>
             <span>&#160;|<xsl:text> </xsl:text></span>
-            <a href="javascript:alert('[言語] 機能はまだ利用できません')">言語を選択</a>
+            <a href="javascript:alert('[言語] 機能�?��?��?�利用�?��??�?��?�ん')">言語を�?�択</a>
             <span>&#160;|<xsl:text> </xsl:text></span>
-            <a href="javascript:alert('[プロファイル] 機能はまだ利用できません')">プロファイル</a>
+            <a href="javascript:alert('[プロファイル] 機能�?��?��?�利用�?��??�?��?�ん')">プロファイル</a>
             <xsl:if test="alternateLayouts">
               <span>&#160;|<xsl:text> </xsl:text></span>Manage:&#160;<select name="select" class="uportal-input-text uportal-background-content"><option selected="selected">My layout</option><xsl:for-each select="alternateLayouts/alternate"><option><xsl:value-of select="@name"/></option></xsl:for-each></select>
               <!--<option><xsl:value-of select="New fragment"/></option>--><input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="レイアウトを修正" title="レイアウトを修正"/>
-              <!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[レイアウトを出版] 機能はまだ利用できません')">タブをフラグメントにコピー</a> --><span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[新規フラグメント] 機能はまだ利用できません')">新規フラグメント</a></xsl:if>
+              <!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[レイアウトを出版] 機能�?��?��?�利用�?��??�?��?�ん')">タブをフラグメント�?�コピー</a> --><span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[新�?フラグメント] 機能�?��?��?�利用�?��??�?��?�ん')">新�?フラグメント</a></xsl:if>
           </span>
         </td>
         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/iconbarrightborder.gif); background-repeat:repeat-y;">
@@ -2551,7 +2588,7 @@
 
                     <td>
                       <a href="#">
-                        <img src="{$mediaPathIcons}/columnlanguages.gif" width="28" height="25" alt="カラムの言語を変更" title="カラムの言語を変更" border="0"/>
+                        <img src="{$mediaPathIcons}/columnlanguages.gif" width="28" height="25" alt="カラム�?�言語を変更" title="カラム�?�言語を変更" border="0"/>
                       </a>
                     </td>
 
@@ -2648,7 +2685,7 @@
         <xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
           <xsl:variable name="thisColumnCondensed" select="number(substring-before(@width,'%'))-5"/>
           <xsl:variable name="followingColumnExpanded" select="number(substring-before(following-sibling::column/@width,'%'))+5"/>
-          <input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="カラムを 5% 狭める" title="カラムを 5% 狭める"/>
+          <input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="カラムを 5% 狭�?る" title="カラムを 5% 狭�?る"/>
           <input type="hidden" name="uP_sparam" value="mode"/>
           <input type="hidden" name="mode" value="{$mode}"/>
           <input type="hidden" name="uP_sparam" value="focusedTabID"/>
@@ -2667,7 +2704,7 @@
         <xsl:when test="../column[position()=last()]/@ID=$thisId">
           <xsl:variable name="thisColumnCondensed" select="number(substring-before(@width,'%'))-5"/>
           <xsl:variable name="precedingColumnExpanded" select="number(substring-before(preceding-sibling::column/@width,'%'))+5"/>
-          <input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="カラムを 5% 狭める" title="カラムを 5% 狭める"/>
+          <input name="shrinkColumn" type="image" src="{$mediaPathIcons}/columnshrink.gif" width="28" height="25" border="0" alt="カラムを 5% 狭�?る" title="カラムを 5% 狭�?る"/>
           <input type="hidden" name="uP_sparam" value="mode"/>
           <input type="hidden" name="mode" value="{$mode}"/>
           <input type="hidden" name="uP_sparam" value="focusedTabID"/>
@@ -2694,7 +2731,7 @@
         <xsl:when test="not(../column[position()=last()]/@ID=$thisId)">
           <xsl:variable name="thisColumnExpanded" select="number(substring-before(@width,'%'))+5"/>
           <xsl:variable name="followingColumnCondensed" select="number(substring-before(following-sibling::column/@width,'%'))-5"/>
-          <input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="カラムを 5% 広げる" title="カラムを 5% 広げる"/>
+          <input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="カラムを 5% 広�?�る" title="カラムを 5% 広�?�る"/>
           <input type="hidden" name="uP_sparam" value="mode"/>
           <input type="hidden" name="mode" value="{$mode}"/>
           <input type="hidden" name="uP_sparam" value="focusedTabID"/>
@@ -2713,7 +2750,7 @@
         <xsl:when test="../column[position()=last()]/@ID=$thisId">
           <xsl:variable name="thisColumnExpanded" select="number(substring-before(@width,'%'))+5"/>
           <xsl:variable name="precedingColumnCondensed" select="number(substring-before(preceding-sibling::column/@width,'%'))-5"/>
-          <input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="カラムを 5% 広げる" title="カラムを 5% 広げる"/>
+          <input name="expandColumn" type="image" src="{$mediaPathIcons}/columnexpand.gif" width="28" height="25" border="0" alt="カラムを 5% 広�?�る" title="カラムを 5% 広�?�る"/>
           <input type="hidden" name="uP_sparam" value="mode"/>
           <input type="hidden" name="mode" value="{$mode}"/>
           <input type="hidden" name="uP_sparam" value="focusedTabID"/>
@@ -2762,8 +2799,4 @@
       </td>
     </form>
   </xsl:template>
-</xsl:stylesheet><!-- Stylus Studio meta-information - (c)1998-2002 eXcelon Corp.
-<metaInformation>
-<scenarios ><scenario default="no" name="input002" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input002.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input003" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input003.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input004" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input004.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input005" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input005.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input006" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input006.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="yes" name="input007actions" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input007actions.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input007login" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input007login.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input007ltab" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input007ltab.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input008focused" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input008focused.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input009test" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input009test.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input0011newLogin" userelativepaths="yes" externalpreview="no" url="..\hulk\Integrate Modes Input XML\input011newLogin.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input012layouttest" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input012layouttest.xml" htmlbaseurl="..\..\" processortype="xalan" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="themeinputtest" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\themeinputtest.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/></scenarios><MapperInfo srcSchemaPath="" srcSchemaRoot="" srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
-</metaInformation>
--->
+</xsl:stylesheet>

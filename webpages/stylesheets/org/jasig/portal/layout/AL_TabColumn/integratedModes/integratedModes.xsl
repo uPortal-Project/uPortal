@@ -1,4 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!--
+Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+   
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+   
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Justin Tilton, jet@immagic.com
+Version $Revision$
+-->
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" indent="no"/>
 
@@ -958,7 +995,7 @@
 		<table width="100%" cols="2" border="0" cellspacing="9" cellpadding="0">
 			<tr>
 				<td valign="top" width="100%" class="uportal-background-dark">
-					<xsl:apply-templates/>
+					<xsl:apply-templates select="*[1]"/>
 				</td>
 			</tr>
 		</table>
@@ -2766,8 +2803,4 @@
 			</td>
 		</form>
 	</xsl:template>
-</xsl:stylesheet><!-- Stylus Studio meta-information - (c)1998-2002 eXcelon Corp.
-<metaInformation>
-<scenarios ><scenario default="no" name="input002" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input002.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input003" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input003.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input004" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input004.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input005" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input005.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input006" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input006.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="yes" name="input007actions" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input007actions.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input007login" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input007login.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input007ltab" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input007ltab.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input008focused" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input008focused.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input009test" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input009test.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input0011newLogin" userelativepaths="yes" externalpreview="no" url="..\hulk\Integrate Modes Input XML\input011newLogin.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="input012layouttest" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\input012layouttest.xml" htmlbaseurl="..\..\" processortype="xalan" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/><scenario default="no" name="themeinputtest" userelativepaths="yes" externalpreview="no" url="Integrate Modes Input XML\themeinputtest.xml" htmlbaseurl="..\..\" processortype="internal" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/></scenarios><MapperInfo srcSchemaPath="" srcSchemaRoot="" srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
-</metaInformation>
--->
+</xsl:stylesheet>
