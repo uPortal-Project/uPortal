@@ -1252,8 +1252,8 @@
     <primary-key>ENTITY_TYPE_ID</primary-key>
     <primary-key>ENTITY_KEY</primary-key>
     <primary-key>LOCK_OWNER</primary-key>
+    <primary-key>EXPIRATION_TIME</primary-key>
     <not-null>LOCK_TYPE</not-null>
-    <not-null>EXPIRATION_TIME</not-null>
   </table>
 
   <!-- Used by the EntityPropertyRegistry to store aribtrary properties. -->
