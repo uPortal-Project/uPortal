@@ -31,11 +31,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import java.util.*;
+package  org.jasig.portal;
+
+import  java.util.*;
 
 
 /**
@@ -53,57 +56,178 @@ import java.util.*;
  * </ul>
  * @version $Revision$
  * @author Peter Kharchenko
+ * @deprecated This object is no longer used in the 2.x framework. Instead all
+ * parameters are communicated through an XML file.
  */
+public class ChannelSubscriptionProperties {
+  private String str_name;
+  // I leave those as strings, just in case we'll want to use some weird format
+  private String str_defaultDetachWidth;
+  private String str_defaultDetachHeight;
+  private boolean bool_isMinimizable;
+  private boolean bool_isDetachable;
+  private boolean bool_isRemovable;
+  private boolean bool_isEditable;
+  private boolean bool_hasHelp;
+  private java.util.Vector vec_parameter_fields;
 
-public class ChannelSubscriptionProperties
-{
-    private String str_name;
+  /**
+   * put your documentation comment here
+   */
+  public ChannelSubscriptionProperties () {
+    // set the default values here ... I've chosen something safe for now
+    str_name = "";
+    str_defaultDetachWidth = "200";
+    str_defaultDetachHeight = "100";
+    bool_isMinimizable = true;
+    bool_isDetachable = true;
+    bool_isRemovable = true;
+    bool_isEditable = false;
+    bool_hasHelp = false;
+    vec_parameter_fields = null;
+  }
 
-    // I leave those as strings, just in case we'll want to use some weird format
-    private String str_defaultDetachWidth;
-    private String str_defaultDetachHeight;
+  /**
+   * The set functions
+   * @param n
+   */
+  public void setName (String n) {
+    str_name = n;
+  }
 
-    private boolean bool_isMinimizable;
-    private boolean bool_isDetachable;
-    private boolean bool_isRemovable;
-    private boolean bool_isEditable;
-    private boolean bool_hasHelp;
+  /**
+   * put your documentation comment here
+   * @param ddw
+   */
+  public void setDefaultDetachWidth (String ddw) {
+    str_defaultDetachWidth = ddw;
+  }
 
-    private java.util.Vector vec_parameter_fields;
+  /**
+   * put your documentation comment here
+   * @param ddh
+   */
+  public void setDefaultDetachHeight (String ddh) {
+    str_defaultDetachHeight = ddh;
+  }
 
-    public ChannelSubscriptionProperties() {
-	// set the default values here ... I've chosen something safe for now
-	str_name="";
-	str_defaultDetachWidth="200";
-	str_defaultDetachHeight="100";
-	bool_isMinimizable=true;
-	bool_isDetachable=true;
-	bool_isRemovable=true;
-	bool_isEditable=false;
-	bool_hasHelp=false;
-	vec_parameter_fields=null;
-    }
+  /**
+   * put your documentation comment here
+   * @param value
+   */
+  public void setMinimizable (boolean value) {
+    bool_isMinimizable = value;
+  }
 
-    // the set functions
-    public void setName(String n) { str_name=n; }
-    public void setDefaultDetachWidth(String ddw) { str_defaultDetachWidth=ddw;}
-    public void setDefaultDetachHeight(String ddh) { str_defaultDetachHeight=ddh;}
-    public void setMinimizable(boolean value) { bool_isMinimizable=value; }
-    public void setDetachable(boolean value) { bool_isDetachable=value; }
-    public void setRemovable(boolean value) { bool_isRemovable=value; }
-    public void setEditable(boolean value) { bool_isEditable=value; }
-    public void setHasHelp(boolean value) { bool_hasHelp=value; }
-    public void setParameterFields(java.util.Vector v) { vec_parameter_fields=v; }
+  /**
+   * put your documentation comment here
+   * @param value
+   */
+  public void setDetachable (boolean value) {
+    bool_isDetachable = value;
+  }
 
-    // the get functions
-    public String getName() { return str_name; }
-    public String getDefaultDetachWidth() { return str_defaultDetachWidth; }
-    public String getDefaultDetachHeight() { return str_defaultDetachHeight; }
-    public boolean isMinimizable() {return bool_isMinimizable; }
-    public boolean isDetachable() { return bool_isDetachable; }
-    public boolean isRemovable() { return bool_isRemovable; }
-    public boolean isEditable() { return bool_isEditable; }
-    public boolean hasHelp() { return bool_hasHelp; }
-    public java.util.Vector getParameterFields() { return vec_parameter_fields; }
+  /**
+   * put your documentation comment here
+   * @param value
+   */
+  public void setRemovable (boolean value) {
+    bool_isRemovable = value;
+  }
 
+  /**
+   * put your documentation comment here
+   * @param value
+   */
+  public void setEditable (boolean value) {
+    bool_isEditable = value;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param value
+   */
+  public void setHasHelp (boolean value) {
+    bool_hasHelp = value;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param v
+   */
+  public void setParameterFields (java.util.Vector v) {
+    vec_parameter_fields = v;
+  }
+
+  // the get functions
+  public String getName () {
+    return  str_name;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public String getDefaultDetachWidth () {
+    return  str_defaultDetachWidth;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public String getDefaultDetachHeight () {
+    return  str_defaultDetachHeight;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isMinimizable () {
+    return  bool_isMinimizable;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isDetachable () {
+    return  bool_isDetachable;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isRemovable () {
+    return  bool_isRemovable;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isEditable () {
+    return  bool_isEditable;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean hasHelp () {
+    return  bool_hasHelp;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public java.util.Vector getParameterFields () {
+    return  vec_parameter_fields;
+  }
 }
+
+
+
