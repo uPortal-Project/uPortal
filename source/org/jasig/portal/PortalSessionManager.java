@@ -108,6 +108,11 @@ public class PortalSessionManager extends HttpServlet {
    * @exception ServletException, IOException
    */
   public void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    // Disable page caching
+    res.setHeader("pragma", "no-cache");
+    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+    res.setDateHeader("Expires", 0);
+
     // forwarding
     ServletContext sc = this.getServletContext();
     HttpSession session = req.getSession();
