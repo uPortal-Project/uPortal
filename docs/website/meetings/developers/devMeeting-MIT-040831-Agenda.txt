@@ -75,27 +75,31 @@ Tuesday, August 31, 2004
                  Logging
                  Security
                  Groups and permissions
-                 Exception handling
-                 HOw to integrate into uPortal 3.0
+                 How to integrate into uPortal 3.0
+                 
+11:30 - 12:00  Exception handling [Andrew Petro]
 
-11:30 - 12:00  Upgrading [Al Wold]
+                 Status
+                 How to integrate into uPortal 3.0
+
+12:00 - 01:00  Lunch
+
+01:00 - 01:30  Upgrading [Al Wold]
   
                  Upgrade tools
                  Experiences with upgrading
-                 
-12:00 - 01:00  Lunch
 
-01:00 - 02:00  Wish list for uPortal 3.0 [Ken Weiner]
+01:30 - 02:30  Wish list for uPortal 3.0 [Ken Weiner]
 
                  Gather requirements                 
 
-02:00 - 02:30  Documentation [John Fereira]
+02:30 - 02:45  Break
+
+02:45 - 03:30  Documentation [John Fereira]
 
                  Website 
 
-02:30 - 02:45  Break
-
-02:45 - 04:00  Compile worklist [Ken Weiner]
+03:30 - 04:00  Meeting summary [Ken Weiner]
 
                  Establish priorities
                  2.4, 3.0 feature sets
