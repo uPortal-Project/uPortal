@@ -56,17 +56,13 @@ public interface ILayoutFragment extends IUserLayout {
 		 * @return an <code>String</code> fragment description
 		 */
 	public String getDescription();
-
+	
 	/**
-			* Sets a fragment name
-			* @param name a <code>String</code> value
-			*/
-	public void setName(String name);
-
-	/**
-	   * Sets a fragment description
-	   * @param description a <code>String</code> value
-	   */
-	public void setDescription(String description);
+		 * Returns a fragment functional name
+		 *
+		 * @return an <code>String</code> fragment name
+		 */
+	public String getFunctionalName();
+	
 
 }

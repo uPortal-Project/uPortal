@@ -48,8 +48,9 @@ import org.jasig.portal.PortalException;
  */
 public class ALFragment extends AggregatedLayout implements ILayoutFragment {
 	
-	protected String name;
+	protected String functionalName;
 	protected String description;
+	protected boolean pushedFragment = false;
 	
 
 	public ALFragment (  String fragmentId, IAggregatedUserLayoutManager layoutManager ) throws PortalException {
@@ -59,6 +60,47 @@ public class ALFragment extends AggregatedLayout implements ILayoutFragment {
 	public ALFragment (  String fragmentId ) throws PortalException {
 	 super ( fragmentId );
 	}
+	
+	
+	/**
+				 * Answers whether the fragment is pushed or pulled
+				 *
+				 * @return an boolean value
+				 */
+	public boolean isPushedFragment() {
+		 return pushedFragment;
+	}
+    
+	/**
+				   * Marks the fragment as pushed
+				   */
+	public void setPushedFragment() {
+	   pushedFragment = true;
+	}
+	
+	/**
+					   * Marks the fragment as pulled
+					   */
+	public void setPulledFragment() {
+	   pushedFragment = false;
+	}
+	
+	/**
+			 * Returns a fragment functional name
+			 *
+			 * @return an <code>String</code> fragment name
+			 */
+    public String getFunctionalName() {
+      return functionalName;
+    }
+    
+	/**
+			   * Sets a fragment functional name
+			   * @param functionalName a <code>String</code> value
+			   */
+	public void setFunctionalName(String functionalName) {
+		this.functionalName = functionalName;
+	}
 
     /**
      * Returns a fragment name
@@ -66,7 +108,7 @@ public class ALFragment extends AggregatedLayout implements ILayoutFragment {
      * @return an <code>String</code> fragment name
      */
     public String getName() {
-      return name;	
+      return getFunctionalName();	
     }
     
 	/**
@@ -83,7 +125,7 @@ public class ALFragment extends AggregatedLayout implements ILayoutFragment {
 		* @param name a <code>String</code> value
 		*/
 	public void setName( String name ) {
-	  this.name = name;	
+	  setFunctionalName(name);	
 	}
     
 	/**

@@ -1585,19 +1585,19 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
  /**   Sets the fragment
      * @param person an <code>IPerson</code> object specifying the user
-     * @param layoutImpl a <code>ILayoutFragment</code> containing a fragment
+     * @param fragment a <code>ILayoutFragment</code> containing a fragment
      * @exception Exception if an error occurs
      */
- public void setFragment (IPerson person, ILayoutFragment layoutImpl ) throws Exception {
+ public void setFragment (IPerson person, ILayoutFragment fragment ) throws Exception {
 
     int userId = person.getID();
-    String fragmentId = layoutImpl.getId();
+    String fragmentId = fragment.getId();
     Connection con = RDBMServices.getConnection();
 
-     if ( !(layoutImpl instanceof AggregatedLayout) )
-       throw new PortalException("The user layout object must have "+AggregatedLayout.class.getName()+" type!");
+     if ( !(fragment instanceof ALFragment) )
+       throw new PortalException("The user layout fragment must have "+ALFragment.class.getName()+" type!");
 
-    AggregatedLayout layout = (AggregatedLayout) layoutImpl;
+    ALFragment layout = (ALFragment) fragment;
 
     RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
@@ -1608,19 +1608,29 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       // Check if the fragment is new
       if ( IAggregatedUserLayoutManager.NEW_FRAGMENT.equals( fragmentId )) {
       	fragmentId = getNextFragmentId();
-		String sqlUpdate = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+	
-		"VALUES ("+fragmentId+",1"+userId+","+layoutImpl.getName()+","+layoutImpl.getDescription()+",'N'";
-     	stmt.executeUpdate(sqlUpdate);
+		String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+	
+		"VALUES ("+fragmentId+",1"+userId+","+layout.getName()+","+layout.getDescription()+",'N'";
+     	stmt.executeUpdate(sqlInsert);
       } else {
-         boolean isOwner = false;
-         // Check if the user was an owner
-         ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-         if ( rs.next() )
-          if ( rs.getInt(1) == userId )
-           isOwner = true;
-         if ( rs != null ) rs.close();
-         if ( !isOwner )
-          throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
+		 boolean isOwner = false;
+		 // Check if the user was an owner
+		 ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+		 if ( rs.next() )
+		  if ( rs.getInt(1) == userId )
+		   isOwner = true;
+		 if ( rs != null ) rs.close();
+		 if ( !isOwner )
+		  throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
+      	 
+		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";	
+		 PreparedStatement ps = con.prepareStatement(sqlUpdate);
+		 ps.setString(1,layout.getName());
+		 ps.setString(2,layout.getDescription());
+		 ps.setString(3,(layout.isPushedFragment())?"Y":"N");
+		 ps.setInt(4,userId);
+		 ps.setInt(5,CommonUtils.parseInt(fragmentId));
+		 ps.executeUpdate(sqlUpdate);
+		 
         }  
 
       // Clear the previous data related to the user layout
@@ -2386,16 +2396,21 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //        int layoutId=profile.getLayoutId();
         // but for now:
 
-
         String restrFragmentSQL = "SELECT RESTRICTION_TYPE, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
                                       "WHERE FRAGMENT_ID=? AND NODE_ID=?";
 
         int firstStructId = -1;
-        String sQuery = "SELECT FRAGMENT_ROOT_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID=" + fragmentId + " AND OWNER_ID = " + userId;
+        String sQuery = "SELECT FRAGMENT_ROOT_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID=" + fragmentId + " AND OWNER_ID = " + userId;
         rs = stmt.executeQuery(sQuery);
         try {
           rs.next();
           firstStructId = rs.getInt(1);
+          layout.setName(rs.getString(2));
+		  layout.setDescription(rs.getString(3));
+		  if ("Y".equals(rs.getString(4))) 
+		     layout.setPushedFragment();
+		  else   
+		     layout.setPulledFragment();
         } finally {
           rs.close();
         }
