@@ -44,7 +44,10 @@ import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
 import org.xml.sax.InputSource;
-
+import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * <p>This utility provides methods for accessing resources.
@@ -149,16 +152,31 @@ public class ResourceLoader {
   }
 
   /**
+   * Get the contents of a URL as an XML Document
+   * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
+   * @param resource a String describing the full or partial URL of the resource whose contents to load
+   * @return the actual contents of the resource as an XML Document
+   * @throws org.jasig.portal.ResourceMissingException
+   * @throws java.io.IOException
+   * @throws javax.xml.parsers.ParserConfigurationException
+   * @throws org.xml.sax.SAXException
+   */
+  public static Document getResourceAsDocument (Class requestingClass, String resource) throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
+    InputStream inputStream = getResourceAsStream(requestingClass, resource);
+    return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+  }
+
+  /**
    * Get the contents of a URL as a String
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource whose contents to load
-   * @return the data pointed to by a URI
+   * @return the actual contents of the resource as a String
    * @throws org.jasig.portal.ResourceMissingException
    * @throws java.io.IOException
    */
-  public static String getResourceAsString (Class requestingClass, String uri) throws ResourceMissingException, IOException {
+  public static String getResourceAsString (Class requestingClass, String resource) throws ResourceMissingException, IOException {
     String line = null;
-    BufferedReader in = new BufferedReader (new InputStreamReader(getResourceAsStream(requestingClass, uri)));
+    BufferedReader in = new BufferedReader (new InputStreamReader(getResourceAsStream(requestingClass, resource)));
     StringBuffer sbText = new StringBuffer (1024);
     while ((line = in.readLine()) != null)
       sbText.append (line).append ("\n");
