@@ -22,6 +22,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.XSLT;
+import org.springframework.dao.DataAccessException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -141,13 +142,7 @@ public class DbLoader
         {
             config.setConnection(RDBMServices.getConnection());
     
-          if (config.getConnection() == null)
-          {
-              config.getLog().println(
-                  "DbLoader couldn't obtain a database connection.  " +
-                  "See the portal log for details.");
-              return;
-          }
+           
            long startTime = System.currentTimeMillis();
 
             DbUtils.logDbInfo(config);
@@ -257,6 +252,12 @@ public class DbLoader
             long endTime = System.currentTimeMillis();
             config.getLog().println(
                 "Elapsed time: " + ((endTime - startTime) / 1000f) + " seconds");
+        } catch (DataAccessException dae) {
+            // we know this will be thrown by RDBMServices when getConnection() fails.
+            config.getLog().println(
+                    "DbLoader couldn't obtain a database connection.  " +
+                    "See the portal log for details.");
+                return;
         }
         finally
         {

@@ -13,6 +13,7 @@ import java.sql.Statement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Adjusts stored layouts in 2.1 database to work in 2.2+.
@@ -46,10 +47,8 @@ public class DbConvert21 {
 
       try {
          con = RDBMServices.getConnection ();
-	     if (con == null) {
-            System.err.println("Unable to get a database connection");
-            return;
-         }
+         
+
 
 		if (RDBMServices.supportsTransactions)
 		  con.setAutoCommit(false);
@@ -187,8 +186,11 @@ public class DbConvert21 {
 			if (rsetTest!=null) rsetTest.close();
 		}
 
-     }
-      catch (Exception e) {
+     } catch (DataAccessException dae) {
+        // we know this was thrown by RDBMServices.getConnection().
+        System.err.println("Unable to get a database connection");
+        return;
+     } catch (Exception e) {
         e.printStackTrace();
       }
       finally {

@@ -16,6 +16,7 @@ import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Title:        Delete Portal User
@@ -100,11 +101,7 @@ public class DeleteUser {
       try
       {
           con = RDBMServices.getConnection ();
-          if (con == null)
-          {
-              throw new SQLException("DeleteUser.deleteBookmarks(): " +
-                "Unable to get a database connection.");
-          }
+          
           Statement stmt = null;
           try 
           {
@@ -133,6 +130,10 @@ public class DeleteUser {
           {
               try { stmt.close(); } catch (Exception e) {}
           }
+      } catch (DataAccessException dae) {
+          // we know this was thrown by RDBMServices.getConnection().
+          throw new SQLException("DeleteUser.deleteBookmarks(): " +
+                "Unable to get a database connection.");
       }
       finally
       {

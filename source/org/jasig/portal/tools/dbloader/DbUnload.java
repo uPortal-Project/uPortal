@@ -16,6 +16,7 @@ import java.sql.Statement;
 
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.XMLEscaper;
+import org.springframework.dao.DataAccessException;
 /**
  * Title:        DbUnload
  * Description:  Dump database table(s) into a xml format
@@ -104,10 +105,8 @@ public class DbUnload {
       }
 
       con = RDBMServices.getConnection ();
-      if (con == null) {
-        System.err.println("Unable to get a database connection");
-        return;
-      }
+      
+
       Statement stmt = con.createStatement();
       xmlOut.println("<?xml version=\"1.0\"?>");
       xmlOut.println();
@@ -121,6 +120,12 @@ public class DbUnload {
       }
       xmlOut.println("</data>");
       xmlOut.close();
+    } catch (DataAccessException dae) {
+       // we know this was thrown by RDBMServices.getConnection()
+        if (con == null) {
+          System.err.println("Unable to get a database connection");
+          return;
+        }
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);

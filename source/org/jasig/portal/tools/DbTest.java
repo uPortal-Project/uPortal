@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jasig.portal.RDBMServices;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Title:        DbTest
@@ -27,13 +28,13 @@ public class DbTest {
       Connection con = null;
       try {
          con = RDBMServices.getConnection ();
-	     if (con == null) {
-            System.err.println("Unable to get a database connection");
-            return;
-         }
+         
          printInfo(con);
-      }
-      catch (SQLException e) {
+      } catch (DataAccessException dae) {
+          // we know this was thrown by RDBMServices.getConnection().
+         System.err.println("Unable to get a database connection");
+         return;
+      } catch (SQLException e) {
          e.printStackTrace();
       }
       finally {
