@@ -13,7 +13,7 @@ import java.util.Properties;
  * via a setter method.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public interface IConfigurableSecurityContext extends ISecurityContext {
     
