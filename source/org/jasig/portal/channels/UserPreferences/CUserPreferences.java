@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -70,10 +68,7 @@ public class CUserPreferences implements IPrivilegedChannel {
     private boolean initialized=false;
     UserProfile editedProfile=null;
 
-  /**
-   * put your documentation comment here
-   */
-  public CUserPreferences () throws PortalException {
+  public CUserPreferences() throws PortalException {
     this.runtimeData = new ChannelRuntimeData();
     this.set = new StylesheetSet(this.getClass().getResource(sslLocation).toString());
     this.set.setMediaProps("/properties/media.properties");
@@ -82,44 +77,27 @@ public class CUserPreferences implements IPrivilegedChannel {
     ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
   }
 
-  /**
-   * put your documentation comment here
-   * @return UserLayoutManager
-   */
-  protected IUserLayoutManager getUserLayoutManager () {
+
+  protected IUserLayoutManager getUserLayoutManager() {
     return  ulm;
   }
 
-  /**
-   * put your documentation comment here
-   * @return UserPreferences
-   */
-  protected UserPreferences getCurrentUserPreferences () {
+
+  protected UserPreferences getCurrentUserPreferences() {
     return  up;
   }
 
-  /**
-   * put your documentation comment here
-   * @return ChannelRuntimeData
-   */
-  protected ChannelRuntimeData getRuntimeData () {
+  protected ChannelRuntimeData getRuntimeData() {
     return  runtimeData;
   }
 
-  /**
-   * put your documentation comment here
-   * @return StylesheetSet
-   */
-  protected StylesheetSet getStylesheetSet () {
+
+  protected StylesheetSet getStylesheetSet() {
     return  set;
   }
 
-  /**
-   * put your documentation comment here
-   * @param pcs
-   * @exception PortalException
-   */
-  public void setPortalControlStructures (PortalControlStructures pcs) throws PortalException {
+
+  public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
     if (ulm == null)
       ulm = pcs.getUserLayoutManager();
     if (up == null)
@@ -166,7 +144,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   /** Returns channel runtime properties
    * @return handle to runtime properties
    */
-  public ChannelRuntimeProperties getRuntimeProperties () {
+  public ChannelRuntimeProperties getRuntimeProperties() {
     // Channel will always render, so the default values are ok
     return  new ChannelRuntimeProperties();
   }
@@ -174,7 +152,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   /** Processes layout-level events coming from the portal
    * @param ev a portal layout event
    */
-  public void receiveEvent (PortalEvent ev) {
+  public void receiveEvent(PortalEvent ev) {
     // no events for this channel
     internalState.receiveEvent(ev);
   }
@@ -182,7 +160,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   /** Receive static channel data from the portal
    * @param sd static channel data
    */
-  public void setStaticData (ChannelStaticData sd) throws PortalException {
+  public void setStaticData(ChannelStaticData sd) throws PortalException {
     this.staticData = sd;
   }
 
@@ -191,34 +169,24 @@ public class CUserPreferences implements IPrivilegedChannel {
    * preferences.
    * @param rd handle to channel runtime data
    */
-  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+  public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
     this.runtimeData = rd;
     String action = runtimeData.getParameter("userPreferencesAction");
     if (action != null) {
       Integer profileId = null;
       try {
         profileId = new Integer(runtimeData.getParameter("profileId"));
-      } catch (NumberFormatException nfe) {}
-      ;
+      } catch (NumberFormatException nfe) {};
       boolean systemProfile = false;
       if (profileId != null) {
         String profileType = runtimeData.getParameter("profileType");
         if (profileType != null && profileType.equals("system"))
           systemProfile = true;
       }
+
       if (action.equals("manageProfiles")) {
-        if (profileId != null) {
-        //if(!profile.equals(currentProfileName)) {
-        // need a new manage preferences state
-        //			}
-        }
-        else {
-          // reset to the manage profiles state
-            //          manageProfiles.setRuntimeData(rd);
           this.internalState = manageProfiles;
-        }
-      }
-      else if (action.equals("managePreferences")) {
+      } else if (action.equals("managePreferences")) {
           if (profileId != null) {
               // find the profile mapping
             try {
@@ -238,34 +206,33 @@ public class CUserPreferences implements IPrivilegedChannel {
                   }
               }
             } catch (Exception e) {
-              throw new PortalException(e.getMessage(), e);
+                throw new PortalException(e.getMessage(), e);
             }
           }
 
           if(editedProfile==null) {
               editedProfile = up.getProfile();
           }
+
           //        managePreferences.setRuntimeData(rd);
           this.internalState = managePreferences;
       }
     }
-    if (internalState != null)
+
+    if (internalState != null) {
       internalState.setRuntimeData(rd);
+    }
   }
 
   /**
    * Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (ContentHandler out) throws PortalException {
+  public void renderXML(ContentHandler out) throws PortalException {
     internalState.renderXML(out);
   }
 
-  /**
-   * put your documentation comment here
-   * @exception PortalException
-   */
-  private void prepareSaveChanges () throws PortalException {
+  private void prepareSaveChanges() throws PortalException {
     // write code to persist the userLayoutXML to the session
     // and the database (remember, as the user interacts with this
     // channel, changes are only made to a copy of the userLayoutXML

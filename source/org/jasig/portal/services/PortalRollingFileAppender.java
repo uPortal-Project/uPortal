@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -182,12 +180,7 @@ public class PortalRollingFileAppender extends FileAppender {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param fileName
-   * @param append
-   * @exception IOException
-   */
+
   public synchronized void setFile (String fileName, boolean append) throws IOException {
     super.setFile(fileName, append);
     if (append) {
@@ -238,10 +231,7 @@ public class PortalRollingFileAppender extends FileAppender {
     maxFileSize = OptionConverter.toFileSize(value, maxFileSize + 1);
   }
 
-  /**
-   * put your documentation comment here
-   * @param writer
-   */
+
   protected void setQWForFiles (Writer writer) {
     this.qw = new CountingQuietWriter(writer, errorHandler);
   }

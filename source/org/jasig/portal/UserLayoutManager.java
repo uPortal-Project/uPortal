@@ -310,10 +310,6 @@ public class UserLayoutManager implements IUserLayoutManager {
         return  (channelIdNode.getNodeValue());
     }
 
-    /**
-     * put your documentation comment here
-     * @return boolean
-     */
     public boolean isUserAgentUnmapped() {
         return  unmapped_user_agent;
     }

@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -66,22 +64,15 @@ class ManageProfilesState extends BaseState {
   static final boolean ALLOW_SYSTEM_BROWSER_MAPPING=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowSystemProfileBrowserMaping");
   static final boolean ALLOW_NEW_PROFILE_BUTTON=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowNewProfileCreation");
 
-  /**
-   * put your documentation comment here
-   * @param   CUserPreferences context
-   */
-  public ManageProfilesState (CUserPreferences context) {
+ 
+  public ManageProfilesState(CUserPreferences context) {
     super(context);
     userExpandStates=new Hashtable();
     systemExpandStates=new Hashtable();
   }
 
-  /**
-   * put your documentation comment here
-   * @return userProfileList
-   * @exception PortalException
-   */
-  protected Hashtable getUserProfileList () throws PortalException {
+
+  protected Hashtable getUserProfileList() throws PortalException {
     if (userProfileList == null) {
       try {
         userProfileList = this.getUserLayoutStore().getUserProfileList(context.getUserLayoutManager().getPerson());
@@ -92,12 +83,8 @@ class ManageProfilesState extends BaseState {
     return  userProfileList;
   }
 
-  /**
-   * put your documentation comment here
-   * @return systemProfileList
-   * @exception PortalException
-   */
-  protected Hashtable getSystemProfileList () throws PortalException {
+
+  protected Hashtable getSystemProfileList() throws PortalException {
     if (systemProfileList == null) {
       try {
         systemProfileList = this.getUserLayoutStore().getSystemProfileList();
@@ -108,12 +95,8 @@ class ManageProfilesState extends BaseState {
     return  systemProfileList;
   }
 
-  /**
-   * put your documentation comment here
-   * @param rd
-   * @exception PortalException
-   */
-    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
         this.runtimeData = rd;
         // local action processing
         String action = runtimeData.getParameter("action");
@@ -139,6 +122,7 @@ class ManageProfilesState extends BaseState {
                     } else {
                         p=(UserProfile)userProfileList.get(new Integer(profileId));
                     }
+                    
                     if(p!=null) {
                         // create a new layout
                         try {
@@ -162,7 +146,7 @@ class ManageProfilesState extends BaseState {
                         throw new PortalException(e.getMessage(), e);
                       }
 
-                        userProfileList = null;
+                      userProfileList = null;
                     }
                 } else if (action.equals("map")) {
                   try {
@@ -182,6 +166,7 @@ class ManageProfilesState extends BaseState {
                     }
                 }
             }
+
             if(action.equals("newProfile")) {
                 // get a copy of a current layout to copy the values from
                 UserProfile cp=context.getCurrentUserPreferences().getProfile();
@@ -231,28 +216,17 @@ class ManageProfilesState extends BaseState {
             internalState.setRuntimeData(rd);
     }
 
-  /**
-   * put your documentation comment here
-   * @return IPerson
-   */
-  private IPerson getPerson () {
+ 
+  private IPerson getPerson() {
     return  context.getUserLayoutManager().getPerson();
   }
 
-  /**
-   * put your documentation comment here
-   * @return StylesheetSet
-   */
-  private StylesheetSet getStylesheetSet () {
+  private StylesheetSet getStylesheetSet() {
     return  context.getStylesheetSet();
   }
 
-  /**
-   * put your documentation comment here
-   * @return IUserLayoutStore
-   * @exception PortalException
-   */
-  private IUserLayoutStore getUserLayoutStore () throws PortalException {
+ 
+  private IUserLayoutStore getUserLayoutStore() throws PortalException {
     // Should obtain implementation in a different way!!
     if (ulsdb == null) {
       ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
@@ -263,18 +237,13 @@ class ManageProfilesState extends BaseState {
     return  ulsdb;
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception PortalException
-   */
-  public void renderXML (ContentHandler out) throws PortalException {
+ 
+  public void renderXML(ContentHandler out) throws PortalException {
     // check if internal state exists, and if not, proceed with the
     // default screen rendering (profile list screen)
     if (internalState != null) {
       internalState.renderXML(out);
-    }
-    else {
+    } else {
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element edEl = doc.createElement("profiles");
       doc.appendChild(edEl);
@@ -283,7 +252,7 @@ class ManageProfilesState extends BaseState {
           Element uEl = doc.createElement("user");
           Hashtable upList=this.getUserProfileList();
 
-          for (Enumeration upe = this.getUserProfileList().elements(); upe.hasMoreElements();) {
+          for(Enumeration upe = this.getUserProfileList().elements(); upe.hasMoreElements();) {
               UserProfile p = (UserProfile)upe.nextElement();
               Element pEl = doc.createElement("profile");
               Boolean expState=(Boolean) userExpandStates.get(Integer.toString(p.getProfileId()));
@@ -355,10 +324,12 @@ class ManageProfilesState extends BaseState {
 
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       params.put("profileId", Integer.toString(currentProfile.getProfileId()));
-      if (currentProfile.isSystemProfile())
-        params.put("profileType", "system");
-      else
-        params.put("profileType", "user");
+      if (currentProfile.isSystemProfile()) {
+          params.put("profileType", "system");
+      } else {
+          params.put("profileType", "user");
+      }
+
       if (xslURI != null) {
         XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
@@ -366,9 +337,9 @@ class ManageProfilesState extends BaseState {
         xslt.setTarget(out);
         xslt.setStylesheetParameters(params);
         xslt.transform();
+      } else {
+          throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
       }
-      else
-        throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
   }
 
@@ -385,11 +356,8 @@ class ManageProfilesState extends BaseState {
     protected static final String mimeImagesPropsFile = "media/org/jasig/portal/channels/CUserPreferences/mimeImages.properties";
     protected Properties mimeImagesProps = new Properties();
 
-    /**
-     * put your documentation comment here
-     * @param     ManageProfilesState context
-     */
-    public CEditProfile (ManageProfilesState context) {
+
+    public CEditProfile(ManageProfilesState context) {
       // load the mimetype image properties file
       try {
         java.io.InputStream in = PortalSessionManager.getResourceAsStream(mimeImagesPropsFile);
@@ -401,12 +369,7 @@ class ManageProfilesState extends BaseState {
       this.context = context;
     }
 
-    /**
-     * put your documentation comment here
-     * @param rd
-     * @exception PortalException
-     */
-    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
       this.runtimeData = rd;
       // internal state handling
       String action = runtimeData.getParameter("action");
@@ -423,40 +386,36 @@ class ManageProfilesState extends BaseState {
           if (profileId == null) {
             // return back to the base state if the profile hasn't been specified
             context.setState(null);
-          }
-          else {
+          } else {
             String profileType = runtimeData.getParameter("profileType");
             if (profileType == null) {
               // return to the profile listing
               context.setState(null);
-            }
-            else {
+            } else {
               if (profileType.equals("system"))
                 systemProfile = true;
               // find the UserProfile
               try {
                 if (systemProfile) {
                   profile = context.getUserLayoutStore().getSystemProfileById(profileId.intValue());
-                }
-                  else {
-                  profile = context.getUserLayoutStore().getUserProfileById(context.getPerson(), profileId.intValue());
+                } else {
+                    profile = context.getUserLayoutStore().getUserProfileById(context.getPerson(), profileId.intValue());
                 }
               } catch (Exception e) {
                 throw new PortalException(e.getMessage(), e);
               }
+              
               if (profile == null) {
                 // failed to find the specified profile, return to the base state
                 context.setState(null);
               }
             }
           }
-        }
-        else if (action.equals("completeEdit")) {
+        } else if (action.equals("completeEdit")) {
           if (runtimeData.getParameter("submitCancel") != null) {
             // cancel button has been hit
             context.setState(null);
-          }
-          else if (runtimeData.getParameter("submitSave") != null) {
+          } else if (runtimeData.getParameter("submitSave") != null) {
             // save changes
             profile.setProfileName(runtimeData.getParameter("profileName"));
             profile.setProfileDescription(runtimeData.getParameter("profileDescription"));
@@ -467,11 +426,12 @@ class ManageProfilesState extends BaseState {
               // see if the mime type has changed, alert user
             }
             try {
-              if (profile.isSystemProfile())
-                // only administrative users should be able to do this
-                context.getUserLayoutStore().updateSystemProfile(profile);
-              else
-                context.getUserLayoutStore().updateUserProfile(context.getPerson(), profile);
+                if (profile.isSystemProfile()) {
+                    // only administrative users should be able to do this
+                    context.getUserLayoutStore().updateSystemProfile(profile);
+                } else {
+                    context.getUserLayoutStore().updateUserProfile(context.getPerson(), profile);
+                }
             } catch (Exception e) {
               throw new PortalException(e.getMessage(), e);
             }
@@ -481,19 +441,17 @@ class ManageProfilesState extends BaseState {
       }
     }
 
-    /**
-     * put your documentation comment here
-     * @param out
-     * @exception PortalException
-     */
-    public void renderXML (ContentHandler out) throws PortalException {
+ 
+    public void renderXML(ContentHandler out) throws PortalException {
       // construct gpref XML
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element profileEl = doc.createElement("profile");
-      if (this.modified)
-        profileEl.setAttribute("modified", "true");
-      else
-        profileEl.setAttribute("modified", "false");
+      if (this.modified) {
+          profileEl.setAttribute("modified", "true");
+      } else {
+          profileEl.setAttribute("modified", "false");
+      }
+
       // add profile name and description
       {
         Element pnameEl = doc.createElement("name");
@@ -590,6 +548,8 @@ class ManageProfilesState extends BaseState {
        }
        profileEl.appendChild(structEl);
        }*/
+
+
       // deal with theme stylesheets
       {
         Element themeEl = doc.createElement("themestylesheets");
@@ -599,9 +559,10 @@ class ManageProfilesState extends BaseState {
         } catch (Exception e) {
           throw new PortalException(e.getMessage(), e);
         }
-        if (tsList == null)
-          throw  new ResourceMissingException("", "List of theme stylesheets for the structure stylesheet \"" + profile.getStructureStylesheetId()
-              + "\"", "Unable to obtain a list of theme stylesheets for the specified structure stylesheet");
+        if (tsList == null) {
+            throw  new ResourceMissingException("", "List of theme stylesheets for the structure stylesheet \"" + profile.getStructureStylesheetId()+ "\"", "Unable to obtain a list of theme stylesheets for the specified structure stylesheet");
+        }
+
         // see if the current Theme stylesheet is still in the list, otherwise assign a first one in the hastable
         if (tsList.get(new Integer(profile.getThemeStylesheetId())) == null) {
           if (!tsList.isEmpty()) {
@@ -612,15 +573,18 @@ class ManageProfilesState extends BaseState {
           //                        profile.setThemeStylesheetId(-1);
           }
         }
+
         for (Enumeration me = tsList.keys(); me.hasMoreElements();) {
           Integer ssId = (Integer)me.nextElement();
           // check if the stylesheet is current
           boolean current = (ssId.intValue() == profile.getThemeStylesheetId());
           Element altEl;
-          if (current)
-            altEl = doc.createElement("current");
-          else
-            altEl = doc.createElement("alternate");
+          if (current) {
+              altEl = doc.createElement("current");
+          } else {
+              altEl = doc.createElement("alternate");
+          }
+
           ThemeStylesheetDescription tsd = (ThemeStylesheetDescription)tsList.get(ssId);
           Element altnEl = doc.createElement("name");
           altnEl.appendChild(doc.createTextNode(tsd.getStylesheetName()));
@@ -632,20 +596,25 @@ class ManageProfilesState extends BaseState {
           altmEl.appendChild(doc.createTextNode(tsd.getMimeType()));
           // determine device icon
           String deviceIconURI;
-          if ((deviceIconURI = mimeImagesProps.getProperty(tsd.getDeviceType())) == null)
-            deviceIconURI = mimeImagesProps.getProperty("unknown");
+          if ((deviceIconURI = mimeImagesProps.getProperty(tsd.getDeviceType())) == null) {
+              deviceIconURI = mimeImagesProps.getProperty("unknown");
+          }
           Element altdiuEl = doc.createElement("deviceiconuri");
           altdiuEl.appendChild(doc.createTextNode(deviceIconURI));
           Element altsuEl = doc.createElement("sampleuri");
-          if (tsd.getSamplePictureURI() == null || tsd.getSamplePictureURI().equals(""))
-            altsuEl.appendChild(doc.createTextNode(""));
-          else
-            altsuEl.appendChild(doc.createTextNode(tsd.getSamplePictureURI()));
+          if (tsd.getSamplePictureURI() == null || tsd.getSamplePictureURI().equals("")) {
+              altsuEl.appendChild(doc.createTextNode(""));
+          } else {
+              altsuEl.appendChild(doc.createTextNode(tsd.getSamplePictureURI()));
+          }
+
           Element altsiuEl = doc.createElement("sampleiconuri");
-          if (tsd.getSampleIconURI() == null || tsd.getSampleIconURI().equals(""))
-            altsiuEl.appendChild(doc.createTextNode(""));
-          else
-            altsiuEl.appendChild(doc.createTextNode(tsd.getSampleIconURI()));
+          if (tsd.getSampleIconURI() == null || tsd.getSampleIconURI().equals("")) {
+              altsiuEl.appendChild(doc.createTextNode(""));
+          } else {
+              altsiuEl.appendChild(doc.createTextNode(tsd.getSampleIconURI()));
+          }
+
           altEl.appendChild(altnEl);
           altEl.appendChild(altidEl);
           altEl.appendChild(altdEl);
@@ -681,9 +650,9 @@ class ManageProfilesState extends BaseState {
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();
+      } else {
+          throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
       }
-      else
-        throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
   }
 }

@@ -96,10 +96,7 @@ public class CBookmarks extends BaseChannel {
   private String m_activeNodeID = null;
   private String m_activeNodeType = null;
 
-  /**
-   * put your documentation comment here
-   * @return DOM representation of user bookmarks
-   */
+
   private DocumentImpl getBookmarkXML () {
     Connection connection = null;
     // Return the cached bookmarks if they've already been read in
@@ -154,10 +151,7 @@ public class CBookmarks extends BaseChannel {
     return  (m_bookmarksXML);
   }
 
-  /**
-   * Retrieve the XML for the default set of bookmarks
-   * @return XML Representation of the default user bookmarks
-   */
+ 
   private String getDefaultBookmarks () {
     Connection connection = null;
     String inputXML = null;
@@ -208,9 +202,6 @@ public class CBookmarks extends BaseChannel {
     return  (inputXML);
   }
 
-  /**
-   * put your documentation comment here
-   */
   protected void saveXML () {
     if (m_bookmarksXML == null) {
       return;
@@ -493,20 +484,11 @@ public class CBookmarks extends BaseChannel {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception org.xml.sax.SAXException
-   */
+
   private void renderViewModeXML (ContentHandler out) throws Exception {
     transformXML(out, "view_mode", getBookmarkXML());
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception org.xml.sax.SAXException
-   */
   private void renderEditModeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
@@ -514,11 +496,7 @@ public class CBookmarks extends BaseChannel {
     transformXML(out, "edit_mode", getBookmarkXML(), parameters);
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception org.xml.sax.SAXException
-   */
+
   private void renderEditNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
@@ -526,11 +504,6 @@ public class CBookmarks extends BaseChannel {
     transformXML(out, "delete_node", getBookmarkXML(), parameters);
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception org.xml.sax.SAXException
-   */
   private void renderAddNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
@@ -551,11 +524,6 @@ public class CBookmarks extends BaseChannel {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception org.xml.sax.SAXException
-   */
   private void renderMoveNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
@@ -563,11 +531,7 @@ public class CBookmarks extends BaseChannel {
     transformXML(out, "move_node", getBookmarkXML(), parameters);
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception org.xml.sax.SAXException
-   */
+ 
   private void renderDeleteNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
@@ -588,23 +552,12 @@ public class CBookmarks extends BaseChannel {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @param styleSheetName
-   * @param inputXML
-   */
+
   private void transformXML (ContentHandler out, String stylesheetName, DocumentImpl inputXML) throws Exception {
     transformXML(out, stylesheetName, inputXML, null);
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @param styleSheetName
-   * @param inputXML
-   * @param parameters
-   */
+
   private void transformXML (ContentHandler out, String stylesheetName, DocumentImpl inputXML, Hashtable parameters) throws Exception {
     // Create the parameters hashtable if it is null
     if (parameters == null) {
@@ -623,10 +576,7 @@ public class CBookmarks extends BaseChannel {
     xslt.transform();
   }
 
-  /**
-   * put your documentation comment here
-   * @return unique ID
-   */
+ 
   private String createUniqueID () {
     String uniqueID = "n" + System.currentTimeMillis();
     while (m_bookmarksXML.getElementById(uniqueID) != null) {
@@ -635,11 +585,7 @@ public class CBookmarks extends BaseChannel {
     return  (uniqueID);
   }
 
-  /**
-   * put your documentation comment here
-   * @param url
-   * @return formatted URL
-   */
+  
   private static String makeUrlSafe (String url) {
     // Return if the url is correctly formed
     if (url.toLowerCase().startsWith("http://")) {
@@ -662,10 +608,7 @@ public class CBookmarks extends BaseChannel {
     return  (url);
   }
 
-  /**
-   * put your documentation comment here
-   * @return database connection
-   */
+
   private Connection getConnection () {
     try {
       RDBMServices rdbmServices = new RDBMServices();
@@ -676,10 +619,7 @@ public class CBookmarks extends BaseChannel {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param connection
-   */
+
   private void releaseConnection (Connection connection) {
     try {
       RDBMServices rdbmServices = new RDBMServices();

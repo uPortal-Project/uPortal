@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -58,18 +56,12 @@ public class PersonImpl
   protected int m_ID = -1;
   protected ISecurityContext m_securityContext = null;
 
-  /**
-   * put your documentation comment here
-   * @param securityContext
-   */
+
   public void setSecurityContext (ISecurityContext securityContext) {
     m_securityContext = securityContext;
   }
 
-  /**
-   * put your documentation comment here
-   * @return  ISecurityContext
-   */
+
   public ISecurityContext getSecurityContext () {
     return  (m_securityContext);
   }

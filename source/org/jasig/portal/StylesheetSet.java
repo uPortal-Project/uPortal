@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -77,64 +75,67 @@ public class StylesheetSet extends SAX2FilterImpl {
   protected Hashtable title_table;
 
 
-  /**
-   * put your documentation comment here
-   */
-  public StylesheetSet () {
-    title_table = new Hashtable();
-  }
-
-  /**
-   * put your documentation comment here
-   * @param   ContentHandler dt
-   */
-  public StylesheetSet (ContentHandler dt) {
-      super(dt);
-  }
-
-  /**
-   * put your documentation comment here
-   * @param   String uri
-   */
-  public StylesheetSet (String uri) throws PortalException {
-    try {
-        XMLReader reader = XMLReaderFactory.createXMLReader();
-        StylesheetSet dummy = new StylesheetSet();
-        reader.setContentHandler((ContentHandler)dummy);
-        URL url = null;
-        try {
-            url = new URL(uri);
-            reader.parse(url.toString());
-            this.title_table = dummy.getTitleTable();
-        } catch (IOException ioe) {
-            throw new ResourceMissingException(url.toString(),"XSLT stylesheet","StylesheetSet(uri) : Unable to read stylesheet set from the specified location. Please check the URL.");
-        } catch (SAXException se) {
-            throw new GeneralRenderingException("StylesheetSet(uri) : Unable to parse stylesheet set (.ssl) file. URL=\""+url+"\", exception message: "+se.getMessage());
-        }
-    } catch (SAXException se) {
-        // Log the exception
-        LogService.log(LogService.ERROR, se);
-        throw new GeneralRenderingException("StylesheetSet(uri) : Unable to instantiate SAX Reader. Please check your library installation.");
+    public StylesheetSet() {
+        title_table = new Hashtable();
     }
-  }
 
-  /**
-   * put your documentation comment here
-   * @param title
-   * @return Source
-   */
-  public Source getStylesheet (String title) {
+    /**
+     * Create a SAX filter that will pick up stylesheet bindings in a document that's processed through this filter.
+     *
+     * @param dt a <code>ContentHandler</code> of the downstream SAX listener..
+     */
+    public StylesheetSet(ContentHandler dt) {
+        super(dt);
+    }
+
+    /**
+     * Creates a new <code>StylesheetSet</code> instance given a .ssl file URI.
+     *
+     * @param uri a <code>String</code> value
+     * @exception PortalException if an error occurs
+     */
+    public StylesheetSet(String uri) throws PortalException {
+        try {
+            XMLReader reader = XMLReaderFactory.createXMLReader();
+            StylesheetSet dummy = new StylesheetSet();
+            reader.setContentHandler((ContentHandler)dummy);
+            URL url = null;
+            try {
+                url = new URL(uri);
+                reader.parse(url.toString());
+                this.title_table = dummy.getTitleTable();
+            } catch (IOException ioe) {
+                throw new ResourceMissingException(url.toString(),"XSLT stylesheet","StylesheetSet(uri) : Unable to read stylesheet set from the specified location. Please check the URL.");
+            } catch (SAXException se) {
+                throw new GeneralRenderingException("StylesheetSet(uri) : Unable to parse stylesheet set (.ssl) file. URL=\""+url+"\", exception message: "+se.getMessage());
+            }
+        } catch (SAXException se) {
+            // Log the exception
+            LogService.log(LogService.ERROR, se);
+            throw new GeneralRenderingException("StylesheetSet(uri) : Unable to instantiate SAX Reader. Please check your library installation.");
+        }
+    }
+
+
+    /**
+     * Obtain a stylesheet transform source
+     *
+     * @param title a <code>String</code> value
+     * @return a <code>Source</code> for a given stylesheet
+     */
+  public Source getStylesheet(String title) {
     Hashtable media_table = (Hashtable)title_table.get(title);
-    if (media_table == null)
-      return  null;
+    if (media_table == null) {
+        return  null;
+    }
     StylesheetDescription sd = null;
-    if (media_table.isEmpty())
-      return  null;
+    if (media_table.isEmpty()) {
+        return  null;
+    }
     for (Enumeration e = media_table.elements(); e.hasMoreElements();) {
       if (sd == null) {
         sd = (StylesheetDescription)e.nextElement();
-      }
-      else {
+      } else {
         StylesheetDescription tsd = (StylesheetDescription)e.nextElement();
         if (!tsd.getAlternate())
           sd = tsd;
@@ -144,11 +145,12 @@ public class StylesheetSet extends SAX2FilterImpl {
     return  (new StreamSource(sd.getURI()));
   }
 
-  /**
-   * put your documentation comment here
-   * @return Source
-   */
-  public Source getStylesheet () {
+    /**
+     * Obtains a default stylesheet.
+     *
+     * @return a <code>Source</code> for a default stylesheet.
+     */
+  public Source getStylesheet() {
     // this is painful ... browse through all possible
     // browse through all titles to find a non-alternate
     // stylesheet
@@ -159,52 +161,63 @@ public class StylesheetSet extends SAX2FilterImpl {
         for (Enumeration f = media_table.elements(); f.hasMoreElements();) {
           if (sd == null) {
             sd = (StylesheetDescription)f.nextElement();
-          }
-          else {
+          }  else {
             StylesheetDescription tsd = (StylesheetDescription)f.nextElement();
-            if (!tsd.getAlternate())
-              sd = tsd;
+            if (!tsd.getAlternate()) {
+                sd = tsd;
+            }
           }
-          if (!sd.getAlternate())
-            break;
+          if (!sd.getAlternate()) {
+              break;
+          }
         }
       }
     }
     return  (new StreamSource(sd.getURI()));
   }
 
-  /**
-   * put your documentation comment here
-   * @param title
-   * @param media
-   * @return Source
-   */
-  public Source getStylesheet (String title, String media) {
+
+    /**
+     * Obtain a stylesheet.
+     *
+     * @param title stylesheet title
+     * @param media stylesheet media
+     * @return a <code>Source</code> for the stylesheet.
+     */
+  public Source getStylesheet(String title, String media) {
     Hashtable media_table = (Hashtable)title_table.get(title);
-    if (media_table == null)
-      return  null;
+    if (media_table == null) {
+        return  null;
+    }
     StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
     if (sd == null) {
       Enumeration sls = media_table.elements();
-      if (sls.hasMoreElements())
-        sd = (StylesheetDescription)sls.nextElement();
+      if (sls.hasMoreElements()) {
+          sd = (StylesheetDescription)sls.nextElement();
+      }
     }
-    if (sd == null)
-      return  null;
-    return  (new StreamSource(sd.getURI()));
+    if (sd == null) {
+        return  null;
+    }
+    return (new StreamSource(sd.getURI()));
   }
 
-  /**
-   * put your documentation comment here
-   * @param title
-   * @param media
-   * @return Source
-   */
-  public Source getStylesheet (String title, BrowserInfo bi) throws PortalException {
+
+    /**
+     * Obtain a stylesheet
+     *
+     * @param title stylesheet title
+     * @param bi current <code>BrowserInfo</code> value
+     * @return a <code>Source</code> for the stylesheet
+     * @exception PortalException if an error occurs
+     */
+  public Source getStylesheet(String title, BrowserInfo bi) throws PortalException {
     String media = getMedia(bi);
     Hashtable media_table = (Hashtable)title_table.get(title);
-    if (media_table == null)
-      return  null;
+    if (media_table == null) {
+        return  null;
+    }
+
     StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
     if (sd == null) {
       Enumeration sls = media_table.elements();
@@ -221,7 +234,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * @param media
    * @return the stylesheet URI
    */
-  public String getStylesheetURI (String media) throws GeneralRenderingException {
+  public String getStylesheetURI(String media) throws GeneralRenderingException {
     if (media == null) {
       throw  (new GeneralRenderingException("StylesheetSet.getStylesheetURI(): Media argument cannot be null"));
     }
@@ -233,51 +246,65 @@ public class StylesheetSet extends SAX2FilterImpl {
     return  ssURI;
   }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @return Stylesheet URI
-   */
-  public String getStylesheetURI (HttpServletRequest req) throws PortalException {
+
+    /**
+     * Obtain a matching stylesheet.
+     *
+     * @param req current request value.
+     * @return a <code>String</code> stylesheet URI
+     * @exception PortalException if an error occurs
+     */
+  public String getStylesheetURI(HttpServletRequest req) throws PortalException {
     return  (getStylesheetURI(getMedia(req)));
   }
 
-  /**
-   * put your documentation comment here
-   * @param bi
-   * @return Stylesheet URI
-   */
-  public String getStylesheetURI (BrowserInfo bi) throws PortalException {
-    return  getStylesheetURI(getMedia(bi));
-  }
 
-  /**
-   * put your documentation comment here
-   * @param title
-   * @param req
-   * @return Stylesheet URI
-   */
-  public String getStylesheetURI (String title, HttpServletRequest req) throws PortalException {
-    return  getStylesheetURI(title, getMedia(req));
-  }
+    /**
+     * Obtain a matching stylesheet URI
+     *
+     * @param bi a <code>BrowserInfo</code> value
+     * @return a <code>String</code> styleshet
+     * @exception PortalException if an error occurs
+     */
+    public String getStylesheetURI(BrowserInfo bi) throws PortalException {
+        return  getStylesheetURI(getMedia(bi));
+    }
 
-  /**
-   * put your documentation comment here
-   * @param title
-   * @param bi
-   * @return Stylesheet URI
-   */
-  public String getStylesheetURI (String title, BrowserInfo bi) throws PortalException {
-    return  getStylesheetURI(title, getMedia(bi));
-  }
 
-  /**
-   * Returns the URI of the stylesheet matching the title and media
-   * @param title
-   * @param media
-   * @return the stylesheet URI
-   */
-  public String getStylesheetURI (String title, String media) throws GeneralRenderingException {
+    /**
+     * Obtain stylesheet URI
+     *
+     * @param title stylesheet title
+     * @param req a <code>HttpServletRequest</code> value
+     * @return a <code>String</code> stylesheet URI
+     * @exception PortalException if an error occurs
+     */
+    public String getStylesheetURI(String title, HttpServletRequest req) throws PortalException {
+        return  getStylesheetURI(title, getMedia(req));
+    }
+
+    /**
+     * Describe <code>getStylesheetURI</code> method here.
+     *
+     * @param title a stylesheet title
+     * @param bi a <code>BrowserInfo</code> value
+     * @return a <code>String</code> stylesheet URI
+     * @exception PortalException if an error occurs
+     */
+    public String getStylesheetURI(String title, BrowserInfo bi) throws PortalException {
+        return  getStylesheetURI(title, getMedia(bi));
+    }
+
+
+    /**
+     * Obtain a stylesheet URI
+     *
+     * @param title stylesheet title
+     * @param media media value
+     * @return a <code>String</code> stylesheet URI
+     * @exception GeneralRenderingException if an error occurs
+     */
+  public String getStylesheetURI(String title, String media) throws GeneralRenderingException {
     if (title != null) {
       Hashtable media_table = (Hashtable)title_table.get(title);
       if (media_table == null) {
@@ -287,28 +314,24 @@ public class StylesheetSet extends SAX2FilterImpl {
       StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
       if (sd == null) {
         Enumeration sls = media_table.elements();
-        if (sls.hasMoreElements())
-          sd = (StylesheetDescription)sls.nextElement();
+        if (sls.hasMoreElements()) {
+            sd = (StylesheetDescription)sls.nextElement();
+        }
       }
       if (sd == null) {
         return  null;
       }
       return  sd.getURI();
-    }
-    else {
+    } else {
       return  getStylesheetURI(media);
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param media
-   * @return Stylesheet Description
-   */
-  protected StylesheetDescription getStylesheetDescription (String media) throws GeneralRenderingException {
+
+  protected StylesheetDescription getStylesheetDescription(String media) throws GeneralRenderingException {
     if (media == null) {
-      LogService.instance().log(LogService.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
-      throw  (new GeneralRenderingException("StylesheetSet.getStylesheetDescription(): Null media argument passed in"));
+        LogService.instance().log(LogService.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
+        throw  (new GeneralRenderingException("StylesheetSet.getStylesheetDescription(): Null media argument passed in"));
     }
     // search for a non-alternate stylesheet for a particular media
     StylesheetDescription sd = null;
@@ -323,8 +346,7 @@ public class StylesheetSet extends SAX2FilterImpl {
           sd = tsd;
           break;
         }
-      }
-      else {
+      } else {
         Enumeration sls = media_table.elements();
         if (sls.hasMoreElements()) {
           sd = (StylesheetDescription)sls.nextElement();
@@ -334,61 +356,69 @@ public class StylesheetSet extends SAX2FilterImpl {
     return  sd;
   }
 
-  /**
-   * put your documentation comment here
-   * @param title
-   * @param req
-   * @return Source
-   */
-  public Source getStylesheet (String title, HttpServletRequest req) throws PortalException {
-    //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
-    return  getStylesheet(title, getMedia(req));
-  }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @return Source
-   */
-  public Source getStylesheet (HttpServletRequest req) throws PortalException {
-    StylesheetDescription sd = getStylesheetDescription(getMedia(req));
-    if (sd != null) {
-      return  new StreamSource(sd.getURI());
+    /**
+     * Obtain a stylesheet source.
+     *
+     * @param title stylesheet title
+     * @param req current request
+     * @return a <code>Source</code> for the stylesheet.
+     * @exception PortalException if an error occurs
+     */
+    public Source getStylesheet(String title, HttpServletRequest req) throws PortalException {
+        //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+        return  getStylesheet(title, getMedia(req));
     }
-    else {
-      return  null;
-    }
-  }
 
-  /**
-   * put your documentation comment here
-   * @param media
-   * @return Source
-   */
-  public Source getStylesheetByMedia (String media) throws GeneralRenderingException {
+    /**
+     * Obtain a stylesheet source.
+     *
+     * @param req an <code>HttpServletRequest</code> value
+     * @return a <code>Source</code> for the stylesheet
+     * @exception PortalException if an error occurs
+     */
+    public Source getStylesheet(HttpServletRequest req) throws PortalException {
+        StylesheetDescription sd = getStylesheetDescription(getMedia(req));
+        if (sd != null) {
+            return  new StreamSource(sd.getURI());
+        }
+        else {
+            return  null;
+        }
+    }
+
+
+    /**
+     * Obtain a stylesheet for a given media.
+     *
+     * @param media desired media
+     * @return a <code>Source</code> for the stylesheet.
+     * @exception GeneralRenderingException if an error occurs
+     */
+  public Source getStylesheetByMedia(String media) throws GeneralRenderingException {
     //	LogService.instance().log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd = getStylesheetDescription(media);
     if (sd != null) {
       return  new StreamSource(sd.getURI());
-    }
-    else {
+    } else {
       return  (null);
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param sd
-   */
-  public void addStyleSheet (StylesheetDescription sd) {
+
+    /**
+     * Add a stylesheet to the list.
+     *
+     * @param sd a <code>StylesheetDescription</code> value
+     */
+   public void addStyleSheet(StylesheetDescription sd) {
     // see if the title is already in the hashtable
     Hashtable media_table = (Hashtable)title_table.get(sd.getTitle());
     if (media_table == null) {
       media_table = new Hashtable();
       media_table.put(sd.getMedia(), sd);
       title_table.put(sd.getTitle(), media_table);
-    }
-    else {
+    } else {
       media_table.put(sd.getMedia(), sd);
     }
   }
@@ -410,8 +440,7 @@ public class StylesheetSet extends SAX2FilterImpl {
     }
   }
 
-  protected OrderedProps getMediaProps() throws PortalException
-  {
+  protected OrderedProps getMediaProps() throws PortalException {
     // Check to see if the media properties are in the cache
     if(m_mediaPropsCache.containsKey(m_myMediaPropsUri))
     {
@@ -427,11 +456,14 @@ public class StylesheetSet extends SAX2FilterImpl {
     return((OrderedProps)m_mediaPropsCache.get(m_myMediaPropsUri));
   }
 
-  /**
-   * put your documentation comment here
-   * @param uri
-   */
-  public void setMediaProps (String uri) throws PortalException {
+
+    /**
+     * Set the location of the media properties object.
+     *
+     * @param uri a <code>String</code> value
+     * @exception PortalException if an error occurs
+     */
+    public void setMediaProps(String uri) throws PortalException {
     if (uri == null)
     {
       // Use the default URI
@@ -472,29 +504,17 @@ public class StylesheetSet extends SAX2FilterImpl {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @return Hashtable
-   */
-  public Hashtable getTitleTable () {
-    return  title_table;
-  }
+    protected  Hashtable getTitleTable () {
+        return  title_table;
+    }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @return String
-   */
+
   protected String getMedia (HttpServletRequest req) throws PortalException
   {
     return(getMediaProps().getValue(req.getHeader("User-Agent")));
   }
 
-  /**
-   * put your documentation comment here
-   * @param bi
-   * @return String
-   */
+
   protected String getMedia (BrowserInfo bi) throws PortalException {
     return(getMediaProps().getValue(bi.getUserAgent()));
   }
@@ -524,8 +544,10 @@ public class StylesheetSet extends SAX2FilterImpl {
       StringTokenizer currentTokens;
       while ((currentLine = input.readLine()) != null) {
         currentTokens = new StringTokenizer(currentLine, "=\t\r\n");
-        if (currentTokens.hasMoreTokens())
-          Key = currentTokens.nextToken().trim();
+        if (currentTokens.hasMoreTokens()) {
+            Key = currentTokens.nextToken().trim();
+        }
+
         if ((Key != null) && !Key.startsWith("#") && currentTokens.hasMoreTokens()) {
           String temp[] = new String[2];
           temp[0] = Key;
@@ -543,13 +565,15 @@ public class StylesheetSet extends SAX2FilterImpl {
      * @return Value for key found in string, otherwise "unknown"
      */
     String getValue (String s) {
-      if (s == null)
-        return  null;
+        if (s == null) {
+            return  null;
+        }
       int i, j = attVec.size();
       for (i = 0; i < j; i++) {
         String temp[] = (String[])attVec.elementAt(i);
-        if (s.indexOf(temp[0]) > -1)
-          return  temp[1];
+        if (s.indexOf(temp[0]) > -1) {
+            return  temp[1];
+        }
       }
       return  "unknown";
     }

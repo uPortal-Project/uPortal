@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -49,16 +47,9 @@ import  org.jasig.portal.security.ISecurityContextFactory;
 import  org.jasig.portal.security.ISecurityContext;
 
 
-/**
- * put your documentation comment here
- */
-public class SimpleLdapSecurityContextFactory
-    implements ISecurityContextFactory {
 
-  /**
-   * put your documentation comment here
-   * @return ISecurityContext
-   */
+public class SimpleLdapSecurityContextFactory implements ISecurityContextFactory {
+
   public ISecurityContext getSecurityContext () {
     return  new SimpleLdapSecurityContext();
   }

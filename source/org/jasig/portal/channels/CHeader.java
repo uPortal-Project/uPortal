@@ -79,7 +79,7 @@ public class CHeader extends BaseChannel
    * Checks user permissions to see if the user is authorized to publish channels
    * @return true if user can publish
    */
-  private boolean canUserPublish () {
+  private boolean canUserPublish() {
     // Get the current user ID
     int userID = staticData.getPerson().getID();
     // Check the cache for the answer
@@ -108,11 +108,7 @@ public class CHeader extends BaseChannel
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @return ChannelCacheKey
-   */
-  public ChannelCacheKey generateKey () {
+  public ChannelCacheKey generateKey() {
     ChannelCacheKey k = new ChannelCacheKey();
     StringBuffer sbKey = new StringBuffer(1024);
 
@@ -164,7 +160,7 @@ public class CHeader extends BaseChannel
    * NOTE: This should be made more effecient through caching
    * @return DOM object associated with the user
    */
-  private Document getUserXML () {
+  private Document getUserXML() {
     // Get the fullname of the current user
     String fullName = (String)staticData.getPerson().getFullName();
     // Get a new DOM instance
@@ -223,11 +219,7 @@ public class CHeader extends BaseChannel
     return  (doc);
   }
 
-  /**
-   * put your documentation comment here
-   * @param validity
-   * @return true if cache is valid
-   */
+
   public boolean isCacheValid (Object validity) {
     if (validity instanceof Long) {
       Long oldtime = (Long)validity;

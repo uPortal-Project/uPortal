@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -52,70 +50,72 @@ public class BrowserInfo {
   protected Cookie[] cookies;
   protected Hashtable headers;
 
-  /**
-   * put your documentation comment here
-   * @param   HttpServletRequest req
-   */
-  public BrowserInfo (HttpServletRequest req) {
-    headers = new Hashtable();
-    for (Enumeration e = req.getHeaderNames(); e.hasMoreElements();) {
-      String hName = (String)e.nextElement();
-      // Request header names are case insensitive, so BrowserInfo must be too!!
-      headers.put(hName.toLowerCase(), req.getHeader(hName));
+    
+    /**
+     * Construct a new browser info based on HTTP request.
+     *
+     * @param req a <code>HttpServletRequest</code> value
+     */
+    public BrowserInfo (HttpServletRequest req) {
+        headers = new Hashtable();
+        for (Enumeration e = req.getHeaderNames(); e.hasMoreElements();) {
+            String hName = (String)e.nextElement();
+            // Request header names are case insensitive, so BrowserInfo must be too!!
+            headers.put(hName.toLowerCase(), req.getHeader(hName));
+        }
+        cookies = req.getCookies();
     }
-    cookies = req.getCookies();
-  }
 
-  /**
-   * put your documentation comment here
-   * @return array of Cookies
-   */
-  public Cookie[] getCookies () {
-    return  cookies;
-  }
-
-  /**
-   * put your documentation comment here
-   * @param hName
-   * @return String
-   */
-  public String getHeader (String hName) {
-    return  (String)headers.get(hName.toLowerCase());
-  }
-
-  /**
-   * put your documentation comment here
-   * @return header names
-   */
-  public Enumeration getHeaderNames () {
-    return  headers.keys();
-  }
-
-  /**
-   * put your documentation comment here
-   * @return user agent
-   */
-  public String getUserAgent () {
-    return  (String)headers.get("user-agent");
-  }
-
-  /**
-   * Overrides Object's toString().  The string form of this object is
-   * sometimes used to generate a key for caching objects in the portal.
-   * @return state the state of this object in string form
-   */
-  public String toString() {
-    StringBuffer sb = new StringBuffer(1024);
-    // Skip cookies for now and just print out headers
-    Enumeration e = headers.keys();
-    while (e.hasMoreElements()) {
-      String header = (String)e.nextElement();
-      sb.append("[").append(header).append("]");
-      sb.append("=");
-      sb.append("[").append(headers.get(header)).append("] ");
+    public Cookie[] getCookies() {
+        return  cookies;
     }
-    return sb.toString();
-  }
+
+    
+    /**
+     * Get value of a particular header.
+     *
+     * @param hName a <code>String</code> value
+     * @return a <code>String</code> value
+     */
+    public String getHeader(String hName) {
+        return  (String)headers.get(hName.toLowerCase());
+    }
+
+    /**
+     * Obtain all header names.
+     *
+     * @return an <code>Enumeration</code> value
+     */
+    public Enumeration getHeaderNames() {
+        return  headers.keys();
+    }
+
+    /**
+     * Obtain a "user-agent" header contained in the request.
+     *
+     * @return a <code>String</code> value
+     */
+    public String getUserAgent () {
+        return  (String)headers.get("user-agent");
+    }
+
+    /**
+     * Overrides Object's toString().  The string form of this object is
+     * sometimes used to generate a key for caching objects in the portal.
+     * @return state the state of this object in string form
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(1024);
+        // Skip cookies for now and just print out headers
+        Enumeration e = headers.keys();
+        while (e.hasMoreElements()) {
+            String header = (String)e.nextElement();
+            sb.append("[").append(header).append("]");
+            sb.append("=");
+            sb.append("[").append(headers.get(header)).append("] ");
+        }
+        return sb.toString();
+    }
 }
 
 

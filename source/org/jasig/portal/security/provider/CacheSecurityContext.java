@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -66,26 +64,16 @@ class CacheSecurityContext extends ChainingSecurityContext
   private final int CACHESECURITYAUTHTYPE = 0xFF03;
   private byte[] cachedcredentials;
 
-  /**
-   * put your documentation comment here
-   */
-  CacheSecurityContext () {
+  CacheSecurityContext() {
     super();
   }
 
-  /**
-   * put your documentation comment here
-   * @return CACHE SECURITY AUTH TYPE
-   */
-  public int getAuthType () {
+
+  public int getAuthType() {
     return  this.CACHESECURITYAUTHTYPE;
   }
 
-  /**
-   * put your documentation comment here
-   * @exception PortalSecurityException
-   */
-  public synchronized void authenticate () throws PortalSecurityException {
+  public synchronized void authenticate() throws PortalSecurityException {
     this.isauth = false;
     if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
       String first_name = null, last_name = null;
@@ -121,7 +109,7 @@ class CacheSecurityContext extends ChainingSecurityContext
    * We need to override this method in order to return a class that implements
    * the NotSoOpaqueCredentals interface.
    */
-  public IOpaqueCredentials getOpaqueCredentials () {
+  public IOpaqueCredentials getOpaqueCredentials() {
     if (this.isauth) {
       NotSoOpaqueCredentials oc = new CacheOpaqueCredentials();
       oc.setCredentials(this.cachedcredentials);
@@ -138,11 +126,7 @@ class CacheSecurityContext extends ChainingSecurityContext
   private class CacheOpaqueCredentials extends ChainingSecurityContext.ChainingOpaqueCredentials
       implements NotSoOpaqueCredentials {
 
-    /**
-     * put your documentation comment here
-     * @return Credentials
-     */
-    public String getCredentials () {
+    public String getCredentials() {
       if (this.credentialstring != null)
         return  new String(this.credentialstring);
       else

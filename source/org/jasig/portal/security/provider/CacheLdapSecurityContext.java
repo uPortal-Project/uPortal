@@ -73,9 +73,7 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
   private final int CACHELDAPSECURITYAUTHTYPE = 0xFF03;
   private byte[] cachedcredentials;
 
-  /**
-   * put your documentation comment here
-   */
+
   CacheLdapSecurityContext () {
     super();
   }

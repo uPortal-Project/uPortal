@@ -52,11 +52,6 @@ import org.jasig.portal.services.LogService;
 public class RDBMCounterStore implements ICounterStore {
 
 
-    /**
-     * put your documentation comment here
-     * @param counterName
-     * @exception Exception
-     */
     public synchronized void createCounter (String counterName) throws Exception {
         Connection con = RDBMServices.getConnection();
         try {
@@ -74,12 +69,6 @@ public class RDBMCounterStore implements ICounterStore {
     }
 
 
-    /**
-     * put your documentation comment here
-     * @param counterName
-     * @param value
-     * @exception Exception
-     */
     public synchronized void setCounter (String counterName, int value) throws Exception {
         Connection con = RDBMServices.getConnection();
         try {

@@ -311,7 +311,7 @@ public class JNDIManager {
    * @return uPortal JNDI context
    * @exception NamingException
    */
-  private static Context getContext () throws NamingException {
+  private static Context getContext() throws NamingException {
     Hashtable environment = new Hashtable(5);
     // Set up the path
     environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
@@ -327,11 +327,8 @@ public class JNDIManager {
   private static class JNDISessionListener
       implements HttpSessionBindingListener {
 
-    /**
-     * put your documentation comment here
-     * @param     HttpSessionBindingEvent bindingEvent
-     */
-    public void valueBound (HttpSessionBindingEvent bindingEvent) {
+ 
+    public void valueBound(HttpSessionBindingEvent bindingEvent) {
       LogService.instance().log(LogService.INFO, "JNDISessionListener bound for: " + bindingEvent.getSession().getId());
     }
 

@@ -401,7 +401,7 @@ public class MediaManager {
      * @param s String being searched for a key.
      * @return Value for key found in string, otherwise "unknown"
      */
-    String getValue (String s) {
+    String getValue(String s) {
       int i, j = attVec.size();
       for (i = 0; i < j; i++) {
         String temp[] = (String[])attVec.elementAt(i);
@@ -412,11 +412,8 @@ public class MediaManager {
       return  "unknown";
     }
 
-    /**
-     * put your documentation comment here
-     * @return String
-     */
-    String getDefaultValue () {
+
+    String getDefaultValue() {
       return  ((String[])attVec.elementAt(0))[1];
     }
   }

@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -61,97 +59,91 @@ import  java.net.URL;
  * @version $Revision$
  */
 class GPreferencesState extends BaseState {
-  private UserProfile profile;
-  protected ChannelRuntimeData runtimeData;
-  private UserPreferences up = null;
-  private Document userLayoutXML = null;
-  ThemeStylesheetDescription tsd = null;
-  StructureStylesheetDescription ssd = null;
-  protected IUserLayoutStore ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-  // these state variables are kept for the use by the internalStates
-  private static final String layoutID = "top";                 // just a way to refer to the layout element since it doesn't have an ID attribute
-  private String folderID = layoutID;
-  private boolean modified = false;             // becomes true after user makes changes to layout
+    private UserProfile profile;
+    protected ChannelRuntimeData runtimeData;
+    private UserPreferences up = null;
+    private Document userLayoutXML = null;
+    ThemeStylesheetDescription tsd = null;
+    StructureStylesheetDescription ssd = null;
+    protected IUserLayoutStore ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+    // these state variables are kept for the use by the internalStates
 
-  /**
-   * put your documentation comment here
-   * @return modified
-   */
-  public boolean isModified () {
-    return  modified;
-  }
+    // just a way to refer to the layout element since it doesn't have an ID attribute
+    private static final String layoutID = "top";                
+    private String folderID = layoutID;
+    private boolean modified = false;             // becomes true after user makes changes to layout
 
-  /**
-   * put your documentation comment here
-   * @param mod
-   */
-  public void setModified (boolean mod) {
-    this.modified = mod;
-  }
+ 
+    /**
+     * Check if the user layout or preferences have been modified.
+     *
+     * @return a <code>boolean</code> value
+     */
+    protected boolean isModified() {
+        return  modified;
+    }
 
-  /**
-   * put your documentation comment here
-   * @param id
-   */
-  public void setFolderID (String id) {
-    this.folderID = id;
-    if (folderID == null)
-      folderID = layoutID;
-  }
+    /**
+     * Set modification state
+     *
+     * @param mod a <code>boolean</code> value
+     */
+    protected void setModified(boolean mod) {
+        this.modified = mod;
+    }
 
-  /**
-   * put your documentation comment here
-   * @return folderID
-   */
-  public String getFolderID () {
-    if (folderID == null)
-      folderID = layoutID;
-    return  this.folderID;
-  }
 
-  /**
-   * put your documentation comment here
-   * @return layoutID
-   */
-  public String getLayoutRootID () {
-    return  layoutID;
-  }
+    /**
+     * Set current folderId.
+     *
+     * @param id a <code>String</code> value
+     */
+    protected void setFolderID(String id) {
+        this.folderID = id;
+        if (folderID == null)
+            folderID = layoutID;
+    }
 
-  /**
-   * put your documentation comment here
-   */
-  public GPreferencesState () {
+    /**
+     * Obtain current folderId
+     *
+     * @return a <code>String</code> value
+     */
+    protected String getFolderID() {
+        if (folderID == null)
+            folderID = layoutID;
+        return  this.folderID;
+    }
+
+    
+    protected String getLayoutRootID() {
+        return  layoutID;
+    }
+
+  public GPreferencesState() {
     super();
     this.internalState = new GBrowseState(this);
     ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
   }
 
-  /**
-   * put your documentation comment here
-   * @param   CUserPreferences context
-   */
-  public GPreferencesState (CUserPreferences context) {
+    /**
+     * Creates a new <code>GPreferencesState</code> for a given context.
+     *
+     * @param context a <code>CUserPreferences</code> value
+     */
+    public GPreferencesState(CUserPreferences context) {
     super(context);
     this.internalState = new GBrowseState(this);
   }
 
-  /**
-   * put your documentation comment here
-   * @param   CUserPreferences context
-   * @param   UserProfile p
-   */
-  public GPreferencesState (CUserPreferences context, UserProfile p) {
+
+  public GPreferencesState(CUserPreferences context, UserProfile p) {
     this.profile = p;
     // initialize in a browse state
     this.internalState = new GBrowseState(this);
   }
 
-  /**
-   * put your documentation comment here
-   * @return userLayoutXML
-   * @exception PortalException
-   */
-  public Document getUserLayoutXML () throws PortalException {
+  protected Document getUserLayoutXML() throws PortalException {
     if (userLayoutXML == null) {
       // get the layout from the database
       try {
@@ -164,20 +156,13 @@ class GPreferencesState extends BaseState {
     return  userLayoutXML;
   }
 
-  /**
-   * put your documentation comment here
-   * @return IUserLayoutManager
-   */
-  public IUserLayoutManager getUserLayoutManager () {
+
+  protected IUserLayoutManager getUserLayoutManager() {
     return  context.getUserLayoutManager();
   }
 
-  /**
-   * put your documentation comment here
-   * @return UserPreferences
-   * @exception ResourceMissingException, PortalException
-   */
-  public UserPreferences getUserPreferences () throws ResourceMissingException, PortalException {
+
+  protected UserPreferences getUserPreferences() throws ResourceMissingException, PortalException {
     if (up == null) {
       // load UserPreferences from the DB
       try {
@@ -190,12 +175,8 @@ class GPreferencesState extends BaseState {
     return  up;
   }
 
-  /**
-   * put your documentation comment here
-   * @return ThemeStylesheetDescription
-   * @exception PortalException
-   */
-  public ThemeStylesheetDescription getThemeStylesheetDescription () throws PortalException{
+ 
+  protected ThemeStylesheetDescription getThemeStylesheetDescription() throws PortalException{
     if (tsd == null) {
       ThemeStylesheetUserPreferences ssup = up.getThemeStylesheetUserPreferences();
       try {
@@ -207,12 +188,7 @@ class GPreferencesState extends BaseState {
     return  tsd;
   }
 
-  /**
-   * put your documentation comment here
-   * @return StructureStylesheetDescription
-   * @exception ResourceMissingException, PortalException
-   */
-  public StructureStylesheetDescription getStructureStylesheetDescription () throws ResourceMissingException, PortalException {
+  protected StructureStylesheetDescription getStructureStylesheetDescription() throws ResourceMissingException, PortalException {
     if (ssd == null) {
       StructureStylesheetUserPreferences fsup = this.getUserPreferences().getStructureStylesheetUserPreferences();
       try {
@@ -224,41 +200,26 @@ class GPreferencesState extends BaseState {
     return  ssd;
   }
 
-  /**
-   * put your documentation comment here
-   * @param pcs
-   * @exception PortalException
-   */
-  public void setPortalControlStructures (PortalControlStructures pcs) throws PortalException {
+
+  public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
     if (this.internalState != null) {
       this.internalState.setPortalControlStructures(pcs);
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @return StylesheetSet
-   */
-  public StylesheetSet getStylesheetSet () {
+ 
+  protected StylesheetSet getStylesheetSet() {
     return  context.getStylesheetSet();
   }
 
-  /**
-   * put your documentation comment here
-   * @return UserProfile
-   */
-  public UserProfile getProfile () {
+  
+  protected UserProfile getProfile() {
     if (profile == null)
       profile = context.getUserLayoutManager().getCurrentProfile();
     return  profile;
   }
 
-  /**
-   * put your documentation comment here
-   * @param rd
-   * @exception PortalException
-   */
-  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+  public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
     this.runtimeData = rd;
     String action = runtimeData.getParameter("action");
     if (action != null) {
@@ -270,8 +231,7 @@ class GPreferencesState extends BaseState {
           GBrowseState bstate = new GBrowseState(this);
           bstate.setRuntimeData(rd);
           this.internalState = bstate;
-        }
-        else if (manageTarget.equals("gpref")) {
+        } else if (manageTarget.equals("gpref")) {
           // invoke gpref mode
           GGlobalPrefsState pstate = new GGlobalPrefsState(this);
           pstate.setRuntimeData(rd);
@@ -279,40 +239,33 @@ class GPreferencesState extends BaseState {
         }
       }
     }
-    if (this.internalState != null)
-      this.internalState.setRuntimeData(rd);
+
+    if (this.internalState != null) {
+        this.internalState.setRuntimeData(rd);
+    }
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception PortalException
-   */
-  public void renderXML (ContentHandler out) throws PortalException {
-    if (this.internalState != null)
-      this.internalState.renderXML(out);
-    else
-      LogService.instance().log(LogService.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
+
+  public void renderXML(ContentHandler out) throws PortalException {
+      if (this.internalState != null) {
+          this.internalState.renderXML(out);
+      }
+      else {
+          LogService.instance().log(LogService.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
+      }
   }
 
   protected class GEditLayoutItemState extends BaseState {
     protected GPreferencesState context;
     private String editElementID;
 
-    /**
-     * put your documentation comment here
-     * @param     GPreferencesState context
-     */
-    public GEditLayoutItemState (GPreferencesState context) {
+
+    public GEditLayoutItemState(GPreferencesState context) {
       this.context = context;
     }
 
-    /**
-     * put your documentation comment here
-     * @param rd
-     * @exception PortalException
-     */
-    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+ 
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
       String action = runtimeData.getParameter("action");
       if (action != null) {
         if (action.equals("editElement")) {
@@ -333,11 +286,7 @@ class GPreferencesState extends BaseState {
       }
     }
 
-    /**
-     * put your documentation comment here
-     * @exception PortalException
-     */
-    private void prepareSaveEditedItem () throws PortalException {
+    private void prepareSaveEditedItem() throws PortalException {
       Element target = context.getUserLayoutXML().getElementById(editElementID);
       String elType = target.getTagName();
       // reset the name
@@ -352,15 +301,16 @@ class GPreferencesState extends BaseState {
             atValue = null;
           ssup.setFolderAttributeValue(editElementID, atName, atValue);
         }
-      }
-      else if (elType.equals("channel")) {
+      } else if (elType.equals("channel")) {
         // target is a channel
         StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
         for (Enumeration ce = ssup.getChannelAttributeNames(); ce.hasMoreElements();) {
           String atName = (String)ce.nextElement();
           String atValue = runtimeData.getParameter(atName);
-          if (atValue.equals(context.getStructureStylesheetDescription().getChannelAttributeDefaultValue(atName)))
-            atValue = null;
+          if (atValue.equals(context.getStructureStylesheetDescription().getChannelAttributeDefaultValue(atName))) {
+              atValue = null;
+          }
+
           ssup.setChannelAttributeValue(editElementID, atName, atValue);
         }
         ThemeStylesheetUserPreferences tsup = context.getUserPreferences().getThemeStylesheetUserPreferences();
@@ -379,22 +329,19 @@ class GPreferencesState extends BaseState {
       context.setState(bstate);
     }
 
-    /**
-     * put your documentation comment here
-     * @param out
-     * @exception PortalException
-     */
-    public void renderXML (ContentHandler out) throws PortalException {
+    public void renderXML(ContentHandler out) throws PortalException {
       Element target = context.getUserLayoutXML().getElementById(editElementID);
       String elType = target.getTagName();
       // construct the descriptive XML
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element edEl = doc.createElement("editelement");
       Element typeEl = doc.createElement("type");
-      if (elType.equals("folder"))
+      if (elType.equals("folder")) {
         typeEl.appendChild(doc.createTextNode("folder"));
-      else
+      } else {
         typeEl.appendChild(doc.createTextNode("channel"));
+      }
+
       edEl.appendChild(typeEl);
       Element nameEl = doc.createElement("name");
       nameEl.appendChild(doc.createTextNode(target.getAttribute("name")));
@@ -424,8 +371,7 @@ class GPreferencesState extends BaseState {
           saEl.appendChild(atEl);
         }
         edEl.appendChild(saEl);
-      }
-      else if (elType.equals("channel")) {
+      } else if (elType.equals("channel")) {
         // target is a channel
         StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
         Element saEl = doc.createElement("structureattributes");
@@ -484,8 +430,9 @@ class GPreferencesState extends BaseState {
         LogService.instance().log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
-      if (set == null)
-        throw  new GeneralRenderingException("Unable to determine the stylesheet list");
+      if (set == null) {
+          throw  new GeneralRenderingException("Unable to determine the stylesheet list");
+      }
       String xslURI = set.getStylesheetURI("editItem", runtimeData.getBrowserInfo());
       if (xslURI != null) {
         XSLT xslt = new XSLT(this);
@@ -494,9 +441,9 @@ class GPreferencesState extends BaseState {
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();
+      } else {
+          throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
       }
-      else
-        throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
   }
 
@@ -504,20 +451,12 @@ class GPreferencesState extends BaseState {
     ChannelRuntimeData runtimeData;
     protected GPreferencesState context;
 
-    /**
-     * put your documentation comment here
-     * @param     GPreferencesState context
-     */
-    public GGlobalPrefsState (GPreferencesState context) {
+ 
+    public GGlobalPrefsState(GPreferencesState context) {
       this.context = context;
     }
 
-    /**
-     * put your documentation comment here
-     * @param rd
-     * @exception PortalException
-     */
-    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
       this.runtimeData = rd;
       // internal state handling
       String action = runtimeData.getParameter("action");
@@ -536,12 +475,8 @@ class GPreferencesState extends BaseState {
       }
     }
 
-    /**
-     * put your documentation comment here
-     * @param out
-     * @exception PortalException
-     */
-    public void renderXML (ContentHandler out) throws PortalException {
+ 
+    public void renderXML(ContentHandler out) throws PortalException {
       // construct gpref XML
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element edEl = doc.createElement("gpref");
@@ -603,8 +538,9 @@ class GPreferencesState extends BaseState {
         LogService.instance().log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
-      if (set == null)
-        throw  new GeneralRenderingException("Unable to determine the stylesheet list");
+      if (set == null) {
+          throw  new GeneralRenderingException("Unable to determine the stylesheet list");
+      }
       String xslURI = set.getStylesheetURI("editGPrefs", runtimeData.getBrowserInfo());
       if (xslURI != null) {
         XSLT xslt = new XSLT(this);
@@ -613,24 +549,19 @@ class GPreferencesState extends BaseState {
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
         xslt.transform();
+      } else {
+          throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
       }
-      else
-        throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
-
-    /**
-     * put your documentation comment here
-     * @exception PortalException
-     */
-    private void prepareSaveEditGPrefs () throws PortalException {
+      
+    private void prepareSaveEditGPrefs() throws PortalException {
       StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
       for (Enumeration e = context.getStructureStylesheetDescription().getStylesheetParameterNames(); e.hasMoreElements();) {
         String parName = (String)e.nextElement();
         String value = runtimeData.getParameter(parName);
         if (value == null) {
           ssup.putParameterValue(parName, context.getStructureStylesheetDescription().getStylesheetParameterDefaultValue(parName));
-        }
-        else {
+        } else {
           ssup.putParameterValue(parName, value);
           //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
         }
@@ -641,8 +572,7 @@ class GPreferencesState extends BaseState {
         String value = runtimeData.getParameter(parName);
         if (value == null) {
           tsup.putParameterValue(parName, context.getThemeStylesheetDescription().getStylesheetParameterDefaultValue(parName));
-        }
-        else {
+        } else {
           tsup.putParameterValue(parName, value);
           //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
         }
@@ -658,40 +588,31 @@ class GPreferencesState extends BaseState {
     ChannelRuntimeData runtimeData;
     protected GPreferencesState context;
 
-    /**
-     * put your documentation comment here
-     * @param     GPreferencesState context
-     */
+ 
     public GBrowseState (GPreferencesState context) {
       this.context = context;
     }
 
-    /**
-     * put your documentation comment here
-     * @param rd
-     * @exception PortalException
-     */
-    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+  
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
       this.runtimeData = rd;
       // internal state handling
       String action = runtimeData.getParameter("action");
       if (action != null) {
         if (action.equals("browse")) {
           String runtimeFolderID = runtimeData.getParameter("folderID");
-          if (runtimeFolderID != null)
+          if (runtimeFolderID != null) {
             context.setFolderID(runtimeFolderID);
-        }
-        else if (action.equals("move")) {
+          }
+        } else if (action.equals("move")) {
           IPrivilegedChannel mts = new GMoveToState(context);
           mts.setRuntimeData(rd);
           context.setState(mts);
-        }
-        else if (action.equals("reorder"))
+        } else if (action.equals("reorder"))
           prepareReorder();
         else if (action.equals("saveChanges")) {
           prepareSaveChanges();
-        }
-        else if (action.equals("editElement")) {
+        } else if (action.equals("editElement")) {
           IPrivilegedChannel eli = new GEditLayoutItemState(context);
           eli.setRuntimeData(rd);
           context.setState(eli);
@@ -699,15 +620,12 @@ class GPreferencesState extends BaseState {
       }
     }
 
-    /**
-     * put your documentation comment here
-     * @param out
-     * @exception PortalException
-     */
-    public void renderXML (ContentHandler out) throws PortalException {
+
+    public void renderXML(ContentHandler out) throws PortalException {
       StylesheetSet set = context.getStylesheetSet();
-      if (set == null)
-        throw  new GeneralRenderingException("Unable to determine the stylesheet list");
+      if (set == null) {
+          throw  new GeneralRenderingException("Unable to determine the stylesheet list");
+      }
       String xslURI = null;
       xslURI = set.getStylesheetURI("browse", runtimeData.getBrowserInfo());
       Hashtable params = new Hashtable();
@@ -715,10 +633,11 @@ class GPreferencesState extends BaseState {
       params.put("modified", new Boolean(context.isModified()));
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       params.put("profileName", context.getProfile().getProfileName());
-      if (context.getProfile().isSystemProfile())
+      if (context.getProfile().isSystemProfile()) {
         params.put("profileType", "system");
-      else
+      } else {
         params.put("profileType", "user");
+      }
       if (xslURI != null) {
         XSLT xslt = new XSLT(this);
         xslt.setXML(context.getUserLayoutXML());
@@ -727,15 +646,12 @@ class GPreferencesState extends BaseState {
         xslt.setStylesheetParameters(params);
         xslt.transform();
       }
-      else
-        throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
+      else {
+          throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
+      }
     }
 
-    /**
-     * put your documentation comment here
-     * @exception PortalException
-     */
-    private void prepareSaveChanges () throws PortalException {
+    private void prepareSaveChanges() throws PortalException {
       context.setFolderID(context.getLayoutRootID());
       context.setModified(false);
       // relate changes back to the UserLayoutManager if the profile that's being
@@ -744,8 +660,7 @@ class GPreferencesState extends BaseState {
       // (unless profile-specific layouts will be introduced)
       if (context.getUserLayoutManager().getCurrentProfile() == context.getProfile()) {
         context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), context.getUserPreferences(), false);
-      }
-      else {
+      } else {
         // do a database save on the preferences
         try {
           ulsdb.putUserPreferences(context.getUserLayoutManager().getPerson(), context.getUserPreferences());
@@ -756,11 +671,7 @@ class GPreferencesState extends BaseState {
       }
     }
 
-    /**
-     * put your documentation comment here
-     * @exception PortalException
-     */
-    private void prepareReorder () throws PortalException {
+    private void prepareReorder() throws PortalException {
       String folderID = runtimeData.getParameter("elementID");                  // the folder or channel ID
       String direction = runtimeData.getParameter("dir");       // "up" or "down"
       Node element = context.getUserLayoutXML().getElementById(folderID);
@@ -775,8 +686,7 @@ class GPreferencesState extends BaseState {
       else if (direction.equals("down")) {
         Node next;
         // Goto the next channel or folder element
-        for (next = element.getNextSibling(); next != null && next.getNodeType() != Node.ELEMENT_NODE && (!next.getNodeName().equals("channel")
-            || !next.getNodeName().equals("folder")); next = next.getNextSibling());
+        for(next = element.getNextSibling(); next != null && next.getNodeType() != Node.ELEMENT_NODE && (!next.getNodeName().equals("channel") || !next.getNodeName().equals("folder")); next = next.getNextSibling());
         parent.insertBefore(next, element);
       }
       context.setModified(true);
@@ -788,38 +698,25 @@ class GPreferencesState extends BaseState {
     protected ChannelRuntimeData runtimeData;
     protected GPreferencesState context;
 
-    /**
-     * put your documentation comment here
-     * @param     GPreferencesState context
-     */
-    public GMoveToState (GPreferencesState context) {
+   
+    public GMoveToState(GPreferencesState context) {
       this.context = context;
     }
 
-    /**
-     * put your documentation comment here
-     * @param rd
-     * @exception PortalException
-     */
-    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
       this.runtimeData = rd;
       String action = runtimeData.getParameter("action");
       if (action != null) {
         if (action.equals("cancel")) {
         //			prepareCancel ();
-        }
-        else if (action.equals("move"))
+        } else if (action.equals("move"))
           prepareMove();
         else if (action.equals("moveTo"))
           prepareMoveTo();
       }
     }
 
-    /**
-     * put your documentation comment here
-     * @param out
-     * @exception PortalException
-     */
+ 
     public void renderXML (ContentHandler out) throws PortalException {
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
@@ -837,43 +734,36 @@ class GPreferencesState extends BaseState {
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
     }
 
-    /**
-     * put your documentation comment here
-     */
+
     private void prepareMove () {
       // getParameterValues() should be a method in ChannelRuntimeData.
       // For now, I'll use the request object -- ask Peter about this!
       moveIDs = runtimeData.getParameterValues("move");
     }
 
-    /**
-     * put your documentation comment here
-     * @exception PortalException
-     */
     private void prepareMoveTo () throws PortalException {
       String destinationID = runtimeData.getParameter("destination");
       Node destination = null;
       if (destinationID == null) {
         LogService.instance().log(LogService.ERROR, "CUserPreferences::prepareMove() : received a null destinationID !");
-      }
-      else {
-        if (destinationID.equals(context.getLayoutRootID()))
-          destination = context.getUserLayoutXML().getDocumentElement();        // the layout element
-        else
-          destination = context.getUserLayoutXML().getElementById(destinationID);
-        if (destination == null) {
-          LogService.instance().log(LogService.ERROR, "CUserPreferences::prepareMove() : destinationID=\"" + destinationID + "\" results in an empty node !");
-        }
-        else {
-          for (int i = 0; i < moveIDs.length; i++) {
-            Node relocating = context.getUserLayoutXML().getElementById(moveIDs[i]);
-            destination.insertBefore(relocating, null);         // adds to end of children nodes
+      } else {
+          if (destinationID.equals(context.getLayoutRootID())) {
+              destination = context.getUserLayoutXML().getDocumentElement();        // the layout element
+          } else {
+              destination = context.getUserLayoutXML().getElementById(destinationID);
           }
-          context.setModified(true);
-          IPrivilegedChannel bstate = new GBrowseState(context);
-          bstate.setRuntimeData(runtimeData);
-          context.setState(bstate);
-        }
+          if (destination == null) {
+              LogService.instance().log(LogService.ERROR, "CUserPreferences::prepareMove() : destinationID=\"" + destinationID + "\" results in an empty node !");
+          } else {
+              for (int i = 0; i < moveIDs.length; i++) {
+                  Node relocating = context.getUserLayoutXML().getElementById(moveIDs[i]);
+                  destination.insertBefore(relocating, null);         // adds to end of children nodes
+              }
+              context.setModified(true);
+              IPrivilegedChannel bstate = new GBrowseState(context);
+              bstate.setRuntimeData(runtimeData);
+              context.setState(bstate);
+          }
       }
     }
   }

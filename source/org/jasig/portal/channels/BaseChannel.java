@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -53,48 +51,24 @@ import  org.jasig.portal.PortalEvent;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public abstract class BaseChannel
-    implements IChannel {
+public abstract class BaseChannel implements IChannel {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
 
-  /**
-   * put your documentation comment here
-   * @return ChannelRuntimeProperties
-   */
-  public ChannelRuntimeProperties getRuntimeProperties () {
+  public ChannelRuntimeProperties getRuntimeProperties() {
     return  new ChannelRuntimeProperties();
   }
 
-  /**
-   * put your documentation comment here
-   * @param ev
-   */
-  public void receiveEvent (PortalEvent ev) {}
+  public void receiveEvent(PortalEvent ev) {}
 
-  /**
-   * put your documentation comment here
-   * @param sd
-   * @exception PortalException
-   */
-  public void setStaticData (ChannelStaticData sd) throws PortalException {
+  public void setStaticData(ChannelStaticData sd) throws PortalException {
     this.staticData = sd;
   }
 
-  /**
-   * put your documentation comment here
-   * @param rd
-   * @exception PortalException
-   */
-  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+  public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
     this.runtimeData = rd;
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception PortalException
-   */
   public void renderXML (ContentHandler out) throws PortalException {}
 }
 

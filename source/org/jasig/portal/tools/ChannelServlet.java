@@ -88,10 +88,6 @@ public class ChannelServlet extends HttpServlet {
   private static final String fs = File.separator;
   private static final String relativeSSLLocation = "ChannelServlet/ChannelServlet.ssl";
 
-  /**
-   * put your documentation comment here
-   * @exception ServletException
-   */
   public void init() throws ServletException {
     ServletConfig sc = this.getServletConfig();
     if (sc != null) {
@@ -114,8 +110,9 @@ public class ChannelServlet extends HttpServlet {
       hasHelp = Boolean.getBoolean(sc.getInitParameter("hasHelp"));
       hasAbout = Boolean.getBoolean(sc.getInitParameter("hasAbout"));
       String s_timeOut = sc.getInitParameter("timeOut");
-      if (s_timeOut != null)
-        this.timeOut = Long.parseLong(s_timeOut);
+      if (s_timeOut != null) {
+          this.timeOut = Long.parseLong(s_timeOut);
+      }
       // instantiate channel class
       try {
         channel = (org.jasig.portal.IChannel)Class.forName(className).newInstance();
@@ -140,23 +137,13 @@ public class ChannelServlet extends HttpServlet {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @param res
-   * @exception ServletException, IOException
-   */
-  public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+  public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     doGet(req, res);
   }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @param res
-   * @exception ServletException, IOException
-   */
-  public void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+  public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     if (initialized) {
       // construct runtime data object
       ChannelRuntimeData rd = new ChannelRuntimeData();
@@ -259,12 +246,8 @@ public class ChannelServlet extends HttpServlet {
       showErrorMessage("failed to initialize", res);
   }
 
-  /**
-   * put your documentation comment here
-   * @param message
-   * @param res
-   */
-  private void showErrorMessage (String message, HttpServletResponse res) {
+
+  private void showErrorMessage(String message, HttpServletResponse res) {
     res.setContentType("text/html");
     try {
       PrintWriter out = res.getWriter();
@@ -292,22 +275,14 @@ public class ChannelServlet extends HttpServlet {
 	private ContentHandler contentHandler;
 	private Exception exc = null;
 
-    /**
-     * put your documentation comment here
-     * @param     IChannel ch
-     * @param     ChannelRuntimeData runtimeData
-     * @param     ContentHandler dh
-     */
-    public Worker (IChannel ch, ChannelRuntimeData runtimeData, ContentHandler dh) {
+
+    public Worker(IChannel ch, ChannelRuntimeData runtimeData, ContentHandler dh) {
       this.channel = ch;
       this.contentHandler = dh;
       this.rd = runtimeData;
     }
 
-    /**
-     * put your documentation comment here
-     */
-    public void run () {
+    public void run() {
       successful = false;
       done = false;
       try {
@@ -321,37 +296,21 @@ public class ChannelServlet extends HttpServlet {
       done = true;
     }
 
-    /**
-     * put your documentation comment here
-     * @return boolean
-     */
-    public boolean successful () {
+    public boolean successful() {
       return  this.successful;
     }
 
-    /**
-     * put your documentation comment here
-     * @return boolean
-     */
-    public boolean done () {
+    public boolean done() {
       return  this.done;
     }
 
-    /**
-     * put your documentation comment here
-     * @return Exception
-     */
-    public Exception getException () {
+    public Exception getException() {
       return  exc;
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param req
-   * @return IPerson
-   */
-  protected IPerson getPerson (HttpServletRequest req) {
+
+  protected IPerson getPerson(HttpServletRequest req) {
     HttpSession session = req.getSession(false);
     IPerson person = (IPerson)session.getAttribute("up_person");
     return  person;

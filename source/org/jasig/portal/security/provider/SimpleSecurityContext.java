@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -55,17 +53,11 @@ class SimpleSecurityContext extends ChainingSecurityContext
     implements ISecurityContext {
   private final int SIMPLESECURITYAUTHTYPE = 0xFF02;
 
-  /**
-   * put your documentation comment here
-   */
+
   SimpleSecurityContext () {
     super();
   }
 
-  /**
-   * put your documentation comment here
-   * @return int
-   */
   public int getAuthType () {
     return  this.SIMPLESECURITYAUTHTYPE;
   }
@@ -74,7 +66,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
    * Authenticate user.
    * @exception PortalSecurityException
    */
-  public synchronized void authenticate () throws PortalSecurityException {
+  public synchronized void authenticate() throws PortalSecurityException {
     this.isauth = false;
     if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
       String first_name = null, last_name = null, md5_passwd = null;
@@ -115,16 +107,18 @@ class SimpleSecurityContext extends ChainingSecurityContext
           else
             LogService.log(LogService.INFO, "MD5 Password Invalid");
         }
-        else
-          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
+        else {
+            LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
+        }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
         LogService.log(LogService.ERROR, e);
         throw  (ep);
       }
     }
-    else
-      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+    else {
+        LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+    }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
     return;
@@ -134,7 +128,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
   // This was originally Jonathan B. Knudsen's Example from his book
   // Java Cryptography published by O'Reilly Associates (1st Edition 1998)
   //
-  public static byte[] decode (String base64) {
+  public static byte[] decode(String base64) {
     int pad = 0;
     for (int i = base64.length() - 1; base64.charAt(i) == '='; i--)
       pad++;
@@ -151,12 +145,8 @@ class SimpleSecurityContext extends ChainingSecurityContext
     return  raw;
   }
 
-  /**
-   * put your documentation comment here
-   * @param c
-   * @return int
-   */
-  protected static int getValue (char c) {
+
+  protected static int getValue(char c) {
     if (c >= 'A' && c <= 'Z')
       return  c - 'A';
     if (c >= 'a' && c <= 'z')

@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -56,26 +54,18 @@ class TrustSecurityContext extends ChainingSecurityContext
     implements ISecurityContext {
   private final int TRUSTSECURITYAUTHTYPE = 0xFF01;
 
-  /**
-   * put your documentation comment here
-   */
-  TrustSecurityContext () {
+
+  TrustSecurityContext() {
     super();
   }
 
-  /**
-   * put your documentation comment here
-   * @return int
-   */
-  public int getAuthType () {
+
+  public int getAuthType() {
     return  this.TRUSTSECURITYAUTHTYPE;
   }
 
-  /**
-   * put your documentation comment here
-   * @exception PortalSecurityException
-   */
-  public synchronized void authenticate () throws PortalSecurityException {
+
+  public synchronized void authenticate() throws PortalSecurityException {
     this.isauth = true;
     if (this.myPrincipal.UID != null) {
       try {
@@ -88,16 +78,18 @@ class TrustSecurityContext extends ChainingSecurityContext
           LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
         }
-        else
-          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
+        else {
+            LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
+        }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
         LogService.log(LogService.ERROR, ep);
         throw  (ep);
       }
     }
-    else
-      LogService.log(LogService.ERROR, "Principal not initialized prior to authenticate");
+    else {
+        LogService.log(LogService.ERROR, "Principal not initialized prior to authenticate");
+    }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
     return;

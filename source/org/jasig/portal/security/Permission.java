@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -101,16 +99,21 @@ public abstract class Permission {
    */
   public abstract void setTarget (String target);
 
-  /**
-   * put your documentation comment here
-   */
-  public abstract String getType ();
 
-  /**
-   * put your documentation comment here
-   * @param type
-   */
-  public abstract void setType (String type);
+    /**
+     * Returns permission type.
+     *
+     * @return a <code>String</code> value
+     */
+    public abstract String getType ();
+
+ 
+    /**
+     * Sets permission type.
+     *
+     * @param type a <code>String</code> value
+     */
+    public abstract void setType (String type);
 
   /**
    * Gets that date that this Permission should become effective on

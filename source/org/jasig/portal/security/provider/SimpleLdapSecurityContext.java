@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -75,9 +73,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     "sn"        // last name
   };
 
-  /**
-   * put your documentation comment here
-   */
+
   SimpleLdapSecurityContext () {
     super();
   }

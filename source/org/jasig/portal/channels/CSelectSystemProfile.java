@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -66,12 +64,8 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
       ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     }
 
-  /**
-   * put your documentation comment here
-   * @param rd
-   * @exception PortalException
-   */
-  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+
+  public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
     super.setRuntimeData(rd);
     String action = runtimeData.getParameter("action");
     if (action != null) {
@@ -90,28 +84,20 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @return hashtable of system profile
-   * @exception PortalException
-   */
-  protected Hashtable getSystemProfileList () throws PortalException {
-    if (systemProfileList == null)
-      try {
-        systemProfileList = ulsdb.getSystemProfileList();
-      } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+  protected Hashtable getSystemProfileList() throws PortalException {
+      if (systemProfileList == null) {
+          try {
+              systemProfileList = ulsdb.getSystemProfileList();
+          } catch (Exception e) {
+              throw new PortalException(e.getMessage(), e);
+          }
       }
-
-    return  systemProfileList;
+      
+      return  systemProfileList;
   }
 
-  /**
-   * put your documentation comment here
-   * @param out
-   * @exception PortalException
-   */
-  public void renderXML (ContentHandler out) throws PortalException {
+
+  public void renderXML(ContentHandler out) throws PortalException {
     Document doc = new org.apache.xerces.dom.DocumentImpl();
     Element edEl = doc.createElement("profiles");
     doc.appendChild(edEl);

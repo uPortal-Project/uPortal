@@ -394,10 +394,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     return(uPortalUID);
   }
 
-  /**
-   * put your documentation comment here
-   * @param connection
-   */
   static final protected void commit (Connection connection) {
     try {
       if (connection.getMetaData().supportsTransactions())
@@ -407,10 +403,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param connection
-   */
   static final protected void rollback (Connection connection) {
     try {
       if (connection.getMetaData().supportsTransactions())

@@ -54,29 +54,17 @@ import org.apache.log4j.*;
  */
 public final class LogService {
   // Log levels, create fake ones if they don't match the Log4J standard ones
-  /**
-   *  Description of the Field
-   */
+
   public final static Priority NONE = Priority.DEBUG;
-  /**
-   *  Description of the Field
-   */
+
   public final static Priority SEVERE = Priority.FATAL;
-  /**
-   *  Description of the Field
-   */
+
   public final static Priority ERROR = Priority.ERROR;
-  /**
-   *  Description of the Field
-   */
+
   public final static Priority WARN = Priority.WARN;
-  /**
-   *  Description of the Field
-   */
+
   public final static Priority INFO = Priority.INFO;
-  /**
-   *  Description of the Field
-   */
+
   public final static Priority DEBUG = Priority.DEBUG;
   private final static String fs = File.separator;
   private final static String sLogRelativePath = "logs" + fs + "portal.log";
@@ -84,17 +72,11 @@ public final class LogService {
   private static Category m_category = null;
   private static final LogService m_instance = new LogService();
 
-  /**
-   * put your documentation comment here
-   */
+
   protected LogService () {
     initialize();
   }
 
-  /**
-   * put your documentation comment here
-   * @return instance of LogService
-   */
   public final static LogService instance () {
     return  (m_instance);
   }
@@ -128,11 +110,7 @@ public final class LogService {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param pLogLevel
-   * @param sMessage
-   */
+
   public final static void log (Priority pLogLevel, String sMessage) {
     try {
       initialize();
@@ -146,11 +124,7 @@ public final class LogService {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param pLogLevel
-   * @param ex
-   */
+
   public final static void log (Priority pLogLevel, Throwable ex) {
     try {
       initialize();
@@ -164,12 +138,7 @@ public final class LogService {
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param pLogLevel
-   * @param sMessage
-   * @param ex
-   */
+
   public final static void log (Priority pLogLevel, String sMessage, Throwable ex) {
     try {
       initialize();
@@ -183,12 +152,6 @@ public final class LogService {
     }
   }
 
-  /**
-   *  Generic logging method that logs to a default of INFO. These should be
-   *  eliminated eventually.
-   *
-   *@param  sMessage  Description of Parameter
-   */
   public final static void log (String sMessage) {
     try {
       initialize();
