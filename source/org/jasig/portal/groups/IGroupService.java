@@ -60,25 +60,17 @@ public interface IGroupService {
 
   /**
    * Refers to the PropertiesManager to get the key for the group
-   * Everyone and asks the group store implementation for the corresponding
+   * associated with 'name' and asks the group store implementation for the corresponding
    * <code>IEntityGroup</code>.
    */
-  public IEntityGroup getEveryoneGroup() throws GroupsException;
+  public IEntityGroup getDistinguishedGroup(String name) throws GroupsException;
 
   /**
-   * Refers to the PropertiesManager to get the key for the group of
-   * All channel categories and asks the group store implementation for the corresponding
+   * Refers to the PropertiesManager to get the key for the root group
+   * associated with 'type' and asks the group store implementation for the corresponding
    * <code>IEntityGroup</code>.
    */
-  public IEntityGroup getChannelCategoriesGroup() throws GroupsException;
-
-
-  /**
-   * Refers to the PropertiesManager to get the key for the group of
-   * Portal Administrators and asks the group store implementation for the corresponding
-   * <code>IEntityGroup</code>.
-   */
-  public IEntityGroup getPortalAdministratorsGroup() throws GroupsException;
+  public IEntityGroup getRootGroup(Class type) throws GroupsException;
 
   /**
    * Returns an <code>IGroupMember</code> representing either a group or a

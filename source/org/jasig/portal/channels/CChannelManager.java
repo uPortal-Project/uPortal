@@ -975,7 +975,7 @@ public class CChannelManager extends BaseChannel {
       Document groupsDoc = DocumentFactory.getNewDocument();
       Element groupsE = groupsDoc.createElement("groups");
 
-      IEntityGroup everyoneGroup = GroupService.getEveryoneGroup();
+      IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
 
       // Create a top-level group representing everyone
       Element everyoneGroupE = groupsDoc.createElement("group");

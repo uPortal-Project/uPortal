@@ -234,7 +234,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       // First delete existing category memberships for this channel
       String channelDefEntityKey = String.valueOf(channelDef.getPublishId());
       IEntity channelDefEntity = GroupService.getEntity(channelDefEntityKey, ChannelDefinition.class);
-      IEntityGroup topLevelCategory = GroupService.getChannelCategoriesGroup();
+      IEntityGroup topLevelCategory = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
       Iterator iter = topLevelCategory.getAllMembers();
       while (iter.hasNext()) {
         IGroupMember groupMember = (IGroupMember)iter.next();

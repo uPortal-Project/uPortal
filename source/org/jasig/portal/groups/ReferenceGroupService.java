@@ -55,16 +55,6 @@ public class ReferenceGroupService implements IGroupService
     private IEntityStore entityFactory = null;
     private IEntityGroupStore groupFactory = null;
 
-    // Key property names for common root groups:
-    private static final String EVERYONE_KEY = "org.jasig.portal.groups.Everyone.key";
-    private static final String CHANNEL_CATEGORIES_KEY = "org.jasig.portal.groups.ChannelCategories.key";
-    private static final String ADMIN_KEY = "org.jasig.portal.groups.PortalAdministrators.key";
-
-    // Key for common root groups:
-    private String everyoneKey = null;
-    private String channelCategoriesKey = null;
-    private String adminKey = null;
-
     /**
      * ReferenceGroupsService constructor.
      */
@@ -108,28 +98,28 @@ public class ReferenceGroupService implements IGroupService
       return gm;
     }
 
-    /**
-     * Returns the group whose key is the everyone key in the portal.properties file.
+     /**
+     * Refers to the PropertiesManager to get the key for the group
+     * associated with 'name' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
      */
-    public IEntityGroup getEveryoneGroup() throws GroupsException
-    {
-      return findGroup(everyoneKey);
+    public IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
+      String key = PropertiesManager.getProperty(name+".GroupService.key");
+      if (key != null){
+        return findGroup(key);
+      }
+      else {
+        throw new GroupsException("ReferenceGroupService.getDistinguishedGroup(): no key found to match requested name");
+      }
     }
 
     /**
-     * Returns the group whose key is the all channel categories key in the portal.properties file.
+     * Refers to the PropertiesManager to get the key for the root group
+     * associated with 'type' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
      */
-    public IEntityGroup getChannelCategoriesGroup() throws GroupsException
-    {
-      return findGroup(channelCategoriesKey);
-    }
-
-    /**
-     * Returns the group whose key is the PortalAdministrators key in the portal.properties file.
-     */
-    public IEntityGroup getPortalAdministratorsGroup() throws GroupsException
-    {
-      return findGroup(adminKey);
+    public IEntityGroup getRootGroup(Class type) throws GroupsException{
+      return getDistinguishedGroup(type.getName());
     }
 
     /**
@@ -161,36 +151,6 @@ public class ReferenceGroupService implements IGroupService
           throw new GroupsException(eMsg);
       }
 
-      try
-      {
-          everyoneKey = PropertiesManager.getProperty(EVERYONE_KEY);
-      }
-      catch (Exception e)
-      {
-          eMsg = "ReferenceGroupService.initialize(): Unable to load " + EVERYONE_KEY + " from portal.properties... " + e;
-          LogService.instance().log(LogService.ERROR, eMsg);
-          throw new GroupsException(eMsg);
-      }
-      try
-      {
-          channelCategoriesKey = PropertiesManager.getProperty(CHANNEL_CATEGORIES_KEY);
-      }
-      catch (Exception e)
-      {
-          eMsg = "ReferenceGroupService.initialize(): Unable to load " + CHANNEL_CATEGORIES_KEY + " from portal.properties... " + e;
-          LogService.instance().log(LogService.ERROR, eMsg);
-          throw new GroupsException(eMsg);
-      }
-      try
-      {
-          adminKey = PropertiesManager.getProperty(ADMIN_KEY);
-      }
-      catch (Exception e)
-      {
-          eMsg = "ReferenceGroupService.initialize(): Unable to load " + ADMIN_KEY + " from portal.properties... " + e;
-          LogService.instance().log(LogService.ERROR, eMsg);
-          throw new GroupsException(eMsg);
-      }
     }
 
     /**

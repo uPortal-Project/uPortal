@@ -45,7 +45,7 @@ import org.jasig.portal.*;
  * @version $Revision$
  */
 
-public class GroupService
+public class GroupService implements IGroupConstants
 {
     // Singleton instance of the bootstrap class:
     private static GroupService instance = null;
@@ -83,30 +83,21 @@ public class GroupService
     }
 
     /**
-     * Returns the distinguished group called "everyone".
-     * @return org.jasig.portal.groups.IEntityGroup
+     * Refers to the PropertiesManager to get the key for the group
+     * associated with 'name' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
      */
-    public static IEntityGroup getEveryoneGroup() throws GroupsException
-    {
-        return instance().igetEveryoneGroup();
+    public static IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
+      return instance().igetDistinguishedGroup(name);
     }
 
     /**
-     * Returns the distinguished group called "All categories".
-     * @return org.jasig.portal.groups.IEntityGroup
+     * Refers to the PropertiesManager to get the key for the root group
+     * associated with 'type' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
      */
-    public static IEntityGroup getChannelCategoriesGroup() throws GroupsException
-    {
-        return instance().igetChannelCategoriesGroup();
-    }
-
-    /**
-     * Returns the distinguished group called "Portal Administrators".
-     * @return org.jasig.portal.groups.IEntityGroup
-     */
-    public static IEntityGroup getPortalAdministratorsGroup() throws GroupsException
-    {
-        return instance().igetPortalAdministratorsGroup();
+    public static IEntityGroup getRootGroup(Class type) throws GroupsException{
+      return instance().igetRootGroup(type);
     }
 
     /*
@@ -143,30 +134,21 @@ public class GroupService
     }
 
     /**
-     * Returns the distinguished group called "everyone".
-     * @return org.jasig.portal.groups.IEntityGroup
+     * Refers to the PropertiesManager to get the key for the group
+     * associated with 'name' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
      */
-    protected IEntityGroup igetEveryoneGroup() throws GroupsException
-    {
-        return groupService.getEveryoneGroup();
+    protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsException{
+      return groupService.getDistinguishedGroup(name);
     }
 
     /**
-     * Returns the distinguished group called "All categories".
-     * @return org.jasig.portal.groups.IEntityGroup
+     * Refers to the PropertiesManager to get the key for the root group
+     * associated with 'type' and asks the group store implementation for the corresponding
+     * <code>IEntityGroup</code>.
      */
-    protected IEntityGroup igetChannelCategoriesGroup() throws GroupsException
-    {
-        return groupService.getChannelCategoriesGroup();
-    }
-
-    /**
-     * Returns the distinguished group called "Portal Administrators".
-     * @return org.jasig.portal.groups.IEntityGroup
-     */
-    protected IEntityGroup igetPortalAdministratorsGroup() throws GroupsException
-    {
-        return groupService.getPortalAdministratorsGroup();
+    protected IEntityGroup igetRootGroup(Class type) throws GroupsException{
+      return groupService.getRootGroup(type);
     }
 
     /*

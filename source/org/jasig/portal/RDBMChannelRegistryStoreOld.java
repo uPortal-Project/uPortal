@@ -103,7 +103,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
     Element registry = doc.createElement("registry");
     doc.appendChild(registry);
 
-    IEntityGroup channelCategoriesGroup = GroupService.getChannelCategoriesGroup();
+    IEntityGroup channelCategoriesGroup = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
     processGroupsRecursively(channelCategoriesGroup, registry);
 
     return doc;
