@@ -96,20 +96,20 @@ public class UserLayoutManager {
         this.person.setFullName("Guest");
       }
       // load user preferences
-      IUserPreferencesDB updb = new UserPreferencesDBImpl();
+      // Should obtain implementation in a different way!!
+      IUserPreferencesStore updb = new RDBMUserPreferencesStore();
       // determine user profile
       String userAgent = req.getHeader("User-Agent");
       UserProfile upl = updb.getUserProfile(this.person.getID(), userAgent);
       if (upl != null) {
-        uLayoutXML = GenericPortalBean.getDbImplObject().getUserLayout(this.person.getID(), upl.getProfileId());
+        uLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(this.person.getID(), upl.getProfileId());
         if (uLayoutXML == null)
-          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
+          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
               this.person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
         this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(), upl));
-
         // Initialize the JNDI context for this user
         JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), this.person);
-      }
+      } 
       else {
         // there is no user-defined mapping for this particular browser.
         // user should be redirected to a browser-registration page.
@@ -311,7 +311,7 @@ public class UserLayoutManager {
     if (current_up != null)
       complete_up = current_up;
     // load stylesheet description files and fix user preferences
-    ICoreStylesheetDescriptionDB csddb = new CoreStylesheetDescriptionDBImpl();
+    ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
     // syncronize up with layout
     synchUserPreferencesWithLayout(complete_up);
   }
@@ -322,20 +322,20 @@ public class UserLayoutManager {
    */
   public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
     if (newPreferences != null) {
-      IUserPreferencesDB updb = new UserPreferencesDBImpl();
+      // Should obtain implementation in a different way!!
+      IUserPreferencesStore updb = new RDBMUserPreferencesStore();
       updb.putUserPreferences(person.getID(), newPreferences);
       this.setCurrentUserPreferences(newPreferences);
     }
     if (newLayout != null) {
       uLayoutXML = newLayout;
       try {
-        GenericPortalBean.getDbImplObject().setUserLayout(person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+        GenericPortalBean.getUserLayoutStore().setUserLayout(person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
       } catch (Exception e) {
         Logger.log(Logger.ERROR, e);
-        throw new GeneralRenderingException(e.getMessage());
+        throw  new GeneralRenderingException(e.getMessage());
       }
     }
-
   }
 
   /**
@@ -377,7 +377,7 @@ public class UserLayoutManager {
    */
   private ThemeStylesheetDescription getThemeStylesheetDescription () {
     if (this.tsd == null) {
-      ICoreStylesheetDescriptionDB csddb = new CoreStylesheetDescriptionDBImpl();
+      ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
       tsd = csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetId());
     }
     return  tsd;
@@ -389,7 +389,7 @@ public class UserLayoutManager {
    */
   private StructureStylesheetDescription getStructureStylesheetDescription () {
     if (this.ssd == null) {
-      ICoreStylesheetDescriptionDB csddb = new CoreStylesheetDescriptionDBImpl();
+      ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
       ssd = csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetId());
     }
     return  ssd;
@@ -448,8 +448,8 @@ public class UserLayoutManager {
     Element node = uLayoutXML.getElementById(nodeID);
     if (node != null) {
       return  node.getAttribute("name");
-    }
-    else
+    } 
+    else 
       return  null;
   }
 
@@ -463,11 +463,11 @@ public class UserLayoutManager {
     if (channel != null) {
       Node parent = channel.getParentNode();
       if (parent != null)
-        parent.removeChild(channel);
-      else
+        parent.removeChild(channel); 
+      else 
         Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : attempt to remove a root node !");
-    }
-    else
+    } 
+    else 
       Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID=" + str_ID);
   }
 
@@ -492,132 +492,145 @@ public class UserLayoutManager {
     return  null;
   }
 
-    // utility methods for operating on user layout
-    /**
-     * Determines if the node or any of it's parents are marked
-     * as "unremovable".
-     * @param node the node to be tested
-     */
-    public boolean isUnremovable(Node node) {
-	if(getUnremovableParent(node)!=null) return true;
-	else return false;
+  // utility methods for operating on user layout
+  /**
+   * Determines if the node or any of it's parents are marked
+   * as "unremovable".
+   * @param node the node to be tested
+   */
+  public boolean isUnremovable (Node node) {
+    if (getUnremovableParent(node) != null)
+      return  true; 
+    else 
+      return  false;
+  }
+
+  /**
+   * Determines if the node or any of it's parents are marked as immutables
+   * @param node the node to be tested
+   * @param root the root node of the layout tree
+   */
+  public boolean isImmutable (Node node) {
+    if (getImmutableParent(node) != null)
+      return  true; 
+    else 
+      return  false;
+  }
+
+  /**
+   * Returns first parent of the node (or the node itself) that's marked
+   * as "unremovable". Note that if the node itself is marked as
+   * "unremovable", the method will return the node itself.
+   * @param node node from which to move up the tree
+   */
+  public Node getUnremovableParent (Node node) {
+    if (node == null)
+      return  null;
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      String r = ((Element)node).getAttribute("unremovable");
+      if (r != null) {
+        if (r.equals("true"))
+          return  node;
+      }
     }
+    return  getUnremovableParent(node.getParentNode());
+  }
 
-    /**
-     * Determines if the node or any of it's parents are marked as immutables
-     * @param node the node to be tested
-     * @param root the root node of the layout tree
-     */
-    public boolean isImmutable(Node node){
-	if(getImmutableParent(node)!=null) return true;
-	else return false;
+  /**
+   * Returns first parent of the node (or the node itself) that's marked
+   * as "immutable". Note that if the node itself is marked as
+   * "ummutable", the method will return the node itself.
+   * @param node node from which to move up the tree
+   */
+  public Node getImmutableParent (Node node) {
+    if (node == null)
+      return  null;
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      String r = ((Element)node).getAttribute("immutable");
+      if (r != null) {
+        if (r.equals("true"))
+          return  node;
+      }
     }
+    return  getUnremovableParent(node.getParentNode());
+  }
 
-    /**
-     * Returns first parent of the node (or the node itself) that's marked
-     * as "unremovable". Note that if the node itself is marked as
-     * "unremovable", the method will return the node itself.
-     * @param node node from which to move up the tree
-     */
-    public Node getUnremovableParent(Node node) {
-	if(node==null) return null;
-	if(node.getNodeType()==Node.ELEMENT_NODE) {
-	    String r=((Element)node).getAttribute("unremovable");
-	    if(r!=null) {
-		if(r.equals("true")) return node;
-	    }
-	}
-	return getUnremovableParent(node.getParentNode());
+  /**
+   * Removes a channel or a folder from the userLayout structure
+   * @param node the node to be removed
+   * @return removal has been successfull
+   */
+  public boolean deleteNode (Node node) {
+    // first of all check if this is an Element node
+    if (node == null || node.getNodeType() != Node.ELEMENT_NODE)
+      return  false;
+    // check if the node is removable
+    if (isUnremovable(node))
+      return  false;
+    // see if any of the parent nodes marked as immutable
+    if (isImmutable(node.getParentNode()))
+      return  false;
+    // all checks out, delete the node
+    if (node.getParentNode() != null)
+      (node.getParentNode()).removeChild(node);
+    return  true;
+  }
+
+  /**
+   * Checks if a particular node is a descendent of some other node.
+   * Note that if both ancestor and node point at the same node, true
+   * will be returned.
+   * @param node the node to be checked
+   * @param ancestor potential ancestor
+   * @return true if node is an descendent of ancestor
+   */
+  private boolean isDescendentOf (Node ancestor, Node node) {
+    if (node == null)
+      return  false;
+    if (node == ancestor)
+      return  true; 
+    else 
+      return  isDescendentOf(ancestor, node.getParentNode());
+  }
+
+  /**
+   * Moves node from one location in the userLayout tree to another
+   * @param node the node to be moved
+   * @param target the node to which it should be appended.
+   * @param sibiling a sibiling before which the node should be inserted under the target node (can be null)
+   * @return move has been successfull
+   */
+  public boolean moveNode (Node node, Node target, Node sibiling) {
+    // make sure this is an element node
+    if (node == null || node.getNodeType() != Node.ELEMENT_NODE)
+      return  false;
+    if (target == null || target.getNodeType() != Node.ELEMENT_NODE)
+      return  false;
+    // source node checks
+    // see if the source is a descendent of an immutable node
+    if (isImmutable(node.getParentNode()))
+      return  false;
+    // see if the source is a descendent of some unremovable node
+    Node unrp = getUnremovableParent(node.getParentNode());
+    if (unrp != null) {
+      // make sure the target node is a descendent of the same unremovable
+      // node as well.
+      if (!isDescendentOf(unrp, target))
+        return  false;
     }
-
-    /**
-     * Returns first parent of the node (or the node itself) that's marked
-     * as "immutable". Note that if the node itself is marked as
-     * "ummutable", the method will return the node itself.
-     * @param node node from which to move up the tree
-     */
-    public Node getImmutableParent(Node node) {
-	if(node==null) return null;
-	if(node.getNodeType()==Node.ELEMENT_NODE) {
-	    String r=((Element)node).getAttribute("immutable");
-	    if(r!=null) {
-		if(r.equals("true")) return node;
-	    }
-	}
-	return getUnremovableParent(node.getParentNode());
+    // target node checks
+    // check if the target is unremovable or immutable
+    if (isUnremovable(target) || isImmutable(target))
+      return  false;
+    // everything checks out, do the move
+    if (sibiling != null && sibiling.getParentNode() == target) {
+      target.insertBefore(node, sibiling);
+    } 
+    else {
+      target.appendChild(node);
     }
-
-
-
-    /**
-     * Removes a channel or a folder from the userLayout structure
-     * @param node the node to be removed
-     * @return removal has been successfull
-     */
-    public boolean deleteNode(Node node) {
-	// first of all check if this is an Element node
-	if(node==null || node.getNodeType()!=Node.ELEMENT_NODE) return false;
-	// check if the node is removable
-	if(isUnremovable(node)) return false;
-	// see if any of the parent nodes marked as immutable
-	if(isImmutable(node.getParentNode())) return false;
-	// all checks out, delete the node
-	if(node.getParentNode()!=null)
-	    (node.getParentNode()).removeChild(node);
-	return true;
-    }
-
-    /**
-     * Checks if a particular node is a descendent of some other node.
-     * Note that if both ancestor and node point at the same node, true
-     * will be returned.
-     * @param node the node to be checked
-     * @param ancestor potential ancestor
-     * @return true if node is an descendent of ancestor
-     */
-    private boolean isDescendentOf(Node ancestor, Node node) {
-	if(node==null) return false;
-	if(node==ancestor) return true;
-	else return isDescendentOf(ancestor,node.getParentNode());
-    }
-
-    /**
-     * Moves node from one location in the userLayout tree to another
-     * @param node the node to be moved
-     * @param target the node to which it should be appended.
-     * @param sibiling a sibiling before which the node should be inserted under the target node (can be null)
-     * @return move has been successfull
-     */
-    public boolean moveNode(Node node,Node target,Node sibiling) {
-	// make sure this is an element node
-	if(node==null || node.getNodeType()!=Node.ELEMENT_NODE) return false;
-	if(target==null || target.getNodeType()!=Node.ELEMENT_NODE) return false;
-
-	// source node checks
-	// see if the source is a descendent of an immutable node
-	if(isImmutable(node.getParentNode())) return false;
-	// see if the source is a descendent of some unremovable node
-	Node unrp=getUnremovableParent(node.getParentNode());
-	if(unrp!=null) {
-	    // make sure the target node is a descendent of the same unremovable
-	    // node as well.
-	    if(!isDescendentOf(unrp,target)) return false;
-	}
-
-	// target node checks
-	// check if the target is unremovable or immutable
-	if(isUnremovable(target) || isImmutable(target)) return false;
-
-	// everything checks out, do the move
-	if(sibiling!=null && sibiling.getParentNode()==target) {
-	    target.insertBefore(node,sibiling);
-	} else {
-	    target.appendChild(node);
-	}
-	return true;
-    }
-
-
+    return  true;
+  }
 }
 
 
