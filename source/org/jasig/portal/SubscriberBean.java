@@ -22,7 +22,6 @@ import org.jasig.portal.GenericPortalBean;
  */
 public class SubscriberBean extends GenericPortalBean{
 
-  private static Object dummyObject = new Object (); // For syncronizing code
   RdbmServices rdbmService = new RdbmServices ();
   Connection con = null;
 
@@ -33,7 +32,6 @@ public class SubscriberBean extends GenericPortalBean{
   /**
    * Retrieves a handle to the channel xml
    * @param the servlet request object
-   * @param the channel id
    * @return handle to the channel xml
    */
   public IXml getChannelXml (HttpServletRequest req)
@@ -43,8 +41,6 @@ public class SubscriberBean extends GenericPortalBean{
 
     try
     {
-      synchronized (dummyObject)
-      {
         con = rdbmService.getConnection ();
         Statement stmt = con.createStatement();
 
@@ -65,7 +61,6 @@ public class SubscriberBean extends GenericPortalBean{
           channelXml = Xml.openDocument (xmlFilePackage, new StringReader (sChannelXml));
         }
         stmt.close ();
-      }
 
       return channelXml;
     }
@@ -105,8 +100,6 @@ public class SubscriberBean extends GenericPortalBean{
 
     try
     {
-      synchronized (dummyObject)
-      {
         con = rdbmService.getConnection ();
         stmt = con.createStatement();
 
@@ -115,7 +108,6 @@ public class SubscriberBean extends GenericPortalBean{
         debug(sQuery);
 
         rs = stmt.executeQuery (sQuery);
-      }
 
       return rs;
       
