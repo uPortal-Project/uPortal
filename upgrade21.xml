@@ -28,9 +28,18 @@
     <antcall target="pushfragment">
       <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
     </antcall>
-    <antcall target="convertprofiles"/>
+    <antcall target="dbconvert21"/>
     <echo message="Finished initializing uPortal"/>
   </target>
+
+ <target name="convert-to-al" depends="compile"
+   description="Runs all the targets necessary to upgrade the portal database to use aggregated layouts">
+    <echo message="Converting to Aggregated Layouts"/>
+    <antcall target="convertprofiles"/>
+    <antcall target="convertlayouts">
+      <param name="allLayouts" value="-all"/>
+    </antcall>
+ </target>
 
  <target name="upgradedb" depends="compile">
     <echo message="Invoking DbLoader"/>
@@ -75,5 +84,45 @@
    </classpath>
   </java>
  </target>
+
+ <target name="convertlayouts" depends="compile">
+  <property name="allLayouts" value=""/>
+  <property name="userId" value=""/>
+  <property name="profileId" value=""/>
+  <java fork="false" classname="org.jasig.portal.tools.SimpleLayout2ALIM">
+   <classpath>
+    <pathelement path="${build.home}/WEB-INF/classes"/>
+    <path refid="compile.classpath"/>
+   </classpath>
+   <arg value="${allLayouts}"/>
+   <arg value="${userId}"/>
+   <arg value="${profileId}"/>
+  </java>
+ </target>
+
+<!-- ==================== DbConvert21 Target ================================= -->
+
+<!--
+
+  The "DbConvert21" target runs uPortal's DbConvert21 program to convert
+  uPortal 2.1 database to 2.2+
+
+  The DbConvert21 tool will add the top level folder to an existing stored layout allowing the
+  layout to be used correctly in the 2.2, 2.3 portal
+
+-->
+
+
+  <target name="dbconvert21" depends="compile"
+   description="converts database from 2.1 to 2.2 / 2.3">
+    <echo message="Invoking DbConvert21"/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbConvert21">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <path refid="compile.classpath"/>
+      </classpath>
+    </java>
+  </target>
+
 
 </project>
