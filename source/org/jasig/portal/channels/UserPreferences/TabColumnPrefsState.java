@@ -47,6 +47,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.IUserLayoutStore;
@@ -85,7 +86,6 @@ final class TabColumnPrefsState extends BaseState
   private static IUserLayoutStore ulStore = RdbmServices.getUserLayoutStoreImpl();
   private static IUserPreferencesStore upStore = RdbmServices.getUserPreferencesStoreImpl();
   private StylesheetSet set;
-  private static SmartCache channelRegistryCache = new SmartCache(60); // One minute
   private static Document SkinsInfoDocument = null;
 
   private String action = "none";
@@ -192,23 +192,6 @@ final class TabColumnPrefsState extends BaseState
       userLayout = ulStore.getUserLayout(ulm.getPerson().getID(), context.getCurrentUserPreferences().getProfile().getProfileId());
 
     return userLayout;
-  }
-
-  private final Document getChannelRegistry() throws java.sql.SQLException
-  {
-    Document channelRegistry = (Document)channelRegistryCache.get("channelRegistry");
-    if (channelRegistry == null)
-    {
-      // Channel registry has expired, so get it and cache it
-      channelRegistry = RdbmServices.getChannelRegistryStoreImpl().getChannelRegistryXML();
-
-      if (channelRegistry != null)
-      {
-        channelRegistryCache.put("channelRegistry", channelRegistry);
-        LogService.instance().log(LogService.INFO, "Caching channel registry in TabColumnPrefsState channel");
-      }
-    }
-    return channelRegistry;
   }
 
   private final String getActiveTab()
@@ -461,7 +444,7 @@ final class TabColumnPrefsState extends BaseState
   {
     Element layout = userLayout.getDocumentElement();
 
-    Document channelRegistry = getChannelRegistry();
+    Document channelRegistry = ChannelRegistryManager.getChannelRegistry();
     Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
     String instanceId = ulStore.getNextStructChannelId(staticData.getPerson().getID());
     newChannel.setAttribute("ID", instanceId);
@@ -887,7 +870,7 @@ final class TabColumnPrefsState extends BaseState
         // Incorporate channel registry document into userLayout if user is in the subscribe process
         if (action.equals("newChannel"))
         {
-          Node channelRegistry = getChannelRegistry().getDocumentElement();
+          Node channelRegistry = ChannelRegistryManager.getChannelRegistry().getDocumentElement();
           userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));
         }
 
@@ -1108,14 +1091,7 @@ final class TabColumnPrefsState extends BaseState
 
     public void renderXML (DocumentHandler out) throws PortalException
     {
-      Document doc = null;
-
-      try {
-        doc = getChannelRegistry();
-      } catch (java.sql.SQLException sqle) {
-        LogService.instance().log(LogService.ERROR, sqle);
-        errorMessage = errorMessageNewChannel;
-      }
+      Document doc = ChannelRegistryManager.getChannelRegistry();
 
       XSLT xslt = new XSLT();
       xslt.setXML(doc);
