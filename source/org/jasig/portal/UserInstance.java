@@ -90,7 +90,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
     // To debug structure and/or theme transformations, set these to true
     // and the XML fed to those transformations will be printed to the log.
-    private static final boolean printXMLBeforeStructureTransformation = false;
+    private static final boolean printXMLBeforeStructureTransformation = true;
     private static final boolean printXMLBeforeThemeTransformation = false;
 
     // manages layout and preferences
@@ -687,9 +687,7 @@ public class UserInstance implements HttpSessionBindingListener {
             }
         }
         if ((values = req.getParameterValues("uP_detach_target")) != null) {
-            for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], new PortalEvent(PortalEvent.DETACH_BUTTON_EVENT));
-            }
+            channelManager.passPortalEvent(values[0], new PortalEvent(PortalEvent.DETACH_BUTTON_EVENT));
         }
         if ((values = req.getParameterValues("uP_remove_target")) != null) {
             for (int i = 0; i < values.length; i++) {
