@@ -42,7 +42,35 @@ $Revision$
 <!ELEMENT ID (#PCDATA)*>
 <!ELEMENT name (#PCDATA)*>
 <!ELEMENT parameter (name,label,type,example,description,units,(defaultValue)?)>
-<!ATTLIST parameter modify  (subscribe|publish|subscribe-only|publish-only) #REQUIRED>
+
+<!--
+  Descriptions of the possible values for the modify 
+  attribute of the parameter element.
+
+  publish
+  -------
+  the publisher can set the parameter value and can also 
+  control (via a checkbox) whether or not the user should 
+  be able to override the value at subscribe time - defaults 
+  to not letting the subscriber override
+
+  subscribe
+  ---------
+  same as above except defaults to letting the 
+  subscriber override
+
+  publish-only
+  ------------
+  the parameter value is set by the publisher 
+  (publisher cannot change this)
+
+  subscribe-only
+  --------------
+  the parameter value is set by the subscriber 
+  (publisher cannot change this)
+
+-->
+<!ATTLIST parameter modify  (publish|subscribe|publish-only|subscribe-only) #REQUIRED>
 
 
 <!ELEMENT label (#PCDATA)*>
