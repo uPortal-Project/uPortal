@@ -6,20 +6,20 @@
   <xsl:param name="allowRefresh">true</xsl:param>
   <xsl:param name="allowReinstantiation">true</xsl:param>
   <xsl:param name="showStackTrace">true</xsl:param>
-  
+
   <xsl:template match="error">
-  
+
     <p><u>Error Report</u></p>
-    
+
     <p align="left"><b>Channel ID:</b></p>
     <p align="right"><xsl:value-of select="channel/id"/></p>
-    
+
     <p align="left"><b>Message:</b></p>
     <p align="right">
       <xsl:if test="not(message) or message = ''">Message not available</xsl:if>
       <xsl:value-of select="message"/>
     </p>
-    
+
     <p align="left"><b>Error type:</b></p>
     <p align="right">
       <xsl:choose>
@@ -30,6 +30,8 @@
         <xsl:when test="@code='0'">(<xsl:value-of select="@code"/>) General error</xsl:when>
         <xsl:when test="@code='5'">(<xsl:value-of select="@code"/>) Channel failed to accept PCS</xsl:when>
         <xsl:when test="@code='-1'">(<xsl:value-of select="@code"/>) uPortal error</xsl:when>
+        <xsl:when test="@code='6'">(<xsl:value-of select="@code"/>) User not authorized (code 6)</xsl:when>
+        <xsl:when test="@code='7'">(<xsl:value-of select="@code"/>) Channel not available (code 7)</xsl:when>
       </xsl:choose>
     </p>
 
@@ -37,17 +39,17 @@
     <xsl:if test="$showStackTrace='true'">
       <xsl:call-template name="stackTrace"/>
     </xsl:if>
-    
+
     <xsl:apply-templates select="exception"/>
-      
+
     <xsl:if test="$allowRefresh='true'">
       <p align="left"><a href="{$baseActionURL}?action=retry">Retry channel</a></p>
     </xsl:if>
-    
+
     <xsl:if test="$allowReinstantiation='true'">
       <p align="left"><a href="{$baseActionURL}?action=restart">Restart channel</a></p>
     </xsl:if>
-    
+
     <xsl:if test="exception">
       <p align="left">
         <xsl:choose>
@@ -60,9 +62,9 @@
         </xsl:choose>
       </p>
     </xsl:if>
-    
+
   </xsl:template>
-  
+
   <xsl:template match="exception">
     <p align="left"><b>Problem type:</b></p>
     <p align="right">
@@ -86,7 +88,7 @@
         </small>
       </p>
     </xsl:if>
-    
+
     <xsl:if test="@code='3'">
       <p align="left"><b>Resource description:</b></p>
       <p align="right">
@@ -111,9 +113,9 @@
         <xsl:value-of select="message"/>
       </small>
     </p>
-    
+
   </xsl:template>
-  
+
   <xsl:template name="stackTrace">
     <p align="left"><b>Stack Trace:</b></p>
     <p align="right">
