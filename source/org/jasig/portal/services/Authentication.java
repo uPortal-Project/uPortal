@@ -88,28 +88,17 @@ public class Authentication {
         // It is either what was typed in or supplied by the security provider
         m_Person.setAttribute("username", me.getUID());
 
-        try {
-          // Directory information to be filled in for the user would usually come from a
-          // directory service such as LDAP.  In the reference implementation we retrieve these
-          // attributes from the database.
-          String directoryInfo[] = GenericPortalBean.getUserLayoutStore().getUserDirectoryInformation(me.getUID());
-          // Set the user's full name
-          if (directoryInfo[0]!=null || directoryInfo[1]!=null) m_Person.setFullName(directoryInfo[0] + " " + directoryInfo[1]);
-          // And set the email address
-          if (directoryInfo[2]!=null && directoryInfo[2].length()>0)
-            m_Person.setAttribute("mail", directoryInfo[2]);
-        } catch (Exception e) {
-        // nothing do do if no directory info
-        }
-        java.util.Hashtable attribs = (new org.jasig.portal.services.PersonDirectory()).getUserDirectoryInformation(me.getUID());
+        java.util.Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation(me.getUID());
         java.util.Enumeration en = attribs.keys();
         while (en.hasMoreElements()) {
           String key = (String) en.nextElement();
           String value = (String) attribs.get(key);
           m_Person.setAttribute(key,value);
         }
-        if (attribs.get("displayName")!=null) m_Person.setFullName((String)attribs.get("displayName"));
-        if (m_Person.getFullName()==null) m_Person.setFullName("Unrecognized person "+m_Person.getAttribute("username"));
+        if (attribs.get("displayName") != null)
+          m_Person.setFullName((String)attribs.get("displayName"));
+        if (m_Person.getFullName() == null)
+          m_Person.setFullName("Unrecognized person: " + m_Person.getAttribute("username"));
       }
       else {
         // Set the IPerson to be the AdditionalDescriptor object
