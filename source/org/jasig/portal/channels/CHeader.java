@@ -47,6 +47,8 @@ import  javax.naming.NamingException;
 import  org.jasig.portal.security.Permission;
 import  org.jasig.portal.security.PermissionManager;
 import  org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.ChannelCacheKey;
 import  org.jasig.portal.MediaManager;
 import  org.jasig.portal.UtilitiesBean;
 import  org.jasig.portal.PortalException;
@@ -70,7 +72,7 @@ import  org.w3c.dom.Element;
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision 1.1$
  */
-public class CHeader extends BaseChannel {
+public class CHeader extends BaseChannel implements ICacheable {
   // Cache the answers to canUserPublish() to speed things up
   private static SmartCache m_canUserPublishResponses = new SmartCache(60*10);
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
@@ -186,6 +188,40 @@ public class CHeader extends BaseChannel {
       return  (false);
     }
   }
+
+    public ChannelCacheKey generateKey() {
+	ChannelCacheKey k=new ChannelCacheKey();
+	StringBuffer sbKey = new StringBuffer(1024);
+	// guest pages are cached system-wide
+
+        k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+
+	sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+        sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
+        sbKey.append("stylesheetURI:");
+        try {
+            sbKey.append(XSLT.getStylesheetURI(sslLocation,runtimeData.getBrowserInfo()));
+        } catch (Exception e) {
+            sbKey.append("not defined");
+        }
+
+	k.setKey(sbKey.toString());
+	k.setKeyValidity(new Long(System.currentTimeMillis()));
+	return k;
+    }
+
+    public boolean isCacheValid(Object validity) {
+        if(validity instanceof Long) {
+            Long oldtime=(Long) validity;
+            if(staticData.getPerson().getID()==org.jasig.portal.UserInstance.guestUserId) {
+                return true;
+            }
+            if(System.currentTimeMillis()-oldtime.longValue()<1*60*1000) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 
