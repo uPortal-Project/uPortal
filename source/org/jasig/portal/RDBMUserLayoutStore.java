@@ -971,13 +971,13 @@ public class RDBMUserLayoutStore
    *    <name>Image</name>
    *    <description>Simple channel to display an image with optional
    *        caption and subcaption</description>
-   *    <definition>webpages/media/org/jasig/portal/channels/CImage/CImage.cpd</definition>
+   *    <cpd-uri>webpages/media/org/jasig/portal/channels/CImage/CImage.cpd</cpd-uri>
    *  </channelType>
    *  <channelType ID="1">
    *    <class>org.jasig.portal.channels.CWebProxy</class>
    *    <name>Web Proxy</name>
    *    <description>Incorporate a dynamic HTML or XML application</description>
-   *    <definition>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</definition>
+   *    <cpd-uri>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</cpd-uri>
    *  </channelType>
    *</channelTypes>
    *
@@ -1025,8 +1025,8 @@ public class RDBMUserLayoutStore
             elem.appendChild(doc.createTextNode(descr));
             channelType.appendChild(elem);
             
-            // <definition>
-            elem = doc.createElement("definition");
+            // <cpd-uri>
+            elem = doc.createElement("cpd-uri");
             elem.appendChild(doc.createTextNode(cpdUri));
             channelType.appendChild(elem);
             
