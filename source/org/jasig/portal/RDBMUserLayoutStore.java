@@ -640,22 +640,6 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param node
-   * @param tag
-   * @return
-   */
-  protected static final NamedNodeMap findSystemNamedNodeMap (Element node, String tag) {
-    NodeList nl = node.getChildNodes();
-    for (int i = 0; i < nl.getLength(); i++) {
-      if (nl.item(i).getNodeName().equals(tag)) {
-        return  nl.item(i).getAttributes();
-      }
-    }
-    return  null;
-  }
-
-  /**
-   * put your documentation comment here
    * @param con
    * @param doc
    * @param stmt
@@ -2583,23 +2567,6 @@ public class RDBMUserLayoutStore
 
   /**
    * put your documentation comment here
-   * @param node
-   * @return
-   */
-  static protected final String getTextChildNodeValue (Node node) {
-    if (node == null)
-      return  null;
-    NodeList children = node.getChildNodes();
-    for (int i = children.getLength() - 1; i >= 0; i--) {
-      Node child = children.item(i);
-      if (child.getNodeType() == Node.TEXT_NODE)
-        return  child.getNodeValue();
-    }
-    return  null;
-  }
-
-  /**
-   * put your documentation comment here
    * @param person
    * @param profileId
    * @param ssup
@@ -2868,26 +2835,6 @@ public class RDBMUserLayoutStore
     } finally {
       rdbmService.releaseConnection(con);
     }
-  }
-
-  /**
-   * put your documentation comment here
-   * @param chanDoc
-   * @return
-   */
-  static final protected String serializeDOM (Document chanDoc) {
-    StringWriter stringOut = null;
-    try {
-      OutputFormat format = new OutputFormat(chanDoc);          //Serialize DOM
-      stringOut = new StringWriter();           //Writer will be a String
-      XMLSerializer serial = new XMLSerializer(stringOut, format);
-      serial.asDOMSerializer();                 // As a DOM Serializer
-      serial.serialize(chanDoc.getDocumentElement());
-    } catch (java.io.IOException ioe) {
-      LogService.instance().log(LogService.ERROR, ioe);
-    }
-    return  stringOut.toString();
-    //LogService.instance().log(LogService.DEBUG, "STRXML = " + stringOut.toString());
   }
 
   /**
