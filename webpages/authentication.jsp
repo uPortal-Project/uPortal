@@ -79,5 +79,5 @@ if (userName != null && password != null)
   }
 }
 
-response.sendRedirect(redirectString);
+  response.sendRedirect("http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" + redirectString);
 %>
