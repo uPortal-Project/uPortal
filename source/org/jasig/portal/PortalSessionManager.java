@@ -80,7 +80,6 @@ public class PortalSessionManager extends HttpServlet {
       }
       // Get the portal base directory
       String sPortalBaseDir = sc.getInitParameter("portalBaseDir");
-      sPortalBaseDir = "/ut01/home/its/lindholm/devl/2.0/portal/";
       // Make sure the directory is a properly formatted string
       sPortalBaseDir.replace('/', File.separatorChar);
       sPortalBaseDir.replace('\\', File.separatorChar);
