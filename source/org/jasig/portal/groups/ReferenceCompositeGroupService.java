@@ -90,7 +90,7 @@ public IEntityGroup findGroup(String key) throws GroupsException
     IIndividualGroupService service = getComponentService(ent);
     return ( service == null ) 
       ? null 
-      : service.findGroup(ent);
+      : service.findGroup(ent.getLocalKey());
 }
 /**
  * Returns a pre-existing <code>IEntityGroup</code> or null if the
@@ -297,7 +297,7 @@ throws GroupsException
         {
             try 
             {
-                CompositeEntityIdentifier cei = new CompositeEntityIdentifier(ids[i].getKey(),leaftype);
+                CompositeEntityIdentifier cei = new CompositeEntityIdentifier(ids[i].getKey(),ids[i].getType());
                 cei.setServiceName(service.getServiceName());
 	            allIds.add(cei);
             }
@@ -318,10 +318,18 @@ throws GroupsException
 
     for ( Iterator services = getComponentServices().values().iterator(); services.hasNext(); )
     {
-        IGroupService service = (IGroupService) services.next();
+        IIndividualGroupService service = (IIndividualGroupService) services.next();
         EntityIdentifier[] ids = service.searchForGroups(query, method, leaftype, ancestor);
         for (int i=0; i<ids.length; i++)
-            { allIds.add(ids[i]);}
+          {
+            try 
+            {
+                CompositeEntityIdentifier cei = new CompositeEntityIdentifier(ids[i].getKey(),ids[i].getType());
+                cei.setServiceName(service.getServiceName());
+	            allIds.add(cei);
+            }
+            catch (javax.naming.InvalidNameException ine) {}
+          }
     }
     return (EntityIdentifier[])allIds.toArray(new EntityIdentifier[allIds.size()]);
 }
