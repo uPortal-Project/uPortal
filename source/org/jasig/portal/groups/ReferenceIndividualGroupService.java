@@ -665,18 +665,13 @@ throws GroupsException
 
         updateGroup((IEntityGroup)group);
 
-        if ( ! renewLock )
-        {
-            if ( cacheInUse())
-                { cacheUpdate(group); }
-            group.getLock().release();
-        }
+        if ( renewLock )
+            { group.getLock().renew(); }
         else
-        {
-            if ( cacheInUse())
-                { cacheRemove(group); }
-            group.getLock().renew();
-        }
+            { group.getLock().release(); }
+
+        if ( cacheInUse())
+            { cacheRemove(group); }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
@@ -717,18 +712,13 @@ throws GroupsException
 
         updateGroupMembers((IEntityGroup)group);
 
-        if ( ! renewLock )
-        {
-            if ( cacheInUse() )
-                { cacheUpdate(group); }
-            group.getLock().release();
-        }
+        if ( renewLock )
+            { group.getLock().renew(); }
         else
-        {
-            if ( cacheInUse())
-                { cacheRemove(group); }
-            group.getLock().renew();
-        }
+            { group.getLock().release(); }
+
+        if ( cacheInUse())
+            { cacheRemove(group); }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
