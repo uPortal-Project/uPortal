@@ -69,7 +69,7 @@
                    <table border="0" cellpadding="0" cellspacing="1">
                     <tr>
                      <td align="left">
-	 	      <input type="submit" name="submit" value="Move"></input>
+                      <input type="submit" name="submit" value="Move"></input>
                      </td>
                      <td align="left">
                       <xsl:apply-templates select="folders"/>
@@ -198,7 +198,7 @@
  <td>
  <xsl:choose>
   <xsl:when test="address/personal">
-   <xsl:attribute name="title"><xsl:value-of select="concat(&lt;,address/email, &gt;)"/></xsl:attribute>
+   <xsl:attribute name="title"><xsl:value-of select="concat(' ',address/email, ' ')"/></xsl:attribute>
 <xsl:value-of select="address/personal"/>
 
   </xsl:when>
