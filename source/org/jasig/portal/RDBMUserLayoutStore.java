@@ -151,6 +151,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           ChannelDefinition cd = new ChannelDefinition(chanId);
           cd.setTitle("Missing channel");
           cd.setName("Missing channel");
+          cd.setTimeout(20000);
           structure = cd.getDocument(doc, channelPrefix + structId,
            "This channel no longer exists. You should remove it from your layout.",
            CError.CHANNEL_MISSING_EXCEPTION);
