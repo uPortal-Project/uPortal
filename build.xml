@@ -154,12 +154,6 @@
                        Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xalan-j/
 
-  bsf.jar              Bean scripting framework (BSF) used by the CWebProxy channel.
-                       Be sure to use the version of BSF that comes with
-                       the Xalan you are using.
-                       Version: (depends on Xalan version)
-                       URL: http://oss.software.ibm.com/developerworks/projects/bsf/
-
   tidy.jar             Turns HTML into well formed XHTML. There is a problem with
                        the current release that shows up when uPortal is deployed
                        in certain web containers including Tomcat 4.0.1.
@@ -216,7 +210,6 @@
   <property name="xalan.jar" value="(set this in build.properties!)"/>
   <property name="xerces.jar" value="(set this in build.properties!)"/>
   <property name="xml-apis.jar" value="(set this in build.properties!)"/>
-  <property name="bsf.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
   <property name="tyrex.jar" value="(set this in build.properties!)"/>
   <property name="activation.jar" value="(set this in build.properties!)"/>
@@ -247,7 +240,6 @@
     <pathelement location="${xalan.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
-    <pathelement location="${bsf.jar}"/>
     <pathelement location="${tidy.jar}"/>
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${activation.jar}"/>
@@ -366,7 +358,6 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xalan.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xerces.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${bsf.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
