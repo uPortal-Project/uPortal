@@ -116,7 +116,16 @@ public class CError extends BaseChannel implements IPrivilegedChannel
     public void setRuntimeData (ChannelRuntimeData rd)
     {
         this.runtimeData=rd;
-        if(str_channelID!=null) {
+    }
+
+    public void setPortalControlStructures(PortalControlStructures pcs) {
+        this.portcs=pcs;
+    }
+
+    public void renderXML(DocumentHandler out) {
+	// runtime data processing needs to be done here, otherwise replaced 
+	// channel will get duplicated setRuntimeData() calls
+	if(str_channelID!=null) {
             String chFate=runtimeData.getParameter("action");
             if(chFate!=null) {
                 // a fate has been chosen
@@ -124,22 +133,24 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                     Logger.log(Logger.DEBUG,"CError:setRuntimeData() : going for retry");
                     // clean things up for the channel
                     ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
-                    crd.clear(); // Remove parameters et al.
+                    crd.clear(); // Remove parameters
                     try {
                         if(the_channel instanceof IPrivilegedChannel)
                             ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                         the_channel.setRuntimeData (crd);
                         ChannelManager cm=portcs.getChannelManager();
                         cm.addChannelInstance(this.str_channelID,this.the_channel);
+			the_channel.renderXML(out);
+			return;
                     } catch (Exception e) {
                         // if any of the above didn't work, fall back to the error channel
                         resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a refresh attempt.");
                     }
                 } else if(chFate.equals("restart")) {
                     Logger.log(Logger.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
-
+		    
                     ChannelManager cm=portcs.getChannelManager();
-
+		    
                     ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
                     crd.clear();
                     try {
@@ -150,6 +161,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                                 if(the_channel instanceof IPrivilegedChannel)
                                     ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                                 the_channel.setRuntimeData (crd);
+				the_channel.renderXML(out);
+				return;
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a reload attempt.");
@@ -162,19 +175,15 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                         Logger.log(Logger.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
-          showStackTrace=!showStackTrace;
+		    showStackTrace=!showStackTrace;
                 }
             }
         }
-
+	// if channel's render XML method was to be called, we would've returned by now
+	localRenderXML(out);
     }
-
-
-    public void setPortalControlStructures(PortalControlStructures pcs) {
-        this.portcs=pcs;
-    }
-
-    public void renderXML(DocumentHandler out) {
+    
+    private void localRenderXML(DocumentHandler out) {
         // note: this method should be made very robust. Optimally, it should
         // not rely on XSLT to do the job. That means that mime-type dependent
         // output should be generated directly within the method.
