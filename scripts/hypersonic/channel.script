@@ -1,3 +1,5 @@
+DROP TABLE PORTAL_CATS;
+
 DROP TABLE PORTAL_CLASS;
 
 CREATE TABLE PORTAL_CLASS(
@@ -60,6 +62,7 @@ CREATE TABLE PORTAL_CHANNELS (
 	CHANNEL_XML LONGVARCHAR not null
 	);
 
+
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
 VALUES ('Salon.com', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
@@ -78,17 +81,17 @@ VALUES ('ABC News', '<channel minimized="false" class="org.jasig.portal.channels
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('Search', '<channel minimized="false" class="org.jasig.portal.channels.CSearch">
+VALUES ('Search the Web', '<channel minimized="false" class="org.jasig.portal.channels.CSearch">
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('DE Weather', '<channel minimized="false" class="org.jasig.portal.channels.CWeather">
-        <parameter value="DE" name="state"/>
-        <parameter value="Newark" name="city"/>
+VALUES ('Local Weather', '<channel minimized="false" class="org.jasig.portal.channels.CWeather">
+        <parameter value="CA" name="state"/>
+        <parameter value="El Segundo" name="city"/>
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('JA-SIG uPortal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+VALUES ('JA-SIG Portal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
       </channel>');
 
@@ -141,10 +144,57 @@ VALUES ('Funky Clock', '<channel minimized="false" class="org.jasig.portal.chann
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('UD Homepage', '<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
-        <parameter value="UDel" name="name"/>
-        <parameter value="http://www.udel.edu" name="url"/>
+VALUES ('Yahoo', '<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+        <parameter value="Yahoo" name="name"/>
+        <parameter value="http://www.yahoo.com" name="url"/>
       </channel>');
+
+INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+VALUES ('Test XML Renderer', '<channel minimized="false" class="org.jasig.portal.channels.CXMLRenderer">
+        <parameter value="XML Renderer" name="name"/>
+        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+VALUES ('UBC Example', '<channel minimized="false" class="org.jasig.portal.channels.CUBCExample">
+        <parameter value="UBC Example" name="name"/>
+	    <parameter value="UBC Folks" name="myName"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+VALUES ('Student Services Centre', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+	    <parameter value="Student Services Centre" name="name"/>
+	    <parameter value="ubc.regi.ssc.SSCTreeApplet" name="code"/>
+	    <parameter value="https://regi2.adm.ubc.ca/ssc/" name="codeBase"/>
+	    <parameter value="ssc326.jar" name="archive"/>
+	    <parameter value="250" name="width"/>
+	    <parameter value="500" name="height"/>
+	    <parameter name="APPLET.cabbase" value="ssc326.cab"/>
+        <parameter name="APPLET.ini" value="PROD_SSCclient.properties"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+VALUES ('Web Mail', '<channel minimized="false" class="org.jasig.portal.channels.CMail">
+	<parameter value="Mail Summary" name="name"/>
+	<parameter value="imap" name="protocol"/>
+	<parameter value="mail.interchange.ubc.ca" name="host"/>
+	<parameter value="142" name="port"/>
+	<parameter value="INBOX" name="mailbox"/>
+      </channel>');
+
+INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+VALUES ('JA-SIG Development', '<channel class="org.jasig.portal.channels.CRSSChannel" instanceID="">
+  <parameter value="Next" name="Submit"/>
+  <parameter value="" name="pub_email"/>
+  <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="url"/>
+  <parameter value="CRSSChannel" name="chan_type"/>
+    </channel>');
+
+INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
+VALUES ('Number Guessing Game', '<channel class="org.jasig.portal.xmlchannels.CNumberGuess" instanceID="">
+  <parameter value="1" name="minNum"/>
+  <parameter value="100" name="maxNum"/>
+    </channel>');
 
 DROP TABLE PORTAL_CHAN_CLASS;
 
@@ -167,6 +217,9 @@ INSERT INTO PORTAL_CHAN_CLASS VALUES(5, 8);
 
 INSERT INTO PORTAL_CHAN_CLASS VALUES(6, 7);
 
+INSERT INTO PORTAL_CHAN_CLASS VALUES(6, 9);
+
 INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 2);
 
 INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 5);
+

@@ -1,20 +1,26 @@
 DROP TABLE PORTAL_USERS;
 
 CREATE TABLE PORTAL_USERS (
-	ID INTEGER IDENTITY PRIMARY KEY,
+	ID INTEGER IDENTITY PRIMARY KEY, 
 	USER_NAME VARCHAR(15),
 	FIRST_NAME VARCHAR(15),
 	LAST_NAME VARCHAR(15),
 	LAYOUT_XML LONGVARCHAR
 	);
 
-INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('guest', 'Guest', 'Guest');
-INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('default', 'Default', 'User');
-INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('demo', 'Demo', 'Dude');
-INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('prez', 'Lester', 'Young');
-INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('bird', 'Charlie', 'Parker');
-INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('duke', 'Duke', 'Ellington');
-INSERT INTO PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) VALUES ('trane', 'John', 'Coltrane');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('guest', 'Guest', 'Guest');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('default', 'Default', 'User');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('demo', 'Demo', 'Lish');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('kweiner', 'Ken', 'Weiner');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('arybicki', 'Adam', 'Rybicki');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('tholderith', 'Tony', 'Holderith');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('jk', 'John', 'Kliszewski');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('tim', 'Tim', 'O Neil');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('curtis', 'Curtis', 'Martin');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('venky', 'Sridhar', 'Venkatesh');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('stan', 'Stan', 'Schwartz');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('amenendez', 'Al', 'Menendez');
+INSERT into PORTAL_USERS (USER_NAME, FIRST_NAME, LAST_NAME) values ('jing', 'Jing', 'Chen');
 
 UPDATE PORTAL_USERS SET LAYOUT_XML='
 <?xml version="1.0"?>
@@ -92,7 +98,10 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
       </channel>
     </column>
     <column width="70%">
-       <channel instanceID="c9" minimized="false" class="org.jasig.portal.xmlchannels.BookmarksChannel"/>
+      <channel instanceID="c9" minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+        <parameter value="Yahoo" name="name"/>
+        <parameter value="http://www.yahoo.com" name="url"/>
+      </channel>
     </column>
   </tab>
 </layout>
@@ -171,12 +180,16 @@ UPDATE PORTAL_USERS SET LAYOUT_XML='
   </tab>
   <tab name="Misc">
     <column width="30%">
-      <channel instanceID="c7" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+      <channel class="org.jasig.portal.xmlchannels.CNumberGuess" instanceID="c7" minimized="false">
+        <parameter value="1" name="minNum"/>
+        <parameter value="100" name="maxNum"/>
+      </channel>
+      <channel instanceID="c8" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
       </channel>
     </column>
     <column width="70%">
-      <channel instanceID="c8" minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+      <channel instanceID="c9" minimized="false" class="org.jasig.portal.channels.CPageRenderer">
         <parameter value="Yahoo" name="name"/>
         <parameter value="http://www.yahoo.com" name="url"/>
       </channel>
