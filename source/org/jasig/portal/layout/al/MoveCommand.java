@@ -6,7 +6,6 @@
 package org.jasig.portal.layout.al;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayout;
 import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
@@ -36,7 +35,7 @@ public class MoveCommand extends AbstractCommand {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.ILayout)
      */
-    public boolean execute(ILayout manager) throws PortalException {
+    public boolean execute(IAggregatedLayout manager) throws PortalException {
         return manager.moveNode(getNodeId(),parentId,nextNodeId);
     }
     
