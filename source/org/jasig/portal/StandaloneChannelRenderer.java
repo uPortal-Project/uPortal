@@ -101,7 +101,6 @@ public class StandaloneChannelRenderer extends BaseChannel {
 	this.hasAbout=hasAbout;
 	this.hasEdit=hasEdit;
 	this.timeOut=timeOut;
-	this.pcs=pcs;
 
         ChannelStaticData sd = new ChannelStaticData ();
         sd.setChannelSubscribeId (chanID);
