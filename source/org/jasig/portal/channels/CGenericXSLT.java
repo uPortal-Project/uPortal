@@ -247,8 +247,8 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     }
     catch (SAXException se)
     {
-	Logger.log(Logger.DEBUG,"CGenericXSLT:renderXML() : "+se.toString());
-      throw new GeneralRenderingException("Problem performing the transformation.");
+	//	Logger.log(Logger.DEBUG,"CGenericXSLT:renderXML() : "+se.toString());
+      throw new GeneralRenderingException("Problem performing the transformation:"+se.toString());
 
     }
     catch (IOException ioe)
