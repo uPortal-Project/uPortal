@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>uPortal Copyright Header</title>
+</head>
+<body>
+<h1>uPortal copyright header</h1>
+      <p>Code developed for or contributed to uPortal is distributed under the uPortal license agreement.
+		This page describes how we document this in our code.</p>
+      <h2>Basic example</h2>
+<p>A new .java file first added in 2004 might look like this:</p>
+	<pre>/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
+
+package org.jasig.portal.portlet.dao.springjdbc;
+
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
+/**
+ * Ancestor of all Spring JDBC-based DAO implementations.
+ * @author Mike DeSimone, mike@rsmart.com
+ * @version $Revision$
+ */
+public abstract class BaseSpringDao extends JdbcDaoSupport {
+
+}</pre>
+      <h2>Points to note</h2>
+<ul>
+	<li>The header is the very first text in the file.  
+		It comes before the package declaration, the import statements, 
+		the type JavaDoc comment, and the class declaration itself.</li>
+	<li>The header is only four lines long.  It serves as a pointer to the license.html
+		file distributed with uPortal and available online.</li>
+	<li>There is exactly one line of whitespace between the copyright header comment
+		and the package declaration.  More space would be wasted space, causing the reader
+		to be more likely to have to scroll to get to the meat of things.  No space would be less
+		legible.</li>
+</ul> 
+	
+      <h2>Copyright years</h2>
+<p>The copyright years are the years in which significant work is done on the file.  
+	If the file is continually edited every year between 1981 and 1984, 
+	a copyright year range of 1981-1984 is appropriate.  
+	If the file is edited in 1942, 1945, and 1947, 
+	"Copyright 1942, 1945, 1947  The JA-SIG Collaborative ..." is appropriate.  
+	Trivial edits do not update the copyright year; 
+	edits sufficiently significant that you feel like adding yourself as an 
+	author on the file, whether you do or not, likely warrant adding the 
+	current year to the copyright header's year list or range.</p>
+</body>
+</html>
