@@ -72,12 +72,12 @@ public class AssignPermissions
      *  expects to receive all permissions in form
      *  key['permission//{owner}|{principal}|{activity}|{target}'] = value['INHERIT','GRANT','DENY']
      */
-    public void execute (ChannelRuntimeData rd, ChannelStaticData sd) {
+    public void execute (PermissionsSessionData session) {
         try {
             LogService.instance().log(LogService.DEBUG, "PermissionsManager->AssignPermissions processing");
-            DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
-            Element root = viewDoc.getDocumentElement();
-            Enumeration formkeys = rd.getParameterNames();
+            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
+            Element root = session.XML.getDocumentElement();
+            Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap owners = new HashMap();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
@@ -92,7 +92,7 @@ public class AssignPermissions
                             1);
                     ph.activity = split3.substring(0, split3.indexOf("|"));
                     ph.target = split3.substring(split3.indexOf("|") + 1);
-                    ph.type = rd.getParameter(key);
+                    ph.type = session.runtimeData.getParameter(key);
                     LogService.instance().log(LogService.DEBUG, "Processing "
                             + ph.type + " permission o=" + ph.owner + " p="
                             + ph.principal + " a=" + ph.activity + " t=" +
@@ -118,7 +118,7 @@ public class AssignPermissions
                 upm.addPermissions(ipsa);
             }
             IPermissionCommand wrapit = CommandFactory.get("Cancel");
-            wrapit.execute(rd, sd);
+            wrapit.execute(session);
         } catch (Exception e) {
             LogService.log(LogService.ERROR, e);
         }

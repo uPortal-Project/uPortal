@@ -54,7 +54,7 @@ public interface IPermissionCommand {
      * @param rd
      * @param sd
      */
-    public void execute (ChannelRuntimeData rd, ChannelStaticData sd);
+    public void execute (PermissionsSessionData session);
 }
 
 

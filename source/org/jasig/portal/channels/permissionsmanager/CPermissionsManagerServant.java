@@ -42,6 +42,7 @@ import  org.jasig.portal.*;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.utils.*;
+import java.util.HashMap;
 
 
 /**
@@ -89,11 +90,7 @@ public class CPermissionsManagerServant extends CPermissionsManager
      * @return
      */
     public boolean isFinished () {
-        boolean isFinished = false;
-        if (staticData.containsKey("prmFinished") && staticData.getParameter("prmFinished").equals("true")) {
-            isFinished = true;
-        }
-        return  isFinished;
+        return  session.isFinished;
     }
 
     /**
@@ -107,7 +104,54 @@ public class CPermissionsManagerServant extends CPermissionsManager
 
     public void setStaticData (org.jasig.portal.ChannelStaticData sD) {
         super.setStaticData(sD);
-        isauthorized = true;
+        session.isAuthorized = true;
+
+        // handle pre-selection for servant mode
+        if (session.staticData.get("prmOwners") != null) {
+            LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): processing pre-selection");
+
+            // use specified set of owners
+            IPermissible[] selOwners = (IPermissible[])session.staticData.get("prmOwners");
+            for (int j =0; j < selOwners.length ; j++){
+              PermissionsXML.setSelected(session,selOwners[j].getClass().getName(),"owner", selOwners[j].getOwnerToken(),true);
+
+              if (session.staticData.get("prmTargets") != null) {
+                  if (((HashMap)session.staticData.get("prmTargets")).get(selOwners[j].getOwnerToken())
+                          != null) {
+                    String[] selTargets = (String[])((HashMap)session.staticData.get("prmTargets")).get(selOwners[j].getOwnerToken());
+                    LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): got "+selTargets.length+" pre-selected targets");
+                    for (int s=0;s<selTargets.length;s++){
+                      PermissionsXML.setSelected(session,selOwners[j].getClass().getName(),"target",selTargets[s],true);
+                    }
+                    session.gotTargets = true;
+                  }
+                  else {
+                    LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): error retrieving pre-selected targets");
+                  }
+              }
+
+              if (session.staticData.get("prmActivities") != null) {
+                  if (((HashMap)session.staticData.get("prmActivities")).get(selOwners[j].getOwnerToken())
+                          != null) {
+                      String[] selActivities = (String[])((HashMap)session.staticData.get("prmActivities")).get(selOwners[j].getOwnerToken());
+                      LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): got "+selActivities.length+" pre-selected activities");
+                      for (int s=0;s<selActivities.length;s++){
+                        PermissionsXML.setSelected(session,selOwners[j].getClass().getName(),"activity",selActivities[s],true);
+                      }
+                      session.gotActivities = true;
+                  }
+                  else {
+                    LogService.instance().log(LogService.DEBUG,"PermissionServant.setStaticData(): error retrieving pre-selected activities");
+                  }
+              }
+
+            }
+            session.gotOwners = true;
+        }
+        if (session.staticData.get("prmPrincipals")!=null){
+          session.principals = (IAuthorizationPrincipal[]) session.staticData.get("prmPrincipals");
+          PermissionsXML.populatePrincipals(session);
+        }
     }
 }
 

@@ -60,13 +60,13 @@ public class SelectOwners implements IPermissionCommand {
     public SelectOwners() {
     }
 
-    public void execute(ChannelRuntimeData rd, ChannelStaticData sd) {
+    public void execute(PermissionsSessionData session) {
           try {
             LogService.instance().log(LogService.DEBUG,"PermissionsManager->SelectOwners processing");
             boolean foundOne = false;
-            DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
-            Element root = viewDoc.getDocumentElement();
-            Enumeration formkeys = rd.getParameterNames();
+            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
+            Element root = session.XML.getDocumentElement();
+            Enumeration formkeys = session.runtimeData.getParameterNames();
             ArrayList ownerkeys = new ArrayList();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
@@ -78,18 +78,23 @@ public class SelectOwners implements IPermissionCommand {
                 }
             }
             if (foundOne) {
-                NodeList owners = viewDoc.getElementsByTagName("owner");
+                NodeList owners = session.XML.getElementsByTagName("owner");
                 for (int i = owners.getLength()-1; i >=0; i--) {
                     Element owner = (Element)owners.item(i);
                     String ownertoken = owner.getAttribute("ipermissible");
-                    if (!ownerkeys.contains(ownertoken)) {
-                        viewDoc.getDocumentElement().removeChild(owner);
+                    if (ownerkeys.contains(ownertoken)) {
+                        owner.setAttribute("selected","true");
+                    }
+                    else {
+                        owner.setAttribute("selected","false");
+                        //session.XML.getDocumentElement().removeChild(owner);
                     }
                 }
-                sd.setParameter("prmOwners", "finished");
+                session.gotOwners = true;
+                //sd.setParameter("prmOwners", "finished");
             }
             else {
-                rd.setParameter("commandResponse", "You must select at least one owner to continue");
+                session.runtimeData.setParameter("commandResponse", "You must select at least one owner to continue");
             }
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR, e);

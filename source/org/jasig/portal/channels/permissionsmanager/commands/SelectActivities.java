@@ -63,13 +63,13 @@ public class SelectActivities
     public SelectActivities () {
     }
 
-    public void execute (ChannelRuntimeData rd, ChannelStaticData sd) {
+    public void execute (PermissionsSessionData session) {
         try {
             LogService.instance().log(LogService.DEBUG,"PermissionsManager->SelectActivities processing");
             boolean foundOne = false;
-            DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
-            Element root = viewDoc.getDocumentElement();
-            Enumeration formkeys = rd.getParameterNames();
+            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
+            Element root = session.XML.getDocumentElement();
+            Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap ownerActs = new HashMap();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
@@ -87,7 +87,7 @@ public class SelectActivities
                 }
             }
             if (foundOne) {
-                NodeList owners = viewDoc.getElementsByTagName("owner");
+                NodeList owners = session.XML.getElementsByTagName("owner");
                 for (int i = 0; i < owners.getLength(); i++) {
                     Element owner = (Element)owners.item(i);
                     String ownertoken = owner.getAttribute("ipermissible");
@@ -97,19 +97,23 @@ public class SelectActivities
                         for (int j = kids - 1; j >= 0; j--) {
                             Element act = (Element)ownerkids.item(j);
                             String acttoken = act.getAttribute("token");
-                            if (!((ArrayList)ownerActs.get(ownertoken)).contains(acttoken)) {
-                                owner.removeChild(act);
+                            if (((ArrayList)ownerActs.get(ownertoken)).contains(acttoken)) {
+                               act.setAttribute("selected","true");
+                            }
+                            else {
+                                act.setAttribute("selected","false");
+                                //owner.removeChild(act);
                             }
                         }
                     }
                     else {
-                        viewDoc.getDocumentElement().removeChild(owners.item(i));
+                        //session.XML.getDocumentElement().removeChild(owners.item(i));
                     }
                 }
-                sd.setParameter("prmActivities", "finished");
+                session.gotActivities=true;
             }
             else {
-                rd.setParameter("commandResponse", "You must select at least one activity to continue");
+                session.runtimeData.setParameter("commandResponse", "You must select at least one activity to continue");
             }
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR, e);

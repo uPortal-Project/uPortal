@@ -20,7 +20,7 @@
                     <xsl:choose>
                         <xsl:when test="$prmView='Select Owners'">
                             <xsl:call-template name="selectDeselectAll"/>
-                            <xsl:apply-templates select="CPermissionsManager/owner"/>
+                            <xsl:apply-templates select="//owner"/>
                             <xsl:call-template name="selectfooter"/>
                         </xsl:when>
                         <xsl:when test="$prmView='Select Activities'">
@@ -99,9 +99,9 @@
                 </td></tr>
                 <tr><td><xsl:text> </xsl:text></td><td>
                         <table border="0" cellpadding="2" cellspacing="1">
-                <xsl:for-each select="//owner">
+                <xsl:for-each select="//owner[@selected='true']">
                     <xsl:variable name="ownerkey" select="@token"/>
-                    <xsl:variable name="activities" select="activity"/>
+                    <xsl:variable name="activities" select="activity[@selected='true']"/>
 
 
                         	<tr>
@@ -135,7 +135,7 @@
                               </td>
                             </tr>
 
-                            <xsl:for-each select ="target">
+                            <xsl:for-each select ="target[@selected='true']">
                                 <xsl:variable name="targetkey" select="@token"/>
                                 <tr>
                                 <td class="uportal-background-light">
@@ -175,9 +175,9 @@
 
         <xsl:template name="assignByOwner">
             <input type="hidden" name="prmCommand" value="AssignPermissions"/>
-            <xsl:for-each select="//owner">
+            <xsl:for-each select="//owner[@selected='true']">
                 <xsl:variable name="ownerkey" select="@token"/>
-                <xsl:variable name="activities" select="activity"/>
+                <xsl:variable name="activities" select="activity[@selected='true']"/>
                  <tr><td colspan="2">
                 	<span class="uportal-channel-table-header">
                     <xsl:value-of select="@name"/>
@@ -191,7 +191,7 @@
                 </td></tr>
                 <tr><td><xsl:text> </xsl:text></td><td>
                     	<table border="0" cellpadding="2" cellspacing="1">
-                <xsl:for-each select="target">
+                <xsl:for-each select="target[@selected='true']">
                     <xsl:variable name="targetkey" select="@token"/>
 
                         	<tr>
@@ -389,12 +389,18 @@
 
         <xsl:template name="activities">
             <input type="hidden" name="prmCommand" value="SelectActivities"/>
-            <xsl:for-each select="//owner">
+            <xsl:for-each select="//owner[@selected='true']">
                 <td colspan="2" class="uportal-channel-table-header">
                     <xsl:value-of select="@name"/>
                 </td>
                 <xsl:for-each select="activity">
-                    <tr><td><input type="checkbox" name="activity//{parent::owner/@ipermissible}|{@token}"/></td>
+                    <tr><td>
+                      <input type="checkbox" name="activity//{parent::owner/@ipermissible}|{@token}">
+                        <xsl:if test="@selected='true'">
+                          <xsl:attribute name="checked">checked</xsl:attribute>
+                        </xsl:if>
+                      </input>
+                    </td>
                     <td class="uportal-channel-text"><xsl:value-of select="@name"/></td>
                     </tr>
                 </xsl:for-each>
@@ -403,12 +409,18 @@
 
         <xsl:template name="targets">
             <input type="hidden" name="prmCommand" value="SelectTargets"/>
-            <xsl:for-each select="//owner">
+            <xsl:for-each select="//owner[@selected='true']">
                 <td colspan="2" class="uportal-channel-table-header">
                     <xsl:value-of select="@name"/>
                 </td>
                 <xsl:for-each select="target">
-                    <tr><td><input type="checkbox" name="target//{parent::owner/@ipermissible}|{@token}"/></td>
+                    <tr><td>
+                      <input type="checkbox" name="target//{parent::owner/@ipermissible}|{@token}">
+                        <xsl:if test="@selected='true'">
+                          <xsl:attribute name="checked">checked</xsl:attribute>
+                        </xsl:if>
+                      </input>
+                    </td>
                     <td class="uportal-channel-text"><xsl:value-of select="@name"/></td>
                     </tr>
                 </xsl:for-each>

@@ -59,13 +59,13 @@ public class SelectTargets implements IPermissionCommand {
     public SelectTargets() {
     }
 
-    public void execute(ChannelRuntimeData rd, ChannelStaticData sd) {
+    public void execute(PermissionsSessionData session) {
        try {
             LogService.instance().log(LogService.DEBUG,"PermissionsManager->Selecttargets processing");
             boolean foundOne = false;
-            DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
-            Element root = viewDoc.getDocumentElement();
-            Enumeration formkeys = rd.getParameterNames();
+            //DocumentImpl viewDoc = (DocumentImpl)sd.get("prmViewDoc");
+            Element root = session.XML.getDocumentElement();
+            Enumeration formkeys = session.runtimeData.getParameterNames();
             HashMap ownerTgts = new HashMap();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
@@ -82,7 +82,7 @@ public class SelectTargets implements IPermissionCommand {
                 }
             }
             if (foundOne) {
-                NodeList owners = viewDoc.getElementsByTagName("owner");
+                NodeList owners = session.XML.getElementsByTagName("owner");
                 for (int i = 0; i < owners.getLength(); i++) {
                     Element owner = (Element)owners.item(i);
                     String ownertoken = owner.getAttribute("ipermissible");
@@ -92,19 +92,24 @@ public class SelectTargets implements IPermissionCommand {
                         for (int j = kids - 1; j >= 0; j--) {
                             Element tgt = (Element)ownerkids.item(j);
                             String tgttoken = tgt.getAttribute("token");
-                            if (!((ArrayList)ownerTgts.get(ownertoken)).contains(tgttoken)) {
-                                owner.removeChild(tgt);
+                            if (((ArrayList)ownerTgts.get(ownertoken)).contains(tgttoken)) {
+                                tgt.setAttribute("selected","true");
+                            }
+                            else {
+                                tgt.setAttribute("selected","false");
+                                //owner.removeChild(tgt);
                             }
                         }
                     }
                     else {
-                        viewDoc.getDocumentElement().removeChild(owners.item(i));
+                        //session.XML.getDocumentElement().removeChild(owners.item(i));
                     }
                 }
-                sd.setParameter("prmTargets", "finished");
+                session.gotTargets=true;
+                //sd.setParameter("prmTargets", "finished");
             }
             else {
-                rd.setParameter("commandResponse", "You must select at least one target to continue");
+                session.runtimeData.setParameter("commandResponse", "You must select at least one target to continue");
             }
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR, e);

@@ -31,46 +31,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
  */
 
-package org.jasig.portal.channels.permissionsmanager.commands;
-import org.jasig.portal.channels.permissionsmanager.*;
-import org.jasig.portal.*;
-import org.jasig.portal.services.*;
+package org.jasig.portal.channels.permissionsmanager;
+
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.IServant;
+import org.w3c.dom.Document;
+import java.util.HashMap;
 
 /**
- * An IPermissionCommand implementation that resets CPermissionsManager
- * and sets the prmFinished flag in staticData for IServant operations
+ * PermissionsSessionData
+ *
+ * A lightwieht object used to store all values associated with a single channel
+ * session of CPermissionsManager
  *
  * @author Alex Vigdor
  * @version $Revision$
  */
 
-public class Cancel implements IPermissionCommand {
+public class PermissionsSessionData {
+  public ChannelStaticData staticData;
+  public ChannelRuntimeData runtimeData;
+  public String view;
+  public Document XML;
+  public IServant servant;
+  public IAuthorizationPrincipal[] principals;
+  public long startRD;  // used for timing response generation
+  public boolean gotActivities = false;
+  public boolean gotTargets = false;
+  public boolean gotOwners = false;
+  public boolean isFinished = false;
+  public boolean isAuthorized = false;
 
-    /** Creates new StartOver */
-    public Cancel() {
-    }
-
-    public void execute(PermissionsSessionData session) {
-        session.XML=null;
-        //sd.remove("prmViewDoc");
-        session.gotOwners = false;
-        //session.owners = null;
-        //sd.remove("prmOwners");
-        session.gotActivities = false;
-        //sd.remove("prmActivities");
-        // re-instate when this funcion is available
-        session.principals=null;
-        //sd.remove("prmPrincipals");
-        session.servant = null;
-        //sd.remove("prmServant");
-        session.gotTargets=false;
-        //sd.remove("prmTargets");
-        session.isFinished=true;
-        session.view = null;
-        //sd.setParameter("prmFinished","true");
-        LogService.instance().log(LogService.DEBUG,"PermissionsManager.Cancel complete");
-    }
+  public PermissionsSessionData() {
+  }
 
 }
