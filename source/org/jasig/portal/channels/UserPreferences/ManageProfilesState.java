@@ -96,47 +96,71 @@ class ManageProfilesState extends BaseState {
    * @param rd
    * @exception PortalException
    */
-  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
-    this.runtimeData = rd;
-    // local action processing
-    String action = runtimeData.getParameter("action");
-    if (action != null) {
-      String profileId = runtimeData.getParameter("profileId");
-      boolean systemProfile = false;
-      if (profileId != null) {
-        String profileType = runtimeData.getParameter("profileType");
-        if (profileType != null && profileType.equals("system"))
-          systemProfile = true;
-        if (action.equals("edit")) {
-          // initialize internal edit state
-          CEditProfile epstate = new CEditProfile(this);
-          // clear cached profile list tables
-          userProfileList = systemProfileList = null;
-          epstate.setRuntimeData(rd);
-          internalState = epstate;
-        } 
-        else if (action.equals("delete")) {
-          // delete a profile
-          if (systemProfile) {
-          // need to check permissions here
-          //			context.getUserPreferencesStore().deleteSystemProfile(Integer.parseInt(profileId));
-          //			systemProfileList=null;
-          } 
-          else {
-            this.getUserPreferencesStore().deleteUserProfile(context.getUserLayoutManager().getPerson().getID(), Integer.parseInt(profileId));
-            userProfileList = null;
-          }
-        } 
-        else if (action.equals("map")) {
-          this.getUserPreferencesStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(), this.runtimeData.getBrowserInfo().getUserAgent(), 
-              Integer.parseInt(profileId));
-          // let userLayoutManager know that the current profile has changed : everything must be reloaded
-        }
-      }
+    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+	this.runtimeData = rd;
+	// local action processing
+	String action = runtimeData.getParameter("action");
+	if (action != null) {
+	    String profileId = runtimeData.getParameter("profileId");
+	    boolean systemProfile = false;
+	    if (profileId != null) {
+		String profileType = runtimeData.getParameter("profileType");
+		if (profileType != null && profileType.equals("system"))
+		    systemProfile = true;
+		if (action.equals("edit")) {
+		    // initialize internal edit state
+		    CEditProfile epstate = new CEditProfile(this);
+		    // clear cached profile list tables
+		    userProfileList = systemProfileList = null;
+		    epstate.setRuntimeData(rd);
+		    internalState = epstate;
+		} else if (action.equals("copy")) {
+		    // retrieve a profile from the database
+		    UserProfile p=null;
+		    if(systemProfile) {
+			p=(UserProfile)systemProfileList.get(new Integer(profileId));
+		    } else {
+			p=(UserProfile)userProfileList.get(new Integer(profileId));
+		    }
+		    if(p!=null) {
+			// create a new layout
+			p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson().getID(),p);
+			// reset user profile listing
+			userProfileList=null;
+		    }
+		}
+		else if (action.equals("delete")) {
+		    // delete a profile
+		    if (systemProfile) {
+			// need to check permissions here
+			//			context.getUserPreferencesStore().deleteSystemProfile(Integer.parseInt(profileId));
+			//			systemProfileList=null;
+		    } 
+		    else {
+			this.getUserPreferencesStore().deleteUserProfile(context.getUserLayoutManager().getPerson().getID(), Integer.parseInt(profileId));
+			userProfileList = null;
+		    }
+		} 
+		else if (action.equals("map")) {
+		    this.getUserPreferencesStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
+		    // let userLayoutManager know that the current profile has changed : everything must be reloaded
+		}
+	    }
+	    if(action.equals("newProfile")) {
+		// get a copy of a current layout to copy the values from
+		UserProfile cp=context.getCurrentUserPreferences().getProfile();
+		if(cp!=null) {
+		    // create a new profile
+		    UserProfile p=new UserProfile(0,"new profile","please edit the profile",cp.getLayoutId(),cp.getStructureStylesheetId(),cp.getThemeStylesheetId());
+		    p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson().getID(),p);
+		    // reset user profile listing
+		    userProfileList=null;
+		}
+	    }
+	}
+	if (internalState != null)
+	    internalState.setRuntimeData(rd);
     }
-    if (internalState != null)
-      internalState.setRuntimeData(rd);
-  }
 
   /**
    * put your documentation comment here
