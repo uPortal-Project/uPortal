@@ -123,7 +123,7 @@ public class AddressTester {
               if (DEBUG) {
                 System.out.println("timed out on " + urlToTry);
               }
-              LogService.instance().log(LogService.INFO,
+              LogService.log(LogService.INFO,
                                         "AddressTest::checkURL(): timed out on " +
                                         urlToTry);
 
@@ -132,7 +132,7 @@ public class AddressTester {
                 System.out.println(urlToTry + " generated exception: " +
                                    e.getMessage());
               }
-              LogService.instance().log(LogService.INFO,
+              LogService.log(LogService.INFO,
                                         "AddressTest::checkURL(): "
                                         + urlToTry + " generated exception: " +
                                         e.getMessage());
@@ -144,7 +144,7 @@ public class AddressTester {
             if (DEBUG) {
               System.out.println("Bad URL: " + urlToTry);
             }
-            LogService.instance().log(LogService.ERROR,
+            LogService.log(LogService.ERROR,
                                       "AddressTest::checkURL(): Bad URL: " +
                                       urlToTry);
           }
