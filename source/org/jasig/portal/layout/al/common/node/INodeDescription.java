@@ -13,16 +13,10 @@ import org.w3c.dom.Element;
  * An interface describing common features of user layout nodes,
  * that is channels and folders
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version 1.0
+ * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @version $Revision$
  */
 public interface INodeDescription {
-
-    /**
-      * Constants indicating the type of a node
-      */
-    public static final int CHANNEL = 1;
-    public static final int FOLDER = 2;
 
     /**
      * Determine a name associated with this node.
