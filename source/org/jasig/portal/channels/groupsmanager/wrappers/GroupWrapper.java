@@ -77,11 +77,6 @@ public class GroupWrapper extends GroupMemberWrapper {
          rootElem.setAttribute("entityType",gm.getLeafType().getName());
          rootElem.setAttribute("type", gm.getType().getName());
          rootElem.setAttribute("editable", String.valueOf(entGrp.isEditable()));
-         /** @todo uncomment next line when IEntityGroup answers isEditable()
-          *  Have to make sure that the root groups are always set to "false".
-          *  The default value is true (i.e. if attibute is not set.*/
-         //rootElem.setAttribute("editable", String.valueOf(gm.isEditable()));
-         //rootElem.setAttribute("editable", "true");
          boolean hasMems = gm.hasMembers();
          Utility.logMessage("DEBUG", "GroupWrapper::getXml(): gm.hasMembers(): " + hasMems);
          if (!hasMems) {

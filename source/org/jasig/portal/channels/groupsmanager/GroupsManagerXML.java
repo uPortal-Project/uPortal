@@ -81,9 +81,6 @@ public class GroupsManagerXML
       //id=0 distinguishes the root groups element
       rootGroupsElem.setAttribute("id", "0");
       rootGroupsElem.setAttribute("expanded", "true");
-      /** @todo next 2 lines were from original igc code, I don't think they are needed */
-      //rootGroupsElem.setAttribute("expanded", "false");
-      //rootGroupsElem.setAttribute("hasMembers", "false");
       Element rdfElem = createRdfElement(null, viewDoc);
       rootGroupsElem.appendChild(rdfElem);
       viewRoot.appendChild(rootGroupsElem);
@@ -96,9 +93,7 @@ public class GroupsManagerXML
             Class entType = (Class)entTypes.get(key);
             IEntityGroup rootGrp = GroupService.getRootGroup(entType);
             rootGroupElement = getGroupMemberXml(rootGrp, true, null, viewDoc);
-            /** @todo IEntityGroup.isEditable() will return the value we want */
-            //rootGroupElement.setAttribute("editable", String.valueOf(rootGrp.isEditable()));
-            rootGroupElement.setAttribute("editable", "false");
+            rootGroupElement.setAttribute("editable", String.valueOf(rootGrp.isEditable()));
             rootGroupsElem.appendChild(rootGroupElement);
          }
       } catch (Exception e) {
@@ -181,26 +176,6 @@ public class GroupsManagerXML
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): APPENDING TO RDF");
       rdfElem.appendChild(rdfDesc);
       return  rdfElem;
-   }
-
-   /**
-    * Returns an empty IEntityGroup
-    * @param nonPersistentElement Element
-    * @return IEntityGroup
-    */
-   public static IEntityGroup dummyGroup(Element nonPersistentElement){
-      /** @todo delete this method...no longer needed */
-      IEntityGroup entGrp = null;
-      try {
-         entGrp = new EntityGroupImpl(null,Class.forName(nonPersistentElement.getAttribute("entityType")));
-      }
-      catch (ClassNotFoundException cnfe){
-         Utility.logMessage("INFO", "gotcha again for search element...class not found");
-      }
-      catch (GroupsException ge){
-         Utility.logMessage("INFO", "gotcha again for search element...groups exception");
-      }
-      return entGrp;
    }
 
    /**
