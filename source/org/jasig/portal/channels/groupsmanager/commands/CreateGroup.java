@@ -157,27 +157,34 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
 
          /** Grant all permissions for the new group to the creator */
          /** @todo need to catch following exceptions for next block of code
-          *  org.jasig.portal.AuthorzationException
+          *  org.jasig.portal.AuthorizationException
           *  java.lang.IllegalAccessException
           *  java.lang.InstantiationException */
          ArrayList perms = new ArrayList();
          IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
          IAuthorizationPrincipal ap = staticData.getAuthorizationPrincipal();
+         Utility.logMessage("DEBUG", "CreateGroup::execute(): The IAuthorizationPrincipal: " + ap);
          String[] activities = ((IPermissible)Class.forName(OWNER).newInstance()).getActivityTokens();
+         IPermission prm;
          for (int a = 0; a < activities.length; a++) {
-            IPermission prm = upm.newPermission(ap);
+            prm = upm.newPermission(ap);
             prm.setActivity(activities[a]);
             prm.setTarget(childEntGrp.getKey());
             prm.setType("GRANT");
             perms.add(prm);
          }
          upm.addPermissions((IPermission[])perms.toArray(new IPermission[perms.size()]));
+
+         // create permission elements
+         /** @todo should make sure there is one and only one principal element */
          NodeList principals = xmlDoc.getDocumentElement().getElementsByTagName("principal");
-         for (int p = principals.getLength() - 1; p >= 0; p--) {
-            xmlDoc.getDocumentElement().removeChild(principals.item(p));
+         Element princElem = (Element)principals.item(0);
+         for (int p = 0; p < perms.size(); p++) {
+            prm = (IPermission)perms.get(p);
+            Element permElem = GroupsManagerXML.getPermissionXml(xmlDoc, prm.getPrincipal(), prm.getActivity(), prm.getType(), prm.getTarget());
+            /** @todo should we check if element already exists??? */
+            princElem.appendChild(permElem);
          }
-         Element apElem = GroupsManagerXML.getAuthorizationXml(xmlDoc, staticData);
-         xmlDoc.getDocumentElement().appendChild(apElem);
       } catch (GroupsException ge) {
          retMsg = "Unable to create new group\n" + ge;
          runtimeData.setParameter("commandResponse", retMsg);
