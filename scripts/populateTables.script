@@ -65,6 +65,10 @@ UPDATE PORTAL_USERS SET USER_LAYOUT_XML=
 <layout>
   <folder ID="t01" priority="1" name="Main">
     <folder ID="col01" priority="0" width="40%" name="Column 1">
+      <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CNumberGuess" name="Number Guessing Game">
+        <parameter value="1" name="minNum"/>  
+        <parameter value="100" name="maxNum"/> 
+      </channel>      
       <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
         <parameter value="webpages/rss/netscape.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
