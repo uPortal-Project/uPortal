@@ -13,13 +13,17 @@ import java.net.*;
 
 
 /**
- * This is a user-defined channel for displaying an RSS Channel.
+ * This is a channel for displaying an RSS broadcast.
+ * The first time an RSS file is requested, it is retrieved 
+ * from its URL, and then stored in a memory cache for future requests.
+ * After one hour from the initial request, it is flushed from the
+ * cache and retrieved again.
  * 
  * @author Ken Weiner
  */
 public class CRSSChannel implements org.jasig.portal.IChannel                           
 { 
-  private String m_sUrl = null;
+  private static RSSCache m_RSSCache = new RSSCache (3600);
   private Hashtable params = null;
   
   public void initParams (Hashtable params) {this.params = params;}
@@ -28,14 +32,20 @@ public class CRSSChannel implements org.jasig.portal.IChannel
   {
     try
     {
-      m_sUrl = (String) params.get ("url");
-        
-      URL url = new URL (m_sUrl);
+      // Check if RSSXml is already in the cache
+      String sUrl = (String) params.get ("url");
+      IXml xml = (IXml) m_RSSCache.get (sUrl);
       
-      InputStream xmlStream = url.openStream();
+      // If the RSSXml isn't already cached, download it and put it in the cache
+      if (xml == null)
+      {
+        URL url = new URL (sUrl);
+        String sXmlPackage = "org.jasig.portal.channels.rss";
+        InputStream xmlStream = url.openStream();
+        xml = Xml.openDocument (sXmlPackage, xmlStream);
+        m_RSSCache.put (sUrl, xml);
+      }
       
-      String xmlPackage = "org.jasig.portal.channels.rss";
-      IXml xml = Xml.openDocument (xmlPackage, xmlStream);
       IRss rss = (IRss) xml.getRoot ();            
       
       // Get Channel
@@ -53,7 +63,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      e.printStackTrace  ();
     }
     
     return "&nbsp;";
@@ -72,13 +82,20 @@ public class CRSSChannel implements org.jasig.portal.IChannel
   {    
     try 
     {
-      m_sUrl = (String) params.get ("url");
-        
-      URL url = new URL (m_sUrl);
-      InputStream xmlStream = url.openStream();
+      // Check if RSSXml is already in the cache
+      String sUrl = (String) params.get ("url");
+      IXml xml = (IXml) m_RSSCache.get (sUrl);
       
-      String xmlPackage = "org.jasig.portal.channels.rss";
-      IXml xml = Xml.openDocument (xmlPackage, xmlStream);
+      // If the RSSXml isn't already cached, download it and put it in the cache
+      if (xml == null)
+      {
+        URL url = new URL (sUrl);
+        String sXmlPackage = "org.jasig.portal.channels.rss";
+        InputStream xmlStream = url.openStream();
+        xml = Xml.openDocument (sXmlPackage, xmlStream);
+        m_RSSCache.put (sUrl, xml);
+      }
+      
       IRss rss = (IRss) xml.getRoot ();            
       
       // Get Channel
@@ -162,7 +179,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      e.printStackTrace ();
       
       try
       {
@@ -173,52 +190,60 @@ public class CRSSChannel implements org.jasig.portal.IChannel
       }
     }
   }
+  
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
-    try 
-    {
-      String sAction = req.getParameter ("action");
-      
-      if (sAction == null)
-        doEditPage (req, res, out);
-      else
-        doSavePage (req, res, out);
-    }
-    catch (Exception e)
-    {
-      System.out.println ("\nERROR: \n" + e);
-    }
+    // This channel is not editable
   }
   
-  protected void doEditPage (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
+  /**
+   * A class for caching RSS Xml objects.  Each object will be
+   * cached for a specified amount of time (specified in seconds)
+   */
+  protected static class RSSCache extends java.util.Hashtable
+  {
+    protected int m_iExpirationTimeout = 3600000;   // default to 1 hour
+    
+    public RSSCache (int timeout)
     {
-      out.println ("<form action=\"edit.jsp\">");
-      out.println ("Enter a URL:");
-      out.println ("<input type=text name=url size=50><br>");
-      out.println ("<input type=hidden name=action value=\"save\">");
-      out.println ("<input type=submit name=submit value=\"Submit\">");
-      out.println ("</form>");
+      super ();
+      m_iExpirationTimeout = timeout * 1000;
     }
-    catch (Exception e)
+    
+    public synchronized Object get (Object key)
     {
-      System.out.println ("\nERROR: \n" + e);
+      Placeholder placeholder = (Placeholder) super.get (key);
+      
+      if (placeholder != null)
+      {
+        if (placeholder.m_lCreationTime + m_iExpirationTimeout < System.currentTimeMillis())
+        {
+          remove (key);
+          return null;
+        }
+        return placeholder.m_Value;
+      }
+      else
+        return null;
+    }
+    
+    public synchronized Object put (Object key, Object value)
+    {
+      Placeholder placeholder = new Placeholder (value);
+      return super.put (key, placeholder);
+    }
+    
+    protected class Placeholder
+    {
+      protected long m_lCreationTime = System.currentTimeMillis ();
+      protected Object m_Value;
+      
+      protected Placeholder (Object value)
+      {
+        m_lCreationTime = System.currentTimeMillis ();
+        m_Value = value;
+      }
     }
   }
 
-  protected void doSavePage (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
-    {
-      m_sUrl = req.getParameter ("url");
-      // Write this to a database
-      res.sendRedirect ("layout.jsp?tab=Misc");
-    }
-    catch (Exception e)
-    {
-      System.out.println ("\nERROR: \n" + e);
-    }
-  }
-  
 }
