@@ -93,6 +93,7 @@ public class InitialSecurityContextFactory {
     pr = new Properties();
     try {
       pr.load(secprops);
+		secprops.close();
     }
     catch (IOException e) {
       PortalSecurityException ep = new PortalSecurityException(e.getMessage());

@@ -64,6 +64,7 @@ public class AuthorizationService
     Properties pr = new Properties();
     try {
       pr.load(secprops);
+		secprops.close();
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
         LogService.instance().log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
