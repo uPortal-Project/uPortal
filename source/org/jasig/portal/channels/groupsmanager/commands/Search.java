@@ -6,7 +6,6 @@
 package  org.jasig.portal.channels.groupsmanager.commands;
 
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerCommandFactory;
@@ -49,7 +48,6 @@ public class Search extends GroupsManagerCommand {
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception {
       Utility.logMessage("DEBUG", "SearchForEntities::execute(): Start");
-      ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Class type;
       String grpTypeName = null;
@@ -65,8 +63,6 @@ public class Search extends GroupsManagerCommand {
       // For an EntityGroup search, the grpType will have the  form of "IEntityGroup::classname"
       // For an Entity search, the grpType will have the  form of "classname"
       String grpType = runtimeData.getParameter("grpType");
-      String searchCriteria = "grpQuery." + query + "|" + "grpMethod." + method + "|"
-            + "grpType." + grpType + "|" + "ancestor." + ancestorKey;
       if (grpType.startsWith(grpPrefix)) {
          isGroupSearch = true;
          grpTypeName = grpType.substring(grpPrefix.length());

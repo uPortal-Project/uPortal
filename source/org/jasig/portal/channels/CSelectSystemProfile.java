@@ -39,24 +39,20 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
     }
 
 
-  public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
-    super.setRuntimeData(rd);
-    String action = runtimeData.getParameter("action");
-    if (action != null) {
-      String profileId = runtimeData.getParameter("profileId");
-      boolean systemProfile = false;
-      if (profileId != null) {
-        String profileType = runtimeData.getParameter("profileType");
-        if (action.equals("map")) {
-          try {
-            ulsdb.setSystemBrowserMapping(this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
-          } catch (Exception e) {
-            throw new PortalException(e);
-          }
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
+        super.setRuntimeData(rd);
+        String action = runtimeData.getParameter("action");
+        if (action != null) {
+            String profileId = runtimeData.getParameter("profileId");
+            if (profileId != null && action.equals("map")) {
+                try {
+                    ulsdb.setSystemBrowserMapping(this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
+                } catch (Exception e) {
+                    throw new PortalException(e);
+                }
+            }
         }
-      }
     }
-  }
 
   protected Hashtable getSystemProfileList() throws PortalException {
       if (systemProfileList == null) {

@@ -44,7 +44,6 @@ public class Md5Passwd {
     Long date = new Long((new Date()).getTime());
     SecureRandom r = new SecureRandom((date.toString()).getBytes());
     MessageDigest md = MessageDigest.getInstance("MD5");
-    RDBMServices rdbm = new RDBMServices();
     Connection conn;
     PreparedStatement stmt;
     ResultSet rset;
@@ -110,16 +109,15 @@ public class Md5Passwd {
 
   public static void main(String[] args)
       throws IOException, NoSuchAlgorithmException, SQLException {
-    Md5Passwd me;
 
     if (args.length == 1 && args[0].charAt(0) != '-')
-      me = new Md5Passwd(args[0], false, false);
+      new Md5Passwd(args[0], false, false);
     else if (args.length == 2 && args[0].equals("-c") &&
         args[1].charAt(0) != '-')
-      me = new Md5Passwd(args[1], true, false);
+      new Md5Passwd(args[1], true, false);
     else if (args.length == 2 && args[0].equals("-l") &&
         args[1].charAt(0) != '-')
-      me = new Md5Passwd(args[1], false, true);
+      new Md5Passwd(args[1], false, true);
     else {
       System.err.println("Usage \"Md5Passwd [-c| -l] <user>\"");
       return;

@@ -6,7 +6,6 @@
 package  org.jasig.portal.channels.groupsmanager.commands;
 
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
@@ -34,7 +33,6 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
     * @throws Exception
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception{
-      ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Start");
@@ -44,7 +42,6 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Uid of expanded element = "
             + elemUid);
       Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, elemUid);
-      String rootOwner;
       if (expandedElem != null) {
         GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), expandedElem);
 
