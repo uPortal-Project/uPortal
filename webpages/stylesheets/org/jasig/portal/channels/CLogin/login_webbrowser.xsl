@@ -4,20 +4,19 @@
 <xsl:template match="/">
 
   <xsl:if test="login-status/failure">
-    <!-- please replace <font> tag with a <span> tag and error text css class !!! -->
-    <font color="red">Invalid user name or password.  Please try again!</font>
+    <span class="uportal-channel-error" align="center">The user name/password combination you entered is not recognized.  Please try again!</span>
   </xsl:if>
   
-  <div align="center" class="PortalChannelText">
+  <div align="center">
   <form action="authentication.jsp" method="post">
     <input type="hidden" name="action" value="login"/>
     <table border="0">
       <tr>
-        <td>User name:</td>
+        <th class="uportal-channel-table-header">User name:</th>
         <td><input type="text" name="userName" value="demo" size="15"/></td>
       </tr>
       <tr>
-        <td>Password:</td>
+        <th class="uportal-channel-table-header">Password:</th>
         <td><input type="password" name="password" value="demo" size="15"/></td>
       </tr>
     </table>
