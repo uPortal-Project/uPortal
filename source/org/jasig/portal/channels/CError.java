@@ -61,8 +61,9 @@ import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
 /**
- * Error channel (aka null channel) is designed to render in
- * place of other channels when something goes wrong.<br/>
+ * CError is the error channel, also known as the null channel, it is
+ * designed to render in place of other channels when something goes wrong.
+ * <p>
  * Possible conditions when CError is invoked are:
  * <ul>
  * <li> Channel has thrown a {@link PortalException} from one of the IChannel or IPrivilegedChannel methods.</li>
@@ -71,6 +72,7 @@ import org.xml.sax.ContentHandler;
  * <li> uPortal has rejected a channel for some reason.
  * In this case a general message is constructed by the portal.</li>
  * </ul>
+ * 
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
  */
@@ -185,7 +187,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                         return;
                     } catch (Exception e) {
                         // if any of the above didn't work, fall back to the error channel
-                        resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a refresh attempt.");
+                        resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a refresh attempt.");
                     }
                 } else if(chFate.equals("restart")) {
                     LogService.log(LogService.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
@@ -207,13 +209,13 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                                 return;
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
-                                resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
+                                resetCError(CError.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
                                 cm.setChannelInstance(str_channelSubscribeId,this);
                                 LogService.log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
                             }
                         }
                     } catch (Exception e) {
-                        resetCError(this.GENERAL_ERROR,e,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
+                        resetCError(CError.GENERAL_ERROR,e,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
                         LogService.log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
