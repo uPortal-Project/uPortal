@@ -2265,8 +2265,4 @@ Version $Revision$
 			</td>
 		</form>
 	</xsl:template>
-</xsl:stylesheet><!-- Stylus Studio meta-information - (c)1998-2003. Sonic Software Corporation. All rights reserved.
-<metaInformation>
-<scenarios/><MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
-</metaInformation>
--->
+</xsl:stylesheet>
