@@ -650,7 +650,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       if (state.personAllow != null)
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
-      XSLT xslt = XSLT.getTransformer(this, state.runtimeData.getLocales());
+      XSLT xslt = new XSLT(this);
       if (tidiedXml != null)
         xslt.setXML(tidiedXml);
       else
