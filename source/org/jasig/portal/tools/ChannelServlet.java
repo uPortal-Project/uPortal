@@ -61,6 +61,7 @@ import  org.jasig.portal.GenericPortalBean;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.ChannelSAXStreamFilter;
 import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.utils.XSLT;
 import  org.xml.sax.*;
 import  org.apache.xalan.xslt.*;
@@ -205,7 +206,15 @@ public class ChannelServlet extends HttpServlet {
       BaseMarkupSerializer ser = mediaM.getSerializer(mediaM.getMedia(req), res.getWriter());
       ser.asContentHandler();
       // get the framing stylesheet
-      String xslURI = set.getStylesheetURI(req);
+      String xslURI = null;
+      try
+      {
+        xslURI = set.getStylesheetURI(req);
+      }
+      catch(GeneralRenderingException gre)
+      {
+        throw new ServletException(gre);
+      }
       try {
         XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
         processor.setDocumentHandler(ser);
