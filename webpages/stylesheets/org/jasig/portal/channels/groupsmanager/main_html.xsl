@@ -260,7 +260,7 @@
   
   <xsl:template name="rightPane">
   	<xsl:param name="group"/>
-    <xsl:variable name="grpKey" select="@key" />
+    <xsl:variable name="grpKey" select="$group/@key" />
 	<table width="100%" border="0">
 	<form action="{$baseActionURL}" method="POST">
     <xsl:choose>
