@@ -73,7 +73,7 @@ public void convert(int newType, int newDuration) throws LockingException;
  */
 public String getEntityKey();
 /**
- * @see org.jasig.portal.groups.EntityTypes for known types.
+ * @see org.jasig.portal.EntityTypes for known types.
  * @return java.lang.Class
  */
 public Class getEntityType();
