@@ -54,6 +54,21 @@ import org.jasig.portal.services.LogService;
  * the user, their "secure" password is being placed in jeopardy. PLEASE use
  * this SecurityContext implementation sparingly and with your eyes open!</p>
  *
+ * CacheSecurityContext can be chained together with another context such that 
+ * both are required.  This allows an authentication provider such as 
+ * SimpleLdapSecurityContext to be used to verify the password and 
+ * CacheSecurityContext to allow channels access to the password. Example of 
+ * security.properties settings to accomplish this:
+ * 
+ * root=org.jasig.portal.security.provider.SimpleSecurityContextFactory
+ * root.cache=org.jasig.portal.security.provider.CacheSecurityContextFactory
+ * principalToken.root=userName
+ * credentialToken.root=password
+ * 
+ * To ensure that both contexts are exercized the portal property
+ * org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated
+ * must be set to false (by default it is set to true).
+
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  *
