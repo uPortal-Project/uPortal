@@ -62,12 +62,6 @@ public class DbConvert21 {
     int updateCount = 0;
     
     // the query to select all the layouts that need to be adjusted 
-	String oldQuery = 
-	"select uls.USER_ID, uls.LAYOUT_ID, max(uls.struct_id)+100 new_struct_id, "+
-	"init_struct_id new_child_id from up_layout_struct uls, up_user_layout uul " +
-	"where uls.user_id=uul.user_id and uls.layout_id=uul.layout_id "+
-	"group by uls.user_id, uls.layout_id, init_struct_id";
-	
 	String query =
 	"select uul.USER_ID, uul.LAYOUT_ID, max(uls.struct_id)+100 new_struct_id, " +
 	"init_struct_id new_child_id from up_layout_struct uls, up_user_layout uul " +
@@ -92,17 +86,29 @@ public class DbConvert21 {
 		
 		// Add CHAN_SECURE column to UP_CHANNEL if not already there
 		ResultSet rsMeta = null;
+		DatabaseMetaData dbMeta = con.getMetaData();
 		try {
-			DatabaseMetaData dbMeta = con.getMetaData();
 			rsMeta = dbMeta.getColumns(null,null,"UP_CHANNEL","CHAN_SECURE");
 			if (!rsMeta.next()){
 				String alter = "ALTER TABLE UP_CHANNEL ADD (CHAN_SECURE  VARCHAR(1) DEFAULT 'N')";
 				con.createStatement().execute(alter);
-				System.err.println("Added CHAN_SECURE column to UP_CHANNEL table.");
+				System.out.println("Added CHAN_SECURE column to UP_CHANNEL table.");
 			}
-			else System.err.println("CHAN_SECURE column already exists in UP_CHANNEL table.");
+			else System.out.println("CHAN_SECURE column already exists in UP_CHANNEL table.");
 		} catch (SQLException se) {
-			System.err.println("Error handling changes to UP_CHANNEL table");
+			System.err.println("Error attempting to add CHAN_SECURE column to UP_CHANNEL table");
+			se.printStackTrace();
+		}
+		try {
+			rsMeta = dbMeta.getColumns(null,null,"UP_ENTITY_CACHE_INVALIDATION","ENTITY_CACHE_ID");
+			if (!rsMeta.next()){
+				String alter = "ALTER TABLE UP_ENTITY_CACHE_INVALIDATION ADD (ENTITY_CACHE_ID  NUMBER NOT NULL)";
+				con.createStatement().execute(alter);
+				System.out.println("Added ENTITY_CACHE_ID column to UP_ENTITY_CACHE_INVALIDATION table.");
+			}
+			else System.out.println("ENTITY_CACHE_ID column already exists in UP_ENTITY_CACHE_INVALIDATION table.");
+		} catch (SQLException se) {
+			System.err.println("Error attempting to add ENTITY_CACHE_ID column to UP_ENTITY_CACHE_INVALIDATION table");
 			se.printStackTrace();
 		}
 		finally {
@@ -161,6 +167,8 @@ public class DbConvert21 {
 			se.printStackTrace();
 		}
 		finally {
+			if (rset!=null) rset.close();
+			System.out.println("stylesheet references updated.");
 		}
 
 		// update layouts to add new folder
