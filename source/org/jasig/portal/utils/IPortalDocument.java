@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
  * @author Nick Bolton
  * @version $Revision$
  */
-public interface IUPortalDocument extends Document {
+public interface IPortalDocument extends Document {
 
     /**
      * Registers an identifier name with a specified element node.
@@ -65,5 +65,5 @@ public interface IUPortalDocument extends Document {
      *
      * @param sourceDoc The source doc to copy from.
      */
-    public void copyCache(IUPortalDocument sourceDoc);
+    public void copyCache(IPortalDocument sourceDoc);
 }

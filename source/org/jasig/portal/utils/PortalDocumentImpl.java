@@ -41,7 +41,7 @@ import java.util.Iterator;
 import org.w3c.dom.*;
 
 /**
- * An implementation of IUPortalDocument that decorates a generic
+ * An implementation of IPortalDocument that decorates a generic
  * <code>Document</code> object. This is used to locally store and manage
  * the ID element mappings regardless of the DOM implementation.
  *
@@ -50,17 +50,17 @@ import org.w3c.dom.*;
  * @author Nick Bolton
  * @version $Revision$
  */
-public class UPortalDocumentImpl implements IUPortalDocument {
+public class PortalDocumentImpl implements IPortalDocument {
 
     private final Hashtable identifiers = new Hashtable(1024);
 
     public Document document = null;
 
-    UPortalDocumentImpl() {
+    PortalDocumentImpl() {
         document = DocumentFactory.__getNewDocument();
     }
 
-    UPortalDocumentImpl(Document doc) {
+    PortalDocumentImpl(Document doc) {
         document = doc;
     }
 
@@ -98,7 +98,7 @@ public class UPortalDocumentImpl implements IUPortalDocument {
      *
      * @param sourceDoc The source doc to copy from.
      */
-    public void copyCache(IUPortalDocument sourceDoc) {
+    public void copyCache(IPortalDocument sourceDoc) {
         for (Node n = this.getFirstChild(); n != null; n = n.getNextSibling()) {
             preserveCache(sourceDoc, n);
         }
@@ -108,9 +108,9 @@ public class UPortalDocumentImpl implements IUPortalDocument {
         identifiers.remove(key);
     }
 
-    private void preserveCache(IUPortalDocument sourceDoc, Node node) {
+    private void preserveCache(IPortalDocument sourceDoc, Node node) {
         if (node instanceof Element) {
-            String key = ((UPortalDocumentImpl)sourceDoc).
+            String key = ((PortalDocumentImpl)sourceDoc).
                 getElementKey((Element)node);
 
             if (key != null) {
@@ -287,7 +287,7 @@ public class UPortalDocumentImpl implements IUPortalDocument {
 
     public Node cloneNode(boolean deep) {
         Document newDoc = (Document)document.cloneNode(deep);
-        UPortalDocumentImpl newNode = new UPortalDocumentImpl(newDoc);
+        PortalDocumentImpl newNode = new PortalDocumentImpl(newDoc);
 
         // only copy the identifiers if it's a deep cloning. Otherwise,
         // the children won't exist and you'd have an identifier mapping
@@ -347,7 +347,7 @@ public class UPortalDocumentImpl implements IUPortalDocument {
             this.hashCode() + ")\n");
     }
 
-    void checkCaches(UPortalDocumentImpl doc2) {
+    void checkCaches(PortalDocumentImpl doc2) {
         String key;
         Element element1;
         Element element2;
