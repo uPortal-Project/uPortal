@@ -53,11 +53,21 @@ public class DTDResolver implements EntityResolver
   private String pathToDtd = UtilitiesBean.getPortalBaseDir() + "webpages" + File.separator + "dtd" + File.separator;
   private String dtdName = null;
 
+  /**
+   * Constructor for DTDResolver
+   * @param dtdName the name of the dtd
+   */
   public DTDResolver (String dtdName)
   {
     this.dtdName = dtdName;
   }
 
+  /**
+   * Sets up a new input source based on the dtd specified in the xml document
+   * @param publicId the public ID
+   * @param systemId the system ID
+   * @return an input source based on the dtd specified in the xml document
+   */
   public InputSource resolveEntity (String publicId, String systemId)
   {
     InputSource inSrc = null;
