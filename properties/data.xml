@@ -1666,6 +1666,14 @@
         <column><name>PARAM_NAME</name><value>activeTab</value></column>
         <column><name>PARAM_VAL</name><value>1</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>1</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>PARAM_NAME</name><value>skin</value></column>
+        <column><name>PARAM_VAL</name><value>imm</value></column>
+      </row>      
     </rows>
   </table>
 
