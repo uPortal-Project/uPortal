@@ -1571,14 +1571,15 @@ Version $Revision$
 						</span>
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						-->
-                        <xsl:if test="fragments">
-                            <br/>
-                            <!--  <span> |<xsl:text>&#160;</xsl:text> </span>-->
-                            <form name="selectFragments" method="post" action="{$baseActionURL}"> Manage:<select name="uP_fragment_ID" class="uportal-input-text uportal-background-content">
+                        <xsl:if test="fragments and $fragmentAuthor='true'">
+                            <!-- <br/> -->
+                            <span> |<xsl:text>&#160;</xsl:text> </span>
+                            <a href="{$baseActionURL}?uP_fname=fragmentManager&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Fragments</a>
+                            <!-- <form name="selectFragments" method="post" action="{$baseActionURL}"> Manage:<select name="uP_fragment_ID" class="uportal-input-text uportal-background-content"> -->
                                     <!-- This test wil need to be modified when multiple layouts are allowed -->
-                                    <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
+                                    <!-- <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')"> -->
                                         <!-- <xsl:variable name="newFragment">true</xsl:variable> -->
-                                        <option selected="selected">Unsaved New Fragment [ID:<xsl:value-of select="$currentFragmentID"/>]</option>
+                                        <!-- <option selected="selected">Unsaved New Fragment [ID:<xsl:value-of select="$currentFragmentID"/>]</option>
                                     </xsl:if>
                                     <option value="default_layout">
                                         <xsl:if test="$currentFragmentID='default_layout'">
@@ -1600,19 +1601,19 @@ Version $Revision$
                                 <input type="hidden" name="targetAction" value="no targetAction parameter"/>
                                 <input type="hidden" name="uP_sparam" value="targetRestriction"/>
                                 <input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
-                                <input type="hidden" name="uP_cancel_targets" value="true"/>
+                                <input type="hidden" name="uP_cancel_targets" value="true"/> -->
                                 <!--<option><xsl:value-of select="New fragment"/></option>-->
-                                <input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Load selected fragment" title="Load selected fragment"/>
+                                <!-- <input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Load selected fragment" title="Load selected fragment"/> -->
                                 <!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> -->
-                                <xsl:if test="$fragmentAuthor='true'">
+                               <!--  <xsl:if test="$fragmentAuthor='true'">
                                     <span> |<xsl:text>&#160;</xsl:text>
-                                    </span>
+                                    </span> -->
                                     <!-- <a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true"> -->
-                                    <a href="{$baseActionURL}?uP_fragment_action=new&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">New Tab Fragment</a>
+                                    <!-- <a href="{$baseActionURL}?uP_fragment_action=new&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">New Tab Fragment</a>
                                     <xsl:if test="not($currentFragmentID = 'default_layout')">
                                         <span> |<xsl:text>&#160;</xsl:text>
                                         </span>
-                                        <a href="{$baseActionURL}?uP_fragment_action=save&amp;uP_fragment_ID={$currentFragmentID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Save Fragment</a>
+                                        <a href="{$baseActionURL}?uP_fragment_action=save&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Save Fragment</a>
                                     </xsl:if>
                                     <xsl:if test="$currentFragmentID = fragments/fragment/@ID and not($currentFragmentID = 'default_layout')">
                                         <span> |<xsl:text>&#160;</xsl:text>
@@ -1625,7 +1626,7 @@ Version $Revision$
                                         <a href="{$baseActionURL}?uP_fragment_action=delete&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Delete Fragment</a>
                                     </xsl:if>
                                 </xsl:if>
-                            </form>
+                            </form> -->
                         </xsl:if>
                         <!-- <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
                             <form name="addFragNameDesc" method="post" action="{$baseActionURL}"> New Fragment Name:<input name="uP_fragment_name" type="text" class="uportal-input-text" maxlength="30"/> New Fragment Description:<input name="uP_fragment_desc" type="text" class="uportal-input-text"/>
