@@ -48,6 +48,21 @@ public class PortalControlStructures {
     protected HttpServletResponse res;
     protected ChannelManager cm;
 
+    public PortalControlStructures(HttpServletRequest req,HttpServletResponse res, ChannelManager cm, IUserLayoutManager ulm) {
+        this.req=req;
+        this.res=res;
+        this.cm=cm;
+        this.ulm=ulm;
+    }
+    
+    public PortalControlStructures() {
+        this.req=null;
+        this.res=null;
+        this.cm=null;
+        this.ulm=null;
+    }
+        
+
     public IUserLayoutManager getUserLayoutManager() { return ulm; }
     public HttpServletRequest getHttpServletRequest() { return req;}
     public HttpServletResponse getHttpServletResponse() { return res; }
