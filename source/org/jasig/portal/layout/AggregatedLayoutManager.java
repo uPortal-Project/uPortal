@@ -35,18 +35,18 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.Vector;
 
-import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
 import org.jasig.portal.layout.restrictions.RestrictionTypes;
@@ -59,7 +59,6 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.GuidGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
