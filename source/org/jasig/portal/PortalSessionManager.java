@@ -170,7 +170,7 @@ public class PortalSessionManager extends HttpServlet {
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // Send the uPortal version in a header
-        res.setHeader("uPortal-version", "uPortal_rel-2-0-patches");
+        res.setHeader("uPortal-version", "uPortal_rel-2-0-3");
         
         HttpSession session = req.getSession();
         if (session != null) {
