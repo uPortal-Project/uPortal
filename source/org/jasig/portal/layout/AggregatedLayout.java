@@ -518,10 +518,11 @@ public class AggregatedLayout implements IAggregatedLayout {
      */
     public void writeTo(String nodeId, Document document) throws PortalException {
       try {
-        Element layoutNode = document.createElement(LAYOUT);
+        Element layoutNode = document.createElement((nodeId.equals(getRootId()))?LAYOUT:FRAGMENT);
         document.appendChild(layoutNode);
         // Create a fragment list which the user owns
-        createFragmentList(document,layoutNode);
+        if (nodeId.equals(getRootId()))
+         createFragmentList(document,layoutNode);
         // Build the DOM
         appendDescendants(document,layoutNode,nodeId);
       } catch ( Exception e ) {

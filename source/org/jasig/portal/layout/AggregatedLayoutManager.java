@@ -326,6 +326,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
           }
        }
       }
+
         if ( isFolder ) {
             ++depth;
             String firstChildId = ((ALFolder)node).getFirstChildNodeId();
@@ -341,6 +342,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             }
         }
 
+  }
+
+  // Gets the content of the lost folder
+  public String getLostFolderXML() throws PortalException {
+    Document document = DocumentFactory.getNewDocument();
+    layout.writeTo(ALFolderDescription.LOST_FOLDER_ID,document);
+    return org.jasig.portal.utils.XML.serializeNode(document);
   }
 
   /**

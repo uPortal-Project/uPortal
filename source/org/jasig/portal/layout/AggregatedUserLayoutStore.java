@@ -1393,17 +1393,17 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       String sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
       LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
+      String firstNodeId = layout.getLayoutFolder(layout.getRootId()).getFirstChildNodeId();
       rs = stmt.executeQuery(sQuery);
       if ( !rs.next() ) {
-         String firstNodeId = layout.getLayoutFolder(layout.getRootId()).getFirstChildNodeId();
          sQuery = "INSERT INTO UP_USER_LAYOUT_AGGR (LAYOUT_ID,USER_ID,LAYOUT_TITLE,INIT_NODE_ID) VALUES ("+layoutId+","+userId+",'"+person.getFullName()+" layout',"
-                   +firstNodeId+")";
-         LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
-         stmt.executeUpdate(sQuery);
-      }
+                  +firstNodeId+")";
+      } else {
+         sQuery = "UPDATE UP_USER_LAYOUT_AGGR SET INIT_NODE_ID="+firstNodeId+" WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId;
+        }
+      LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
+      stmt.executeUpdate(sQuery);
       if ( rs != null ) rs.close();
-
-
 
       // Clear the previous data related to the user layout
       PreparedStatement psDeleteLayout = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?");
