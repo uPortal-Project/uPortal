@@ -439,6 +439,13 @@
   </target>
 
 
+  <target name="get.jvm">
+<!--    <echo message="ant.java.version: ${ant.java.version}" />-->
+    <condition property="jvm.15">
+      <equals arg1="${ant.java.version}" arg2="1.5"/>
+    </condition>
+  </target>
+	
 
 <!-- ==================== Compile Target ================================== -->
 
@@ -450,8 +457,29 @@
   unpacked directory hierarchy under "/WEB-INF/classes".
 
 -->
+  <target name="compile15" depends="prepare,get.jvm" if="jvm.15"
+   description="Compile Java sources">
 
-  <target name="compile" depends="prepare"
+    <mkdir dir="${build.home}/WEB-INF/lib/endorsed"/>
+    <copy  todir="${build.home}/WEB-INF/lib/endorsed" file="lib/xml-apis.jar"/>
+
+  	<!-- Compile Java classes as necessary -->
+    <mkdir    dir="${build.home}/WEB-INF/classes"/>
+    <javac srcdir="source"
+          destdir="${build.home}/WEB-INF/classes"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+      <!-- JDK 1.5 needs the following -->
+      <compilerarg value="-Djava.endorsed.dirs=${build.home}/WEB-INF/lib/endorsed"/>
+      
+    </javac>
+
+  </target>
+
+
+  <target name="compile14" depends="prepare,get.jvm" unless="jvm.15"
    description="Compile Java sources">
 
     <!-- Compile Java classes as necessary -->
@@ -462,12 +490,13 @@
       deprecation="${compile.deprecation}"
          optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
-      <!-- To build with JDK 1.5 uncomment the following and 
-           copy xml-apis.jar from lib to lib/endorsed -->
-      <!--<compilerarg value="-Djava.endorsed.dirs=lib/endorsed"/>-->
-      
     </javac>
-      
+
+  </target>
+
+  <target name="compile" depends="compile14,compile15"
+   description="Compile Java sources">
+
     <!-- Copy non-java resources -->
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="source" excludes="CVS,**/*.java"/>
