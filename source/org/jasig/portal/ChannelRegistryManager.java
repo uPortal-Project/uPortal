@@ -9,8 +9,12 @@ import java.util.Date;
 import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
-import org.apache.xpath.XPathAPI;
+
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -199,6 +203,7 @@ public class ChannelRegistryManager {
         // Create category element and append it to its parent
         Element categoryE = owner.createElement("category");
         categoryE.setAttribute("ID", "cat" + key);
+        categoryE.setIdAttribute("ID", true);
         categoryE.setAttribute("name", name);
         categoryE.setAttribute("description", description);
         parentGroup.appendChild(categoryE);
@@ -214,6 +219,10 @@ public class ChannelRegistryManager {
           if (approvalDate != null && approvalDate.before(now)) {
             Element channelDefE = channelDef.getDocument(owner, "chan" + channelPublishId);
             channelDefE = (Element)owner.importNode(channelDefE, true);
+            
+            if (channelDefE.getAttribute("ID") != null)
+                channelDefE.setIdAttribute("ID", true);
+            
             parentGroup.appendChild(channelDefE);
           }
          }
@@ -233,10 +242,13 @@ public class ChannelRegistryManager {
     Document channelRegistry = getChannelRegistry();
     Element channelE = null;
     try {
-      // This is unfortunately dependent on Xalan 2.  Is there a way to use a standard interface?
-      channelE = (Element)XPathAPI.selectSingleNode(channelRegistry, "(//channel[@ID = '" + channelPublishId + "'])[1]");
-    } catch (javax.xml.transform.TransformerException te) {
-      throw new GeneralRenderingException("Not able to find channel " + channelPublishId + " within channel registry: " + te.getMessageAndLocation());
+        String expression = "(//channel[@ID = '" + channelPublishId + "'])[1]";
+        XPathFactory fac = XPathFactory.newInstance();
+        XPath xpath = fac.newXPath();
+        channelE = (Element) xpath.evaluate(expression, channelRegistry,
+                XPathConstants.NODE);
+    } catch (XPathExpressionException e) {
+      throw new GeneralRenderingException("Not able to find channel " + channelPublishId + " within channel registry.", e);
     }
     return channelE;
   }
@@ -447,10 +459,13 @@ public class ChannelRegistryManager {
     Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
     NodeList categories = null;
     try {
-      // This is unfortunately dependent on Xalan 2.  Is there a way to use a standard interface?
-      categories = (NodeList)XPathAPI.selectNodeList(channelRegistry, "//category[channel/@ID = '" + channelPublishId + "']");
-    } catch (javax.xml.transform.TransformerException te) {
-      throw new GeneralRenderingException("Not able to find channel " + channelPublishId + " within channel registry: " + te.getMessageAndLocation());
+        String expression = "//category[channel/@ID = '" + channelPublishId + "']";
+        XPathFactory fac = XPathFactory.newInstance();
+        XPath xpath = fac.newXPath();
+        categories = (NodeList) xpath.evaluate(expression, channelRegistry, XPathConstants.NODESET);
+        
+    } catch (XPathExpressionException e) {
+        throw new GeneralRenderingException("Not able to find channel " + channelPublishId + " within channel registry.", e);
     }
     return categories;
   }

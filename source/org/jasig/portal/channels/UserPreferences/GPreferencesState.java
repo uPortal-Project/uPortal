@@ -38,6 +38,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+
 /** <p>Manages User Layout and user stylesheet preferences </p>
  * This is a general UserPreference component. A structure/theme
  * stylesheet is expected to replace this component with its own
@@ -428,10 +431,14 @@ class GPreferencesState extends BaseState {
       // debug printout of the prepared xml
       try {
         StringWriter outString = new StringWriter();
-        org.apache.xml.serialize.OutputFormat format = new org.apache.xml.serialize.OutputFormat();
+        /* TODO: This should be reviewed at some point to see if we can use the
+         * DOM3 LS capability and hence a standard way of doing this rather
+         * than using an internal implementation class.
+         */
+        OutputFormat format = new OutputFormat();
         format.setOmitXMLDeclaration(true);
         format.setIndenting(true);
-        org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
+        XMLSerializer xsl = new XMLSerializer(outString, format);        
         xsl.serialize(doc);
         log.debug(outString.toString());
       } catch (Exception e) {
@@ -536,11 +543,15 @@ class GPreferencesState extends BaseState {
       // debug printout of the prepared xml
       try {
         StringWriter outString = new StringWriter();
-        org.apache.xml.serialize.OutputFormat format = new org.apache.xml.serialize.OutputFormat();
+        /* TODO: This should be reviewed at some point to see if we can use the
+         * DOM3 LS capability and hence a standard way of doing this rather
+         * than using an internal implementation class.
+         */
+        OutputFormat format = new OutputFormat();
         format.setOmitXMLDeclaration(true);
         format.setIndenting(true);
-        org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
-        xsl.serialize(doc);
+        XMLSerializer serializer = new XMLSerializer(outString, format);        
+        serializer.serialize(doc);
         log.debug(outString.toString());
       } catch (Exception e) {
         log.debug(e, e);

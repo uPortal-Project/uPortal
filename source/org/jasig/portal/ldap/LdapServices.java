@@ -12,11 +12,14 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xpath.XPathAPI;
+
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,8 +96,11 @@ public final class LdapServices {
             config.normalize();
 
             try {
-                NodeList connElements = 
-                    XPathAPI.selectNodeList(config, LDAP_XML_CONNECTION_XPATH);
+                XPathFactory fac = XPathFactory.newInstance();
+                XPath xpath = fac.newXPath();
+                NodeList connElements = (NodeList) xpath.evaluate(
+                     LDAP_XML_CONNECTION_XPATH, config,
+                     XPathConstants.NODESET);
                 
                 //Loop through each <connection> element
                 for (int connIndex = 0; connIndex < connElements.getLength(); connIndex++) {
@@ -196,8 +202,8 @@ public final class LdapServices {
                     }
                 }
             }
-            catch (TransformerException te) {
-                log.error( "Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, te);
+            catch (XPathExpressionException e) {
+                log.error( "Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, e);
             }
         }
         else {

@@ -8,7 +8,13 @@ package org.jasig.portal.layout;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.xpath.XPathAPI;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -32,6 +38,9 @@ public class SimpleLayout implements IUserLayout {
     private Document layout;
     private String layoutId;
     private String cacheKey;
+    
+    private Log log = LogFactory.getLog(getClass());
+    
 
     public SimpleLayout(String layoutId, Document layout) {
         this.layoutId = layoutId;
@@ -168,7 +177,11 @@ public class SimpleLayout implements IUserLayout {
     public Enumeration getNodeIds() throws PortalException {
         Vector v = new Vector();
         try {
-            NodeList nl = XPathAPI.selectNodeList(layout, "*");
+            String expression = "*";
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
+            NodeList nl = (NodeList) xpath.evaluate(expression, layout, 
+                    XPathConstants.NODESET);
             for (int i = 0; i < nl.getLength(); i++) {
                 Node node = nl.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -177,7 +190,7 @@ public class SimpleLayout implements IUserLayout {
                 }
             }
         } catch (Exception e) {
-            // Do nothing for now
+            log.error("Exception getting node ids.", e);
         }
         return v.elements();
     }
@@ -185,10 +198,16 @@ public class SimpleLayout implements IUserLayout {
     public String getRootId() {
         String rootNode = null;
         try {
-            Element rootNodeE = (Element) XPathAPI.selectSingleNode(layout, "/layout/folder");
+            
+            String expression = "/layout/folder";
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
+            Element rootNodeE = (Element) xpath.evaluate(expression, layout, 
+                    XPathConstants.NODESET);
+            
             rootNode = rootNodeE.getAttribute("ID");
         } catch (Exception e) {
-            // Do nothing for now
+            log.error("Error getting root id.", e);
         }
         return rootNode;
     }

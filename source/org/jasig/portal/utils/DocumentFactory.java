@@ -55,18 +55,7 @@ public class DocumentFactory {
      * @return an empty org.w3c.dom.Document implementation
      */
     public static Document getNewDocument() {
-        IPortalDocument doc = null;
-        try {
-            String className = 
-                PropertiesManager.getProperty("org.jasig.portal.utils.IPortalDocument.implementation", 
-                        "org.jasig.portal.utils.PortalDocumentImpl");
-            doc = (IPortalDocument)Class.forName(className).newInstance();
-        } catch (Exception e) {
-            log.error("org.jasig.portal.utils.DocumentFactory could not create new " 
-                    + "IPortalDocument: ", e);
-            throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new " + "IPortalDocument: ", e);
-        }
-        return doc;
+        return newDocumentBuilder().newDocument();
     }
 
     /**

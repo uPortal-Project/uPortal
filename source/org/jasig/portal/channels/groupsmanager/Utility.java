@@ -10,11 +10,14 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xml.serialize.XMLSerializer;
+
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * A class holding utility functions used by the Groups Manager channel.
@@ -173,13 +176,19 @@ public class Utility
    /**
     * Represents a document as a string.
     * @param aDoc
-    * @return an <code>String</code> object
+    * @return the document serialized out as a human-readable String
     */
    public static String toString (Document aDoc) {
       StringWriter sw = new StringWriter();
       try {
-         XMLSerializer serial = new XMLSerializer(sw, new org.apache.xml.serialize.OutputFormat(aDoc,
-               "UTF-8", true));
+          /* TODO: This should be reviewed at some point to see if we can use the
+           * DOM3 LS capability and hence a standard way of doing this rather
+           * than using an internal implementation class.
+           */
+          OutputFormat format = new OutputFormat();
+                      format.setOmitXMLDeclaration(true);
+                      format.setIndenting(true);
+          XMLSerializer serial = new XMLSerializer(sw, format);
          serial.serialize(aDoc);
       } catch (Exception e) {
          Utility.logMessage("ERROR", "Utility::asString(): " + e, e);

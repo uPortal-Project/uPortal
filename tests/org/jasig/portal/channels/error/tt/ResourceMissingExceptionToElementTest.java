@@ -5,7 +5,10 @@
 
 package org.jasig.portal.channels.error.tt;
 
-import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 import org.jasig.portal.channels.error.error2xml.ResourceMissingExceptionToElement;
@@ -28,12 +31,14 @@ public final class ResourceMissingExceptionToElementTest extends
     /**
      * Test the aspects of the XML production for RMEs
      * that differ from basic Throwable representation.
+     * @throws FactoryConfigurationError
+     * @throws ParserConfigurationException
      */
-    public void testRMEToElement() {
+    public void testRMEToElement() throws ParserConfigurationException, FactoryConfigurationError {
         ResourceMissingException rme = 
             new ResourceMissingException("http://www.somewhere.com", 
                 "A description", "A message");
-        Document dom = new DocumentImpl();
+        Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         
         Element elem = this.rmeToElement.throwableToElement(rme, dom);
         

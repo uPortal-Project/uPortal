@@ -5,7 +5,10 @@
 
 package org.jasig.portal.channels.error.tt;
 
-import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.jasig.portal.ExceptionHelper;
 import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 import org.w3c.dom.Document;
@@ -37,7 +40,7 @@ public abstract class AbstractThrowableToElementTest extends TestCase {
         super.tearDown();
     }
     
-    public final void testThrowableToElement() {
+    public final void testThrowableToElement() throws ParserConfigurationException, FactoryConfigurationError {
 
         IThrowableToElement throwableToElement 
             = getThrowableToElementInstance();
@@ -49,7 +52,7 @@ public abstract class AbstractThrowableToElementTest extends TestCase {
         
         assertTrue(throwableToElement.supports(supportedThrowableClass));
         
-        Document dom = new DocumentImpl();
+        Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
        
         Element e = throwableToElement.throwableToElement(supportedThrowable, dom);
         assertEquals(dom, e.getOwnerDocument());
@@ -82,10 +85,12 @@ public abstract class AbstractThrowableToElementTest extends TestCase {
     
     /**
      * Test that throwableToElement throws IAE for an unsupported Throwable.
+     * @throws FactoryConfigurationError
+     * @throws ParserConfigurationException
      */
-    public final void testThrowableToElementUnsupported(){
+    public final void testThrowableToElementUnsupported() throws ParserConfigurationException, FactoryConfigurationError{
         try{
-            Document dom = new DocumentImpl();
+            Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             IThrowableToElement throwableToElement 
                 = getThrowableToElementInstance();
             Throwable unsupportedThrowable = unsupportedThrowable();
@@ -100,10 +105,12 @@ public abstract class AbstractThrowableToElementTest extends TestCase {
     /**
      * Test that calling throwableToElement() with a null Throwable argument
      * throws IllegalArgumentException
+     * @throws FactoryConfigurationError
+     * @throws ParserConfigurationException
      */
-    public final void testThrowableToElementNullThrowable() {
+    public final void testThrowableToElementNullThrowable() throws ParserConfigurationException, FactoryConfigurationError {
         try{
-            Document dom = new DocumentImpl();
+            Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             IThrowableToElement throwableToElement 
                 = getThrowableToElementInstance();
             throwableToElement.throwableToElement(null, dom);

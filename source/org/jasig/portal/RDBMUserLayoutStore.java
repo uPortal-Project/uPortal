@@ -33,7 +33,7 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
-import org.jasig.portal.utils.IPortalDocument;
+
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -161,8 +161,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
       } else {
         structure = doc.createElement("folder");
-        ((IPortalDocument)doc).putIdentifier(folderPrefix+structId, structure);
+        
+        structure.setIdAttribute("ID", true);
         structure.setAttribute("ID", folderPrefix + structId);
+        
         structure.setAttribute("name", name);
         structure.setAttribute("type", (type != null ? type : "regular"));
       }
@@ -600,6 +602,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         LayoutStructure ls = (LayoutStructure) layoutStructure.get(new Integer(structId));
         Element structure = ls.getStructureDocument(doc);
         root.appendChild(structure);
+        
+        String id = structure.getAttribute("ID");
+        if (id != null && ! id.equals("")) {
+            structure.setIdAttribute("ID", true);
+        }
+        
         if (!ls.isChannel()) {          // Folder
           createLayout(layoutStructure, doc,  structure, ls.getChildId());
         }

@@ -5,7 +5,10 @@
 
 package org.jasig.portal.channels.error.tt;
 
-import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 import org.jasig.portal.channels.error.error2xml.InternalTimeoutExceptionToElement;
@@ -30,11 +33,13 @@ public final class InternalTimeoutExceptionToElementTest
     /**
      * Test the child element "timeout".
      * Basic Element production testing accomplished in superclass.
+     * @throws FactoryConfigurationError
+     * @throws ParserConfigurationException
      */
-    public void testITEToElement() {
+    public void testITEToElement() throws ParserConfigurationException, FactoryConfigurationError {
         InternalTimeoutException ite = 
             new InternalTimeoutException("A test message", 40);
-        Document dom = new DocumentImpl();
+        Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         
         Element elem = this.exceptionToElement.throwableToElement(ite, dom);
         

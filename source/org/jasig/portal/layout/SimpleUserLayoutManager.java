@@ -18,7 +18,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 
-import org.apache.xpath.XPathAPI;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.w3c.dom.NodeList;
+
+
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
@@ -32,7 +38,7 @@ import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.IPortalDocument;
+
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -292,17 +298,12 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 parentElement.insertBefore(childElement,nextSibling);
             }
             markLayoutDirty();
+           
             // register element id
-            if (ulm instanceof IPortalDocument) {
-                ((IPortalDocument)ulm).putIdentifier(
-                    node.getId(),childElement);
-            } else {
-                StringBuffer msg = new StringBuffer(128);
-                msg.append("SimpleUserLayoutManager::addNode() : ");
-                msg.append("User Layout does not implement IPortalDocument, ");
-                msg.append("so element caching cannot be performed.");
-                log.error( msg.toString());
-            }
+          
+            childElement.setIdAttribute("ID", true);
+            childElement.setAttribute("ID",node.getId());
+            
 
             this.updateCacheKey();
             this.clearMarkings();
@@ -406,15 +407,20 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     public String getRootFolderId() {
-     try {
-      if ( rootNodeId == null ) {
-       Element rootNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//layout/folder");
-       rootNodeId = rootNode.getAttribute("ID");
-      }
-     } catch ( Exception e ) {
-         log.error( e);
-       }
-       return rootNodeId;
+        try {
+            if (this.rootNodeId == null) {
+                String expression = "//layout/folder";
+                XPathFactory fac = XPathFactory.newInstance();
+                XPath xpath = fac.newXPath();
+                Element rootNode = (Element) xpath.evaluate(expression, this
+                        .getUserLayoutDOM(), XPathConstants.NODE);
+
+                this.rootNodeId = rootNode.getAttribute("ID");
+            }
+        } catch (Exception e) {
+            log.error("Exception getting root folder id.", e);
+        }
+        return this.rootNodeId;
     }
 
     public synchronized boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
@@ -446,18 +452,10 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     Node parent=oldChannelElement.getParentNode();
                     parent.removeChild(oldChannelElement);
                     parent.insertBefore(newChannelElement,nextSibling);
+                    
                     // register new child instead
-                    if (ulm instanceof IPortalDocument) {
-                        ((IPortalDocument)ulm).putIdentifier(
-                            node.getId(),newChannelElement);
-                    } else {
-                        StringBuffer msg = new StringBuffer(128);
-                        msg.append("SimpleUserLayoutManager::updateNode() : ");
-                        msg.append("User Layout does not implement ");
-                        msg.append("IPortalDocument, ");
-                        msg.append("so element caching cannot be performed.");
-                        log.error( msg.toString());
-                    }
+                    newChannelElement.setIdAttribute("ID", true);
+                    newChannelElement.setAttribute("ID",node.getId());
 
                     // inform the listeners
                     LayoutEvent ev=new LayoutEvent(this,node);
@@ -491,18 +489,10 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     // replace the actual node
                     parent.removeChild(oldFolderElement);
                     parent.insertBefore(newFolderElement,nextSibling);
+                    
                     // register new child instead
-                    if (ulm instanceof IPortalDocument) {
-                        ((IPortalDocument)ulm).putIdentifier(
-                            node.getId(), newFolderElement);
-                    } else {
-                        StringBuffer msg = new StringBuffer(128);
-                        msg.append("SimpleUserLayoutManager::updateNode() : ");
-                        msg.append("User Layout does not implement ");
-                        msg.append("IPortalDocument, ");
-                        msg.append("so element caching cannot be performed.");
-                        log.error( msg.toString());
-                    }
+                    newFolderElement.setIdAttribute("ID", true);
+                     newFolderElement.setAttribute("ID",node.getId());
 
                     // inform the listeners
                     LayoutEvent ev=new LayoutEvent(this,node);
@@ -701,15 +691,19 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
      */
     public String getSubscribeId(String fname) throws PortalException {
         try {
-            Element fnameNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//channel[@fname=\'"+fname+"\']");
+            String expression = "//channel[@fname=\'"+fname+"\']";
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
+            Element fnameNode = (Element) xpath.evaluate(expression, 
+                    this.getUserLayoutDOM(), XPathConstants.NODE);
             if(fnameNode!=null) {
                 return fnameNode.getAttribute("ID");
             } else {
                 return null;
             }
-        } catch (Exception e) {
-            log.error( "SimpleUserLayoutManager::getSubcribeId() : encountered the following exception, while trying to identify subscribe channel id for the fname=\""+fname+"\" : "+e);
-            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            log.error( "SimpleUserLayoutManager::getSubcribeId() : " +
+                    "encountered exception while trying to identify subscribe channel id for the fname=\""+fname+"\" : ", e);
             return null;
         }
     }

@@ -20,6 +20,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+
 /**
  * CSecureInfo is designed to replace channel instances that are required
  * to be rendered securely, yet the request does not warrant it.
@@ -104,10 +107,14 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
         if (log.isDebugEnabled()) {
             try {
                 java.io.StringWriter outString = new java.io.StringWriter ();
-                org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+                /* This should be reviewed at some point to see if we can use the
+                 * DOM3 LS capability and hence a standard way of doing this rather
+                 * than using an internal implementation class.
+                 */
+                OutputFormat format = new OutputFormat();
                 format.setOmitXMLDeclaration(true);
                 format.setIndenting(true);
-                org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+                XMLSerializer xsl = new XMLSerializer(outString, format);                
                 xsl.serialize (doc);
                 log.debug(outString.toString());
             } catch (Exception e) {

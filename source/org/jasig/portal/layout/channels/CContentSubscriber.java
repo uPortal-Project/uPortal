@@ -18,7 +18,11 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xpath.XPathAPI;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import java.util.Vector;
@@ -180,7 +184,10 @@ public class CContentSubscriber extends FragmentManager {
 			String escapedSearchQuery = escapeQuotesForXpath(searchQuery);
 			// Clear all the previous state
 			if ( searchQuery != null ) {
-				NodeList nodeList = XPathAPI.selectNodeList(registry,"//*");
+                String expression = "//*";
+                XPathFactory fac = XPathFactory.newInstance();
+                XPath xpath = fac.newXPath();
+                NodeList nodeList = (NodeList) xpath.evaluate(expression, registry, XPathConstants.NODESET);
 				for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				  Element node = (Element) nodeList.item(k);
 				  node.setAttribute("search-selected","false");
@@ -198,7 +205,10 @@ public class CContentSubscriber extends FragmentManager {
 			  for ( int i = 0; i < xPathQueries.length; i++) {  
 			   if ( xPathQueries[i] != null ) {
 			    log.debug("xPathQueries["+i+"]: "+xPathQueries[i]);
-			    NodeList nodeList =  XPathAPI.selectNodeList(registry,xPathQueries[i]);
+                XPathFactory fac = XPathFactory.newInstance();
+                XPath xpath = fac.newXPath();
+                NodeList nodeList = (NodeList) xpath.evaluate(xPathQueries[i], registry, 
+                        XPathConstants.NODESET);
 			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				 Element node = (Element) nodeList.item(k);
 				 node.setAttribute("search-selected","true");
@@ -226,7 +236,10 @@ public class CContentSubscriber extends FragmentManager {
 			      xPathQuery = "//channel[../@ID='"+item.getCategoryId()+"' and @ID='"+item.getItemId()+"']";
 			     else 
 			      xPathQuery = "//*[@ID='"+item.getItemId()+"']";   
-				 Element elem = (Element) XPathAPI.selectSingleNode(registry,xPathQuery);
+                 XPathFactory fac = XPathFactory.newInstance();
+                 XPath xpath = fac.newXPath();
+                 Element elem = (Element) xpath.evaluate(xPathQuery,
+                         registry, XPathConstants.NODE);
 				 if ( elem != null ) 
 				  elem.setAttribute(attrName,(k==0)?"expanded":"condensed");
 				 else
@@ -271,7 +284,7 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
 		     
-	  } catch ( TransformerException e ) {
+	  } catch ( Exception e ) {
 	  	  throw new PortalException(e);	     
 	  }
 			 
