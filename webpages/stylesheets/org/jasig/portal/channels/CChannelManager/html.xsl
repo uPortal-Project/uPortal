@@ -782,7 +782,8 @@
   <!-- Display the parameters that are NOT subscribe-only-->
   <xsl:template match="parameter">
     <xsl:if test="@modify != 'subscribe-only'">
-    <!--<xsl:if test="type/@display != 'hidden'">-->
+    <xsl:choose>
+    <xsl:when test="type/@display != 'hidden'">
       <tr>
 <td align="center" valign="top">
 <xsl:call-template name="help"/>
@@ -810,6 +811,20 @@
                   </table>
                 </td>
               </tr>
+    </xsl:when>
+    <xsl:otherwise>
+            <xsl:choose>
+          <xsl:when test="type/@input='text'">
+            <xsl:call-template name="text"/>
+          </xsl:when>
+          <xsl:when test="type/@input='single-choice'">
+            <xsl:call-template name="single-choice"/>
+          </xsl:when>
+          <xsl:when test="type/@input='multi-choice'">
+            <xsl:call-template name="multi-choice"/>
+          </xsl:when>
+        </xsl:choose>
+    </xsl:otherwise></xsl:choose>
     </xsl:if>
   </xsl:template>
   <!-- displays checkbox for publisher to allow subscribe time modification-->
@@ -2180,7 +2195,7 @@
           <xsl:for-each select="/manageChannels/reviewChannel/params/step/channel/parameter">
           <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
           <xsl:variable name="value"><xsl:value-of select="@value"/></xsl:variable>
-
+<xsl:if test="/manageChannels/channelDef/params/step/parameter[name=$name]/type/@display != 'hidden'">
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@override = 'yes'">
@@ -2215,7 +2230,7 @@
 
         </td>
 
-      </tr>
+      </tr></xsl:if>
       </xsl:for-each>
 </xsl:otherwise>
 </xsl:choose>
