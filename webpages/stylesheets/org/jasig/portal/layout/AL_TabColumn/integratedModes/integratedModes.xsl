@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Copyright (c) 2004 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -36,12 +36,14 @@ Author: Justin Tilton, jet@immagic.com
 Version $Revision$
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="html" indent="no"/>
+	<xsl:output method="html" indent="yes"/>
+	<!--<xsl:output method="html" indent="no"/>-->
 	<!--These variables and parameters are used in all modes-->
 	<xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
 	<!--modes: view (default), preferences, fragment-->
 	<xsl:variable name="mode" select="/layout/@mode"/>
-	<xsl:variable name="mediaPath">media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable>
+	<xsl:variable name="mediaPath">/home/immdca13/workspace/portal/webpages/media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable>
+	<!--<xsl:variable name="mediaPath">media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable>-->
 	<xsl:param name="skin" select="'immII'"/>
 	<xsl:variable name="mediaPathSkin" select="concat($mediaPath,'/',$skin,'/skin')"/>
 	<!--<xsl:variable name="mediaPathBorder" select="concat($mediaPath,'/',$skin)"/>-->
@@ -1549,34 +1551,34 @@ Version $Revision$
 					<span class="uportal-label">
 						<xsl:if test="not($targetRestriction='no targetRestriction parameter')">
 							<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Cancel <xsl:value-of select="$targetAction"/></a>
-							<span> |<xsl:text/></span>
+							<span> |<xsl:text>&#160;</xsl:text></span>
 						</xsl:if>
 						<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Turn Preferences Off</a>
-						<span> |<xsl:text/></span>
+						<span> |<xsl:text>&#160;</xsl:text></span>
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">New Tab</a>
-						<span> |<xsl:text/></span>
+						<span> |<xsl:text>&#160;</xsl:text></span>
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=New Column">New Column</a>
-						<span> |<xsl:text/></span>
+						<span> |<xsl:text>&#160;</xsl:text></span>
 						<a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Add Content</a>
-						<span> |<xsl:text/></span>
+						<span> |<xsl:text>&#160;</xsl:text></span>
 						<a href="{$baseActionURL}?uP_fname=skinselector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Skins</a>
-						<span> |<xsl:text/></span>
+						<span> |<xsl:text>&#160;</xsl:text></span>
 						<a href="{$baseActionURL}?uP_fname=user-locales-selector&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">Languages</a>
 						<!--  Profiles action temporarily removed
-						<span>&#160;|<xsl:text> </xsl:text>
+						<span> |<xsl:text>&#160;</xsl:text>
 						</span>
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						-->
-						<xsl:if test="alternateLayouts">
-							<span> |<xsl:text/></span>Manage: <select name="select" class="uportal-input-text uportal-background-content">
+						<xsl:if test="fragments">
+							<span> |<xsl:text>&#160;</xsl:text></span>Manage: <select name="select" class="uportal-input-text uportal-background-content">
 								<option selected="selected">My layout</option>
-								<xsl:for-each select="alternateLayouts/alternate">
+								<xsl:for-each select="fragments/fragment">
 									<option>
-										<xsl:value-of select="@name"/>
+										<xsl:value-of select="@desc"/>
 									</option>
 								</xsl:for-each></select>
 							<!--<option><xsl:value-of select="New fragment"/></option>--><input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/>
-							<!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> --><span> |<xsl:text/></span>
+							<!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> --><span> |<xsl:text>&#160;</xsl:text></span>
 							<a href="javascript:alert('[New fragment] function is under construction')">New fragment</a>
 						</xsl:if>
 					</span>
@@ -2245,8 +2247,4 @@ Version $Revision$
 			</td>
 		</form>
 	</xsl:template>
-</xsl:stylesheet><!-- Stylus Studio meta-information - (c)1998-2003. Sonic Software Corporation. All rights reserved.
-<metaInformation>
-<scenarios/><MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
-</metaInformation>
--->
+</xsl:stylesheet>
