@@ -73,9 +73,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                                                "EXTERNAL_ID=?,CHAN_ID=?,NAME=?,TYPE=?,HIDDEN=?,IMMUTABLE=?,UNREMOVABLE=?,GROUP_KEY=?,"+
                                                                "PRIORITY=?,FRAGMENT_ID=?,FRAGMENT_NODE_ID=? WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=?";
   protected static final String FRAGMENT_RESTRICTION_UPDATE_SQL = "UPDATE UP_FRAGMENT_RESTRICTIONS SET RESTRICTION_VALUE=?"+
-                                  " WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?";
+                                  " WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?";
   protected static final String LAYOUT_RESTRICTION_UPDATE_SQL = "UPDATE UP_LAYOUT_RESTRICTIONS SET RESTRICTION_VALUE=?"+
-                                  " WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?";
+                                  " WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?";
   protected static final String CHANNEL_PARAM_UPDATE_SQL = "UPDATE UP_CHANNEL_PARAM SET CHAN_PARM_DESC=?,CHAN_PARM_VAL=?,CHAN_PARM_OVRD=?" +
                                   " WHERE CHAN_ID=? AND CHAN_PARM_NM=?";
   protected static final String CHANNEL_UPDATE_SQL = "UPDATE UP_CHANNEL SET CHAN_TITLE=?,CHAN_NAME=?,CHAN_DESC=?,CHAN_CLASS=?,CHAN_TYPE_ID=?,"+
@@ -87,9 +87,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
   protected static final String LAYOUT_ADD_SQL = "INSERT INTO UP_LAYOUT_STRUCT_AGGR (LAYOUT_ID,USER_ID,NODE_ID,NEXT_NODE_ID,PREV_NODE_ID,CHLD_NODE_ID,PRNT_NODE_ID,"+
                                                                "EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE,GROUP_KEY,PRIORITY,FRAGMENT_ID,FRAGMENT_NODE_ID)"+
                                                                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-  protected static final String FRAGMENT_RESTRICTION_ADD_SQL = "INSERT INTO UP_FRAGMENT_RESTRICTIONS (RESTRICTION_TYPE,NODE_ID,FRAGMENT_ID,RESTRICTION_VALUE,RESTRICTION_TREE_PATH)"+
+  protected static final String FRAGMENT_RESTRICTION_ADD_SQL = "INSERT INTO UP_FRAGMENT_RESTRICTIONS (RESTRICTION_NAME,NODE_ID,FRAGMENT_ID,RESTRICTION_VALUE,RESTRICTION_TREE_PATH)"+
                                                                " VALUES (?,?,?,?,?)";
-  protected static final String LAYOUT_RESTRICTION_ADD_SQL = "INSERT INTO UP_LAYOUT_RESTRICTIONS (RESTRICTION_TYPE,LAYOUT_ID,USER_ID,NODE_ID,RESTRICTION_VALUE,RESTRICTION_TREE_PATH)"+
+  protected static final String LAYOUT_RESTRICTION_ADD_SQL = "INSERT INTO UP_LAYOUT_RESTRICTIONS (RESTRICTION_NAME,LAYOUT_ID,USER_ID,NODE_ID,RESTRICTION_VALUE,RESTRICTION_TREE_PATH)"+
                                                                " VALUES (?,?,?,?,?,?)";
   protected static final String CHANNEL_PARAM_ADD_SQL = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID,CHAN_PARM_NM,CHAN_PARM_DESC,CHAN_PARM_VAL,CHAN_PARM_OVRD)"+
                                                         " VALUES (?,?,?,?,?)";
@@ -662,7 +662,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
            for ( ;restrictions.hasMoreElements(); ) {
              IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
-             psAddRestriction.setInt(1,restriction.getRestrictionType());
+             psAddRestriction.setString(1,restriction.getName());
              psAddRestriction.setInt(2,nodeId);
              psAddRestriction.setInt(3,fragmentId);
              psAddRestriction.setString(4,restriction.getRestrictionExpression());
@@ -682,7 +682,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             for ( ;restrictions.hasMoreElements(); ) {
              IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
-             psAddRestriction.setInt(1,restriction.getRestrictionType());
+             psAddRestriction.setString(1,restriction.getName());
              psAddRestriction.setInt(2,layoutId);
              psAddRestriction.setInt(3,userId);
              psAddRestriction.setInt(4,nodeId);
@@ -1041,7 +1041,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             psUpdateRestriction.setString(1,restriction.getRestrictionExpression());
             psUpdateRestriction.setInt(2,fragmentId);
             psUpdateRestriction.setInt(3,nodeId);
-            psUpdateRestriction.setInt(4,restriction.getRestrictionType());
+            psUpdateRestriction.setString(4,restriction.getName());
 
             String path = restriction.getRestrictionPath();
             psUpdateRestriction.setString(5,path);
@@ -1060,7 +1060,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             psUpdateRestriction.setInt(2,layoutId);
             psUpdateRestriction.setInt(3,userId);
             psUpdateRestriction.setInt(4,nodeId);
-            psUpdateRestriction.setInt(5,restriction.getRestrictionType());
+            psUpdateRestriction.setString(5,restriction.getName());
 
             String path = restriction.getRestrictionPath();
             psUpdateRestriction.setString(6,path);
@@ -1234,14 +1234,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            PreparedStatement  psFragmentRestr =
              con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS"+
-                                  " WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?");
+                                  " WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?");
            Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
             IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
             psFragmentRestr.setInt(1,fragmentId);
             psFragmentRestr.setInt(2,nodeId);
-            psFragmentRestr.setInt(3,restriction.getRestrictionType());
+            psFragmentRestr.setString(3,restriction.getName());
 
             String path = restriction.getRestrictionPath();
             psFragmentRestr.setString(4,path);
@@ -1257,7 +1257,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            PreparedStatement  psRestr =
              con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS"+
-                                  " WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_TYPE=? AND RESTRICTION_TREE_PATH=?");
+                                  " WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?");
 
            Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
@@ -1266,7 +1266,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             psRestr.setInt(1,layoutId);
             psRestr.setInt(2,userId);
             psRestr.setInt(3,nodeId);
-            psRestr.setInt(4,restriction.getRestrictionType());
+            psRestr.setString(4,restriction.getName());
 
             String path = restriction.getRestrictionPath();
             psRestr.setString(5,path);
@@ -1851,9 +1851,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // Instantiating the layout and setting the layout ID
         layout = new AggregatedLayout ( layoutId + "" );
 
-        String restrLayoutSQL = "SELECT RESTRICTION_TYPE, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_LAYOUT_RESTRICTIONS "+
+        String restrLayoutSQL = "SELECT RESTRICTION_NAME, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_LAYOUT_RESTRICTIONS "+
                                       "WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId+" AND NODE_ID=?";
-        String restrFragmentSQL = "SELECT RESTRICTION_TYPE, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
+        String restrFragmentSQL = "SELECT RESTRICTION_NAME, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
                                       "WHERE FRAGMENT_ID=? AND NODE_ID=?";
 
         int firstStructId = -1;
@@ -2095,12 +2095,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               }
               ResultSet rsRestr = psRestr.executeQuery();
               while (rsRestr.next()) {
-                  int restrType = rsRestr.getInt(1);
+                  String restrName = rsRestr.getString(1);
                   String restrExp = rsRestr.getString(2);
                   String restrPath = rsRestr.getString(3);
                   if ( restrPath == null || restrPath.trim().length() == 0 )
                     restrPath = IUserLayoutRestriction.LOCAL_RESTRICTION_PATH;
-                  IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrType,restrExp,restrPath);
+                  IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrName,restrExp,restrPath);
                   nodeDesc.addRestriction(restriction);
               }
                rsRestr.close();
@@ -2456,7 +2456,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //        int layoutId=profile.getLayoutId();
         // but for now:
 
-        String restrFragmentSQL = "SELECT RESTRICTION_TYPE, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
+        String restrFragmentSQL = "SELECT RESTRICTION_NAME, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
                                       "WHERE FRAGMENT_ID=? AND NODE_ID=?";
 
         int firstStructId = -1;
@@ -2644,12 +2644,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               ResultSet rsRestr = psRestr.executeQuery();
               while (rsRestr.next()) {
-                  int restrType = rsRestr.getInt(1);
+                  String restrName = rsRestr.getString(1);
                   String restrExp = rsRestr.getString(2);
                   String restrPath = rsRestr.getString(3);
                   if ( restrPath == null || restrPath.trim().length() == 0 )
                     restrPath = IUserLayoutRestriction.LOCAL_RESTRICTION_PATH;
-                  IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrType,restrExp,restrPath);
+                  IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrName,restrExp,restrPath);
                   nodeDesc.addRestriction(restriction);
               }
                rsRestr.close();

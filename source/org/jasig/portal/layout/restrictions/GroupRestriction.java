@@ -35,7 +35,7 @@ public class GroupRestriction extends ALRestriction {
          private static IGroupService groupService;
          private static IGroupServiceFactory groupServiceFactory;
 
-         public GroupRestriction(String nodePath) throws PortalException {
+         public GroupRestriction(String name,String nodePath) throws PortalException {
            super(nodePath);
            try {
             if ( groupServiceFactory == null )
@@ -47,19 +47,9 @@ public class GroupRestriction extends ALRestriction {
             }
          }
 
-         public GroupRestriction() throws PortalException {
-           this(LOCAL_RESTRICTION_PATH);
+         public GroupRestriction(String name) throws PortalException {
+           this(name,LOCAL_RESTRICTION_PATH);
          }
-
-
-         /**
-           * Returns the type of the current restriction
-           * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-          */
-         public int getRestrictionType() {
-           return RestrictionTypes.GROUP_RESTRICTION;
-         }
-
 
           /**
             * Parses the restriction expression of the current node

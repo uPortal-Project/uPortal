@@ -19,21 +19,12 @@ import org.jasig.portal.layout.IUserLayoutNodeDescription;
 public class ImmutableRestriction extends BooleanRestriction {
 
 
-         public ImmutableRestriction(String nodePath) {
-           super(nodePath);
+         public ImmutableRestriction(String name,String nodePath) {
+           super(name,nodePath);
          }
 
-         public ImmutableRestriction() {
-           super();
-         }
-
-
-         /**
-           * Returns the type of the current restriction
-           * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-          */
-         public int getRestrictionType() {
-           return RestrictionTypes.IMMUTABLE_RESTRICTION;
+         public ImmutableRestriction(String name) {
+           super(name);
          }
 
 

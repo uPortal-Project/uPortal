@@ -125,7 +125,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
               // Adding the user priority restriction
               if ( nodeDesc != null ) {
                int[] priorityRange = UserPriorityManager.getPriorityRange(person);	  	
-			   PriorityRestriction restriction = new PriorityRestriction(); 
+			   PriorityRestriction restriction = (PriorityRestriction) UserLayoutRestrictionFactory.createRestriction(RestrictionTypes.PRIORITY_RESTRICTION);
 			   restriction.setRestriction(priorityRange[0],priorityRange[1]);
                nodeDesc.addRestriction(restriction);
               } 
@@ -203,41 +203,41 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
    /**
      * Checks the restriction specified by the parameters below
      * @param nodeId a <code>String</code> node ID
-     * @param restrictionType a restriction type
+     * @param restrictionName a restriction name
      * @param restrictionPath a <code>String</code> restriction path
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  protected boolean checkRestriction(String nodeId, int restrictionType, String restrictionPath, String propertyValue) throws PortalException {
+  protected boolean checkRestriction(String nodeId, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
     ALNode node = getLayoutNode(nodeId);
-    return (node!=null)?checkRestriction(node,restrictionType,restrictionPath,propertyValue):true;
+    return (node!=null)?checkRestriction(node,restrictionName,restrictionPath,propertyValue):true;
   }
 
 
   /**
      * Checks the local restriction specified by the parameters below
      * @param nodeId a <code>String</code> node ID
-     * @param restrictionType a restriction type
+     * @param restrictionName a restriction name
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  protected boolean checkRestriction(String nodeId, int restrictionType, String propertyValue ) throws PortalException {
-    return (nodeId!=null)?checkRestriction(nodeId, restrictionType, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue):true;
+  protected boolean checkRestriction(String nodeId, String restrictionName, String propertyValue ) throws PortalException {
+    return (nodeId!=null)?checkRestriction(nodeId, restrictionName, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue):true;
   }
 
   /**
      * Checks the restriction specified by the parameters below
      * @param node a <code>ALNode</code> node to be checked
-     * @param restrictionType a restriction type
+     * @param restrictionName a restriction name
      * @param restrictionPath a <code>String</code> restriction path
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  protected boolean checkRestriction(ALNode node, int restrictionType, String restrictionPath, String propertyValue) throws PortalException {
-    IUserLayoutRestriction restriction = node.getRestriction(UserLayoutRestriction.getRestrictionName(restrictionType,restrictionPath));
+  protected boolean checkRestriction(ALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
+    IUserLayoutRestriction restriction = node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
     if ( restriction != null )
      return restriction.checkRestriction(propertyValue);
      return true;
@@ -279,8 +279,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          // check other restrictions except priority and depth
-         if ( ( restriction.getRestrictionType() & (RestrictionTypes.DEPTH_RESTRICTION | RestrictionTypes.PRIORITY_RESTRICTION )) == 0
-                && !restriction.checkRestriction(node) ) {
+         if ( !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
+         	  !restriction.getName().equals(RestrictionTypes.PRIORITY_RESTRICTION) &&
+              !restriction.checkRestriction(node) ) {
             moveNodeToLostFolder(nodeId);
             break;
          }
@@ -300,7 +301,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
           for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; ) {
            ALNode nextNode = getLayoutNode(nextId);
            String tmpNodeId = nextNode.getNextNodeId();
-           if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
+           if ( !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
                 !restriction.checkRestriction(nextNode) ) {
               moveNodeToLostFolder(nextId);
            }
@@ -316,7 +317,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        ALNode parentNode = getLayoutNode(parentNodeId);
        for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-          if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
+          if (  !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
                 !restriction.checkRestriction(parentNode) ) {
               moveNodeToLostFolder(nodeId);
               break;
@@ -353,13 +354,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   /**
      * Checks the local restriction specified by the parameters below
      * @param node a <code>ALNode</code> node to be checked
-     * @param restrictionType a restriction type
+     * @param restrictionName a restriction name
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  protected boolean checkRestriction(ALNode node, int restrictionType, String propertyValue ) throws PortalException {
-    return checkRestriction(node, restrictionType, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue);
+  protected boolean checkRestriction(ALNode node, String restrictionName, String propertyValue ) throws PortalException {
+    return checkRestriction(node, restrictionName, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue);
   }
 
 
@@ -394,7 +395,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      Collection restrictions = parentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-         if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
+         if (   !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
                 !restriction.checkRestriction(newNode) )
             return false;
      }
@@ -403,7 +404,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      restrictions = newNode.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-          if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
+          if (  !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
                 !restriction.checkRestriction(parentNode) )
             return false;
      }
@@ -447,7 +448,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       Collection restrictions = newParentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-         if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
+         if (   !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
                 !restriction.checkRestriction(node) )
             return false;
       }
@@ -456,7 +457,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       restrictions = node.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
-          if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
+          if (  !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
                 !restriction.checkRestriction(newParentNode) )
             return false;
       }
@@ -566,13 +567,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   /**
      * Gets the restriction specified by the parameters below
      * @param node a <code>ALNode</code> node
-     * @param restrictionType a restriction type
+     * @param restrictionName a restriction name
      * @param restrictionPath a <code>String</code> restriction path
      * @return a <code>IUserLayoutRestriction</code> instance
      * @exception PortalException if an error occurs
      */
-  private static IUserLayoutRestriction getRestriction( ALNode node, int restrictionType, String restrictionPath ) throws PortalException {
-     return node.getRestriction(UserLayoutRestriction.getRestrictionName(restrictionType,restrictionPath));
+  private static IUserLayoutRestriction getRestriction( ALNode node, String restrictionName, String restrictionPath ) throws PortalException {
+     return node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
   }
 
    /**
@@ -953,7 +954,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
              String restrType = childNode.getAttribute("type");
 
              if ( restrValue != null ) {
-              IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(CommonUtils.parseInt(restrType),restrValue,restrPath);
+              IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrType,restrValue,restrPath);
               nodeDesc.addRestriction(restriction);
              }
             }

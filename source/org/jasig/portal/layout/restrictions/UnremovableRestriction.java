@@ -20,16 +20,12 @@ import org.jasig.portal.layout.IUserLayoutNodeDescription;
 public class UnremovableRestriction extends BooleanRestriction {
 
 
-         public UnremovableRestriction(String nodePath) {
-           super(nodePath);
+         public UnremovableRestriction(String name,String nodePath) {
+           super(name,nodePath);
          }
-
-         /**
-           * Returns the type of the current restriction
-           * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-          */
-         public int getRestrictionType() {
-           return RestrictionTypes.UNREMOVABLE_RESTRICTION;
+         
+         public UnremovableRestriction(String name) {
+            super(name);
          }
 
          /**

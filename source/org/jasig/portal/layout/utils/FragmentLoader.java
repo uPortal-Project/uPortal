@@ -9,7 +9,6 @@ package org.jasig.portal.layout.utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +24,7 @@ import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.layout.IAggregatedUserLayoutStore;
+import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.EntityIdentifier;
@@ -62,7 +62,7 @@ public class FragmentLoader {
         HashMap rNames=new HashMap();
 
         // compile a table of restriction types
-        Connection con=null;
+        /*Connection con=null;
         try {
             con=RDBMServices.getConnection();
             if(con!=null) {
@@ -87,8 +87,9 @@ public class FragmentLoader {
             if(con!=null) {
                 RDBMServices.releaseConnection(con);
             }
-        }
-
+        }*/
+        
+        rNames.putAll(UserLayoutRestrictionFactory.getAvailableRestrictions());
 
         // instantiate transfomer
         SAXTransformerFactory saxTFactory=(SAXTransformerFactory) TransformerFactory.newInstance();
@@ -358,25 +359,18 @@ public class FragmentLoader {
 
             } else if(qName.equals("restriction")) { // this can also be made more robust by adding another mode for "restrictions" element
                 // look up restriction name in the DB
-                String restrType;
                 if(ai.getIndex("type")!=-1) {
-                    // restriction type was specified
-                    if(!rMap.containsValue(ai.getValue("type"))) {
-                        System.out.println("ERROR: specified restriction type \""+ai.getValue("type")+"\" does not exist ! Either correct the type value, or consider using match by restriction name (i.e. <restriction name=\"priority\" ...)");
-                        System.exit(1);
-                    } else {
-                        if(ai.getIndex("name")!=-1 && rMap.containsKey(ai.getValue("name")) && (!ai.getValue("type").equals((String)rMap.get(ai.getValue("name"))))) {
+                        // restriction type was specified
+                        if(ai.getIndex("name")!=-1 && rMap.containsKey(ai.getValue("name")) && (!ai.getValue("type").equals(ai.getValue("name")))) {
                             System.out.println("ERROR: specified restriction type \""+ai.getValue("type")+"\" does not match the specified name \""+ai.getValue("name")+"\" in the database. name \""+ai.getValue("name")+"\" matches restriction type \""+(String)rMap.get(ai.getValue("name"))+"\"");
                             System.exit(1);
                         } else {
                             super.startElement(uri,localName,qName,ai);
                         }
-                    }
                 } else {
                     String restrName=ai.getValue("name");
-                    restrType=(String)rMap.get(restrName);
-                    if(restrType!=null) {
-                        ai.addAttribute(uri,"type","type","CDATA",restrType);
+                    if(restrName!=null) {
+                        ai.addAttribute(uri,"type","type","CDATA",restrName);
                     } else {
                         System.out.println("ERROR: config file specifies a restriction name \""+restrName+"\" which is not registered with the database!");
                         System.exit(1);

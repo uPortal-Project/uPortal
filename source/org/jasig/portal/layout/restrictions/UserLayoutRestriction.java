@@ -17,18 +17,36 @@ import org.jasig.portal.layout.ILayoutNode;
 
 public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 
-
+  private String name;	
   private String restrictionExpression;
   protected String nodePath;
 
-  public UserLayoutRestriction() {
-     this(LOCAL_RESTRICTION_PATH);
+  public UserLayoutRestriction( String name ) {
+     this(name,LOCAL_RESTRICTION_PATH);
   }
 
-  public UserLayoutRestriction( String nodePath ) {
+  public UserLayoutRestriction( String name, String nodePath ) {
+  	 this.name = name;
      this.nodePath = nodePath;
   }
 
+  /**
+   * Sets the name of the current restriction
+   * @param a <code>String</code> name
+   */
+  public void setName( String name ) {
+  	this.name = name;
+  }
+  
+  /**
+   * Returns the name of the current restriction
+   * @return a <code>String</code> name
+   */
+  public String getName() {
+  	return name;
+  }
+  
+  
   /**
    * Sets the restriction path
    * @param restrictionPath a <code>String</code> path
@@ -61,41 +79,35 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   	return true;
   }
 
-  
-  /**
-   * Returns the type of the current restriction
-   * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-   */
-  public abstract int getRestrictionType();
 
   /**
      * Gets the restriction name
      * @return a <code>String</code> restriction name
      */
-  public String getRestrictionName() {
-     return getRestrictionName(getRestrictionType(),nodePath);
+  public String getUniqueKey() {
+     return getUniqueKey(getName(),nodePath);
   }
 
 
   /**
-     * Gets the restriction name based on a restriction type and a node path
-     * @param restrictionType a restriction type
+     * Gets the restriction name based on a restriction name and a node path
+     * @param restrictionName a restriction name
      * @param nodePath a <code>String</code> node path
      * @return a <code>String</code> restriction name
      */
-  public static String getRestrictionName( int restrictionType, String nodePath ) {
+  public static String getUniqueKey( String restrictionName, String nodePath ) {
   	 if ( nodePath!=null && nodePath.length() > 0  ) 
   	 	nodePath = LOCAL_RESTRICTION_PATH;
-     return restrictionType+":"+nodePath;
+     return restrictionName+":"+nodePath;
   }
 
   /**
    * Gets the local restriction name based on a restriction type
-   * @param restrictionType a restriction type
+   * @param restrictionName a restriction name
    * @return a <code>String</code> restriction name
    */
-  public static String getRestrictionName( int restrictionType) {
-	 return getRestrictionName(restrictionType,LOCAL_RESTRICTION_PATH);
+  public static String getUniqueKey( String restrictionName) {
+	 return getUniqueKey(restrictionName,LOCAL_RESTRICTION_PATH);
   }
 
   

@@ -14,11 +14,11 @@ package org.jasig.portal.layout.restrictions;
 
 public interface RestrictionTypes {
 
-  public static final int PRIORITY_RESTRICTION = 1;
-  public static final int DEPTH_RESTRICTION = 2;
-  public static final int GROUP_RESTRICTION = 4;
-  public static final int IMMUTABLE_RESTRICTION = 8;
-  public static final int UNREMOVABLE_RESTRICTION = 16;
-  public static final int HIDDEN_RESTRICTION = 32;
+  public static final String PRIORITY_RESTRICTION = "priority";
+  public static final String DEPTH_RESTRICTION = "depth";
+  public static final String GROUP_RESTRICTION = "group";
+  public static final String IMMUTABLE_RESTRICTION = "immutable";
+  public static final String UNREMOVABLE_RESTRICTION = "unremovable";
+  public static final String HIDDEN_RESTRICTION = "hidden";
 
 }

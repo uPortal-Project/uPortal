@@ -27,21 +27,13 @@ public class DepthRestriction extends ALRestriction {
 
          private Integer[] minDepthArray, maxDepthArray, depthArray;
 
-         public DepthRestriction(String nodePath) {
-            super(nodePath);
+         public DepthRestriction(String name,String nodePath) {
+            super(name,nodePath);
          }
 
-         public DepthRestriction() {
-            super();
+         public DepthRestriction(String name) {
+            super(name);
          }
-
-         /**
-           * Returns the type of the current restriction
-           * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-           */
-          public int getRestrictionType() {
-           return RestrictionTypes.DEPTH_RESTRICTION;
-          }
 
           /**
             * Parses the restriction expression of the current node

@@ -19,22 +19,13 @@ import org.jasig.portal.layout.IUserLayoutNodeDescription;
 public class HiddenRestriction extends BooleanRestriction {
 
 
-         public HiddenRestriction(String nodePath) {
-           super(nodePath);
+         public HiddenRestriction(String name,String nodePath) {
+           super(name,nodePath);
          }
 
-         public HiddenRestriction() {
-           super();
+         public HiddenRestriction(String name) {
+           super(name);
          }
-
-         /**
-           * Returns the type of the current restriction
-           * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-          */
-         public int getRestrictionType() {
-           return RestrictionTypes.HIDDEN_RESTRICTION;
-         }
-
 
          /**
            * Gets the boolean property value for the specified node

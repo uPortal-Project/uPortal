@@ -39,18 +39,18 @@ public interface IUserLayoutRestriction {
   // The children restriction path, could be setup to all children 
   public final static String CHILDREN_RESTRICTION_PATH = "children";
 
-
+  
   /**
-     * Returns the type of the current restriction
-     * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-     */
-  public int getRestrictionType();
+   * Returns the name of the current restriction
+   * @return a <code>String</code> name
+   */
+  public String getName();
 
    /**
-     * Gets the restriction name
-     * @return a <code>String</code> restriction name
+     * Gets the unique key of the current restriction
+     * @return a <code>String</code> unique key
      */
-  public String getRestrictionName();
+  public String getUniqueKey();
 
 
   /**

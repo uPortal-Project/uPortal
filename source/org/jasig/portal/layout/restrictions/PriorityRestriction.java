@@ -25,12 +25,12 @@ public class PriorityRestriction extends ALRestriction {
 
          private int minPriority, maxPriority;
 
-         public PriorityRestriction(String nodePath) {
-           super(nodePath);
+         public PriorityRestriction(String name,String nodePath) {
+           super(name,nodePath);
          }
 
-         public PriorityRestriction() {
-           super();
+         public PriorityRestriction(String name) {
+           super(name);
          }
 
          /**
@@ -56,15 +56,6 @@ public class PriorityRestriction extends ALRestriction {
           */
          public int[] getRange() {
             return new int[] { minPriority, maxPriority };
-         }
-
-
-         /**
-           * Returns the type of the current restriction
-           * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
-          */
-         public int getRestrictionType() {
-          return RestrictionTypes.PRIORITY_RESTRICTION;
          }
 
           /**
@@ -115,7 +106,7 @@ public class PriorityRestriction extends ALRestriction {
 
           // if we have a related priority restriction we should check the priority ranges
           if ( nodePath != null && !nodePath.equals(LOCAL_RESTRICTION_PATH) ) {
-             PriorityRestriction restriction = (PriorityRestriction) alNode.getRestriction(getRestrictionName(RestrictionTypes.PRIORITY_RESTRICTION));
+             PriorityRestriction restriction = (PriorityRestriction) alNode.getRestriction(getUniqueKey(RestrictionTypes.PRIORITY_RESTRICTION));
              if ( restriction != null ) {
               int[] range = restriction.getRange();
               if ( minPriority > range[1] || maxPriority < range[0] )

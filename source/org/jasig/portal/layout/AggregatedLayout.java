@@ -86,21 +86,21 @@ public class AggregatedLayout implements IAggregatedLayout {
       Hashtable restrictions = nodeDesc.getRestrictions();
       for ( Enumeration e = restrictions.keys(); e.hasMoreElements(); ) {
        IUserLayoutRestriction restriction = (IUserLayoutRestriction ) e.nextElement();
-       if ( ( restriction.getRestrictionType() & restrictionMask ) > 0 ) {
+       //if ( ( restriction.getRestrictionType() & restrictionMask ) > 0 ) {
          AttributesImpl paramAttrs = new AttributesImpl();
          paramAttrs.addAttribute("","path","path","CDATA",restriction.getRestrictionPath());
          // we have to re-scale the priority restriction for the UI
-         if ( ( restriction.getRestrictionType() & RestrictionTypes.PRIORITY_RESTRICTION ) > 0 ) {
+         if ( restriction.getName().equals(RestrictionTypes.PRIORITY_RESTRICTION) ) {
           PriorityRestriction priorRestriction = (PriorityRestriction) restriction;
           paramAttrs.addAttribute("","value","value","CDATA",((int)priorRestriction.getMinValue()/IAggregatedUserLayoutManager.PRIORITY_COEFF)+"-"+
                                                              ((int)priorRestriction.getMaxValue()/IAggregatedUserLayoutManager.PRIORITY_COEFF));
          } else
           paramAttrs.addAttribute("","value","value","CDATA",restriction.getRestrictionExpression());
 
-         paramAttrs.addAttribute("","type","type","CDATA",restriction.getRestrictionType()+"");
+         paramAttrs.addAttribute("","type","type","CDATA",restriction.getName()+"");
          contentHandler.startElement("",RESTRICTION,RESTRICTION,paramAttrs);
          contentHandler.endElement("",RESTRICTION,RESTRICTION);
-       }
+       //}
       }
   }
 

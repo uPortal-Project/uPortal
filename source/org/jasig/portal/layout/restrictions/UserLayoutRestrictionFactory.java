@@ -8,10 +8,7 @@ package org.jasig.portal.layout.restrictions;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.ResourceLoader;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Properties;
-import java.util.Enumeration;
 
 /**
  * UserLayoutRestrictionFactory class.
@@ -25,69 +22,48 @@ public class UserLayoutRestrictionFactory {
 	
  private static final String RESTRICTIONS_PATH = 	"/properties/al/restrictions.properties";
 	
- private static Set activeRestrictions;
+ private static Properties activeRestrictions;
  
- private static void init() throws PortalException {
+ static {
   try {	
- 	activeRestrictions = new HashSet();
- 	Properties props = ResourceLoader.getResourceAsProperties(UserLayoutRestrictionFactory.class,RESTRICTIONS_PATH);
- 	for ( Enumeration elems = props.keys(); elems.hasMoreElements(); ) {
- 	  	 String restrClassName = elems.nextElement().toString(); 
- 	  	 if ( "Y".equalsIgnoreCase(props.getProperty(restrClassName)) )
- 	  	   activeRestrictions.add(restrClassName);
- 	}
+ 	 activeRestrictions = ResourceLoader.getResourceAsProperties(UserLayoutRestrictionFactory.class,RESTRICTIONS_PATH);
   } catch ( Exception e ) {
-  	 throw new PortalException ( "init: " + e.toString() ); 
-  }
- }
- 
-	
- public static IUserLayoutRestriction createRestriction ( String className, String restrictionValue, String restrictionPath ) throws PortalException {
-  if ( activeRestrictions == null )
-  	init();
-  if ( !activeRestrictions.contains(className) )
- 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + className +"'" );	
-  try {	
- 	IUserLayoutRestriction restriction = (IUserLayoutRestriction) Class.forName(className).newInstance();
- 	restriction.setRestrictionExpression(restrictionValue);
- 	restriction.setRestrictionPath(restrictionPath);
- 	return restriction;
-  } catch ( Exception e ) {
-  	  throw new PortalException ( "createRestriction: " + e.toString() );
+  	 throw new RuntimeException ( "init: " + e.toString() ); 
   }
  }
 
- public static IUserLayoutRestriction createRestriction( int restrictionType, String restrictionValue, String restrictionPath ) throws PortalException {
-    IUserLayoutRestriction restriction = null;
-    switch ( restrictionType ) {
-      case RestrictionTypes.DEPTH_RESTRICTION:
-        restriction = new DepthRestriction(restrictionPath);
-        break;
-      case RestrictionTypes.GROUP_RESTRICTION:
-        restriction = new GroupRestriction(restrictionPath);
-        break;
-      case RestrictionTypes.HIDDEN_RESTRICTION:
-        restriction = new HiddenRestriction(restrictionPath);
-        break;
-      case RestrictionTypes.IMMUTABLE_RESTRICTION:
-        restriction = new ImmutableRestriction(restrictionPath);
-        break;
-      case RestrictionTypes.PRIORITY_RESTRICTION:
-        restriction = new PriorityRestriction(restrictionPath);
-        break;
-      case RestrictionTypes.UNREMOVABLE_RESTRICTION:
-        restriction = new UnremovableRestriction(restrictionPath);
-        break;
-    }
-        if ( restriction == null )
-          throw new PortalException ("Cannot create restriction for the given type = " + restrictionType );
-    
-        restriction.setRestrictionExpression(restrictionValue);
-        return restriction;
+ private static IUserLayoutRestriction getRestriction ( String className ) throws PortalException {
+ 	  if ( !activeRestrictions.contains(className) )
+ 	 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + className +"'" );	
+ 	  try {	
+ 	 	IUserLayoutRestriction restriction = (IUserLayoutRestriction) Class.forName(className).newInstance();
+ 	 	return restriction;
+ 	  } catch ( Exception e ) {
+ 	  	  throw new PortalException ( "createRestriction: " + e.toString() );
+ 	  }
  }
  
- public static IUserLayoutRestriction createRestriction( int restrictionType, String restrictionValue ) throws PortalException {
-        return createRestriction(restrictionType,restrictionValue,IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);     
+ public static Properties getAvailableRestrictions() {
+ 	return activeRestrictions;
  }
+ 
+ 
+ public static IUserLayoutRestriction createRestriction( String restrictionName ) throws PortalException {
+ 	if ( !activeRestrictions.containsKey(restrictionName) )
+ 	 	throw new PortalException ("The allowed set of restrictions does not contain the restriction '" + restrictionName +"'" );	
+ 	return getRestriction(activeRestrictions.getProperty(restrictionName));
+ }
+ 
+ public static IUserLayoutRestriction createRestriction( String restrictionName, String restrictionValue, String restrictionPath ) throws PortalException {
+ 	IUserLayoutRestriction restriction = createRestriction ( restrictionName );
+ 	restriction.setRestrictionExpression(restrictionValue);
+ 	restriction.setRestrictionPath(restrictionPath);
+ 	return restriction;
+ }
+ 
+ public static IUserLayoutRestriction createRestriction( String restrictionName, String restrictionValue ) throws PortalException {
+        return createRestriction(restrictionName,restrictionValue,IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);     
+ }
+ 
 
 }

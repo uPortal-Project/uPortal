@@ -116,7 +116,7 @@ public class ALNodeProperties {
      */
      public void addRestriction( IUserLayoutRestriction restriction ) {
        if ( restrictions == null ) restrictions = new Hashtable();
-       restrictions.put(restriction.getRestrictionName(), restriction);
+       restrictions.put(restriction.getUniqueKey(), restriction);
      }
 
      /**
@@ -154,7 +154,7 @@ public class ALNodeProperties {
             IUserLayoutRestriction restriction = (IUserLayoutRestriction) enum.nextElement();
             pElement.setAttribute("path",restriction.getRestrictionPath());
             pElement.setAttribute("value",restriction.getRestrictionExpression());
-            pElement.setAttribute("type",restriction.getRestrictionType()+"");
+            pElement.setAttribute("type",restriction.getName());
             node.appendChild(pElement);
         }
     }
