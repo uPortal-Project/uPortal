@@ -395,10 +395,10 @@ public class ChannelManager {
         // check if the user has permissions to instantiate this channel
         if(ap==null) {
             ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserLayoutManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
-        } 
+        }
 
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
-            
+
             boolean exists=false;
             // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
             // channel more then once, but it's difficult to implement "instanceof" operation on
@@ -436,28 +436,29 @@ public class ChannelManager {
                 // vanilla IChannel
                 ch=(IChannel)cobj;
             }
+
+            // construct a ChannelStaticData object
+            ChannelStaticData sd = new ChannelStaticData ();
+            sd.setChannelID (chanId);
+            sd.setTimeout (timeOut);
+            sd.setParameters (params);
+            // Set the Id of the channel that exists in UP_CHANNELS
+            sd.setChannelGlobalID(ulm.getChannelGlobalId(chanId));
+            // Set the PermissionManager for this channel (no longer necessary)
+            // sd.setPermissionManager(new ReferencePermissionManager("CHAN_ID." + ulm.getChannelGlobalId(chanId)));
+
+            // get person object from UsreLayoutManager
+            sd.setPerson(ulm.getPerson());
+
+            sd.setJNDIContext(channelContext);
+
+            ch.setStaticData (sd);
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
             ch=new CError(CError.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",chanId,null);
         }
 
-        // construct a ChannelStaticData object
-        ChannelStaticData sd = new ChannelStaticData ();
-        sd.setChannelID (chanId);
-        sd.setTimeout (timeOut);
-        sd.setParameters (params);
-        // Set the Id of the channel that exists in UP_CHANNELS
-        sd.setChannelGlobalID(ulm.getChannelGlobalId(chanId));
-        // Set the PermissionManager for this channel (no longer necessary)
-        // sd.setPermissionManager(new ReferencePermissionManager("CHAN_ID." + ulm.getChannelGlobalId(chanId)));
-
-        // get person object from UsreLayoutManager
-        sd.setPerson(ulm.getPerson());
-
-        sd.setJNDIContext(channelContext);
-
-        ch.setStaticData (sd);
         channelTable.put (chanId,ch);
 
         return ch;
