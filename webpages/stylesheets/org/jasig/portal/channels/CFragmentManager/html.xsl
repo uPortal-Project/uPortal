@@ -43,7 +43,7 @@ Version $Revision$
     <!--~-->
     <!--actions: 'defaultView', 'properties', 'publish', 'new', 'save' -->
     <!--~-->
-    <xsl:param name="uPcFM_action" select="'save'"/>
+    <xsl:param name="uPcFM_action" select="'defaultView'"/>
     <xsl:param name="uPcFM_selectedID" select="''"/>
     <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CFragmentManager'"/>
     <!--~-->
@@ -62,8 +62,8 @@ Version $Revision$
                     <table cellpadding="2" cellspacing="0" border="0" width="100%">
                         <tr>
                             <td class="uportal-background-content" align="left" valign="bottom" nowrap="nowrap">
-                                <img src="{$mediaPath}/new.gif" width="16" height="16" alt=""/>
                                 <a href="{$baseActionURL}?uPcFM_action=new&amp;uPcFM_selectedID=">
+                                    <img src="{$mediaPath}/new.gif" width="16" height="16" alt="Create New Fragment" title="Create New Fragment" border="0"/>
                                     <span class="uportal-channel-table-header">Create new fragment</span>
                                 </a>
                             </td>
@@ -115,7 +115,7 @@ Version $Revision$
             <tr class="uportal-channel-text" valign="top" align="left">
                 <td class="uportal-navigation-category">
                     <!-- Non functioning categories - add logic to open/close and indent folders when available -->
-                    <img src="{$mediaPath}/openFile.gif" width="16" height="16" border="0" alt=""/>
+                    <img src="{$mediaPath}/openFile.gif" width="16" height="16" border="0" title="Open Folder" alt="Open Folder"/>
                 </td>
                 <td width="100%" valign="bottom">
                     <a href="#" class="uportal-navigation-category-selected">Fragments</a>
@@ -169,7 +169,7 @@ Version $Revision$
                                 <tr>
                                     <td>
                                         <a href="{$baseActionURL}?uPcFM_action=properties&amp;uPcFM_selectedID={$uPcFM_selectedID}">
-                                            <img src="{$mediaPath}/properties.gif" alt="properties" border="0"/>
+                                            <img src="{$mediaPath}/properties.gif" alt="properties" title="properties" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
@@ -181,7 +181,7 @@ Version $Revision$
                                 <tr>
                                     <td>
                                         <a href="{$baseActionURL}?uPcFM_action=edit&amp;uP_sparam=focusedTabID&amp;focusedTabID={rootNodeID}&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_fragmentID={ID}&amp;uP_root=root">
-                                            <img src="{$mediaPath}/editContent.gif" alt="edit" border="0"/>
+                                            <img src="{$mediaPath}/editContent.gif" alt="edit" title="edit" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
@@ -193,7 +193,7 @@ Version $Revision$
                                 <tr>
                                     <td>
                                         <a href="{$baseActionURL}?uPcFM_action=publish&amp;uPcFM_selectedID={$uPcFM_selectedID}">
-                                            <img src="{$mediaPath}/publish.gif" alt="publish" border="0"/>
+                                            <img src="{$mediaPath}/publish.gif" alt="publish" title="publish" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
@@ -205,7 +205,7 @@ Version $Revision$
                                 <tr>
                                     <td>
                                         <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_selectedID={$uPcFM_selectedID}">
-                                            <img src="{$mediaPath}/delete.gif" alt="delete" border="0"/>
+                                            <img src="{$mediaPath}/delete.gif" alt="delete" title="delete" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
