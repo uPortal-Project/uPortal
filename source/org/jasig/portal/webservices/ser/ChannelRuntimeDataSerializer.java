@@ -51,7 +51,7 @@ import org.xml.sax.Attributes;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class ChannelRuntimeDataSerializer implements Serializer {
+public class ChannelRuntimeDataSerializer extends ProxySerializer {
 
   public static final String CHANNEL_RUNTIME_DATA_ELEMENT_NAME = "channel-runtime-data";
   public static final String REQUEST_PARAMS_ELEMENT_NAME = "request-parameters";
@@ -62,7 +62,7 @@ public class ChannelRuntimeDataSerializer implements Serializer {
   public static final String UP_FILE_SPEC_ELEMENT_NAME = "up-file-spec";
   public static final String BASE_ACTION_URL_ELEMENT_NAME = "base-action-url";
   public static final String HTTP_REQUEST_METHOD_ELEMENT_NAME = "http-request-method";
-  
+
   /**
    * Serializes a ChannelRuntimeData object.
    * @param name the name
@@ -76,12 +76,12 @@ public class ChannelRuntimeDataSerializer implements Serializer {
       throw new IOException("Can't serialize a " + value.getClass().getName() + " with a ChannelRuntimeDataSerializer.");
     }
     ChannelRuntimeData runtimeData = (ChannelRuntimeData)value;
- 
+
     context.startElement(name, attributes);
     context.startElement(new QName("", CHANNEL_RUNTIME_DATA_ELEMENT_NAME), null);
     context.serialize(new QName("", REQUEST_PARAMS_ELEMENT_NAME), null, runtimeData.getParameters()); // a Map
     context.serialize(new QName("", KEYWORDS_ELEMENT_NAME), null, runtimeData.getKeywords()); // a String
-    context.serialize(new QName("", RENDERING_AS_ROOT_ELEMENT_NAME), null, new Boolean(runtimeData.isRenderingAsRoot())); // a Boolean 
+    context.serialize(new QName("", RENDERING_AS_ROOT_ELEMENT_NAME), null, new Boolean(runtimeData.isRenderingAsRoot())); // a Boolean
     context.serialize(new QName("", BROWSER_INFO_ELEMENT_NAME), null, runtimeData.getBrowserInfo()); // a BrowserInfo
     context.serialize(new QName("", LOCALES_ELEMENT_NAME), null, runtimeData.getLocales()); // an array of Locale
     context.serialize(new QName("", UP_FILE_SPEC_ELEMENT_NAME), null, runtimeData.getUPFile()); // a UPFileSpec
@@ -90,15 +90,15 @@ public class ChannelRuntimeDataSerializer implements Serializer {
     context.endElement();
     context.endElement();
   }
-  
+
   /**
    * Returns the mechanism type.
    * @return mechanismType the mechanism type
-   */  
-  public String getMechanismType() { 
-    return Constants.AXIS_SAX; 
+   */
+  public String getMechanismType() {
+    return Constants.AXIS_SAX;
   }
-  
+
   /**
    * Return XML schema for the specified type, suitable for insertion into
    * the types element of a WSDL document.

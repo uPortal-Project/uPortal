@@ -51,7 +51,7 @@ import org.xml.sax.Attributes;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CookieSerializer implements Serializer {
+public class CookieSerializer extends ProxySerializer {
 
   /**
    * Serializes a Cookie.
@@ -66,29 +66,29 @@ public class CookieSerializer implements Serializer {
       throw new IOException("Can't serialize a " + value.getClass().getName() + " with a CookieSerializer.");
     }
     Cookie cookie = (Cookie)value;
- 
+
     context.startElement(name, attributes);
     context.startElement(new QName("", "cookie"), null);
     context.serialize(new QName("", "name"), null, cookie.getName());
-    context.serialize(new QName("", "value"), null, cookie.getValue()); 
-    context.serialize(new QName("", "comment"), null, cookie.getComment()); 
-    context.serialize(new QName("", "domain"), null, cookie.getDomain()); 
-    context.serialize(new QName("", "maxAge"), null, new Integer(cookie.getMaxAge())); 
-    context.serialize(new QName("", "path"), null, cookie.getPath()); 
-    context.serialize(new QName("", "secure"), null, new Boolean(cookie.getSecure())); 
-    context.serialize(new QName("", "version"), null, new Integer(cookie.getVersion()));     
+    context.serialize(new QName("", "value"), null, cookie.getValue());
+    context.serialize(new QName("", "comment"), null, cookie.getComment());
+    context.serialize(new QName("", "domain"), null, cookie.getDomain());
+    context.serialize(new QName("", "maxAge"), null, new Integer(cookie.getMaxAge()));
+    context.serialize(new QName("", "path"), null, cookie.getPath());
+    context.serialize(new QName("", "secure"), null, new Boolean(cookie.getSecure()));
+    context.serialize(new QName("", "version"), null, new Integer(cookie.getVersion()));
     context.endElement();
     context.endElement();
   }
-  
+
   /**
    * Returns the mechanism type.
    * @return mechanismType the mechanism type
-   */  
-  public String getMechanismType() { 
-    return Constants.AXIS_SAX; 
+   */
+  public String getMechanismType() {
+    return Constants.AXIS_SAX;
   }
-  
+
   /**
    * Return XML schema for the specified type, suitable for insertion into
    * the types element of a WSDL document.

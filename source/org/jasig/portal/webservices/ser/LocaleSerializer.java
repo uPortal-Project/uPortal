@@ -51,7 +51,7 @@ import org.xml.sax.Attributes;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class LocaleSerializer implements Serializer {
+public class LocaleSerializer extends ProxySerializer {
 
   /**
    * Serializes a Locale.
@@ -66,24 +66,24 @@ public class LocaleSerializer implements Serializer {
       throw new IOException("Can't serialize a " + value.getClass().getName() + " with a LocaleSerializer.");
     }
     Locale locale = (Locale)value;
- 
+
     context.startElement(name, attributes);
     context.startElement(new QName("", "locale"), null);
     context.serialize(new QName("", "language"), null, locale.getLanguage());
-    context.serialize(new QName("", "country"), null, locale.getCountry()); 
-    context.serialize(new QName("", "variant"), null, locale.getVariant()); 
+    context.serialize(new QName("", "country"), null, locale.getCountry());
+    context.serialize(new QName("", "variant"), null, locale.getVariant());
     context.endElement();
     context.endElement();
   }
-  
+
   /**
    * Returns the mechanism type.
    * @return mechanismType the mechanism type
-   */  
-  public String getMechanismType() { 
-    return Constants.AXIS_SAX; 
+   */
+  public String getMechanismType() {
+    return Constants.AXIS_SAX;
   }
-  
+
   /**
    * Return XML schema for the specified type, suitable for insertion into
    * the types element of a WSDL document.

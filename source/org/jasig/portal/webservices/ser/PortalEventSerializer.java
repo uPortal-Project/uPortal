@@ -51,7 +51,7 @@ import org.xml.sax.Attributes;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class PortalEventSerializer implements Serializer {
+public class PortalEventSerializer extends ProxySerializer {
 
   /**
    * Serializes a PortalEvent.
@@ -66,20 +66,20 @@ public class PortalEventSerializer implements Serializer {
       throw new IOException("Can't serialize a " + value.getClass().getName() + " with a PortalEventSerializer.");
     }
     PortalEvent pe = (PortalEvent)value;
- 
+
     context.startElement(name, attributes);
     context.writeString(String.valueOf(pe.getEventNumber()));
     context.endElement();
   }
-  
+
   /**
    * Returns the mechanism type.
    * @return mechanismType the mechanism type
-   */  
-  public String getMechanismType() { 
-    return Constants.AXIS_SAX; 
+   */
+  public String getMechanismType() {
+    return Constants.AXIS_SAX;
   }
-  
+
   /**
    * Return XML schema for the specified type, suitable for insertion into
    * the types element of a WSDL document.
