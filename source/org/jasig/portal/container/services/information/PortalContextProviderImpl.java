@@ -40,6 +40,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
+
 import org.apache.pluto.services.information.PortalContextProvider;
 
 /**
@@ -50,15 +53,15 @@ import org.apache.pluto.services.information.PortalContextProvider;
 public class PortalContextProviderImpl implements PortalContextProvider {
     
     private Map properties = null;
-    private String[] supportedPortletModes = null;
-    private String[] supportedWindowStates = null;
+    private PortletMode[] supportedPortletModes = null;
+    private WindowState[] supportedWindowStates = null;
     private String portalInfo = null;
     
     public PortalContextProviderImpl() {
         properties = new HashMap();
         // Should read these from a properties file
-        supportedPortletModes = new String[] {"view", "edit", "help"};
-        supportedWindowStates = new String[] {"normal", "maximized", "minimized"};
+        supportedPortletModes = new PortletMode[] {new PortletMode("view"), new PortletMode("edit"), new PortletMode("help")};
+        supportedWindowStates = new WindowState[] {new WindowState("normal"), new WindowState("maximized"), new WindowState("minimized")};
         portalInfo = "uPortal/2.3";
     }
 
