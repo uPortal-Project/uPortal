@@ -19,7 +19,7 @@
 		-->
 	
 	<!-- Legacy Person Directory configruation. This will read the config from PersonDirs.xml -->
-	<bean id="personDirectory" class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonDirectoryToPersonAttributeDaoAdapter"/>
+	<bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonAttributeDao"/>
 	
 	<!--
      | Example Person Directory configuration using the Spring implementation,
@@ -32,7 +32,7 @@
 	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
 	<!--
-	<bean id="personDirectory" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
+	<bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
 		<property name="personAttributeDaos">
 			<list>
 				<ref bean="uPortalJdbcAttributeSource"/>

@@ -38,6 +38,13 @@ public interface IPersonAttributeDao {
      *  <li>If the user doesn't exist <code>null</code> is returned.</li>
      *  <li>If an error occurs while getting the attributes the appropriate exception will be propagated.</li>
      * </ul>
+     * <br>
+     * Unless otherwise specified by an implementation the returned {@link Map}
+     * will not be a union of the seed and query results. If your are given a
+     * {@link Map} that includes the attribute "phone" and value "555-1212" and
+     * the returned {@link Map} contains the attribute "phone" with the value
+     * "555-1212", this means that your implementation also believes that the
+     * "phone" attribute should have this value.
      * 
      * @param seed Map of attributes to values to seed the query
      * @return Map from attribute names to values
@@ -47,12 +54,13 @@ public interface IPersonAttributeDao {
 
 
     /**
-     * This method uses the default attribute to construct a seed
-     * {@link Map} and call the {@link #getUserAttributes(Map)} method
-     * with.
+     * This method uses a single attribute to get a {@link Map} of user
+     * attributes. 
+     * <br>
+     * This methods follows the same return rules as {@link #getUserAttributes(Map)}
      * 
      * @param uid The string to use as the value in the seed
-     * @return The same value as returned by {@link #getUserAttributes(Map)}
+     * @return Map from attribute names to values
      * @see #getUserAttributes(Map)
      */
     public Map getUserAttributes(final String uid);

@@ -54,7 +54,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
 
     Element attributesE = doc.createElement("attributes");
     
-    IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDaoInstance();
+    IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
     Set possibleAttrs = pa.getPossibleUserAttributeNames();
     
     if (possibleAttrs != null)

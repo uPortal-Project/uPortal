@@ -29,7 +29,7 @@ import org.springframework.beans.factory.BeanFactory;
  * This class serves as the lookup mechanism and the interface by which client
  * code accesses user attributes.  Implementation of actually getting attributes
  * is delegated to an IPersonDirectory implementation which is declared as the
- * bean named "personDirectory" in the personDirectory.xml Spring configuration
+ * bean named "personAttributeDao" in the personDirectory.xml Spring configuration
  * file.
  * 
  * The default configuration of that file implements the legacy behavior of using
@@ -75,10 +75,10 @@ public class PersonDirectory {
      * 
      * @return The Spring configured {@link IPersonAttributeDao} implementation.
      */
-    public static IPersonAttributeDao getPersonAttributeDaoInstance() {
+    public static IPersonAttributeDao getPersonAttributeDao() {
         final BeanFactory factory = PortalApplicationContextFacade.getPortalApplicationContext();
         
-        final Object objectDelegate = factory.getBean("personDirectory");
+        final Object objectDelegate = factory.getBean("personAttributeDao");
         
         if (objectDelegate == null)
             throw new NullPointerException("Spring config file did not declare a bean named 'personDirectory'.");
@@ -93,12 +93,12 @@ public class PersonDirectory {
      * Obtain the singleton instance of PersonDirectory.
      * 
      * @return the singleton instance of PersonDirectory.
-     * @deprecated Use {@link #getPersonAttributeDaoInstance()}
+     * @deprecated Use {@link #getPersonAttributeDao()}
      */
     public static synchronized PersonDirectory instance() {
         if (instance == null) {
             try {
-                instance = new PersonDirectory(getPersonAttributeDaoInstance());
+                instance = new PersonDirectory(getPersonAttributeDao());
             }
             catch (Throwable t) {
                 log.error("Error instantiating PersonDirectory", t);

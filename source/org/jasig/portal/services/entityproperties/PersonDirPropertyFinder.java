@@ -34,7 +34,7 @@ public class PersonDirPropertyFinder
     private SoftHashMap cache;
 
     public PersonDirPropertyFinder() {
-        pa = PersonDirectory.getPersonAttributeDaoInstance();
+        pa = PersonDirectory.getPersonAttributeDao();
         cache = new SoftHashMap(120);
     }
 

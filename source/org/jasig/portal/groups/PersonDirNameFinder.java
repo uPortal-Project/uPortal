@@ -35,7 +35,7 @@ public class PersonDirNameFinder
     private PersonDirNameFinder () throws SQLException
     {
         super();
-        pa = PersonDirectory.getPersonAttributeDaoInstance();
+        pa = PersonDirectory.getPersonAttributeDao();
         names = new SoftHashMap();
     }
 

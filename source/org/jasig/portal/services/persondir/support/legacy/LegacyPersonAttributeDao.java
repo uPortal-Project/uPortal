@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * @author andrew.petro@yale.edu, Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  */
-public class LegacyPersonDirectoryToPersonAttributeDaoAdapter implements IPersonAttributeDao {
+public class LegacyPersonAttributeDao implements IPersonAttributeDao {
 
     private IPersonAttributeDao delegate;
     
@@ -40,7 +40,7 @@ public class LegacyPersonDirectoryToPersonAttributeDaoAdapter implements IPerson
      * This constructor builds a legacy PersonDirectory implementation suitable
      * for environments in which Spring configuration is not available.
      */
-    public LegacyPersonDirectoryToPersonAttributeDaoAdapter() 
+    public LegacyPersonAttributeDao() 
         throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
         // build up from the bottom
         

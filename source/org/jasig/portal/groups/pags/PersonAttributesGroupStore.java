@@ -130,7 +130,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
              { return false; }
          IPerson person = null;
          try {
-             IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDaoInstance();
+             IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
              Map attrs = pa.getUserAttributes(member.getKey());
              RestrictedPerson rp = PersonFactory.createRestrictedPerson();
              rp.setAttributes(attrs);
