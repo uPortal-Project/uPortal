@@ -142,7 +142,7 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
      * Returns current theme stylesheet description
      * @return current <code>ThemeStylesheetDescription</code>
      */
-    public ThemeStylesheetDescription getThemeStylesheetDescription () {
+    public ThemeStylesheetDescription getThemeStylesheetDescription () throws Exception {
         return this.gulm.getThemeStylesheetDescription(this.sessionId);
     }
 
@@ -150,7 +150,7 @@ public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
      * Returns current structure stylesheet description
      * @return current <code>StructureStylesheetDescription</code>
      */
-    public StructureStylesheetDescription getStructureStylesheetDescription () {
+    public StructureStylesheetDescription getStructureStylesheetDescription () throws Exception {
         return this.gulm.getStructureStylesheetDescription(this.sessionId);
     }
 

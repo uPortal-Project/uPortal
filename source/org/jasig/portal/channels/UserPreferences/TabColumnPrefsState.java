@@ -54,8 +54,6 @@ import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.UserPreferencesStoreFactory;
-import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ChannelCacheKey;
@@ -99,7 +97,6 @@ final class TabColumnPrefsState extends BaseState
   private UserPreferences userPrefs;
   private UserProfile editedUserProfile;
   private static IUserLayoutStore ulStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-  private static IUserPreferencesStore upStore = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
   private StylesheetSet set;
 
   private String action = "none";
@@ -240,7 +237,7 @@ final class TabColumnPrefsState extends BaseState
 
     // Persist structure stylesheet user preferences
     int profileId = editedUserProfile.getProfileId();
-    upStore.setStructureStylesheetUserPreferences(staticData.getPerson(), profileId, ssup);
+    ulStore.setStructureStylesheetUserPreferences(staticData.getPerson(), profileId, ssup);
   }
 
   private final void renameTab(String tabId, String tabName) throws Exception
@@ -624,10 +621,15 @@ final class TabColumnPrefsState extends BaseState
   private void saveUserPreferences () throws PortalException
   {
     IUserLayoutManager ulm = context.getUserLayoutManager();
-    if (modifyingCurrentProfile())
+    if (modifyingCurrentProfile()) {
       ulm.setNewUserLayoutAndUserPreferences(null, userPrefs, false);
-    else
-      upStore.putUserPreferences(staticData.getPerson(), userPrefs);
+    } else {
+      try {
+        ulStore.putUserPreferences(staticData.getPerson(), userPrefs);
+      } catch (Exception e) {
+        throw new PortalException(e.getMessage(), e);
+      }
+    }
   }
 
   private boolean modifyingCurrentProfile () throws PortalException

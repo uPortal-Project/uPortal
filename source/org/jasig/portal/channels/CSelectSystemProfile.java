@@ -58,11 +58,12 @@ import  java.net.URL;
  */
 public class CSelectSystemProfile extends StandaloneChannelRenderer {
   private static final String sslLocation = "CSelectSystemProfile/CSelectSystemProfile.ssl";
-  IUserPreferencesStore updb;
+  IUserLayoutStore ulsdb;
   private Hashtable systemProfileList;
 
 
     public CSelectSystemProfile() {
+      ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     }
 
   /**
@@ -79,7 +80,11 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
       if (profileId != null) {
         String profileType = runtimeData.getParameter("profileType");
         if (action.equals("map")) {
-          this.getUserPreferencesStore().setSystemBrowserMapping(this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
+          try {
+            ulsdb.setSystemBrowserMapping(this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
+          } catch (Exception e) {
+            throw new PortalException(e.getMessage(), e);
+          }
         }
       }
     }
@@ -90,25 +95,14 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
    * @return
    * @exception PortalException
    */
-  private IUserPreferencesStore getUserPreferencesStore () throws PortalException {
-    // this should be obtained from the JNDI context
-    if (updb == null) {
-      updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
-    }
-    if (updb == null) {
-      throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
-    }
-    return  updb;
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   * @exception PortalException
-   */
   protected Hashtable getSystemProfileList () throws PortalException {
     if (systemProfileList == null)
-      systemProfileList = this.getUserPreferencesStore().getSystemProfileList();
+      try {
+        systemProfileList = ulsdb.getSystemProfileList();
+      } catch (Exception e) {
+        throw new PortalException(e.getMessage(), e);
+      }
+
     return  systemProfileList;
   }
 

@@ -72,39 +72,40 @@ public class RegisterStylesheet {
       printHelp();
       return;
     }
-    ICoreStylesheetDescriptionStore csdb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
-    if (update) {
-      boolean success = false;
-      if (isTheme) {
-        success = csdb.updateThemeStylesheetDescription(stylesheetDescriptionURI, stylesheetURI, stylesheetId);
-      }
-      else {
-        success = csdb.updateStructureStylesheetDescription(stylesheetDescriptionURI, stylesheetURI, stylesheetId);
-      }
-      if (success) {
-        System.out.println("Update successful!");
-      }
-      else {
-        System.out.println("Update failed!");
-        return;
-      }
-    }
-    else {
-      Integer id = null;
-      if (isTheme)
-        id = csdb.addThemeStylesheetDescription(stylesheetDescriptionURI, stylesheetURI);
-      else
-        id = csdb.addStructureStylesheetDescription(stylesheetDescriptionURI, stylesheetURI);
-      if (id == null) {
-        System.out.println("Save failed!");
-        return;
-      }
-      else {
-        stylesheetId = id.intValue();
-        System.out.println("Save successfull!");
-      }
-    }
+    IUserLayoutStore ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     try {
+      if (update) {
+        boolean success = false;
+        if (isTheme) {
+          success = ulsdb.updateThemeStylesheetDescription(stylesheetDescriptionURI, stylesheetURI, stylesheetId);
+        }
+        else {
+          success = ulsdb.updateStructureStylesheetDescription(stylesheetDescriptionURI, stylesheetURI, stylesheetId);
+        }
+        if (success) {
+          System.out.println("Update successful!");
+        }
+        else {
+          System.out.println("Update failed!");
+          return;
+        }
+      }
+      else {
+        Integer id = null;
+        if (isTheme)
+          id = ulsdb.addThemeStylesheetDescription(stylesheetDescriptionURI, stylesheetURI);
+        else
+          id = ulsdb.addStructureStylesheetDescription(stylesheetDescriptionURI, stylesheetURI);
+        if (id == null) {
+          System.out.println("Save failed!");
+          return;
+        }
+        else {
+          stylesheetId = id.intValue();
+          System.out.println("Save successfull!");
+        }
+      }
+
       // verify
       if (isTheme) {
         ThemeStylesheetDescription tsd = UserLayoutStoreFactory.getUserLayoutStoreImpl().getThemeStylesheetDescription(stylesheetId);

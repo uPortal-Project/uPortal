@@ -74,7 +74,7 @@ public class UserLayoutManager implements IUserLayoutManager {
     private StructureStylesheetDescription ssd;
     private boolean unmapped_user_agent = false;
     IPerson m_person;
-
+    IUserLayoutStore ulsdb = null;
     BooleanLock layout_write_lock=new BooleanLock(true);
 
     /**
@@ -90,12 +90,12 @@ public class UserLayoutManager implements IUserLayoutManager {
             m_person = person;
             // load user preferences
             // Should obtain implementation in a different way!!
-            IUserPreferencesStore updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
+            ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
-            UserProfile upl = updb.getUserProfile(m_person, userAgent);
+            UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
             if (upl == null) {
-                upl = updb.getSystemProfile(userAgent);
+                upl = ulsdb.getSystemProfile(userAgent);
             }
             if(upl==null) {
                 // try guessing the profile through pattern matching
@@ -119,10 +119,10 @@ public class UserLayoutManager implements IUserLayoutManager {
                     if(profileId!=null) {
                         // user agent has been matched
 
-                        upl=updb.getSystemProfileById(Integer.parseInt(profileId));
+                        upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
                     }
                 }
-                
+
             }
 
             if (upl != null) {
@@ -132,7 +132,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     LogService.instance().log(LogService.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
                                m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
                 }
-                complete_up=updb.getUserPreferences(m_person, upl);
+                complete_up=ulsdb.getUserPreferences(m_person, upl);
                 try {
                     // Initialize the JNDI context for this user
                     JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),uLayoutXML);
@@ -297,24 +297,23 @@ public class UserLayoutManager implements IUserLayoutManager {
      * Note that if any of the two are "null", old values will be used.
      */
     public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences, boolean channelsAdded) throws PortalException {
+      try {
         if (newPreferences != null) {
-            // Should obtain implementation in a different way!!
-            IUserPreferencesStore updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
-            updb.putUserPreferences(m_person, newPreferences);
+            ulsdb.putUserPreferences(m_person, newPreferences);
             complete_up=newPreferences;
         }
         synchronized(layout_write_lock) {
             if (newLayout != null) {
                 uLayoutXML = newLayout;
                 layout_write_lock.setValue(true);
-                try {
-                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, channelsAdded);
-                } catch (Exception e) {
-                    LogService.instance().log(LogService.ERROR, e);
-                    throw  new GeneralRenderingException(e.getMessage());
-                }
+                    ulsdb.setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, channelsAdded);
             }
         }
+      } catch (Exception e) {
+        LogService.instance().log(LogService.ERROR, e);
+        throw  new GeneralRenderingException(e.getMessage());
+      }
+
     }
 
     /**
@@ -334,18 +333,16 @@ public class UserLayoutManager implements IUserLayoutManager {
         return  this.getUserPreferences().getProfile();
     }
 
-    public ThemeStylesheetDescription getThemeStylesheetDescription () {
+    public ThemeStylesheetDescription getThemeStylesheetDescription () throws Exception {
         if (this.tsd == null) {
-            ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
-            tsd = csddb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetId());
+           tsd = ulsdb.getThemeStylesheetDescription(this.getCurrentProfile().getThemeStylesheetId());
         }
         return  tsd;
     }
 
-    public StructureStylesheetDescription getStructureStylesheetDescription () {
+    public StructureStylesheetDescription getStructureStylesheetDescription () throws Exception {
         if (this.ssd == null) {
-            ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
-            ssd = csddb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetId());
+            ssd = ulsdb.getStructureStylesheetDescription(this.getCurrentProfile().getStructureStylesheetId());
         }
         return  ssd;
     }
@@ -395,7 +392,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                         /*
                           The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                         */
-                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, false);
+                        ulsdb.setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, false);
                         /* end of patch */
                     } catch (Exception e) {
                         LogService.instance().log(LogService.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);

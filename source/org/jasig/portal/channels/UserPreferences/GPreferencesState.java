@@ -62,13 +62,12 @@ import  java.net.URL;
  */
 class GPreferencesState extends BaseState {
   private UserProfile profile;
-  protected IUserPreferencesStore updb;
   protected ChannelRuntimeData runtimeData;
   private UserPreferences up = null;
   private Document userLayoutXML = null;
   ThemeStylesheetDescription tsd = null;
   StructureStylesheetDescription ssd = null;
-  ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
+  protected IUserLayoutStore ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
   // these state variables are kept for the use by the internalStates
   private static final String layoutID = "top";                 // just a way to refer to the layout element since it doesn't have an ID attribute
   private String folderID = layoutID;
@@ -124,6 +123,7 @@ class GPreferencesState extends BaseState {
   public GPreferencesState () {
     super();
     this.internalState = new GBrowseState(this);
+    ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
   }
 
   /**
@@ -176,28 +176,17 @@ class GPreferencesState extends BaseState {
   /**
    * put your documentation comment here
    * @return
-   * @exception ResourceMissingException
-   */
-  public IUserPreferencesStore getUserPreferencesStore () throws ResourceMissingException {
-    if (updb == null) {
-      updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
-    }
-    if (updb == null) {
-      throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
-    }
-    return  updb;
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
    * @exception ResourceMissingException, PortalException
    */
   public UserPreferences getUserPreferences () throws ResourceMissingException, PortalException {
     if (up == null) {
       // load UserPreferences from the DB
-      up = this.getUserPreferencesStore().getUserPreferences(context.getUserLayoutManager().getPerson(), this.getProfile());
-      up.synchronizeWithUserLayoutXML(this.getUserLayoutXML());
+      try {
+        up = ulsdb.getUserPreferences(context.getUserLayoutManager().getPerson(), this.getProfile());
+        up.synchronizeWithUserLayoutXML(this.getUserLayoutXML());
+      } catch (Exception e) {
+        throw new PortalException(e.getMessage(), e);
+      }
     }
     return  up;
   }
@@ -205,24 +194,15 @@ class GPreferencesState extends BaseState {
   /**
    * put your documentation comment here
    * @return
+   * @exception PortalException
    */
-  public ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionStore () {
-    if (csddb == null)
-      csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
-    return  csddb;
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   */
-  public ThemeStylesheetDescription getThemeStylesheetDescription () {
+  public ThemeStylesheetDescription getThemeStylesheetDescription () throws PortalException{
     if (tsd == null) {
       ThemeStylesheetUserPreferences ssup = up.getThemeStylesheetUserPreferences();
-      tsd = this.getCoreStylesheetDescriptionStore().getThemeStylesheetDescription(ssup.getStylesheetId());
-      if (tsd == null) {
-        LogService.instance().log(LogService.ERROR, "CUserPreferences::setRuntimeData() : theme stylesheet description for a stylesheet \""
-            + ssup.getStylesheetId() + "\" is null");
+      try {
+        tsd = ulsdb.getThemeStylesheetDescription(ssup.getStylesheetId());
+      } catch (Exception e) {
+        throw new PortalException(e.getMessage(), e);
       }
     }
     return  tsd;
@@ -235,12 +215,11 @@ class GPreferencesState extends BaseState {
    */
   public StructureStylesheetDescription getStructureStylesheetDescription () throws ResourceMissingException, PortalException {
     if (ssd == null) {
-      ICoreStylesheetDescriptionStore csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
       StructureStylesheetUserPreferences fsup = this.getUserPreferences().getStructureStylesheetUserPreferences();
-      ssd = this.getCoreStylesheetDescriptionStore().getStructureStylesheetDescription(fsup.getStylesheetId());
-      if (ssd == null) {
-        LogService.instance().log(LogService.ERROR, "CUserPreferences::setRuntimeData() : structure stylesheet description for a stylesheet \""
-            + fsup.getStylesheetId() + "\" is null");
+      try {
+        ssd = ulsdb.getStructureStylesheetDescription(fsup.getStylesheetId());
+      } catch (Exception e) {
+        throw new PortalException(e.getMessage(), e);
       }
     }
     return  ssd;
@@ -769,7 +748,11 @@ class GPreferencesState extends BaseState {
       }
       else {
         // do a database save on the preferences
-        context.getUserPreferencesStore().putUserPreferences(context.getUserLayoutManager().getPerson(), context.getUserPreferences());
+        try {
+          ulsdb.putUserPreferences(context.getUserLayoutManager().getPerson(), context.getUserPreferences());
+        } catch (Exception e) {
+          throw new PortalException(e.getMessage(), e);
+        }
         context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), null, false);
       }
     }

@@ -107,13 +107,13 @@ public interface IUserLayoutManager {
      * Returns current theme stylesheet description
      * @return current <code>ThemeStylesheetDescription</code>
      */
-    public ThemeStylesheetDescription getThemeStylesheetDescription ();
+    public ThemeStylesheetDescription getThemeStylesheetDescription () throws Exception;
 
     /**
      * Returns current structure stylesheet description
      * @return current <code>StructureStylesheetDescription</code>
      */
-    public StructureStylesheetDescription getStructureStylesheetDescription ();
+    public StructureStylesheetDescription getStructureStylesheetDescription () throws Exception;
 
     /**
      * Returns a user layout node.

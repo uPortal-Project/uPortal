@@ -87,9 +87,6 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     Hashtable cached_profiles;
 
     IPerson m_person;
-    IUserPreferencesStore updb;
-    ICoreStylesheetDescriptionStore csddb;
-
 
     /**
      * Initializing constructor.
@@ -107,8 +104,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
         ts_descripts=new Hashtable();
         ss_descripts=new Hashtable();
         m_person = person;
-        updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
-        csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
+        ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
         layout_write_lock.setValue(true);
     }
 
@@ -136,9 +132,9 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             // see if the profile was cached
             if((upl=(UserProfile)cached_profiles.get(userAgent))==null) {
                 synchronized(cached_profiles) {
-                    upl= updb.getUserProfile(m_person, userAgent);
+                    upl= ulsdb.getUserProfile(m_person, userAgent);
                     if (upl == null) {
-                        upl = updb.getSystemProfile(userAgent);
+                        upl = ulsdb.getSystemProfile(userAgent);
                     }
                     if(upl!=null) {
                         cached_profiles.put(userAgent,upl);
@@ -168,7 +164,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     if(profileId!=null) {
                         // user agent has been matched
                         LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
-                        upl=updb.getSystemProfileById(Integer.parseInt(profileId));
+                        upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
                     } else {
                         LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched not matched any profile.");
                     }
@@ -207,7 +203,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     cleanUP=(UserPreferences)up_cleanUPs.get(new Integer(upl.getProfileId()));
                 }
                 if(cleanUP==null) {
-                    cleanUP=updb.getUserPreferences(m_person, upl);
+                    cleanUP=ulsdb.getUserPreferences(m_person, upl);
                     if(cleanUP!=null) {
                         if(upl.isSystemProfile()) {
                             sp_cleanUPs.put(new Integer(upl.getProfileId()),cleanUP);
@@ -393,22 +389,22 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::setCurrentUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return;
         }
-        if (newPreferences != null) {
+        try {
+          if (newPreferences != null) {
             state.complete_up=newPreferences;
-            updb.putUserPreferences(m_person, newPreferences);
-        }
-        if (newLayout != null) {
+            ulsdb.putUserPreferences(m_person, newPreferences);
+          }
+          if (newLayout != null) {
             synchronized(layout_write_lock) {
                 state.uLayoutXML = newLayout;
                 // one lock for all - not very efficient, but ok for the Guest layout - it should rarely change
                 layout_write_lock.setValue(true);
-                try {
-                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(),newLayout, channelsAdded);
-                } catch (Exception e) {
-                    LogService.instance().log(LogService.ERROR, e);
-                    throw  new GeneralRenderingException(e.getMessage());
-                }
+                    ulsdb.setUserLayout(m_person, state.complete_up.getProfile().getProfileId(),newLayout, channelsAdded);
             }
+          }
+        } catch (Exception e) {
+          LogService.instance().log(LogService.ERROR, e);
+          throw  new GeneralRenderingException(e.getMessage());
         }
     }
 
@@ -454,7 +450,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
         throw new UnsupportedOperationException();
     }
 
-    public ThemeStylesheetDescription getThemeStylesheetDescription (String sessionId) {
+    public ThemeStylesheetDescription getThemeStylesheetDescription (String sessionId) throws Exception {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
             LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
@@ -464,7 +460,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             int sid=state.complete_up.getProfile().getThemeStylesheetId();
             state.tsd=(ThemeStylesheetDescription)ts_descripts.get(new Integer(sid));
             if(state.tsd==null) {
-                state.tsd = csddb.getThemeStylesheetDescription(sid);
+                state.tsd = ulsdb.getThemeStylesheetDescription(sid);
                 ts_descripts.put(new Integer(sid),state.tsd);
             }
         }
@@ -475,7 +471,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
         throw new UnsupportedOperationException();
     }
 
-    public StructureStylesheetDescription getStructureStylesheetDescription (String sessionId) {
+    public StructureStylesheetDescription getStructureStylesheetDescription (String sessionId) throws Exception{
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
             LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
@@ -485,7 +481,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             int sid=state.complete_up.getProfile().getStructureStylesheetId();
             state.ssd=(StructureStylesheetDescription)ss_descripts.get(new Integer(sid));
             if(state.ssd==null) {
-                state.ssd = csddb.getStructureStylesheetDescription(sid);
+                state.ssd = ulsdb.getStructureStylesheetDescription(sid);
                 ss_descripts.put(new Integer(sid),state.ssd);
             }
         }

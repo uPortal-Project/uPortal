@@ -65,7 +65,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   IPrivilegedChannel internalState = null;
   IPrivilegedChannel managePreferences = null;
   IPrivilegedChannel manageProfiles = null;
-  protected IUserPreferencesStore updb;
+  protected IUserLayoutStore ulsdb;
   private PortalControlStructures pcs;
     private boolean initialized=false;
     UserProfile editedProfile=null;
@@ -79,6 +79,7 @@ public class CUserPreferences implements IPrivilegedChannel {
     this.set.setMediaProps("/properties/media.properties");
 
     manageProfiles = new ManageProfilesState(this);
+    ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
   }
 
   /**
@@ -147,7 +148,7 @@ public class CUserPreferences implements IPrivilegedChannel {
      */
     private void instantiateManagePreferencesState(UserProfile profile) {
         try {
-            ThemeStylesheetDescription tsd = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl().getThemeStylesheetDescription(profile.getThemeStylesheetId());
+            ThemeStylesheetDescription tsd = ulsdb.getThemeStylesheetDescription(profile.getThemeStylesheetId());
             if(tsd!=null) {
                 String cupmClass = tsd.getCustomUserPreferencesManagerClass();
                 managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
@@ -220,22 +221,25 @@ public class CUserPreferences implements IPrivilegedChannel {
       else if (action.equals("managePreferences")) {
           if (profileId != null) {
               // find the profile mapping
-              updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
+            try {
               if (systemProfile) {
-                  UserProfile newProfile = updb.getSystemProfileById(profileId.intValue());
+                  UserProfile newProfile = ulsdb.getSystemProfileById(profileId.intValue());
                   if(newProfile!=null && (!(editedProfile.isSystemProfile() && editedProfile.getProfileId()==newProfile.getProfileId()))) {
                       // new profile has been selected
                       editedProfile=newProfile;
                       instantiateManagePreferencesState(editedProfile);
                   }
               } else {
-                  UserProfile newProfile = updb.getUserProfileById(ulm.getPerson(), profileId.intValue());
+                  UserProfile newProfile = ulsdb.getUserProfileById(ulm.getPerson(), profileId.intValue());
                   if(newProfile!=null && (editedProfile.isSystemProfile() || (editedProfile.getProfileId()!=newProfile.getProfileId()))) {
                       // new profile has been selected
                       editedProfile=newProfile;
                       instantiateManagePreferencesState(editedProfile);
                   }
               }
+            } catch (Exception e) {
+              throw new PortalException(e.getMessage(), e);
+            }
           }
 
           if(editedProfile==null) {
@@ -270,8 +274,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   }
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
-      IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
-      up = upStore.getUserPreferences(getUserLayoutManager().getPerson(), profile);
+      up = ulsdb.getUserPreferences(getUserLayoutManager().getPerson(), profile);
       up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile().getProfileId()));
       return up;
   }

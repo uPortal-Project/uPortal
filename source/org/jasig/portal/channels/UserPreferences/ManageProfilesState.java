@@ -55,11 +55,10 @@ import  java.net.URL;
  * @version $Revision$
  */
 class ManageProfilesState extends BaseState {
-  protected IUserPreferencesStore updb;
   protected Hashtable userProfileList;
   protected Hashtable systemProfileList;
   protected ChannelRuntimeData runtimeData;
-  ICoreStylesheetDescriptionStore csddb;
+  IUserLayoutStore ulsdb;
 
   /**
    * put your documentation comment here
@@ -75,8 +74,13 @@ class ManageProfilesState extends BaseState {
    * @exception PortalException
    */
   protected Hashtable getUserProfileList () throws PortalException {
-    if (userProfileList == null)
-      userProfileList = this.getUserPreferencesStore().getUserProfileList(context.getUserLayoutManager().getPerson());
+    if (userProfileList == null) {
+      try {
+        userProfileList = this.getUserLayoutStore().getUserProfileList(context.getUserLayoutManager().getPerson());
+      } catch (Exception e) {
+        throw new PortalException(e.getMessage(), e);
+      }
+    }
     return  userProfileList;
   }
 
@@ -86,8 +90,13 @@ class ManageProfilesState extends BaseState {
    * @exception PortalException
    */
   protected Hashtable getSystemProfileList () throws PortalException {
-    if (systemProfileList == null)
-      systemProfileList = this.getUserPreferencesStore().getSystemProfileList();
+    if (systemProfileList == null) {
+      try {
+        systemProfileList = this.getUserLayoutStore().getSystemProfileList();
+      } catch (Exception e) {
+        throw new PortalException(e.getMessage(), e);
+      }
+    }
     return  systemProfileList;
   }
 
@@ -124,7 +133,11 @@ class ManageProfilesState extends BaseState {
                     }
                     if(p!=null) {
                         // create a new layout
-                        p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
+                        try {
+                          p=this.getUserLayoutStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
+                        } catch (Exception e) {
+                          throw new PortalException(e.getMessage(), e);
+                        }
                         // reset user profile listing
                         userProfileList=null;
                     }
@@ -137,13 +150,22 @@ class ManageProfilesState extends BaseState {
                         //			systemProfileList=null;
                     }
                     else {
-                        this.getUserPreferencesStore().deleteUserProfile(context.getUserLayoutManager().getPerson(), Integer.parseInt(profileId));
+                      try {
+                        this.getUserLayoutStore().deleteUserProfile(context.getUserLayoutManager().getPerson(), Integer.parseInt(profileId));
+                      } catch (Exception e) {
+                        throw new PortalException(e.getMessage(), e);
+                      }
+
                         userProfileList = null;
                     }
                 }
                 else if (action.equals("map")) {
-                    this.getUserPreferencesStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
-                    // let userLayoutManager know that the current profile has changed : everything must be reloaded
+                  try {
+                    this.getUserLayoutStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
+                  } catch (Exception e) {
+                    throw new PortalException(e.getMessage(), e);
+                  }
+                  // let userLayoutManager know that the current profile has changed : everything must be reloaded
                 }
             }
             if(action.equals("newProfile")) {
@@ -152,7 +174,12 @@ class ManageProfilesState extends BaseState {
                 if(cp!=null) {
                     // create a new profile
                     UserProfile p=new UserProfile(0,"new profile","please edit the profile",cp.getLayoutId(),cp.getStructureStylesheetId(),cp.getThemeStylesheetId());
-                    p=this.getUserPreferencesStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
+                    try {
+                      p=this.getUserLayoutStore().addUserProfile(context.getUserLayoutManager().getPerson(),p);
+                    } catch (Exception e) {
+                      throw new PortalException(e.getMessage(), e);
+                    }
+
                     // reset user profile listing
                     userProfileList=null;
                 }
@@ -183,30 +210,15 @@ class ManageProfilesState extends BaseState {
    * @return
    * @exception PortalException
    */
-  private IUserPreferencesStore getUserPreferencesStore () throws PortalException {
+  private IUserLayoutStore getUserLayoutStore () throws PortalException {
     // Should obtain implementation in a different way!!
-    if (updb == null) {
-      updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
+    if (ulsdb == null) {
+      ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     }
-    if (updb == null) {
-      throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
+    if (ulsdb == null) {
+      throw  new ResourceMissingException("", "User Layout database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
     }
-    return  updb;
-  }
-
-  /**
-   * put your documentation comment here
-   * @return
-   * @exception PortalException
-   */
-  public ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionStore () throws PortalException {
-    if (csddb == null) {
-      csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
-    }
-    if (csddb == null) {
-      throw  new ResourceMissingException("", "Stylesheet description database", "Unable to obtain the list of available stylesheets since the database holding them is not avaiable.");
-    }
-    return  csddb;
+    return  ulsdb;
   }
 
   /**
@@ -344,11 +356,15 @@ class ManageProfilesState extends BaseState {
               if (profileType.equals("system"))
                 systemProfile = true;
               // find the UserProfile
-              if (systemProfile) {
-                profile = context.getUserPreferencesStore().getSystemProfileById(profileId.intValue());
-              }
-              else {
-                profile = context.getUserPreferencesStore().getUserProfileById(context.getPerson(), profileId.intValue());
+              try {
+                if (systemProfile) {
+                  profile = context.getUserLayoutStore().getSystemProfileById(profileId.intValue());
+                }
+                  else {
+                  profile = context.getUserLayoutStore().getUserProfileById(context.getPerson(), profileId.intValue());
+                }
+              } catch (Exception e) {
+                throw new PortalException(e.getMessage(), e);
               }
               if (profile == null) {
                 // failed to find the specified profile, return to the base state
@@ -372,11 +388,15 @@ class ManageProfilesState extends BaseState {
               profile.setThemeStylesheetId(newId);
               // see if the mime type has changed, alert user
             }
-            if (profile.isSystemProfile())
-              // only administrative users should be able to do this
-              context.getUserPreferencesStore().updateSystemProfile(profile);
-            else
-              context.getUserPreferencesStore().updateUserProfile(context.getPerson(), profile);
+            try {
+              if (profile.isSystemProfile())
+                // only administrative users should be able to do this
+                context.getUserLayoutStore().updateSystemProfile(profile);
+              else
+                context.getUserLayoutStore().updateUserProfile(context.getPerson(), profile);
+            } catch (Exception e) {
+              throw new PortalException(e.getMessage(), e);
+            }
             context.setState(null);
           }
         }
@@ -495,7 +515,12 @@ class ManageProfilesState extends BaseState {
       // deal with theme stylesheets
       {
         Element themeEl = doc.createElement("themestylesheets");
-        Hashtable tsList = context.getCoreStylesheetDescriptionStore().getThemeStylesheetList(profile.getStructureStylesheetId());
+        Hashtable tsList;
+        try {
+          tsList = context.getUserLayoutStore().getThemeStylesheetList(profile.getStructureStylesheetId());
+        } catch (Exception e) {
+          throw new PortalException(e.getMessage(), e);
+        }
         if (tsList == null)
           throw  new ResourceMissingException("", "List of theme stylesheets for the structure stylesheet \"" + profile.getStructureStylesheetId()
               + "\"", "Unable to obtain a list of theme stylesheets for the specified structure stylesheet");

@@ -55,6 +55,7 @@ import  java.util.Enumeration;
 import  java.util.HashMap;
 import  java.util.HashSet;
 import  java.util.Hashtable;
+import  java.util.Vector;
 import  org.xml.sax.EntityResolver;
 import  org.xml.sax.InputSource;
 import  org.jasig.portal.utils.DTDResolver;
@@ -66,6 +67,9 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.ISecurityContext;
+
 
 /**
  * SQL implementation for the 2.x relational database model
@@ -727,6 +731,178 @@ public class RDBMUserLayoutStore
       RdbmServices.releaseConnection(con);
     }
   }
+
+  /**
+   * put your documentation comment here
+   * @param stylesheetDescriptionURI
+   * @param stylesheetURI
+   * @param stylesheetId
+   * @return
+   */
+  public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
+    try {
+      DOMParser parser = new DOMParser();
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      Document stylesheetDescriptionXML = parser.getDocument();
+      String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
+      // should thrown an exception
+      if (ssName == null)
+        return  false;
+      // determine id of the parent structure stylesheet
+      Integer ssId = getStructureStylesheetId(ssName);
+      // stylesheet not found, should thrown an exception here
+      if (ssId == null)
+        return  false;
+      ThemeStylesheetDescription sssd = new ThemeStylesheetDescription();
+      sssd.setId(stylesheetId);
+      sssd.setStructureStylesheetId(ssId.intValue());
+      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
+      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
+      sssd.setStylesheetName(xmlStylesheetName);
+      sssd.setStylesheetURI(stylesheetURI);
+      sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
+      sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+      sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""
+          + sssd.getMimeType() + "\"");
+      sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""
+          + sssd.getSerializerName() + "\"");
+      sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
+      sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
+      sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML, "sampleIconURI"));
+      sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML, "deviceType"));
+      // populate parameter and attriute tables
+      this.populateParameterTable(stylesheetDescriptionXML, sssd);
+      this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
+      updateThemeStylesheetDescription(sssd);
+    } catch (Exception e) {
+      LogService.instance().log(LogService.DEBUG, e);
+      return  false;
+    }
+    return  true;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param stylesheetDescriptionURI
+   * @param stylesheetURI
+   * @param stylesheetId
+   * @return
+   */
+  public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
+    try {
+      DOMParser parser = new DOMParser();
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      Document stylesheetDescriptionXML = parser.getDocument();
+      StructureStylesheetDescription fssd = new StructureStylesheetDescription();
+      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
+      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
+      fssd.setId(stylesheetId);
+      fssd.setStylesheetName(xmlStylesheetName);
+      fssd.setStylesheetURI(stylesheetURI);
+      fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
+      fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+      // populate parameter and attriute tables
+      this.populateParameterTable(stylesheetDescriptionXML, fssd);
+      this.populateFolderAttributeTable(stylesheetDescriptionXML, fssd);
+      this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
+      // now write out the database record
+      updateStructureStylesheetDescription(fssd);
+    } catch (Exception e) {
+      LogService.instance().log(LogService.DEBUG, e);
+      return  false;
+    }
+    return  true;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param stylesheetDescriptionURI
+   * @param stylesheetURI
+   * @return
+   */
+  public Integer addStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
+    // need to read in the description file to obtain information such as name, word description and media list
+    try {
+      DOMParser parser = new DOMParser();
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      Document stylesheetDescriptionXML = parser.getDocument();
+      StructureStylesheetDescription fssd = new StructureStylesheetDescription();
+      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
+      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
+      fssd.setStylesheetName(xmlStylesheetName);
+      fssd.setStylesheetURI(stylesheetURI);
+      fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
+      fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+      // populate parameter and attriute tables
+      this.populateParameterTable(stylesheetDescriptionXML, fssd);
+      this.populateFolderAttributeTable(stylesheetDescriptionXML, fssd);
+      this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
+      // now write out the database record
+      // first the basic record
+      //UserLayoutStoreFactory.getUserLayoutStoreImpl().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
+      return  addStructureStylesheetDescription(fssd);
+    } catch (Exception e) {
+      LogService.instance().log(LogService.DEBUG, e);
+    }
+    return  null;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param stylesheetDescriptionURI
+   * @param stylesheetURI
+   * @return
+   */
+  public Integer addThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
+    // need to read iN the description file to obtain information such as name, word description and mime type list
+    try {
+      DOMParser parser = new DOMParser();
+      parser.parse(new InputSource(PortalSessionManager.getResourceAsStream(stylesheetDescriptionURI)));
+      Document stylesheetDescriptionXML = parser.getDocument();
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = "
+          + this.getName(stylesheetDescriptionXML));
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet description = "
+          + this.getDescription(stylesheetDescriptionXML));
+      String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
+      // should thrown an exception
+      if (ssName == null)
+        return  null;
+      // determine id of the parent structure stylesheet
+      Integer ssId = getStructureStylesheetId(ssName);
+      // stylesheet not found, should thrown an exception here
+      if (ssId == null)
+        return  null;
+      ThemeStylesheetDescription sssd = new ThemeStylesheetDescription();
+      sssd.setStructureStylesheetId(ssId.intValue());
+      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
+      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
+      sssd.setStylesheetName(xmlStylesheetName);
+      sssd.setStylesheetURI(stylesheetURI);
+      sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
+      sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
+      sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting mimetype=\""
+          + sssd.getMimeType() + "\"");
+      sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getThemeStylesheetDescription() : setting serializerName=\""
+          + sssd.getSerializerName() + "\"");
+      sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
+      sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
+      sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML, "sampleIconURI"));
+      sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML, "deviceType"));
+      // populate parameter and attriute tables
+      this.populateParameterTable(stylesheetDescriptionXML, sssd);
+      this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
+      //            UserLayoutStoreFactory.getUserLayoutStoreImpl().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
+      return  addThemeStylesheetDescription(sssd);
+    } catch (Exception e) {
+      LogService.instance().log(LogService.DEBUG, e);
+    }
+    return  null;
+  }
+
   /**
    * put your documentation comment here
    * @param person
@@ -1291,7 +1467,7 @@ public class RDBMUserLayoutStore
    * CoreStyleSheet
    *
    */
-  public void getMimeTypeList (Hashtable list) throws Exception {
+  public Hashtable getMimeTypeList () throws Exception {
     Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -1300,9 +1476,11 @@ public class RDBMUserLayoutStore
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getMimeTypeList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
+          Hashtable list = new Hashtable();
           while (rs.next()) {
             list.put(rs.getString("MIME_TYPE"), rs.getString("MIME_TYPE_DESCRIPTION"));
           }
+          return list;
         } finally {
           rs.close();
         }
@@ -1850,6 +2028,253 @@ public class RDBMUserLayoutStore
     }
     return  tsup;
   }
+
+  // private helper modules that retreive information from the DOM structure of the description files
+  private String getName (Document descr) {
+    NodeList names = descr.getElementsByTagName("name");
+    Node name = null;
+    for (int i = names.getLength() - 1; i >= 0; i--) {
+      name = names.item(i);
+      if (name.getParentNode().getLocalName().equals("stylesheetdescription"))
+        break;
+      else
+        name = null;
+    }
+    if (name != null) {
+      return  this.getTextChildNodeValue(name);
+      ;
+    }
+    else {
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
+      return  null;
+    }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param descr
+   * @param elementName
+   * @return
+   */
+  private String getRootElementTextValue (Document descr, String elementName) {
+    NodeList names = descr.getElementsByTagName(elementName);
+    Node name = null;
+    for (int i = names.getLength() - 1; i >= 0; i--) {
+      name = names.item(i);
+      if (name.getParentNode().getLocalName().equals("stylesheetdescription"))
+        break;
+      else
+        name = null;
+    }
+    if (name != null) {
+      return  this.getTextChildNodeValue(name);
+      ;
+    }
+    else {
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getRootElementTextValue() : no \"" + elementName + "\" element was found under the \"stylesheetdescription\" node!");
+      return  null;
+    }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param descr
+   * @return
+   */
+  private String getDescription (Document descr) {
+    NodeList descriptions = descr.getElementsByTagName("description");
+    Node description = null;
+    for (int i = descriptions.getLength() - 1; i >= 0; i--) {
+      description = descriptions.item(i);
+      if (description.getParentNode().getLocalName().equals("stylesheetdescription"))
+        break;
+      else
+        description = null;
+    }
+    if (description != null) {
+      return  this.getTextChildNodeValue(description);
+    }
+    else {
+      LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::getName() : no \"description\" element was found under the \"stylesheetdescription\" node!");
+      return  null;
+    }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param descr
+   * @param csd
+   */
+  private void populateParameterTable (Document descr, CoreStylesheetDescription csd) {
+    NodeList parametersNodes = descr.getElementsByTagName("parameters");
+    Node parametersNode = null;
+    for (int i = parametersNodes.getLength() - 1; i >= 0; i--) {
+      parametersNode = parametersNodes.item(i);
+      if (parametersNode.getParentNode().getLocalName().equals("stylesheetdescription"))
+        break;
+      else
+        parametersNode = null;
+    }
+    if (parametersNode != null) {
+      NodeList children = parametersNode.getChildNodes();
+      for (int i = children.getLength() - 1; i >= 0; i--) {
+        Node child = children.item(i);
+        if (child.getNodeType() == Node.ELEMENT_NODE && child.getLocalName().equals("parameter")) {
+          Element parameter = (Element)children.item(i);
+          // process a <parameter> node
+          String name = parameter.getAttribute("name");
+          String description = null;
+          String defaultvalue = null;
+          NodeList pchildren = parameter.getChildNodes();
+          for (int j = pchildren.getLength() - 1; j >= 0; j--) {
+            Node pchild = pchildren.item(j);
+            if (pchild.getNodeType() == Node.ELEMENT_NODE) {
+              if (pchild.getLocalName().equals("defaultvalue")) {
+                defaultvalue = this.getTextChildNodeValue(pchild);
+              }
+              else if (pchild.getLocalName().equals("description")) {
+                description = this.getTextChildNodeValue(pchild);
+              }
+            }
+          }
+          LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateParameterTable() : adding a stylesheet parameter : (\""
+              + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
+          csd.addStylesheetParameter(name, defaultvalue, description);
+        }
+      }
+    }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param descr
+   * @param cxsd
+   */
+  private void populateFolderAttributeTable (Document descr, StructureStylesheetDescription cxsd) {
+    NodeList parametersNodes = descr.getElementsByTagName("parameters");
+    NodeList folderattributesNodes = descr.getElementsByTagName("folderattributes");
+    Node folderattributesNode = null;
+    for (int i = folderattributesNodes.getLength() - 1; i >= 0; i--) {
+      folderattributesNode = folderattributesNodes.item(i);
+      if (folderattributesNode.getParentNode().getLocalName().equals("stylesheetdescription"))
+        break;
+      else
+        folderattributesNode = null;
+    }
+    if (folderattributesNode != null) {
+      NodeList children = folderattributesNode.getChildNodes();
+      for (int i = children.getLength() - 1; i >= 0; i--) {
+        Node child = children.item(i);
+        if (child.getNodeType() == Node.ELEMENT_NODE && child.getLocalName().equals("attribute")) {
+          Element attribute = (Element)children.item(i);
+          // process a <attribute> node
+          String name = attribute.getAttribute("name");
+          String description = null;
+          String defaultvalue = null;
+          NodeList pchildren = attribute.getChildNodes();
+          for (int j = pchildren.getLength() - 1; j >= 0; j--) {
+            Node pchild = pchildren.item(j);
+            if (pchild.getNodeType() == Node.ELEMENT_NODE) {
+              if (pchild.getLocalName().equals("defaultvalue")) {
+                defaultvalue = this.getTextChildNodeValue(pchild);
+              }
+              else if (pchild.getLocalName().equals("description")) {
+                description = this.getTextChildNodeValue(pchild);
+              }
+            }
+          }
+          LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateFolderAttributeTable() : adding a stylesheet folder attribute : (\""
+              + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
+          cxsd.addFolderAttribute(name, defaultvalue, description);
+        }
+      }
+    }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param descr
+   * @param cxsd
+   */
+  private void populateChannelAttributeTable (Document descr, CoreXSLTStylesheetDescription cxsd) {
+    NodeList channelattributesNodes = descr.getElementsByTagName("channelattributes");
+    Node channelattributesNode = null;
+    for (int i = channelattributesNodes.getLength() - 1; i >= 0; i--) {
+      channelattributesNode = channelattributesNodes.item(i);
+      if (channelattributesNode.getParentNode().getLocalName().equals("stylesheetdescription"))
+        break;
+      else
+        channelattributesNode = null;
+    }
+    if (channelattributesNode != null) {
+      NodeList children = channelattributesNode.getChildNodes();
+      for (int i = children.getLength() - 1; i >= 0; i--) {
+        Node child = children.item(i);
+        if (child.getNodeType() == Node.ELEMENT_NODE && child.getLocalName().equals("attribute")) {
+          Element attribute = (Element)children.item(i);
+          // process a <attribute> node
+          String name = attribute.getAttribute("name");
+          String description = null;
+          String defaultvalue = null;
+          NodeList pchildren = attribute.getChildNodes();
+          for (int j = pchildren.getLength() - 1; j >= 0; j--) {
+            Node pchild = pchildren.item(j);
+            if (pchild.getNodeType() == Node.ELEMENT_NODE) {
+              if (pchild.getLocalName().equals("defaultvalue")) {
+                defaultvalue = this.getTextChildNodeValue(pchild);
+              }
+              else if (pchild.getLocalName().equals("description")) {
+                description = this.getTextChildNodeValue(pchild);
+              }
+            }
+          }
+          LogService.instance().log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::populateChannelAttributeTable() : adding a stylesheet channel attribute : (\""
+              + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
+          cxsd.addChannelAttribute(name, defaultvalue, description);
+        }
+      }
+    }
+  }
+
+  /**
+   * put your documentation comment here
+   * @param descr
+   * @param elementName
+   * @return
+   */
+  private Vector getVectorOfSimpleTextElementValues (Document descr, String elementName) {
+    Vector v = new Vector();
+    // find "stylesheetdescription" node, take the first one
+    Element stylesheetdescriptionElement = (Element)(descr.getElementsByTagName("stylesheetdescription")).item(0);
+    if (stylesheetdescriptionElement == null) {
+      LogService.instance().log(LogService.ERROR, "Could not obtain <stylesheetdescription> element");
+      return  null;
+    }
+    NodeList elements = stylesheetdescriptionElement.getElementsByTagName(elementName);
+    for (int i = elements.getLength() - 1; i >= 0; i--) {
+      v.add(this.getTextChildNodeValue(elements.item(i)));
+      //	    LogService.instance().log(LogService.DEBUG,"adding "+this.getTextChildNodeValue(elements.item(i))+" to the \""+elementName+"\" vector.");
+    }
+    return  v;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param node
+   * @return
+   */
+  private String getTextChildNodeValue (Node node) {
+    if (node == null)
+      return  null;
+    NodeList children = node.getChildNodes();
+    for (int i = children.getLength() - 1; i >= 0; i--) {
+      Node child = children.item(i);
+      if (child.getNodeType() == Node.TEXT_NODE)
+        return  child.getNodeValue();
+    }
+    return  null;
+  }
+
   /**
    *
    * Authorization
@@ -3296,4 +3721,162 @@ public class RDBMUserLayoutStore
       RdbmServices.releaseConnection(con);
     }
   }
+  /**
+   * put your documentation comment here
+   * @param userAgent
+   * @param profileId
+   */
+  public void setSystemBrowserMapping (String userAgent, int profileId) throws Exception {
+    this.setUserBrowserMapping(systemUser, userAgent, profileId);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param userAgent
+   * @return
+   */
+  public int getSystemBrowserMapping (String userAgent) throws Exception {
+    return  getUserBrowserMapping(systemUser, userAgent);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param person
+   * @param userAgent
+   * @return
+   */
+  public UserProfile getUserProfile (IPerson person, String userAgent) throws Exception {
+    int profileId = getUserBrowserMapping(person, userAgent);
+    if (profileId == 0)
+      return  null;
+    return  this.getUserProfileById(person, profileId);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param userAgent
+   * @return
+   */
+  public UserProfile getSystemProfile (String userAgent) throws Exception {
+    int profileId = getSystemBrowserMapping(userAgent);
+    if (profileId == 0)
+      return  null;
+    UserProfile up = this.getUserProfileById(systemUser, profileId);
+    up.setSystemProfile(true);
+    return  up;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param profileId
+   * @return
+   */
+  public UserProfile getSystemProfileById (int profileId) throws Exception {
+    UserProfile up = this.getUserProfileById(systemUser, profileId);
+    up.setSystemProfile(true);
+    return  up;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return
+   */
+  public Hashtable getSystemProfileList () throws Exception {
+    Hashtable pl = this.getUserProfileList(systemUser);
+    for (Enumeration e = pl.elements(); e.hasMoreElements();) {
+      UserProfile up = (UserProfile)e.nextElement();
+      up.setSystemProfile(true);
+    }
+    return  pl;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param profile
+   */
+  public void updateSystemProfile (UserProfile profile) throws Exception {
+    this.updateUserProfile(systemUser, profile);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param profile
+   * @return
+   */
+  public UserProfile addSystemProfile (UserProfile profile) throws Exception {
+    return  addUserProfile(systemUser, profile);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param profileId
+   */
+  public void deleteSystemProfile (int profileId) throws Exception {
+    this.deleteUserProfile(systemUser, profileId);
+  }
+
+    private class SystemUser implements IPerson {
+      public void setID(int sID) {}
+      public int getID() {return 0;}
+
+      public void setFullName(String sFullName) {}
+      public String getFullName() {return "uPortal System Account";}
+
+      public Object getAttribute (String key) {return null;}
+      public void setAttribute (String key, Object value) {}
+
+      public Enumeration getAttributes () {return null;}
+      public Enumeration getAttributeNames () {return null;}
+
+      public boolean isGuest() {return(false);}
+
+      public ISecurityContext getSecurityContext() { return(null); }
+      public void setSecurityContext(ISecurityContext context) {}
+    }
+
+    private IPerson systemUser = new SystemUser(); // We should be getting this from the uPortal
+
+  /**
+   * put your documentation comment here
+   * @param person
+   * @param profileId
+   * @return
+   */
+  public UserPreferences getUserPreferences (IPerson person, int profileId) throws Exception {
+    UserPreferences up = null;
+    UserProfile profile = this.getUserProfileById(person, profileId);
+    if (profile != null) {
+      up = getUserPreferences(person, profile);
+    }
+    return  (up);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param person
+   * @param profile
+   * @return
+   */
+  public UserPreferences getUserPreferences (IPerson person, UserProfile profile) throws Exception {
+    int profileId = profile.getProfileId();
+    UserPreferences up = new UserPreferences(profile);
+    up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(person, profileId, profile.getStructureStylesheetId()));
+    up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(person, profileId, profile.getThemeStylesheetId()));
+    return  up;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param person
+   * @param up
+   */
+  public void putUserPreferences (IPerson person, UserPreferences up) throws Exception {
+    // store profile
+    UserProfile profile = up.getProfile();
+    this.updateUserProfile(person, profile);
+    this.setStructureStylesheetUserPreferences(person, profile.getProfileId(), up.getStructureStylesheetUserPreferences());
+    this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), up.getThemeStylesheetUserPreferences());
+  }
+
+
 }
