@@ -46,6 +46,7 @@ import org.jasig.portal.services.LogService;
 /**
  * A reference implementation for the counter store
  *
+ * @author George Lindholm, george.lindholm@ubc.ca
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
@@ -55,11 +56,16 @@ public class RDBMCounterStore implements ICounterStore {
     public synchronized void createCounter (String counterName) throws Exception {
         Connection con = RDBMServices.getConnection();
         try {
+            RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
             try {
                 String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE/*/) VALUES ('" + counterName + "',0)";
                 LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
                 stmt.executeUpdate(sInsert);
+                RDBMServices.commit(con);
+            } catch (Exception e) {
+                RDBMServices.rollback(con);
+                throw e;
             } finally {
                 stmt.close();
             }
@@ -72,11 +78,16 @@ public class RDBMCounterStore implements ICounterStore {
     public synchronized void setCounter (String counterName, int value) throws Exception {
         Connection con = RDBMServices.getConnection();
         try {
+            RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
             try {
                 String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + value + "WHERE SEQUENCE_NAME='" + counterName + "'";
                 LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
                 stmt.executeUpdate(sUpdate);
+                RDBMServices.commit(con);
+            } catch (Exception e) {
+                RDBMServices.rollback(con);
+                throw e;
             } finally {
                 stmt.close();
             }
@@ -91,12 +102,13 @@ public class RDBMCounterStore implements ICounterStore {
     public synchronized int getIncrementIntegerId (String counterName) throws Exception {
         Connection con = RDBMServices.getConnection();
         try {
+            RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
             try {
                 String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + counterName + "'";
                 for (int i = 0; i < 25; i++) {
                     try {
-                        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sQuery);
+                        LogService.instance().log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sQuery);
                         ResultSet rs = stmt.executeQuery(sQuery);
                         int origId;
                         int nextId;
@@ -104,17 +116,19 @@ public class RDBMCounterStore implements ICounterStore {
                             rs.next();
                             origId = rs.getInt(1);
                             nextId = origId + 1;
-                        } catch (SQLException e) { // If the query fails, there is no hope in h**k
-                            throw new Exception("RDBMUserLayoutStore::getIncrementInteger():" + e);
+                        } catch (SQLException e) { // If the query fails, there is no hope in h**l
+                            throw new Exception("RDBMCounterStore::getIncrementInteger():" + e);
                         } finally {
                             rs.close();
                         }
                         String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + counterName + "'" +
                             " AND SEQUENCE_VALUE=" + origId;
-                        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sInsert);
+                        LogService.instance().log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sInsert);
                         stmt.executeUpdate(sInsert);
+                        RDBMServices.commit(con);
                         return  nextId;
                     } catch (SQLException e) {
+                        RDBMServices.rollback(con);
                         /**
                          * Assume a concurrent update. Try again after some random amount of milliseconds.
                          */
