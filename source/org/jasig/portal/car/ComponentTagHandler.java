@@ -131,8 +131,10 @@ extends DefaultHandler
                 throws SAXException
     {
         // see if we are leaving a process tag and if so switch back to routing
+        // since the process tag does not contribute to the traversal path the
+        // path should be just the outermost component element
         if (qName.equals(DescriptorHandler.PROCESS_TAG_NAME) &&
-            ctx.getPath().equals(DescriptorHandler.PROCESS))
+            ctx.getPath().equals(DescriptorHandler.COMPONENT))
         {
             currentHandler=routingHandler;
         }
