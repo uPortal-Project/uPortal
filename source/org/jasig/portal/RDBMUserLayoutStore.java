@@ -696,10 +696,9 @@ public class RDBMUserLayoutStore
             return  nextId;
           } catch (SQLException e) {
             /**
-             * Assume a concurrent update. Try again after some random amount of microseconds.
+             * Assume a concurrent update. Try again after some random amount of milliseconds.
              */
-            Thread.sleep(java.lang.Math.round(java.lang.Math.random()*3000 * 1000)); // Retry in up to 3 seconds
-//          Thread.sleep(java.lang.StrictMath.round(java.lang.StrictMath.random()*3000 * 1000)); // Retry in up to 3 seconds
+            Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
           }
         }
       } finally {
@@ -742,15 +741,15 @@ public class RDBMUserLayoutStore
     }
   }
   /**
-   * Get the next structure Id
+   * Return the next available channel structure id for a user
    * @parameter userId
-   * @result next free structure ID
+   * @result
    */
   public String getNextStructChannelId (IPerson person) throws Exception {
     return  getNextStructId(person, channelPrefix);
   }
   /**
-   * put your documentation comment here
+   * Return the next available folder structure id for a user
    * @param person
    * @return
    * @exception Exception
@@ -759,10 +758,10 @@ public class RDBMUserLayoutStore
     return  getNextStructId(person, folderPrefix);
   }
   /**
-   * put your documentation comment here
+   * Return the next available structure id for a user
    * @param person
    * @param prefix
-   * @return
+   * @return next free structure ID
    * @exception Exception
    */
   protected String getNextStructId (IPerson person, String prefix) throws Exception {
@@ -772,19 +771,29 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          rs.next();
-          int currentStructId = rs.getInt(1);
-          int nextStructId = currentStructId + 1;
-          sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + userId + " AND NEXT_STRUCT_ID="
-              + currentStructId;
+        for (int i = 0; i < 25; i++) {
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-          return  prefix + nextStructId;
-        } finally {
-          rs.close();
+          ResultSet rs = stmt.executeQuery(sQuery);
+          int currentStructId;
+          try {
+            rs.next();
+            currentStructId = rs.getInt(1);
+          } finally {
+            rs.close();
+          }
+          int nextStructId = currentStructId + 1;
+          try {
+            String sUpdate = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + userId + " AND NEXT_STRUCT_ID="
+                + currentStructId;
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sUpdate);
+            stmt.executeUpdate(sUpdate);
+            return  prefix + nextStructId;
+          } catch (SQLException sqle) {
+            /**
+            * Assume a concurrent update. Try again after some random amount of milliseconds.
+            */
+            Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
+          }
         }
       } finally {
         stmt.close();
@@ -792,6 +801,7 @@ public class RDBMUserLayoutStore
     } finally {
       RdbmServices.releaseConnection(con);
     }
+    throw new SQLException("Unable to generate a new structure id for user " + userId);
   }
   /**
    * Return the Structure ID tag
