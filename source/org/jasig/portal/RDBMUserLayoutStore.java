@@ -76,7 +76,7 @@ import org.jasig.portal.utils.ResourceLoader;
 public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
-  static int DEBUG = 0;
+  protected static int DEBUG = 0;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
   protected IChannelRegistryStoreOld crsdb;
@@ -1566,7 +1566,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  profileId;
   }
 
-  public Document getUserLayout (IPerson person, UserProfile profile) throws Exception { 
+  public Document getUserLayout (IPerson person, UserProfile profile) throws Exception {
     int userId = person.getID();
     int realUserId = userId;
     ResultSet rs;
@@ -1656,6 +1656,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
           insertStmt.executeUpdate(Insert);
          }
+
+          // Close Result Set
+          if ( rs != null ) rs.close();
+
           RDBMServices.commit(con); // Make sure it appears in the store
         }
 
@@ -1689,24 +1693,25 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           String sepChar = "";
           if (rs.next()) {
             int structId = rs.getInt(1);
-            if (rs.wasNull()) {
+            // Result Set returns 0 by default if structId was null
+            /*if (rs.wasNull()) {
               structId = 0;
-            }
+            }*/
             readLayout: while (true) {
               if (DEBUG > 1) System.err.println("Found layout structureID " + structId);
 
               int nextId = rs.getInt(2);
-              if (rs.wasNull()) {
+              /*if (rs.wasNull()) {
                 nextId = 0;
-              }
+              }*/
               int childId = rs.getInt(3);
-              if (rs.wasNull()) {
+              /*if (rs.wasNull()) {
                 childId = 0;
-              }
+              }*/
               int chanId = rs.getInt(4);
-              if (rs.wasNull()) {
+              /*if (rs.wasNull()) {
                 chanId = 0;
-              }
+              }*/
               ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
               layoutStructure.put(new Integer(structId), ls);
               lastStructId = structId;
@@ -1726,9 +1731,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                     break readLayout;
                   }
                   structId = rs.getInt(1);
-                  if (rs.wasNull()) {
+                  /*if (rs.wasNull()) {
                     structId = 0;
-                  }
+                  }*/
                 } while (structId == lastStructId);
               } else { // Do second SELECT later on for structure parameters
                 if (ls.isChannel()) {
@@ -1737,9 +1742,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 }
                 if (rs.next()) {
                   structId = rs.getInt(1);
-                  if (rs.wasNull()) {
+                  /*if (rs.wasNull()) {
                     structId = 0;
-                  }
+                  }*/
                 } else {
                   break readLayout;
                 }
