@@ -142,15 +142,15 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
             parameters.add("dummyName", "dummyValue");
             portletDefinition1.setInitParameters(parameters);
                 
-            PreferenceSetImpl preferences = new PreferenceSetImpl();
-            Collection values1 = new ArrayList();
-            values1.add("dummyValue");
-            preferences.add("dummyName", values1);
-            Collection values2 = new ArrayList();
-            values2.add("dummyValue");
-            preferences.add("dummyName", values2);
+            PreferenceSetImpl preferences1 = new PreferenceSetImpl();
+            Collection values11 = new ArrayList();
+            values11.add("dummyValue");
+            preferences1.add("dummyName", values11);
+            Collection values12 = new ArrayList();
+            values12.add("dummyValue2");
+            preferences1.add("dummyName2", values12);
             //preferences.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
-            portletDefinition1.setPreferences(preferences);
+            portletDefinition1.setPreferences(preferences1);
                 
             ContentTypeSetImpl contentTypes = new ContentTypeSetImpl();
             ContentTypeImpl contentType = new ContentTypeImpl();
@@ -199,13 +199,13 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
                 
             PreferenceSetImpl preferences2 = new PreferenceSetImpl();
             Collection values21 = new ArrayList();
-            values2.add("dummyValue");
+            values21.add("dummyValue");
             preferences2.add("dummyName", values21);
             Collection values22 = new ArrayList();
-            values2.add("dummyValue");
-            preferences2.add("dummyName", values22);
+            values22.add("dummyValue2");
+            preferences2.add("dummyName2", values22);
             //preferences.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
-            portletDefinition2.setPreferences(preferences);
+            portletDefinition2.setPreferences(preferences2);
                 
             ContentTypeSetImpl contentTypes2 = new ContentTypeSetImpl();
             ContentTypeImpl contentType2 = new ContentTypeImpl();
