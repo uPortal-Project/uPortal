@@ -122,7 +122,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
           Element c = (Element) cc;
           c.normalize();
           Node t = c.getFirstChild();
-          if(t!=null && t.getNodeType()==t.TEXT_NODE){
+          if(t!=null && t.getNodeType()==Node.TEXT_NODE){
             String name = c.getNodeName();
             String text = ((Text) t).getData();
             //System.out.println(name+" = "+text);
@@ -244,7 +244,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     protected EntitySet(Element entityset){
       entityset.normalize();
       Node n = entityset.getFirstChild();
-      while (n.getNodeType()!=n.ELEMENT_NODE){
+      while (n.getNodeType()!=Node.ELEMENT_NODE){
         n = n.getNextSibling();
       }
       Element e = (Element) n;
@@ -286,7 +286,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         ArrayList subs = new ArrayList();
         NodeList nl = e.getChildNodes();
         for (int i=0; i < nl.getLength(); i++){
-          if (nl.item(i).getNodeType() == nl.item(i).ELEMENT_NODE){
+          if (nl.item(i).getNodeType() == Node.ELEMENT_NODE){
             EntitySet subset = new EntitySet((Element)nl.item(i));
             subs.add(subset);
           }
