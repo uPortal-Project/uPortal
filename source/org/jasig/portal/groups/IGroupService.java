@@ -65,13 +65,20 @@ public interface IGroupService {
    */
   public IEntityGroup getEveryoneGroup() throws GroupsException;
 
-    /*
+  /*
+   * Returns an <code>IGroupMember</code> representing either a group or a
+   * portal entity.  If the parm <code>type</code> is the group type,
+   * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
+   * an <code>IEntity</code>.
+   */
+  public IGroupMember getGroupMember(String key, Class type) throws GroupsException;
+
+   /*
    * Refers to the PropertiesManager to get the key for the group of
    * Portal Administrators and asks the group store implementation for the corresponding
    * <code>IEntityGroup</code>.
    */
   public IEntityGroup getPortalAdministratorsGroup() throws GroupsException;
-
 
   /*
    * Returns a new <code>IEntityGroup</code> for the given Class with an unused

@@ -81,6 +81,21 @@ public IEntityGroup findGroup(String key) throws GroupsException
   {
     return entityFactory.newInstance(key, type);
   }
+   /*
+   * Returns an <code>IGroupMember</code> representing either a group or a
+   * portal entity.  If the parm <code>type</code> is the group type,
+   * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
+   * an <code>IEntity</code>.
+   */
+  public IGroupMember getGroupMember(String key, Class type) throws GroupsException
+  {
+    IGroupMember gm = null;
+    if ( type == EntityTypes.GROUP_ENTITY_TYPE )
+      gm = findGroup(key);
+    else
+      gm = getEntity(key, type);
+    return gm;
+  }
   /*
    * Returns the group whose key is the everyone key in the portal.properties file.
    */
@@ -88,7 +103,7 @@ public IEntityGroup findGroup(String key) throws GroupsException
   {
     return findGroup(everyoneKey);
   }
-  
+
   /*
    * Returns the group whose key is the PortalAdministrators key in the portal.properties file.
    */
@@ -96,7 +111,7 @@ public IEntityGroup findGroup(String key) throws GroupsException
   {
     return findGroup(adminKey);
   }
-  
+
   /**
    * @exception org.jasig.portal.groups.GroupsException.
    */

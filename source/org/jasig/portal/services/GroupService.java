@@ -87,6 +87,17 @@ public class GroupService
     {
         return instance().igetEveryoneGroup();
     }
+
+  /*
+   * Returns an <code>IGroupMember</code> representing either a group or a
+   * portal entity.  If the parm <code>type</code> is the group type,
+   * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
+   * an <code>IEntity</code>.
+   */
+  public static IGroupMember getGroupMember(String key, Class type) throws GroupsException
+    {
+        return instance().igetGroupMember(key, type);
+    }
      /**
      * Returns the distinguished group called "Portal Administrators".
      * @return org.jasig.portal.groups.IEntityGroup
@@ -122,6 +133,16 @@ public class GroupService
     protected IEntityGroup igetEveryoneGroup() throws GroupsException
     {
         return groupService.getEveryoneGroup();
+    }
+  /*
+   * Returns an <code>IGroupMember</code> representing either a group or a
+   * portal entity.  If the parm <code>type</code> is the group type,
+   * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
+   * an <code>IEntity</code>.
+   */
+    protected IGroupMember igetGroupMember(String key, Class type) throws GroupsException
+    {
+        return groupService.getGroupMember(key, type);
     }
     /**
      * Returns the distinguished group called "Portal Administrators".
