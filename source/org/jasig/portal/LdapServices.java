@@ -35,6 +35,7 @@
 
 package org.jasig.portal;
 
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
 /**
@@ -66,7 +67,7 @@ public class LdapServices {
      * @see org.jasig.portal.ldap.ILdapServer#getConnection()
      * @deprecated As of uPortal 2.4, use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getConnection()}.
      */
-    public DirContext getConnection() {
+    public DirContext getConnection() throws NamingException {
         return org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().getConnection();
     }
 

@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.xml.transform.TransformerException;
@@ -368,30 +369,23 @@ public class LdapServices
         }
         
         
-        public DirContext getConnection() {
+        public DirContext getConnection() throws NamingException {
             DirContext conn = null;
 
-            try {
-                Hashtable env = new Hashtable(5, 0.75f);
-                env.put(Context.INITIAL_CONTEXT_FACTORY, this.ldapInitCtxFactory);
-                StringBuffer urlBuffer = new StringBuffer("ldap://");
-                urlBuffer.append(ldapHost).append(":").append(ldapPort);
-     
-                env.put(Context.PROVIDER_URL, urlBuffer.toString());
-                env.put(Context.SECURITY_AUTHENTICATION, "simple");
-                env.put(Context.SECURITY_PRINCIPAL,      ldapManagerDn);
-                env.put(Context.SECURITY_CREDENTIALS,    ldapManagerPw);
-                
-                if(ldapManagerProtocol.equals("ssl"))
-                    env.put(Context.SECURITY_PROTOCOL,"ssl");
-                
-                conn = new InitialDirContext(env);
-            }
-            catch ( Exception e ) {
-                log.error( "LdapServices::LdapConnectionImpl::getConnection(): Error creating the LDAP Connection.", e);
-            }
-     
-            return conn;
+            Hashtable env = new Hashtable(5, 0.75f);
+            env.put(Context.INITIAL_CONTEXT_FACTORY, this.ldapInitCtxFactory);
+            StringBuffer urlBuffer = new StringBuffer("ldap://");
+            urlBuffer.append(ldapHost).append(":").append(ldapPort);
+ 
+            env.put(Context.PROVIDER_URL, urlBuffer.toString());
+            env.put(Context.SECURITY_AUTHENTICATION, "simple");
+            env.put(Context.SECURITY_PRINCIPAL,      ldapManagerDn);
+            env.put(Context.SECURITY_CREDENTIALS,    ldapManagerPw);
+            
+            if(ldapManagerProtocol.equals("ssl"))
+                env.put(Context.SECURITY_PROTOCOL,"ssl");
+
+            return new InitialDirContext(env);
         }
 
         public String getBaseDN() {
