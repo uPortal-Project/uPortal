@@ -52,13 +52,22 @@ import  org.w3c.dom.Document;
  *
  * Session data for a cached thread stored in a Map in CGroupsManager
  */
-public class CGroupsManagerSessionData {
+public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public ChannelRuntimeData runtimeData;
    public ChannelStaticData staticData;
    public IServant servantChannel = null;
+   public boolean servantMode = false;
+   public boolean allowFinish = true;
+   public boolean blockEntitySelect = false;
    public Document model;
    public String uid;
    public IPerson user;
    public long startRD;
    public ILockableEntityGroup lockedGroup;
+   public String highlightedGroupID;
+   public int currentPage = 1;
+   public String rootViewGroupID = "0";
+   public String mode = BROWSE_MODE; //"browse", "edit" or "select"
+   public String feedback;
+   public String customMessage;
 }
