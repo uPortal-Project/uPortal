@@ -127,7 +127,7 @@ Version $Revision$
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-content">
 			<tr>
 				<td align="left" valign="top">
-					<img src="{$mediaPathHeader}/mainlogo.gif" width="426" height="102"/>
+					<img src="{$mediaPathHeader}/mainlogo.gif" alt="" title=""/>
 				</td>
 				<td width="100%">
 					<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
