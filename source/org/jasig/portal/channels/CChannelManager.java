@@ -931,7 +931,12 @@ public class CChannelManager extends BaseChannel {
       Iterator iter = selectedGroups.iterator();
       for (int i = 0; iter.hasNext(); i++) {
         String key = (String)iter.next();
-        selectedEntityGroups[i] = GroupService.find(key);
+        IEntityGroup group = GroupService.find(key);
+        if (group != null) {
+          selectedEntityGroups[i] = group;
+        } else {
+          throw new GroupsException("Unable to find group '" + key + "'");
+        }
       }
       return selectedEntityGroups;
     }
