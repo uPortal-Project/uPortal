@@ -11,6 +11,7 @@ import java.sql.*;
 import java.net.*;
 import com.objectspace.xml.*;
 import org.jasig.portal.layout.*;
+import org.jasig.portal.channels.*;
 import org.jasig.portal.GenericPortalBean;
 
 /**
@@ -46,18 +47,9 @@ public class PublisherBean extends GenericPortalBean{
     Vector v = ch.getParameters();
     Enumeration enum = v.elements();
     while(enum.hasMoreElements()) {
-      String [] param = new String[5];
-      param = (String[])enum.nextElement();
-      out.println(param[4]+ "<br>");
-      out.println("<table width=\"40%\" border=\"0\">");
-      out.println("<tr>");
-      out.println("<td width=\"19%\">"+param[0]+":</td>");
-      out.println("<td width=\"81%\">");
-      out.println("<input type=\"text\" name=\""+param[1]+"\" size=\""+param[2]+"\" maxlength=\""+param[3]+"\" >");
-      out.println("</td>");
-      out.println("</tr>");
-      out.println("</table>");
-      out.println("<br>");
+      ParameterField param = new ParameterField();
+      param = (ParameterField)enum.nextElement();
+      out.print(param.writeField());
     }
     }
     catch (Exception e)
