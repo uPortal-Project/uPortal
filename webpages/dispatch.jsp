@@ -111,6 +111,8 @@
   <div class="portalChannelText">
   <%-- Render Channel --%>
   <%
+    try
+    {
     String sMethodName = request.getParameter ("method");
 
     if(sMethodName == null)
@@ -122,6 +124,17 @@
     Object[] methodParams = new Object[] {request, response, out};
     java.lang.reflect.Method method = ch.getClass ().getMethod (sMethodName, paramTypes);
     method.invoke(ch, methodParams);
+    }
+    catch(Exception ex)
+    {
+      Logger.log(Logger.ERROR, ex);
+      out.println("Due to technical difficulties, this channel cannot be displayed");
+    }
+    catch(Error er)
+    {
+      Logger.log(Logger.ERROR, er);
+      out.println("Due to technical difficulties, this channel cannot be displayed");
+    }
   %>
   </div>
 
