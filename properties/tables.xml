@@ -29,6 +29,40 @@
   </table>
 
   <table>
+    <name>UP_PERMISSIONS</name>
+    <columns>
+      <column>
+        <name>OWNER</name>
+        <type>VARCHAR</type>
+        <param>255</param>
+      </column>
+      <column>
+        <name>PRINCIPAL</name>
+        <type>VARCHAR</type>
+        <param>255</param>
+      </column>
+      <column>
+        <name>ACTIVITY</name>
+        <type>VARCHAR</type>
+        <param>255</param>
+      </column>
+      <column>
+        <name>TARGET</name>
+        <type>VARCHAR</type>
+        <param>255</param>
+      </column>
+      <column>
+        <name>EFFECTIVE</name>
+        <type>TIMESTAMP</type>
+      </column>
+      <column>
+        <name>EXPIRES</name>
+        <type>TIMESTAMP</type>
+      </column>
+    </columns>
+  </table>
+
+  <table>
     <name>UP_USER_PARAM</name>
     <columns>
       <column> <name>USER_ID</name>          <type>INTEGER</type>                    </column>
