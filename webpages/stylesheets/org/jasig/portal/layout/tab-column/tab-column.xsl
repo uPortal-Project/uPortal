@@ -5,11 +5,11 @@
   <xsl:param name="userLayoutRoot">root</xsl:param>
   <xsl:variable name="activeID">
     <xsl:choose>
-      <xsl:when test="$activeTab &gt; count(/layout/folder[@type='regular' and @hidden='false'])">
-        <xsl:value-of select="/layout/folder[@type='regular' and @hidden='false'][1]/@ID"/>
+      <xsl:when test="$activeTab &gt; count(/layout/folder/folder[@type='regular' and @hidden='false'])">
+        <xsl:value-of select="/layout/folder/folder[@type='regular' and @hidden='false'][1]/@ID"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="/layout/folder[@type='regular' and @hidden='false'][position()=$activeTab]/@ID"/>
+        <xsl:value-of select="/layout/folder/folder[@type='regular' and @hidden='false'][position()=$activeTab]/@ID"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
@@ -25,8 +25,8 @@
   </xsl:template>
 
   <xsl:template match="layout">
+   <xsl:for-each select="folder[@type='root']">
     <layout>
-
       <header>
         <xsl:for-each select="child::folder[@type='header']">
           <xsl:copy-of select=".//channel"/>
@@ -54,11 +54,12 @@
         </xsl:for-each>
       </footer>
     </layout>
+   </xsl:for-each>
   </xsl:template>
 
   <xsl:template name="tabList">
     <navigation>
-      <xsl:for-each select="/layout/folder[@type='regular' and @hidden='false']">
+      <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
         <tab>
           <xsl:attribute name="ID">
             <xsl:value-of select="@ID"/>

@@ -43,7 +43,7 @@ $Revision$
   <xsl:param name="elementID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="showLockUnlock">false</xsl:param>
-  <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
+  <xsl:variable name="activeTabID" select="/layout/folder/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <!--remove for CVS
   <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
@@ -57,6 +57,8 @@ $Revision$
         <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
       </head>
     end remove-->
+
+    <xsl:for-each select="folder[@type='root']">
 
     <xsl:call-template name="optionMenu"/>
     <br/>
@@ -81,6 +83,8 @@ $Revision$
         </td>
       </tr>
     </table>
+   </xsl:for-each>
+
     <!--End Layout Table -->
     <!--remove for CVS
     </html>
@@ -90,7 +94,7 @@ $Revision$
     <!--Begin Tab Table -->
     <table summary="add summary" border="0" cellspacing="0" cellpadding="0" width="100%">
       <tr>
-        <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false']">
+        <xsl:for-each select="/layout/folder/folder[not(@type='header' or @type='footer') and @hidden='false']">
           <xsl:choose>
             <xsl:when test="not($activeTab = position())">
               <td nowrap="nowrap" class="uportal-background-light">
@@ -250,8 +254,8 @@ $Revision$
       <xsl:call-template name="controlRow"/>
       <tr>
         <xsl:choose>
-          <xsl:when test="/layout/folder[attribute::ID=$activeTabID]/folder">
-            <xsl:for-each select="/layout/folder[attribute::ID=$activeTabID]/descendant::folder">
+          <xsl:when test="/layout/folder/folder[attribute::ID=$activeTabID]/folder">
+            <xsl:for-each select="/layout/folder/folder[attribute::ID=$activeTabID]/descendant::folder">
               <xsl:call-template name="contentColumns"/>
               <xsl:if test="position()=last()">
                 <xsl:call-template name="closeContentRow"/>
@@ -259,7 +263,7 @@ $Revision$
             </xsl:for-each>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:for-each select="/layout/folder[attribute::ID=$activeTabID]">
+            <xsl:for-each select="/layout/folder/folder[attribute::ID=$activeTabID]">
               <xsl:call-template name="contentColumns"/>
               <xsl:call-template name="closeContentRow"/>
             </xsl:for-each>
@@ -274,8 +278,8 @@ $Revision$
     <!--Begin Control Row -->
     <tr>
       <xsl:choose>
-        <xsl:when test="/layout/folder[attribute::ID=$activeTabID]/folder">
-          <xsl:for-each select="/layout/folder[attribute::ID=$activeTabID]/folder">
+        <xsl:when test="/layout/folder/folder[attribute::ID=$activeTabID]/folder">
+          <xsl:for-each select="/layout/folder/folder[attribute::ID=$activeTabID]/folder">
             <td width="10">
               <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/>
             </td>
@@ -775,7 +779,7 @@ $Revision$
   </xsl:template>
   <xsl:template name="optionMenuModifyTab">
     <!-- Begin Mod Tab Options -->
-    <xsl:variable name="tabName" select="/layout/folder[@ID=$activeTabID]/@name"/>
+    <xsl:variable name="tabName" select="/layout/folder/folder[@ID=$activeTabID]/@name"/>
     <p>
       <span class="uportal-channel-subtitle-reversed">Options for modifying this tab:</span>
     </p>
@@ -788,7 +792,7 @@ $Revision$
           <a href="{$baseActionURL}?action=setActiveTab&amp;tab={$activeTab}">Make this the default "Active Tab" (the tab that is selected when you log into the portal)</a>
         </td>
       </tr>
-      <xsl:if test="not(/layout/folder[@ID=$activeTabID]/@immutable = 'true')">
+      <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@immutable = 'true')">
         <tr>
           <td valign="top">
             <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -829,7 +833,7 @@ $Revision$
           <form name="formMoveTab" method="post" action="{$baseActionURL}">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-channel-text">
               <tr>
-                <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false']">
+                <xsl:for-each select="/layout/folder/folder[not(@type='header' or @type='footer') and @hidden='false']">
                   <xsl:choose>
                     <xsl:when test="@ID=$activeTabID">
                       <td class="uportal-background-light">
@@ -918,12 +922,12 @@ $Revision$
             <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
           </td>
           <xsl:choose>
-            <xsl:when test="/layout/folder[@ID=$activeTabID]/@unremovable = 'true'">
+            <xsl:when test="/layout/folder/folder[@ID=$activeTabID]/@unremovable = 'true'">
               <td>
                 <a href="{$baseActionURL}?action=unlockTab&amp;elementID={$activeTabID}">Unlock this tab</a>
               </td>
             </xsl:when>
-            <xsl:when test="/layout/folder[@ID=$activeTabID]/@unremovable = 'false'">
+            <xsl:when test="/layout/folder/folder[@ID=$activeTabID]/@unremovable = 'false'">
               <td>
                 <a href="{$baseActionURL}?action=lockTab&amp;elementID={$activeTabID}">Lock this tab</a>
               </td>
@@ -931,7 +935,7 @@ $Revision$
           </xsl:choose>
         </tr>
       </xsl:if>
-      <xsl:if test="not(/layout/folder[@ID=$activeTabID]/@unremovable = 'true')">
+      <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@unremovable = 'true')">
         <tr>
           <td valign="top">
             <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -986,7 +990,7 @@ $Revision$
                         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                       </td>
                       <input type="hidden" name="action" value="columnWidth"/>
-                      <xsl:for-each select="/layout/folder[@ID = $activeTabID]/descendant::folder">
+                      <xsl:for-each select="/layout/folder/folder[@ID = $activeTabID]/descendant::folder">
                         <td nowrap="nowrap" align="center" class="uportal-text-small">
                           <input type="text" name="columnWidth_{@ID}" value="{@width}" size="5" maxlength="" class="uportal-input-text"/>
                           <br/>
@@ -1009,7 +1013,7 @@ $Revision$
                 </td>
               </tr>
               <!-- If ancestor is immutable - the column cannot be moved-->
-              <xsl:if test="not(/layout/descendant::folder[@ID=$elementID]/ancestor::*[@immutable='true'])">
+              <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor::*[@immutable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
                     <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -1020,7 +1024,7 @@ $Revision$
                 </tr>
               </xsl:if>
               <!-- If ancestor or self is unremovable - the column cannot be deleted-->
-              <xsl:if test="not(/layout/descendant::folder[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
+              <xsl:if test="not(/layout/folder/descendant::folder[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
                     <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -1051,7 +1055,7 @@ $Revision$
     <!-- End Mod Column Options -->
   </xsl:template>
   <xsl:template name="optionMenuModifyChannel">
-    <xsl:variable name="channelName" select="/layout/folder/descendant::*[@ID = $elementID]/@name"/>
+    <xsl:variable name="channelName" select="/layout/folder/folder/descendant::*[@ID = $elementID]/@name"/>
     <form name="formModifyChannel" method="post" action="{$baseActionURL}">
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
         <tr class="uportal-background-light">
@@ -1061,7 +1065,7 @@ $Revision$
             </p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <!-- We aren't going to allow renaming a channel at the moment...
-              <xsl:if test="not(/layout/descendant::channel[@ID=$elementID]/@immutable = 'true')">
+              <xsl:if test="not(/layout/folder/descendant::channel[@ID=$elementID]/@immutable = 'true')">
                 <tr>
                   <td class="uportal-channel-text">
                     <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
@@ -1079,7 +1083,7 @@ $Revision$
               </xsl:if>
               End of channel rename section-->
               <!-- If ancestor is immutable - the channel cannot be moved-->
-              <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor::folder[@immutable='true'])">
+              <xsl:if test="not(/layout/folder/descendant::*[@ID=$elementID]/ancestor::folder[@immutable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
                     <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -1100,7 +1104,7 @@ $Revision$
                 </tr>
               </xsl:if>
               <!-- If ancestor or self is unremovable - the channel cannot be deleted-->
-              <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
+              <xsl:if test="not(/layout/folder/descendant::*[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])">
                 <tr>
                   <td class="uportal-channel-text">
                     <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -1158,7 +1162,7 @@ $Revision$
                 <td class="uportal-channel-text">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                      <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false']">
+                      <xsl:for-each select="/layout/folder/folder[not(@type='header' or @type='footer') and @hidden='false']">
                         <td nowrap="nowrap" class="uportal-background-light">
                           <input type="radio" name="method_ID" value="insertBefore_{@ID}"/>
                         </td>
@@ -1171,7 +1175,7 @@ $Revision$
                         </td>
                       </xsl:for-each>
                       <td width="100%">
-                        <input type="radio" name="method_ID" value="appendAfter_{/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = last()]/@ID}"/>
+                        <input type="radio" name="method_ID" value="appendAfter_{/layout/folder/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = last()]/@ID}"/>
                       </td>
                     </tr>
                   </table>
@@ -1228,7 +1232,7 @@ $Revision$
                         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                       </td>
                       <input type="hidden" name="action" value="columnWidth"/>
-                      <xsl:for-each select="/layout/folder[@ID = $activeTabID]/descendant::folder">
+                      <xsl:for-each select="/layout/folder/folder[@ID = $activeTabID]/descendant::folder">
                         <xsl:if test="$position='before' and $elementID=@ID">
                           <td nowrap="nowrap" align="center" class="uportal-text-small">
                             <input type="text" name="columnWidth_{@ID}" value="" size="5" maxlength="" class="uportal-input-text"/>

@@ -11,6 +11,7 @@
 </xsl:template>
 
 <xsl:template match="layout">
+ <xsl:for-each select="folder">
   <layout>
     <header>
       <xsl:for-each select="folder[@type='header']">
@@ -42,6 +43,7 @@
     </footer>
     
    </layout>    
+ </xsl:for-each>
 </xsl:template>
 
 

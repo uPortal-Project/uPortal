@@ -2,9 +2,11 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 	<xsl:output method="xml" doctype-system="http://localhost:8080/portal/dtd/structuredLayout.dtd"/>
 	<xsl:template match="layout">
+            <xsl:for-each select="folder">
 		<layout>
 			<xsl:apply-templates/>
 		</layout>
+            </xsl:for-each>
 	</xsl:template>
 	<xsl:template match="folder">
 		<xsl:choose>
