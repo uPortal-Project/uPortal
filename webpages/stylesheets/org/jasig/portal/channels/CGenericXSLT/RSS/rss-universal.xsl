@@ -96,14 +96,14 @@ Version $Revision$
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                  <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                 </td>
                 <td width="100%">
                   <xsl:if test="language">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[language:&#x20;<xsl:value-of select="language"/>] </p>
@@ -115,7 +115,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[copyright:&#x20;<xsl:value-of select="copyright"/>]</p>
@@ -127,7 +127,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[published:&#x20;<xsl:value-of select="pubDate"/>]</p>
@@ -139,7 +139,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[last updated:&#x20;<xsl:value-of select="lastBuildDate"/>]</p>
@@ -151,7 +151,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[documentation:&#x20;<xsl:value-of select="docs"/>]</p>
@@ -163,7 +163,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[generator:&#x20;<xsl:value-of select="generator"/>]</p>
@@ -175,7 +175,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[category:&#x20;<xsl:value-of select="category"/>]</p>
@@ -187,7 +187,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[editor:&#x20;<xsl:value-of select="managingEditor"/>]</p>
@@ -199,7 +199,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[web master:&#x20;<xsl:value-of select="webMaster"/>]</p>
@@ -211,7 +211,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[time to live:&#x20;<xsl:value-of select="ttl"/>]</p>
@@ -223,7 +223,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[PICS rating:&#x20;<xsl:value-of select="rating"/>]</p>
@@ -235,7 +235,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[language:&#x20;<xsl:value-of select="language"/>]</p>
@@ -247,7 +247,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[skipped hours:&#x20;<xsl:value-of select="skipHours"/>]</p>
@@ -259,7 +259,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[skipped days:&#x20;<xsl:value-of select="skipDays"/>]</p>
@@ -271,7 +271,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
                         </td>
                         <td width="100%" align="left" valign="top">
                           <p class="uportal-text-small">[cloud:&#x20;<xsl:value-of select="cloud"/>]</p>
@@ -295,7 +295,7 @@ Version $Revision$
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+            <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
           </td>
           <td width="100%" align="left" valign="top">
             <p class="uportal-text-small">
@@ -319,7 +319,7 @@ Version $Revision$
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+            <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
           </td>
           <td width="100%" align="left" valign="top">
             <p class="uportal-text-small">
@@ -347,7 +347,7 @@ Version $Revision$
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
+            <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1" border="0"/>
           </td>
           <td width="100%" align="left" valign="top">
             <p class="uportal-text-small">
@@ -369,13 +369,13 @@ Version $Revision$
         <td>
           <xsl:choose>
             <xsl:when test="str:*">
-              <img alt="interface image" src="{$mediaPath}/streamingBullet.gif" width="16" height="16"/>
+              <img alt="streaming bullet" src="{$mediaPath}/streamingBullet.gif" width="16" height="16"/>
             </xsl:when>
             <xsl:when test="ev:*">
-              <img alt="interface image" src="{$mediaPath}/eventBullet.gif" width="16" height="16"/>
+              <img alt="event bullet" src="{$mediaPath}/eventBullet.gif" width="16" height="16"/>
             </xsl:when>
             <xsl:otherwise>
-              <img alt="interface image" src="{$mediaPath}/{$bulletImage}" width="16" height="16"/>
+              <img alt="bullet" src="{$mediaPath}/{$bulletImage}" width="16" height="16"/>
             </xsl:otherwise>
           </xsl:choose>
         </td>
@@ -388,7 +388,7 @@ Version $Revision$
       <xsl:if test="*[local-name()='description'] or content:* != ''">
         <tr class="uportal-channel-text">
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+            <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
           </td>
           <xsl:choose>
             <xsl:when test="content:*">
@@ -443,7 +443,7 @@ Version $Revision$
         <!--  and ../../*=rss[@version='2.0'] -->
         <tr>
           <td>
-            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+            <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
           </td>
           <td width="100%">
             <span class="uportal-text-small">
@@ -461,7 +461,7 @@ Version $Revision$
               </xsl:if>
               <xsl:if test="source">source:&#x20;<xsl:value-of select="source"/>]<br/>
               </xsl:if>
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+              <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
             </span>
           </td>
         </tr>

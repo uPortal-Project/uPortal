@@ -77,8 +77,8 @@ $Revision$
                             <input type="hidden" name="action" value="newChannel"/>
                             <tr>
                               <td nowrap="nowrap" align="left" valign="top">
-                                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                                <img alt="interface image" src="{$mediaPath}/arrow_right_image.gif" width="16" height="16"/>
+                                <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                                <img alt="right arrow" src="{$mediaPath}/arrow_right_image.gif" width="16" height="16"/>
                                 <select name="selectedCategory" class="uportal-input-text">
                                   <xsl:for-each select="/registry/category">
                                     <xsl:sort select="@name"/>
@@ -111,17 +111,17 @@ $Revision$
                                 <input type="hidden" name="action" value="newChannel"/>
                                 <tr>
                                   <td nowrap="nowrap" align="left" valign="top">
-                                    <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16">
+                                    <img alt="" src="{$mediaPath}/transparent.gif" height="16">
                                       <xsl:attribute name="width">
                                         <xsl:value-of select="(count(ancestor::category)+1)*16"/>
                                       </xsl:attribute>
                                     </img>
                                     <xsl:choose>
                                       <xsl:when test="position() = last()">
-                                        <img alt="interface image" src="{$mediaPath}/arrow_right_image.gif" width="16" height="16"/>
+                                        <img alt="right arrow" src="{$mediaPath}/arrow_right_image.gif" width="16" height="16"/>
                                       </xsl:when>
                                       <xsl:otherwise>
-                                        <img alt="interface image" src="{$mediaPath}/arrow_down_image.gif" width="16" height="16"/>
+                                        <img alt="down arrow" src="{$mediaPath}/arrow_down_image.gif" width="16" height="16"/>
                                       </xsl:otherwise>
                                     </xsl:choose>
                                     <select name="selectedCategory" class="uportal-input-text">
@@ -165,7 +165,7 @@ $Revision$
                                 <input type="hidden" name="action" value="newChannel"/>
                                 <tr>
                                   <td nowrap="nowrap" align="left" valign="top">
-                                    <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16" width="16"/>
+                                    <img alt="" src="{$mediaPath}/transparent.gif" height="16" width="16"/>
                                     <select name="selectedCategory" class="uportal-input-text">
                                       <xsl:for-each select="category">
                                         <xsl:sort select="@name"/>
@@ -189,7 +189,7 @@ $Revision$
                     <!--End Category Selection Table -->
                   </td>
                   <td>
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="32" height="16"/>
+                    <img alt="" src="{$mediaPath}/transparent.gif" width="32" height="16"/>
                   </td>
                   <td width="100%">
                     <xsl:if test="$catID != 'top'">
@@ -209,7 +209,7 @@ $Revision$
                           </tr>
                           <tr>
                             <td>
-                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                              <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                             </td>
                             <!--Begin Channel Listing -->
                             <td width="100%">
@@ -282,7 +282,7 @@ $Revision$
             </tr>
             <tr>
               <td colspan="3">
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                <img alt="bullet point" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
                 <a href="{$baseActionURL}?action=cancel">Avbryt och gå tillbaka</a>
               </td>
             </tr>

@@ -13,13 +13,13 @@
 
             <tr>
               <td colspan="4" class="uportal-background-dark" valign="top">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1" />
               </td>
             </tr>
 
             <tr>
               <td colspan="4" class="uportal-channel-subtitle" valign="top">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+                <img alt="" src="{$mediaPath}/transparent.gif" width="10" height="10" />
               </td>
             </tr>
 
@@ -35,7 +35,7 @@
 
             <tr>
               <td colspan="4" class="uportal-channel-subtitle" valign="top">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+                <img alt="" src="{$mediaPath}/transparent.gif" width="10" height="10" />
               </td>
             </tr>
 
@@ -53,7 +53,7 @@
 
             <tr>
               <td colspan="4" class="uportal-channel-subtitle" valign="top">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+                <img alt="" src="{$mediaPath}/transparent.gif" width="10" height="10" />
               </td>
             </tr>
 
@@ -61,7 +61,7 @@
 
             <tr>
               <td class="uportal-text-small" colspan="4">
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+                <img alt="" src="{$mediaPath}/transparent.gif" width="10" height="10" />
               </td>
             </tr>
 
@@ -70,7 +70,7 @@
 		<input type="hidden" name="action" value="completeEdit"/>
                 <input type="submit" name="submitSave" value="Save Changes" class="uportal-button" />
 
-                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+                <img alt="" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
                 <input type="submit" name="submitCancel" value="Cancella" class="uportal-button" />
               </td>
@@ -86,13 +86,13 @@
 
     <tr>
       <td class="uportal-background-dark" colspan="4" valign="top">
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+        <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1" />
       </td>
     </tr>
 
     <tr>
       <td colspan="4" valign="top">
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
+        <img alt="" src="{$mediaPath}/transparent.gif" width="10" height="10" />
       </td>
     </tr>
 
@@ -122,7 +122,7 @@
 
     <tr>
       <td class="uportal-background-med" colspan="4">
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+        <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1" />
       </td>
     </tr>
   </xsl:template>
@@ -134,7 +134,7 @@
       </td>
 
       <td align="center" class="uportal-text-small">
-        <img alt="interface image" src="{deviceiconuri}" width="120" height="90" />
+        <img alt="device icon" src="{deviceiconuri}" width="120" height="90" />
 
         <br />
 
@@ -163,14 +163,14 @@
 
         <xsl:when test="sampleuri = ''">
           <td align="center" class="uportal-text-small">
-            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+            <img alt="sample icon" src="{sampleiconuri}" width="120" height="90" border="0" />
           </td>
         </xsl:when>
 
         <xsl:otherwise>
           <td align="center" class="uportal-text-small">
           <a href="{sampleuri}" target="_blank">
-            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+            <img alt="sample icon" src="{sampleiconuri}" width="120" height="90" border="0" />
           </a>
 
           <br />
@@ -188,7 +188,7 @@
       </td>
 
       <td align="center" class="uportal-text-small">
-        <img alt="interface image" src="{deviceiconuri}" width="120" height="90" />
+        <img alt="device icon" src="{deviceiconuri}" width="120" height="90" />
 
         <br />
 
@@ -217,14 +217,14 @@
 
         <xsl:when test="sampleuri = ''">
           <td align="center" class="uportal-text-small">
-            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+            <img alt="sample icon" src="{sampleiconuri}" width="120" height="90" border="0" />
           </td>
         </xsl:when>
 
         <xsl:otherwise>
           <td align="center" class="uportal-text-small">
           <a href="{sampleuri}" target="_blank">
-            <img alt="interface image" src="{sampleiconuri}" width="120" height="90" border="0" />
+            <img alt="sample icon" src="{sampleiconuri}" width="120" height="90" border="0" />
           </a>
 
           <br />
