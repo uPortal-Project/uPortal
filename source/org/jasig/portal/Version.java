@@ -46,9 +46,9 @@ public class Version {
     // Use empty strings rather than null when value is not desired.
     private static String product = "uPortal";
     private static String major = "2";
-    private static String minor = "3";
+    private static String minor = "4";
     private static String patch = "";
-    private static String extra = "+";
+    private static String extra = "";
     
     private static String releaseTag;
     private static String version;
@@ -67,6 +67,15 @@ public class Version {
             version += "." + patch;
         }
         version += extra;
+    }
+    
+    /**
+     * Returns the product name.
+     * For example, this would return <code>uPortal</code> for uPortal 2.3.4.
+     * @return the product name
+     */
+    public static String getProduct() {
+        return product;
     }
     
     /**

@@ -44,6 +44,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import org.apache.pluto.services.information.PortalContextProvider;
+import org.jasig.portal.Version;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -64,7 +65,7 @@ public class PortalContextProviderImpl implements PortalContextProvider {
         // Should read these from a properties file
         supportedPortletModes = new PortletMode[] {PortletMode.VIEW, PortletMode.EDIT, PortletMode.HELP};
         supportedWindowStates = new WindowState[] {WindowState.NORMAL, WindowState.MAXIMIZED, WindowState.MINIMIZED, EXCLUSIVE};
-        portalInfo = "uPortal/2.4";
+        portalInfo = Version.getProduct() + "/" + Version.getVersion();
     }
 
     // PortalContextProvider methods
