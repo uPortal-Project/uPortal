@@ -102,7 +102,7 @@ import org.jasig.portal.layout.UserLayoutFolderDescription;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-class TabColumnPrefsState extends BaseState
+public class TabColumnPrefsState extends BaseState
 {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
@@ -119,7 +119,9 @@ class TabColumnPrefsState extends BaseState
   private String activeTab = "none";
   private String elementID = "none";
 
-  private static final String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
+  // These can be overridden in a sub-class.
+  protected static String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
+  protected static String SKIN_LIST_FILE = "media/org/jasig/portal/layout/tab-column/nested-tables/skinList.xml";
 
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
@@ -1100,7 +1102,7 @@ class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      InputStream xmlStream = PortalSessionManager.getResourceAsStream("media/org/jasig/portal/layout/tab-column/nested-tables/skinList.xml");
+      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKIN_LIST_FILE);
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
       XSLT xslt = new XSLT (this);
