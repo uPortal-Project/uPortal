@@ -113,11 +113,10 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				IAggregatedUserLayoutManager alm =
 					(IAggregatedUserLayoutManager) ulm;
 				if (action.equals("new")) {
-					String fragmentName = runtimeData.getParameter("uP_fragment_name");
-					String fragmentDesc = runtimeData.getParameter("uP_fragment_desc");
-					String defaultValue = IAggregatedUserLayoutManager.NEW_FRAGMENT;
-					fragmentId = alm.createFragment(CommonUtils.envl(fragmentName, defaultValue),
-					                                CommonUtils.envl(fragmentDesc, "The fragment"));
+					String fragmentName = runtimeData.getParameter("fragment_name");
+					String fragmentDesc = runtimeData.getParameter("fragment_desc");
+					String fragmentType = runtimeData.getParameter("fragment_type");
+					fragmentId = alm.createFragment(CommonUtils.nvl(fragmentName),CommonUtils.nvl(fragmentDesc));
 				} else if (action.equals("edit") && fragmentId != null) {
 					if (CommonUtils.parseInt(fragmentId) > 0)
 						alm.loadFragment(fragmentId);
@@ -199,9 +198,9 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	}
 
 	public void refreshFragments() throws PortalException {
-		if (fragmentMap == null)
+		//if (fragmentMap == null)
 			fragmentMap = layoutStore.getFragments(staticData.getPerson());
-		if (fragments == null) {
+		//if (fragments == null) {
 			fragments = new ALFragment[fragmentMap.size()];
 			int i = 0;
 			for (Iterator ids = fragmentMap.keySet().iterator();
@@ -218,7 +217,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 							+ " type!");
 				fragments[i] = (ALFragment) layoutFragment;
 			}
-		}
+		//}
 	}
 
 	public void renderXML(ContentHandler out) throws PortalException {
