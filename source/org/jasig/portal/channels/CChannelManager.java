@@ -49,6 +49,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -249,9 +251,13 @@ public class CChannelManager extends BaseChannel {
           else // runtimeData.getParameter("uPCM_select") != null
             categorySettings.addSelectedCategory(selectedCategory);
         }
+        String removeCategory = runtimeData.getParameter("removeCategory");
+        if (removeCategory != null)
+          categorySettings.removeCategory(removeCategory);
       // Roles
       } else if (capture.equals("selectRoles")) {
         String[] roles = runtimeData.getParameterValues("selectedRoles");
+        roleSettings.removeRoles();
         if (roles != null) {
           for (int i = 0; i < roles.length; i++) {
             roleSettings.addSelectedRole(roles[i]);
@@ -365,21 +371,35 @@ public class CChannelManager extends BaseChannel {
         state = CHANNEL_REVIEW_STATE;
         Workflow workflow = new Workflow();
 
-        WorkflowSection reviewSection = new WorkflowSection("reviewChannel");
-        workflow.setReviewSection(reviewSection);
-        WorkflowStep step = new WorkflowStep("1", "Review");
-
-        // Channel Definition
-        step.addDataElement(channelDef.toXML());
-        // Selected categories
-        // Channel registry
-        step.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
-        // Selected roles
-        step.addDataElement(roleSettings.toXML());
         // Channel types
-        step.addDataElement(ChannelRegistryManager.getChannelTypes().getDocumentElement());
+        WorkflowSection ctSection = new WorkflowSection("selectChannelType");
+        WorkflowStep ctStep = new WorkflowStep("1", "Channel Type");
+        ctStep.addDataElement(ChannelRegistryManager.getChannelTypes().getDocumentElement());
+        ctSection.addStep(ctStep);
+        workflow.setChannelTypesSection(ctSection);
 
+        // Selected categories
+        WorkflowSection regSection = new WorkflowSection("selectCategories");
+        WorkflowStep regStep = new WorkflowStep("1", "Categories");
+        regStep.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
+        regStep.addDataElement(categorySettings.toXML());
+        regSection.addStep(regStep);
+        workflow.setCategoriesSection(regSection);
+
+        // Selected roles
+        WorkflowSection roleSection = new WorkflowSection("selectRoles");
+        WorkflowStep rolesStep = new WorkflowStep("1", "Roles");
+        rolesStep.addDataElement(roleSettings.toXML());
+        roleSection.addStep(rolesStep);
+        workflow.setRolesSection(roleSection);
+
+        // Review (with channel definition)
+        WorkflowSection reviewSection = new WorkflowSection("reviewChannel");
+        WorkflowStep step = new WorkflowStep("1", "Review");
+        step.addDataElement(channelDef.toXML());
         reviewSection.addStep(step);
+        workflow.setReviewSection(reviewSection);
+
         channelManagerDoc = workflow.toXML();
 
       } else if (action.equals("selectModifyChannel")) {
@@ -533,7 +553,7 @@ public class CChannelManager extends BaseChannel {
 
   // This method is just for testing and will be removed...
   public static void main(String[] args) throws Exception {
-    UtilitiesBean.setPortalBaseDir("D:\\Projects\\JA-SIG\\uPortal2\\");
+    UtilitiesBean.setPortalBaseDir("C:\\Projects\\JA-SIG\\uPortal2\\");
     org.jasig.portal.IChannelRegistryStore chanReg = org.jasig.portal.RdbmServices.getChannelRegistryStoreImpl();
 
     // Getting the channel types...
@@ -899,8 +919,13 @@ public class CChannelManager extends BaseChannel {
     }
 
     protected void setBrowsingCategory(String browsingCategory) { this.browsingCategory = browsingCategory; }
-    protected void addSelectedCategory(String selectedCategory) {
-      selectedCategories.add(selectedCategory);
+
+    protected void addSelectedCategory(String category) {
+      selectedCategories.add(category);
+    }
+
+    protected void removeCategory(String category) {
+      selectedCategories.remove(category);
     }
 
     protected Element toXML() {
@@ -926,14 +951,19 @@ public class CChannelManager extends BaseChannel {
   }
 
   protected class RoleSettings {
-    protected List selectedRoles;
+    // change to a Set!
+    protected Set selectedRoles;
 
     protected RoleSettings() {
-      selectedRoles = new ArrayList();
+      selectedRoles = new TreeSet();
     }
 
     protected void addSelectedRole(String selectedRole) {
       selectedRoles.add(selectedRole);
+    }
+
+    protected void removeRoles() {
+      selectedRoles = new TreeSet();
     }
 
     protected Element toXML() {
@@ -954,35 +984,6 @@ public class CChannelManager extends BaseChannel {
       return userSettingsE;
     }
   }
-
-  /*
-   * Channel Types
-   *   Channel types
-   * General settings
-   *   CPD
-   *   Channel XML
-   * CPD steps
-   *   CPD
-   *   Channel XML
-   * Channel controls
-   *   CPD
-   *   Channel XML
-   * Categories
-   *   CPD
-   *   Channel Registry
-   *   Browsed category/selected category
-   * Roles
-   *   CPD
-   *   Roles
-   * Review
-   *   Channel XML
-   *   Selected categories
-   *   Channel Registry
-   *   Selected Roles
-   *   Channel types
-   *
-   *
-   */
 }
 
 
