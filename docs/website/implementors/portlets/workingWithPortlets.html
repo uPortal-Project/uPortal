@@ -1,15 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>Guide to Working with Portlets in uPortal 2.3</title>
+  <title>Guide to Working with Portlets in uPortal</title>
   <meta http-equiv="content-type">
   <link href="../../uportal.css" rel="stylesheet">
 </head>
 <body style="background-color: rgb(255, 255, 255);">
-<table cellspacing="0" cellpadding="0" width="100%">
+<table cellpadding="0" cellspacing="0" width="100%">
   <tbody>
     <tr>
-      <td align="left" valign="bottom" colspan="3"><img
+      <td colspan="3" align="left" valign="bottom"><img
  src="../../images/uportal-head.gif" alt="uPortal by JA-SIG" border="0"
  height="87" width="592"> </td>
     </tr>
@@ -19,10 +19,10 @@
     </tr>
   </tbody>
 </table>
-<table cellspacing="0" cellpadding="5" width="100%" border="0">
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
   <tbody>
     <tr>
-      <td valign="top" width="150" bgcolor="#ccccff"> <img
+      <td bgcolor="#ccccff" valign="top" width="150"> <img
  src="../../images/spacer.gif" border="0" height="4"> <br>
       <p><a class="sidelinks" href="http://www.ja-sig.org/"><b> JA-SIG
 Home</b></a></p>
@@ -36,17 +36,19 @@ Started</b></a></p>
       <p><a class="sidelinks" href="../../architecture/index.html"><b>Background</b></a></p>
       <p><a class="sidelinks" href="../../release/index.html"><b>Release</b></a></p>
       <p><img src="../../images/mellon.gif" alt="" border="0"
- width="145" height="93"> </p>
+ height="93" width="145"> </p>
       </td>
 <!-- main body goes in this table cell  (see BELOW)   --> <td
- valign="top"> <img height="4" width="692"
- src="../../images/orange-pixel.gif" border="0" alt="."> <a
+ valign="top"> <img src="../../images/orange-pixel.gif" alt="."
+ border="0" height="4" width="692"> <a
  href="workingWithPortlets_prt.html"> <img
- src="../../images/print_this.gif" border="0" width="86" height="20"
- alt="Printable version of this document" align="right"> </a> <br>
+ src="../../images/print_this.gif"
+ alt="Printable version of this document" align="right" border="0"
+ height="20" width="86"> </a> <br>
 <!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
       <h1 style="text-align: center;">Guide to Working with Portlets in
-uPortal 2.3</h1>
+uPortal<br>
+      </h1>
       <h2>Contents</h2>
       <a href="#Introduction">Introduction</a><br>
       <a href="#Servlet_Container_Issues">Servlet Container Issues</a><br>
@@ -55,6 +57,7 @@ uPortal 2.3</h1>
       <a href="#Publishing_Portlets">Publishing Portlets</a><br>
       <a href="#Portlet_Caching">Portlet Caching</a><br>
       <a href="#User_Information">User Information</a><br>
+      <a href="#Portlet_Security">Portlet Security</a><br>
       <a href="#Custom_Portlet_Modes_and_Window_States">Custom Portlet
 Modes and Window States</a><br>
       <a href="#Future_of_Portlets_in_uPortal">Future of Portlets in
@@ -71,7 +74,8 @@ interface.&nbsp; To provide a runtime environment for Portlets, uPortal
 has chosen to use a Portlet Container from the Apache Jakarta project
 called <a href="http://jakarta.apache.org/pluto/">Pluto</a>.&nbsp;
 Pluto is the reference implementation of the Java Portlet
-Specification.&nbsp; uPortal 2.3 embeds the Pluto container and
+Specification.&nbsp; Beginning with uPortal 2.3, uPortal embeds the
+Pluto container and
 includes a Portlet adapter that makes it possible to install
 and render Portlets along with its native Channels.&nbsp; The End-User
 of uPortal can not tell the difference between a Portlet and a Channel.
@@ -88,7 +92,7 @@ several components:<br>
 uPortal includes the Portlet API, Portlet Container, and Test Suite
 Portlet, but not Pluto's Portal Driver which is not meant to be a fully
 functional portal.&nbsp; uPortal acts as the Portal Driver.&nbsp; This
-guide gives you an overview of the uPortal 2.3 Portlet environment.<br>
+guide gives you an overview of the uPortal Portlet environment.<br>
       <h2><a name="Servlet_Container_Issues"></a>Servlet Container
 Issues</h2>
 uPortal, with its implementation of Pluto, requires that the web
@@ -114,13 +118,13 @@ application with the <code>crossContext</code> attribute set to true:<code><br>
 &lt;Context path="/uPortal" docBase="uPortal" crossContext="true"&gt;<br>
 &lt;/Context&gt;</code></li>
       </ol>
-      <strong>Note: uPortal 2.3 will not be able to run Portlets in
+      <strong>Note: uPortal will not be able to run Portlets in
 Tomcat
 5.0.19 because of a Tomcat bug that is documented <a
  href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=27309">here</a>.<br>
       <span style="font-weight: bold;"></span></strong>
       <h2><a name="Sample_Portlets"></a>Sample Portlets</h2>
-uPortal 2.3 comes with 3 sample Portlets that are preinstalled: <br>
+uPortal comes with 3 sample Portlets that are preinstalled: <br>
       <ol>
         <li>Test Suite Portlet - comes with Pluto [<a
  href="http://jakarta.apache.org/pluto/multiproject/testsuite/">Info</a>]<br>
@@ -230,7 +234,7 @@ The Portlet Specification says that you should be able to map user
 attribute names declared in the <code>portlet.xml</code> file at
 deployment
 time.&nbsp;
-In uPortal 2.3, this feature will not be available.&nbsp; Instead, you
+In uPortal, this feature will not be available.&nbsp; Instead, you
 will
 have to edit uPortal's <code>PersonDirs.xml</code> file, adding
 aliases for any of the user attribute names declared in the <code>portlet.xml</code>
@@ -253,14 +257,69 @@ contain something like...<br>
       </code><code>&nbsp;&nbsp;&nbsp;
 &lt;name&gt;FIRST_NAME&lt;/name&gt;<br>
       </code><code>&nbsp;&nbsp;&nbsp; &lt;alias&gt;</code><code>user.name.given</code><code>&lt;/alias&gt;<br>
-&lt;/attribute&gt;</code><br>
+&lt;/attribute&gt;<br>
+      <br>
+      </code>As of uPortal 2.4, Portlets can be configured to receive
+the
+user's password as a user attribute.&nbsp; If this is desired, simply
+include the following user attribute mapping in <code>portlet.xml</code>:<br>
+      <br>
+      <code>&lt;user-attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;description&gt;User Password&lt;/description&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;name&gt;password&lt;/name&gt;<br>
+&lt;/user-attribute&gt;<br>
+      <br>
+      </code>If a password mapping was specified in <code>PersonDirs.xml</code>,
+then it will be used.&nbsp; Otherwise, uPortal will look for the
+password in
+the user's authenticated security contexts that cache credentials,
+using the first one it finds.<br>
       <br>
 Full support of deployment-time mapping will be
 available in
 uPortal 3.0.<br>
+      <h2><span style="font-weight: bold;"><a name="Portlet_Security"></a></span>Portlet
+Security</h2>
+As of uPortal 2.4, Portlets in uPortal can make use of the <code>getRemoteUser()</code>,
+      <code>getUserPrincipal()</code>, and <code>isUserInRole()</code>
+methods of the <code>PortletRequest</code>.&nbsp; <br>
+      <br>
+Each method will first try to call its respective method on the
+original servlet request to see if the information is available (it
+would be available if J2EE security was properly set up in the
+container and the container has authenticated the user).&nbsp; If not,
+then
+it will use uPortal's IPerson object in conjunction with uPortal's
+GroupService to determine the answers.&nbsp; The role mapping that must
+be
+included with the <code>portlet.xml</code> will be a mapping from some
+made-up role to a uPortal Groups key.&nbsp; For example: <br>
+      <br>
+      <code>&lt;security-role-ref&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;role-name&gt;myEveryoneRole&lt;/role-name&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;role-link&gt;local.0&lt;/role-link&gt;<br>
+&lt;/security-role-ref&gt;</code><br>
+      <br>
+      <code>&lt;security-role-ref&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;role-name&gt;myStudentRole&lt;/role-name&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;role-link&gt;pags.students&lt;/role-link&gt;<br>
+&lt;/security-role-ref&gt;<br>
+      <br>
+      </code>If these example mappings were included and the user was
+authenticated and in the <code>pags.students</code> role, then a call
+from within the Portlet to <code>portletRequest.isUserInRole("myStudentRole")</code>
+and <code>portletRequest.isUserInRole("pags.students")</code> should
+return <code>true</code>.<br>
+      <br>
+Note that security tests included with Pluto's <code>testsuite</code>
+Portlet test for a role mapped to the role link of <code>tomcat</code>
+which isn't a valid role within uPortal.&nbsp; Therefore, some of these
+tests will fail until Pluto makes their tests more flexible by
+providing a properties file that lets us specify the role link
+ourselves.<br>
       <h2><a name="Custom_Portlet_Modes_and_Window_States"></a>Custom
 Portlet Modes and Window States</h2>
-uPortal 2.3 supports the following Portlet modes:<br>
+uPortal supports the following Portlet modes:<br>
       <ul>
         <li>VIEW</li>
         <li>EDIT</li>
@@ -268,19 +327,24 @@ uPortal 2.3 supports the following Portlet modes:<br>
       </ul>
 When a user clicks on one of these buttons in the channel control bar,
 the Portlet mode will change.&nbsp; There is currently no button
-provided to switch the mode back to the default VIEW mode.&nbsp; At
-this time, custom Portlet modes are not supported. <br>
+provided to
+switch the mode back to the default VIEW mode.&nbsp; At this time,
+custom
+Portlet modes are not supported. <br>
       <br>
-uPortal 2.3 supports the following Portlet window states: <br>
+uPortal supports the following Portlet window states: <br>
       <ul>
         <li>NORMAL - Portlet is rendered along with other Portlets in
-the layout.<br>
+the
+layout.<br>
         </li>
         <li>MAXIMIZED - Same as uPortal focused concept.<br>
         </li>
         <li>MINIMIZED - Same as uPortal minimized concept.</li>
+        <li>EXCLUSIVE - Gives Portlet full control over request and
+response.&nbsp; Can be used to achieve file downloading.<br>
+        </li>
       </ul>
-At this time, custom Portlet window states are not supported.<br>
       <h2><a name="Future_of_Portlets_in_uPortal"></a>Future of
 Portlets in
 uPortal</h2>
@@ -296,39 +360,40 @@ More will be added to this section as the design matures.<br>
       <br>
       <br>
 <!-- end cut this section to put into jasig table cell format --> <br>
-<!-- end of main body table cell --> <img height="4" width="692"
- src="../../images/orange-pixel.gif" border="0" alt="."> </td>
+<!-- end of main body table cell --> <img
+ src="../../images/orange-pixel.gif" alt="." border="0" height="4"
+ width="692"> </td>
     </tr>
   </tbody>
 </table>
 <!-- page footer -->
-<table cellspacing="0" cellpadding="0" width="100%">
+<table cellpadding="0" cellspacing="0" width="100%">
   <tbody>
     <tr>
       <td align="center">&nbsp;</td>
     </tr>
     <tr>
-      <td align="center"><img height="3" src="../../images/spacer.gif"
- width="1" border="0" alt="."> <br>
+      <td align="center"><img src="../../images/spacer.gif" alt="."
+ border="0" height="3" width="1"> <br>
       <font face="Verdana, Arial, sans-serif" size="1"><a
- href="http://www.ja-sig.org/">JA-SIG Home</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> <a
- href="../../index.html"> About uPortal</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> <a
- href="../../faq.html">FAQ</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> <a
- href="../download.html">Download</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> <a
- href="../../docs.html">Documentation</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> <a
- href="../../getinv.html">Getting Involved</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> <br>
-      <a href="../../cvs.html">Code Repository</a> <img height="13"
- alt="*" src="../../images/diamond-lo.gif" width="8" border="0"> <a
- href="../../bugs.html">Reporting Bugs</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> <a
- href="../../license.html">License</a> <img height="13" alt="*"
- src="../../images/diamond-lo.gif" width="8" border="0"> </font></td>
+ href="http://www.ja-sig.org/">JA-SIG Home</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <a
+ href="../../index.html"> About uPortal</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <a
+ href="../../faq.html">FAQ</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <a
+ href="../download.html">Download</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <a
+ href="../../docs.html">Documentation</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <a
+ href="../../getinv.html">Getting Involved</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <br>
+      <a href="../../cvs.html">Code Repository</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <a
+ href="../../bugs.html">Reporting Bugs</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> <a
+ href="../../license.html">License</a> <img alt="*"
+ src="../../images/diamond-lo.gif" border="0" height="13" width="8"> </font></td>
     </tr>
   </tbody>
 </table>
