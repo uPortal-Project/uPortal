@@ -5,14 +5,12 @@
     "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
 
 <web-app>
-  <distributable />
-
   <servlet>
     <servlet-name>uPortal</servlet-name>
     <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
     <init-param>
       <param-name>portalBaseDir</param-name>
-      <param-value>d:\projects\jasig\uportal20\portal\</param-value>
+      <param-value>d:\projects\jasig\uPortal20\portal</param-value>
     </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
@@ -22,9 +20,23 @@
     <url-pattern>*.uP</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>Authentication</servlet-name>
+    <servlet-class>org.jasig.portal.AuthenticationServlet</servlet-class>
+    <init-param>
+      <param-name>portalBaseDir</param-name>
+      <param-value>d:\projects\jasig\uPortal20\portal</param-value>
+    </init-param>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Authentication</servlet-name>
+    <url-pattern>authentication.jsp</url-pattern>
+  </servlet-mapping>
+
   <mime-mapping>
     <extension>wbmp</extension>
     <mime-type>image/vnd.wap.wbmp</mime-type>
   </mime-mapping>
-
 </web-app>
