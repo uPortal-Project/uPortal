@@ -98,6 +98,8 @@ public class ProblemsTable {
 	public synchronized static void store(PortalException pe) {
 		if (pe == null)
 			return; // bad argument
+        if (recentPortalExceptions.contains(pe))
+            return; // already recorded
 		ErrorID id = pe.getErrorID();
 		if (id == null)
 			return; // no ErrorID (Msg only PortalException)
