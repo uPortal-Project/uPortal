@@ -26,5 +26,5 @@
 <!ELEMENT parameter EMPTY>
 <!ATTLIST parameter
   name CDATA #REQUIRED
-  value CDATA #REQUIRED>
-  override (yes|no) "no"
+  value CDATA #REQUIRED
+  override (yes|no) "no">
