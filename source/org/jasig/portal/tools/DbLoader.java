@@ -52,14 +52,51 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.SAXParser;
+
+
 /**
- * A tool to set up a uPortal database.
+ * <p>A tool to set up a uPortal database. This tool was created so that uPortal
+ * developers would only have to maintain a single set of xml documents to define
+ * the uPortal database schema and data.  Previously it was necessary to maintain
+ * different scripts for each database we wanted to support.</p>
+ *
+ * <p>DbLoader reads the generic types that are specified in tables.xml and
+ * tries to map them to local types by querying the database metadata via methods
+ * implemented by the JDBC driver.  Fallback mappings can be supplied in
+ * dbloader.xml for cases where the JDBC driver is not able to determine the
+ * appropriate mapping.</p>
+ *
+ * <p>Generic data types (as defined in java.sql.Types) which may be specified
+ * in tables.xml include:
+ * <code>BIT, TINYINT, SMALLINT, INTEGER, BIGINT, FLOAT, REAL, DOUBLE,
+ * NUMERIC, DECIMAL, CHAR, VARCHAR, LONGVARCHAR, DATE, TIME, TIMESTAMP,
+ * BINARY, VARBINARY, LONGVARBINARY, NULL, OTHER, JAVA_OBJECT, DISTINCT,
+ * STRUCT, ARRAY, BLOB, CLOB, REF</code>
+ *
+ * <p><strong>WARNING: YOU MAY WANT TO MAKE A BACKUP OF YOUR DATABASE BEFORE RUNNING DbLoader</strong></p>
+ *
+ * <p>DbLoader will perform the following steps:
+ * <ol>
+ * <li>Read configurable properties from <portal.home>/properties/dbloader.xml</li>
+ * <li>Read tables.xml and issue corresponding DROP TABLE and CREATE TABLE SQL statements.</li>
+ * <li>Read data.xml and issue corresponding INSERT SQL statements.</li>
+ * </ol></p>
+ *
+ * <p>You will either need to change the <code>portalBaseDir</code> member variable
+ * below and re-compile, or alternatively set the system property "portal.home"</p>
+ *
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @see java.sql.Types
+ * @since uPortal 2.0
  */
 public class DbLoader
 {
-  private static final String portalBaseDir = "D:\\Projects\\JA-SIG\\uPortal2\\";
+  // CHANGE THIS OR SET portal.home SYSTEM PROPERTY!!!
+  private static String portalBaseDir = "D:\\Projects\\JA-SIG\\uPortal2\\";
+
   private static final String propertiesUri = portalBaseDir + "properties" + File.separator + "dbloader.xml";
   private static final String indent = "  ";
   private static final String space = " ";
@@ -75,18 +112,18 @@ public class DbLoader
   {
     try
     {
-      UtilitiesBean.setPortalBaseDir(portalBaseDir);
+      setPortalBaseDir();
       con = rdbmService.getConnection ();
 
       if (con != null)
       {
-        XMLReader parser = new org.apache.xerces.parsers.SAXParser();
+        XMLReader parser = getXMLReader();
         doProperties(parser);
         doTables(parser);
         doData(parser);
       }
       else
-        System.out.println("Couldn't obtain a database connection. See '" + portalBaseDir + "logs" + File.separator + "portal.log' for details.");
+        System.out.println("DbLoader couldn't obtain a database connection. See '" + portalBaseDir + "logs" + File.separator + "portal.log' for details.");
     }
     catch (Exception e)
     {
@@ -96,6 +133,33 @@ public class DbLoader
     {
       rdbmService.releaseConnection(con);
     }
+  }
+
+  private static void setPortalBaseDir()
+  {
+    String portalBaseDirParam = System.getProperty("portal.home");
+
+    if (portalBaseDirParam != null)
+      portalBaseDir = portalBaseDirParam;
+
+    if (!portalBaseDir.endsWith(File.separator))
+      portalBaseDir += File.separator;
+
+    UtilitiesBean.setPortalBaseDir(portalBaseDir);
+  }
+
+  private static XMLReader getXMLReader()
+  {
+    // This method of getting a parser won't compile until we start using Xerces 1.2.2 and higher
+    //
+    // SAXParserFactory spf = SAXParserFactory.newInstance();
+    // SAXParser saxParser = spf.newSAXParser();
+    // XMLReader xr = saxParser.getXMLReader();
+
+    // For now, we'll use the hard-coded instantiaiton of a Xerces SAX Parser
+    XMLReader xr = new org.apache.xerces.parsers.SAXParser();
+
+    return xr;
   }
 
   private static void doProperties (XMLReader parser) throws SAXException, IOException
@@ -552,15 +616,14 @@ public class DbLoader
             System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
             System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
             System.out.println("Exiting...");
-            System.exit(0);
+            exit();
           }
         }
       }
       catch (Exception e)
       {
         e.printStackTrace();
-        rdbmService.releaseConnection(con);
-        System.exit(0);
+        exit();
       }
 
       return localDataTypeName;
@@ -827,5 +890,11 @@ public class DbLoader
       public void setName(String name) { this.name = name; }
       public void setValue(String value) { this.value = value; }
     }
+  }
+
+  private static void exit()
+  {
+    rdbmService.releaseConnection(con);
+    System.exit(1);
   }
 }
