@@ -43,12 +43,7 @@ import  org.apache.xerces.dom.DocumentImpl;
 
 
 /**
- * Title:        uPortal 20
- * Description:  Returns an instance of a Document
- * Copyright:    Copyright (c) 2000
- * Company:      Interactive Business Solutions
- * @author       Bernie Durfee (bdurfee@interactivebusiness.com)
- * @version 1.0
+ * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  */
 public class DocumentFactory {
 
@@ -56,7 +51,7 @@ public class DocumentFactory {
    * Returns a new copy of a Document implementation
    * @return 
    */
-  public Document getNewDocument () {
+  public static Document getNewDocument () {
     return  (new DocumentImpl());
   }
 }
