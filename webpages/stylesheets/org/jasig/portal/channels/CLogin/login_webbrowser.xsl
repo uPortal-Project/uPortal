@@ -56,5 +56,20 @@
       <br/>
     </div>
   </xsl:template>
-  
+    <xsl:template match="error">
+    <div style="text-align: center">
+      <table border="0" width="80%" cellspacing="0" cellpadding="10">
+        <tr>
+          <td class="uportal-background-light" align="center">
+            <p class="uportal-channel-warning">
+			An error occured during authentication.  
+			The portal is unable to log you on at this time.
+			Try again later.	</p>
+          </td>
+        </tr>
+      </table>
+      <br/>
+    </div>
+  </xsl:template>
+
 </xsl:stylesheet>
