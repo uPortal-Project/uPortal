@@ -86,7 +86,7 @@ public class CBookmarks extends GenericPortalBean implements IChannel
   StylesheetSet set;
 
   // location of the stylesheet files
-  String stylesheetDir=getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "BookmarksChannel" + fs;
+  String stylesheetDir = getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
 
   // some variables to keep the state in.
   boolean editMode = false;
@@ -101,7 +101,7 @@ public class CBookmarks extends GenericPortalBean implements IChannel
     // initialize a stylesheet set from a file
     // take a look at the *.ssl file for the stylesheet list format.
     // The format is a W3C-recommended default stylehseet binding
-    set = new StylesheetSet (stylesheetDir + "BookmarksChannel.ssl");
+    set = new StylesheetSet (stylesheetDir + "CBookmarks.ssl");
     set.setMediaProps (getPortalBaseDir () + "properties" + fs + "media.properties");
   }
 
@@ -258,11 +258,11 @@ public class CBookmarks extends GenericPortalBean implements IChannel
       else if (action.equals ("addBookmark"))
       {
         newBookmarkMode=false;
-        Node bookmarks= ( (getBookmarkXML ()).getElementsByTagName ("bookmarks")).item (0);
+        Node bookmarks= ((getBookmarkXML ()).getElementsByTagName ("bookmarks")).item (0);
         Element bookmark=getBookmarkXML ().createElement ("bookmark");
-        bookmark.setAttribute ("name",runtimeData.getParameter ("name"));
-        bookmark.setAttribute ("url",makeUrlSafe (runtimeData.getParameter ("url")));
-        bookmark.setAttribute ("comments",runtimeData.getParameter ("comments"));
+        bookmark.setAttribute ("name", runtimeData.getParameter ("name"));
+        bookmark.setAttribute ("url", makeUrlSafe (runtimeData.getParameter ("url")));
+        bookmark.setAttribute ("comments", runtimeData.getParameter ("comments"));
         bookmarks.appendChild (bookmark);
       }
     }
@@ -306,7 +306,7 @@ public class CBookmarks extends GenericPortalBean implements IChannel
         // test in a order of precedence
         if (editBookmarkMode)
         {
-          renderEditBookmarkXML (out,currentBookmark);
+          renderEditBookmarkXML (out, currentBookmark);
         }
         else if (newBookmarkMode)
         {
