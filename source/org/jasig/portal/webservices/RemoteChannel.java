@@ -49,6 +49,7 @@ import org.jasig.portal.MultithreadedChannelAdapter;
 import org.jasig.portal.MultithreadedCacheableChannelAdapter;
 import org.jasig.portal.MultithreadedPrivilegedChannelAdapter;
 import org.jasig.portal.MultithreadedPrivilegedCacheableChannelAdapter;
+import org.jasig.portal.ChannelFactory;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.InternalTimeoutException;
@@ -130,31 +131,9 @@ public class RemoteChannel implements IRemoteChannel {
     String instanceId = Long.toHexString(randomNumberGenerator.nextLong()) + "_" + System.currentTimeMillis();
 
     ChannelDefinition channelDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
-    Object channelObj = Class.forName(channelDef.getJavaClass()).newInstance();
-
-    // Figure out what kind of channel we have an use adapters if necessary
-    // to make any channel look like an IChannel
-    if (channelObj instanceof IMultithreadedChannel) {
-      String uid = messageContext.getProperty(SimpleSessionHandler.SESSION_ID) + "/" + instanceId;
-      if (channelObj instanceof IMultithreadedCacheable) {
-        if (channelObj instanceof IPrivileged) {
-          // Multithreaded=true, cacheable=true, privileged=true
-          channel = new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)channelObj, uid);
-        } else {
-          // Multithreaded=true, cacheable=true, privileged=false
-          channel = new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)channelObj, uid);
-        }
-      } else if (channelObj instanceof IPrivileged) {
-          // Multithreaded=true, cacheable=false, privileged=true
-          channel = new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)channelObj, uid);
-      } else {
-        // Multithreaded=true, cacheable=false, privileged=false
-        channel = new MultithreadedChannelAdapter((IMultithreadedChannel)channelObj, uid);
-      }
-    } else {
-      // Channel must be a normal IChannel
-      channel = (IChannel)channelObj;
-    }
+    String javaClass = channelDef.getJavaClass();
+    String uid = messageContext.getProperty(SimpleSessionHandler.SESSION_ID) + "/" + instanceId;
+    channel = ChannelFactory.instantiateChannel(javaClass, uid);
 
     ChannelStaticData staticData = new ChannelStaticData();
 
