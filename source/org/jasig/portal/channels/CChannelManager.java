@@ -94,6 +94,15 @@ public class CChannelManager extends BaseChannel {
   protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
   protected IPerson person;
 
+  // Called after publishing so that you won't see any previous settings
+  // on the next publish attempt
+  protected void resetSettings() {
+    channelDef = new ChannelDefinition();
+    categorySettings = new CategorySettings();
+    groupSettings = new GroupSettings();
+    modChanSettings = new ModifyChannelSettings();
+  }
+
   public void setStaticData (ChannelStaticData sd) throws PortalException {
     staticData = sd;
     person = sd.getPerson();
@@ -417,6 +426,7 @@ public class CChannelManager extends BaseChannel {
         try {
           Element channelE = channelDef.toXML();
           ChannelRegistryManager.publishChannel(channelE, catIDs, groups, person);
+          resetSettings();
         } catch (Exception e) {
           // Need to revisit this and handle the error!
           throw new PortalException(e);
