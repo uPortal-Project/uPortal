@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -53,7 +51,11 @@ import  org.jasig.portal.services.LogService;
 
 
 /**
+ * Receives the username and password and tries to authenticate the user.
+ * The form presented by org.jasig.portal.channels.CLogin is typically used
+ * to generate the post to this servlet.
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
+ * @version $Revision$
  */
 public class AuthenticationServlet extends HttpServlet {
   private static final String redirectString;
@@ -63,7 +65,7 @@ public class AuthenticationServlet extends HttpServlet {
       String upFile=UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UserInstance.USER_LAYOUT_ROOT_NODE+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
       try {
           upFile = UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,null,null);
-      } catch(PortalException pe) { 
+      } catch(PortalException pe) {
           LogService.log(LogService.ERROR,"AuthenticationServlet::static "+pe);
       }
       redirectString=upFile;
@@ -131,8 +133,12 @@ public class AuthenticationServlet extends HttpServlet {
     else {
       // Store the fact that this user has attempted authentication in the session
       request.getSession(false).setAttribute("up_authenticationAttempted", "true");
-      // Send the unauthenticated to the baseActionURL
-      response.sendRedirect(request.getParameter("baseActionURL") + "?userName=" + request.getParameter("userName"));
+      // Preserve the attempted username so it can be redisplayed to the user by CLogin
+      String attemptedUserName = request.getParameter("userName");
+      if (attemptedUserName != null)
+        request.getSession(false).setAttribute("up_attemptedUserName", request.getParameter("userName"));
+      // Send the unauthenticated user back to the PortalSessionManager servlet
+      response.sendRedirect(request.getContextPath() + '/' + redirectString);
     }
   }
 }

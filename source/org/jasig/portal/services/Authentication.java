@@ -80,7 +80,12 @@ public class Authentication {
 
     // Retrieve and populate an instance of the principal object
     IPrincipal principalInstance = securityContext.getPrincipalInstance();
-    principalInstance.setUID(username);
+    if (username != null) {
+      principalInstance.setUID(username);
+      // prime userid in person object before authenticated so can be
+      // displayed after failure if desired
+      person.setAttribute("username",principalInstance.getUID());
+    }
 
     // Retrieve and populate an instance of the credentials object
     IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
@@ -89,14 +94,14 @@ public class Authentication {
     // Attempt to authenticate the user
     securityContext.authenticate();
 
-    // Add the person's login username to the person object
-    // the login name may have been provided or reset by the security provider
-    // so this needs to be done after authentication is attempted but it
-    // ends up as either what was typed in or supplied by the security provider
-     person.setAttribute("username",principalInstance.getUID());
-
     // Check to see if the user was authenticated
     if (securityContext.isAuthenticated()) {
+
+      // Add the authenticated username to the person object
+      // the login name may have been provided or reset by the security provider
+      // so this needs to be done after authentication.
+      person.setAttribute("username",securityContext.getPrincipal().getUID());
+
       // Retrieve the additional descriptor from the security context
       IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
       // Process the additional descriptor if one was created
@@ -133,7 +138,7 @@ public class Authentication {
       // Populate the person object using the PersonDirectory if applicable
       if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
         // Retrieve all of the attributes associated with the person logging in
-        Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation(username);
+        Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation((String)person.getAttribute("username"));
         // Add each of the attributes to the IPerson
         Enumeration en = attribs.keys();
         while (en.hasMoreElements()) {
@@ -187,8 +192,8 @@ public class Authentication {
    * @return An object that implements the
    * <code>org.jasig.portal.security.IPerson</code> interface.
    */
-  public IPerson getPerson () {
-    return  m_Person;
+ public IPerson getPerson () {
+   return  m_Person;
   }
 
   /**

@@ -38,6 +38,7 @@ package  org.jasig.portal.channels.UserPreferences;
 
 import  org.jasig.portal.*;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.utils.DocumentFactory;
 import  org.jasig.portal.services.LogService;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.Element;
@@ -333,7 +334,7 @@ class GPreferencesState extends BaseState {
       Element target = context.getUserLayoutXML().getElementById(editElementID);
       String elType = target.getTagName();
       // construct the descriptive XML
-      Document doc = new org.apache.xerces.dom.DocumentImpl();
+      Document doc = DocumentFactory.getNewDocument();
       Element edEl = doc.createElement("editelement");
       Element typeEl = doc.createElement("type");
       if (elType.equals("folder")) {

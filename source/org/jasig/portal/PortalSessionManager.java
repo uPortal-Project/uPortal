@@ -81,22 +81,23 @@ import com.oreilly.servlet.multipart.ParamPart;
  */
 public class PortalSessionManager extends HttpServlet {
 
-    //    public static final String SESSION_TAG_VARIABLE="uP_session_tag";
-    public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
+  //public static final String SESSION_TAG_VARIABLE="uP_session_tag";
+  public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
+  public static final String IDEMPOTENT_URL_TAG="idempotent";
 
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
   
 
-    // Following flag allows to disable features that prevent
-    // repeated requests from going through. This is useful
-    // when debugging and typing things in on a command line.
-    // Otherwise, the flag should be set to false.
-    private static final boolean ALLOW_REPEATED_REQUESTS=false;
+  // Following flag allows to disable features that prevent
+  // repeated requests from going through. This is useful
+  // when debugging and typing things in on a command line.
+  // Otherwise, the flag should be set to false.
+  private static final boolean ALLOW_REPEATED_REQUESTS = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests");
 
-    // random number generator
-    private static final Random randomGenerator= new Random();
+  // random number generator
+  private static final Random randomGenerator = new Random();
 
   static {
     LogService.instance().log(LogService.INFO, "uPortal started");
@@ -168,12 +169,9 @@ public class PortalSessionManager extends HttpServlet {
      * @exception IOException if an error occurs
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        // Disable page caching
-        res.setHeader("pragma", "no-cache");
-        res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
-        res.setHeader("uPortal-version", "uPortal_2-0+");
-        res.setDateHeader("Expires", 0);        
-
+        // Send the uPortal version in a header
+        res.setHeader("uPortal-version", "uPortal_rel-2-0-3");
+        
         HttpSession session = req.getSession();
         if (session != null) {
 
@@ -195,7 +193,7 @@ public class PortalSessionManager extends HttpServlet {
             // see if the tag was registered
             boolean request_verified=false;
             if(tag!=null) {
-                request_verified=requestTags.remove(tag);
+                request_verified=(tag.equals(IDEMPOTENT_URL_TAG) || requestTags.remove(tag));
             }
 
             LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
@@ -232,7 +230,7 @@ public class PortalSessionManager extends HttpServlet {
                 // fire away
                 if(ALLOW_REPEATED_REQUESTS) {
                     userInstance.writeContent(new RequestParamWrapper(req,true),res);
-                } else {
+                } else {                  
                     userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }
             } catch (PortalException pe) {

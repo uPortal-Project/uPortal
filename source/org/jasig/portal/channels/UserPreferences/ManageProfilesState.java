@@ -39,6 +39,7 @@ package  org.jasig.portal.channels.UserPreferences;
 import  org.jasig.portal.*;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.utils.DocumentFactory;
 import  org.jasig.portal.services.LogService;
 import  org.xml.sax.ContentHandler;
 import  java.util.*;
@@ -244,7 +245,7 @@ class ManageProfilesState extends BaseState {
     if (internalState != null) {
       internalState.renderXML(out);
     } else {
-      Document doc = new org.apache.xerces.dom.DocumentImpl();
+      Document doc = DocumentFactory.getNewDocument();
       Element edEl = doc.createElement("profiles");
       doc.appendChild(edEl);
       if(ALLOW_USER_PROFILES) {

@@ -51,6 +51,7 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.UPFileSpec;
 import org.xml.sax.*;
 
 import  org.jasig.portal.serialize.*;
@@ -209,8 +210,7 @@ public class StandaloneChannelRenderer extends BaseChannel {
         }
 
         try {
-            String redirectURL=UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null);
-            rd.setBaseActionURL(req.getContextPath()+"/"+redirectURL);
+            rd.setUPFile(new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null));
         } catch (Exception e) {
             LogService.instance().log(LogService.DEBUG,"StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
         }

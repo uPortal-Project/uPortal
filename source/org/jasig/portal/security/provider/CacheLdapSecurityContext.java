@@ -144,6 +144,11 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
             LogService.instance().log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
+
+            // Since LDAP is case-insensitive with respect to uid, force
+            // user name to lower case for use by the portal
+            this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
+
           }                     // while (results != null && results.hasMore())
         }
         else {

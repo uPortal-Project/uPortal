@@ -121,7 +121,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
     String ssTitle = "noIFrameSupport";
     if ((userAgent.indexOf("MSIE 3") >= 0) || (userAgent.indexOf("MSIE 4") >= 0) ||
         (userAgent.indexOf("MSIE 5") >= 0) || (userAgent.indexOf("MSIE 6") >= 0) ||
-        (userAgent.indexOf("Mozilla/5") >= 0)) {
+        (userAgent.indexOf("Mozilla/5") >= 0 || (userAgent.indexOf("Opera/6") >= 0))) {
       ssTitle = "IFrameSupport";
     }
     return  ssTitle;

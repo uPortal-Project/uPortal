@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="ascii"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <!--Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+<?xml version="1.0"?>
+<!--
+Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
@@ -34,6 +34,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 Author: Jultin Tilton, jet@immagic.com
 $Revision$
 -->
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="activeTab">1</xsl:param>
@@ -41,21 +42,21 @@ $Revision$
   <xsl:param name="position">no parameter passed</xsl:param>
   <xsl:param name="elementID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
-  <xsl:param name="showLockUnlock">true</xsl:param>
+  <xsl:param name="showLockUnlock">false</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
-  <!--remove for CVS-->
-  <!--<xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
-  <!--end remove-->
+  <!--remove for CVS
+  <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  end remove-->
 
   <xsl:template match="layout">
-    <!--remove for CVS-->
-    <!--        <html>
+    <!--remove for CVS
+            <html>
       <head>
         <title>uPortal 2.0</title>
         <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
-      </head>-->
-    <!--end remove-->
+      </head>
+    end remove-->
 
     <xsl:call-template name="optionMenu"/>
     <br/>
@@ -81,9 +82,9 @@ $Revision$
       </tr>
     </table>
     <!--End Layout Table -->
-    <!--remove for CVS-->
-    <!--</html>-->
-    <!--end remove-->
+    <!--remove for CVS
+    </html>
+    end remove-->
   </xsl:template>
   <xsl:template name="tabRow">
     <!--Begin Tab Table -->
@@ -521,7 +522,7 @@ $Revision$
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
       <tr>
         <td>
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
+          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
         </td>
       </tr>
       <tr align="center">
@@ -556,7 +557,7 @@ $Revision$
       </tr>
       <tr>
         <td>
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="20"/>
+          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
         </td>
       </tr>
     </table>
@@ -564,205 +565,143 @@ $Revision$
   </xsl:template>
   <xsl:template name="selectChannel">
     <!--Begin [select channel] Table -->
+<TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0" ALIGN="CENTER" WIDTH="100%">
+<tr><td ALIGN="CENTER">
+<xsl:if test="($action = 'selectChannel' or $action = 'moveChannel') and $elementID=@ID">
+        <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
+      </xsl:if>
+<TABLE CELLPADDING="5" CELLSPACING="0" BORDER="0" ALIGN="CENTER" WIDTH="100%">
 
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
-      <tr align="center">
-        <xsl:if test="$elementID = @ID and $action != 'newChannel'">
-          <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
-        </xsl:if>
-        <td>
-          <table border="2" cellspacing="0" cellpadding="4" align="center">
-            <tr class="uportal-background-light">
-              <td align="center" class="uportal-channel-title">
-                <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}">
+           <TR><TD ALIGN="CENTER"><IMG SRC="{$mediaPath}/transparent.gif" WIDTH="1" HEIGHT="1"/></TD></TR>
+           <TR>
+                <TD ALIGN="CENTER" CLASS="uportal-channel-text"><B>
+                <A HREF="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}" onMouseover="window.status=''; return true;">
+                
                   <xsl:if test="@name = ''">No Channel Name</xsl:if>
-                  <xsl:value-of select="@name"/><br/>
-                </a><img alt="interface image" src="{$mediaPath}/transparent.gif" width="150" height="1"/>
-              </td>
-            </tr>
-          </table>
-          <table width="165" border="0" cellpadding="0" cellspacing="0" align="center">
-            <tr>
-              <td colspan="7">
-                <img alt="" src="{$mediaPath}/channel/chan01.gif" width="165" height="9"/>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <img alt="" src="{$mediaPath}/channel/chan02.gif" width="69" height="25"/>
-              </td>
-              <td>
+                  <xsl:value-of select="@name"/>
+                </A>
+                </B></TD>
+           </TR>
+        </TABLE>
+	<TABLE CELLPADDING="1" CELLSPACING="0" BORDER="0" WIDTH="120" HEIGHT="110">
+
+	   <TR>
+	        <TD VALIGN="TOP" style="background-image: url({$mediaPath}/channel/chan_box_bg.gif)">
+	        <DIV ALIGN="RIGHT">
+		<A HREF="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}" onMouseover="window.status=''; return true;">
+		  <IMG SRC="{$mediaPath}/channel/chan_select.gif" ALT="Click to select this channel" WIDTH="16" HEIGHT="16" BORDER="0" VSPACE="2"/>
+		</A>
+    <xsl:choose>
+<xsl:when test="not(@unremovable='true') and not(ancestor-or-self::*[@immutable='true'])">
+		<A HREF="{$baseActionURL}?action=deleteChannel&amp;elementID={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')" onMouseover="window.status=''; return true;">
+		  <IMG SRC="{$mediaPath}/channel/chan_remove.gif" ALT="Click to remove this channel" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="2" VSPACE="2"/>
+		</A>
+        </xsl:when>
+        <xsl:otherwise>
+		<IMG ALT="" SRC="{$mediaPath}/channel/chan_remove_na.gif" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="2" VSPACE="2"/>
+        </xsl:otherwise>
+    </xsl:choose>
+		</DIV>
+		<DIV ALIGN="CENTER">
+    <IMG SRC="{$mediaPath}/transparent.gif" WIDTH="1" HEIGHT="9"/><BR/>
+<!-- Move Channel Up -->
                 <xsl:choose>
                   <xsl:when test="not(position()=1) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan03.gif" width="26" height="25" border="0"/>
+                  <img alt="This channel is locked" src="{$mediaPath}/channel/arrow_up_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small">
-                      <img alt="Click to move this channel up" src="{$mediaPath}/channel/chan03.gif" width="26" height="25" border="0"/>
+                      <img alt="Click to move this channel up" src="{$mediaPath}/channel/arrow_up.gif" WIDTH="16" HEIGHT="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
-                    <img alt="" src="{$mediaPath}/inactive/chan03.gif" width="26" height="25" border="0"/>
+                    <img alt="" src="{$mediaPath}/channel/arrow_up_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:otherwise>
                 </xsl:choose>
-              </td>
-              <td colspan="4">
-                <img alt="" src="{$mediaPath}/channel/chan04.gif" width="70" height="25"/>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="7">
-                <img alt="" src="{$mediaPath}/channel/chan05.gif" width="165" height="8"/>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="4">
-                <img alt="" src="{$mediaPath}/channel/chan06.gif" width="116" height="16"/>
-              </td>
-              <td>
-                <xsl:choose>
-                  <xsl:when test="not(@unremovable='true') and not(ancestor-or-self::*[@immutable='true'])">
-                    <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
-                      <img alt="Click to remove this channel" src="{$mediaPath}/channel/chan07.gif" width="16" height="16" border="0"/>
-                    </a>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <img alt="This channel is locked" src="{$mediaPath}/locked/chan07.gif" width="16" height="16"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </td>
-              <td colspan="2">
-                <img alt="" src="{$mediaPath}/channel/chan08.gif" width="33" height="16"/>
-              </td>
-            </tr>
-            <tr>
-              <td>
+<!-- End Move Channel Up -->
+</DIV>
+		<DIV ALIGN="CENTER">
+<!-- Move Channel Left -->
                 <xsl:choose>
                   <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan09.gif" width="24" height="26" border="0"/>
+                  <img alt="This channel is locked" src="{$mediaPath}/channel/arrow_left_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID)">
                     <xsl:choose>
                       <xsl:when test="parent::folder/preceding-sibling::folder[1]/channel[1]/@ID">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[1]/channel[1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this channel to the top of the previous column" src="{$mediaPath}/channel/chan09.gif" width="24" height="26" border="0"/>
+                          <img alt="Click to move this channel to the top of the previous column" src="{$mediaPath}/channel/arrow_left.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this channel to the top of the previous column" src="{$mediaPath}/channel/chan09.gif" width="24" height="26" border="0"/>
+                          <img alt="Click to move this channel to the top of the previous column" src="{$mediaPath}/channel/arrow_left.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:when>
                   <xsl:otherwise>
-                    <img alt="" src="{$mediaPath}/inactive/chan09.gif" width="24" height="26" border="0"/>
+                    <img alt="" src="{$mediaPath}/channel/arrow_left_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:otherwise>
                 </xsl:choose>
-              </td>
-              <td colspan="5">
-                <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}">
-                  <img src="{$mediaPath}/channel/chan10.gif" width="116" height="26" border="0" alt="Click to select this channel"/>
-                </a>
-              </td>
-              <td>
+<!-- End Move Channel Left -->
+		<IMG SRC="{$mediaPath}/transparent.gif" WIDTH="50" HEIGHT="16" VSPACE="1"/>
+<!-- Right Arrow -->
                 <xsl:choose>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan11.gif" width="25" height="26" border="0"/>
+                  <img alt="This channel is locked" src="{$mediaPath}/channel/arrow_right_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID)">
                     <xsl:choose>
                       <xsl:when test="parent::folder/following-sibling::folder[1]/channel[1]/@ID">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[1]/channel[1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this channel to the top of the next column" src="{$mediaPath}/channel/chan11.gif" width="25" height="26" border="0"/>
+                          <img alt="Click to move this channel to the top of the next column" src="{$mediaPath}/channel/arrow_right.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this channel to the top of the next column" src="{$mediaPath}/channel/chan11.gif" width="25" height="26" border="0"/>
+                          <img alt="Click to move this channel to the top of the next column" src="{$mediaPath}/channel/arrow_right.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:when>
                   <xsl:otherwise>
-                    <img alt="" src="{$mediaPath}/inactive/chan11.gif" width="25" height="26" border="0"/>
+                    <img alt="" src="{$mediaPath}/channel/arrow_right_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:otherwise>
                 </xsl:choose>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img alt="" src="{$mediaPath}/channel/chan12.gif" width="24" height="36"/>
-              </td>
-              <td colspan="5">
-                <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}">
-                  <img src="{$mediaPath}/channel/chan13.gif" width="116" height="36" border="0" alt="Click to select this channel"/>
-                </a>
-              </td>
-              <td>
-                <img alt="" src="{$mediaPath}/channel/chan14.gif" width="25" height="36"/>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <img alt="" src="{$mediaPath}/channel/chan15.gif" width="69" height="24"/>
-              </td>
-              <td>
+<!-- End Right Arrow -->
+<!-- Moved 002 -->
+	        </DIV>
+	        <DIV ALIGN="CENTER">
+<!-- Down Arrow -->
                 <xsl:choose>
                   <xsl:when test="not(position()=last()) and ancestor-or-self::*[@immutable='true']">
-                  <img alt="This channel is locked" src="{$mediaPath}/locked/chan16.gif" width="26" height="24" border="0"/>
+                  <img alt="This channel is locked" src="{$mediaPath}/channel/arrow_down_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:when>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::channel[not(@hidden='true')][2]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this channel down" src="{$mediaPath}/channel/chan16.gif" width="26" height="24" border="0"/>
+                          <img alt="Click to move this channel down" src="{$mediaPath}/channel/arrow_down.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this channel down" src="{$mediaPath}/channel/chan16.gif" width="26" height="24" border="0"/>
+                          <img alt="Click to move this channel down" src="{$mediaPath}/channel/arrow_down.gif" WIDTH="16" HEIGHT="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:when>
                   <xsl:otherwise>
-                    <img alt="" src="{$mediaPath}/inactive/chan16.gif" width="26" height="24" border="0"/>
+                    <img alt="" src="{$mediaPath}/channel/arrow_down_na.gif" WIDTH="16" HEIGHT="16" border="0"/>
                   </xsl:otherwise>
                 </xsl:choose>
-              </td>
-              <td colspan="4">
-                <img alt="" src="{$mediaPath}/channel/chan17.gif" width="70" height="24"/>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img alt="" src="{$mediaPath}/transparent.gif" width="24" height="1"/>
-              </td>
-              <td>
-                <img alt="" src="{$mediaPath}/transparent.gif" width="45" height="1"/>
-              </td>
-              <td>
-                <img alt="" src="{$mediaPath}/transparent.gif" width="26" height="1"/>
-              </td>
-              <td>
-                <img alt="" src="{$mediaPath}/transparent.gif" width="21" height="1"/>
-              </td>
-              <td>
-                <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1"/>
-              </td>
-              <td>
-                <img alt="" src="{$mediaPath}/transparent.gif" width="8" height="1"/>
-              </td>
-              <td>
-                <img alt="" src="{$mediaPath}/transparent.gif" width="25" height="1"/>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <!--Begin [select channel] Table -->
+<!-- End Down Arrow -->
+	        </DIV>
+	        </TD>
+	   </TR>
+	</TABLE></td></tr></TABLE>
+    <!--End [select channel] Table -->
   </xsl:template>
   <xsl:template name="closeContentColumn">
     <!--Begin [new channel] Table -->
@@ -973,7 +912,7 @@ $Revision$
         </td>
       </tr>
       <!-- Add the lock/unlock icon if the user is allowed to make things immutable -->
-      <xsl:if test="$showLockUnlock">
+      <xsl:if test="$showLockUnlock = 'true'">
         <tr>
           <td valign="top">
             <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
@@ -1431,7 +1370,4 @@ $Revision$
       </tr>
     </table>
   </xsl:template>
-</xsl:stylesheet>
-
-
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->

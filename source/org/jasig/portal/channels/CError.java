@@ -50,6 +50,7 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -243,7 +244,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         // In the future, if the information within exceptions is expanded, it should be
         // placed into this XML for the CError UI to give user a proper feedback.
 
-        Document doc = new org.apache.xerces.dom.DocumentImpl();
+        Document doc = DocumentFactory.getNewDocument();
         Element errorEl=doc.createElement("error");
         errorEl.setAttribute("code",Integer.toString(errorID));
         if(str_message!=null) {

@@ -91,7 +91,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
      Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      if (con.getMetaData().supportsTransactions())  con.setAutoCommit(false);
+      if (RDBMServices.supportsTransactions)  con.setAutoCommit(false);
 
       try {
         String SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = '" + uPortalUID + "'";
@@ -130,7 +130,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        if (con.getMetaData().supportsTransactions())  con.commit();
+        if (RDBMServices.supportsTransactions)  con.commit();
 
       } finally {
         stmt.close();
@@ -138,7 +138,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     catch (SQLException se) {
       try {
-        if (con.getMetaData().supportsTransactions())  con.rollback();
+        if (RDBMServices.supportsTransactions)  con.rollback();
         }
         catch (SQLException e) {}
         if (DEBUG>0){
@@ -170,11 +170,15 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     // Get a connection to the database
     Connection con = rdbmService.getConnection();
     Statement stmt = null;
+    Statement insertStmt = null;
 
     try
     {
       // Create the JDBC statement
       stmt = con.createStatement();
+      // Create a separate statement for inserts so it doesn't
+      // interfere with ResultSets
+      insertStmt = con.createStatement();
     }
     catch(SQLException se)
     {
@@ -218,21 +222,21 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         int templateUSER_DFLT_USR_ID ;
         int templateUSER_DFLT_LAY_ID;
         java.sql.Date templateLST_CHAN_UPDT_DT = new java.sql.Date(System.currentTimeMillis());
+        String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
 
         // Retrieve the username of the user to use as a template for this new user
         String templateName=(String) person.getAttribute(templateAttrName);
-        if (DEBUG>0) System.err.println("template name is "+templateName);
+        if (DEBUG>0) System.err.println("Attempting to autocreate user from template "+templateName);
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + "template name is " + templateName);
 
-        // Just use the guest account if the template could not be found
+        // Just use the default template if requested template not populated
         if (templateName == null || templateName=="")
         {
-          templateUID = guestUID;
+          templateName=defaultTemplateUserName;
         }
 
         // Retrieve the information for the template user
         query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
-        // DEBUG
-        if (DEBUG>0) System.err.println(query);
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         // Execute the query
         rset = stmt.executeQuery(query);
@@ -243,9 +247,28 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           templateUSER_DFLT_USR_ID = templateUID;
           templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
         }
-        else
-        {
-          throw new AuthorizationException("No information found for template user = " + templateName + ". Cannot create new account for " + person.getAttribute("username"));
+        // if no results on default template throw error
+        // otherwise try the default
+        else {
+          if (templateName.equals(defaultTemplateUserName))
+            throw new AuthorizationException("No information found for template user = " + templateName
+              + ". Cannot create new account for " + person.getAttribute("username"));
+          else {
+          templateName=defaultTemplateUserName;
+          query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+
+            templateName+"'";
+          LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
+          // Execute the query
+          rset = stmt.executeQuery(query);
+          // Check to see if the template user exists
+          if (rset.next())   {
+            templateUID = rset.getInt("USER_ID");
+            templateUSER_DFLT_USR_ID = templateUID;
+            templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
+            }
+          else throw new AuthorizationException("No information found for template user = " + templateName
+              + ". Cannot create new account for " + person.getAttribute("username"));
+          }
         }
 
         /* get a new uid for the person */
@@ -278,7 +301,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         try
         {
           // Turn off autocommit if the database supports it
-          if (con.getMetaData().supportsTransactions())
+          if (RDBMServices.supportsTransactions)
           {
             con.setAutoCommit(false);
           }
@@ -303,48 +326,112 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
+        // replaced INSERT INTO SELECT statements with queries followed
+        // by INSERTS because MySQL does not support this using the same
+        // table.
+        // Courtesy of John Fereira <jaf30@cornell.edu>
+
         /* insert row into up_user_layout */
-        Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID ) "+
-          " SELECT "+newUID+", UUL.LAYOUT_ID, UUL.LAYOUT_TITLE, NULL FROM UP_USER_LAYOUT UUL WHERE UUL.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID) "+
+           "VALUES("+
+           newUID+","+
+           rset.getInt("LAYOUT_ID")+","+
+           "'"+rset.getString("LAYOUT_TITLE")+"',"+
+           "NULL)";
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           insertStmt.executeUpdate(Insert);
+        }
 
         /* insert row into up_user_param */
-        Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
-          " SELECT "+newUID+", UUP.USER_PARAM_NAME, UUP.USER_PARAM_VALUE FROM UP_USER_PARAM UUP WHERE UUP.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query = "SELECT USER_ID,USER_PARAM_NAME,USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
+           "VALUES("+
+           newUID+","+
+           ",'"+rset.getString("USER_PARAM_NAME")+"',"+
+           ",'"+rset.getString("USER_PARAM_VALUE")+"')";
+
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           stmt.executeUpdate(Insert);
+        }
 
         /* insert row into up_user_profile */
-        Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
-          " SELECT "+newUID+", UUP.PROFILE_ID, UUP.PROFILE_NAME, UUP.DESCRIPTION, NULL, NULL, NULL "+
-          "FROM UP_USER_PROFILE UUP WHERE UUP.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+
+        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
+                "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+
+           Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
+           "VALUES("+
+           newUID+","+
+           rset.getInt("PROFILE_ID")+","+
+           "'"+rset.getString("PROFILE_NAME")+"',"+
+           "'"+rset.getString("DESCRIPTION")+"',"+
+           "NULL,"+
+           "NULL,"+
+           "NULL)";
+
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           insertStmt.executeUpdate(Insert);
+        }
 
         /* insert row into up_user_ua_map */
-        Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
-          " SELECT "+newUID+", UUUA.USER_AGENT, UUUA.PROFILE_ID"+
-          " FROM UP_USER_UA_MAP UUUA WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query = " SELECT USER_ID, USER_AGENT, PROFILE_ID"+
+                " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
+           "VALUES("+
+           newUID+","+
+           "'"+rset.getString("USER_AGENT")+"',"+
+           rset.getInt("PROFILE_ID")+")";
+
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           insertStmt.executeUpdate(Insert);
+        }
 
         /* insert row(s) into up_ss_user_parm */
-        Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
-          " SELECT "+newUID+", USUP.PROFILE_ID, USUP.SS_ID, USUP.SS_TYPE, USUP.PARAM_NAME, USUP.PARAM_VAL "+
-          " FROM UP_SS_USER_PARM USUP WHERE USUP.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
+          " FROM UP_SS_USER_PARM WHERE USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+           "VALUES("+
+           newUID+","+
+           rset.getInt("PROFILE_ID")+","+
+           rset.getInt("SS_ID")+","+
+           rset.getInt("SS_TYPE")+","+
+           "'"+rset.getString("PARAM_NAME")+"',"+
+           "'"+rset.getString("PARAM_VAL")+"')";
+
+           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           insertStmt.executeUpdate(Insert);
+        }
+
+        // end of changes for MySQL support
 
         // Check to see if the database supports transactions
-        boolean supportsTransactions = false;
-        try
-        {
-           supportsTransactions = con.getMetaData().supportsTransactions();
-        }
-        catch(Exception e)  {}
-
-        if(supportsTransactions)
+        if(RDBMServices.supportsTransactions)
         {
           // Commit the transaction
           con.commit();
@@ -365,7 +452,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       // Rollback the transaction
       try
       {
-        if (con.getMetaData().supportsTransactions())
+        if (RDBMServices.supportsTransactions)
         {
           con.rollback();
         }
@@ -395,7 +482,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   static final protected void commit (Connection connection) {
     try {
-      if (connection.getMetaData().supportsTransactions())
+      if (RDBMServices.supportsTransactions)
         connection.commit();
     } catch (Exception e) {
       LogService.log(LogService.ERROR, "RDBMUserIdentityStore::commit(): " + e);
@@ -404,7 +491,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   static final protected void rollback (Connection connection) {
     try {
-      if (connection.getMetaData().supportsTransactions())
+      if (RDBMServices.supportsTransactions)
         connection.rollback();
     } catch (Exception e) {
       LogService.log(LogService.ERROR, "RDBMUserIdentityStore::rollback(): " + e);

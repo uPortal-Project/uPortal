@@ -257,7 +257,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
             } else if (nodeName.equals("value")) {
               paramValue = nodeValue;
             } else if (nodeName.equals("override") && nodeValue.equals("yes")) {
-              paramOverride = "'Y'";
+              paramOverride = "Y";
             }
           }
 
@@ -305,6 +305,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    */
   public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception {
     crs.approveChannelDefinition(crs.getChannelDefinition(chanId), approver, approveDate);
+    flushChannelEntry(chanId);
   }
 
   /** A method for getting the next available channel ID.
@@ -402,7 +403,16 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
   public ChannelDefinition getChannel(int chanId) {
     ChannelDefinition channelDef = null;
     try {
-      channelDef = crs.getChannelDefinition(chanId);
+      Integer chanID = new Integer(chanId);
+      channelDef  = (ChannelDefinition)channelCache.get(chanID);
+      if (channelDef == null) {
+        synchronized (channelLock) {
+          channelDef = (ChannelDefinition)channelCache.get(chanID);
+        }
+      }
+      if (channelDef == null) {
+        throw new Exception("Channel " + chanID + " not in cache");
+      }
     } catch (Exception e) {
       LogService.log(LogService.ERROR, e);
     }
@@ -413,14 +423,20 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
 
   /**
    * Get a channel from the cache (it better be there)
+   * Only return channel if it is approved
    */
   public Element getChannelXML(int chanId, Document doc, String idTag) {
+    Element channelXML = null;
     ChannelDefinition channel = getChannel(chanId);
     if (channel != null) {
-      return channel.getDocument(doc, idTag);
-    } else {
-      return null;
+      Date approvalDate = channel.getApprovalDate();
+      Date rightNow = new Date();
+      boolean channelApproved = approvalDate != null && !approvalDate.after(rightNow);
+      if (channelApproved) {
+        channelXML = channel.getDocument(doc, idTag);
+      }
     }
+    return channelXML;
   }
 
   /**

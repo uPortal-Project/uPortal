@@ -46,6 +46,7 @@ import org.xml.sax.InputSource;
  * Provides a means to resolve uPortal DTDs
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Dave Wallace, dwallace@udel.edu modifications 
  * @version $Revision$
  */
 public class DTDResolver implements EntityResolver
@@ -72,20 +73,32 @@ public class DTDResolver implements EntityResolver
    * @param publicId the public ID
    * @param systemId the system ID
    * @return an input source based on the dtd specified in the xml document
+   *         or null if we don't have a dtd that matches systemId or publicId
    */
   public InputSource resolveEntity (String publicId, String systemId) {
     InputStream inStream = null;
-    InputSource inSrc = null;
 
+    // Check for a match on the systemId
     if (systemId != null) {
       if (dtdName != null && systemId.indexOf(dtdName) != -1)
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/" + dtdName);
       else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd"))
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
-
-      inSrc = new InputSource(inStream);
+         
+      if ( null != inStream )
+          return new InputSource(inStream);
     }
-
-    return inSrc;
+    
+    // Check for a match on the public id
+    if ( publicId != null ) {
+        if ( publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN"))
+            inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
+            
+        if ( null != inStream )
+            return new InputSource(inStream);
+    }
+        
+    // Return null to let the parser handle this entity 
+    return null;
   }
 }

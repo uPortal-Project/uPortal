@@ -32,9 +32,11 @@
 	    <xsl:copy-of select="/html/head/script/@*[not(name()='src')]"/>
             <xsl:choose>
 	      <xsl:when test="not(contains(/html/head/script/@src, ':')) or not( contains(/html/head/script/@src, ':') and not(contains(substring-before(/html/head/script/@src, ':'), '/')) )">
+               <xsl:if test="@src">
                 <xsl:attribute name="src">
 		  <xsl:value-of select="portal:getAbsURI(string($base), string(/html/head/script/@src))"/>
                 </xsl:attribute>
+                </xsl:if>
               </xsl:when>
               <xsl:otherwise>
 	        <xsl:copy-of select="/html/head/script/@src"/>
@@ -65,6 +67,12 @@
       </xsl:param>
       <xsl:copy>
       <xsl:choose>
+       <xsl:when test="@target">
+         <xsl:copy-of select="attribute::*[not(name()='action')]" />
+         <xsl:attribute name="action">
+           <xsl:value-of select="$action-uri" />
+         </xsl:attribute>
+       </xsl:when>
        <xsl:when test="$cw_passThrough='marked' and input/@name='cw_inChannelLink'">
          <xsl:copy-of select="attribute::*[not(name()='action')]" />
          <xsl:attribute name="action">
@@ -144,8 +152,6 @@
       <xsl:copy>
       <xsl:choose>
         <xsl:when test="@src">
-          <!-- moved to top <xsl:param name="src-uri">... -->
-            
           <xsl:copy-of select="attribute::*[not(name()='src')]" />
           <xsl:attribute name="src">
             <xsl:value-of select="$src-uri"/>
@@ -173,6 +179,15 @@
       </xsl:param> 
       <xsl:copy>
       <xsl:choose>
+       <!-- do not rewrite href attribute if target exists -->
+       <xsl:when test="@target">
+         <xsl:copy-of select="attribute::*[not(name()='href')]" />
+         <xsl:if test="@href">
+         <xsl:attribute name="href">
+           <xsl:value-of select="$href-uri" />
+         </xsl:attribute>
+         </xsl:if>
+       </xsl:when>
        <xsl:when test="$cw_passThrough='marked' and (contains(@href, '&amp;cw_inChannelLink=') or contains(@href, '?cw_inChannelLink=') )">
          <xsl:copy-of select="attribute::*[not(name()='href')]" />
          <xsl:attribute name="href">
@@ -185,7 +200,6 @@
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
-         <xsl:apply-templates/>
        </xsl:when>
        <xsl:when test="$cw_passThrough='application' and ( string-length(normalize-space(@href))=0 or $cw_xml=$href-uri or $cw_xml=substring-before($href-uri, '?'))">
          <xsl:copy-of select="attribute::*[not(name()='href')]" />
@@ -199,7 +213,6 @@
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
-         <xsl:apply-templates/> 
        </xsl:when>
        <xsl:when test="$cw_passThrough='all'">
          <xsl:copy-of select="attribute::*[not(name()='href')]" />
@@ -227,16 +240,17 @@
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
-         <xsl:apply-templates/>
        </xsl:when>
        <xsl:otherwise>
          <xsl:copy-of select="attribute::*[not(name()='href')]"/>
+         <xsl:if test="@href">
          <xsl:attribute name="href">
             <xsl:value-of select="$href-uri"/>
          </xsl:attribute>
-         <xsl:apply-templates/>
+         </xsl:if>
        </xsl:otherwise>
       </xsl:choose> 
+      <xsl:apply-templates/>
       </xsl:copy>
    </xsl:template>
  
@@ -246,9 +260,11 @@
       <xsl:choose>
          <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
            <xsl:copy-of select="attribute::*[not(name()='src')]"/>
+           <xsl:if test="@src">
            <xsl:attribute name="src">
              <xsl:value-of select="portal:getAbsURI(string($base), string(@src))"/>
            </xsl:attribute>
+           </xsl:if>
            <xsl:apply-templates/>
          </xsl:when>
          <xsl:otherwise>

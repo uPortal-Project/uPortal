@@ -35,8 +35,7 @@
 
 package org.jasig.portal.utils;
 
-import java.io.IOException;
-
+import org.jasig.portal.PropertiesManager;
 import org.xml.sax.XMLReader;
 import org.xml.sax.XMLFilter;
 import org.xml.sax.InputSource;
@@ -53,7 +52,7 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.ext.LexicalHandler;
 import java.util.Vector;
 import java.util.Enumeration;
-
+import java.io.IOException;
 
 /**
  * A basic XML buffer implementation.
@@ -72,29 +71,30 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     protected boolean outputAtDocumentEnd;
 
     // types of SAX events
-    public static final int STARTDOCUMENT = 0;
-    public static final int ENDDOCUMENT = 1;
-    public static final int STARTELEMENT = 2;
-    public static final int ENDELEMENT = 3;
-    public static final int CHARACTERS = 4;
-    public static final int IGNORABLEWHITESPACE = 5;
-    public static final int PROCESSINGINSTRUCTION = 6;
-    public static final int NOTATIONDECL = 7;
-    public static final int UNPARSEDENTITYDECL = 8;
-    public static final int STARTPREFIXMAPPING = 9;
-    public static final int ENDPREFIXMAPPING = 10;
-    public static final int SKIPPEDENTITY = 11;
-    public static final int WARNING = 12;
-    public static final int ERROR = 13;
-    public static final int FATALERROR = 14;
-    public static final int COMMENT = 15;
-    public static final int STARTCDATA = 16;
-    public static final int ENDCDATA = 17;
-    public static final int STARTDTD = 18;
-    public static final int ENDDTD = 19;
-    public static final int STARTENTITY = 20;
-    public static final int ENDENTITY = 21;
+    public static final Integer STARTDOCUMENT = new Integer(0);
+    public static final Integer ENDDOCUMENT = new Integer(1);
+    public static final Integer STARTELEMENT = new Integer(2);
+    public static final Integer ENDELEMENT = new Integer(3);
+    public static final Integer CHARACTERS = new Integer(4);
+    public static final Integer IGNORABLEWHITESPACE = new Integer(5);
+    public static final Integer PROCESSINGINSTRUCTION = new Integer(6);
+    public static final Integer NOTATIONDECL = new Integer(7);
+    public static final Integer UNPARSEDENTITYDECL = new Integer(8);
+    public static final Integer STARTPREFIXMAPPING = new Integer(9);
+    public static final Integer ENDPREFIXMAPPING = new Integer(10);
+    public static final Integer SKIPPEDENTITY = new Integer(11);
+    public static final Integer WARNING = new Integer(12);
+    public static final Integer ERROR = new Integer(13);
+    public static final Integer FATALERROR = new Integer(14);
+    public static final Integer COMMENT = new Integer(15);
+    public static final Integer STARTCDATA = new Integer(16);
+    public static final Integer ENDCDATA = new Integer(17);
+    public static final Integer STARTDTD = new Integer(18);
+    public static final Integer ENDDTD = new Integer(19);
+    public static final Integer STARTENTITY = new Integer(20);
+    public static final Integer ENDENTITY = new Integer(21);
     
+    protected boolean copyCharBlock = PropertiesManager.getPropertyAsBoolean(SAX2BufferImpl.class.getName() + ".copyCharBlock");
 
     // constructors
 
@@ -109,14 +109,13 @@ public class SAX2BufferImpl extends SAX2FilterImpl
      * @see org.xml.sax.XMLReader#setFeature
      * @see org.xml.sax.XMLReader#setProperty
      */
-    public SAX2BufferImpl () {
-	super();
+    public SAX2BufferImpl() {
+        super();
         buffering = true;
         outputAtDocumentEnd=false;
         eventTypes = new Vector ();
         eventArguments = new Vector ();
     }
-
 
     /**
      * Construct an XML filter with the specified parent.
@@ -126,7 +125,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
      */
     public SAX2BufferImpl(XMLReader parent) {
         this();
-	setParent(parent);
+        setParent(parent);
     }
 
     /**
@@ -206,118 +205,97 @@ public class SAX2BufferImpl extends SAX2FilterImpl
             SAXParseException e;
         
             for (Enumeration types = eventTypes.elements (); types.hasMoreElements ();) {
-                int type = ((Integer)types.nextElement ()).intValue ();
+                Integer type = (Integer)types.nextElement();
 
-                switch (type) {
-                    // ContentHandler events
-                case STARTDOCUMENT:
+                // ContentHandler events
+                if (STARTDOCUMENT.equals(type)) {
                     contentHandler.startDocument ();
-                    break;
-                case ENDDOCUMENT:
+                } else if (ENDDOCUMENT.equals(type)) {
                     contentHandler.endDocument ();
-                    break;
-                case STARTPREFIXMAPPING:
+                } else if (STARTPREFIXMAPPING.equals(type)) {
                     ts=(TwoString) args.nextElement();
                     contentHandler.startPrefixMapping(ts.first,ts.second);
-                    break;
-                case ENDPREFIXMAPPING:
+                } else if (ENDPREFIXMAPPING.equals(type)) {
                     contentHandler.endPrefixMapping((String)args.nextElement());
-                    break;
-                case STARTELEMENT:
+                } else if (STARTELEMENT.equals(type)) {
                     StartElementData sed = (StartElementData) args.nextElement ();
                     contentHandler.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
-                    break;
-                case ENDELEMENT:
+                } else if (ENDELEMENT.equals(type)) {
                     ths = (ThreeString) args.nextElement ();
                     contentHandler.endElement (ths.first,ths.second,ths.third);
-                    break;
-                case CHARACTERS:
+                } else if (CHARACTERS.equals(type)) {
                     cd = (CharBlock) args.nextElement ();
                     contentHandler.characters (cd.getCh(), cd.getStart(), cd.getLength());
-                    break;
-                case IGNORABLEWHITESPACE:
+                } else if (IGNORABLEWHITESPACE.equals(type)) {
                     cd = (CharBlock) args.nextElement ();
                     contentHandler.ignorableWhitespace (cd.getCh(), cd.getStart(), cd.getLength());
-                    break;
-                case PROCESSINGINSTRUCTION:
+                } else if (PROCESSINGINSTRUCTION.equals(type)) {
                     ts=(TwoString) args.nextElement();
                     contentHandler.processingInstruction (ts.first,ts.second);
-                    break;
-                    
-                    // DTDHandler events
-                case NOTATIONDECL:
+                
+                // DTDHandler events
+                } else if (NOTATIONDECL.equals(type)) {
                     if(dtdHandler!=null) {
                         ths=(ThreeString) args.nextElement();
                         dtdHandler.notationDecl(ths.first,ths.second,ths.third);
                     }
-                    break;
-                case UNPARSEDENTITYDECL:
+                } else if (UNPARSEDENTITYDECL.equals(type)) {
                     if(dtdHandler!=null) {
                         fs=(FourString) args.nextElement();
                         dtdHandler.unparsedEntityDecl(fs.first,fs.second,fs.third,fs.fourth);
                     }
-                    break;
 
-                    // ErrorHandler events
-                case WARNING:
+                
+                // ErrorHandler events
+                } else if (WARNING.equals(type)) {
                     if(errorHandler!=null) {
                         e=(SAXParseException) args.nextElement();
                         errorHandler.warning(e);
                     }
-                    break;
-                case ERROR:
+                } else if (ERROR.equals(type)) {
                     if(errorHandler!=null) {
                         e=(SAXParseException) args.nextElement();
                         errorHandler.error(e);
                     }
-                    break;
-                case FATALERROR:
+                } else if (FATALERROR.equals(type)) {
                     if(errorHandler!=null) {
                         e=(SAXParseException) args.nextElement();
                         errorHandler.fatalError(e);
                     }
-                    break;
                     
-                    // LexicalHandler events
-                case STARTDTD:
+                // LexicalHandler events
+                } else if (STARTDTD.equals(type)) {
                     if(lexicalHandler!=null) {
                         ths=(ThreeString) args.nextElement();
                         lexicalHandler.startDTD(ths.first,ths.second,ths.third);
                     }
-                    break;
-                case ENDDTD:
+                } else if (ENDDTD.equals(type)) {
                     if(lexicalHandler!=null) {
                         lexicalHandler.endDTD();
                     }
-                    break;
-                case STARTENTITY:
+                } else if (STARTENTITY.equals(type)) {
                     if(lexicalHandler!=null) {
                         String n=(String) args.nextElement();
                         lexicalHandler.startEntity(n);
                     } 
-                    break;
-                case ENDENTITY:
+                } else if (ENDENTITY.equals(type)) {
                     if(lexicalHandler!=null) {
                         String n=(String) args.nextElement();
                         lexicalHandler.endEntity(n);
                     } 
-                    break;
-                case STARTCDATA:
+                } else if (STARTCDATA.equals(type)) {
                     if(lexicalHandler!=null) {
                         lexicalHandler.startCDATA();
                     } 
-                    break;
-                case ENDCDATA:
+                } else if (ENDCDATA.equals(type)) {
                     if(lexicalHandler!=null) {
                         lexicalHandler.endCDATA();
                     } 
-                    break;
-                case COMMENT:
+                } else if (COMMENT.equals(type)) {
                     if(lexicalHandler!=null) {
                         CharBlock ccd = (CharBlock) args.nextElement ();
                         lexicalHandler.comment (ccd.getCh(), ccd.getStart(), ccd.getLength());
                     } 
-                    break;
                 }
             }
         } else {
@@ -356,7 +334,6 @@ public class SAX2BufferImpl extends SAX2FilterImpl
                 lh=(LexicalHandler)ch;
             }
         
-
             Enumeration args = eventArguments.elements ();
             ThreeString ths;
             CharBlock cd;
@@ -365,118 +342,96 @@ public class SAX2BufferImpl extends SAX2FilterImpl
             SAXParseException e;
         
             for (Enumeration types = eventTypes.elements (); types.hasMoreElements ();) {
-                int type = ((Integer)types.nextElement ()).intValue ();
+                Integer type = (Integer)types.nextElement();
 
-                switch (type) {
-                    // ContentHandler events
-                case STARTDOCUMENT:
+                // ContentHandler events
+                if (STARTDOCUMENT.equals(type)) {
                     ch.startDocument ();
-                    break;
-                case ENDDOCUMENT:
+                } else if (ENDDOCUMENT.equals(type)) {
                     ch.endDocument ();
-                    break;
-                case STARTPREFIXMAPPING:
+                } else if (STARTPREFIXMAPPING.equals(type)) {
                     ts=(TwoString) args.nextElement();
                     ch.startPrefixMapping(ts.first,ts.second);
-                    break;
-                case ENDPREFIXMAPPING:
+                } else if (ENDPREFIXMAPPING.equals(type)) {
                     ch.endPrefixMapping((String)args.nextElement());
-                    break;
-                case STARTELEMENT:
+                } else if (STARTELEMENT.equals(type)) {
                     StartElementData sed = (StartElementData) args.nextElement ();
                     ch.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
-                    break;
-                case ENDELEMENT:
+                } else if (ENDELEMENT.equals(type)) {
                     ths = (ThreeString) args.nextElement ();
                     ch.endElement (ths.first,ths.second,ths.third);
-                    break;
-                case CHARACTERS:
+                } else if (CHARACTERS.equals(type)) {
                     cd = (CharBlock) args.nextElement ();
                     ch.characters (cd.getCh(), cd.getStart(), cd.getLength());
-                    break;
-                case IGNORABLEWHITESPACE:
+                } else if (IGNORABLEWHITESPACE.equals(type)) {
                     cd = (CharBlock) args.nextElement ();
                     ch.ignorableWhitespace (cd.getCh(), cd.getStart(), cd.getLength());
-                    break;
-                case PROCESSINGINSTRUCTION:
+                } else if (PROCESSINGINSTRUCTION.equals(type)) {
                     ts=(TwoString) args.nextElement();
                     ch.processingInstruction (ts.first,ts.second);
-                    break;
                     
-                    // DTDHandler events
-                case NOTATIONDECL:
+                // DTDHandler events
+                } else if (NOTATIONDECL.equals(type)) {
                     if(dtdh!=null) {
                         ths=(ThreeString) args.nextElement();
                         dtdh.notationDecl(ths.first,ths.second,ths.third);
                     }
-                    break;
-                case UNPARSEDENTITYDECL:
+                } else if (UNPARSEDENTITYDECL.equals(type)) {
                     if(dtdh!=null) {
                         fs=(FourString) args.nextElement();
                         dtdh.unparsedEntityDecl(fs.first,fs.second,fs.third,fs.fourth);
                     }
-                    break;
 
-                    // ErrorHandler events
-                case WARNING:
+                // ErrorHandler events
+                } else if (WARNING.equals(type)) {
                     if(erh!=null) {
                         e=(SAXParseException) args.nextElement();
                         erh.warning(e);
                     }
-                    break;
-                case ERROR:
+                } else if (ERROR.equals(type)) {
                     if(erh!=null) {
                         e=(SAXParseException) args.nextElement();
                         erh.error(e);
                     }
-                    break;
-                case FATALERROR:
+                } else if (FATALERROR.equals(type)) {
                     if(erh!=null) {
                         e=(SAXParseException) args.nextElement();
                         erh.fatalError(e);
                     }
-                    break;
                     
-                    // LexicalHandler events
-                case STARTDTD:
+                // LexicalHandler events
+                } else if (STARTDTD.equals(type)) {
                     if(lh!=null) {
                         ths=(ThreeString) args.nextElement();
                         lh.startDTD(ths.first,ths.second,ths.third);
                     }
-                    break;
-                case ENDDTD:
+                } else if (ENDDTD.equals(type)) {
                     if(lh!=null) {
                         lh.endDTD();
                     }
-                    break;
-                case STARTENTITY:
+                } else if (STARTENTITY.equals(type)) {
                     if(lh!=null) {
                         String n=(String) args.nextElement();
                         lh.startEntity(n);
                     } 
-                    break;
-                case ENDENTITY:
+                } else if (ENDENTITY.equals(type)) {
                     if(lh!=null) {
                         String n=(String) args.nextElement();
                         lh.endEntity(n);
                     } 
-                    break;
-                case STARTCDATA:
+                } else if (STARTCDATA.equals(type)) {
                     if(lh!=null) {
                         lh.startCDATA();
                     } 
-                    break;
-                case ENDCDATA:
+                } else if (ENDCDATA.equals(type)) {
                     if(lh!=null) {
                         lh.endCDATA();
                     } 
-                    break;
-                case COMMENT:
+                } else if (COMMENT.equals(type)) {
                     if(lh!=null) {
                         CharBlock ccd = (CharBlock) args.nextElement ();
                         lh.comment (ccd.getCh(), ccd.getStart(), ccd.getLength());
                     } 
-                    break;
                 }
             }
         } else {
@@ -488,7 +443,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public void startDTD (String name, String publicId, String systemId) throws SAXException {
         if(buffering) {
-            eventTypes.add(new Integer(STARTDTD));
+            eventTypes.add(STARTDTD);
             eventArguments.add(new ThreeString(name,publicId,systemId));
         } else if(lexicalHandler!=null) {
             lexicalHandler.startDTD(name,publicId,systemId);
@@ -497,7 +452,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public void endDTD () throws SAXException {
         if(buffering) {
-            eventTypes.add(new Integer(ENDDTD));
+            eventTypes.add(ENDDTD);
         } else if(lexicalHandler!=null) {
             lexicalHandler.endDTD();
         }
@@ -505,7 +460,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public void startEntity (String name) throws SAXException {
         if(buffering) {
-            eventTypes.add(new Integer(STARTENTITY));
+            eventTypes.add(STARTENTITY);
             eventArguments.add(name);
         } else if(lexicalHandler!=null) {
             lexicalHandler.startEntity(name);
@@ -514,7 +469,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public void endEntity (String name) throws SAXException {
         if(buffering) {
-            eventTypes.add(new Integer(ENDENTITY));
+            eventTypes.add(ENDENTITY);
             eventArguments.add(name);
         } else if(lexicalHandler!=null) {
             lexicalHandler.endEntity(name);
@@ -523,7 +478,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public void startCDATA () throws SAXException {
         if(buffering) {
-            eventTypes.add(new Integer(STARTCDATA));
+            eventTypes.add(STARTCDATA);
         } else if(lexicalHandler!=null) {
             lexicalHandler.startCDATA();
         }
@@ -531,7 +486,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public void endCDATA () throws SAXException {
         if(buffering) {
-            eventTypes.add(new Integer(ENDCDATA));
+            eventTypes.add(ENDCDATA);
         } else if(lexicalHandler!=null) {
             lexicalHandler.endCDATA();
         }
@@ -539,7 +494,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     public void comment (char ch[], int start, int length) throws SAXException {
         if(buffering) {
-            eventTypes.add(new Integer(COMMENT));
+            eventTypes.add(COMMENT);
             eventArguments.add(new CharBlock(ch,start,length));
         } else if(lexicalHandler!=null) {
             lexicalHandler.comment(ch,start,length);
@@ -551,7 +506,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     public void notationDecl (String name, String publicId, String systemId) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(NOTATIONDECL));
+            eventTypes.add(NOTATIONDECL);
             eventArguments.add(new ThreeString(name,publicId,systemId));
         } else if(dtdHandler != null) {
 	    dtdHandler.notationDecl(name, publicId, systemId);
@@ -561,7 +516,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     public void unparsedEntityDecl (String name, String publicId, String systemId, String notationName)	throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(UNPARSEDENTITYDECL));
+            eventTypes.add(UNPARSEDENTITYDECL);
             eventArguments.add(new FourString(name,publicId,systemId,notationName));
         } else if (dtdHandler != null) {
 	    dtdHandler.unparsedEntityDecl(name, publicId, systemId, notationName);
@@ -585,7 +540,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     public void startDocument () throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(STARTDOCUMENT));
+            eventTypes.add(STARTDOCUMENT);
         } else if (contentHandler != null) {
 	    contentHandler.startDocument();
 	}
@@ -594,7 +549,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     public void endDocument ()	throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(ENDDOCUMENT));
+            eventTypes.add(ENDDOCUMENT);
             if(outputAtDocumentEnd) {
                 this.stopBuffering();
                 this.outputBuffer();
@@ -607,121 +562,120 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     public void startPrefixMapping (String prefix, String uri)	throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(STARTPREFIXMAPPING));
+            eventTypes.add(STARTPREFIXMAPPING);
             eventArguments.add(new TwoString(prefix,uri));
         } else if (contentHandler != null) {
-	    contentHandler.startPrefixMapping(prefix, uri);
-	}
+            contentHandler.startPrefixMapping(prefix, uri);
+        }
     }
 
 
     public void endPrefixMapping (String prefix) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(ENDPREFIXMAPPING));
+            eventTypes.add(ENDPREFIXMAPPING);
             eventArguments.add(prefix);
         } else if (contentHandler != null) {
-	    contentHandler.endPrefixMapping(prefix);
-	}
+            contentHandler.endPrefixMapping(prefix);
+        }
     }
 
 
     public void startElement (String uri, String localName, String qName, Attributes atts) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(STARTELEMENT));
+            eventTypes.add(STARTELEMENT);
             eventArguments.add(new StartElementData(uri,localName,qName,atts));
         } else if (contentHandler != null) {
-	    contentHandler.startElement(uri, localName, qName, atts);
-	}
+            contentHandler.startElement(uri, localName, qName, atts);
+        }
     }
 
 
     public void endElement (String uri, String localName, String qName)	throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(ENDELEMENT));
+            eventTypes.add(ENDELEMENT);
             eventArguments.add(new ThreeString(uri,localName,qName));
         } else if (contentHandler != null) {
-	    contentHandler.endElement(uri, localName, qName);
-	}
+            contentHandler.endElement(uri, localName, qName);
+        }
     }
 
 
     public void characters (char ch[], int start, int length) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(CHARACTERS));
+            eventTypes.add(CHARACTERS);
             eventArguments.add(new CharBlock(ch,start,length));
         } else if (contentHandler != null) {
-	    contentHandler.characters(ch, start, length);
-	}
+            contentHandler.characters(ch, start, length);
+        }
     }
 
 
     public void ignorableWhitespace (char ch[], int start, int length)	throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(IGNORABLEWHITESPACE));
+            eventTypes.add(IGNORABLEWHITESPACE);
             eventArguments.add(new CharBlock(ch,start,length));
         } else if (contentHandler != null) {
-	    contentHandler.ignorableWhitespace(ch, start, length);
-	}
+            contentHandler.ignorableWhitespace(ch, start, length);
+        }
     }
 
     public void processingInstruction (String target, String data) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(PROCESSINGINSTRUCTION));
+            eventTypes.add(PROCESSINGINSTRUCTION);
             eventArguments.add(new TwoString(target,data));
         } else if (contentHandler != null) {
-	    contentHandler.processingInstruction(target, data);
-	}
+            contentHandler.processingInstruction(target, data);
+        }
     }
 
     public void skippedEntity (String name) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(SKIPPEDENTITY));
+            eventTypes.add(SKIPPEDENTITY);
             eventArguments.add(name);
         } else if (contentHandler != null) {
-	    contentHandler.skippedEntity(name);
-	}
+            contentHandler.skippedEntity(name);
+        }
     }
 
 
     // Implementation of org.xml.sax.ErrorHandler.
 
-    public void warning (SAXParseException e)
-	throws SAXException
+    public void warning (SAXParseException e) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(WARNING));
+            eventTypes.add(WARNING);
             eventArguments.add(e);
         } else if (errorHandler != null) {
-	    errorHandler.warning(e);
-	}
+            errorHandler.warning(e);
+        }
     }
 
     public void error (SAXParseException e) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(ERROR));
+            eventTypes.add(ERROR);
             eventArguments.add(e);
         } else if (errorHandler != null) {
-	    errorHandler.error(e);
-	}
+            errorHandler.error(e);
+        }
     }
 
 
     public void fatalError (SAXParseException e) throws SAXException
     {
         if(buffering) {
-            eventTypes.add(new Integer(FATALERROR));
+            eventTypes.add(FATALERROR);
             eventArguments.add(e);
         } else if (errorHandler != null) {
-	    errorHandler.fatalError(e);
-	}
+            errorHandler.fatalError(e);
+        }
     }
 
 
@@ -730,6 +684,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     private class TwoString {
         public String first;
         public String second;
+        
         TwoString(String first, String second)   {
             this.first = first;
             this.second = second;
@@ -743,6 +698,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         public String first;
         public String second;
         public String third;
+        
         ThreeString(String first, String second, String third)   {
             this.first=first;
             this.second=second;
@@ -759,6 +715,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         public String second;
         public String third;
         public String fourth;
+        
         FourString(String first, String second, String third, String fourth)   {
             this.first=first;
             this.second=second;
@@ -778,7 +735,12 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         public int i_length;
         
         CharBlock(char ch[],int start, int length) {
-            this.ca_ch=ch;
+            if (copyCharBlock) {
+                this.ca_ch = new char[length+start];
+                System.arraycopy(ch, 0, this.ca_ch, 0, length+start);
+            } else {
+                this.ca_ch = ch;
+            }
             this.i_start=start;
             this.i_length=length;
         }
