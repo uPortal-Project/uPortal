@@ -450,8 +450,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       }
     }
     catch(NamingException nex){
-        log.error("LDAPGroupStore: error processing results");
-       log.error(nex);
+        log.error("LDAPGroupStore: error processing results", nex);
     }
     finally{
       try{results.close();}catch(Exception e){}
@@ -658,8 +657,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     try {
       userlist = context.search(usercontext,query,sc);
     } catch (NamingException nex) {
-      log.error("LDAPGroupStore: Unable to perform filter "+query);
-      log.error(nex);
+      log.error("LDAPGroupStore: Unable to perform filter "+query, nex);
     }
     ArrayList keys = new ArrayList();
     processLdapResults(userlist,keys);
