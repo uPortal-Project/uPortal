@@ -52,8 +52,10 @@ import org.jasig.portal.MultithreadedPrivilegedChannelAdapter;
 import org.jasig.portal.MultithreadedPrivilegedCacheableChannelAdapter;
 import org.jasig.portal.ChannelFactory;
 import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.utils.AbsoluteURLFilter;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
@@ -61,6 +63,7 @@ import org.jasig.portal.security.InitialSecurityContextFactory;
 import org.jasig.portal.security.PortalSecurityException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -81,23 +84,32 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
+/**
+ * <p>A remote channel web service.  This is the implementation
+ * of IRemoteChannel on which the WSDL for this web service is based.</p>
+ * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @version $Revision$
+ */
 public class RemoteChannel implements IRemoteChannel {
 
   protected static final String MARKUP_FRAGMENT_ROOT = "channel";
   protected static final String PERSON_KEY = "org.jasig.portal.security.IPerson";
   protected static final String CHANNEL_INSTANCE_ID_PREFIX = "chan_";
   protected static final String CHANNEL_DEFINITION_ID_PREFIX = "chandef_";
-
+  
   protected static final Authentication authenticationService = new Authentication();
   protected static final Map multithreadedChannelTable = new HashMap();
   protected static final Random randomNumberGenerator = new Random();
+
+  protected static String baseUrl = null;
 
   /**
    * Authenticates user and establishes a session.
    * @param username the user name of the user
    * @param password the user's password
-   * @throws Exception if there was a problem trying to authenticate
+   * @throws java.lang.Exception if there was a problem trying to authenticate
    */
   public void authenticate(String username, String password) throws Exception {
     IPerson person = getPerson();
@@ -122,7 +134,7 @@ public class RemoteChannel implements IRemoteChannel {
    * Establishes a channel instance which the webservice client will communicate with.
    * @param fname an identifier for the channel unique within a particular portal implementation
    * @return instanceId an identifier for the newly-created channel instance
-   * @throws Exception if the channel cannot be located
+   * @throws java.lang.Exception if the channel cannot be located
    */
   public String instantiateChannel(String fname) throws Exception {
     MessageContext messageContext = MessageContext.getCurrentContext();
@@ -174,6 +186,7 @@ public class RemoteChannel implements IRemoteChannel {
   /**
    * Asks the channel to render content and return it as a String.
    * The content will be well-formed XML which the client must serialize.
+   * All relative URLs in markup are guaranteed to be absolute URLs.
    * @param instanceId an identifier for the channel instance returned by instantiateChannel()
    * @param headers a Map of headers (name/value pairs).
             One of the headers must be a "user-agent".
@@ -184,7 +197,7 @@ public class RemoteChannel implements IRemoteChannel {
    * @param baseActionURL a String representing the base action URL to which
             channels will append '?' and a set of name/value pairs delimited by '&'.
    * @return xml an XML element representing the channel's output
-   * @throws Throwable if the channel cannot respond with the expected rendering
+   * @throws java.lang.Throwable if the channel cannot respond with the expected rendering
    */
   public Element renderChannel(String instanceId, Map headers, Cookie[] cookies,
                                Map parameters, String baseActionURL) throws Throwable {
@@ -234,7 +247,14 @@ public class RemoteChannel implements IRemoteChannel {
     th.startElement("", MARKUP_FRAGMENT_ROOT, MARKUP_FRAGMENT_ROOT, chanAtts);
 
     try {
-      int status = cr.outputRendering(th);
+      // Insert a filter to re-write URLs
+      MediaManager mm = new MediaManager();
+      String media = mm.getMedia(runtimeData.getBrowserInfo());
+      String mimeType = mm.getReturnMimeType(media);
+      AbsoluteURLFilter urlFilter = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, getBaseUrl(), th);
+      
+      // Begin chain: channel renderer --> URL filter --> SAX2DOM transformer
+      int status = cr.outputRendering(urlFilter);      
       if (status == ChannelRenderer.RENDERING_TIMED_OUT) {
         throw new InternalTimeoutException("The remote channel has timed out");
       }
@@ -257,7 +277,7 @@ public class RemoteChannel implements IRemoteChannel {
    * Indicates to the portal that the web services client is finished
    * talking to the channel instance.
    * @param instanceId an identifier for the channel instance returned by instantiateChannel()
-   * @throws Exception if the channel cannot be freed
+   * @throws java.lang.Exception if the channel cannot be freed
    */
   public void freeChannel(String instanceId) throws Exception {
     MessageContext messageContext = MessageContext.getCurrentContext();
@@ -269,7 +289,7 @@ public class RemoteChannel implements IRemoteChannel {
 
   /**
    * Unauthenticates a user, killing the session.
-   * @throws Exception if there was a problem trying to logout
+   * @throws java.lang.Exception if there was a problem trying to logout
    */
   public void logout() throws Exception {
     MessageContext messageContext = MessageContext.getCurrentContext();
@@ -283,6 +303,8 @@ public class RemoteChannel implements IRemoteChannel {
   /**
    * Looks in session for an IPerson.  If it doesn't find one,
    * a "guest" person object is returned
+   * @return person the IPerson object
+   * @throws org.jasig.portal.PortalException  
    */
   protected IPerson getPerson() throws PortalException {
     MessageContext messageContext = MessageContext.getCurrentContext();
@@ -297,6 +319,8 @@ public class RemoteChannel implements IRemoteChannel {
 
   /**
    * Returns a person object that is a "guest" user
+   * @return person a person object that is a "guest" user
+   * @throws org.jasig.portal.PortalException
    */
   protected IPerson getGuestPerson() throws PortalException {
     IPerson person = new PersonImpl();
@@ -304,4 +328,24 @@ public class RemoteChannel implements IRemoteChannel {
     person.setID(1); // Guest users have a UID of 1
     return person;
   }
+  
+  /**
+   * Returns the server's base URL which can be prepended to relative resource paths.
+   * The base URL is unique with respect to the server.
+   * @return baseUrl the server's base URL which can be prepended to relative resource paths
+   */
+  protected static String getBaseUrl() {
+    if (baseUrl == null) {
+      // If there is a better way to obtain the base URL, please improve this!      
+      MessageContext messageContext = MessageContext.getCurrentContext();
+      HttpServletRequest request = (HttpServletRequest)messageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+      String protocol = request.getProtocol();
+      String protocolFixed = protocol.substring(0, protocol.indexOf("/")).toLowerCase();
+      String serverName = request.getServerName();
+      int serverPort = request.getServerPort();
+      String contextPath = request.getContextPath();
+      baseUrl = protocolFixed + "://" + serverName + ":" + serverPort + contextPath + "/";
+    }
+    return baseUrl;
+  }  
 }
