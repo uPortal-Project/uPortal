@@ -200,6 +200,32 @@
                        Version: 2.0.5
                        URL: http://jakarta.apache.org/oro/
 
+  axis.jar             Web services support. Axis is the next generation of the
+                       Apache SOAP project which itself followed IBM's SOAP4J.
+                       Version: beta1
+                       URL: http://xml.apache.org/axis/
+
+  jaxrpc.jar           Java API for XML-Based RPC - needed for Axis. 
+                       Use the version that comes with Axis.
+                       Version: (depends on Axis version)
+                       URL: http://java.sun.com/xml/jaxrpc/
+
+  wsdl4j.jar           Web Services Description Language for Java Toolkit developed
+                       by IBM - needed for Axis. 
+                       Use the version that comes with Axis.
+                       Version: (depends on Axis version)
+                       URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
+
+  commons-logging.jar  Logging components from the Apache Commons project - needed 
+                       for Axis. Use the version that comes with Axis.
+                       Version: (depends on Axis version)
+                       URL: http://jakarta.apache.org/commons/logging.html
+
+  tt-bytecode.jar      A library for creating and manipulating java bytecode - needed
+                       for Axis. Use the version that comes with Axis.
+                       Version: (depends on Axis version)
+                       URL: http://tt-bytecode.sourceforge.net
+
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
                        Version: 2.2 or 2.3
@@ -225,6 +251,11 @@
   <property name="jaas.jar" value="(set this in build.properties!)"/>
   <property name="cos.jar" value="(set this in build.properties!)"/>
   <property name="oro.jar" value="(set this in build.properties!)"/>
+  <property name="axis.jar" value="(set this in build.properties!)"/>
+  <property name="jaxrpc.jar" value="(set this in build.properties!)"/>
+  <property name="wsdl4j.jar" value="(set this in build.properties!)"/>
+  <property name="commons-logging.jar" value="(set this in build.properties!)"/>
+  <property name="tt-bytecode.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
 
@@ -256,6 +287,11 @@
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${cos.jar}"/>
     <pathelement location="${oro.jar}"/>
+    <pathelement location="${axis.jar}"/>
+    <pathelement location="${jaxrpc.jar}"/>
+    <pathelement location="${wsdl4j.jar}"/>
+    <pathelement location="${commons-logging.jar}"/>
+    <pathelement location="${tt-bytecode.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
 
@@ -388,6 +424,11 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jaas.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${axis.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${jaxrpc.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${tt-bytecode.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
 
   </target>
