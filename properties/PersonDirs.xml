@@ -52,11 +52,15 @@
 
     <!-- DataSource from container -->
     <!-- The PersonDirInfo may come from a container supplied DataSource by
-	 supplying the type="DataSource" attribute and a res-ref-name element.
+	 supplying a res-ref-name element.
 	 The name should not include the jdbc/ portion of the reference.  The resource 
 	 must correspond the container's DataSource configuration.
-    <PersonDirInfo type="DataSource">
+    <PersonDirInfo >
 	<res-ref-name>PersonDb</res-ref-name>
+	<attributes>
+		...
+	</attributes>
+    </PersonDirInfo>
     -->
 
     <!-- JDBC Properties -->

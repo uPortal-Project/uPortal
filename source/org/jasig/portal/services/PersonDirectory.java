@@ -163,7 +163,6 @@ public class PersonDirectory {
       for (int i=0;i<list.getLength();i++) { // foreach PersonDirInfo
         Element dirinfo = (Element) list.item(i);
         PersonDirInfo pdi = new PersonDirInfo(); // Java object holding parameters
-        pdi.type = dirinfo.getAttribute("type");
         for (Node param = dirinfo.getFirstChild();
              param!=null; // foreach tag under the <PersonDirInfo>
              param=param.getNextSibling()) {
@@ -281,13 +280,11 @@ public class PersonDirectory {
         continue;
       // new format of personDirs.xml is type attribute to distinguish
       // DataSource from ldap source
-      if (pdi.type==null || pdi.type.length()==0) {
-        if (pdi.url.startsWith("ldap:")) processLdapDir(username, pdi,attribs);
-        if (pdi.url.startsWith("jdbc:")) processJdbcDir(username, pdi,attribs);
-      }
-      else if (pdi.type.equals("ldap"))
+      if (pdi.ResRefName!=null && pdi.ResRefName.length()>0)
+        processJdbcDir(username, pdi,attribs);
+      else if (pdi.url.startsWith("ldap:"))
         processLdapDir(username, pdi,attribs);
-      else if (pdi.type.equals("DataSource"))
+      else if (pdi.url.startsWith("jdbc:"))
         processJdbcDir(username, pdi,attribs);
     }
     return attribs;
@@ -444,7 +441,6 @@ public class PersonDirectory {
   }
 
   private class PersonDirInfo {
-    String type; // protocol, server, and initial connection parameters
     String url; // protocol, server, and initial connection parameters
     String ResRefName; // Resource Reference name for a J2EE style DataSource
     String driver; // JDBC java class to register
