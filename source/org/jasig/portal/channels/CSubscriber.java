@@ -257,8 +257,6 @@ public class CSubscriber implements IPrivilegedChannel
 
                 // user wants to add an entire category to layout
                 if(subIDs[i].startsWith("cat")) {
-                   // Node channel = channelRegistry.getElementById (subIDs[i]);
-                  //System.err.println(subIDs[i] + ", " + channel);
                     NodeList channels = channel.getChildNodes();
 
                     for (int j=0; j<channels.getLength(); j++) {
@@ -268,8 +266,6 @@ public class CSubscriber implements IPrivilegedChannel
                 }
                 else {
 
-                    //Node channel = channelRegistry.getElementById (subIDs[i]);
-                      //System.out.println(userLayoutXML + ", " + channel + ", " + destination);
                     destination.insertBefore (userLayoutXML.importNode(channel, true), null);
                 }
             }

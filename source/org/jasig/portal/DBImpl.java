@@ -617,7 +617,6 @@ public class DBImpl
    * @exception Exception
    */
   public Element getRegistryXML (org.apache.xerces.dom.DocumentImpl chanDoc, Element root, String catID, String role) throws Exception {
-    //System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
     String catid = "";
     Element cat = null;
     RdbmServices rdbmService = new RdbmServices();
@@ -648,7 +647,6 @@ public class DBImpl
         org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
         parser.parse(new org.xml.sax.InputSource(new StringReader(chxml)));
         Document doc = parser.getDocument();
-        //System.out.println("chan: "+ serializeDOM(doc));
         chan = doc.getDocumentElement();
         chanDoc.putIdentifier(((Element)chan).getAttribute("ID"), (Element)chan);
         cat.appendChild(chanDoc.importNode(chan, true));
@@ -677,11 +675,8 @@ public class DBImpl
       Logger.log(Logger.DEBUG, "DBImpl::getTypesXML(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       while (rs.next()) {
-        //String catid = "";
         String name = rs.getString(1);
-        //System.out.println("name: " + name);
         String uri = rs.getString(2);
-        //System.out.println("uri: " +  uri);
         Node chan = null;
         Element type = types.createElement("channelType");
         Element elem = types.createElement("name");
@@ -692,8 +687,6 @@ public class DBImpl
         type.appendChild(elem);
         root.appendChild(type);
       }
-      //System.out.println( "STRXML = " + serializeDOM(types) );
-      //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -703,7 +696,6 @@ public class DBImpl
    * @param role role of the current user
    */
   public void getCategoryXML (Document catsDoc, Element root, String role) throws Exception {
-    //System.out.println("Enterering ChannelRegistryImpl::getCategoryXML()");
     RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
@@ -716,10 +708,8 @@ public class DBImpl
       ResultSet rs = stmt.executeQuery(sQuery);
       Element cat = null;
       while (rs.next()) {
-        //String catid = "";
         String catnm = rs.getString(2);
         String id = rs.getString(1);
-        //System.out.println("s: " + s);
         cat = catsDoc.createElement("category");
         cat.setAttribute("ID", id);
         cat.setAttribute("name", catnm);
@@ -729,7 +719,6 @@ public class DBImpl
     } finally {
       rdbmService.releaseConnection(con);
     }
-    //System.out.println("catsDoc: "+ serializeDOM(catsDoc));
   }
 
   /**
