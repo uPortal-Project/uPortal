@@ -343,26 +343,4 @@ public class CContentSubscriber extends FragmentManager {
       
     }
     
-    /**
-     * Prepares a string literal to be placed in an xpath expression.
-     * Uses concat() to allow double quotes and single quotes in the same
-     * literal value. If the string doesn't have any single quotes the new
-     * string will be the string that is passed in but will have single quotes
-     * around it.
-     * 
-     * @param s String to escape 
-     * @return  
-     */
-    private String escapeQuotesForXpath(String s)
-    {
-        if (s.indexOf("'") >= 0){
-            s = s.replaceAll("'","',\"'\",'");
-            s= "concat('"+s+"','')";
-        }else
-        {
-            s = "'"+s+"'";
-        }
-        return s;
-    }
-
   }
