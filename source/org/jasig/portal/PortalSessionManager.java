@@ -80,6 +80,7 @@ public class PortalSessionManager extends HttpServlet {
       }
       // Get the portal base directory
       String sPortalBaseDir = sc.getInitParameter("portalBaseDir");
+      sPortalBaseDir = "/ut01/home/its/lindholm/devl/2.0/portal/";
       // Make sure the directory is a properly formatted string
       sPortalBaseDir.replace('/', File.separatorChar);
       sPortalBaseDir.replace('\\', File.separatorChar);
@@ -148,7 +149,7 @@ public class PortalSessionManager extends HttpServlet {
         //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
         //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
         res.sendRedirect(req.getContextPath() + redirectBase);
-      } 
+      }
       else {
         // delete old request
         Boolean forwarded = (Boolean)session.getAttribute("forwarded");
@@ -170,12 +171,12 @@ public class PortalSessionManager extends HttpServlet {
         if (oreqp != null) {
           oreqp.setBaseRequest(req);
           layout.writeContent(oreqp, res, res.getWriter());
-        } 
+        }
         else {
           layout.writeContent(myReq, res, res.getWriter());
         }
       }
-    } 
+    }
     else {
       res.setContentType("text/html");
       PrintWriter out = res.getWriter();
@@ -190,7 +191,7 @@ public class PortalSessionManager extends HttpServlet {
   /**
    * This function determines if a given request needs to be redirected
    * @param req
-   * @return 
+   * @return
    */
   private String doRedirect (HttpServletRequest req) {
     HttpSession session = req.getSession();
@@ -207,7 +208,7 @@ public class PortalSessionManager extends HttpServlet {
         if (servletPath.equals("/" + renderBase) || servletPath.startsWith("/" + detachBaseStart))
           return  null;
       }
-      // the only exception to redirect is the detach 
+      // the only exception to redirect is the detach
       if (detach_mode)
         redirectBase = uPFile;
     }
@@ -215,7 +216,7 @@ public class PortalSessionManager extends HttpServlet {
     return  "/" + renderBase;
   }
 
-  /** 
+  /**
    * RequestParamWrapper persists various information
    * from the source request.
    * Once given a "base request", it substitutes corresponding
@@ -256,6 +257,7 @@ public class PortalSessionManager extends HttpServlet {
           MultipartParser multi = new MultipartParser(source, sizeLimit, true, true);
           while ((attachmentPart = multi.readNextPart()) != null) {
             String partName = attachmentPart.getName();
+
             if (attachmentPart.isParam()) {
               ParamPart parameterPart = (ParamPart)attachmentPart;
               String paramValue = parameterPart.getStringValue();
@@ -269,31 +271,34 @@ public class PortalSessionManager extends HttpServlet {
                 }
                 valueArray[oldValueArray.length] = paramValue;
                 parameters.put(partName, valueArray);
-              } 
+              }
               else {
                 String[] valueArray = new String[1];
                 valueArray[0] = paramValue;
                 parameters.put(partName, valueArray);
               }
-            } 
+            }
             else if (attachmentPart.isFile()) {
               FilePart filePart = (FilePart)attachmentPart;
               String filename = filePart.getFileName();
-              MultipartDataSource fileUpload = new MultipartDataSource(filePart);
-              ;
-              if (parameters.containsKey(partName)) {
-                MultipartDataSource[] oldValueArray = (MultipartDataSource[])parameters.get(partName);
-                MultipartDataSource[] valueArray = new MultipartDataSource[oldValueArray.length + 1];
-                for (int i = 0; i < oldValueArray.length; i++) {
-                  valueArray[i] = oldValueArray[i];
+
+              if (filename != null) {
+                MultipartDataSource fileUpload = new MultipartDataSource(filePart);
+
+                if (parameters.containsKey(partName)) {
+                  MultipartDataSource[] oldValueArray = (MultipartDataSource[])parameters.get(partName);
+                  MultipartDataSource[] valueArray = new MultipartDataSource[oldValueArray.length + 1];
+                  for (int i = 0; i < oldValueArray.length; i++) {
+                    valueArray[i] = oldValueArray[i];
+                  }
+                  valueArray[oldValueArray.length] = fileUpload;
+                  parameters.put(partName, valueArray);
                 }
-                valueArray[oldValueArray.length] = fileUpload;
-                parameters.put(partName, valueArray);
-              } 
-              else {
-                MultipartDataSource[] valueArray = new MultipartDataSource[1];
-                valueArray[0] = fileUpload;
-                parameters.put(partName, valueArray);
+                else {
+                  MultipartDataSource[] valueArray = new MultipartDataSource[1];
+                  valueArray[0] = fileUpload;
+                  parameters.put(partName, valueArray);
+                }
               }
             }
           }
@@ -327,19 +332,19 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * Overloaded method
      * @param name
-     * @return 
+     * @return
      */
     public String getParameter (String name) {
       String[] value_array = this.getParameterValues(name);
       if ((value_array != null) && (value_array.length > 0))
-        return  value_array[0]; 
-      else 
+        return  value_array[0];
+      else
         return  null;
     }
 
     /**
      * Overloaded method
-     * @return 
+     * @return
      */
     public Enumeration getParameterNames () {
       return  this.parameters.keys();
@@ -354,7 +359,7 @@ public class PortalSessionManager extends HttpServlet {
       Object[] pars = (Object[])this.parameters.get(name);
       if (pars instanceof String[]) {
         return  (String[])this.parameters.get(name);
-      } 
+      }
       else {
         return  null;
       }
@@ -371,7 +376,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getPathInfo () {
       return  pathInfo;
@@ -379,7 +384,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getPathTranslated () {
       return  pathTranslated;
@@ -387,7 +392,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getContextPath () {
       return  contextPath;
@@ -395,7 +400,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getQueryString () {
       return  queryString;
@@ -403,7 +408,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getServletPath () {
       return  servletPath;
@@ -411,7 +416,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getRequestURI () {
       return  requestURI;
@@ -424,7 +429,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public Cookie[] getCookies () {
       return  req.getCookies();
@@ -433,7 +438,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param name
-     * @return 
+     * @return
      */
     public long getDateHeader (String name) {
       return  req.getDateHeader(name);
@@ -442,7 +447,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param name
-     * @return 
+     * @return
      */
     public String getHeader (String name) {
       return  req.getHeader(name);
@@ -451,7 +456,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param name
-     * @return 
+     * @return
      */
     public Enumeration getHeaders (String name) {
       return  req.getHeaders(name);
@@ -459,7 +464,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public Enumeration getHeaderNames () {
       return  req.getHeaderNames();
@@ -468,7 +473,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param name
-     * @return 
+     * @return
      */
     public int getIntHeader (String name) {
       return  req.getIntHeader(name);
@@ -476,7 +481,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getMethod () {
       return  req.getMethod();
@@ -484,7 +489,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getRemoteUser () {
       return  req.getRemoteUser();
@@ -493,7 +498,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param role
-     * @return 
+     * @return
      */
     public boolean isUserInRole (String role) {
       return  req.isUserInRole(role);
@@ -501,7 +506,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public java.security.Principal getUserPrincipal () {
       return  req.getUserPrincipal();
@@ -509,7 +514,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getRequestedSessionId () {
       return  req.getRequestedSessionId();
@@ -518,7 +523,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param create
-     * @return 
+     * @return
      */
     public HttpSession getSession (boolean create) {
       return  req.getSession(create);
@@ -526,7 +531,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public HttpSession getSession () {
       return  req.getSession();
@@ -534,7 +539,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public boolean isRequestedSessionIdValid () {
       return  req.isRequestedSessionIdValid();
@@ -542,7 +547,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public boolean isRequestedSessionIdFromCookie () {
       return  req.isRequestedSessionIdFromCookie();
@@ -550,7 +555,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public boolean isRequestedSessionIdFromURL () {
       return  req.isRequestedSessionIdFromURL();
@@ -558,7 +563,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public boolean isRequestedSessionIdFromUrl () {
       return  req.isRequestedSessionIdFromUrl();
@@ -567,7 +572,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param name
-     * @return 
+     * @return
      */
     public Object getAttribute (String name) {
       return  req.getAttribute(name);
@@ -575,7 +580,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public Enumeration getAttributeNames () {
       return  req.getAttributeNames();
@@ -583,7 +588,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getCharacterEncoding () {
       return  req.getCharacterEncoding();
@@ -591,7 +596,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public int getContentLength () {
       return  req.getContentLength();
@@ -599,7 +604,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getContentType () {
       return  req.getContentType();
@@ -607,7 +612,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      * @exception IOException
      */
     public ServletInputStream getInputStream () throws IOException {
@@ -616,7 +621,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getProtocol () {
       return  req.getProtocol();
@@ -624,7 +629,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getScheme () {
       return  req.getScheme();
@@ -632,7 +637,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getServerName () {
       return  req.getServerName();
@@ -640,7 +645,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public int getServerPort () {
       return  req.getServerPort();
@@ -648,7 +653,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      * @exception IOException
      */
     public BufferedReader getReader () throws IOException {
@@ -657,7 +662,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getRemoteAddr () {
       return  req.getRemoteAddr();
@@ -665,7 +670,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public String getRemoteHost () {
       return  req.getRemoteHost();
@@ -690,7 +695,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public Locale getLocale () {
       return  req.getLocale();
@@ -698,7 +703,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public Enumeration getLocales () {
       return  req.getLocales();
@@ -706,7 +711,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * put your documentation comment here
-     * @return 
+     * @return
      */
     public boolean isSecure () {
       return  req.isSecure();
@@ -715,7 +720,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param path
-     * @return 
+     * @return
      */
     public RequestDispatcher getRequestDispatcher (String path) {
       return  req.getRequestDispatcher(path);
@@ -724,7 +729,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * put your documentation comment here
      * @param path
-     * @return 
+     * @return
      */
     public String getRealPath (String path) {
       return  req.getRealPath(path);
