@@ -14,8 +14,11 @@
 	<xsl:param name="EditMode">AddBookmark</xsl:param>
 
 	<xsl:template match="/">
-		<div>
 			<form action="{$baseActionURL}?command={$EditMode}" method="post">
+      						<table border="0" cellpadding="6">
+							<tr>
+								<td class="uportal-channel-subtitle">Add New <xsl:value-of select="substring-after($EditMode,'Add')"/></td>
+							</tr></table>
 				<xsl:call-template name="BookmarkTree">
 					<xsl:with-param name="TreeMode"><xsl:value-of select="$EditMode"/></xsl:with-param>
 				</xsl:call-template>
@@ -38,49 +41,44 @@
 				<xsl:choose>
 					<xsl:when test="$EditMode='AddFolder'">
 						<table border="0">
-							<tr>
-								<td colspan="2">Add New Folder</td>
-							</tr>
-							<tr>
-								<td>Name:</td>
-								<td><input type="text" name="FolderTitle"></input></td>
-							</tr>
-							<tr>
-								<td colspan="2">
-									<input type="submit" name="SubmitButton" value="Add"></input>
-									<input type="submit" name="SubmitButton" value="Cancel"></input>
+						
+							<tr><td class="uportal-label">Folder Name:</td></tr>
+							<tr><td><input type="text" name="FolderTitle" class="uportal-input-text"></input></td></tr>
+							<tr><td><input type="submit" name="SubmitButton" value="Add" class="uportal-button"></input>
+									<input type="submit" name="SubmitButton" value="Cancel" class="uportal-button"></input>
 								</td>
 							</tr>
 						</table>
 					</xsl:when>
 					<xsl:when test="$EditMode='AddBookmark'">
 						<table border="0">
+					
 							<tr>
-								<td colspan="2">Add New Bookmark</td>
+								<td class="uportal-label">Bookmark Title:</td>
+								<tr><td><input type="text" name="BookmarkTitle" class="uportal-input-text"></input></td></tr>
+							</tr>
+
+
+
+
+							<tr>
+								<td  class="uportal-label">URL:</td></tr>
+							<tr>	<td><input type="text" name="BookmarkURL" class="uportal-input-text"></input></td>
 							</tr>
 							<tr>
-								<td>Title:</td>
-								<td><input type="text" name="BookmarkTitle"></input></td>
+								<td class="uportal-label">Description:</td></tr>
+							<tr>	<td><textarea rows="5" cols="20" name="BookmarkDescription" class="uportal-input-text"></textarea></td>
 							</tr>
 							<tr>
-								<td>URL:</td>
-								<td><input type="text" name="BookmarkURL"></input></td>
-							</tr>
-							<tr>
-								<td>Description:</td>
-								<td><textarea rows="5" cols="20" name="BookmarkDescription"></textarea></td>
-							</tr>
-							<tr>
-								<td colspan="2">
-									<input type="submit" name="SubmitButton" value="Add"></input>
-									<input type="submit" name="SubmitButton" value="Cancel"></input>
+								<td>
+									<input type="submit" name="SubmitButton" value="Add" class="uportal-button"></input>
+									<input type="submit" name="SubmitButton" value="Cancel" class="uportal-button"></input>
 								</td>
 							</tr>
 						</table>
 					</xsl:when>
 				</xsl:choose>
 			</form>
-		</div>
 	</xsl:template>
 
 </xsl:stylesheet>

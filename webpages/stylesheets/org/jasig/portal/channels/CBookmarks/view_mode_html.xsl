@@ -13,10 +13,10 @@
 			<xsl:call-template name="BookmarkTree"/>
 <table width="100%" cellpadding="2" cellspacing="0">
 <tr><td><img src="{$mediaPath}/transparent.gif" height="8" width="8"/></td></tr>
-			<tr class="uportal-background-light"><td align="left"><a href="{$baseActionURL}?command=AddBookmark"><img src="{$mediaPath}/bookmark_add.gif" border="0"/></a>
-			<a href="{$baseActionURL}?command=DeleteBookmark"><img src="{$mediaPath}/bookmark_delete.gif" border="0"/></a>
-      <a href="{$baseActionURL}?command=AddFolder"><img src="{$mediaPath}/folder_add.gif" border="0"/></a>
-      <a href="{$baseActionURL}?command=DeleteFolder"><img src="{$mediaPath}/folder_delete.gif" border="0"/></a></td></tr>
+			<tr class="uportal-background-light"><td align="left"><a href="{$baseActionURL}?command=AddBookmark"><img src="{$mediaPath}/bookmark_add.gif" alt="add a bookmark" border="0"/></a>
+			<a href="{$baseActionURL}?command=DeleteBookmark"><img src="{$mediaPath}/bookmark_delete.gif" border="0" alt="delete a bookmark"/></a>
+      <a href="{$baseActionURL}?command=AddFolder"><img src="{$mediaPath}/folder_add.gif" border="0" alt="add a folder"/></a>
+      <a href="{$baseActionURL}?command=DeleteFolder"><img src="{$mediaPath}/folder_delete.gif" border="0" alt="delete a folder"/></a></td></tr>
       </table>
 
 		

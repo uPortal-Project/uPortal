@@ -12,6 +12,10 @@
 	<xsl:template match="/">
 		
 			<form action="{$baseActionURL}?command={$EditMode}" method="post">
+      <table border="0" cellpadding="6">
+							<tr>
+								<td class="uportal-channel-subtitle">Delete <xsl:value-of select="substring-after($EditMode,'Delete')"/>s</td>
+							</tr></table>
 				<xsl:call-template name="BookmarkTree">
 					<xsl:with-param name="TreeMode"><xsl:value-of select="$EditMode"/></xsl:with-param>
 				</xsl:call-template>
@@ -26,7 +30,6 @@
 				</xsl:choose>
 				you wish to delete.<hr/>
 				<input type="submit" name="SubmitButton" value="Delete" class="uportal-button"/>
-				<img src="{$imagesURL}trans20x20.gif" width="10" height="20"/>
 				<input type="submit" name="SubmitButton" value="Cancel" class="uportal-button"/>
 			</form>
 		

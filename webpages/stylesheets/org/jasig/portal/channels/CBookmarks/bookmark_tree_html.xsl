@@ -5,7 +5,20 @@
   <xsl:template match="xbel" name="BookmarkTree">
     <xsl:param name="TreeMode">View</xsl:param>
     <!-- TreeMode: <xsl:value-of select="$TreeMode"/><br/> -->
-    <table width="100%" border="0" cellpadding="0" cellspacing="0"><xsl:attribute name="class"><xsl:if test="$TreeMode != 'View'">uportal-background-med</xsl:if></xsl:attribute>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <xsl:attribute name="class">
+    <xsl:if test="$TreeMode != 'View'">uportal-background-med</xsl:if></xsl:attribute>
+      
+            <xsl:if test="$TreeMode='AddFolder' or $TreeMode='AddBookmark'">
+        <tr align="left" valign="top" class="uportal-background-light">
+          <td align="left" valign="top" class="uportal-channel-text">
+            <input type="radio" name="FolderRadioButton" value="RootLevel" checked="true" class="uportal-input-text"/>
+          </td>
+          <td width="100%" align="left" class="uportal-channel-text"><strong>New Top Level <xsl:value-of select="substring-after($TreeMode,'Add')"/></strong></td>
+        </tr>
+        <tr class="uportal-background-med"><td colspan="2"><img src="{$mediaPath}/transparent.gif" border="0" width="1" height="1"/></td></tr>
+      </xsl:if>
+      
       <xsl:apply-templates select="/xbel/folder">
         <xsl:sort select="title"/>
         <xsl:with-param name="TreeMode">
@@ -18,19 +31,21 @@
           <xsl:value-of select="$TreeMode"/>
         </xsl:with-param>
       </xsl:apply-templates>
-      <xsl:if test="$TreeMode='AddFolder' or $TreeMode='AddBookmark'">
-        <tr align="left" valign="top" class="uportal-channel-text">
-          <td align="left" valign="top" class="uportal-channel-text">
-            <input type="radio" name="FolderRadioButton" value="RootLevel" checked="true" class="uportal-input-text"/>
-          </td>
-          <td align="left" valign="top" class="uportal-channel-text">New Top Level<xsl:value-of select="substring-after($TreeMode,'Add')"/></td>
-        </tr>
-      </xsl:if>
+
     </table>
   </xsl:template>
   <xsl:template match="folder">
     <xsl:param name="TreeMode">View</xsl:param>
-    <tr align="left" valign="top"><!--<xsl:attribute name="class"><xsl:if test="$TreeMode != 'View'">uportal-background-light</xsl:if></xsl:attribute>-->
+    <tr align="left" valign="top">
+
+    <xsl:attribute name="class">
+    <xsl:choose>
+    <xsl:when test="$TreeMode = 'View'">uportal-background-content</xsl:when>
+    <xsl:when test="$TreeMode != 'DeleteBookmark'">uportal-background-light</xsl:when>
+    <xsl:otherwise>uportal-background-med</xsl:otherwise>
+    </xsl:choose>
+    </xsl:attribute>
+
       <!-- Display a radio button or checkbox if in edit mode -->
       <td align="left" valign="top" class="uportal-channel-text">
         <xsl:choose>
@@ -42,7 +57,10 @@
           </xsl:when>
         </xsl:choose>
       </td>
-      <td align="left" valign="top" class="uportal-channel-text">
+      <td align="left" valign="top">
+      <!--<xsl:attribute name="class">
+      <xsl:if test="$TreeMode != 'View'">uportal-background-light</xsl:if>
+      </xsl:attribute>-->
         <!-- Indent the folder -->
         <img src="{$mediaPath}/transparent.gif" width="{(count(ancestor::*)-1) * 4 + (count(ancestor::*)-1) * 16}" height="16"/>
         <!-- Display an open or closed folder icon and the folder title -->
@@ -51,7 +69,7 @@
             <a href="{$baseActionURL}?command=unfold&amp;ID={@id}">
               <img src="{$mediaPath}/folded_yes.gif" border="0" alt="Closed Folder"/>
               <img src="{$mediaPath}/transparent.gif" border="0" width="4" height="16"/>
-              <strong>
+              <strong class="uportal-channel-text">
                 <xsl:value-of select="title"/>
               </strong>
             </a>
@@ -60,7 +78,7 @@
             <a href="{$baseActionURL}?command=fold&amp;ID={@id}">
               <img src="{$mediaPath}/folded_no.gif" border="0" alt="Open Folder"/>
               <img src="{$mediaPath}/transparent.gif" border="0" width="4" height="16"/>
-              <strong>
+              <strong class="uportal-channel-text">
                 <xsl:value-of select="title"/>
               </strong>
             </a>
@@ -68,6 +86,10 @@
         </xsl:choose>
       </td>
     </tr>
+    <xsl:if test="$TreeMode != 'View'"><tr class="uportal-background-med"><td colspan="2">
+                  <img src="{$mediaPath}/transparent.gif" border="0" width="1" height="1"/>
+                  </td></tr></xsl:if>
+
     <!-- Recurse through the subtrees if the folder is open -->
     <xsl:if test="@folded='no'">
       <xsl:apply-templates select="folder">
@@ -86,7 +108,15 @@
   </xsl:template>
   <xsl:template match="bookmark">
     <xsl:param name="TreeMode">View</xsl:param>
-    <tr align="left" valign="top"><xsl:attribute name="class"><xsl:if test="$TreeMode != 'View'">uportal-background-light</xsl:if></xsl:attribute>
+    <tr align="left" valign="top">
+        <xsl:attribute name="class">
+    <xsl:choose>
+    <xsl:when test="$TreeMode = 'View'">uportal-background-content</xsl:when>
+    <xsl:when test="$TreeMode = 'DeleteBookmark'">uportal-background-light</xsl:when>
+    <xsl:otherwise>uportal-background-med</xsl:otherwise>
+    </xsl:choose>
+    </xsl:attribute>
+    
       <!-- Display a checkbox if in edit mode -->
       <td align="left" valign="top" class="uportal-channel-text">
         <xsl:choose>
@@ -103,7 +133,9 @@
         </a>
       </td>
     </tr>
-  </xsl:template>
+      <xsl:if test="$TreeMode != 'View'"><tr class="uportal-background-med"><td colspan="2">
+                  <img src="{$mediaPath}/transparent.gif" border="0" width="1" height="1"/>
+                  </td></tr></xsl:if></xsl:template>
 </xsl:stylesheet>
 <!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
 <metaInformation>
