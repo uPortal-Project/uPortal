@@ -4,9 +4,9 @@
     <table width="100%" border="0" cellspacing="5" cellpadding="5">
       <tr>
         <td align="right" class="uportal-label">
-          <a href="http://www.ja-sig.org">Powered by uPortal 2.0p</a>
+          <a href="http://www.ja-sig.org">Powered by uPortal 2.0.3</a>
         </td>
       </tr>
     </table>
   </xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->
+</xsl:stylesheet>
