@@ -51,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.UPFileSpec;
 
