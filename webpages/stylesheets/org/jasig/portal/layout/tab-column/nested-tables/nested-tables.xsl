@@ -298,7 +298,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr align="left" valign="bottom">
         <td class="uportal-channel-title">
-          <xsl:value-of select="@name"/>
+          <xsl:value-of select="@title"/>
         </td>
         <td align="right" nowrap="nowrap">
           <xsl:if test="not(@hasHelp='false')">

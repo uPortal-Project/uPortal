@@ -126,7 +126,7 @@ $Revision$
   </xsl:template>
 
   <xsl:template match="channel">
-    <p mode="nowrap"><a href="{$baseActionURL}?uP_root={@ID}#layout"><xsl:value-of select="@name"/></a></p>
+    <p mode="nowrap"><a href="{$baseActionURL}?uP_root={@ID}#layout"><xsl:value-of select="@title"/></a></p>
   </xsl:template>
 
   <xsl:template match="channel" mode="render-channel">
