@@ -141,20 +141,24 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    }
    
    public boolean contains(IEntityGroup group, IGroupMember member) 
-   throws GroupsException {
+   throws GroupsException 
+   {
       GroupDefinition groupDef = (GroupDefinition)groupDefinitions.get(group.getLocalKey());
-      if (member.isGroup()) {
+      if (member.isGroup()) 
+      {
          String key = ((IEntityGroup)member).getLocalKey();
          return groupDef.hasMember(key);
-      } else {
-         if (member.getEntityType() == IPerson.class) {
-            // get the IPerson for the member and test
-            IPerson person = PersonDirectory.getRestrictedPerson(member.getKey());
-            // return groupDef.test(person);
-            return testRecursively(groupDef, person);
-         } else {
-            return false;
-         }
+      } 
+      else 
+      {
+         if (member.getEntityType() != IPerson.class) 
+             { return false; }
+         IPerson person = null;
+         try 
+             { person = PersonDirectory.getRestrictedPerson(member.getKey()); }
+         catch (Exception ex)
+             { return false; }
+         return testRecursively(groupDef, person);
       }
    }
 
