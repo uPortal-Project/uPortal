@@ -36,7 +36,7 @@
 package org.jasig.portal.webservices.ser;
 
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * DeserializerFactory for CookieDeserializer
@@ -51,7 +51,7 @@ public class CookieDeserializerFactory extends BaseDeserializerFactory {
    * @param xmlType the xml type
    */    
   public CookieDeserializerFactory(Class javaType, QName xmlType) {
-    super(CookieDeserializer.class, false, xmlType, javaType);
+    super(CookieDeserializer.class, xmlType, javaType);
   }
   
 }

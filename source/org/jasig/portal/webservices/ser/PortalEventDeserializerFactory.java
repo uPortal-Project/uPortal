@@ -36,7 +36,7 @@
 package org.jasig.portal.webservices.ser;
 
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * DeserializerFactory for PortalEventDeserializer
@@ -51,7 +51,7 @@ public class PortalEventDeserializerFactory extends BaseDeserializerFactory {
    * @param xmlType the xml type
    */    
   public PortalEventDeserializerFactory(Class javaType, QName xmlType) {
-    super(PortalEventDeserializer.class, false, xmlType, javaType);
+    super(PortalEventDeserializer.class, xmlType, javaType);
   }
   
 }

@@ -37,7 +37,7 @@ package org.jasig.portal.webservices.ser;
 
 import java.io.IOException;
 import javax.servlet.http.Cookie;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import org.xml.sax.Attributes;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Serializer;

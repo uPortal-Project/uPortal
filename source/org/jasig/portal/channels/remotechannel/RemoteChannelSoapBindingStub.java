@@ -40,6 +40,7 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.client.Call;
 import org.apache.axis.AxisFault;
 import org.apache.axis.NoEndPointException;
+import org.apache.axis.Constants;
 import org.w3c.dom.Element;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -47,8 +48,8 @@ import java.util.Map;
 import java.net.URL;
 import java.rmi.RemoteException;
 import javax.xml.rpc.Service;
-import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.namespace.QName;
 import javax.servlet.http.Cookie;
 
 /**
@@ -82,7 +83,7 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
         super.service = service;
       }
       Class cls;
-      javax.xml.rpc.namespace.QName qName;
+      javax.xml.namespace.QName qName;
       Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;
       Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;
       Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;
@@ -91,14 +92,14 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
       Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
       Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;
       Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
-      qName = new javax.xml.rpc.namespace.QName("http://http.servlet.javax", "Cookie");
+      qName = new javax.xml.namespace.QName("http://http.servlet.javax", "Cookie");
       cachedSerQNames.add(qName);
       cls = javax.servlet.http.Cookie.class;
       cachedSerClasses.add(cls);
       cachedSerFactories.add(beansf);
       cachedDeserFactories.add(beandf);
 
-      qName = new javax.xml.rpc.namespace.QName(methodNS, "ArrayOf_tns2_Cookie");
+      qName = new javax.xml.namespace.QName(methodNS, "ArrayOf_tns2_Cookie");
       cachedSerQNames.add(qName);
       cls = javax.servlet.http.Cookie[].class;
       cachedSerClasses.add(cls);
@@ -140,10 +141,10 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
       // is the reason why registration is only needed for the first call.
       if (firstCall()) {
         // must set encoding style before registering serializers
-        call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP_ENC);
+        call.setEncodingStyle(Constants.URI_SOAP11_ENC);
         for (int i = 0; i < cachedSerFactories.size(); ++i) {
           Class cls = (Class) cachedSerClasses.get(i);
-          javax.xml.rpc.namespace.QName qName = (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);
+          QName qName = (QName) cachedSerQNames.get(i);
           Class sf = (Class)cachedSerFactories.get(i);
           Class df = (Class)cachedDeserFactories.get(i);
           call.registerTypeMapping(cls, qName, sf, df, false);
@@ -237,7 +238,7 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
       throw new NoEndPointException();
     }
     Call call = getCall();
-    QName p0QName = new javax.xml.rpc.namespace.QName("", "instanceId");
+    QName p0QName = new QName("", "instanceId");
     call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     QName p1QName = new QName("", "portalEvent");
     call.addParameter(p1QName, new QName(methodNS, "PortalEvent"), ParameterMode.IN);
@@ -259,7 +260,7 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
       throw new NoEndPointException();
     }
     Call call = getCall();
-    QName p0QName = new javax.xml.rpc.namespace.QName("", "instanceId");
+    QName p0QName = new QName("", "instanceId");
     call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
     call.setUseSOAPAction(true);

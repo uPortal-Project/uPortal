@@ -45,7 +45,7 @@ import org.xml.sax.SAXException;
 import java.util.Map;
 import java.util.HashMap;
 import javax.servlet.http.Cookie;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * The CookieSerializer deserializes a Cookie.  

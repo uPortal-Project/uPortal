@@ -37,7 +37,7 @@ package org.jasig.portal.webservices.ser;
 
 import org.jasig.portal.PortalEvent;
 import org.apache.axis.encoding.ser.SimpleDeserializer;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * The PortalEventSerializer deserializes a PortalEvent.                                            

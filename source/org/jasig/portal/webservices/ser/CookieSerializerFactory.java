@@ -36,7 +36,7 @@
 package org.jasig.portal.webservices.ser;
 
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * SerializerFactory for CookieSerializer
