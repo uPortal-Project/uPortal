@@ -430,16 +430,8 @@ public class LayoutBean extends GenericPortalBean
         out.println ("<td width=1%>&nbsp;</td>");                
       }
       
-      // Links to personalize layout for users who are logged in
-      if (getUserName (req) != null && !getUserName (req).equals ("guest"))
-        out.println ("<td align=right bgcolor=" + sTabColor + " width=98%>" +
-          "<SPAN CLASS=\"PortalText\">Personalize&nbsp;</span><a href=\"personalizeTabs.jsp\"><SPAN CLASS=\"PortalText\">[Tabs</SPAN></a>" +
-          "<SPAN CLASS=\"PortalText\">]&nbsp;-&nbsp;[</span><a href=\"personalizeColors.jsp\"><SPAN CLASS=\"PortalText\">Colors</span></a>" +
-          "<SPAN CLASS=\"PortalText\">]&nbsp;-&nbsp;[</span><a href=\"personalizeLayout.jsp\"><SPAN CLASS=\"PortalText\">Layout</span></a>" +
-          "<SPAN CLASS=\"PortalText\">]&nbsp;-&nbsp;[</span><a href=\"subscribe.jsp\"><SPAN CLASS=\"PortalText\">Channels</span></a>" +
-          "<SPAN CLASS=\"PortalText\">]&nbsp;</SPAN></td>");
-      else
-        out.println ("<td width=98%></td>");
+      // Area to the right of the tabs
+      out.println ("<td width=\"98%\">&nbsp;</td>");
 
       out.println ("</tr>");
 

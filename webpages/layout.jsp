@@ -35,12 +35,20 @@ function openWin(url, title, width, height)
 <% layoutBean.writeBodyStyle (request, response, out); %>
 
 <!-- Header -->
-<table border=0 cellpadding=0 cellspacing=1 width=100%>
+<table border="0" cellpadding="0" cellspacing="1" width="100%">
   <tr>
-    <td width=100><img src="images/MyIBS.gif" width=100 height=50 border=0></td>
-    <td width=300><font size=2 color=blue>Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!</font><br>
-        <font size=1 color=#444444><%= UtilitiesBean.getDate () %></font></td>
-    <td align=right><%= sUserName == null || sUserName.equals ("guest") ? "&nbsp;" : "<a href=\"publish.jsp\">Publish</a> |&nbsp;| <a href=\"logout.jsp\">Logout</a>" %></td>
+    <td width="100"><img src="images/MyIBS.gif" width="100" height="50" border="0"></td>
+    <td width="300"><font size="2" color="blue">Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!</font><br>
+        <font size="1" color="#444444"><%= UtilitiesBean.getDate () %></font><br>
+        <%= sUserName == null || sUserName.equals ("guest") ? "&nbsp;" : "<a href=\"logout.jsp\">Logout</a>" %></td>
+    <td align="right">
+      <% if (sUserName == null || sUserName.equals ("guest")) { %>
+      &nbsp;
+      <% } else { %>
+      Channels -> <a href="publish.jsp">Publish</a> | <a href="subscribe.jsp">Subscribe</a><br>
+      Personalize -> <a href="personalizeColors.jsp">Colors</a> | <a href="personalizeTabs.jsp">Tabs</a> | <a href="personalizeLayout.jsp">Layout</a>
+      <% } %>
+    </td>
   </tr>
 </table>
 
