@@ -362,9 +362,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     public ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
      Connection con = RDBMServices.getConnection();
 
-
      try {
-      con.setAutoCommit(false);
+
+      RDBMServices.setAutoCommit(con,false);
 
       int nodeId = 0;
       int layoutId = 0;
@@ -481,14 +481,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( psAddChannelParam != null ) psAddChannelParam.close();
 
       stmt.close();
-      con.commit();
+      RDBMServices.commit(con);
       con.close();
 
       return resultNode;
 
      } catch (Exception e) {
         String errorMessage = e.getMessage();
-        try { con.rollback(); } catch ( SQLException sqle ) {
+        try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
            LogService.log(LogService.ERROR, sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
@@ -807,9 +807,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
      Connection con = RDBMServices.getConnection();
 
-     try {
+    try {
 
-      con.setAutoCommit(false);
+     RDBMServices.setAutoCommit(con,false);
+
 
       int userId = person.getID();
       int nodeId = CommonUtils.parseInt(node.getId());
@@ -859,7 +860,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( psUpdateChannelParam != null ) psUpdateChannelParam.close();
 
 
-      con.commit();
+      RDBMServices.commit(con);
 
       // Closing
       stmt.close();
@@ -869,7 +870,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
      } catch (Exception e) {
         String errorMessage = e.getMessage();
-        try { con.rollback(); } catch ( SQLException sqle ) {
+        try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
            LogService.log(LogService.ERROR, sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
@@ -1177,13 +1178,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      */
     public boolean deleteUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
      Connection con = RDBMServices.getConnection();
+
      try {
 
-      //boolean layoutUpdate = false, restrUpdate = false, paramUpdate = false, chanUpdate = false;
+      RDBMServices.setAutoCommit(con,false);
 
       int count = 0;
-
-      con.setAutoCommit(false);
 
       int userId = person.getID();
       int nodeId = CommonUtils.parseInt(node.getId());
@@ -1330,14 +1330,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
         stmt.close();
-        con.commit();
+        RDBMServices.commit(con);
         con.close();
 
         return count > 0;
 
      } catch (Exception e) {
         String errorMessage = e.getMessage();
-        try { con.rollback(); } catch ( SQLException sqle ) {
+        try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
            LogService.log(LogService.ERROR, sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
@@ -1522,7 +1522,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( stmt != null ) stmt.close();
 
       // Commit all the changes
-      con.commit();
+      RDBMServices.commit(con);
 
       //if ( psFragment != null ) psFragment.close();
       if ( psLayout != null ) psLayout.close();
@@ -1551,7 +1551,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     } catch (Exception e) {
         e.printStackTrace();
         String errorMessage = e.getMessage();
-        try { con.rollback(); } catch ( SQLException sqle ) {
+        try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
            LogService.log(LogService.ERROR, sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
@@ -1648,7 +1648,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( stmt != null ) stmt.close();
 
       // Commit all the changes
-      con.commit();
+      RDBMServices.commit(con);
 
 
 
@@ -1662,7 +1662,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     } catch (Exception e) {
         e.printStackTrace();
         String errorMessage = e.getMessage();
-        try { con.rollback(); } catch ( SQLException sqle ) {
+        try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
            LogService.log(LogService.ERROR, sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
@@ -1700,7 +1700,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
         con = RDBMServices.getConnection();
-        con.setAutoCommit(false);
+        RDBMServices.setAutoCommit(con,false);
 
         layoutData = new Hashtable(50);
 
@@ -2369,7 +2369,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
   try {
 
         con = RDBMServices.getConnection();
-        con.setAutoCommit(false);
+        RDBMServices.setAutoCommit(con,false);
 
         Statement stmt = con.createStatement();
 
