@@ -273,7 +273,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         // If the base action URL was explicitly set, use it
         // peterk: we should probably introduce idepotent version of this one as well, at some point
         if (baseActionURL != null) {
-          return java.net.URLEncoder.encode(baseActionURL);
+          return URLEncoder.encode(baseActionURL);
         }
 
         String url=null;
@@ -288,7 +288,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
         }
-        return java.net.URLEncoder.encode(url);
+        return URLEncoder.encode(url);
     }
 
     /**
@@ -306,7 +306,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
-        return java.net.URLEncoder.encode(url);
+        return url;
     }
 
     /**
@@ -361,7 +361,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      */
     private String createBaseCarMediaURL() throws PortalException {
         String url = getBaseWorkerURL( CarResources.CAR_WORKER_ID, true );
-        return URLEncoder.encode(url).concat( "?" + CarResources.CAR_RESOURCE_PARM + "=" );
+        return url.concat( "?" + CarResources.CAR_RESOURCE_PARM + "=" );
     }
 
 
@@ -385,7 +385,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
 
         url=upfs.getUPFile();
 
-        return java.net.URLEncoder.encode(url);
+        return URLEncoder.encode(url);
     }
 
     /**
