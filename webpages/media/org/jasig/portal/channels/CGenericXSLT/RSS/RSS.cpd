@@ -91,6 +91,7 @@ Version $Revision$
             <value display="0.9x (RSS format)" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
             <value display="1.0x (RDF format)">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
             <value display="Universal (0.90-2.0)">CGenericXSLT/RSS/RSS-universal.ssl</value>
+            <defaultValue>CGenericXSLT/RSS/RSS-universal.ssl</defaultValue>
           </restriction>
         </type>
       </parameter>
