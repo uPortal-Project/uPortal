@@ -148,7 +148,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         structure = crsdb.getChannelXML(chanId, doc, channelPrefix + structId);
         if (structure == null) {
           // Can't find channel
-          ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
+          ChannelDefinition cd = new ChannelDefinition(chanId);
+          cd.setTitle("Missing channel");
+          cd.setName("Missing channel");
           structure = cd.getDocument(doc, channelPrefix + structId,
            "This channel no longer exists. You should remove it from your layout.",
            CError.CHANNEL_MISSING_EXCEPTION);
@@ -1625,7 +1627,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         //        int layoutId=profile.getLayoutId();
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);   
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
         int layoutId;
         rs = stmt.executeQuery(subSelectString);
         try {
@@ -2518,7 +2520,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 layoutId = 0;
             }
         } finally {
-            rs.close();            
+            rs.close();
         }
 
         boolean firstLayout = false;
