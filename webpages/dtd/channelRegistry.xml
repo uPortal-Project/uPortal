@@ -23,19 +23,19 @@
   <category ID="cat03" name="Development">
     <channel ID="chan06" timeout="5000" minimized="false" editable="false"  hasHelp="false" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
       <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+      <parameter value="CGenericXSLT/RSS.ssl" name="ssl"/>
     </channel>
     <channel ID="chan07" timeout="5000" minimized="false" editable="false"  hasHelp="false" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
       <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+      <parameter value="CGenericXSLT/RSS.ssl" name="ssl"/>
     </channel>
     <channel ID="chan08" timeout="5000" minimized="false" editable="false"  hasHelp="false" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
       <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+      <parameter value="CGenericXSLT/RSS.ssl" name="ssl"/>
     </channel>
     <channel ID="chan09" timeout="5000" minimized="false" editable="false"  hasHelp="false" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
       <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+      <parameter value="CGenericXSLT/RSS.ssl" name="ssl"/>
     </channel>
   </category>
 </registry>
