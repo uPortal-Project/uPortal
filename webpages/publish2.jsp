@@ -9,10 +9,12 @@ String sChan_type = request.getParameter ("chan_type");
 String sPub_email = request.getParameter("pub_email");
 %>
 
+<% UtilitiesBean.preventPageCaching (response); %>
+
 <html>
 <head>
 <title>Publish Channel</title>
-<META HTTP-EQUIV="expires" CONTENT="Tue, 20 Aug 1996 14:25:27 GMT">
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 </head>
 
 <% layoutBean.writeBodyStyle (request, response, out); %>

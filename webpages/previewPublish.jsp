@@ -28,7 +28,7 @@ if (sAction != null)
 <html>
 <head>
 <title>Publish Channel</title>
-
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 </head>
 
 <% layoutBean.writeBodyStyle (request, response, out); %>
@@ -57,7 +57,7 @@ else { %>
   <input type=button name=add value="Finished" onClick="location='previewPublish.jsp?action=register'">
   <input type=button name=cancel value="Cancel" onClick="location='publish.jsp'">
 </td></tr></table>
-<FONT FACE="Helvetica, Arial" SIZE=4 COLOR=#003333><B>Preview Channel for Registration</B></FONT>
+<font size=4><b>Preview Channel for Registration</b></font>
 </form>
 
 <table border=0 cellpadding=3 cellspacing=3>
