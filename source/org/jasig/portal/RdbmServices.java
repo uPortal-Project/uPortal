@@ -293,6 +293,35 @@ public class RdbmServices {
   }
 
   /**
+   * Make a string SQL safe
+   * @param string
+   * @return SQL safe string
+   */
+  public static final String sqlEscape (String sql) {
+    if (sql == null) {
+      return  "";
+    }
+    else {
+      int primePos = sql.indexOf("'");
+      if (primePos == -1) {
+        return  sql;
+      }
+      else {
+        StringBuffer sb = new StringBuffer(sql.length() + 4);
+        int startPos = 0;
+        do {
+          sb.append(sql.substring(startPos, primePos + 1));
+          sb.append("'");
+          startPos = primePos + 1;
+          primePos = sql.indexOf("'", startPos);
+        } while (primePos != -1);
+        sb.append(sql.substring(startPos));
+        return  sb.toString();
+      }
+    }
+  }
+
+  /**
    * Wrapper for/Emulator of PreparedStatement class
    */
   public final static class PreparedStatement {

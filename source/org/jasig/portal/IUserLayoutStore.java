@@ -42,11 +42,13 @@
  */
 
 import org.w3c.dom.*;
+import java.sql.Connection;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
 import org.w3c.dom.Document;
 import org.jasig.portal.security.IPerson;
+import org.apache.xerces.dom.DocumentImpl;
 
 public interface IUserLayoutStore {
   /* UserLayout  */
@@ -211,14 +213,10 @@ public interface IUserLayoutStore {
 
 
   /* ChannelRegistry */
-  public void addChannel(int id, IPerson publisher, Document doc) throws Exception;
-  public void addChannel(int id, IPerson publisher, Document doc, String catID[]) throws Exception;
-  public void removeChannel(String chanID) throws Exception;
-  public Document getChannelRegistryXML(IPerson person) throws Exception;
-  public Document getChannelTypesXML() throws Exception;
   public String getNextStructChannelId(IPerson person) throws Exception;
   public String getNextStructFolderId(IPerson person) throws Exception;
-  public void approveChannel(int chanId, IPerson approver, java.util.Date approveDate) throws Exception;
+  public Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException;
+  public void flushChannelEntry(int chanId);
 
   /**
    *  CoreStylesheetDescription

@@ -53,8 +53,8 @@ import java.util.Date;
 public interface IChannelRegistryStore {
 
   /**
-   * put your documentation comment here
-   * @return
+   * Get next available channel ID
+   * @return channel id
    * @exception PortalException
    */
   public int getNextId () throws PortalException;
@@ -74,7 +74,7 @@ public interface IChannelRegistryStore {
    * put your documentation comment here
    * @param registryXML
    */
-  public void setRegistryXML (String registryXML);
+  public void setRegistryXML (String registryXML) throws Exception;
 
 
 

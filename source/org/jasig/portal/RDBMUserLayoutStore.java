@@ -440,21 +440,6 @@ public class RDBMUserLayoutStore
   public RDBMUserLayoutStore () {
   }
   /**
-   * Publishes a channel.
-   * @param id
-   * @param publisher
-   * @param chanXML
-   * @exception java.sql.SQLException
-   */
-  public void addChannel (int id, IPerson publisher, Document chanXML) throws SQLException {
-    Connection con = RdbmServices.getConnection();
-    try {
-      addChannel(id, publisher, chanXML, con);
-    } finally {
-      RdbmServices.releaseConnection(con);
-    }
-  }
-  /**
    *
    *   UserPreferences
    *
@@ -464,160 +449,6 @@ public class RDBMUserLayoutStore
    *   ChannelRegistry
    *
    */
-  public void addChannel (int id, IPerson publisher, Document chanXML, String catID[]) throws SQLException {
-    Connection con = RdbmServices.getConnection();
-    try {
-      addChannel(id, publisher, chanXML, con);
-      // Set autocommit false for the connection
-      RdbmServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        // First delete existing categories for this channel
-        String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + id;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sDelete);
-        int recordsDeleted = stmt.executeUpdate(sDelete);
-
-        for (int i = 0; i < catID.length; i++) {
-          // Take out "cat" prefix if its there
-          String categoryID = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
-
-          String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + categoryID + ")";
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
-          stmt.executeUpdate(sInsert);
-        }
-        // Commit the transaction
-        RdbmServices.commit(con);
-      } catch (SQLException sqle) {
-        // Roll back the transaction
-        RdbmServices.rollback(con);
-        throw sqle;
-      } finally {
-        if (stmt != null)
-          stmt.close();
-      }
-    } finally {
-      RdbmServices.releaseConnection(con);
-    }
-  }
-  /**
-   * Publishes a channel.
-   * @param id
-   * @param publisherId
-   * @param doc
-   * @param con
-   * @exception Exception
-   */
-  protected void addChannel (int id, IPerson publisher, Document doc, Connection con) throws SQLException {
-    Element channel = (Element)doc.getFirstChild();
-    // Set autocommit false for the connection
-    RdbmServices.setAutoCommit(con, false);
-    Statement stmt = con.createStatement();
-    try {
-      String sqlTitle = sqlEscape(channel.getAttribute("title"));
-      String sqlDescription = sqlEscape(channel.getAttribute("description"));
-      String sqlClass = channel.getAttribute("class");
-      String sqlTypeID = channel.getAttribute("typeID");
-      String sysdate = RdbmServices.sqlTimeStamp();
-      String sqlTimeout = channel.getAttribute("timeout");
-      String timeout = "0";
-      if (sqlTimeout != null && sqlTimeout.trim().length() != 0) {
-        timeout  = sqlTimeout;
-      }
-      String sqlEditable = RdbmServices.dbFlag(xmlBool(channel.getAttribute("editable")));
-      String sqlHasHelp = RdbmServices.dbFlag(xmlBool(channel.getAttribute("hasHelp")));
-      String sqlHasAbout = RdbmServices.dbFlag(xmlBool(channel.getAttribute("hasAbout")));
-      String sqlName = sqlEscape(channel.getAttribute("name"));
-      String sqlFName = sqlEscape(channel.getAttribute("fname"));
-
-      String sQuery = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + id;
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-
-      // If channel is already there, do an update, otherwise do an insert
-      if (rs.next()) {
-        String sUpdate = "UPDATE UP_CHANNEL SET " +
-        "CHAN_TITLE='" + sqlTitle + "', " +
-        "CHAN_DESC='" + sqlDescription + "', " +
-        "CHAN_CLASS='" + sqlClass + "', " +
-        "CHAN_TYPE_ID=" + sqlTypeID + ", " +
-        "CHAN_PUBL_ID=" + publisher.getID() + ", " +
-        "CHAN_PUBL_DT=" + sysdate + ", " +
-        "CHAN_APVL_ID=NULL, " +
-        "CHAN_APVL_DT=NULL, " +
-        "CHAN_TIMEOUT=" + timeout + ", " +
-        "CHAN_EDITABLE='" + sqlEditable + "', " +
-        "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
-        "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
-        "CHAN_NAME='" + sqlName + "', " +
-        "CHAN_FNAME='" + sqlFName + "' " +
-        "WHERE CHAN_ID=" + id;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sUpdate);
-        stmt.executeUpdate(sUpdate);
-      } else {
-        String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
-            + "CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
-        sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
-            + publisher.getID() + ", " + sysdate + ", " + timeout
-            + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
-            + "', '" + sqlName + "', '" + sqlFName + "')";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
-        stmt.executeUpdate(sInsert);
-      }
-
-      // First delete existing parameters for this channel
-      String sDelete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + id;
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sDelete);
-      int recordsDeleted = stmt.executeUpdate(sDelete);
-
-      NodeList parameters = channel.getChildNodes();
-      if (parameters != null) {
-        for (int i = 0; i < parameters.getLength(); i++) {
-          if (parameters.item(i).getNodeName().equals("parameter")) {
-            Element parmElement = (Element)parameters.item(i);
-            NamedNodeMap nm = parmElement.getAttributes();
-            String paramName = null;
-            String paramValue = null;
-            String paramOverride = "NULL";
-            for (int j = 0; j < nm.getLength(); j++) {
-              Node param = nm.item(j);
-              String nodeName = param.getNodeName();
-              String nodeValue = param.getNodeValue();
-              if (DEBUG > 1) {
-                System.err.println(nodeName + "=" + nodeValue);
-              }
-              if (nodeName.equals("name")) {
-                paramName = nodeValue;
-              } else if (nodeName.equals("value")) {
-                paramValue = nodeValue;
-              } else if (nodeName.equals("override") && nodeValue.equals("yes")) {
-                paramOverride = "'Y'";
-              }
-            }
-            if (paramName == null && paramValue == null) {
-              throw new RuntimeException("Invalid parameter node");
-            }
-            String sInsert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
-                ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
-            stmt.executeUpdate(sInsert);
-          }
-        }
-      }
-      // Commit the transaction
-      RdbmServices.commit(con);
-      synchronized (channelLock) {
-        if (channelCache.remove(new Integer(id)) != null) {
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): flushed channel "
-            + id + " from cache");
-        }
-      }
-    } catch (SQLException sqle) {
-      RdbmServices.rollback(con);
-      throw  sqle;
-    } finally {
-      stmt.close();
-    }
-  }
   /**
    * Registers a NEW structure stylesheet with the database.
    * @param tsd Stylesheet description object
@@ -932,80 +763,6 @@ public class RDBMUserLayoutStore
     }
     return  profile;
   }
-  protected void appendChildCategoriesAndChannels (Connection con, IAuthorizationPrincipal ap, RdbmServices.PreparedStatement chanStmt, Element category, int catId) throws SQLException, AuthorizationException {
-    Document doc = category.getOwnerDocument();
-    Statement stmt = null;
-    ResultSet rs = null;
-    try {
-      stmt = con.createStatement();
-      String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID=" + catId;
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): " + query);
-      rs = stmt.executeQuery(query);
-      while (rs.next()) {
-        int childCatId = rs.getInt(1);
-        String childCatTitle = rs.getString(2);
-        String childCatDesc = rs.getString(3);
-
-        // Child <category>
-        Element childCategory = doc.createElement("category");
-        childCategory.setAttribute("ID", "cat" + childCatId);
-        childCategory.setAttribute("name", childCatTitle);
-        childCategory.setAttribute("description", childCatDesc);
-        ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(childCategory.getAttribute("ID"), childCategory);
-        category.appendChild(childCategory);
-
-        // Append child categories and channels recursively
-        appendChildCategoriesAndChannels(con, ap, chanStmt, childCategory, childCatId);
-      }
-
-      // Append children channels
-      chanStmt.clearParameters();
-      chanStmt.setInt(1, catId);
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): " + chanStmt);
-      rs = chanStmt.executeQuery();
-      try {
-        while (rs.next()) {
-          int chanId = rs.getInt(1);
-          if (ap.canSubscribe(chanId)) {
-            Element channel = getChannelNode (chanId, con, (org.apache.xerces.dom.DocumentImpl)doc, "chan" + chanId);
-            if (channel == null) {
-              LogService.instance().log(LogService.WARN, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): channel " + chanId +
-                " in category " + catId + " does not exist in the store");
-            } else {
-              category.appendChild(channel);
-            }
-          }
-        }
-      } finally {
-        rs.close();
-      }
-    } finally {
-      stmt.close();
-    }
-  }
-  /**
-   * put your documentation comment here
-   * @param chanId
-   * @param approver
-   * @exception Exception
-   */
-  public void approveChannel(int chanId, IPerson approver, java.util.Date approveDate) throws Exception {
-    Connection con = RdbmServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
-        ", CHAN_APVL_DT = " + RdbmServices.sqlTimeStamp(approveDate) +
-        " WHERE CHAN_ID = " + chanId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
-        stmt.executeUpdate(sUpdate);
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RdbmServices.releaseConnection(con);
-    }
-  }
   /**
    * put your documentation comment here
    * @param approved Date
@@ -1017,9 +774,23 @@ public class RDBMUserLayoutStore
    }
   /**
    * See if the channel is already in the cache
+   * @param channel id
    */
   protected boolean channelCached(int chanId) {
     return channelCache.containsKey(new Integer(chanId));
+  }
+
+  /**
+   * Remove channel entry from cache
+   * @param channel id
+   */
+  public void flushChannelEntry(int chanId) {
+    synchronized (channelLock) {
+      if (channelCache.remove(new Integer(chanId)) != null) {
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): flushed channel "
+          + chanId + " from cache");
+      }
+    }
   }
 
   /**
@@ -1238,7 +1009,7 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
 
-  protected Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException {
+  public Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException {
     RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
     try {
       RdbmServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
@@ -1278,141 +1049,6 @@ public class RDBMUserLayoutStore
     sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RdbmServices.sqlTimeStamp();
 
     return new RdbmServices.PreparedStatement(con, sql);
-  }
-  public Document getChannelRegistryXML (IPerson person) throws SQLException, AuthorizationException {
-    Document doc = new org.apache.xerces.dom.DocumentImpl();
-    Element registry = doc.createElement("registry");
-    doc.appendChild(registry);
-    Connection con = RdbmServices.getConnection();
-    try {
-      RdbmServices.PreparedStatement chanStmt = new RdbmServices.PreparedStatement(con, "SELECT CHAN_ID FROM UP_CAT_CHAN WHERE CAT_ID=?");
-      try {
-        Statement stmt = con.createStatement();
-        try {
-          String userKey = "" + person.getID();
-          Class userType = org.jasig.portal.security.IPerson.class;
-          IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(userKey, userType);
-          try {
-            String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
-            ResultSet rs = stmt.executeQuery(query);
-            try {
-              while (rs.next()) {
-                int catId = rs.getInt(1);
-                String catTitle = rs.getString(2);
-                String catDesc = rs.getString(3);
-
-                // Top level <category>
-                Element category = doc.createElement("category");
-                category.setAttribute("ID", "cat" + catId);
-                category.setAttribute("name", catTitle);
-                category.setAttribute("description", catDesc);
-                ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(category.getAttribute("ID"), category);
-                registry.appendChild(category);
-
-                  // Add child categories and channels
-                appendChildCategoriesAndChannels(con, ap, chanStmt, category, catId);
-              }
-            } finally {
-              rs.close();
-            }
-          } finally {
-            // ap.close();
-          }
-        } finally {
-          stmt.close();
-        }
-      } finally {
-        chanStmt.close();
-      }
-    } finally {
-      RdbmServices.releaseConnection(con);
-    }
-    return doc;
-  }
-
-  /**
-   * Get channel types xml.
-   * It will look something like this:
-   * <p><code>
-   *
-   *<channelTypes>
-   *  <channelType ID="0">
-   *    <class>org.jasig.portal.channels.CImage</class>
-   *    <name>Image</name>
-   *    <description>Simple channel to display an image with optional
-   *        caption and subcaption</description>
-   *    <cpd-uri>webpages/media/org/jasig/portal/channels/CImage/CImage.cpd</cpd-uri>
-   *  </channelType>
-   *  <channelType ID="1">
-   *    <class>org.jasig.portal.channels.CWebProxy</class>
-   *    <name>Web Proxy</name>
-   *    <description>Incorporate a dynamic HTML or XML application</description>
-   *    <cpd-uri>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</cpd-uri>
-   *  </channelType>
-   *</channelTypes>
-   *
-   * </code></p>
-   * @return types, the channel types as a Document
-   * @throws java.sql.SQLException
-   */
-  public Document getChannelTypesXML () throws SQLException {
-    Document doc = new org.apache.xerces.dom.DocumentImpl();
-    Element root = doc.createElement("channelTypes");
-    doc.appendChild(root);
-    Connection con = RdbmServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT TYPE_ID, TYPE, TYPE_NAME, TYPE_DESCR, TYPE_DEF_URI FROM UP_CHAN_TYPE";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelTypesXML(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          while (rs.next()) {
-            int ID = rs.getInt(1);
-            String javaClass = rs.getString(2);
-            String name = rs.getString(3);
-            String descr = rs.getString(4);
-            String cpdUri = rs.getString(5);
-
-            // <channelType>
-            Element channelType = doc.createElement("channelType");
-            channelType.setAttribute("ID", String.valueOf(ID));
-
-            Element elem = null;
-
-            // <class>
-            elem = doc.createElement("class");
-            elem.appendChild(doc.createTextNode(javaClass));
-            channelType.appendChild(elem);
-
-            // <name>
-            elem = doc.createElement("name");
-            elem.appendChild(doc.createTextNode(name));
-            channelType.appendChild(elem);
-
-            // <description>
-            elem = doc.createElement("description");
-            elem.appendChild(doc.createTextNode(descr));
-            channelType.appendChild(elem);
-
-            // <cpd-uri>
-            elem = doc.createElement("cpd-uri");
-            elem.appendChild(doc.createTextNode(cpdUri));
-            channelType.appendChild(elem);
-
-            root.appendChild(channelType);
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RdbmServices.releaseConnection(con);
-    }
-    return doc;
   }
   /* DBCounter */
   /*
@@ -2670,51 +2306,6 @@ public class RDBMUserLayoutStore
     return  pv;
   }
   /**
-   * Removes a channel from the channel registry.  The channel
-   * is not actually deleted.  Rather its status as an "approved"
-   * channel is revoked.
-   * @param chanID, the ID of the channel to delete
-   * @exception java.sql.SQLException
-   */
-  public void removeChannel (String chanID) throws SQLException {
-    Connection con = RdbmServices.getConnection();
-    try {
-      // Set autocommit false for the connection
-      RdbmServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        chanID = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
-
-        // Delete channel/category associations
-        //String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + chanID;
-        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sDelete);
-        //stmt.executeUpdate(sDelete);
-
-        // Delete channel/role associations
-        //sDelete = "DELETE FROM UP_ROLE_CHAN WHERE CHAN_ID=" + chanID;
-        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sDelete);
-        //stmt.executeUpdate(sDelete);
-
-        // Delete channel.
-        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + chanID;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sUpdate);
-        stmt.executeUpdate(sUpdate);
-
-        // Commit the transaction
-        RdbmServices.commit(con);
-      } catch (SQLException sqle) {
-        // Roll back the transaction
-        RdbmServices.rollback(con);
-        throw sqle;
-      } finally {
-        if (stmt != null)
-          stmt.close();
-      }
-    } finally {
-      RdbmServices.releaseConnection(con);
-    }
-  }
-  /**
    * Remove (with cleanup) a structure stylesheet channel attribute
    * @param stylesheetId id of the structure stylesheet
    * @param pName name of the attribute
@@ -2975,7 +2566,7 @@ public class RDBMUserLayoutStore
     }
     else {
       structStmt.setNull(5,java.sql.Types.NUMERIC);
-      structStmt.setString(6, sqlEscape(structure.getAttribute("name")));
+      structStmt.setString(6, RdbmServices.sqlEscape(structure.getAttribute("name")));
     }
     String structType = structure.getAttribute("type");
     if (structType.length() > 0) {
@@ -3417,34 +3008,6 @@ public class RDBMUserLayoutStore
       }
     } finally {
       RdbmServices.releaseConnection(con);
-    }
-  }
-  /**
-   * put your documentation comment here
-   * @param sql
-   * @return
-   */
-  protected static final String sqlEscape (String sql) {
-    if (sql == null) {
-      return  "";
-    }
-    else {
-      int primePos = sql.indexOf("'");
-      if (primePos == -1) {
-        return  sql;
-      }
-      else {
-        StringBuffer sb = new StringBuffer(sql.length() + 4);
-        int startPos = 0;
-        do {
-          sb.append(sql.substring(startPos, primePos + 1));
-          sb.append("'");
-          startPos = primePos + 1;
-          primePos = sql.indexOf("'", startPos);
-        } while (primePos != -1);
-        sb.append(sql.substring(startPos));
-        return  sb.toString();
-      }
     }
   }
   /**
