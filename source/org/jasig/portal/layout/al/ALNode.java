@@ -155,7 +155,7 @@ public abstract class ALNode implements IALNode {
      * @return an <code>IALNodeDescription</code> value
      * @exception PortalException if the xml passed is somehow invalid.
      */
-    public static INodeDescription createUserLayoutNodeDescription(Element xmlNode) throws PortalException {
+    public static INodeDescription createNodeDescription(Element xmlNode) throws PortalException {
         // is this a folder or a channel ?
         String nodeName = xmlNode.getNodeName();
         if (nodeName.equals("channel")) {
