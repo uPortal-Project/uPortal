@@ -93,15 +93,17 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
   protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
   
-  // Cache transformed content in this smartcache
-  protected SmartCache m_cachedContent = new SmartCache(10000);
-  
+    // Cache transformed content in this smartcache
+    //  protected SmartCache m_cachedContent = new SmartCache(10000);
+    protected SAXBufferImpl cache=new SAXBufferImpl();
+
   public CGenericXSLT ()
   {
     // The media will soon be passed to the channel I think.
     // This code can then be replaced with runtimeData.getMedia()
     mm = new MediaManager();
     mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    cache.startBuffering();
   }
 
   // Get channel parameters.
@@ -127,7 +129,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     if (xmlUri != null)
     {
       this.xmlUri = xmlUri;
-      m_cachedContent = null;
+      cache.clearBuffer();
     }
 
     String sslUri = runtimeData.getParameter("sslUri");
@@ -135,7 +137,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     if (sslUri != null)
     {
       this.sslUri = sslUri;
-      m_cachedContent = null;
+      cache.clearBuffer();
     }
 
     String xslTitle = runtimeData.getParameter("xslTitle");
@@ -143,7 +145,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     if (xslTitle != null)
     {
       this.xslTitle = xslTitle;
-      m_cachedContent = null;
+      cache.clearBuffer();
     }
 
     String xslUri = runtimeData.getParameter("xslUri");
@@ -151,7 +153,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     if (xslUri != null)
     {
       this.xslUri = xslUri;
-      m_cachedContent = null;
+      cache.clearBuffer();
     }
 
     media = runtimeData.getMedia();
@@ -180,83 +182,54 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     Document xmlDoc;
     sslUri = UtilitiesBean.fixURI(sslUri);
 
-    String cachedContent = (String)m_cachedContent.get("content");
-    
     // If there is cached content then write it out
-    if(cachedContent != null)
-    {
-      try
-      {
-        SAXHelper.outputContent(out, cachedContent);
-        return;
-      }
-      catch(SAXException se)
-      {
-        Logger.log(Logger.ERROR, se);
-      }
-      catch(IOException ioe)
-      {
-        Logger.log(Logger.ERROR, ioe);
-      }
-    }
-    
-    try
-    {
-      org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
-      org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
-      domParser.setEntityResolver(dtdResolver);
-      domParser.parse(UtilitiesBean.fixURI(xmlUri));
-      xmlDoc = domParser.getDocument();
-    }
-    catch (IOException e)
-    {
-      throw new ResourceMissingException (xmlUri, "", e.getMessage());
-    }
-    catch (SAXException se)
-    {
-      throw new GeneralRenderingException("Problem parsing " + xmlUri + ": " + se);
-    }
+    if(cache.isEmpty()) {
+	try {
+	    org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
+	    org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
+	    domParser.setEntityResolver(dtdResolver);
+	    domParser.parse(UtilitiesBean.fixURI(xmlUri));
+	    xmlDoc = domParser.getDocument();
+	}
+	catch (IOException e) {
+	    throw new ResourceMissingException (xmlUri, "", e.getMessage());
+	}
+	catch (SAXException se)
+	    {
+		throw new GeneralRenderingException("Problem parsing " + xmlUri + ": " + se);
+	    }
+	
+	runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
+	
+	try {
+	    if (xslUri != null) {
+		XSLT.transform(xmlDoc, new URL(xslUri), cache, runtimeData);
+	    } else {
+		if (xslTitle != null)  {
+		    XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, xslTitle, media);
+		}
+		else {
+		    XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, media);
+		}
+	    }
 
-    runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
-
-    try
-    {
-      StringWriter sw = new StringWriter();
-      
-      if (xslUri != null)
-      {
-        XSLT.transform(xmlDoc, new URL(xslUri), sw, runtimeData);
-      }
-      else
-      {
-        if (xslTitle != null)
-        {
-          XSLT.transform(xmlDoc, new URL(sslUri), sw, runtimeData, xslTitle, media);
-        }
-        else
-        {
-          XSLT.transform(xmlDoc, new URL(sslUri), sw, runtimeData, media);
-        }
-      }
-      
-      // Cache the content
-      m_cachedContent.put("content", sw.toString(), 10000);
-      
-      // Write the content out
-      SAXHelper.outputContent(out, (String)m_cachedContent.get("content"));
+	} catch (SAXException se)
+	    {
+		throw new GeneralRenderingException("Problem performing the transformation:"+se.toString());
+	    }
+	catch (IOException ioe)
+	    {
+		StringWriter sw = new StringWriter();
+		ioe.printStackTrace(new PrintWriter(sw));
+		sw.flush();
+		throw new GeneralRenderingException(sw.toString());
+	    }
     }
-    catch (SAXException se)
-    {
-	//	Logger.log(Logger.DEBUG,"CGenericXSLT:renderXML() : "+se.toString());
-      throw new GeneralRenderingException("Problem performing the transformation:"+se.toString());
-
-    }
-    catch (IOException ioe)
-    {
-      StringWriter sw = new StringWriter();
-      ioe.printStackTrace(new PrintWriter(sw));
-      sw.flush();
-      throw new GeneralRenderingException(sw.toString());
-    }
+    try {
+	cache.outputBuffer(out);	    
+    } catch (SAXException se)
+	{
+	    throw new GeneralRenderingException("Problem retreiving output from cache:"+se.toString());
+	}
   }
 }
