@@ -37,8 +37,8 @@ package org.jasig.portal.tools;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
@@ -250,10 +250,15 @@ public class DbConvert21 {
         e.printStackTrace();
       }
       finally {
-         try { RDBMServices.releaseConnection(con); } 
+         try { 
+         	con.commit();
+         	RDBMServices.releaseConnection(con); } 
          catch (Exception e) {}
       }
-      System.out.println("DbConvert21 updated " + updateCount +" user layouts");
+      
+      	System.out.println("DbConvert21 updated " + updateCount +" user layouts");
+    	return;
+		
    }//end main
 
 }
