@@ -9,7 +9,7 @@
 <html>
 <body>
 
-<p align="center">Vad vill du ändra?</p>
+<p align="center">Vad vill du ändra ??</p>
 <form method="post">
 <xsl:attribute name="action"><xsl:value-of select="$baseActionURL"/></xsl:attribute>
 <input type="hidden" name="action" value="submitEditChoice"/>

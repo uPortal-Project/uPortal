@@ -25,7 +25,7 @@
                   <td>
                     <img alt="utfyllnadsbild" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td nowrap="nowrap">Thumbnail</td>
+                  <td nowrap="nowrap">Tumnagel</td>
                   <td>
                     <img alt="utfyllnadsbild" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
@@ -51,8 +51,8 @@
           <tr>
             <td>
               <input type="hidden" name="action" value="completeEdit"/>
-              <input type="submit" name="submitSave" value="Apply" class="uportal-button"/>
-              <input type="submit" name="submitCancel" value="Cancel" class="uportal-button"/>              
+              <input type="submit" name="submitSave" value="Verkställ" class="uportal-button"/>
+              <input type="submit" name="submitCancel" value="Avbryt" class="uportal-button"/>              
             </td>
           </tr>
         </table>

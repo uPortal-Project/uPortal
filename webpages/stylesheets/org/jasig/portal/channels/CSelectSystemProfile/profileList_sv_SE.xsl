@@ -6,7 +6,7 @@
   <xsl:template match="profiles">
         <div align="center">
           <center>
-	<p class="uportal-channel-warning">Versionen av den webbläsare du använder har portalen inte tidigare stött på.<br/>
+	<p class="uportal-channel-warning">Portalen har inte stött på din version av webbläsare tidigare.<br/>
 Välj en lämplig profil för webbläsaren, tack!</p>
             <table border="0" width="100%" cellspacing="0" cellpadding="2">
               <xsl:apply-templates select="system"/>
