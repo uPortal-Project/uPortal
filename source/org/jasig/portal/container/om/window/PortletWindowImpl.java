@@ -37,6 +37,8 @@ package org.jasig.portal.container.om.window;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.pluto.om.common.ObjectID;
 import org.apache.pluto.om.entity.PortletEntity;
 import org.apache.pluto.om.window.PortletWindow;
@@ -56,6 +58,7 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     private PortletEntity portletEntity;
     
     private ChannelRuntimeData runtimeData;
+    private HttpServletRequest request;
 
     // PortletWindow methods
     
@@ -86,6 +89,14 @@ public class PortletWindowImpl implements PortletWindow, PortletWindowCtrl, Seri
     
     public ChannelRuntimeData getChannelRuntimeData() {
         return this.runtimeData;
+    }
+    
+    public void setHttpServletRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+    
+    public HttpServletRequest getHttpServletRequest() {
+        return this.request;
     }
 
 }
