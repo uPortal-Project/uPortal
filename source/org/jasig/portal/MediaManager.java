@@ -69,6 +69,7 @@ public class MediaManager {
   protected OrderedProps mimeProps = null;
   protected OrderedProps serializerProps = null;
   private static boolean outputIndenting = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting");
+  private static boolean omitDoctype = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype");
 
   /**
    * Constructs a MediaManager
@@ -293,27 +294,24 @@ public class MediaManager {
       OutputFormat frmt = new OutputFormat("wml", "UTF-8", true);
       frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
       return  new XMLSerializer(out, frmt);
-    }
-    /*    else if (serializerName != null && serializerName.equals("PalmHTML")) {
+    } /* else if (serializerName != null && serializerName.equals("PalmHTML")) {
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       return  new PalmHTMLSerializer(out, frmt);
-      } */
-    else if (serializerName != null && serializerName.equals("XML")) {
+      } */ else if (serializerName != null && serializerName.equals("XML")) {
       OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
       return  new XMLSerializer(out, frmt);
-    }
-    else if (serializerName != null && serializerName.equals("XHTML")) {
+    } else if (serializerName != null && serializerName.equals("XHTML")) {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
-      //      frmt.setOmitDocumentType(true); // Portal looks like crap on Netscape when the XHTML doctype is included!
+      frmt.setOmitDocumentType(omitDoctype);
       return  new CachingXHTMLSerializer(out, frmt);
-    }
-    else {
+    } else {
       // default case is HTML, such as that for netscape and explorer
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
+      frmt.setOmitDocumentType(omitDoctype);
       return  new CachingHTMLSerializer(out, frmt);
     }
   }
