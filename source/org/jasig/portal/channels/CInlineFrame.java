@@ -151,12 +151,12 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
     sbKey.append("xslUri:");
     try {
       String sslUrl = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
-      sbKey.append(XSLT.getStylesheetURI(sslUrl, runtimeData.getBrowserInfo())).append(", ");
+      String ssTitle = getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent());
+      sbKey.append(XSLT.getStylesheetURI(sslUrl, ssTitle, runtimeData.getBrowserInfo())).append(", ");
     } catch (PortalException pe) {
       sbKey.append("Not available, ");
     }
     sbKey.append("staticData:").append(staticData.toString());
-
     return sbKey.toString();
   }
 }
