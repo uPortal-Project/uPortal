@@ -40,7 +40,7 @@ Version $Revision$
     <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
     <xsl:param name="locale" select="'en_US'"/>
     <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CContentSubscriber'"/>
-    <xsl:param name="channel-state" select="'search'"/>
+    <xsl:param name="channel-state" select="'browse'"/>
     <!--~-->
     <!-- parameters for content search -->
     <!--~-->
@@ -917,6 +917,7 @@ Version $Revision$
                                 </td>
                                 <td width="100%" align="left" valign="top">
                                     <br/>
+                                    <input type="hidden" name="uPcCS_action" value="search"/> 
                                     <input type="hidden" name="channel-state" value="search"/>
                                     <input name="Submit" type="submit" class="uportal-button" value="Search"/>
                                 </td>
