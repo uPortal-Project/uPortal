@@ -56,6 +56,8 @@ public final class LogService {
   
   protected LogService () {
     initialize();
+    log.debug(getClass().getName() + 
+            " logging using Log implementation " + log.getClass().getName());
   }
 
   public final static LogService instance () {
