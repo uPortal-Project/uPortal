@@ -37,7 +37,7 @@
 
 <span class="subhead2">ViewCVS</span>
 <p>
-You can use this <a href="http://mis105.mis.udel.edu/cgi-bin/viewcvs.cgi/">web interface</a> to the uPortal CVS code repository to
+You can use this <a href="http://www.uportal.org/cgi-bin/viewcvs.cgi/">web interface</a> to the uPortal CVS code repository to
 browse through all the branches of the uPortal code.</P> 
 			 
 <span class="subhead2">CVS Monitor</span> 
@@ -58,21 +58,21 @@ The uPortal project's CVS repository can be checked out through anonymous (pserv
 CVS with the following instruction set. When prompted for a password for anonymous, 
 simply press the Enter key.<br/>
 <br/>
-<code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:2401/home/cvs/jasig login</code><br/>
+<code>cvs -d:pserver:anonymous@www.uportal.org:2401/home/cvs/jasig login</code><br/>
 <br/>
 Next, checkout the <b>portal</b> module with the following command:</p>
-<P><code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:2401/home/cvs/jasig co portal</code><br/>
+<P><code>cvs -d:pserver:anonymous@www.uportal.org:2401/home/cvs/jasig co portal</code><br/>
 
 </P>
 <P>uPortal channels are kept as a separate module <b>portal_channels</b>. Use
 the following command to checkout portal_channels:</P>
-<code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:2401/home/cvs/jasig co portal_channels</code>
+<code>cvs -d:pserver:anonymous@www.uportal.org:2401/home/cvs/jasig co portal_channels</code>
 <p>Notes: 
 <ul>
 <li>Updates from within the module's directory do not need the -d parameter.</li>
 <li>Some CVS clients have problems
 with the port syntax.  In this case, remove the "2401" and instead, use:<br>
-<code>cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig</code> ...
+<code>cvs -d:pserver:anonymous@www.uportal.org:/home/cvs/jasig</code> ...
 </li>
 </ul>
 </p>
