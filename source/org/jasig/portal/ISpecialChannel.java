@@ -24,7 +24,7 @@ public interface ISpecialChannel extends IChannel {
      * Passes portal control structure to the channel.
      * @see PortalControlStructures
      */
-    public void setPortalControlStructures(PortalControlStructures pcs);
+    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException;
 
 }
     

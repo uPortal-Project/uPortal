@@ -56,7 +56,7 @@ public interface IChannel
    * @param sd channel static data
    * @see ChannelStaticData
    */
-  public void setStaticData (ChannelStaticData sd);
+    public void setStaticData (ChannelStaticData sd) throws PortalException;
 
   /**
    * Passes ChannelRuntimeData to the channel.
@@ -64,7 +64,7 @@ public interface IChannel
    * @param rd channel runtime data
    * @see ChannelRuntimeData
    */
-  public void setRuntimeData (ChannelRuntimeData rd);
+    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException;
 
   /**
    * Passes an outside event to a channel.
@@ -96,5 +96,5 @@ public interface IChannel
    * Ask channel to render its content.
    * @param out the SAX DocumentHandler to output content to
    */
-  public void renderXML (DocumentHandler out) throws Exception;
+    public void renderXML (DocumentHandler out) throws PortalException;
 }

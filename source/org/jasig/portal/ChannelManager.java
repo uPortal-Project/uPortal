@@ -161,14 +161,18 @@ public class ChannelManager {
 		pcs.setHttpServletRequest(req);
 		pcs.setHttpServletResponse(res);
 		pcs.setChannelManager(this);
+		try {
 		((ISpecialChannel) ch).setPortalControlStructures(pcs);
+		} catch (PortalException pe) {};
 	    }
 	    
 	    ChannelRuntimeData rd = new ChannelRuntimeData ();
 	    if(chanID.equals(channelTarget)) rd.setParameters (targetParams);
 	    rd.setHttpRequest (req);
 	    rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+	    try {
 	    ch.setRuntimeData (rd);
+	    } catch (PortalException pe) {};
 	}
     }
     

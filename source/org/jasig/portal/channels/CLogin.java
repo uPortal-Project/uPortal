@@ -98,7 +98,7 @@ public class CLogin implements ISpecialChannel
     media = mm.getMedia(runtimeData.getHttpRequest());
   }
 
-  public void renderXML (DocumentHandler out) throws Exception
+  public void renderXML (DocumentHandler out) throws PortalException
   {
     StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
     sb.append("<login-status>\n");
@@ -107,7 +107,10 @@ public class CLogin implements ISpecialChannel
     sb.append("</login-status>\n");
 
     bFirstTime = false;
-
-    XSLT.transform(out, media, sb.toString(), sslLocation, "login", null);
+    try {
+	XSLT.transform(out, media, sb.toString(), sslLocation, "login", null);
+    } catch (Exception e) {
+	throw new GeneralRenderingException(e.getMessage(),true);
+    }
   }
 }
