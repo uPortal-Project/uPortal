@@ -55,7 +55,7 @@ public interface CachingSerializer {
      *
      * @return <code>false</code> if the serializer was NOT caching.
      */
-    public boolean stopCaching();
+    public boolean stopCaching() throws IOException ;
 
 
     /**
@@ -71,7 +71,7 @@ public interface CachingSerializer {
      *
      * @param text a <code>String</code> value
      */
-    public void printRawCharacters(String text);
+    public void printRawCharacters(String text) throws IOException;
 
     /**
      * Let the serializer know if the document has already

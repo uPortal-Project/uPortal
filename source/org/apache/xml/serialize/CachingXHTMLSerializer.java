@@ -157,7 +157,7 @@ public final class CachingXHTMLSerializer
         _printer.flush();
         return cacher.startCaching();
     }
-    public boolean stopCaching() {
+    public boolean stopCaching() throws IOException {
         _printer.flush();
         return cacher.stopCaching(); 
     }
@@ -172,7 +172,7 @@ public final class CachingXHTMLSerializer
      *
      * @param text a <code>String</code> value
      */
-    public void printRawCharacters(String text) {
+    public void printRawCharacters(String text) throws IOException{
         _printer.printText(text);
         //        _printer.flush();
     }
