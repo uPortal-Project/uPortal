@@ -336,9 +336,9 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
       }
       catch (Exception e)
       {
-          eMsg = "ReferenceGroupService.initialize(): Failed to instantiate " + groupFactoryName + " " + e;
+          eMsg = "ReferenceGroupService.initialize(): Failed to instantiate " + groupFactoryName;
           log.error( eMsg);
-          throw new GroupsException(eMsg);
+          throw new GroupsException(eMsg,e);
       }
 
     cacheInUse = PropertiesManager.getPropertyAsBoolean
@@ -362,7 +362,7 @@ public IEntityGroup newGroup(Class type) throws GroupsException
         addGroupToCache(group);
         return group;
     }
-    catch (Exception e)
+    catch (CachingException e)
     {
         throw new GroupsException(e);
     }
