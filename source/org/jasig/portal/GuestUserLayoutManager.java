@@ -184,7 +184,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 if(newState.uLayoutXML==null) {
                     // read uLayoutXML
                     try {
-                        newState.uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
+                        newState.uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl);
                         if(newState.uLayoutXML!=null) {
                             if(upl.isSystemProfile()) {
                                 sp_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);

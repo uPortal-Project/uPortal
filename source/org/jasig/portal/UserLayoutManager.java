@@ -129,7 +129,7 @@ public class UserLayoutManager implements IUserLayoutManager {
 
             if (upl != null) {
                 // read uLayoutXML
-                uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
+                uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl);
                 if (uLayoutXML == null) {
                     throw new PortalException("UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
                 }
@@ -325,7 +325,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             if (newLayout != null) {
                 uLayoutXML = newLayout;
                 layout_write_lock.setValue(true);
-                    ulsdb.setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, channelsAdded);
+                    ulsdb.setUserLayout(m_person, complete_up.getProfile(), uLayoutXML, channelsAdded);
             }
         }
       } catch (Exception e) {
@@ -411,7 +411,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                         /*
                           The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                         */
-                        ulsdb.setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML, false);
+                        ulsdb.setUserLayout(m_person, complete_up.getProfile(), uLayoutXML, false);
                         /* end of patch */
                     } catch (Exception e) {
                         LogService.instance().log(LogService.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
