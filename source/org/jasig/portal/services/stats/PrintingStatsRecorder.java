@@ -47,50 +47,14 @@ import org.jasig.portal.ChannelDefinition;
  */
 public class PrintingStatsRecorder extends MessageStatsRecorder {
 
-  public void recordLogin(IPerson person) {
-    String msg = super.getMessageForLogin(person);
-    System.out.println(msg);
+  /**
+   * Prints portal statistics messages to std out.
+   * @param message, the message to print
+   */    
+  protected void outputMessage(String message) {
+    System.out.println(message);
   }
   
-  public void recordLogout(IPerson person) {
-    String msg = super.getMessageForLogout(person);
-    System.out.println(msg);
-  }  
-  
-  public void recordSessionCreated(IPerson person) {
-    String msg = super.getMessageForSessionCreated(person);
-    System.out.println(msg);
-  }
-  
-  public void recordSessionDestroyed(IPerson person) {
-    String msg = super.getMessageForSessionDestroyed(person);
-    System.out.println(msg);
-  }
-  
-  public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
-    String msg = super.getMessageForChannelDefinitionPublished(person, channelDef);
-    System.out.println(msg);
-  }
-
-  public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
-    String msg = super.getMessageForChannelDefinitionModified(person, channelDef);
-    System.out.println(msg);
-  }
-
-  public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
-    String msg = super.getMessageForChannelDefinitionRemoved(person, channelDef);
-    System.out.println(msg);
-  }  
-  
-  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    String msg = super.getMessageForChannelAddedToLayout(person, profile, channelDesc);
-    System.out.println(msg);
-  }    
-  
-  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    String msg = super.getMessageForChannelRemovedFromLayout(person, profile, channelDesc);
-    System.out.println(msg);
-  }   
 }
 
 

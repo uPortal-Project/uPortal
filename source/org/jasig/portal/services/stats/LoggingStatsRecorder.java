@@ -71,50 +71,14 @@ public class LoggingStatsRecorder extends MessageStatsRecorder {
     return this.priority;
   }
   
-  public void recordLogin(IPerson person) {
-    String msg = super.getMessageForLogin(person);
-    LogService.instance().log(priority, msg);
+  /**
+   * Prints portal statistics messages to the portal log.
+   * @param message, the message to print
+   */   
+  protected void outputMessage(String message) {
+    LogService.instance().log(priority, message);
   }
-  
-  public void recordLogout(IPerson person) {
-    String msg = super.getMessageForLogout(person);
-    LogService.instance().log(priority, msg);
-  }  
-  
-  public void recordSessionCreated(IPerson person) {
-    String msg = super.getMessageForSessionCreated(person);
-    LogService.instance().log(priority, msg);
-  }
-  
-  public void recordSessionDestroyed(IPerson person) {
-    String msg = super.getMessageForSessionDestroyed(person);
-    LogService.instance().log(priority, msg);
-  }
-  
-  public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
-    String msg = super.getMessageForChannelDefinitionPublished(person, channelDef);
-    LogService.instance().log(priority, msg);
-  }
-
-  public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
-    String msg = super.getMessageForChannelDefinitionModified(person, channelDef);
-    LogService.instance().log(priority, msg);
-  }
-
-  public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
-    String msg = super.getMessageForChannelDefinitionRemoved(person, channelDef);
-    LogService.instance().log(priority, msg);
-  }  
-
-  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    String msg = super.getMessageForChannelAddedToLayout(person, profile, channelDesc);
-   LogService.instance().log(priority, msg);
-  }    
-  
-  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
-    String msg = super.getMessageForChannelRemovedFromLayout(person, profile, channelDesc);
-    LogService.instance().log(priority, msg);
-  }    
+     
 }
 
 

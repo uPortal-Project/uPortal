@@ -43,75 +43,73 @@ import org.jasig.portal.ChannelDefinition;
 
 /**
  * Formulates stats messages which can be logged, printed, etc.
- * Subclasses can get the messages from this class using
- * getMessageForXXXXX() methods and do whatever they want with them.
+ * Subclasses need to override <code>outputMessage(String message)</code>.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public abstract class MessageStatsRecorder implements IStatsRecorder {
-
-  protected String getMessageForLogin(IPerson person) {
+ 
+  public void recordLogin(IPerson person) {
     String msg = getDisplayName(person) + 
                  " logged in successfully at " +
                  new java.util.Date();
-    return fixMsg(msg);
+    outputMessage(fixMsg(msg));
   }
- 
-  protected String getMessageForLogout(IPerson person) {
+  
+  public void recordLogout(IPerson person) {
     String msg = getDisplayName(person) + 
                  " logged out at " +
                  new java.util.Date();
-    return fixMsg(msg);
-  }
- 
-  public String getMessageForSessionCreated(IPerson person) {
+    outputMessage(fixMsg(msg));                 
+  }  
+  
+  public void recordSessionCreated(IPerson person) {
     String msg = "Session created for " +
                  getDisplayName(person) + " " +
                  "at " + 
                  new java.util.Date();
-    return fixMsg(msg);
-                 
+    outputMessage(fixMsg(msg));                 
   }
   
-  public String getMessageForSessionDestroyed(IPerson person) {
+  public void recordSessionDestroyed(IPerson person) {
     String msg = "Session destroyed for " +
                  getDisplayName(person) + " " +
                  "at " + 
                  new java.util.Date();
-    return fixMsg(msg);                 
+    outputMessage(fixMsg(msg));                 
   }
   
-  public String getMessageForChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
+  public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
     String msg = "Channel '" +
                  channelDef.getName() + "' " +
                  "was published by " +
                  getDisplayName(person) + " " +
                  "at " + 
                  new java.util.Date();
-    return fixMsg(msg);
-  }    
+    outputMessage(fixMsg(msg));                 
+  }
 
-  public String getMessageForChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
+  public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
     String msg = "Channel '" +
                  channelDef.getName() + "' " +
                  "was modified by " +
                  getDisplayName(person) + " " +
                  "at " + 
-                 new java.util.Date();
-    return fixMsg(msg);
-  }    
-  
-  public String getMessageForChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
+                 new java.util.Date();  
+    outputMessage(fixMsg(msg));                 
+  }
+
+  public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
     String msg = "Channel '" +
                  channelDef.getName() + "' " +
                  "was removed by " +
                  getDisplayName(person) + " " +
                  "at " + 
                  new java.util.Date();
-    return fixMsg(msg);
+    outputMessage(fixMsg(msg));                 
   }  
-
-  public String getMessageForChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  
+  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -121,10 +119,10 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
                  getDisplayName(person) + " " +
                  "at " + 
                  new java.util.Date();
-    return fixMsg(msg);
-  }
+    outputMessage(fixMsg(msg));                 
+  }    
   
-  public String getMessageForChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
     String msg = "Channel [" +
                  channelDesc.getName() + ", " + 
                  channelDesc.getChannelPublishId() + ", " +
@@ -134,9 +132,18 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
                  getDisplayName(person) + " " +
                  "at " + 
                  new java.util.Date();
-    return fixMsg(msg);
-  }  
+    outputMessage(fixMsg(msg));                 
+  }   
   
+  /**
+   * Outputs the message formulated according
+   * to the stat being recorded.  Subclasses
+   * have the responsibility of implementing 
+   * this method.
+   * @param message, the message to output
+   */    
+  protected abstract void outputMessage(String message);
+ 
   /**
    * Creates a name suitable for displaying in a
    * stats message.  Indicates if user is a "guest" user.
