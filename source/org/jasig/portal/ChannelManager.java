@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2004 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.channels.CError;
+
 import org.jasig.portal.channels.CSecureInfo;
+import org.jasig.portal.channels.error.CError;
+import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
@@ -427,7 +429,7 @@ public class ChannelManager implements LayoutEventListener {
      */
     private void handleRenderingError(String channelSubscribeId,ContentHandler contentHandler, Throwable t, int renderingStatus, String commonMessage, String technicalMessage,boolean partialOutput) {
         try {
-            if(isRepeatedRenderingAttempt(channelSubscribeId)) {
+            if (isRepeatedRenderingAttempt(channelSubscribeId)) {
                 // this means that the error channel has failed :(
                 String message="ChannelManager::handleRenderingError() : Unable to handle a rendering error through error channel.";
                 if(t!=null) {
@@ -435,12 +437,10 @@ public class ChannelManager implements LayoutEventListener {
                         InternalPortalException ipe=(InternalPortalException) t;
                         Throwable e=ipe.getException();
                         message=message+" Error channel (channelSubscribeId=\""+channelSubscribeId+"\") has thrown the following exception: "+e.toString()+" Partial output possible !";
-                        System.out.println("CError produced the following exception. Please fix CError immediately!");
-                        e.printStackTrace();
+                        log.fatal("CError threw exception. Please fix CError immediately!", e);
                     } else {
                         message=message+" An following exception encountered while trying to render the error channel for channelSubscribeId=\""+channelSubscribeId+"\": "+t.toString();
-                        System.out.println("CError produced the following exception. Please fix CError immediately!");
-                        t.printStackTrace();
+                        log.fatal("CError threw exception. Please fix CError immediately!", t);
                     }
                 } else {
                     // check status
@@ -470,15 +470,15 @@ public class ChannelManager implements LayoutEventListener {
                     if(t instanceof InternalPortalException) {
                         InternalPortalException ipe=(InternalPortalException) t;
                         Throwable channelException=ipe.getException();
-                        replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
+                        replaceWithErrorChannel(channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
                     } else {
-                        replaceWithErrorChannel(channelSubscribeId,CError.RENDER_TIME_EXCEPTION,t,technicalMessage,true);
+                        replaceWithErrorChannel(channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION, t, technicalMessage, true);
                     }
                 } else {
                     if(renderingStatus==IChannelRenderer.RENDERING_TIMED_OUT) {
-                        replaceWithErrorChannel(channelSubscribeId,CError.TIMEOUT_EXCEPTION,t,technicalMessage,true);
+                        replaceWithErrorChannel(channelSubscribeId,ErrorCode.TIMEOUT_EXCEPTION,t,technicalMessage,true);
                     } else {
-                        replaceWithErrorChannel(channelSubscribeId,CError.GENERAL_ERROR,t,technicalMessage,true);
+                        replaceWithErrorChannel(channelSubscribeId,ErrorCode.GENERAL_ERROR,t,technicalMessage,true);
                     }
                 }
     
@@ -500,16 +500,17 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     /**
-     * A helper method to replace all occurences of a given channel instance with that of an error channel.
+     * A helper method to replace all occurences of a given channel instance 
+     * with that of an error channel.
      *
      * @param channelSubscribeId a <code>String</code> value
-     * @param errorCode an <code>int</code> value from CError.* constants
+     * @param errorCode an ErrorCode
      * @param t a <code>Throwable</code> an exception that caused the problem
      * @param message a <code>String</code> an optional message to pass to the error channel
      * @param setRuntimeData a <code>boolean</code> wether the method should also set the ChannelRuntimeData for the newly instantiated error channel
      * @return an <code>IChannel</code> value of an error channel instance
      */
-    private IChannel replaceWithErrorChannel(String channelSubscribeId,int errorCode, Throwable t, String message,boolean setRuntimeData) {
+    private IChannel replaceWithErrorChannel(String channelSubscribeId, ErrorCode errorCode, Throwable t, String message,boolean setRuntimeData) {
         // get and delete old channel instance
         IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
         
@@ -521,7 +522,8 @@ public class ChannelManager implements LayoutEventListener {
         channelTable.remove(channelSubscribeId);
         rendererTable.remove(channelSubscribeId);
 
-        CError errorChannel=new CError(errorCode,t,channelSubscribeId,oldInstance,message);
+        CError errorChannel = 
+            new CError(errorCode,t,channelSubscribeId,oldInstance,message);
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
@@ -674,7 +676,7 @@ public class ChannelManager implements LayoutEventListener {
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
-            ch=new CError(CError.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",channelSubscribeId,null);
+            ch=new CError(ErrorCode.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",channelSubscribeId,null);
         }
 
         channelTable.put(channelSubscribeId,ch);
@@ -785,7 +787,7 @@ public class ChannelManager implements LayoutEventListener {
                 } catch (Throwable e) {
                     log.error("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
                     log.error(e);
-                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
+                    chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
             if(chObj!=null && (chObj instanceof IPrivileged)) {
@@ -794,7 +796,7 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     isc.setPortalControlStructures(pcs);
                 } catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_PCS_EXCEPTION,e,null,false);
+                    chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
                     isc=(IPrivileged) chObj;
 
                     // set portal control structures
@@ -838,7 +840,7 @@ public class ChannelManager implements LayoutEventListener {
                     chObj.setRuntimeData(rd);
                 }
                 catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
+                    chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
                 }
             }
         }
@@ -1006,7 +1008,7 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     ch=instantiateChannel(channel);
                 } catch (Throwable e) {
-                    ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
+                    ch=replaceWithErrorChannel(channelSubscribeId,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
         }
@@ -1019,7 +1021,7 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     ((IPrivileged) ch).setPortalControlStructures(pcs);
                 } catch (Exception e) {
-                    ch=replaceWithErrorChannel(channelTarget,CError.SET_PCS_EXCEPTION,e,null,false);
+                    ch=replaceWithErrorChannel(channelTarget,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
                     channelTable.remove(ch);
 
                     // set portal control structures for the error channel
@@ -1027,9 +1029,7 @@ public class ChannelManager implements LayoutEventListener {
                         ((IPrivileged) ch).setPortalControlStructures(pcs);
                     } catch (Exception e2) {
                         // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e2.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
+
                         log.error("ChannelManager::outputChannels : Error channel threw ! ", e2);
                     }
                 }
