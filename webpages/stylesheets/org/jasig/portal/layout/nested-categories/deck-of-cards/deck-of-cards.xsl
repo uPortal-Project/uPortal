@@ -16,7 +16,6 @@
         </xsl:choose>
       </xsl:attribute>
       
-      <p mode="nowrap"><small>uPortal 2.0</small></p>
       <xsl:apply-templates select="header"/>
       <xsl:apply-templates select="content"/>
       <xsl:apply-templates select="footer"/>
@@ -26,6 +25,9 @@
 </xsl:template>
 
 <xsl:template match="header">
+  <xsl:for-each select="channel">
+    <xsl:copy-of select="."/>
+  </xsl:for-each>
 </xsl:template>
 
 <xsl:template match="content">
