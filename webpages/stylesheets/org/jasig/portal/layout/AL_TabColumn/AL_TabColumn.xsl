@@ -124,7 +124,18 @@
   </xsl:template>
 
   <xsl:template match="folder">
-    <column ID="{@ID}" width="{@width}">
+    <xsl:variable name="sumOfWidths"><xsl:value-of select="sum(../folder/@width)"/></xsl:variable>
+    <column ID="{@ID}">
+      <xsl:attribute name="width">
+        <xsl:choose>
+          <xsl:when test="$sumOfWidths = 100">
+            <xsl:value-of select="@width"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="round(@width div $sumOfWidths * 100)"/>
+          </xsl:otherwise>
+        </xsl:choose>%      
+      </xsl:attribute>
       <xsl:apply-templates select="descendant::channel|descendant::move_target|descendant::add_target"/>
     </column>
   </xsl:template>

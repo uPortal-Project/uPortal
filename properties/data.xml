@@ -3629,7 +3629,7 @@
        <row>
          <column><name>SS_ID</name><value>3</value></column>
          <column><name>PARAM_NAME</name><value>width</value></column>
-         <column><name>PARAM_DEFAULT_VAL</name><value>100%</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>100</value></column>
          <column><name>PARAM_DESCRIPT</name><value>Width of the column</value></column>
          <column><name>TYPE</name><value>2</value></column>
         </row>

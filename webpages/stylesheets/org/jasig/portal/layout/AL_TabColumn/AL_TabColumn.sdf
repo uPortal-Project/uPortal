@@ -13,7 +13,7 @@
 
 <folderattributes>
 	<attribute name="width">    
-	  <defaultvalue>100%</defaultvalue>  
+	  <defaultvalue>100</defaultvalue>  
 	  <description>Width of the column</description>
 	</attribute>
 </folderattributes>
