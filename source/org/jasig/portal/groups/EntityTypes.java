@@ -70,6 +70,9 @@ public class EntityTypes {
 
     // For retrieving all types:
     public static int NULL_TYPE_ID = -1;
+
+    public static Class GROUP_ENTITY_TYPE = null;
+
 /**
  * EntityTypes constructor comment.
  */
@@ -165,6 +168,8 @@ private void initialize()
 
     try
     {
+        GROUP_ENTITY_TYPE = Class.forName("org.jasig.portal.groups.IEntityGroup");
+
         conn = RdbmServices.getConnection();
         Statement stmnt = conn.createStatement();
         try

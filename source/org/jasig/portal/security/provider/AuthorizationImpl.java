@@ -42,7 +42,6 @@ import java.util.*;
 import org.jasig.portal.groups.*;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.security.*;
-import org.jasig.portal.security.provider.ReferencePermissionManager;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.services.LogService;
 
@@ -273,15 +272,20 @@ throws GroupsException
     {
         String key = principal.getKey();
         Class type = principal.getType();
-        gm = EntityStoreRDBM.singleton().newInstance(key, type);
+        if ( type == EntityTypes.GROUP_ENTITY_TYPE )
+            { gm = EntityGroupStoreRDBM.singleton().find(key); }
+        else
+            { gm = EntityStoreRDBM.singleton().newInstance(key, type); }
+
         groupMembersCache.put(principal, gm);
     }
+
     return gm;
 }
 /**
  * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to
- * an <code>IEntity</code>.  Returns ALL the groups the <code>IEntity</code> (recursively)
- * belongs to.
+ * an <code>IGroupMember</code>.  Returns ALL the groups the <code>IGroupMember</code>
+ * (recursively) belongs to.
  * @param user - org.jasig.portal.security.IAuthorizationPrincipal
  * @return java.util.Iterator over Collection of IEntityGroups
  */
