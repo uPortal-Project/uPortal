@@ -133,22 +133,23 @@
                 </td>
               </tr>
 
-                              <tr class="uportal-channel-text" valign="top">
-                  <td nowrap="nowrap" align="center">
-                    <input type="radio" name="ID" value="-1">
-                    <xsl:if test="manageChannels/selectChannelType/params/step/channel/@typeID=-1">
-                     <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input></td>
-                  <td nowrap="nowrap">
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                  </td>
-                  <td nowrap="nowrap">
-                    <strong>Custom</strong>
-                  </td>
-                  <td nowrap="nowrap">
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
-                  </td>
-                  <td width="100%">This channel type allows the publication of channels with no accompanying CPD (Channel Publishing Document). It is typically used to publish channels with only one corresponding channel definition.</td>
-                </tr>
+              <tr class="uportal-channel-text" valign="top">
+                <td nowrap="nowrap" align="center">
+                  <input type="radio" name="ID" value="-1">
+                  <xsl:if test="manageChannels/selectChannelType/params/step/channel/@typeID=-1 or not(manageChannels/selectChannelType/params/step/channel/@typeID)">
+                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
+                </td>
+                <td nowrap="nowrap">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                </td>
+                <td nowrap="nowrap">
+                  <strong>Custom</strong>
+                </td>
+                <td nowrap="nowrap">
+                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                </td>
+                <td width="100%">This channel type allows the publication of channels with no accompanying CPD (Channel Publishing Document). It is typically used to publish channels with only one corresponding channel definition.</td>
+              </tr>
 
                 <tr class="uportal-channel-text" valign="top">
                   <td colspan="5" align="center">
