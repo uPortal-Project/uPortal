@@ -42,7 +42,7 @@ else {
 <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
   <input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'">
 </td></tr></table>
-Click on a channel to add to your tab.
+Click on a channel to preview.
 </form>
 
 <%
@@ -50,7 +50,7 @@ Click on a channel to add to your tab.
  ResultSet rs = subscribe.getChannels(request);
  while(rs.next()) {
  %>
- <a href="personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=rs.getString("ID")%>"><%=rs.getString("TITLE")%></a><br>
+ <a href="previewChannel.jsp?chan_id=<%=rs.getString("ID")%>"><%=rs.getString("TITLE")%></a><br>
  <%
  }
  subscribe.close();
