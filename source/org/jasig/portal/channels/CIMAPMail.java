@@ -160,7 +160,7 @@ import org.w3c.tidy.Tidy;
 public final class CIMAPMail extends GenericPortalBean implements IChannel, HttpSessionBindingListener
 {
   private static String rcsVersion = "$Revision$"; // from rcs/cvs
-  private static String clientVersion = "2.00b";
+  private static String clientVersion = "2.00c";
   private static boolean DEBUG = false;
 
   // Configurable parameters
@@ -735,14 +735,15 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
           xml.write("<controls>\n");
           xml.write("<buttons bgcolor=\"" + userPrefs.sControlColor + "\">");
           xml.write("<folders>\n");
-          ImapFolder.FolderData[] folders = imapFolders.getFolderNames ();
+          if (DEBUG) System.err.println(">folder list");
+          String[] folders = (String [])imapFolders.toArray(new String[0]);
           for (int iFldr = 0; iFldr < folders.length; iFldr++) {
-            if (!folders[iFldr].exists) continue;
-            if (!activeFolder.getFolderName ().equalsIgnoreCase (folders[iFldr].folderName)) {
-              xml.write("<folder value=\"" + folders[iFldr].folderName + "\">" +
-                   folders[iFldr].folderName + "</folder>");
+            if (!activeFolder.getFolderName ().equalsIgnoreCase (folders[iFldr])) {
+              xml.write("<folder value=\"" + folders[iFldr] + "\">" +
+                   folders[iFldr] + "</folder>");
             }
           }
+          if (DEBUG) System.err.println("<folder list");
 
           xml.write("</folders>\n");
           xml.write("</buttons>\n");
@@ -787,7 +788,9 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
                ">Size</header>\n");
           xml.write("</headers>\n");
 
+          if (DEBUG) System.err.println(">Fetching messages");
           activeFolder.fetchHeaders (iMsgsStartAt, iMsgsEndAt); // Preload headers
+          if (DEBUG) System.err.println("<Fetched messages");
           // Loop through messages
           for (int iMsg = iMsgsStartAt; iMsg < iMsgsEndAt; iMsg++) {
             Message msg = activeFolder.getMessage (iMsg);
@@ -3008,7 +3011,7 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
      * Return the list of folders
      * @result folder list
      */
-    public FolderData[] getFolderNames () throws MessagingException {
+    public FolderData[] getFolders () throws MessagingException {
       ArrayList folders = new ArrayList (this.size ());
       for (int i = 0; i < this.size (); i++ ) {
         FolderData folderData = getFolderData (i);
