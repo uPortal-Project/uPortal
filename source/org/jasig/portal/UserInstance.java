@@ -36,29 +36,43 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.utils.*;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.utils.XSLT;
-import  javax.servlet.*;
-import  javax.servlet.jsp.*;
-import  javax.servlet.http.*;
-import  java.io.*;
-import  java.util.*;
-import  java.text.*;
-import  java.net.URL;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.BooleanLock;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
+import org.jasig.portal.utils.SoftHashMap;
+import org.jasig.portal.utils.XSLT;
 
-import  org.w3c.dom.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSessionBindingListener;
+import javax.servlet.http.HttpSessionBindingEvent;
 
-import javax.xml.transform.*;
-import javax.xml.transform.sax.*;
-import javax.xml.transform.dom.*;
-import org.xml.sax.*;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 
-import  org.apache.xml.serialize.*;
+import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
 
-import org.jasig.portal.PropertiesManager;
+import org.w3c.dom.Node;
+import org.w3c.dom.Document;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.dom.DOMSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ContentHandler;
 
+import org.apache.xml.serialize.BaseMarkupSerializer;
+import org.apache.xml.serialize.CachingSerializer;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 
 
 /**
@@ -70,19 +84,24 @@ import org.jasig.portal.PropertiesManager;
  */
 public class UserInstance implements HttpSessionBindingListener {
     public static final int guestUserId = 1;
-    
+
+    // To debug structure and/or theme transformations, set these to true
+    // and the XML fed to those transformations will be printed to the log.
+    private static final boolean printXMLBeforeStructureTransformation = false;
+    private static final boolean printXMLBeforeThemeTransformation = false;
+
     // manages layout and preferences
     UserLayoutManager uLayoutManager;
     // manages channel instances and channel rendering
     ChannelManager channelManager;
-    
-    
+
+
     // contains information relating client names to media and mime types
     static MediaManager mediaM;
-    
+
     // system profile mapper standalone instance
     private StandaloneChannelRenderer p_browserMapper = null;
-    
+
     // lock preventing concurrent rendering
     private Object p_rendering_lock;
 
@@ -96,10 +115,10 @@ public class UserInstance implements HttpSessionBindingListener {
     final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
 
     IPerson person;
-    
+
     public UserInstance (IPerson person) {
         this.person=person;
-      
+
         // init the media manager
         if(mediaM==null) {
             String fs = System.getProperty("file.separator");
@@ -107,9 +126,9 @@ public class UserInstance implements HttpSessionBindingListener {
             mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
         }
     }
-   
+
     /**
-     * Prepares for and initates the rendering cycle. 
+     * Prepares for and initates the rendering cycle.
      * @param the servlet request object
      * @param the servlet response object
      * @param the JspWriter object
@@ -124,9 +143,9 @@ public class UserInstance implements HttpSessionBindingListener {
                 uLayoutManager = new UserLayoutManager(req, this.getPerson());
             } else {
                 // p_browserMapper is no longer needed
-                p_browserMapper = null; 
+                p_browserMapper = null;
             }
-         
+
             if (uLayoutManager.isUserAgentUnmapped()) {
                 // unmapped browser
                 if (p_browserMapper== null) {
@@ -136,16 +155,16 @@ public class UserInstance implements HttpSessionBindingListener {
                 try {
                     p_browserMapper.render(req, res);
                 } catch (Exception e) {
-                    // something went wrong trying to show CSelectSystemProfileChannel 
-                    Logger.log(Logger.ERROR,"UserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+e);
+                    // something went wrong trying to show CSelectSystemProfileChannel
+                    LogService.instance().log(LogService.ERROR,"UserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+e);
                 }
                 // don't go any further!
                 return;
             }
-	    
+
             // if we got to this point, we can proceed with the rendering
             if (channelManager == null) {
-                channelManager = new ChannelManager(uLayoutManager); 
+                channelManager = new ChannelManager(uLayoutManager);
                 p_rendering_lock=new Object();
             }
 
@@ -154,14 +173,14 @@ public class UserInstance implements HttpSessionBindingListener {
             StringWriter sw=new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             sw.flush();
-            Logger.log(Logger.ERROR,"UserInstance::writeContent() : an unknown exception occurred : "+sw.toString());
+            LogService.instance().log(LogService.ERROR,"UserInstance::writeContent() : an unknown exception occurred : "+sw.toString());
         }
     }
-    
+
     /**
-     * <code>renderState</code> method orchestrates the rendering pipeline. 
+     * <code>renderState</code> method orchestrates the rendering pipeline.
      * @param req the <code>HttpServletRequest</code>
-     * @param res the <code>HttpServletResponse</code> 
+     * @param res the <code>HttpServletResponse</code>
      * @param out an output <code>java.io.PrintWriter</code>
      * @param channelManager the <code>ChannelManager</code> instance
      * @param userLayout the user layout
@@ -197,13 +216,13 @@ public class UserInstance implements HttpSessionBindingListener {
             // this will update UserPreference object contained by UserLayoutManager, so that
             // appropriate attribute incorporation filters and parameter tables can be constructed.
             ulm.processUserPreferencesParameters(req);
-            
+
 
 
             // determine uPElement (optimistic prediction) --begin
             // We need uPElement for ChannelManager.setReqNRes() call. That call will distribute uPElement
             // to Privileged channels. We assume that Privileged channels are smart enough not to delete
-            // themselves in the detach mode ! 
+            // themselves in the detach mode !
 
             // In general transformations will start at the userLayoutRoot node, unless
             // we are rendering something in a detach mode.
@@ -219,7 +238,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 int detachInd = upFile.indexOf("detach_");
                 if (detachInd != -1) {
                     detachId = upFile.substring(detachInd + 7, upInd);
-                    //		  Logger.log(Logger.DEBUG,"UserInstance::renderState() : found detachId=\""+detachId+"\" in the .uP spec.");
+                    //		  LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : found detachId=\""+detachId+"\" in the .uP spec.");
                 }
             }
             // see if a new detach target has been specified
@@ -242,7 +261,7 @@ public class UserInstance implements HttpSessionBindingListener {
             try {
                 processUserLayoutParameters(req,channelManager);
             } catch (PortalException pe) {
-                Logger.log(Logger.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
+                LogService.instance().log(LogService.ERROR, "UserInstance.renderState(): processUserLayoutParameters() threw an exception - " + pe.getMessage());
             }
 
             // after this point the layout is determined
@@ -251,7 +270,7 @@ public class UserInstance implements HttpSessionBindingListener {
             synchronized(llock) {
                 // if the layout lock is dirty, prune the cache
                 if(llock.getValue()) {
-                    Logger.log(Logger.DEBUG,"UserInstance::writeContent() : pruning system caches.");
+                    LogService.instance().log(LogService.DEBUG,"UserInstance::writeContent() : pruning system caches.");
                     systemCache.clear();
                     systemCharacterCache.clear();
                     llock.setValue(false);
@@ -277,7 +296,7 @@ public class UserInstance implements HttpSessionBindingListener {
             }
             // else ignore new id, proceed with the old detach target (or the lack of such)
             if (detachId != null) {
-                // Logger.log(Logger.DEBUG,"UserInstance::renderState() : uP_detach_target=\""+detachId+"\".");
+                // LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : uP_detach_target=\""+detachId+"\".");
                 rElement = userLayout.getElementById(detachId);
                 detachMode = true;
             }
@@ -286,9 +305,9 @@ public class UserInstance implements HttpSessionBindingListener {
                 rElement = userLayout;
                 detachMode = false;
             }
-            
+
             if (detachMode) {
-                Logger.log(Logger.DEBUG, "UserInstance::renderState() : entering detach mode for nodeId=\"" + detachId + "\".");
+                LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : entering detach mode for nodeId=\"" + detachId + "\".");
                 uPElement = "detach_" + detachId + ".uP";
             }
             // inform channel manager about the new uPElement value
@@ -319,7 +338,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
                     if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
                         ccache_exists=true;
-                        Logger.log(Logger.DEBUG,"UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
+                        LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
                         // start channel threads
                         for(int i=0;i<cCache.channelIds.size();i++) {
                             Vector chanEntry=(Vector) cCache.channelIds.get(i);
@@ -330,13 +349,13 @@ public class UserInstance implements HttpSessionBindingListener {
                                 Hashtable chanParams=(Hashtable)chanEntry.get(3);
                                 channelManager.startChannelRendering(chanId,chanClassName,timeOut.longValue(),chanParams,true);
                             } else {
-                                Logger.log(Logger.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid !");
+                                LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid !");
                             }
                         }
                         // go through the output loop
                         int ccsize=cCache.systemBuffers.size();
                         if(cCache.channelIds.size()!=ccsize-1) {
-                            Logger.log(Logger.ERROR,"UserInstance::renderState() : channelId character cache has invalid size !");
+                            LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : channelId character cache has invalid size !");
                         }
                         CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
                         cSerializer.setDocumentStarted(true);
@@ -344,8 +363,8 @@ public class UserInstance implements HttpSessionBindingListener {
                         for(int sb=0; sb<ccsize-1;sb++) {
                             cSerializer.printRawCharacters((String)cCache.systemBuffers.get(sb));
 
-                            //Logger.log(Logger.DEBUG,"----------printing frame piece "+Integer.toString(sb));
-                            //Logger.log(Logger.DEBUG,(String)cCache.systemBuffers.get(sb));
+                            //LogService.instance().log(LogService.DEBUG,"----------printing frame piece "+Integer.toString(sb));
+                            //LogService.instance().log(LogService.DEBUG,(String)cCache.systemBuffers.get(sb));
 
                             // get channel output
                             Vector chanEntry=(Vector) cCache.channelIds.get(sb);
@@ -356,17 +375,17 @@ public class UserInstance implements HttpSessionBindingListener {
                             Object o=channelManager.getChannelCharacters (chanId, chanClassName,timeOut.longValue(),chanParams);
                             if(o!=null) {
                                 if(o instanceof String) {
-                                    Logger.log(Logger.DEBUG,"UserInstance::renderState() : received a character result for channelId=\""+chanId+"\"");
+                                    LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : received a character result for channelId=\""+chanId+"\"");
                                     cSerializer.printRawCharacters((String)o);
-                                    //Logger.log(Logger.DEBUG,"----------printing channel cache #"+Integer.toString(sb));
-                                    //Logger.log(Logger.DEBUG,(String)o);
+                                    //LogService.instance().log(LogService.DEBUG,"----------printing channel cache #"+Integer.toString(sb));
+                                    //LogService.instance().log(LogService.DEBUG,(String)o);
                                 } else if(o instanceof SAX2BufferImpl) {
-                                    Logger.log(Logger.DEBUG,"UserInstance::renderState() : received an XSLT result for channelId=\""+chanId+"\"");
-                                    // extract a character cache 
+                                    LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : received an XSLT result for channelId=\""+chanId+"\"");
+                                    // extract a character cache
 
                                     // start new channel cache
                                     if(!cSerializer.startCaching()) {
-                                        Logger.log(Logger.ERROR,"UserInstance::renderState() : unable to restart channel cache on a channel start!");
+                                        LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to restart channel cache on a channel start!");
                                     }
 
                                     // output channel buffer
@@ -380,27 +399,27 @@ public class UserInstance implements HttpSessionBindingListener {
                                     if(cSerializer.stopCaching()) {
                                         try {
                                             channelManager.setChannelCharacterCache(chanId,cSerializer.getCache());
-                                            //Logger.log(Logger.DEBUG,"----------generated channel cache #"+Integer.toString(sb));
-                                            //Logger.log(Logger.DEBUG,cSerializer.getCache());
+                                            //LogService.instance().log(LogService.DEBUG,"----------generated channel cache #"+Integer.toString(sb));
+                                            //LogService.instance().log(LogService.DEBUG,cSerializer.getCache());
                                         } catch (UnsupportedEncodingException e) {
-                                            Logger.log(Logger.ERROR,"UserInstance::renderState() : unable to obtain character cache, invalid encoding specified ! "+e);
+                                            LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to obtain character cache, invalid encoding specified ! "+e);
                                         } catch (IOException ioe) {
-                                            Logger.log(Logger.ERROR,"UserInstance::renderState() : IO exception occurred while retreiving character cache ! "+ioe);
+                                            LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : IO exception occurred while retreiving character cache ! "+ioe);
                                         }
 
                                     } else {
-                                        Logger.log(Logger.ERROR,"UserInstance::renderState() : unable to reset cache state ! Serializer was not caching when it should've been !");
+                                        LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : unable to reset cache state ! Serializer was not caching when it should've been !");
                                     }
                                 } else {
-                                    Logger.log(Logger.ERROR,"UserInstance::renderState() : ChannelManager.getChannelCharacters() returned an unidentified object!");
+                                    LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : ChannelManager.getChannelCharacters() returned an unidentified object!");
                                 }
                             }
                         }
 
                         // print out the last block
                         cSerializer.printRawCharacters((String)cCache.systemBuffers.get(ccsize-1));
-                        //Logger.log(Logger.DEBUG,"----------printing frame piece "+Integer.toString(ccsize-1));
-                        //Logger.log(Logger.DEBUG,(String)cCache.systemBuffers.get(ccsize-1));
+                        //LogService.instance().log(LogService.DEBUG,"----------printing frame piece "+Integer.toString(ccsize-1));
+                        //LogService.instance().log(LogService.DEBUG,(String)cCache.systemBuffers.get(ccsize-1));
 
                         cSerializer.flush();
                         output_produced=true;
@@ -413,7 +432,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) this.systemCache.get(cacheKey);
                     if(cachedBuffer!=null) {
                         // replay the buffer to channel incorporation filter
-                        Logger.log(Logger.DEBUG,"UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
+                        LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
                         // attach rendering buffer downstream of the cached buffer
                         ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader)cachedBuffer,channelManager,ccaching);
                         // attach channel incorporation filter downstream of the channel rendering buffer
@@ -424,7 +443,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         output_produced=true;
                     }
                 }
-            } 
+            }
             // fallback on the regular rendering procedure
             if(!output_produced) {
 
@@ -435,14 +454,14 @@ public class UserInstance implements HttpSessionBindingListener {
                 // obtain transformer references from the handlers
                 Transformer sst=ssth.getTransformer();
                 Transformer tst=tsth.getTransformer();
-                
+
                 // empty transformer to do dom2sax transition
                 Transformer emptyt=TransformerFactory.newInstance().newTransformer();
-                
+
                 // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
                 ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
                 ssth.setResult(new SAXResult(crb));
-                
+
                 // determine and set the stylesheet params
                 // prepare .uP element and detach flag to be passed to the stylesheets
                 // Including the context path in front of uPElement is necessary for phone.com browsers to work
@@ -451,7 +470,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
                     String pValue = (String)supTable.get(pName);
-                    Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
+                    LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
                     sst.setParameter(pName, pValue);
                 }
                 // all the parameters are set up, fire up structure transformation
@@ -459,16 +478,18 @@ public class UserInstance implements HttpSessionBindingListener {
                 // filter to fill in channel/folder attributes for the "structure" transformation.
                 StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(ssth, userPreferences.getStructureStylesheetUserPreferences());
 
-                /*
-                // low debug -- begin
-                // this is a debug statement that will print out XML incoming to the structure transformation to a log file 
-                // serializer to a printstream
-                java.io.StringWriter dbwr1=new java.io.StringWriter();
-                org.apache.xml.serialize.XMLSerializer dbser1 = new org.apache.xml.serialize.XMLSerializer(dbwr1, new OutputFormat());
-                SAX2DuplicatingFilterImpl dupl1=new SAX2DuplicatingFilterImpl(ssth,dbser1);
-                dupl1.setParent(saif);
-                // low debug -- end
-                */
+                // This is a debug statement that will print out XML incoming to the
+                // structure transformation to a log file serializer to a printstream
+                StringWriter dbwr1 = null;
+                OutputFormat outputFormat = null;
+                if (printXMLBeforeStructureTransformation) {
+                  dbwr1 = new StringWriter();
+                  outputFormat = new OutputFormat();
+                  outputFormat.setIndenting(true);
+                  XMLSerializer dbser1 = new XMLSerializer(dbwr1, outputFormat);
+                  SAX2DuplicatingFilterImpl dupl1 = new SAX2DuplicatingFilterImpl(ssth, dbser1);
+                  dupl1.setParent(saif);
+                }
 
                 // if operating in the detach mode, need wrap everything
                 // in a document node and a <layout_fragment> node
@@ -488,12 +509,11 @@ public class UserInstance implements HttpSessionBindingListener {
                 }
                 // all channels should be rendering now
 
-                /*
-                // low debug -- begin
-                // debug piece to print out the recorded pre-structure transformation XML
-                Logger.log("UserInstance::renderState() : XML incoming to the structure transformation :\""+dbwr1.toString()+"\"");
-                // low debug -- end
-                */
+                // Debug piece to print out the recorded pre-structure transformation XML
+                if (printXMLBeforeStructureTransformation) {
+                  LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the structure transformation :\n\n" + dbwr1.toString() + "\n\n");
+                }
+
 
                 // prepare for the theme transformation
 
@@ -504,7 +524,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
                     String pValue = (String)tupTable.get(pName);
-                    Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
+                    LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                     tst.setParameter(pName, pValue);
                 }
 
@@ -513,18 +533,16 @@ public class UserInstance implements HttpSessionBindingListener {
                 ThemeAttributesIncorporationFilter taif = new ThemeAttributesIncorporationFilter((XMLReader)crb, userPreferences.getThemeStylesheetUserPreferences());
                 // attach theme transformation downstream of the theme attribute incorporation filter
                 taif.setAllHandlers(tsth);
-                
 
-                /*
-                // low debug -- begin
-                // this is a debug statement that will print out XML incoming to the structure transformation to a log file 
-                // serializer to a printstream
-                java.io.StringWriter dbwr2=new java.io.StringWriter();
-                org.apache.xml.serialize.XMLSerializer dbser2 = new org.apache.xml.serialize.XMLSerializer(dbwr2, new OutputFormat());
-                SAX2DuplicatingFilterImpl dupl2=new SAX2DuplicatingFilterImpl(tsth,dbser2);
-                dupl2.setParent(taif);
-                // low debug -- end
-                */
+                // This is a debug statement that will print out XML incoming to the
+                // theme transformation to a log file serializer to a printstream
+                StringWriter dbwr2 = null;
+                if (printXMLBeforeThemeTransformation) {
+                  dbwr2 = new StringWriter();
+                  XMLSerializer dbser2 = new XMLSerializer(dbwr2, outputFormat);
+                  SAX2DuplicatingFilterImpl dupl2 = new SAX2DuplicatingFilterImpl(tsth, dbser2);
+                  dupl2.setParent(taif);
+                }
 
                 if(this.CACHE_ENABLED && !ccaching) {
                     // record cache
@@ -534,10 +552,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     // attach channel incorporation filter downstream of the caching buffer
                     cif.setParent(newCache);
-                    
+
                     systemCache.put(cacheKey,newCache);
                     newCache.setOutputAtDocumentEnd(true);
-                    Logger.log(Logger.DEBUG,"UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
+                    LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
                 } else {
                     // attach channel incorporation filter downstream of the theme transformer
                     tsth.setResult(new SAXResult(cif));
@@ -545,12 +563,11 @@ public class UserInstance implements HttpSessionBindingListener {
                 // fire up theme transformation
                 crb.stopBuffering(); crb.outputBuffer(); crb.clearBuffer();
 
-                /*
-                // low debug -- begin
-                // debug piece to print out the recorded pre-theme transformation XML
-                Logger.log("UserInstance::renderState() : XML incoming to the theme transformation :\""+dbwr2.toString()+"\"");
-                // low debug -- end
-                */
+                // Debug piece to print out the recorded pre-theme transformation XML
+                if (printXMLBeforeThemeTransformation) {
+                  LogService.instance().log(LogService.DEBUG, "UserInstance::renderState() : XML incoming to the theme transformation :\n\n" + dbwr2.toString() + "\n\n");
+                }
+
 
                 if(this.CACHE_ENABLED && ccaching) {
                     // save character block cache
@@ -558,35 +575,35 @@ public class UserInstance implements HttpSessionBindingListener {
                     ce.systemBuffers=cif.getSystemCCacheBlocks();
                     ce.channelIds=cif.getChannelIdBlocks();
                     if(ce.systemBuffers==null || ce.channelIds==null) {
-                        Logger.log(Logger.ERROR,"UserInstance::renderState() : CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
+                        LogService.instance().log(LogService.ERROR,"UserInstance::renderState() : CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
                     } else {
                         // record cache
                         systemCharacterCache.put(cacheKey,ce);
-                        Logger.log(Logger.DEBUG,"UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
-                        
+                        LogService.instance().log(LogService.DEBUG,"UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
+
                         /*
-                        Logger.log(Logger.DEBUG,"Printing transformation cache system blocks:");
+                        LogService.instance().log(LogService.DEBUG,"Printing transformation cache system blocks:");
                         for(int i=0;i<ce.systemBuffers.size();i++) {
-                            Logger.log(Logger.DEBUG,"----------piece "+Integer.toString(i));
-                            Logger.log(Logger.DEBUG,(String)ce.systemBuffers.get(i));
+                            LogService.instance().log(LogService.DEBUG,"----------piece "+Integer.toString(i));
+                            LogService.instance().log(LogService.DEBUG,(String)ce.systemBuffers.get(i));
                         }
-                        Logger.log(Logger.DEBUG,"Printing transformation cache channel IDs:");
+                        LogService.instance().log(LogService.DEBUG,"Printing transformation cache channel IDs:");
                         for(int i=0;i<ce.channelIds.size();i++) {
-                            Logger.log(Logger.DEBUG,"----------channel entry "+Integer.toString(i));
-                            Logger.log(Logger.DEBUG,(String)((Vector)ce.channelIds.get(i)).get(0));
+                            LogService.instance().log(LogService.DEBUG,"----------channel entry "+Integer.toString(i));
+                            LogService.instance().log(LogService.DEBUG,(String)((Vector)ce.channelIds.get(i)).get(0));
                         }
                         */
 
 
                     }
                 }
-                
+
             }
             // signal the end of the rendering round
             channelManager.finishedRendering();
         }
     }
-    
+
     /**
      * <code>getRenderingLock</code> returns a rendering lock for this session.
      * @param sessionId current session id
