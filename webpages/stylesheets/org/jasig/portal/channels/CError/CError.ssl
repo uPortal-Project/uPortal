@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CError/html_full.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CError/html_full.xsl"  type="text/xsl" media="explorer"?>
+<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CError/wml.xsl"  type="text/xsl" media="up"?>
+<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CError/wml.xsl"  type="text/xsl" media="wml"?>
 
 
 <document>
