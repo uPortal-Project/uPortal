@@ -60,6 +60,7 @@ Version $Revision$
 		</layout>
 	</xsl:variable>
 	<!--These variables and parameters are used in preferences mode-->
+	<xsl:param name="contentPublishID" select="'false'"/>
 	<xsl:variable name="selectedID" select="/layout/@selectedID"/>
 	<xsl:variable name="focusedTabID" select="/layout/@focusedTabID"/>
 	<xsl:variable name="targetRestriction" select="/layout/@targetRestriction"/>
@@ -177,8 +178,10 @@ Version $Revision$
 		</table>
 		<!-- END: Masthead and Header Channel -->
 	</xsl:template>
+	
+	<!-- Assumed Old Code
 	<xsl:template name="actions">
-		<!-- BEGIN: upActions Table -->
+		BEGIN: upActions Table   ****Comment this if the code is reinstated****
 		<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
@@ -675,8 +678,10 @@ Version $Revision$
 				</td>
 			</tr>
 		</table>
-		<!-- End: upActions Table -->
+		End: upActions Table  ****Comment this if the code is reinstated****
 	</xsl:template>
+	End Assumed Old Code -->
+	
 	<xsl:template match="content">
 		<xsl:variable name="numCols" select="count(column)"/>
 		<table width="100%" border="0" cols="{$numCols}" cellspacing="9" cellpadding="0">
@@ -1102,7 +1107,7 @@ Version $Revision$
 											</a>
 										</xsl:when>
                                                                                 <xsl:when test="$targetAction='New Channel'">
-											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets=channel&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?contentPublishID={$contentPublishID}&amp;uP_request_add_targets=channel&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
 												<xsl:value-of select="@name"/>
 											</a>
 										</xsl:when>
