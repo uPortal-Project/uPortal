@@ -8,6 +8,8 @@ package org.jasig.portal.container.om.portlet;
 import java.io.IOException;
 import java.util.Locale;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.common.Description;
 import org.apache.pluto.om.common.DescriptionSet;
 import org.apache.pluto.om.common.DisplayName;
@@ -25,11 +27,10 @@ import org.apache.pluto.om.servlet.ServletDefinition;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IPortletPreferencesStore;
 import org.jasig.portal.PortletPreferencesStoreFactory;
+import org.jasig.portal.container.om.common.LanguageSetImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -77,6 +78,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     }
 
     public LanguageSet getLanguageSet() {
+        ((LanguageSetImpl)languages).setClassLoader(getPortletClassLoader());
         return languages;
     }
 

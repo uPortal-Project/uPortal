@@ -147,8 +147,11 @@ public class LanguageImpl implements Language, Serializable {
 
         public ResourceBundleImpl(ResourceBundle bundle, ResourceBundle defaults) {
             data = new HashMap();
-            importData(defaults);
-            importData(bundle);
+            if (bundle != null) {
+                importData(bundle);
+            } else {
+                importData(defaults);
+            }
         }
 
         private void importData(ResourceBundle bundle) {

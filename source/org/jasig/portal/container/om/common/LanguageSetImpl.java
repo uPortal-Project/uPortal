@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.common.Language;
 import org.apache.pluto.om.common.LanguageSet;
 
@@ -26,21 +28,30 @@ public class LanguageSetImpl implements LanguageSet, Serializable {
     private String title = null;
     private String shortTitle = null; 
     private String keywords = null;
-    private String resourceBundleBase = null;   
+    private String resources = null;   
     private ClassLoader classLoader = null;
     private Map languages = null; // Locale --> Language
+    private boolean resourceBundleInitialized = false;
+    private boolean hasResourceBundle = false;
+    private static final Log log = LogFactory.getLog(LanguageSetImpl.class);
 
-    public LanguageSetImpl(String title, String shortTitle, String keywords, String resourceBundleBase) {
+    public LanguageSetImpl(String title, String shortTitle, String keywords, String resources) {
         languages = new HashMap();
         this.title = title;
         this.shortTitle = shortTitle;
         this.keywords = keywords;
-        this.resourceBundleBase = resourceBundleBase;
+        this.resources = resources;
+        
+        hasResourceBundle = resources != null;
     }
 
     // LanguageSet methods
     
     public Iterator iterator() {
+        if (!resourceBundleInitialized) {
+            initResourceBundle();
+            resourceBundleInitialized = true;
+        }
         return languages.values().iterator();
     }
 
@@ -49,55 +60,74 @@ public class LanguageSetImpl implements LanguageSet, Serializable {
     }
 
     public Language get(Locale locale) {
+        if (!resourceBundleInitialized) {
+            initResourceBundle();
+            resourceBundleInitialized = true;
+        }
         return (Language)languages.get(locale);
     }
 
     public Locale getDefaultLocale() {
-        // Pluto portalImpl gets the first locale in the list
-        // The languages/locales implementation in Pluto is messed up
-        // so we'll need to revisit how LanguageSetImpl and LanguageImpl work.
         Locale defaultLocale = Locale.getDefault();
-        ResourceBundle resourceBundle = loadResourceBundle(defaultLocale);
-        Language defaultLanguage = createLanguage(defaultLocale, resourceBundle);
-        languages.put(defaultLocale, defaultLanguage);
         return defaultLocale;
     }
     
     // Additional methods
     
-    public void setResourceBundleBase(String resourceBundleBase) {
-        this.resourceBundleBase = resourceBundleBase;    
+    public void setResources(String resourceBundleBase) {
+        this.resources = resourceBundleBase;    
     }
     
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
     
-    public void addLanguage(Locale locale) {
-        ResourceBundle resourceBundle = loadResourceBundle(locale);
+    public void addLocale(Locale locale) {
+        // The null Language values will be replaced
+        // during the initResourceBundle() method
+        // since we don't have the right class loader at the
+        // time this method is called
+        languages.put(locale, null);
+    }
+    
+    private void addLanguage(Locale locale) {
+        ResourceBundle resourceBundle = null;
+        if (hasResourceBundle) {
+            resourceBundle = loadResourceBundle(locale);
+        }
         Language language = createLanguage(locale, resourceBundle);
         languages.put(language.getLocale(), language);
     }
     
-    // create Language object with data from this class (title, short-title, description, keywords)
+    // Create Language object with data from this class (title, short-title, description, keywords)
     private Language createLanguage(Locale locale, ResourceBundle bundle) {
         LanguageImpl lang = new LanguageImpl(locale, bundle, title, shortTitle, keywords);
         return (Language)lang;
     }      
     
-    // loads resource bundle files from WEB-INF/classes directory
+    // Loads resource bundle files from WEB-INF/classes directory
     private ResourceBundle loadResourceBundle(Locale locale) {
         ResourceBundle resourceBundle = null;
         try {
             if (classLoader != null) {
-                resourceBundle = ResourceBundle.getBundle(resourceBundleBase, locale, classLoader);
+                resourceBundle = ResourceBundle.getBundle(resources, locale, classLoader);
             } else {
-                resourceBundle = ResourceBundle.getBundle(resourceBundleBase, locale, Thread.currentThread().getContextClassLoader());
+                resourceBundle = ResourceBundle.getBundle(resources, locale, Thread.currentThread().getContextClassLoader());
             }
-        } catch (MissingResourceException x) {
+        } catch (MissingResourceException mre) {
+            if (log.isErrorEnabled()) {
+                log.error("Cannot obtain portlet resource bundle '" + resources + "'", mre);
+            }
         }
         return resourceBundle;
     }
     
-
+    private void initResourceBundle() {
+        // Assume that by now, we have a proper webapp class loader
+        addLocale(Locale.getDefault());
+        for (Iterator iter = languages.keySet().iterator(); iter.hasNext();) {
+            Locale locale = (Locale)iter.next();
+            addLanguage(locale);
+        }
+    }
 }
