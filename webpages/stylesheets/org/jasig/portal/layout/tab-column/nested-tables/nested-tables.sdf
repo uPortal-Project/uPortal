@@ -1,0 +1,28 @@
+<?xml version='1.0'?>
+
+<stylesheetdescription>
+  <name>Nested tables</name>
+  <description>Renders tabs and columns as nested tables</description>
+  <parentstylesheet>Tabs and columns</parentstylesheet>
+  <mimetype>text/html</mimetype>
+  <serializer>HTML</serializer>
+
+  <parameters>
+  	<parameter name="activeTab">
+  		<defaultvalue>1</defaultvalue>
+  		<description>The number of the tab that is initially active</description>
+  	</parameter>
+  </parameters>                                        
+
+  <channelattributes>
+  	<attribute name="minimizable">
+  		<defaultvalue>true</defaultvalue>
+  		<description>Flag determening if the channel can be minimized or not</description>
+  	</attribute>
+  	<attribute name="minimized">
+  		<defaultvalue>false</defaultvalue>
+  		<description>Flag determening if the channel is minimized or not</description>
+  	</attribute>
+  </channelattributes>
+
+</stylesheetdescription>
