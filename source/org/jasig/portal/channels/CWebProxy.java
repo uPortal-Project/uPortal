@@ -572,26 +572,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
    */
   private Document getXmlDocument(String uri, ChannelState state) throws Exception
   {
-    URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
-    String domain = url.getHost().trim();
-    String path = url.getPath();
-    if ( path.indexOf("/") != -1 )
-    {
-      if (path.lastIndexOf("/") != 0)
-        path = path.substring(0, path.lastIndexOf("/"));
-    }
-    String port = Integer.toString(url.getPort());
-
-    URLConnection urlConnect = url.openConnection();
-    String protocol = url.getProtocol();
-
-    if (protocol.equals("http") || protocol.equals("https"))
-    {
-      HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
-      httpUrlConnect.setInstanceFollowRedirects(true);
-      if (domain != null && path != null)
-        sendAndStoreCookies(httpUrlConnect, domain, path, port, state);
-    }
+    URLConnection urlConnect = getConnection(uri, state);
 
     DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
     docBuilderFactory.setNamespaceAware(false);
@@ -610,26 +591,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
    */
   private String getXmlString (String uri, ChannelState state) throws Exception
   {
-    URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
-    String domain = url.getHost().trim();
-    String path = url.getPath();
-    if ( path.indexOf("/") != -1 )
-    {
-      if (path.lastIndexOf("/") != 0)
-        path = path.substring(0, path.lastIndexOf("/"));
-    }
-    String port = Integer.toString(url.getPort());
-
-    URLConnection urlConnect = url.openConnection();
-    String protocol = url.getProtocol();
-
-    if (protocol.equals("http") || protocol.equals("https"))
-    {
-      HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
-      httpUrlConnect.setInstanceFollowRedirects(true);
-      if (domain != null && path != null)
-        sendAndStoreCookies(httpUrlConnect, domain, path, port, state);
-    }
+    URLConnection urlConnect = getConnection(uri, state);
 
     String xml;
     if ( (state.tidy != null) && (state.tidy.equalsIgnoreCase("on")) )
@@ -666,6 +628,29 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
 
     return xml;
   }
+  
+  private URLConnection getConnection(String uri, ChannelState state) throws Exception{
+      URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
+      String domain = url.getHost().trim();
+      String path = url.getPath();
+      if ( path.indexOf("/") != -1 )
+      {
+        if (path.lastIndexOf("/") != 0)
+          path = path.substring(0, path.lastIndexOf("/"));
+      }
+      String port = Integer.toString(url.getPort());
+      URLConnection urlConnect = url.openConnection();
+      String protocol = url.getProtocol();
+  
+      if (protocol.equals("http") || protocol.equals("https"))
+      {
+        //HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
+        if (domain != null && path != null)
+          urlConnect = (URLConnection) sendAndStoreCookies(((HttpURLConnection) urlConnect), domain, path, port, state);
+        //urlConnect = (URLConnection) httpUrlConnect;
+      }
+      return urlConnect;
+  }
 
    /**
     * Sends any cookies in the cookie vector as a request header and stores
@@ -677,8 +662,9 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
     * @param path The path value for the Cookie to be sent
     * @param port The port value for the Cookie to be sent
     */
-  private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port, ChannelState state) throws Exception
+  private HttpURLConnection sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port, ChannelState state) throws Exception
   {
+    httpUrlConnect.setInstanceFollowRedirects(false);
     // send appropriate cookies to origin server from cookie vector
     if (state.cookies.size() > 0)
       sendCookieHeader(httpUrlConnect, domain, path, port, state.cookies);
@@ -697,29 +683,6 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
         }
     }
 
-    int status = httpUrlConnect.getResponseCode();
-
-    switch (status)
-    {
-       case HttpURLConnection.HTTP_NOT_FOUND:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 404: Not Found");
-       case HttpURLConnection.HTTP_FORBIDDEN:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 403: Forbidden");
-       case HttpURLConnection.HTTP_INTERNAL_ERROR:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 500: Internal Server Error");
-       case HttpURLConnection.HTTP_NO_CONTENT:
-         throw new ResourceMissingException
-             (httpUrlConnect.getURL().toExternalForm(),
-              "", "HTTP Status-Code 204: No Content");
-       default:
-         break;
-    }
 
     // store any cookies sent by the channel in the cookie vector
     int index = 1;
@@ -745,6 +708,60 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
        }
        index++;
     }
+    
+    int status = httpUrlConnect.getResponseCode();
+    String location = httpUrlConnect.getHeaderField("Location");
+    switch (status)
+    {
+       case HttpURLConnection.HTTP_NOT_FOUND:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(),
+              "", "HTTP Status-Code 404: Not Found");
+       case HttpURLConnection.HTTP_FORBIDDEN:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(),
+              "", "HTTP Status-Code 403: Forbidden");
+       case HttpURLConnection.HTTP_INTERNAL_ERROR:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(),
+              "", "HTTP Status-Code 500: Internal Server Error");
+       case HttpURLConnection.HTTP_NO_CONTENT:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(),
+              "", "HTTP Status-Code 204: No Content");
+      /*
+      * Note: these cases apply to http status codes 302 and 303
+      * this will handle automatic redirection to a new GET URL
+      */
+        case HttpURLConnection.HTTP_MOVED_TEMP:
+          httpUrlConnect.disconnect();
+          httpUrlConnect = (HttpURLConnection) getConnection(location,state);
+          break;
+        case HttpURLConnection.HTTP_SEE_OTHER:
+          httpUrlConnect.disconnect();
+          httpUrlConnect = (HttpURLConnection) getConnection(location,state);
+          break;
+      /*
+      * Note: this cases apply to http status code 301
+      * it will handle the automatic redirection of GET requests.
+      * The spec calls for a POST redirect to be verified manually by the user
+      * Rather than bypass this security restriction, we will throw an exception
+      */
+        case HttpURLConnection.HTTP_MOVED_PERM:
+          if (state.runtimeData.getHttpRequestMethod().equals("GET")){
+            httpUrlConnect.disconnect();
+            httpUrlConnect = (HttpURLConnection) getConnection(location,state);
+          }
+          else {
+            throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(),
+              "", "HTTP Status-Code 301: POST Redirection currently not supported");
+          }
+          break;
+       default:
+         break;
+    }
+    return httpUrlConnect;
   }
 
   /**
