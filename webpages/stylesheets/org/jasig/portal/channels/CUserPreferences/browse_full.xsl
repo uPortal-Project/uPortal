@@ -19,6 +19,7 @@
 <select name="manageTarget">
 <option selected="" value="layout">channels and folders</option>
 <option value="gpref">global preferences</option>
+<option value="prof">profiles</option>
 </select>
 </td>
 </tr></table>

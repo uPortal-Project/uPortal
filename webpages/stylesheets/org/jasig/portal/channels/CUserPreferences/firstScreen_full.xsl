@@ -16,6 +16,7 @@
 <select name="manageTarget">
 <option selected="" value="layout">Manage user layout</option>
 <option value="gpref">Manage global preferences</option>
+<option value="prof">profiles</option>
 </select>
 <br/>
 <input type="submit" name="submit" value="Proceed"/>
