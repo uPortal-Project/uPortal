@@ -273,8 +273,6 @@ private static String getUpdateSql()
 private CachedEntityInvalidation instanceFromResultSet(java.sql.ResultSet rs)
 throws  SQLException, CachingException
 {
-    CachedEntityInvalidation entity = null;
-
     Integer entityTypeID = new Integer(rs.getInt(1));
     Class entityType = EntityTypes.getEntityType(entityTypeID);
     String key = rs.getString(2);
