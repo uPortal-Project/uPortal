@@ -368,7 +368,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       RDBMServices.setAutoCommit(con,false);
 
       int nodeId = 0;
-      int layoutId = 0;
+      int layoutId = -1;
       int userId = person.getID();
       IALNodeDescription nodeDesc = node.getNodeDescription();
 
@@ -397,11 +397,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::addUserLayoutNode(): " + subSelectString);
         rs = stmt.executeQuery(subSelectString);
         try {
-            rs.next();
+          if ( rs.next() )  	
             layoutId = rs.getInt(1);
-            if (rs.wasNull()) {
-                layoutId = 0;
-            }
         } finally {
             rs.close();
         }
@@ -412,8 +409,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
           rs = stmt.executeQuery(sQuery);
           try {
-            rs.next();
-            nodeId = rs.getInt(1)+1;
+            if ( rs.next() );
+             nodeId = rs.getInt(1)+1;
           } finally {
             rs.close();
           }
@@ -676,7 +673,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          PreparedStatement psRestr = null;
 
 
-         if ( fragmentId > 0 && layoutId <= 0 ) {  	
+         if ( fragmentId > 0 && layoutId < 0 ) {  	
 
            Enumeration restrictions = restrHash.elements();
            
@@ -826,14 +823,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
         //LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId;
+        int layoutId = -1;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
-            rs.next();
+          if ( rs.next() )
             layoutId = rs.getInt(1);
-            if (rs.wasNull()) {
-                layoutId = 0;
-            }
         } finally {
             rs.close();
         }
@@ -1056,9 +1050,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          Hashtable restrHash = nodeDesc.getRestrictions();
          if ( restrHash != null ) {
 
-          if ( fragmentId > 0 ) {
+          if ( fragmentId > 0 && layoutId < 0  ) {
 
-           /*Enumeration restrictions = restrHash.elements();
+           Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
             IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
@@ -1074,7 +1068,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             count += psUpdateRestriction.executeUpdate();
            } // end for */
 
-          } else {
+          } else if ( fragmentId <= 0 ) {
 
            Enumeration restrictions = restrHash.elements();
            for ( ;restrictions.hasMoreElements(); ) {
@@ -1198,14 +1192,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
         LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::deleteUserLayoutNode(): " + subSelectString);
-        int layoutId;
+        int layoutId = -1;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
-            rs.next();
+          if ( rs.next() )
             layoutId = rs.getInt(1);
-            if (rs.wasNull()) {
-                layoutId = 0;
-            }
         } finally {
             rs.close();
         }
@@ -1257,7 +1248,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          Hashtable restrHash = nodeDesc.getRestrictions();
          if ( restrHash != null ) {
 
-          if ( fragmentId > 0 ) {
+          if ( fragmentId > 0 && layoutId < 0 ) {
 
            PreparedStatement  psFragmentRestr =
              con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS"+
@@ -1280,7 +1271,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             psFragmentRestr.close();
 
           // fragment ID is null
-          } else {
+          } else  if ( fragmentId <= 0 ){
 
            PreparedStatement  psRestr =
              con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS"+
@@ -1389,7 +1380,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
         //LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId = 0;
+        int layoutId = -1;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
             if ( rs.next() )
@@ -1622,7 +1613,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
 
          if (  CommonUtils.parseInt(node.getFragmentId()) > 0 && fragmentNodeId <= 0 )
-           addUserLayoutNode(userId,0,node,psAddFragmentNode,psAddFragmentRestriction,null,null,stmt);
+           addUserLayoutNode(userId,-1,node,psAddFragmentNode,psAddFragmentRestriction,null,null,stmt);
 
        } // End if
       } // End for
@@ -1797,16 +1788,21 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
         LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId = 0;
+        int layoutId = -1;
         rs = stmt.executeQuery(subSelectString);
         try {
-            if ( rs.next() )
-             layoutId = rs.getInt(1);
+            if ( rs.next() ) {
+              layoutId = rs.getInt(1);
+             if ( rs.wasNull() )
+              layoutId = -1;
+            }  
         } finally {
             rs.close();
         }
 
-       if (layoutId == 0) { // First time, grab the default layout for this user
+       System.out.println ( "layoutID="+layoutId);
+
+       if (layoutId < 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
           LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
