@@ -45,7 +45,20 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 
 /**
- * Manages locales on behalf of a user.
+ * Manages locales on behalf of a user. 
+ * This class currently keeps track of locales at the following levels:<br>
+ * <ol>
+ *   <li>User's locale preferences (associated with a user ID)</li>
+ *   <li>Browser's locale preferences (from the Accept-Language request header)</li>
+ *   <li>Session's locale preferences (set via the portal request parameter uP_locales)</li>
+ *   <li>Portal's locale preferences (set in portal.properties)</li>
+ * </ol>
+ * Eventually, this class will also keep track of locale preferences at
+ * the following levels:<br>
+ * <ol>
+ *   <li>Layout node's locale preferences</li>
+ *   <li>User profile's locale preferences</li>
+ * </ol>
  * @author Shoji Kajita <a href="mailto:">kajita@itc.nagoya-u.ac.jp</a>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
@@ -58,7 +71,6 @@ public class LocaleManager  {
     private static Locale[] portalLocales;
     private Locale[] sessionLocales;
     private Locale[] browserLocales;
-    private Locale localeForAdmin;
     private Locale[] userLocales;
 
     /**
@@ -114,19 +126,6 @@ public class LocaleManager  {
         String portalLocalesString = PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.portal_locales");
         return parseLocales(portalLocalesString);
     }    
-
-    /**
-     * This needs to be removed as soon as DbLoader is modified to
-     * depend on a parameter rather than the LocaleManager.localeForAdmin
-     * @return the admin locale
-     */
-    public Locale getLocaleForAdmin() {
-        if (localeForAdmin == null) {
-            String admin_locale = PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.admin_locale");
-            localeForAdmin = parseLocale(admin_locale);
-        }
-        return localeForAdmin;
-    }
 
     /**
      * Produces a sorted list of locales according to locale preferences
@@ -216,13 +215,13 @@ public class LocaleManager  {
     }
     
     /**
-     * Constructs a comma-delimited list of locales.
-     * This string could be parsed back into a Locale
+     * Constructs a comma-delimited list of locales
+     * that could be parsed back into a Locale
      * array with parseLocales(String localeStringList).
      * @param locales the list of locales
      * @return a string representing the list of locales
      */
-    public String toString(Locale[] locales) {
+    public String stringValueOf(Locale[] locales) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < locales.length; i++) {
             Locale locale = locales[i];
@@ -250,22 +249,22 @@ public class LocaleManager  {
         sb.append("-----------------------").append("\n");
         sb.append("Session locales: ");
         if (sessionLocales != null) {
-            sb.append(toString(sessionLocales));
+            sb.append(stringValueOf(sessionLocales));
         }
         sb.append("\n");
         sb.append("User locales: ");
         if (userLocales != null) {
-            sb.append(toString(userLocales));
+            sb.append(stringValueOf(userLocales));
         }
         sb.append("\n");
         sb.append("Browser locales: ");
         if (browserLocales != null) {
-            sb.append(toString(browserLocales));
+            sb.append(stringValueOf(browserLocales));
         }
         sb.append("\n");
         sb.append("Portal locales: ");
         if (portalLocales != null) {
-            sb.append(toString(portalLocales));
+            sb.append(stringValueOf(portalLocales));
         }
         sb.append("\n");
         sb.append("JVM locale: ");
@@ -276,7 +275,7 @@ public class LocaleManager  {
         sb.append("Sorted locales: ");
         Locale[] sortedLocales = getLocales();
         if (sortedLocales != null) {
-            sb.append(toString(sortedLocales));
+            sb.append(stringValueOf(sortedLocales));
         }
         sb.append("\n");
         return sb.toString();

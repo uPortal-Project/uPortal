@@ -166,6 +166,7 @@ public class DbLoader
 
         boolean usetable = false;
         boolean usedata  = false;
+        boolean useLocale  = false;
 
         for (int i = 0; i < args.length; i++) {
            //System.out.println("args["+i+"]: "+args[i]);
@@ -176,6 +177,10 @@ public class DbLoader
               } else if (usedata) {
                  PropertiesHandler.properties.setDataUri(args[i]);
                  usedata=false;
+              } else if (useLocale) {
+                 admin_locale = args[i];
+                 System.out.println("Using admin locale '" + admin_locale + "'");
+                 useLocale = false;
               }
            } else if (args[i].equals("-t")) {
               usetable = true;
@@ -198,16 +203,8 @@ public class DbLoader
            } else if (args[i].equals("-nP")) {
               populateTables = false;
            } else if (args[i].equals("-l")) {
-	      localeAware = true;
-	      try {
-		  admin_locale=PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.admin_locale");
-		  System.out.println("Using " + admin_locale + " based on admin_locale of 'properties/portal.properties'.");
-	      } catch (RuntimeException e) {
-		  System.out.println("DbLoader: " + e.getMessage());
-		  System.out.println("DbLoader: use en_US as admin_locale.");
-		  admin_locale = "en_US";
-	      }
-           } else {
+	          localeAware = true;
+              useLocale = true;
            }
         }
 
@@ -704,14 +701,14 @@ public class DbLoader
       public String getTablesUri() { return tablesUri; }
       public String getTablesXslUri() { return tablesXslUri; }
       public String getDataUri() {
-	  String ret=dataUri;
-	  if (localeAware == true && admin_locale != null) {
+    	  String ret = dataUri;
+          if (localeAware == true && admin_locale != null) {
+              // Switch to replaceAll when we can rely on JDK 1.4
+              // ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
               Perl5Util perl5Util = new Perl5Util();
-	      // ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
-              // replaceAll is introduced from JDK1.4
               ret = perl5Util.substitute("s/\\.xml/_" + admin_locale + ".xml" + "/g", ret);
-	  }
-	  return ret;
+          }
+    	  return ret;
       }
       public String getDataXslUri() { return dataXslUri; }
       public String getCreateScript() { return createScript; }
