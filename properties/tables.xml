@@ -364,6 +364,26 @@
   </table>
 
   <table>
+    <name>UP_USER_LOCALE</name>
+    <desc>Locale preferences for a user</desc>
+    <columns>
+      <column> <name>USER_ID</name>         <type>INTEGER</type>
+        <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>7</param>
+        <desc>User's locale preference</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>PRIORITY</name>        <type>INTEGER</type>
+        <desc>The order of preference for this locale</desc>
+      </column>
+    </columns>
+    <primary-key>USER_ID</primary-key>
+    <primary-key>LOCALE</primary-key>
+  </table>
+
+  <table>
     <name>UP_PERSON_DIR</name>
     <desc>Directory information for a given person, including the MD5 password. Emulates a simple external authentication service, like LDAP.</desc>
     <columns>
@@ -488,13 +508,40 @@
       <column> <name>UNREMOVABLE</name>      <type>VARCHAR</type> <param>1</param>
         <desc>Set to Y if folder or channel cannot be unsubscribed to or removed by user</desc>
       </column>
-      <column> <name>LOCALE</name>      <type>VARCHAR</type> <param>7</param>
-        <desc>Locale of this struct entry. Required for I18n. Ask Shoji.</desc>
-      </column>
     </columns>
     <primary-key>LAYOUT_ID</primary-key>
     <primary-key>USER_ID</primary-key>
     <primary-key>STRUCT_ID</primary-key>
+  </table>
+
+  <table>
+    <name>UP_LAYOUT_STRUCT_LOCALE</name>
+    <desc>Locale preferences for a layout struct node</desc>
+    <columns>
+      <column> <name>USER_ID</name>         <type>INTEGER</type>
+        <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>LAYOUT_ID</name>       <type>INTEGER</type>
+        <desc>Identifies a user's layout</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>NODE_ID</name>        <type>INTEGER</type>
+        <desc>Identifies a node in a user's layout</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>7</param>
+        <desc>User's locale preference</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>PRIORITY</name>        <type>INTEGER</type>
+        <desc>The order of preference for this locale</desc>
+      </column>
+    </columns>
+    <primary-key>USER_ID</primary-key>
+    <primary-key>LAYOUT_ID</primary-key>
+    <primary-key>NODE_ID</primary-key>
+    <primary-key>LOCALE</primary-key>
   </table>
 
   <table>
@@ -722,6 +769,31 @@
     </columns>
     <primary-key>USER_ID</primary-key>
     <primary-key>PROFILE_ID</primary-key>
+  </table>
+
+  <table>
+    <name>UP_USER_PROFILE_LOCALE</name>
+    <desc>Locale preferences for a user profile</desc>
+    <columns>
+      <column> <name>USER_ID</name>         <type>INTEGER</type>
+        <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>PROFILE_ID</name> <type>INTEGER</type>
+        <desc>Internal sequence id of a user's profile</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>7</param>
+        <desc>User's locale preference</desc>
+        <key>PK</key>
+      </column>
+      <column> <name>PRIORITY</name>        <type>INTEGER</type>
+        <desc>The order of preference for this locale</desc>
+      </column>
+    </columns>
+    <primary-key>USER_ID</primary-key>
+    <primary-key>PROFILE_ID</primary-key>
+    <primary-key>LOCALE</primary-key>
   </table>
 
   <table>
