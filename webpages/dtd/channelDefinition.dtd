@@ -33,7 +33,7 @@
 >
 <!ELEMENT controls EMPTY>
 <!ATTLIST controls
-	timeout (#PCDATA) 5000
+	timeout CDATA "5000"
 	minimized (true | false) "true"
 	detachable (true | false) "true"
 	editable (true | false) "true"
