@@ -55,7 +55,11 @@ public class LdapPersonAttributeDaoImpl implements PersonAttributeDao {
      * Map from LDAP attribute names to uPortal attribute names.
      */
     private Map ldapAttributesToPortalAttributes = new HashMap();
-    /** Track the set of attribute names, this lets us avoid creating the set every time getAttributeNames is called */
+    
+    /** 
+     * The Set of uPortal attribute names this instance will map. 
+     * This lets us avoid creating the Set every time getAttributeNames is called. 
+     */
     private Set attrNames = new HashSet();
 
 
@@ -242,16 +246,20 @@ public class LdapPersonAttributeDaoImpl implements PersonAttributeDao {
     }
     
     /**
-     * Create a set of the attribute names to avoid doing it for every getAttributeNames call
+     * Create and store a Set of the uPortal attribute names we will map.
+     * This allows us to avoid doing it for every getAttributeNames call.
      */
     private void updateAttrNameSet() {
-        this.attrNames.clear();
+        Set attributeNames = new HashSet();
         
-        for (final Iterator attrNameSets = this.ldapAttributesToPortalAttributes.values().iterator(); attrNameSets.hasNext(); ) {
+        for (final Iterator attrNameSets = 
+            this.ldapAttributesToPortalAttributes.values().iterator(); attrNameSets.hasNext(); ) {
+            
             final Set attrNameSet = (Set)attrNameSets.next();
             
-            this.attrNames.addAll(attrNameSet);
+            attributeNames.addAll(attrNameSet);
         }
+        this.attrNames = attributeNames;
     }
     
     /**
