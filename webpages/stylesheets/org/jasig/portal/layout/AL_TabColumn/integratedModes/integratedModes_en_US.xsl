@@ -888,7 +888,7 @@ Version $Revision$
     <a href="#">
       <img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="change language for this channel" title="change language for this channel" border="0"/>
     </a>
-    <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode} onClick="return confirm('Are you sure you want to delete this channel?')">
+    <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this channel?')">
       <img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="delete this channel" title="delete this channel" border="0"/>
     </a>
   </xsl:template>
@@ -1382,8 +1382,8 @@ Version $Revision$
                           <img alt="Change language for this tab" title="Change language for this tab" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
                         </a>
                         <xsl:if test="@unremovable='false'">
-                          <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this tab?')>
-                            <img alt="delete this tab" title="delete this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
+                          <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to delete this channel?')">
+        <img alt="delete this channel" title="delete this channel" src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" border="0"/>
                           </a>
                         </xsl:if>
                       </td>
@@ -2080,8 +2080,13 @@ Version $Revision$
             <a href="{$baseActionURL}?uP_fname=skinselector">Skins</a>
             <span>&#160;|<xsl:text> </xsl:text></span>
             <a href="javascript:alert('[Languages] function is under construction')">Layout Languages</a>
-            <span>&#160;|<xsl:text> </xsl:text></span>
-            <a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
+
+						<!-- Profiles action temporarily removed
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
+						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
+						-->
+
             <xsl:if test="alternateLayouts">
               <span>&#160;|<xsl:text> </xsl:text></span>Manage:&#160;<select name="select" class="uportal-input-text uportal-background-content"><option selected="selected">My layout</option><xsl:for-each select="alternateLayouts/alternate"><option><xsl:value-of select="@name"/></option></xsl:for-each></select>
               <!--<option><xsl:value-of select="New fragment"/></option>--><input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/>
@@ -2595,7 +2600,7 @@ Version $Revision$
                     </td>
 
                     <td>
-                      <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode} onClick="return confirm('Are you sure you want to delete this column?')">
+                      <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this column?')">
                         <img src="{$mediaPathIcons}/columncan.gif" width="28" height="25" alt="delete this column" title="delete this column" border="0"/>
                       </a>
                     </td>

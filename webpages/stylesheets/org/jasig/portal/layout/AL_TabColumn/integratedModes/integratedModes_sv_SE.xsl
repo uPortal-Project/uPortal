@@ -2080,8 +2080,13 @@ Version $Revision$
             <a href="{$baseActionURL}?uP_fname=skinselector">Skins</a>
             <span>&#160;|<xsl:text> </xsl:text></span>
             <a href="javascript:alert('[Languages] function is under construction')">Layout Languages</a>
-            <span>&#160;|<xsl:text> </xsl:text></span>
-            <a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
+
+						<!-- Profiles action temporarily removed
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
+						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
+						-->
+
             <xsl:if test="alternateLayouts">
               <span>&#160;|<xsl:text> </xsl:text></span>Manage:&#160;<select name="select" class="uportal-input-text uportal-background-content"><option selected="selected">My layout</option><xsl:for-each select="alternateLayouts/alternate"><option><xsl:value-of select="@name"/></option></xsl:for-each></select>
               <!--<option><xsl:value-of select="New fragment"/></option>--><input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/>

@@ -2035,16 +2035,17 @@ Version $Revision$
 						<a href="{$baseActionURL}?uP_fname=contentsubscriber">Add&#160;Content</a>
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
-						<a href="{$baseActionURL}?uP_fname=portal/channelmanager/general">Publish&#160;Content</a>
-						<span>&#160;|<xsl:text> </xsl:text>
-						</span>
 						<a href="{$baseActionURL}?uP_fname=skinselector">Skins</a>
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
 						<a href="javascript:alert('[Languages] function is under construction')">Layout Languages</a>
+						
+						<!--  Profiles action temporarily removed
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
+						-->
+
 						<xsl:if test="alternateLayouts">
 							<span>&#160;|<xsl:text> </xsl:text>
 							</span>Manage:&#160;<select name="select" class="uportal-input-text uportal-background-content">
