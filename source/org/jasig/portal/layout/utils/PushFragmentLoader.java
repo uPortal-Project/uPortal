@@ -50,6 +50,9 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.layout.IAggregatedUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.IUserLayoutStore;
@@ -142,7 +145,8 @@ public class PushFragmentLoader {
         DbCleaner.fragmentNames = filter.getFragmentNames();
         DbCleaner.cleanTables();
 
-        System.out.println("DEBUG: done.");
+        System.out.println("DEBUG: done");
+        System.exit(0);
     }
 
 
@@ -290,16 +294,21 @@ public class PushFragmentLoader {
         String groupUri;
         String groupData=null;
         private Vector fragmentNames;
-        IAggregatedUserLayoutStore layoutStore = null;
+        private static IAggregatedUserLayoutStore layoutStore = null;
+        private static IChannelRegistryStore channelStore = null;
 
         public ConfigFilter(ContentHandler ch,Map rMap) throws PortalException {
             super(ch);
             this.rMap=rMap;
             fragmentNames= new Vector();
-            IUserLayoutStore layoutStoreImpl = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-            if ( layoutStoreImpl == null || !(layoutStoreImpl instanceof IAggregatedUserLayoutStore) )
+            if ( layoutStore == null ) {
+             IUserLayoutStore layoutStoreImpl = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+             if ( layoutStoreImpl == null || !(layoutStoreImpl instanceof IAggregatedUserLayoutStore) )
               throw new PortalException ( "The user layout store is NULL or must implement IAggregatedUserLayoutStore!" );
-            layoutStore =  (IAggregatedUserLayoutStore) layoutStoreImpl;
+             layoutStore =  (IAggregatedUserLayoutStore) layoutStoreImpl;
+            }
+            if ( channelStore == null )
+             channelStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
         }
 
         public Vector getFragmentNames() {
@@ -324,7 +333,7 @@ public class PushFragmentLoader {
 
             AttributesImpl ai=new AttributesImpl(atts);
 
-             // Adding the fragment id to the vector
+             // Adding the fragment name to the vector
             if ( qName.equals("fragment") ) {
              String name = atts.getValue("name");
              if ( !fragmentNames.contains(name) )
@@ -333,6 +342,15 @@ public class PushFragmentLoader {
               ai.addAttribute(uri,"id","id","CDATA",layoutStore.getNextFragmentId());
              } catch ( PortalException pe ) {
                  throw new SAXException(pe.getMessage());
+               }
+            } // Getting the channel ID by the fname
+            else if ( qName.equals("channel") ) {
+             String fname = atts.getValue("fname");
+             try {
+              ChannelDefinition chanDef = channelStore.getChannelDefinition(fname);
+              ai.addAttribute(uri,"id","id","CDATA",chanDef.getId()+"");
+             } catch ( Exception e ) {
+                 throw new SAXException(e.getMessage());
                }
             }
 

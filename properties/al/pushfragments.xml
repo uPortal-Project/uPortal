@@ -13,11 +13,11 @@
 		</restrictions>
 		<folder name="The push fragment folder" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
-				<channel id="11" immutable="Y" unremovable="Y" hidden="N"/>
-				<channel id="12" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="word-of-the-day" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="salon.com" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
-				<channel id="13" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="motley-fool" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 		</folder>
 	</fragment>
