@@ -15,17 +15,17 @@
 <xsl:template match="layout">
    <layout>
     <header>
-      <xsl:for-each select="descendant::folder[attribute::type='header']">
-	<xsl:copy-of select="./"/>
+      <xsl:for-each select="child::folder[attribute::type='header']">
+	<xsl:copy-of select=".//channel"/>
       </xsl:for-each>
     </header>
     <xsl:call-template name="tabList"/>
     <content>
-     <xsl:apply-templates/>
+     <xsl:apply-templates select="folder[attribute::type='regular']"/>
     </content>
     <footer>
-      <xsl:for-each select="descendant::folder[attribute::type='footer']">
-	<xsl:copy-of select="./"/>
+      <xsl:for-each select="child::folder[attribute::type='footer']">
+	<xsl:copy-of select=".//channel"/>
       </xsl:for-each>
     </footer>
    </layout>    
@@ -50,7 +50,8 @@
 </navigation>
 </xsl:template>
 
-<xsl:template match="folder[attribute::type='regular']"><xsl:if test="$activeTab=@ID">
+<xsl:template match="folder">
+<xsl:if test="$activeTab=@ID">
 <xsl:if test="child::folder">
 <xsl:for-each select="folder">
   <column>
