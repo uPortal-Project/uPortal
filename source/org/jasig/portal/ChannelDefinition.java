@@ -35,6 +35,9 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.IUPortalDocument;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -170,7 +173,17 @@ public class ChannelDefinition implements IBasicEntity {
   private Element getBase(Document doc, String idTag, String chanClass,
     boolean editable, boolean hasHelp, boolean  hasAbout) {
     Element channel = doc.createElement("channel");
-    ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(idTag, channel);
+    
+    if (doc instanceof IUPortalDocument) {
+      ((IUPortalDocument)doc).putIdentifier(idTag, channel);
+    } else {
+      StringBuffer msg = new StringBuffer(128);
+      msg.append("ChannelDefinition::getBase() : ");
+      msg.append("Document does not implement IUPortalDocument, ");
+      msg.append("so element caching cannot be performed.");
+      LogService.log(LogService.ERROR, msg.toString());
+    }
+
     channel.setAttribute("ID", idTag);
     channel.setAttribute("chanID", id + "");
     channel.setAttribute("timeout", chanTimeout + "");

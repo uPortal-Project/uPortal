@@ -46,8 +46,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xerces.parsers.DOMParser;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
@@ -55,12 +53,21 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.IUPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.sax.SAXSource;
+
 /**
  * SQL implementation for the 2.x relational database model
  * @author George Lindholm
@@ -135,7 +142,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     public int getChildId () {return childId;}
     public int getChanId () {return chanId;}
 
-    public Element getStructureDocument(DocumentImpl doc) throws Exception {
+    public Element getStructureDocument(Document doc) throws Exception {
       Element structure = null;
       if (isChannel()) {
         ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
@@ -157,7 +164,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
       } else {
         structure = doc.createElement("folder");
-        doc.putIdentifier(folderPrefix + structId, structure);
+        ((IUPortalDocument)doc).putIdentifier(folderPrefix+structId, structure);
         structure.setAttribute("ID", folderPrefix + structId);
         structure.setAttribute("name", name);
         structure.setAttribute("type", (type != null ? type : "regular"));
@@ -347,9 +354,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    */
   public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
-      DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
-      Document stylesheetDescriptionXML = parser.getDocument();
+      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
       String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
       // should thrown an exception
       if (ssName == null)
@@ -398,9 +403,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    */
   public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
     try {
-      DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
-      Document stylesheetDescriptionXML = parser.getDocument();
+      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
       StructureStylesheetDescription fssd = new StructureStylesheetDescription();
       String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
       String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
@@ -419,6 +422,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       updateStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
+e.printStackTrace();
       LogService.log(LogService.DEBUG, e);
       return  false;
     }
@@ -435,9 +439,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   public Integer addStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
     // need to read in the description file to obtain information such as name, word description and media list
     try {
-      DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
-      Document stylesheetDescriptionXML = parser.getDocument();
+      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
       StructureStylesheetDescription fssd = new StructureStylesheetDescription();
       String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
       String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
@@ -472,9 +474,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   public Integer addThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
     // need to read iN the description file to obtain information such as name, word description and mime type list
     try {
-      DOMParser parser = new DOMParser();
-      parser.parse(new InputSource(ResourceLoader.getResourceAsStream(this.getClass(),stylesheetDescriptionURI)));
-      Document stylesheetDescriptionXML = parser.getDocument();
+      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
       LogService.log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet name = " + this.getName(stylesheetDescriptionXML));
       LogService.log(LogService.DEBUG, "RDBMCoreStylesheetDescriptionStore::addThemeStylesheetDescription() : stylesheet description = " + this.getDescription(stylesheetDescriptionXML));
       String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
@@ -569,7 +569,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * @param ap
    * @exception java.sql.SQLException
    */
-   protected final void createLayout (HashMap layoutStructure, DocumentImpl doc,
+   protected final void createLayout (HashMap layoutStructure, Document doc,
         Element root, int structId) throws java.sql.SQLException, Exception {
       while (structId != 0) {
         if (DEBUG>1) {
@@ -597,6 +597,25 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   public void deleteUserProfile(IPerson person, int profileId) throws Exception {
     int userId = person.getID();
     deleteUserProfile(userId,profileId);
+  }
+
+  private Document getDOM(String uri) throws Exception {
+    DOMResult result = new DOMResult();
+    SAXSource source = new SAXSource(new InputSource(
+      ResourceLoader.getResourceAsStream(this.getClass(), uri)));
+    TransformerFactory tFactory = TransformerFactory.newInstance();
+    Transformer emptytr = tFactory.newTransformer();
+    emptytr.transform(source, result);
+
+    // need to return a Document
+    Node node = result.getNode();
+    if (node instanceof Document) {
+      return (Document)node;
+    }
+
+    Document dom = DocumentFactory.getNewDocument();
+    dom.appendChild(dom.importNode(node, true));
+    return dom;
   }
 
   private void deleteUserProfile(int userId, int profileId) throws Exception {
@@ -1338,7 +1357,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     Node name = null;
     for (int i = names.getLength() - 1; i >= 0; i--) {
       name = names.item(i);
-      if (name.getParentNode().getLocalName().equals("stylesheetdescription"))
+      if (name.getParentNode().getNodeName().equals("stylesheetdescription"))
         break;
       else
         name = null;
@@ -1358,7 +1377,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     for (int i = names.getLength() - 1; i >= 0; i--) {
       name = names.item(i);
 
-      if (name.getParentNode().getLocalName().equals("stylesheetdescription"))
+      if (name.getParentNode().getNodeName().equals("stylesheetdescription"))
         break;
       else
         name = null;
@@ -1377,7 +1396,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     Node description = null;
     for (int i = descriptions.getLength() - 1; i >= 0; i--) {
       description = descriptions.item(i);
-      if (description.getParentNode().getLocalName().equals("stylesheetdescription"))
+      if (description.getParentNode().getNodeName().equals("stylesheetdescription"))
         break;
       else
         description = null;
@@ -1396,7 +1415,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     Node parametersNode = null;
     for (int i = parametersNodes.getLength() - 1; i >= 0; i--) {
       parametersNode = parametersNodes.item(i);
-      if (parametersNode.getParentNode().getLocalName().equals("stylesheetdescription"))
+      if (parametersNode.getParentNode().getNodeName().equals("stylesheetdescription"))
         break;
       else
         parametersNode = null;
@@ -1405,7 +1424,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       NodeList children = parametersNode.getChildNodes();
       for (int i = children.getLength() - 1; i >= 0; i--) {
         Node child = children.item(i);
-        if (child.getNodeType() == Node.ELEMENT_NODE && child.getLocalName().equals("parameter")) {
+        if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("parameter")) {
           Element parameter = (Element)children.item(i);
           // process a <parameter> node
           String name = parameter.getAttribute("name");
@@ -1415,10 +1434,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           for (int j = pchildren.getLength() - 1; j >= 0; j--) {
             Node pchild = pchildren.item(j);
             if (pchild.getNodeType() == Node.ELEMENT_NODE) {
-              if (pchild.getLocalName().equals("defaultvalue")) {
+              if (pchild.getNodeName().equals("defaultvalue")) {
                 defaultvalue = this.getTextChildNodeValue(pchild);
               }
-              else if (pchild.getLocalName().equals("description")) {
+              else if (pchild.getNodeName().equals("description")) {
                 description = this.getTextChildNodeValue(pchild);
               }
             }
@@ -1437,7 +1456,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     Node folderattributesNode = null;
     for (int i = folderattributesNodes.getLength() - 1; i >= 0; i--) {
       folderattributesNode = folderattributesNodes.item(i);
-      if (folderattributesNode.getParentNode().getLocalName().equals("stylesheetdescription"))
+      if (folderattributesNode.getParentNode().getNodeName().equals("stylesheetdescription"))
         break;
       else
         folderattributesNode = null;
@@ -1446,7 +1465,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       NodeList children = folderattributesNode.getChildNodes();
       for (int i = children.getLength() - 1; i >= 0; i--) {
         Node child = children.item(i);
-        if (child.getNodeType() == Node.ELEMENT_NODE && child.getLocalName().equals("attribute")) {
+        if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("attribute")) {
           Element attribute = (Element)children.item(i);
           // process a <attribute> node
           String name = attribute.getAttribute("name");
@@ -1456,10 +1475,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           for (int j = pchildren.getLength() - 1; j >= 0; j--) {
             Node pchild = pchildren.item(j);
             if (pchild.getNodeType() == Node.ELEMENT_NODE) {
-              if (pchild.getLocalName().equals("defaultvalue")) {
+              if (pchild.getNodeName().equals("defaultvalue")) {
                 defaultvalue = this.getTextChildNodeValue(pchild);
               }
-              else if (pchild.getLocalName().equals("description")) {
+              else if (pchild.getNodeName().equals("description")) {
                 description = this.getTextChildNodeValue(pchild);
               }
             }
@@ -1477,7 +1496,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     Node channelattributesNode = null;
     for (int i = channelattributesNodes.getLength() - 1; i >= 0; i--) {
       channelattributesNode = channelattributesNodes.item(i);
-      if (channelattributesNode.getParentNode().getLocalName().equals("stylesheetdescription"))
+      if (channelattributesNode.getParentNode().getNodeName().equals("stylesheetdescription"))
         break;
       else
         channelattributesNode = null;
@@ -1486,7 +1505,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       NodeList children = channelattributesNode.getChildNodes();
       for (int i = children.getLength() - 1; i >= 0; i--) {
         Node child = children.item(i);
-        if (child.getNodeType() == Node.ELEMENT_NODE && child.getLocalName().equals("attribute")) {
+        if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("attribute")) {
           Element attribute = (Element)children.item(i);
           // process a <attribute> node
           String name = attribute.getAttribute("name");
@@ -1496,10 +1515,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           for (int j = pchildren.getLength() - 1; j >= 0; j--) {
             Node pchild = pchildren.item(j);
             if (pchild.getNodeType() == Node.ELEMENT_NODE) {
-              if (pchild.getLocalName().equals("defaultvalue")) {
+              if (pchild.getNodeName().equals("defaultvalue")) {
                 defaultvalue = this.getTextChildNodeValue(pchild);
               }
-              else if (pchild.getLocalName().equals("description")) {
+              else if (pchild.getNodeName().equals("description")) {
                 description = this.getTextChildNodeValue(pchild);
               }
             }
@@ -1585,7 +1604,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     RDBMServices.setAutoCommit(con, false);          // May speed things up, can't hurt
 
     try {
-      DocumentImpl doc = new DocumentImpl();
+      Document doc = DocumentFactory.getNewDocument();
       Element root = doc.createElement("layout");
       Statement stmt = con.createStatement();
       // A separate statement is needed so as not to interfere with ResultSet
@@ -2928,6 +2947,4 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     this.setStructureStylesheetUserPreferences(person, profile.getProfileId(), up.getStructureStylesheetUserPreferences());
     this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), up.getThemeStylesheetUserPreferences());
   }
-
 }
-

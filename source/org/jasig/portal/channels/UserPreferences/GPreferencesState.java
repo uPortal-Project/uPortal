@@ -515,7 +515,7 @@ class GPreferencesState extends BaseState {
 
     public void renderXML(ContentHandler out) throws PortalException {
       // construct gpref XML
-      Document doc = new org.apache.xerces.dom.DocumentImpl();
+      Document doc = DocumentFactory.getNewDocument();
       Element edEl = doc.createElement("gpref");
       StructureStylesheetUserPreferences ssup = context.getUserPreferences().getStructureStylesheetUserPreferences();
       Element spEl = doc.createElement("structureparameters");

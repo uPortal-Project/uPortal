@@ -37,7 +37,6 @@ package org.jasig.portal.layout;
 
 import java.util.List;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
@@ -151,7 +150,7 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
 
      // temp methods, to be removed (getDOM() might actually stay)
      // This method should be removed whenever it becomes possible
-    public void setUserLayoutDOM(DocumentImpl doc) {}
+    public void setUserLayoutDOM(Document doc) {}
 
     // This method should be removed whenever it becomes possible
     public Document getUserLayoutDOM() throws PortalException {

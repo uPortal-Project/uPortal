@@ -40,7 +40,6 @@ import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xpath.XPathAPI;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -119,7 +118,7 @@ public class ChannelRegistryManager {
     }
 
     // Clone the original registry document so that it doesn't get modified
-    return XML.cloneDocument((DocumentImpl)channelRegistry);
+    return (Document)channelRegistry.cloneNode(true);
   }
 
   /**
@@ -161,14 +160,14 @@ public class ChannelRegistryManager {
     doc.appendChild(registry);
 
     IEntityGroup channelCategoriesGroup = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
-    processGroupsRecursively(channelCategoriesGroup, registry);
+    processGroupsRecursively(channelCategoriesGroup, doc, registry);
 
     return doc;
   }
 
-  private static void processGroupsRecursively(IEntityGroup group, Element parentGroup) throws Exception {
+  private static void processGroupsRecursively(IEntityGroup group,
+    Document owner, Element parentGroup) throws Exception {
     Date now = new Date();
-    Document registryDoc = parentGroup.getOwnerDocument();
     Iterator iter = group.getMembers();
     while (iter.hasNext()) {
       IGroupMember member = (IGroupMember)iter.next();
@@ -179,12 +178,12 @@ public class ChannelRegistryManager {
         String description = memberGroup.getDescription();
 
         // Create category element and append it to its parent
-        Element categoryE = registryDoc.createElement("category");
+        Element categoryE = owner.createElement("category");
         categoryE.setAttribute("ID", "cat" + key);
         categoryE.setAttribute("name", name);
         categoryE.setAttribute("description", description);
         parentGroup.appendChild(categoryE);
-        processGroupsRecursively(memberGroup, categoryE);
+        processGroupsRecursively(memberGroup, owner, categoryE);
       } else {
         IEntity channelDefMember = (IEntity)member;
         int channelPublishId = CommonUtils.parseInt(channelDefMember.getKey());
@@ -194,8 +193,8 @@ public class ChannelRegistryManager {
           // Make sure channel is approved
           Date approvalDate = channelDef.getApprovalDate();
           if (approvalDate != null && approvalDate.before(now)) {
-            Element channelDefE = channelDef.getDocument(registryDoc, "chan" + channelPublishId);
-            channelDefE = (Element)registryDoc.importNode(channelDefE, true);
+            Element channelDefE = channelDef.getDocument(owner, "chan" + channelPublishId);
+            channelDefE = (Element)owner.importNode(channelDefE, true);
             parentGroup.appendChild(channelDefE);
           }
          }
@@ -550,7 +549,7 @@ public class ChannelRegistryManager {
     }
 
     // Clone the original channel types document so that it doesn't get modified
-    return XML.cloneDocument((DocumentImpl)channelTypes);
+    return (Document)channelTypes.cloneNode(true);
   }
 
   /**
@@ -612,7 +611,7 @@ public class ChannelRegistryManager {
     }
 
     // Clone the original CPD document so that it doesn't get modified
-    return XML.cloneDocument((DocumentImpl)cpd);
+    return (Document)cpd.cloneNode(true);
   }
 }
 

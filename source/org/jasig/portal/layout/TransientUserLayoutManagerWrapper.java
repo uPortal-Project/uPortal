@@ -41,7 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
@@ -50,6 +49,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.SAX2FilterImpl;
+import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -108,7 +108,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
         IUserLayoutNodeDescription node = this.getNode(nodeId);
         if ( null != node ){
-            DocumentImpl doc = new DocumentImpl();
+            Document doc = DocumentFactory.getNewDocument();
             try{
                 Element e = node.getXML(doc);
                 doc.appendChild(e);

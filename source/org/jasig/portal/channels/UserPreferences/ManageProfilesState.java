@@ -458,7 +458,7 @@ class ManageProfilesState extends BaseState {
  
     public void renderXML(ContentHandler out) throws PortalException {
       // construct gpref XML
-      Document doc = new org.apache.xerces.dom.DocumentImpl();
+      Document doc = DocumentFactory.getNewDocument();
       Element profileEl = doc.createElement("profile");
       if (this.modified) {
           profileEl.setAttribute("modified", "true");

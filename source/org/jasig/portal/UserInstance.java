@@ -281,7 +281,6 @@ public class UserInstance implements HttpSessionBindingListener {
                         // see if the new detach traget is valid
                         try {
                             rElement = ulm.getNode(newRootNodeId);
-                            //                            rElement = userLayout.getElementById(newRootNodeId);
                         } catch (PortalException e) {
                             rElement=null;
                         }

@@ -32,59 +32,45 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jasig.portal.services.dom;
 
-package  org.jasig.portal.utils;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import java.lang.reflect.Constructor;
 
 /**
- * Produces an empty Document implementation
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
+ * @author Nick Bolton, nbolton@unicon.net
  * @version $Revision$
  */
-public class DocumentFactory {
-  /**
-   * Returns a new copy of a Document implementation. This will
-   * return an <code>IUPortalDocument</code> implementation.
-   * @return an empty org.w3c.dom.Document implementation
-   */
-  public static Document getNewDocument() {
-    IUPortalDocument doc = null;
+public class DOMInitServiceFactory {
+
+  private static IDOMInitService service = null;
+
+  private static String className = null;
+
+  static {
     try {
-        String className = PropertiesManager.getProperty(
-          "org.jasig.portal.utils.IUPortalDocument.implementation");
-        doc = (IUPortalDocument)Class.forName(className).newInstance();
-    } catch (Exception e) {
-      LogService.log(LogService.ERROR, e);
-      throw new RuntimeException(
-        "org.jasig.portal.utils.DocumentFactory could not create new " +
-        "IUPortalDocument: " + e.getMessage());
-    }
-    return doc;
+      // Retrieve the class name of the concrete IDOMInitService implementation
+      className = PropertiesManager.getProperty("org.jasig.portal.services.dom.DOMInitServiceFactory.implementation");
+    } catch (Exception e ) {}
   }
 
   /**
-   * Returns a new copy of a Document implementation.
-   * @return an empty org.w3c.dom.Document implementation
+   * Returns an instance of the IDOMInitService specified in portal.properties.
+   * If the property doesn't exist or is empty, null is returned.
+   * @return an IDOMInitService implementation
    */
-  static Document __getNewDocument() {
-    Document doc = null;
+  public static IDOMInitService getService() {
     try {
-      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-      docBuilderFactory.setNamespaceAware(true);
-      doc = docBuilderFactory.newDocumentBuilder().newDocument();
-    } catch (ParserConfigurationException pce) {
-      LogService.log(LogService.ERROR, pce);
-      throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new Document: " + pce.getMessage());
+      if (className == null || "".equals(className)) return null;
+
+      if (service == null) {
+        service = (IDOMInitService)Class.forName(className).newInstance();
+      }
+      return service;
+    } catch (Exception e) {
+      LogService.log(LogService.ERROR, "DOMInitServiceFactory: Could not instantiate " + className, e);
     }
-    return doc;
+    return service;
   }
 }

@@ -49,11 +49,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import org.apache.xpath.XPathAPI;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.IUPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,7 +73,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected IUserLayoutStore store=null;
     protected Set listeners=new HashSet();
 
-    protected DocumentImpl userLayoutDocument=null;
+    protected Document userLayoutDocument=null;
 
     protected static Random rnd=new Random();
     protected String cacheKey="initialKey";
@@ -101,7 +101,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
 
     private void setUserLayoutDOM(Document doc) {
-        this.userLayoutDocument= (DocumentImpl) doc;
+        this.userLayoutDocument=doc;
         this.updateCacheKey();
     }
 
@@ -125,6 +125,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             throw new PortalException("User layout has not been initialized");
         } else {
             Node rootNode=ulm.getElementById(nodeId);
+
             if(rootNode==null) {
                 throw new PortalException("A requested root node (with id=\""+nodeId+"\") is not in the user layout.");
             } else {
@@ -158,7 +159,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             throw new PortalException("Store implementation has not been set.");
         } else {
             try {
-                DocumentImpl uli=(DocumentImpl)this.getLayoutStore().getUserLayout(this.owner,this.profile);
+                Document uli=this.getLayoutStore().getUserLayout(this.owner,this.profile);
                 if(uli!=null) {
                     this.setUserLayoutDOM(uli);
                     clearDirtyFlag();
@@ -212,6 +213,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
         // find an element with a given id
         Element element = (Element) ulm.getElementById(nodeId);
+
         if(element==null) {
             throw new PortalException("Element with ID=\""+nodeId+"\" doesn't exist.");
         }
@@ -242,7 +244,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 }
             }
 
-            DocumentImpl ulm=this.userLayoutDocument;
+            Document ulm=this.userLayoutDocument;
             Element childElement=node.getXML(this.getUserLayoutDOM());
             Element parentElement=(Element)ulm.getElementById(parentId);
             if(nextSiblingId==null) {
@@ -253,7 +255,17 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
             markLayoutDirty();
             // register element id
-            ulm.putIdentifier(node.getId(),childElement);
+            if (ulm instanceof IUPortalDocument) {
+                ((IUPortalDocument)ulm).putIdentifier(
+                    node.getId(),childElement);
+            } else {
+                StringBuffer msg = new StringBuffer(128);
+                msg.append("SimpleUserLayoutManager::addNode() : ");
+                msg.append("User Layout does not implement IUPortalDocument, ");
+                msg.append("so element caching cannot be performed.");
+                LogService.log(LogService.ERROR, msg.toString());
+            }
+
             this.updateCacheKey();
 
             // inform the listeners
@@ -371,7 +383,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             String nextSiblingId=getNextSiblingId(nodeId);
             Element nextSibling=null;
             if(nextSiblingId!=null) {
-                DocumentImpl ulm=this.userLayoutDocument;
+                Document ulm=this.userLayoutDocument;
                 nextSibling=ulm.getElementById(nextSiblingId);
             }
 
@@ -381,7 +393,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 IUserLayoutChannelDescription oldChannel=(IUserLayoutChannelDescription) oldNode;
                 if(node instanceof IUserLayoutChannelDescription) {
                     isChannel=true;
-                    DocumentImpl ulm=this.userLayoutDocument;
+                    Document ulm=this.userLayoutDocument;
                     // generate new XML Element
                     Element newChannelElement=node.getXML(ulm);
                     Element oldChannelElement=(Element)ulm.getElementById(nodeId);
@@ -389,7 +401,17 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.removeChild(oldChannelElement);
                     parent.insertBefore(newChannelElement,nextSibling);
                     // register new child instead
-                    ulm.putIdentifier(node.getId(),newChannelElement);
+                    if (ulm instanceof IUPortalDocument) {
+                        ((IUPortalDocument)ulm).putIdentifier(
+                            node.getId(),newChannelElement);
+                    } else {
+                        StringBuffer msg = new StringBuffer(128);
+                        msg.append("SimpleUserLayoutManager::updateNode() : ");
+                        msg.append("User Layout does not implement ");
+                        msg.append("IUPortalDocument, ");
+                        msg.append("so element caching cannot be performed.");
+                        LogService.log(LogService.ERROR, msg.toString());
+                    }
 
                     // inform the listeners
                     LayoutEvent ev=new LayoutEvent(this,node);
@@ -404,7 +426,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                  // must be a folder
                 IUserLayoutFolderDescription oldFolder=(IUserLayoutFolderDescription) oldNode;
                 if(node instanceof IUserLayoutFolderDescription) {
-                    DocumentImpl ulm=this.userLayoutDocument;
+                    Document ulm=this.userLayoutDocument;
                     // generate new XML Element
                     Element newFolderElement=node.getXML(ulm);
                     Element oldFolderElement=(Element)ulm.getElementById(nodeId);
@@ -424,7 +446,17 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.removeChild(oldFolderElement);
                     parent.insertBefore(newFolderElement,nextSibling);
                     // register new child instead
-                    ulm.putIdentifier(node.getId(),newFolderElement);
+                    if (ulm instanceof IUPortalDocument) {
+                        ((IUPortalDocument)ulm).putIdentifier(
+                            node.getId(), newFolderElement);
+                    } else {
+                        StringBuffer msg = new StringBuffer(128);
+                        msg.append("SimpleUserLayoutManager::updateNode() : ");
+                        msg.append("User Layout does not implement ");
+                        msg.append("IUPortalDocument, ");
+                        msg.append("so element caching cannot be performed.");
+                        LogService.log(LogService.ERROR, msg.toString());
+                    }
 
                     // inform the listeners
                     LayoutEvent ev=new LayoutEvent(this,node);
