@@ -35,6 +35,7 @@
 
 package org.jasig.portal;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 import org.w3c.dom.Document;
@@ -61,7 +62,7 @@ public class ChannelDefinition {
   private boolean chanHasAbout;
   private String chanName = "";
   private String chanFName = "";
-  private ArrayList parameters;
+  private List parameters;
 
   /**
    * Describes a published channel's parameter.
@@ -122,6 +123,8 @@ public class ChannelDefinition {
     this.chanHasAbout = chanHasAbout;
     this.chanName = chanName;
     this.chanFName =chanFName;
+
+    this.parameters = new ArrayList();
   }
 
   // Getter methods
@@ -143,10 +146,6 @@ public class ChannelDefinition {
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.toArray(new ChannelParameter[0]); }
 
   public void addParameter(String name, String value, String override) {
-    if (parameters == null) {
-      parameters = new ArrayList(5);
-    }
-
     parameters.add(new ChannelParameter(name, value, override));
   }
 
