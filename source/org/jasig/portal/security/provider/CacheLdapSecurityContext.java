@@ -61,6 +61,7 @@ import org.jasig.portal.services.LogService;
  * @author Russell Tokuyama (University of Hawaii)
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.1.3, use {@link SimpleLdapSecurityContext} chained with {@link CacheSecurityContext} instead
  */
 public class CacheLdapSecurityContext extends ChainingSecurityContext implements ISecurityContext {
   // Attributes that we're interested in.
