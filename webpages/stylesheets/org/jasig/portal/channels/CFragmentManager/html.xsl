@@ -278,7 +278,7 @@ Version $Revision$
         <table cellpadding="2" cellspacing="0" border="0" width="100%">
             <tr>
                 <td class="uportal-background-content" align="left" valign="bottom" nowrap="nowrap">
-                    <span class="uportal-channel-table-header">Fragment Managment: <xsl:value-of select="//fragment[ID=$uPcFM_selectedID]/name"/> properties</span>
+                    <span class="uportal-channel-table-header">Fragment Managment: <xsl:value-of select="//fragment[@ID=$uPcFM_selectedID]/name"/> properties</span>
                 </td>
             </tr>
             <tr>
@@ -315,7 +315,7 @@ Version $Revision$
                                             </td>
                                             <td align="left" valign="top" nowrap="nowrap">
                                                 <input type="radio" name="fragment_type" value="pulled">
-                                                    <xsl:if test="//fragment[ID=$uPcFM_selectedID]/type='pulled'">
+                                                    <xsl:if test="//fragment[@ID=$uPcFM_selectedID]/type='pulled'">
                                                         <xsl:attribute name="checked">checked</xsl:attribute>
                                                     </xsl:if>
                                                 </input>
@@ -331,7 +331,7 @@ Version $Revision$
                                             </td>
                                             <td align="left" valign="top" nowrap="nowrap">
                                                 <input type="radio" name="fragment_type" value="pushed">
-                                                    <xsl:if test="//fragment[ID=$uPcFM_selectedID]/type='pushed'">
+                                                    <xsl:if test="//fragment[@ID=$uPcFM_selectedID]/type='pushed'">
                                                         <xsl:attribute name="checked">checked</xsl:attribute>
                                                     </xsl:if>
                                                 </input>
@@ -358,13 +358,13 @@ Version $Revision$
                                             <td>
                                                 <!-- The Name of the Fragment will go here -->
                                                 <xsl:choose>
-                                                    <xsl:when test=" //fragment[ID=$uPcFM_selectedID]/rootNodeID/@immutable = 'Y' ">
+                                                    <xsl:when test=" //fragment[@ID=$uPcFM_selectedID]/rootNodeID/@immutable = 'Y' ">
                                                         <span class="uportal-input-text">
-                                                            <xsl:value-of select="//fragment[ID=$uPcFM_selectedID]/name"/>
+                                                            <xsl:value-of select="//fragment[@ID=$uPcFM_selectedID]/name"/>
                                                         </span>
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                        <input name="fragment_name" type="text" class="uportal-input-text" value="{//fragment[ID=$uPcFM_selectedID]/name}" size="30" maxlength="1000"/>
+                                                        <input name="fragment_name" type="text" class="uportal-input-text" value="{//fragment[@ID=$uPcFM_selectedID]/name}" size="30" maxlength="1000"/>
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                             </td>
@@ -388,7 +388,7 @@ Version $Revision$
                                             </td>
                                             <td>
                                                 <!-- The Name of the Fragment will go here -->
-                                                <input name="fragment_fname" type="text" class="uportal-input-text" value="{//fragment[ID=$uPcFM_selectedID]/fname}" size="30" maxlength="1000"/>
+                                                <input name="fragment_fname" type="text" class="uportal-input-text" value="{//fragment[@ID=$uPcFM_selectedID]/fname}" size="30" maxlength="1000"/>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
@@ -411,7 +411,7 @@ Version $Revision$
                                             <td>
                                                 <!-- A Description of the Fragment will go here -->
                                                 <textarea name="fragment_desc" cols="30" rows="4" wrap="on" class="uportal-input-text">
-                                                    <xsl:value-of select="//fragment[ID=$uPcFM_selectedID]/description"/>
+                                                    <xsl:value-of select="//fragment[@ID=$uPcFM_selectedID]/description"/>
                                                 </textarea>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
@@ -529,7 +529,7 @@ Version $Revision$
                                                 <!-- The Name of the Fragment will go here -->
                                                 <!-- Uncomment this conditional if New fragments can be immutable -->
                                                 <!-- <xsl:choose>
-                                                    <xsl:when test=" //fragment[ID=$uPcFM_selectedID]/rootNodeID/@immutable = 'Y' "><xsl:value-of select="//fragment[ID=$uPcFM_selectedID]/name"/></xsl:when>
+                                                    <xsl:when test=" //fragment[@ID=$uPcFM_selectedID]/rootNodeID/@immutable = 'Y' "><xsl:value-of select="//fragment[@ID=$uPcFM_selectedID]/name"/></xsl:when>
                                                     <xsl:otherwise><input name="fragment_name" type="text" class="uportal-input-text" value="" size="30" maxlength="1000"/></xsl:otherwise>
                                                 </xsl:choose> -->
                                                 <input name="fragment_name" type="text" class="uportal-input-text" value="" size="30" maxlength="1000"/>
