@@ -103,6 +103,7 @@ public class UserLayoutManager {
             // determine the default user
             this.person=new org.jasig.portal.security.provider.PersonImpl();
             this.person.setID(guestId);
+	    this.person.setFullName("Guest");
         }
 
         // load user preferences
