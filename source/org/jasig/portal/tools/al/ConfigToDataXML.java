@@ -33,7 +33,7 @@
  **/
 
 
-package org.jasig.portal.layout.tools;
+package org.jasig.portal.tools.al;
 
 
 import org.jasig.portal.utils.XSLT;
@@ -65,7 +65,7 @@ import  java.sql.SQLException;
 
 /**
  * A utility class to load pushed fragment configuration into the database
- * used by the alconfg ant target. 
+ * used by the alconfg ant target.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
