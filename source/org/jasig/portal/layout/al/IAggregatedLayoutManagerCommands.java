@@ -32,18 +32,4 @@ public interface IAggregatedLayoutManagerCommands extends ILayoutManagerCommands
      */
     public ILayoutNode addFragment(IFragmentId fragmentId, INodeId parentId, INodeId nextId) throws PortalException;
     
-    
-    /**
-     * Import and attach a new node structure to the layout.
-     * Note: the layout will attempt to import the specified node structure
-     * into the fragment of the specified parent node. 
-     * To attach a fragment, use <code>addLayoutFragment()</code> method
-     *
-     * @param node an <code>INode</code> structure be added.
-     * @param parentId an id of a folder to which the new node structure should be added.
-     * @param nextSiblingId an id of a sibling node prior to which the new node should be inserted.
-     * @return an <code>ILayoutNode</code> value with a newly determined Id.
-     * @exception PortalException if an error occurs
-     */
-    public ILayoutNode addNode(INode node, INodeId parentId, INodeId nextSiblingId) throws PortalException;
 }
