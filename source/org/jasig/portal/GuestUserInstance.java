@@ -136,50 +136,49 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param the servlet response object
      * @param the JspWriter object
      */
-    public void writeContent (HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out) {
+    public void writeContent (HttpServletRequest req, HttpServletResponse res) throws PortalException {
         String sessionId=req.getSession(false).getId();
 	IState state=(IState)stateTable.get(sessionId);
 	if(state==null) {
 	    LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
 	    return;
 	}
-
-        try {
-            // instantiate user layout manager and check to see if the profile mapping has been established
-            if (state.p_browserMapper != null) {
+        // instantiate user layout manager and check to see if the profile mapping has been established
+        if (state.p_browserMapper != null) {
+            try {
                 state.p_browserMapper.prepare(req);
+            } catch (Exception e) {
+                throw new PortalException(e);
             }
-            if (uLayoutManager.isUserAgentUnmapped(sessionId)) {
-                uLayoutManager.unbindSession(sessionId);
-                uLayoutManager.registerSession(req);
-            } else {
-                // p_browserMapper is no longer needed
-                state.p_browserMapper = null;
-            }
-
-            if (uLayoutManager.isUserAgentUnmapped(sessionId)) {
-                // unmapped browser
-                if (state.p_browserMapper== null) {
-                    state.p_browserMapper = new org.jasig.portal.channels.CSelectSystemProfile();
-                    state.p_browserMapper.initialize(new Hashtable(), "CSelectSystemProfile", true, true, false, 10000, getPerson());
-                }
-                try {
-                    state.p_browserMapper.render(req, res);
-                } catch (Throwable t) {
-                    // something went wrong trying to show CSelectSystemProfileChannel
-                    LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : unable caught an exception while trying to display CSelectSystemProfileChannel! Exception:"+t);
-                }
-                // don't go any further!
-                return;
-            }
-
-            renderState (req, res, out, state.channelManager, new GuestUserLayoutManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
-        } catch (Exception e) {
-            StringWriter sw=new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            sw.flush();
-            LogService.instance().log(LogService.ERROR,"UserInstance::writeContent() : an unknown exception occurred : "+sw.toString());
         }
+        if (uLayoutManager.isUserAgentUnmapped(sessionId)) {
+            uLayoutManager.unbindSession(sessionId);
+            uLayoutManager.registerSession(req);
+        } else {
+            // p_browserMapper is no longer needed
+            state.p_browserMapper = null;
+        }
+
+        if (uLayoutManager.isUserAgentUnmapped(sessionId)) {
+            // unmapped browser
+            if (state.p_browserMapper== null) {
+                state.p_browserMapper = new org.jasig.portal.channels.CSelectSystemProfile();
+                state.p_browserMapper.initialize(new Hashtable(), "CSelectSystemProfile", true, true, false, 10000, getPerson());
+            }
+            try {
+                state.p_browserMapper.render(req, res);
+            } catch (PortalException pe) {
+                throw pe;
+            } catch (Throwable t) {
+                // something went wrong trying to show CSelectSystemProfileChannel
+                LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
+                throw new PortalException("CSelectSystemProfileChannel.render() threw: "+t);
+            }
+            // don't go any further!
+            return;
+        }
+
+        renderState (req, res, state.channelManager, new GuestUserLayoutManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
     }
 }
 
