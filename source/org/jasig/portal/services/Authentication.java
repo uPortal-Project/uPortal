@@ -33,8 +33,6 @@
  *
  *
  * formatted with JxBeauty (c) johann.langhofer@nextra.at
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -100,11 +98,19 @@ public class Authentication {
           // Set the user's full name
           m_Person.setFullName(directoryInfo[0] + " " + directoryInfo[1]);
           // And set the email address
-          m_Person.setAttribute("Email", directoryInfo[2]);
+          if (directoryInfo[2]!=null && directoryInfo[2].length()>0)
+            m_Person.setAttribute("Email", directoryInfo[2]);
         } catch (Exception e) {
         // nothing do do if no directory info
         }
-      } 
+        java.util.Hashtable attribs = (new org.jasig.portal.services.PersonDirectory()).getUserDirectoryInformation(me.getUID());
+        java.util.Enumeration en = attribs.keys();
+        while (en.hasMoreElements()) {
+          String key = (String) en.nextElement();
+          String value = (String) attribs.get(key);
+          m_Person.setAttribute(key,value);
+        }
+      }
       else {
         // Set the IPerson to be the AdditionalDescriptor object
         m_Person = (IPerson)addInfo;
