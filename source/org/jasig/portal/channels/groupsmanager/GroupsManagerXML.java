@@ -875,8 +875,18 @@ public class GroupsManagerXML
          Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroupMemberForElementId(): The child type = "
                + gmElem.getTagName());
       }
+      gm = retrieveGroupMemberForElement (gmElem);
+      return  gm;
+   }
+   /**
+    * Returns the IGroupMember represented by an Element
+    * @param gmElem
+    * @return IGroupMember
+    */
+   public static IGroupMember retrieveGroupMemberForElement (Element gmElem) {
+      IGroupMember gm;
       String gmKey = gmElem.getAttribute("key");
-      Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroupMemberForElementId(): About to retrieve group member ("
+      Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroupMemberForElement(): About to retrieve group member ("
             + gmElem.getTagName() + " for key: " + gmKey);
       if (gmElem.getTagName().equals(GROUP_TAGNAME)) {
          gm = (IGroupMember)GroupsManagerXML.retrieveGroup(gmKey);
