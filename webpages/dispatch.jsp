@@ -34,8 +34,13 @@
 --%>
 
 <%@ page errorPage="error.jsp" %>
+<%@ page import="java.lang.reflect.Method" %>
+<%@ page import="org.jasig.portal.*" %>
 <%@ page import="org.jasig.portal.layout.*" %>
-<%@ page import="org.jasig.portal.UtilitiesBean" %>
+<%@ page import="org.xml.sax.DocumentHandler" %>
+<%@ page import="org.apache.xml.serialize.HTMLSerializer" %>
+<%@ page import="org.apache.xml.serialize.OutputFormat" %>
+
 <%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" />
@@ -64,10 +69,31 @@ session.setAttribute ("headerTitle", sTitle);
 <%@ include file="header.jsp" %>
 
 <%
-Class[] paramTypes = new Class[] {Class.forName ("javax.servlet.http.HttpServletRequest"), Class.forName ("javax.servlet.http.HttpServletResponse"), Class.forName ("javax.servlet.jsp.JspWriter")};
-Object[] methodParams = new Object[] {request, response, out};
-java.lang.reflect.Method method = ch.getClass ().getMethod (sMethodName, paramTypes);
-method.invoke (ch, methodParams);
+Class[] paramTypes = null;
+Object[] methodParams = null;
+Method method = null;
+
+if (ch instanceof org.jasig.portal.XMLChannelWrapper)
+{
+  paramTypes = new Class[] {Class.forName ("org.xml.sax.DocumentHandler")};
+  HTMLSerializer htmlSerializer= new HTMLSerializer(out, new OutputFormat("HTML","UTF-8",true));
+  methodParams = new Object[] {htmlSerializer};
+  IXMLChannel xmlCh = ((XMLChannelWrapper)ch).getXMLChannel();
+  
+  ChannelRuntimeData rd = new ChannelRuntimeData();
+  rd.setHttpRequest(request);
+  xmlCh.setRuntimeData(rd);
+  
+  method = xmlCh.getClass ().getMethod (sMethodName, paramTypes);
+  method.invoke (xmlCh, methodParams);
+}
+else
+{
+  paramTypes = new Class[] {Class.forName ("javax.servlet.http.HttpServletRequest"), Class.forName ("javax.servlet.http.HttpServletResponse"), Class.forName ("javax.servlet.jsp.JspWriter")};
+  methodParams = new Object[] {request, response, out};
+  method = ch.getClass ().getMethod (sMethodName, paramTypes);
+  method.invoke (ch, methodParams);
+}
 %>
 
 <%-- Footer --%>

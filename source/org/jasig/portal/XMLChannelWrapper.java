@@ -49,14 +49,20 @@ import org.apache.xml.serialize.*;
  * @version $Revision$
  * @author Peter Kharchenko
  */
-
-
 public class XMLChannelWrapper implements IChannel
 {
-    IXMLChannel ch;
-    String chanID;
+    private IXMLChannel ch;
+    private String chanID;
 
-    public XMLChannelWrapper(IXMLChannel xmlChannel) { ch=xmlChannel; }
+    public XMLChannelWrapper(IXMLChannel xmlChannel)
+    {
+      ch=xmlChannel;
+    }
+
+    public IXMLChannel getXMLChannel()
+    {
+      return ch;
+    }
 
     public void init (ChannelConfig chConfig) {
 	ChannelStaticData sd=new ChannelStaticData();
