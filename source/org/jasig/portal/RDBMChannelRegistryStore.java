@@ -467,12 +467,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
   /**
-   * Publishes a channel.
+   * Persists a channel definition.
    * @param channelDef the channel definition
-   * @param categories the categories of which this channel should be a member
-   * @throws java.lang.Exception
+   * @throws java.sql.SQLException
    */
-  public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception {
+  public void saveChannelDefinition (ChannelDefinition channelDef) throws SQLException {
     Connection con = RDBMServices.getConnection();
     try {
       int channelPublishId = channelDef.getId();
@@ -561,28 +560,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       } finally {
         stmt.close();
       }
-
-      // Save channel categories memberships
-
-      // First delete existing category memberships for this channel
-      String channelDefEntityKey = String.valueOf(channelDef.getId());
-      IEntity channelDefEntity = GroupService.getEntity(channelDefEntityKey, ChannelDefinition.class);
-      IEntityGroup topLevelCategory = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
-      Iterator iter = topLevelCategory.getAllMembers();
-      while (iter.hasNext()) {
-        IGroupMember groupMember = (IGroupMember)iter.next();
-        if (groupMember.isGroup()) {
-          IEntityGroup group = (IEntityGroup)groupMember;
-          group.removeMember(channelDefEntity);
-          group.updateMembers();
-        }
-      }
-
-      // Then insert new category memberships
-      for (int i = 0; i < categories.length; i++) {
-        addChannelToCategory(channelDef, categories[i]);
-      }
-
     } finally {
       RDBMServices.releaseConnection(con);
     }

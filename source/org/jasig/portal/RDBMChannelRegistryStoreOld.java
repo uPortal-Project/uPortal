@@ -270,17 +270,31 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
       }
     }
 
-    // Create array of category objects based on String array of catIDs
-    ChannelCategory[] categories = new ChannelCategory[catID.length];
-    for (int i = 0; i < catID.length; i++) {
-      String name = null;
-      String descr = null;
-      catID[i] = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
-      int iCatID = Integer.parseInt(catID[i]);
-      categories[i] = new ChannelCategory(iCatID);
+    crs.saveChannelDefinition(channelDef);
+
+    // Delete existing category memberships for this channel
+    String channelDefEntityKey = String.valueOf(channelDef.getId());
+    IEntity channelDefEntity = GroupService.getEntity(channelDefEntityKey, ChannelDefinition.class);
+    IEntityGroup topLevelCategory = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
+    Iterator iter = topLevelCategory.getAllMembers();
+    while (iter.hasNext()) {
+      IGroupMember groupMember = (IGroupMember)iter.next();
+      if (groupMember.isGroup()) {
+        IEntityGroup group = (IEntityGroup)groupMember;
+        group.removeMember(channelDefEntity);
+        group.updateMembers();
+      }
     }
 
-    crs.addChannelDefinition(channelDef, categories);
+    // For each category ID, add channel to category
+    for (int i = 0; i < catID.length; i++) {
+      catID[i] = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
+      int iCatID = Integer.parseInt(catID[i]);
+      ChannelCategory category = new ChannelCategory(iCatID);
+      crs.addChannelToCategory(channelDef, category);
+    }
+
+
     flushChannelEntry(id);
   }
 
