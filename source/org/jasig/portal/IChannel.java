@@ -38,7 +38,16 @@ package org.jasig.portal;
 import java.util.*;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
-
+/**
+ * Sets up a channel that produces old-style HTML to render within the portal. 
+ *
+ *
+ * @deprecated This interface will not be supported in uPortal 2.x, because
+ *             all channels in 2.0 must produce well-formed XML. 
+ *
+ * @since uPortal 1.0
+ *
+ */
 public interface IChannel
 {
   public void init (ChannelConfig chConfig);
