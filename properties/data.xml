@@ -4285,105 +4285,105 @@
     <!-- IPerson groups -->
      <row>
         <column><name>GROUP_ID</name><value>0</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Everyone</value></column>
         <column><name>DESCRIPTION</name><value>All persons</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>1</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Students</value></column>
         <column><name>DESCRIPTION</name><value>All enrolled university students</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>2</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Faculty</value></column>
         <column><name>DESCRIPTION</name><value>All university faculty</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>3</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Staff</value></column>
         <column><name>DESCRIPTION</name><value>All university staff members</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>4</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Developers</value></column>
         <column><name>DESCRIPTION</name><value>All IT developers</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>5</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Undergraduate Students</value></column>
         <column><name>DESCRIPTION</name><value>All enrolled undergraduate students</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>6</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Full Time</value></column>
         <column><name>DESCRIPTION</name><value>All full time undergraduate Students</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>7</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Part Time</value></column>
         <column><name>DESCRIPTION</name><value>All part time undergraduate students</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>8</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Graduate Students</value></column>
         <column><name>DESCRIPTION</name><value>All enrolled graduate students</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>9</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Prospective Students</value></column>
         <column><name>DESCRIPTION</name><value>All prospective students</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>10</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Officers</value></column>
         <column><name>DESCRIPTION</name><value>All Officers of the administration</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>11</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Support Staff</value></column>
         <column><name>DESCRIPTION</name><value>All Support Staff employees</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>12</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Tenured Professors</value></column>
         <column><name>DESCRIPTION</name><value>All tenured university faculty</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>13</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Associate Professors</value></column>
         <column><name>DESCRIPTION</name><value>All associate university faculty</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>14</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>Portal Administrators</value></column>
         <column><name>DESCRIPTION</name><value>A group of system administrators with superuser capabilities</value></column>
@@ -4393,105 +4393,105 @@
 
       <row>
         <column><name>GROUP_ID</name><value>50</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>All categories</value></column>
         <column><name>DESCRIPTION</name><value>All channel categories</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>51</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>Applications</value></column>
         <column><name>DESCRIPTION</name><value>Applications</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>52</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>Development</value></column>
         <column><name>DESCRIPTION</name><value>Development</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>53</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>uPortal</value></column>
         <column><name>DESCRIPTION</name><value>uPortal-related</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>54</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>Channel Types</value></column>
         <column><name>DESCRIPTION</name><value>Java classes implementing the IChannel interface</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>55</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>CWebProxy</value></column>
         <column><name>DESCRIPTION</name><value>Serves as HTTP Proxy to HTML or XHTML web pages</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>56</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>CApplet</value></column>
         <column><name>DESCRIPTION</name><value>Renders a java applet</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>57</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>CGenericXSLT</value></column>
         <column><name>DESCRIPTION</name><value>Performs XSLT transformations</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>58</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>RSS</value></column>
         <column><name>DESCRIPTION</name><value>Rich Site Summary, an XML standard for content feeds</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>59</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>CImage</value></column>
         <column><name>DESCRIPTION</name><value>Renders and image with an optional caption and subcaption</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>60</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>CInlineFrame</value></column>
         <column><name>DESCRIPTION</name><value>Renders a web page inside and inline frame. Only use for IE 5 and Netscape 6 and higher.</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>61</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>News</value></column>
         <column><name>DESCRIPTION</name><value>News</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>62</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>Business</value></column>
         <column><name>DESCRIPTION</name><value>Business or company news</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>63</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>Entertainment</value></column>
         <column><name>DESCRIPTION</name><value>Entertainment</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>64</value></column>
-        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>Games</value></column>
         <column><name>DESCRIPTION</name><value>Games</value></column>
