@@ -52,7 +52,7 @@ Version $Revision$
     <xsl:variable name="mediaPathColumnBorder" select="concat($mediaPath,'/',$skin,'/columnBorder')"/>
     <xsl:variable name="mediaPathIcons" select="concat($mediaPath,'/',$skin,'/icons')"/>
     <xsl:param name="errorMessage" select="'no errorMessage passed'"/>
-    <!-- <xsl:param name="errorMessage"> There are <xsl:value-of select="count(/layout/actions/fragments/fragment)"/> fragments in the current layout XML. </xsl:param> -->
+    <!-- <xsl:param name="errorMessage"> newNodID= <xsl:value-of select="/layout/@newNodeID"/> focusedTabID=<xsl:value-of select="/layout/@focusedTabID"/></xsl:param> -->
     <xsl:param name="authenticated" select="'true'"/>
     <xsl:param name="authorizedChannelPublisher" select="'false'"/>
     <xsl:param name="authorizedFragmentPublisher" select="'false'"/>

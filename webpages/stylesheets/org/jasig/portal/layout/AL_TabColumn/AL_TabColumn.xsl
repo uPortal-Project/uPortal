@@ -146,10 +146,10 @@ Version $Revision$
     </xsl:template>
     <xsl:template match="/layout/folder/folder[@type='regular' and @hidden='false']">
         <xsl:choose>
-            <xsl:when test="@ID=$selectedID and @ID=$focusedTabID">
+            <xsl:when test="@ID=$selectedID and @ID=$validFocusedTabID">
                 <selectedTab name="{@name}" ID="{@ID}" immutable="{@immutable}" unremovable="{@unremovable}"/>
             </xsl:when>
-            <xsl:when test="@ID=$focusedTabID">
+            <xsl:when test="@ID=$validFocusedTabID">
                 <focusedTab name="{@name}" ID="{@ID}" immutable="{@immutable}" unremovable="{@unremovable}"/>
             </xsl:when>
             <xsl:otherwise>
