@@ -158,7 +158,7 @@ public class JNDIManager {
       // Create a subcontext for this specific useer
       Context thisUsersContext = (Context)usersContext.createSubcontext(person.getID() + "");
       // Bind the user's sessionID to this context
-      thisUsersContext.bind("sessionID", session.getId());
+      thisUsersContext.rebind("sessionID", session.getId());
       // Create a subcontext for the user's channel instance IDs
       Context thisUsersChannelIDs = (Context)thisUsersContext.createSubcontext("channel-ids");
       // Get the list of channels in the user's layout
@@ -188,7 +188,7 @@ public class JNDIManager {
             } 
             else {
               //System.out.println("Binding " + instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
-              nextContext.bind(subContextName, instanceid.getNodeValue());
+              nextContext.rebind(subContextName, instanceid.getNodeValue());
             }
           }
         }
