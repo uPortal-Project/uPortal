@@ -51,7 +51,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.WeakHashMap;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
