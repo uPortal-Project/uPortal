@@ -57,7 +57,7 @@ public interface IUserLayout {
      * @param ch a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
-    public void write(ContentHandler ch) throws PortalException;
+    public void writeTo(ContentHandler ch) throws PortalException;
 
     /**
      * Writes subtree of a user layout (with appropriate markings) defined by a particular node into
@@ -67,7 +67,7 @@ public interface IUserLayout {
      * @param ch a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
-    public void write(String nodeId, ContentHandler ch) throws PortalException;
+    public void writeTo(String nodeId, ContentHandler ch) throws PortalException;
 
     /**
      * Writes user layout content (with appropriate markings) into
@@ -76,7 +76,7 @@ public interface IUserLayout {
      * @param document a <code>Document</code> value
      * @exception PortalException if an error occurs
      */
-    public void write(Document document) throws PortalException;
+    public void writeTo(Document document) throws PortalException;
 
     /**
      * Writes subtree of a user layout (with appropriate markings) defined by a particular node into
@@ -86,7 +86,7 @@ public interface IUserLayout {
      * @param document a <code>Document</code> object
      * @exception PortalException if an error occurs
      */
-    public void write(String nodeId, Document document) throws PortalException;
+    public void writeTo(String nodeId, Document document) throws PortalException;
 
     /**
      * Obtain a description of a node (channel or a folder) in a given user layout.

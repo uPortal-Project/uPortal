@@ -336,8 +336,8 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @param ch a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
-    public void write(ContentHandler ch) throws PortalException {
-       write ( getRootId(), ch );
+    public void writeTo(ContentHandler ch) throws PortalException {
+       writeTo ( getRootId(), ch );
     }
 
     /**
@@ -348,7 +348,7 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @param contentHandler a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
-  public void write(String nodeId, ContentHandler contentHandler ) throws PortalException {
+  public void writeTo(String nodeId, ContentHandler contentHandler ) throws PortalException {
 
     IALFolderDescription folderDescription = null;
     IALChannelDescription channelDescription = null;
@@ -403,7 +403,7 @@ public class AggregatedLayout implements IAggregatedLayout {
                  }
 
                 // Recurrence
-                write (nextNodeId,contentHandler);
+                writeTo (nextNodeId,contentHandler);
                 nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
                }
 
@@ -492,8 +492,8 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @param document a <code>Document</code> value
      * @exception PortalException if an error occurs
      */
-    public void write(Document document) throws PortalException {
-      write ( getRootId(), document );
+    public void writeTo(Document document) throws PortalException {
+      writeTo ( getRootId(), document );
     }
 
     /**
@@ -504,7 +504,7 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @param document a <code>Document</code> object
      * @exception PortalException if an error occurs
      */
-    public void write(String nodeId, Document document) throws PortalException {
+    public void writeTo(String nodeId, Document document) throws PortalException {
       try {
         Element layoutNode = document.createElement(LAYOUT);
         document.appendChild(layoutNode);
