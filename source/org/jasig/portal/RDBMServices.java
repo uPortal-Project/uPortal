@@ -232,7 +232,7 @@ public class RDBMServices {
             }
             else {
                 final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
-                LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximatly " + waitTime + " more milliseconds.");
+                LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximately " + waitTime + " more milliseconds.");
             }
         }
 
