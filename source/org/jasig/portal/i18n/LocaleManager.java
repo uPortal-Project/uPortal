@@ -44,7 +44,6 @@ import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
 
-
 /**
  * Locale Manager
  * @author Shoji Kajita <a href="mailto:">kajita@itc.nagoya-u.ac.jp</a>
@@ -56,6 +55,7 @@ public class LocaleManager  {
     private Locale[] DEFAULT_LOCALES;
     private Locale   localeFromSessionParameter;
     private Locale[] localesFromBrowserSetting;
+    private Locale   localeForAdmin;
 
     public LocaleManager() {
 
@@ -121,6 +121,14 @@ public class LocaleManager  {
 
     }
 
+    public Locale getLocaleForAdmin() {
+        if (localeForAdmin == null) {
+            String admin_locale=PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.admin_locale");
+            localeForAdmin = getLocaleForLanguage(admin_locale);
+        }
+        return localeForAdmin;
+    }
+
     public Locale getLocaleFromSessionParameter() {
         return localeFromSessionParameter;
     }
@@ -163,18 +171,37 @@ public class LocaleManager  {
         return localeAware;
     }
 
+    private int getLengthOfBrowserSetting() {
+        if (localesFromBrowserSetting != null) {
+            return localesFromBrowserSetting.length;
+        }  else {
+            return 0;
+        }
+    }
+
+    private int getLengthOfSessionParameter() {
+        if (localeFromSessionParameter != null) {
+            return 1;
+        }  else {
+            return 0;
+        }
+    }
+
+    private int getLengthOfDefaultLocales() {
+        if (DEFAULT_LOCALES != null) {
+            return DEFAULT_LOCALES.length;
+        }  else {
+            return 0;
+        }
+    }
+
     public Locale[] getLocales() {
     
         int i=0;
         
         if (localeAware == false)  return null;
         
-        int totalLength;
-        if (localeFromSessionParameter != null) {
-            totalLength = 1 + localesFromBrowserSetting.length + DEFAULT_LOCALES.length;
-        }  else {
-            totalLength = localesFromBrowserSetting.length + DEFAULT_LOCALES.length;
-        }
+        int totalLength = getLengthOfSessionParameter() + getLengthOfBrowserSetting() + getLengthOfDefaultLocales();
         
         Locale[] allLocales = new Locale[totalLength];
         
@@ -190,7 +217,7 @@ public class LocaleManager  {
         
         // the third priority is uPortal-wide default locales 
         if (DEFAULT_LOCALES != null) {
-            System.arraycopy(DEFAULT_LOCALES, 0, allLocales, localesFromBrowserSetting.length+i, DEFAULT_LOCALES.length);
+            System.arraycopy(DEFAULT_LOCALES, 0, allLocales, getLengthOfBrowserSetting()+i, DEFAULT_LOCALES.length);
         }
         
         return allLocales;
