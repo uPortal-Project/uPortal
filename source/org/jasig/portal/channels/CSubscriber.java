@@ -37,10 +37,12 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
-import org.w3c.dom.*;
-import org.apache.xalan.xslt.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
 import org.xml.sax.DocumentHandler;
-import java.io.*;
+import java.io.File;
+import java.net.URL;
 import java.util.Hashtable;
 
 /**
@@ -143,9 +145,9 @@ public class CSubscriber implements IPrivilegedChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-    
+
     media = runtimeData.getMedia();
-    
+
     String catID = null;
     //catID = runtimeData.getParameter("catID");
     String role = "student"; //need to get from current user
@@ -208,7 +210,7 @@ public class CSubscriber implements IPrivilegedChannel
 
   private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException
   {
-   
+
     String xsl = set.getStylesheetURI(stylesheetName, media);
 
     try{
@@ -218,7 +220,7 @@ public class CSubscriber implements IPrivilegedChannel
       ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
       ssParams.put("categoryID", categoryID);
       ssParams.put("modified", new Boolean(modified));
-      XSLT.transform(out, xmlSource, xsl, ssParams);
+      XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
     }
     else
       Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
