@@ -95,6 +95,9 @@ public class UserInstance implements HttpSessionBindingListener {
     private static final boolean logXMLBeforeStructureTransformation = PropertiesManager.getPropertyAsBoolean(UserInstance.class.getName() + ".log_xml_before_structure_transformation");
     private static final boolean logXMLBeforeThemeTransformation = PropertiesManager.getPropertyAsBoolean(UserInstance.class.getName() + ".log_xml_before_theme_transformation");;
 
+    // browser anchor support
+    private static final boolean useAnchors = PropertiesManager.getPropertyAsBoolean(UserInstance.class.getName() + ".use_anchors");
+    
     // manages layout and preferences
     private IUserPreferencesManager uPreferencesManager;
     // manages channel instances and channel rendering
@@ -374,7 +377,15 @@ public class UserInstance implements HttpSessionBindingListener {
                     channelManager.setCharacterCaching(ccaching);
                     // initialize ChannelIncorporationFilter
                     //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
-                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
+                    // add the anchor filter if the configuration is set to "true" in portal.properties
+                    CharacterCachingChannelIncorporationFilter cif = null;
+                    AnchoringChannelIncorporationFilter aif = null;
+                    if (useAnchors) {
+                      aif = new AnchoringChannelIncorporationFilter (ulm.getUserLayoutDOM(), markupSerializer);
+                      cif = new CharacterCachingChannelIncorporationFilter(aif, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
+                    } else 
+                        cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
+
                     String cacheKey=null;
                     boolean output_produced=false;
                     if(UserInstance.CACHE_ENABLED) {
