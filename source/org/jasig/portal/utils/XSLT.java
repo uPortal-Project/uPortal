@@ -392,6 +392,34 @@ public class XSLT {
 
   /**
    * put your documentation comment here
+   * @param xmlDoc
+   * @param stylesheetSet
+   * @param out
+   * @param stylesheetParams
+   * @param stylesheetTitle
+   * @param media
+   * @exception SAXException, IOException, ResourceMissingException, GeneralRenderingException
+   */
+  public static void transform (Document xmlDoc, StylesheetSet stylesheetSet, DocumentHandler out, Hashtable stylesheetParams, 
+      String stylesheetTitle, String media) throws SAXException, IOException, ResourceMissingException, GeneralRenderingException {
+    // Create the input source for the input xml
+    XSLTInputSource xmlSource = new XSLTInputSource(xmlDoc);
+    // Create the result target for the DocumentHandler
+    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
+    // Get an instance of the XSLT processor
+    XSLTProcessor processor = XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
+    // Reset the processor
+    processor.reset();
+    // Get the XSL stylesheet location
+    StylesheetRoot stylesheetRoot = getStylesheetRoot(stylesheetSet.getStylesheetURI(stylesheetTitle, media));
+    // Set the parameters for the transformation
+    setStylesheetParams(processor, stylesheetParams);
+    // Perform the transformation
+    stylesheetRoot.process(processor, xmlSource, xmlResult);
+  }
+
+  /**
+   * put your documentation comment here
    * @param processor
    * @param stylesheetParams
    */
