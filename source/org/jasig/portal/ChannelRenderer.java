@@ -110,10 +110,10 @@ public class ChannelRenderer
     try
     {
       long wait = timeOut - System.currentTimeMillis () + startTime;
-      
-      if (wait > 0) 
+
+      if (wait > 0)
         workerThread.join (wait);
-    } 
+    }
     catch (InterruptedException e)
     {
       Logger.log (Logger.DEBUG, "ChannelRenderer::outputRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
@@ -131,20 +131,20 @@ public class ChannelRenderer
         try
         {
           buffer.outputBuffer (out);
-        } 
+        }
         catch (SAXException e)
         {
           Logger.log (Logger.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
           return 1;
         }
         return 0;
-      } 
+      }
       else
       {
         // rendering was not successful
         return 1;
       }
-    } 
+    }
     else
     {
       // rendering has timed out
@@ -160,7 +160,7 @@ public class ChannelRenderer
   {
     if (workerThread.isAlive ())
       workerThread.stop ();
-    
+
     super.finalize ();
   }
 
@@ -180,19 +180,26 @@ public class ChannelRenderer
     {
       successful = false;
       done = false;
-      channel.renderXML (documentHandler);
+
+      try {
+        channel.renderXML (documentHandler);
+      }
+      catch (Exception e) {
+        Logger.log(Logger.ERROR, e);
+      }
+
       successful = true;
       done = true;
     }
 
     public boolean successful ()
-    { 
-      return this.successful; 
+    {
+      return this.successful;
     }
-    
+
     public boolean done ()
-    { 
-      return this.done; 
+    {
+      return this.done;
     }
   }
 }
