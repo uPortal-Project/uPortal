@@ -4,6 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.jasig.portal.layout.AllLayoutTests;
+import org.jasig.portal.security.BasicLocalConnectionContextTest;
 
 public class AllTests {
 
@@ -19,6 +20,7 @@ public class AllTests {
         //TestSuite suite=new TestSuite(UPFileSpecTest.class);
         TestSuite suite= new TestSuite("uPortal Framework Tests");
         suite.addTestSuite(UPFileSpecTest.class);
+        suite.addTestSuite(BasicLocalConnectionContextTest.class);        
         suite.addTest(AllLayoutTests.suite());
         return suite;
     }
