@@ -240,7 +240,7 @@ public abstract class AbstractPool implements ThreadPool {
            }
              try {
                Thread.yield();
-               Thread.currentThread().sleep(DELAY);
+               Thread.sleep(DELAY);
              } catch (InterruptedException ie ) {}
 
 
