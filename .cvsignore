@@ -7,3 +7,6 @@ hsql
 defaultroot
 bak
 work
+.cvspass
+jBuilderBackups
+*.jpx*
