@@ -227,6 +227,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
       StringBuffer newXML = new StringBuffer().append(this.xmlUri);
       String appendchar = (this.xmlUri.indexOf('?') == -1) ? "?" : "&";
+      // BUG 772 - this doesn't seem to catch all cases.
 
       // want all runtime parameters not specific to WebProxy
       Enumeration e=runtimeData.getParameterNames ();
@@ -235,15 +236,25 @@ public class CWebProxy implements org.jasig.portal.IChannel
           while (e.hasMoreElements ())
             {
               String pName = (String) e.nextElement ();
-              if ( !pName.startsWith("cw_") )
-              {
-                newXML.append(appendchar);
-                appendchar = "&";
-                newXML.append(pName);
-                newXML.append("=");
-                newXML.append(URLEncoder.encode(runtimeData.getParameter(pName)));
-              }
+              if ( !pName.startsWith("cw_") ) {
+        	String[] value_array = runtimeData.getParameterValues(pName);
+		if ( value_array == null || value_array.length == 0 ) {
+		    // keyword-style parameter
+		    newXML.append(appendchar);
+		    appendchar = "&";
+		    newXML.append(pName);
+	        } else {
+		  int i = 0;
+		  while ( i < value_array.length ) {
+		    newXML.append(appendchar);
+		    appendchar = "&";
+		    newXML.append(pName);
+		    newXML.append("=");
+		    newXML.append(URLEncoder.encode(value_array[i++]));
+	          }
+	      }
             }
+          }
         }
       fullxmlUri = newXML.toString();
       LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + fullxmlUri);
