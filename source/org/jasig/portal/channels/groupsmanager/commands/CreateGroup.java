@@ -85,7 +85,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
       //Document xmlDoc = (Document)staticData.get("xmlDoc");
       Document xmlDoc = (Document)sessionData.model;
       String theCommand = runtimeData.getParameter("grpCommand");
-      String parentID = getCommandIds(runtimeData);
+      String parentID = getCommandArg(runtimeData);
       boolean parentIsInitialGroupContext = parentIsInitialGroupContext(parentID);
       String newGrpName = runtimeData.getParameter("grpName");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): New grp: " + newGrpName +
@@ -98,7 +98,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
       Iterator parentNodes;
       if (parentElem == null) {
          retMsg = "Unable to find Parent element!";
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg);
          return;
       }
@@ -109,7 +109,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
             parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
             if (parentGroup == null) {
                retMsg = "Unable to retrieve Parent Entity Group!";
-               runtimeData.setParameter("commandResponse", retMsg);
+               sessionData.feedback = retMsg;
                return;
             }
             else {
@@ -124,7 +124,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
          Utility.logMessage("DEBUG", "CreateGroup::execute(): About to create new group: "
                + newGrpName);
          // Next line creates a group that will hold iEntities
-         String userID = runtimeData.getParameter("username");
+         String userID = getUserID(sessionData);
          IEntityGroup childEntGrp = GroupService.newGroup(parentEntityType);
          childEntGrp.setName(newGrpName);
          childEntGrp.setCreatorID(userID);
@@ -186,15 +186,15 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
          }
       } catch (GroupsException ge) {
          retMsg = "Unable to create new group\n" + ge;
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg + "\n" + ge);
       } catch (ClassNotFoundException cnfe) {
          retMsg = "Unable to instantiate class " + GROUP_CLASSNAME;
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg + "\n" + cnfe);
       } catch (Exception e) {
          retMsg = "Unable to create group";
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "CreateGroup::execute(): " + retMsg + ".\n" + e);
       }
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Finished");
