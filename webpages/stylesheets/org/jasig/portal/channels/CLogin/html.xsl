@@ -31,192 +31,378 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
-Author: Ken Weiner, kweiner@interactivebusiness.com
+Author: Justin Tilton, jet@immagic.com
 $Revision$
 -->
-
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-  <xsl:output method="html" indent="yes"/>
-  <xsl:param name="baseActionURL">default</xsl:param>
-  <xsl:param name="unauthenticated">false</xsl:param>
-  <xsl:param name="locale">en_US</xsl:param>
-<xsl:variable name="mediaPath" select="'media/org/jasig/portal/channels/CLogin'"/>
-  <xsl:template match="login-status">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <xsl:choose>
-        <xsl:when test="$unauthenticated='true'">
-          <form action="Login" method="post">
-            <input type="hidden" name="action" value="login"/>
-            <xsl:call-template name="buildTable"/>
-          </form>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:call-template name="buildTable"/>
-        </xsl:otherwise>
-      </xsl:choose>
-      <xsl:if test="$unauthenticated='true'">
-      </xsl:if>
-    </table>
-  </xsl:template>
-  <xsl:template match="failure">
-    <tr class="uportal-background-light">
-      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">The user name/password combination entered is not recognized. Please try again.<span class="uportal-channel-warning"></span>
-      </td>
-      <td colspan="1" rowspan="1">
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-      </td>
-    </tr>
-  </xsl:template>
-  <xsl:template match="error">
-    <tr class="uportal-background-light">
-      <td width="100%" class="uportal-channel-warning" colspan="1" rowspan="1">An error occured during authentication. The portal is unable to log you on at this time. Try again later.<span class="uportal-channel-warning"></span>
-      </td>
-      <td colspan="1" rowspan="1">
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-      </td>
-    </tr>
-  </xsl:template>
-  <xsl:template match="full-name">
-  </xsl:template>
-  <xsl:template name="buildTable">
-    <tr>
-      <td colspan="1" rowspan="1">
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="5" height="5"/>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="1" rowspan="1">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td colspan="4" class="uportal-background-shadow" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td rowspan="4" colspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="5" height="5"/>
-            </td>
-            <td class="uportal-background-shadow" colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td class="uportal-background-shadow" colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3" nowrap="nowrap" class="uportal-background-light" rowspan="1">
-              <table width="100%" border="0" cellspacing="0" cellpadding="5">
+    <xsl:output method="html" indent="no"/>
+    <xsl:param name="baseActionURL">default</xsl:param>
+    <xsl:param name="unauthenticated">true</xsl:param>
+    <xsl:param name="locale">en_US</xsl:param>
+    <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CLogin'"/>
+    <!-- ~ -->
+    <!-- ~ Match on root element then check if the user is NOT authenticated-->
+    <!-- ~ -->
+    <xsl:template match="/">
+        <xsl:if test="$unauthenticated='true'">
+            <xsl:apply-templates/>
+        </xsl:if>
+    </xsl:template>
+    <!-- ~ -->
+    <!-- ~ If user is not authenticated insert login form-->
+    <!-- ~ -->
+    <xsl:template match="login-status">
+        <form action="Login" method="post">
+            <table width="100%" border="0" cellspacing="0" cellpadding="5">
                 <tr class="uportal-background-light">
-                  <td class="uportal-channel-text" nowrap="nowrap" colspan="1" rowspan="1">
-                    <strong>
-                      <xsl:choose>
-                        <xsl:when test="$unauthenticated='true'">Welcome Guest - Please Login: </xsl:when>
-                        <xsl:otherwise>Welcome <xsl:value-of select="full-name"/> </xsl:otherwise>
-                      </xsl:choose>
-                    </strong>
-                  </td>
+                    <td width="100%" class="uportal-channel-text" nowrap="nowrap">
+                        <input type="hidden" name="action" value="login"/>
+                        <span class="uportal-label">Name:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+                            <input class="uportal-input-text" type="text" name="userName" size="15" value="{failure/@attemptedUserName}"/>
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1"/>Password:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+                            <input class="uportal-input-text" type="password" name="password" size="15"/>
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="1"/>
+                            <input type="submit" value="Login" name="Login" class="uportal-button"/>
+                        </span>
+                    </td>
                 </tr>
-              </table>
+                <xsl:apply-templates/>
+            </table>
+        </form>
+    </xsl:template>
+    <!-- ~ -->
+    <!-- ~ If user login fails present error message box-->
+    <!-- ~ -->
+    <xsl:template match="failure">
+        <xsl:call-template name="message">
+            <xsl:with-param name="messageString" select="'The user name/password combination entered is not recognized. Please try again.'"/>
+        </xsl:call-template>
+    </xsl:template>
+    <!-- ~ -->
+    <!-- ~ If user login encounters an error present error message box-->
+    <!-- ~ -->
+    <xsl:template match="error">
+        <xsl:call-template name="message">
+            <xsl:with-param name="messageString" select="'An error occured during authentication. The portal is unable to log you on at this time. Try again later.'"/>
+        </xsl:call-template>
+    </xsl:template>
+    <!-- ~ -->
+    <!-- ~ error message box-->
+    <!-- ~ -->
+    <xsl:template name="message">
+        <xsl:param name="messageString"/>
+        <tr class="uportal-background-light">
+            <td width="100%" class="uportal-channel-text" nowrap="nowrap">
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3" class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3" class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-dark">
+                            <span class="uportal-channel-title">
+                                <xsl:value-of select="$messageString"/>
+                            </span>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2" class="uportal-background-dark">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-content">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="4">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td>
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="2">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3" class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3" class="uportal-background-med">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                        <td colspan="3">
+                            <img src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td nowrap="nowrap" class="uportal-background-shadow" colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td nowrap="nowrap" class="uportal-background-med" rowspan="2" colspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td nowrap="nowrap" class="uportal-background-shadow" colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td width="100%" class="uportal-channel-text" colspan="1" rowspan="1">
-              <table width="100%" border="0" cellspacing="0" cellpadding="5">
-                <tr class="uportal-background-light">
-                  <td width="100%" class="uportal-channel-text" nowrap="nowrap" colspan="1" rowspan="1">
-                    <!--Right Content Cell [1]-->
-                    <xsl:choose>
-                      <xsl:when test="$unauthenticated='true'">
-                        <span class="uportal-label">Name:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="text" name="userName" size="15">
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="/login-status/failure/@attemptedUserName"/>
-                            </xsl:attribute></input>Password:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="password" name="password" size="15"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input type="submit" value="Login" name="Login" class="uportal-button"/></span>
-                      </xsl:when>
-                      <xsl:otherwise>You are currently logged in.</xsl:otherwise>
-                    </xsl:choose>
-                  </td>
-                  <td class="uportal-text-small" nowrap="nowrap" colspan="1" rowspan="1">
-                    <xsl:choose>
-                      <xsl:when test="$unauthenticated='true'">
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                      </xsl:when>
-                      <xsl:otherwise>
-
-                        <SCRIPT LANGUAGE="JavaScript1.2">
-
-
-var months=new Array(13);
-months[1]='January';
-months[2]='February';
-months[3]='March';
-months[4]='April';
-months[5]='May';
-months[6]='June';
-months[7]='July';
-months[8]='August';
-months[9]='September';
-months[10]='October';
-months[11]='November';
-months[12]='December';
-var time=new Date();
-var lmonth=months[time.getMonth() + 1];
-var date=time.getDate();
-var year=time.getYear();
-if (year &lt; 1000) {year = 1900 + year;} 
-document.write(lmonth + ' ');
-document.write(date + ', ' + year);
-              </SCRIPT>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </td>
-                </tr>
-                <!--Right Message Row -->
-                <xsl:if test="$unauthenticated='true'">
-                  <xsl:apply-templates/>
-                </xsl:if>
-              </table>
-            </td>
-          </tr>
-          <tr class="uportal-background-shadow">
-            <td colspan="4" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-          </tr>
-          <tr class="uportal-background-med">
-            <td colspan="5" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-            <td colspan="1" rowspan="1">
-              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-            </td>
-          </tr>
-        </table>
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="5" height="5"/>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="1" rowspan="1">
-        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="5" height="5"/>
-      </td>
-    </tr>
-  </xsl:template>
+        </tr>
+    </xsl:template>
 </xsl:stylesheet>
-
