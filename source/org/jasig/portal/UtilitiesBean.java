@@ -127,14 +127,20 @@ public class UtilitiesBean extends GenericPortalBean
 
   public static String escapeString(String source)
   {
-    StringBuffer sb = new StringBuffer ();
+    String escapedString = null;
 
-    for (int i = 0 ; i < source.length() ; i++)
+    if (source != null)
     {
-      sb.append(escapeChar(source.charAt (i)));
+      StringBuffer sb = new StringBuffer ();
+
+      for (int i = 0 ; i < source.length() ; i++)
+      {
+        sb.append(escapeChar(source.charAt (i)));
+      }
+      escapedString = sb.toString();
     }
 
-    return sb.toString ();
+    return escapedString;
   }
 
   private static String escapeChar(char ch)
