@@ -135,17 +135,21 @@ public class PushFragmentLoader {
 
         reader.setContentHandler(filter);
         thand.setResult(new StreamResult(outputDataFile));
+        boolean isException = false;
         try {
          reader.parse(new InputSource(PushFragmentLoader.class.getResourceAsStream(alConfigFile)));
         } catch ( Exception e ) {
-            throw new PortalException ( "The push fragment file \""+alConfigFile+"\" could not be found!" );
+			isException = true;
+			System.out.println ( "The pushed fragment file \""+alConfigFile+"\" caused the exception: " );
+        	e.printStackTrace();
           }
 
-        // Cleaning the database before the DbLoader is called
-        DbCleaner.fragmentNames = filter.getFragmentNames();
-        DbCleaner.cleanTables();
-
-        System.out.println("DEBUG: done");
+        if ( !isException ) {
+         // Cleaning the database before the DbLoader is called
+         DbCleaner.fragmentNames = filter.getFragmentNames();
+         DbCleaner.cleanTables();
+         System.out.println("DEBUG: done");
+        } 
         System.exit(0);
     }
 
