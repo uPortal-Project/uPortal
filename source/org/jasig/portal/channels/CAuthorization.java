@@ -1,3 +1,38 @@
+/**
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.channels;
 
 import javax.servlet.*;
@@ -20,8 +55,8 @@ import java.net.*;
  * This channel how works in conjunction with the "authentication.jsp"
  * -ADN
  */
-public class CAuthorization implements org.jasig.portal.IChannel                             
-{  
+public class CAuthorization implements org.jasig.portal.IChannel
+{
   private static Vector params = null;
 
   public void init (ChannelConfig chConfig) {};
@@ -30,16 +65,16 @@ public class CAuthorization implements org.jasig.portal.IChannel
   public boolean isDetachable () {return false;}
   public boolean isRemovable () {return false;}
   public boolean isEditable () {return false;}
-  public boolean hasHelp () {return true;}  
-  
+  public boolean hasHelp () {return true;}
+
   public int getDefaultDetachWidth () {return 0;}
   public int getDefaultDetachHeight () {return 0;}
-  
+
   public Vector getParameters()
   {
     return params;
   }
-  
+
   /**
    * Called when channel should output its contents
    * @param the servlet request object
@@ -47,8 +82,8 @@ public class CAuthorization implements org.jasig.portal.IChannel
    * @param the JspWriter object
    */
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
+  {
+    try
     {
        doDisplaySignIn (req, res, out);
     }
@@ -57,7 +92,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
       Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   /**
    * Called when user clicks this channel's edit button
    * @param the servlet request object
@@ -68,7 +103,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
   {
     // This channel is not editable
   }
-  
+
   /**
    * Called when user clicks this channel's help button
    * @param the servlet request object
@@ -94,9 +129,9 @@ public class CAuthorization implements org.jasig.portal.IChannel
     {
       Logger.log (Logger.ERROR, e);
     }
-    
+
   }
-  
+
   /**
    * Called by this channels render method.  Outputs an html form prompting
    * for user name and password.
@@ -111,7 +146,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
 
     if (sUserName != null && sUserName.equals ("guest"))
       doDisplayFailedLogonMsg (req, res, out);
-      
+
     out.println ("<p>");
     out.println ("<form action=\"authentication.jsp\" method=post>");
     out.println ("<table align=center border=0 width=100%>");
@@ -124,13 +159,13 @@ public class CAuthorization implements org.jasig.portal.IChannel
     out.println ("    <td><input name=password type=password size=15 value=\"\"></td>");
     out.println ("  </tr>");
     out.println ("</table>");
-      
-    out.println ("<center>");  
+
+    out.println ("<center>");
     out.println ("<p><input name=signIn type=submit value=\"Sign in\">");
-    out.println ("</center>");  
+    out.println ("</center>");
     out.println ("</form>");
   }
-  
+
   /**
    * Called when this channel is redisplayed after an incorrect username/password
    * is submitted by the user

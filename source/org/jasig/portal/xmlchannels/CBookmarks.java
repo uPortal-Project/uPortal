@@ -1,10 +1,45 @@
+/**
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.xmlchannels;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import javax.servlet.jsp.*;
-import javax.servlet.http.*; 
+import javax.servlet.http.*;
 import org.jasig.portal.*;
 import org.apache.xalan.xslt.*;
 import org.apache.xerces.dom.*;
@@ -16,7 +51,7 @@ import org.w3c.dom.*;
  * A reference implementation of the Bookmarks xmlchannel.
  * The purpose of this code is to demonstrate the basic use of IXMLChannel interface.
  * <p>Bookmarks channel reads a simple XML file containing a list of bookmarks in it.
- * Depending on the request action type ("view", "edit", etc.) 
+ * Depending on the request action type ("view", "edit", etc.)
  * Bookmarks channel applies different stylesheets to different locations of the DOM structure produced by reading the bookmarks.xml file. </p>
  * <p> Note the use of a helper StylesheetSet class </p>
  * @author Peter Kharchenko
@@ -32,15 +67,15 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 
     ChannelStaticData staticData=new ChannelStaticData();
     ChannelRuntimeData runtimeData=new ChannelRuntimeData();
-    
-    
+
+
     // construct the URL for the location of the bookmarks.xml
     String fs=System.getProperty("file.separator");
     String uri=getPortalBaseDir () + "source" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "xmlchannels"+fs + "bookmarks.xml";
 
     // initialize StylesheetSet
     StylesheetSet set;
-    
+
     // location of the stylesheet files
     String stylesheetDir=getPortalBaseDir()+"webpages"+fs+"stylesheets"+fs+"BookmarksChannel"+fs;
 
@@ -55,16 +90,16 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 
     public CBookmarks() {
 	// initialize a stylesheet set from a file
-	// take a look at the *.ssl file for the stylesheet list format. 
+	// take a look at the *.ssl file for the stylesheet list format.
 	// The format is a W3C-recommended default stylehseet binding
 	set=new StylesheetSet(stylesheetDir+"BookmarksChannel.ssl");
 	set.setMediaProps(getPortalBaseDir()+"properties"+fs+"media.properties");
     }
-    
 
-    
 
-    
+
+
+
     // report static channel properties to the portal
     public ChannelSubscriptionProperties getSubscriptionProperties() {
 	ChannelSubscriptionProperties csb=new ChannelSubscriptionProperties();
@@ -79,7 +114,7 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 	// channel will always render, so the default values are ok
 	return new ChannelRuntimeProperties();
     }
-							   
+
 
     // process Layout-level events comping from the portal
     public void receiveEvent(LayoutEvent ev) {
@@ -136,13 +171,13 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
     }
 
 
-    
+
     // output channel content to the portal
     public void renderXML(DocumentHandler out)
     {
 	try {
 	    if (set!=null) {
-		
+
 		// test in a order of precedence
 		if(editBookmarkMode) {
 		    renderEditBookmarkXML(out,currentBookmark);
@@ -150,14 +185,14 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 		else if (newBookmarkMode) {
 		    renderNewBookmarkXML(out);
 		}
-		else if (editMode) { 
+		else if (editMode) {
 		    renderEditXML(out);
 		}
 		// default
 		else renderViewXML(out);
 	    }
 	} catch (Exception e) {Logger.log(Logger.ERROR,e); }
-    
+
     }
 
     // the rest are private helper functions, should be rather self-explanatory
@@ -175,22 +210,22 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 	    processor.process(new XSLTInputSource(getDoc()),stylesheet,new XSLTResultTarget(out));
 	} else Logger.log(Logger.ERROR,"BookmarksChannel::renderViewXML() : unable to find a stylesheet for rendering");
     }
-    
+
     private void renderEditXML(DocumentHandler out) throws org.xml.sax.SAXException {
 	XSLTInputSource stylesheet=set.getStylesheet("edit",runtimeData.getHttpRequest());
-	
+
 	if(stylesheet!=null) {
 	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 	    processor.setStylesheetParam("baseActionURL",processor.createXString(runtimeData.getBaseActionURL()));
 	    processor.process(new XSLTInputSource(getDoc()),stylesheet,new XSLTResultTarget(out));
 	} else Logger.log(Logger.ERROR,"BookmarksChannel::renderEditXML() : unable to find a stylesheet for rendering");
     }
-    
+
 
     private void renderEditBookmarkXML(DocumentHandler out,int bookmarkNumber) throws org.xml.sax.SAXException {
 	Node bookmark=((getDoc()).getElementsByTagName("bookmark")).item(bookmarkNumber-1);
 	XSLTInputSource stylesheet=set.getStylesheet("editbookmark",runtimeData.getHttpRequest());
-	
+
 	if(stylesheet!=null) {
 	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 	    processor.setStylesheetParam("channelID",processor.createXString(staticData.getChannelID()));
@@ -198,9 +233,9 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 	    processor.process(new XSLTInputSource(bookmark),stylesheet,new XSLTResultTarget(out));
 	} else Logger.log(Logger.ERROR,"BookmarksChannel::renderEditBookmarkXML() : unable to find a stylesheet for rendering");
     }
-    
+
     private void renderNewBookmarkXML(DocumentHandler out) throws org.xml.sax.SAXException {
-	// this is interesting since there's is no real content being presented ... 
+	// this is interesting since there's is no real content being presented ...
 	// we know the expected structure of the information, but we don't have any data yet.
 	// for now, the best thing I can think of is creating an empty template, i.e. an empty
 	// bookmark and feeding it to the XSLT.
@@ -209,20 +244,20 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 	bookmark.setAttribute("name","");
 	bookmark.setAttribute("url","");
 	bookmark.setAttribute("comments","");
-	
+
 	XSLTInputSource stylesheet=set.getStylesheet("editbookmark",runtimeData.getHttpRequest());
-	
+
 	if(stylesheet!=null) {
 	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 	    processor.setStylesheetParam("channelID",processor.createXString(staticData.getChannelID()));
 	    processor.setStylesheetParam("newBookmark",processor.createXString("true"));
 	    processor.process(new XSLTInputSource(bookmark),stylesheet,new XSLTResultTarget(out));
 	} else Logger.log(Logger.ERROR,"BookmarksChannel::renderEditBookmarkXML() : unable to find a stylesheet for rendering");
-	
+
 
     }
 
-    
+
     private Document getDoc() {
 	try{
 	    if(bookmarksXML==null) {
@@ -242,5 +277,5 @@ public class CBookmarks extends GenericPortalBean implements IXMLChannel
 	    (bookmark.getParentNode()).removeChild(bookmark);
 	} else Logger.log(Logger.ERROR,"BookmarksChannel::deleteBookmark() : attempting to remove nonexistent bookmark #"+bookmarkNumber);
     }
-    
+
 }

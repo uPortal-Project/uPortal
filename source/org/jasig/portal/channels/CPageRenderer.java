@@ -1,3 +1,38 @@
+/**
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.channels;
 
 import javax.servlet.*;
@@ -15,12 +50,12 @@ import java.net.*;
 
 /**
  * This is a user-defined channel for rendering a web page.
- * 
+ *
  * @author Ken Weiner
  * @version $Revision$
  */
-public class CPageRenderer implements org.jasig.portal.IChannel                            
-{ 
+public class CPageRenderer implements org.jasig.portal.IChannel
+{
   protected String m_sUrl = null;
   protected String m_sUrlBaseDir = null;
   protected String m_sUrlServer = null;
@@ -53,37 +88,37 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   }
 
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
+  {
+    try
     {
       m_sUrl = (String) chConfig.get ("url");
       // if the URL has only two slashes, terminate it with a third
-      if (m_sUrl.substring(m_sUrl.indexOf("/")+1).lastIndexOf("/") == 
+      if (m_sUrl.substring(m_sUrl.indexOf("/")+1).lastIndexOf("/") ==
 	  m_sUrl.substring(m_sUrl.indexOf("/")+1).indexOf("/"))
 	  m_sUrl = new String(m_sUrl + "/");
       m_sUrlBaseDir =
 	  new String(m_sUrl.substring(0, m_sUrl.lastIndexOf("/")));
       if (m_sUrlBaseDir.substring(7).indexOf("/") != -1)
-	  m_sUrlServer = 
+	  m_sUrlServer =
 	      new String(m_sUrlBaseDir.substring(7,    // 7 to skip "http://"
 	        m_sUrlBaseDir.substring(7).indexOf("/")+7));
       else
-	  m_sUrlServer = 
+	  m_sUrlServer =
 	      new String(m_sUrlBaseDir.substring(7));
 
       String sLine = null;
       URL url = new URL (m_sUrl);
       HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
       BufferedReader theHTML = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-      
+
       StringBuffer sbHTML = new StringBuffer (1024);
-      
+
       while ((sLine = theHTML.readLine()) != null)
         sbHTML.append (sLine + "\n");
-      
+
       // Filter out HTML between body tags
       String sHTML = grabHtmlBody (sbHTML.toString ());
-      
+
       if (sHTML != null)
       {
         sHTML = replaceRelativeImages (sHTML);
@@ -94,7 +129,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
 	if (chConfig.get("portalAware") != null &&
 	    chConfig.get("portalAware").equals("true"))
 	  sHTML = eliminateIrrelevant (sHTML);
-                    
+
         out.println (sHTML);
       }
       else
@@ -112,29 +147,29 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       {
         Logger.log (Logger.ERROR, e);
       }
-      
+
       Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
+  {
     // This channel is not editable
   }
-  
+
   public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
     // This channel has no help
   }
-  
+
   // TODO: should be updated to use ORO regex matching instead of
   // simple String operations
   protected String grabHtmlBody (String sHTML)
-  {    
-    try 
+  {
+    try
     {
       int iBegin, iEnd;
-      
+
       if (sHTML.indexOf ("<body") >= 0)
       {
         iBegin = sHTML.indexOf ('>', sHTML.indexOf ("<body")) + 1;
@@ -150,7 +185,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
         iBegin = 0;
         iEnd = sHTML.length();
       }
-      
+
       return sHTML.substring (iBegin, iEnd);
     }
     catch (Exception e)
@@ -159,10 +194,10 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     }
     return null;
   }
-  
+
   // replace relative SRC attributes in <IMG> tags with absolute references
   protected String replaceRelativeImages (String sHTML)
-  {    
+  {
     // uses the ORO regular-expression engine (Perl5-style regexes)
     String r1 = "<img\\s+(.*?)src=\"/(.*?)\"(.*?)>";
     String t1 = "<img $1src=\"http://" + m_sUrlServer + "/$2\"$3>";
@@ -198,7 +233,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     return o2;
   }
 
-  /** like repaceRelativeImages but with HREF instead of SRC... 
+  /** like repaceRelativeImages but with HREF instead of SRC...
    *  coule be integrated later to use the same logic for both */
   protected String replaceRelativeLinks (String sHTML)
   {

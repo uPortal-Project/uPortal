@@ -1,3 +1,38 @@
+/**
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.channels;
 
 import javax.servlet.*;
@@ -14,12 +49,12 @@ import java.net.*;
 
 /**
  * All in one search from 1Blink.com.
- * 
+ *
  * @author Ken Weiner
  * @version $Revision$
  */
-public class CSearch implements org.jasig.portal.IChannel                     
-{  
+public class CSearch implements org.jasig.portal.IChannel
+{
   private static Vector params = null;
 
   public void init (ChannelConfig chConfig) {};
@@ -27,20 +62,20 @@ public class CSearch implements org.jasig.portal.IChannel
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
-  public boolean isEditable () {return false;}  
-  public boolean hasHelp () {return false;}  
-  
+  public boolean isEditable () {return false;}
+  public boolean hasHelp () {return false;}
+
   public int getDefaultDetachWidth () {return 175;}
   public int getDefaultDetachHeight () {return 250;}
-  
+
   public Vector getParameters()
   {
     return params;
   }
 
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
+  {
+    try
     {
       out.println ("<center>");
       out.println ("<br><table width=115 border=0 cellspacing=0 cellpadding=0>");
@@ -72,7 +107,7 @@ public class CSearch implements org.jasig.portal.IChannel
   {
     // This channel is not editable
   }
-  
+
   public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
     // This channel has no help

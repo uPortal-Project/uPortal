@@ -1,3 +1,38 @@
+/**
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.channels;
 
 import javax.servlet.*;
@@ -17,12 +52,12 @@ import java.net.*;
  * This is a user-defined channel for rendering a web page in an IFrame.
  * For Browsers without support for Inline Frames the channel just presents
  * a link to open in a separate window.
- * 
+ *
  * @author Susan Bramhall
  * @version $Revision$
  */
-public class CInlineFrame implements org.jasig.portal.IChannel                            
-{ 
+public class CInlineFrame implements org.jasig.portal.IChannel
+{
   protected String m_sUrl = null;
   private ChannelConfig chConfig = null;
 
@@ -54,9 +89,9 @@ public class CInlineFrame implements org.jasig.portal.IChannel
   {
     return params;
   }
-  
+
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
+  {
     try
     {
       String sBrowser = req.getHeader("User-Agent");
@@ -66,12 +101,12 @@ public class CInlineFrame implements org.jasig.portal.IChannel
       URL url = new URL (m_sUrl);
       HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
       BufferedReader theHTML = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-      
+
       StringBuffer sbHTML = new StringBuffer (1024);
-      
+
       while ((sLine = theHTML.readLine()) != null)
         sbHTML.append (sLine);
-      
+
         String sHTML = sbHTML.toString ();
         if (sHTML != null)
         {
@@ -106,20 +141,20 @@ public class CInlineFrame implements org.jasig.portal.IChannel
       {
         Logger.log (Logger.ERROR, e);
       }
-      
+
       Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
+  {
     // This channel is not editable
   }
-  
+
   public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
     // This channel has no help
   }
-  
+
 
 }

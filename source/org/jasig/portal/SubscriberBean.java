@@ -1,3 +1,38 @@
+/**
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal;
 
 import javax.servlet.*;
@@ -123,10 +158,10 @@ public class SubscriberBean extends GenericPortalBean{
     String sInstanceID = "c" + (iHighest + 1);
     channel.setInstanceIDAttribute (sInstanceID);
     channel.setMinimizedAttribute("false");
-    
+
     // Remove from channel cache
     layoutBean.removeChannelInstance (sInstanceID);
-    
+
     return channel;
    }
 
@@ -148,7 +183,7 @@ public class SubscriberBean extends GenericPortalBean{
    public String getChannelName()
    {
     return ch.getName();
-   } 
+   }
 
   /**
    * displays a preview of the channel
@@ -167,7 +202,7 @@ public class SubscriberBean extends GenericPortalBean{
         // Channel heading
         IXml layoutXml = layoutbean.getLayoutXml (req, layoutbean.getUserName (req));
         ILayout layout = (ILayout) layoutXml.getRoot ();
-            
+
         out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
         out.println ("        <tr>");
         out.println ("          <td>");
@@ -175,14 +210,14 @@ public class SubscriberBean extends GenericPortalBean{
         out.println ("          </td>");
         out.println ("          <td nowrap valign=center align=right>");
         out.println ("            &nbsp;");
-            
+
         // Channel control buttons
         if (ch.isMinimizable ())
         out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\">");
 
         if (ch.isDetachable ())
         out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\">");
-            
+
         if (ch.isRemovable ())
         out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\">");
 
@@ -193,7 +228,7 @@ public class SubscriberBean extends GenericPortalBean{
         out.println ("<img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\">");
 
             out.println ("            &nbsp;");
-            out.println ("          </td>");            
+            out.println ("          </td>");
             out.println ("        </tr>");
             out.println ("      </table>");
 
@@ -205,12 +240,12 @@ public class SubscriberBean extends GenericPortalBean{
             out.println ("            <table border=0 cellpadding=3 cellspacing=0 width=100% bgcolor=#ffffff>");
             out.println ("              <tr>");
             out.println ("                <td valign=top>");
-                            
+
 
               // Render channel contents
               ch.render (req, res, out);
 
-              
+
             out.println ("                </td>");
             out.println ("              </tr>");
             out.println ("            </table>");
