@@ -122,12 +122,14 @@ public class RDBMCounterStore implements ICounterStore {
                         } finally {
                             rs.close();
                         }
-                        String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + counterName + "'" +
+                        String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + counterName + "'" +
                             " AND SEQUENCE_VALUE=" + origId;
-                        LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sInsert);
-                        stmt.executeUpdate(sInsert);
-                        RDBMServices.commit(con);
-                        return  nextId;
+                        LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sUpdate);
+                        int rowsUpdated = stmt.executeUpdate(sUpdate);
+                        if (rowsUpdated > 0) {
+                          RDBMServices.commit(con);
+                          return nextId;
+                        }
                     } catch (SQLException e) {
                         RDBMServices.rollback(con);
                         /**
