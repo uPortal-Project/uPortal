@@ -1,9 +1,9 @@
 <!--
-     This is the build.xml for uPortal 2 which can be used in
+     This is the build.xml for uPortal which can be used in
      conjunction with Ant (http://jakarta.apache.org/ant/) to
      build, deploy, and distribute the uPortal project. Type
      "ant -projecthelp" to see a list of ant targets.  This
-     build file is based on a sample build.xml distriuted with
+     build file is based on a sample build.xml distributed with
      Jakarta's Tomcat 4.
 
      Notes:
@@ -137,7 +137,12 @@
 
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
                        into HTML, text, or other XML document types.
-                       Version: 2.4.0
+                       IMPORTANT: See the following web pages that describe
+                       the steps you need to take to ensure that the appropriate 
+                       version of Xalan is being used in your environment:
+                       JDK 1.3: http://xml.apache.org/xalan-j/faq.html#faq-N100AF
+                       JDK 1.4: http://xml.apache.org/xalan-j/faq.html#faq-N100C3
+                       Version: 2.4.1
                        URL: http://xml.apache.org/xalan-j/
 
   xercesImpl.jar       Xerces2 is the next generation of high performance,
