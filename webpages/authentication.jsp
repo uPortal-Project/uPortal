@@ -34,6 +34,7 @@
 --%>
 
 <%@ page errorPage="error.jsp" %>
+<%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.*" %>
 <%@ page import="org.jasig.portal.security.*" %>
 <%@ include file="checkinit.jsp" %>
@@ -64,14 +65,21 @@ if(bAuthorized)
     which prevents you from invalidating the session and then
     creating it again.  So in the meantime, well just
     clear out the session attributes to indicate a logoff/logon
-  */
+
+    And Resin has problems when the attributes are removed while
+    iterating over the Enumeration, hence some slightly funky code
+   */
 
   // Clear out session attributes
   java.util.Enumeration e = session.getAttributeNames ();
-
+  Vector remove = new Vector();
   while (e.hasMoreElements ())
   {
-    session.removeAttribute ((String) e.nextElement ());
+    remove.add((String) e.nextElement ());
+  }
+  for (Iterator it=remove.iterator(); it.hasNext() ;)
+  {
+      session.removeAttribute ((String) it.next());
   }
 
   // Get the Person object and put it in the session
