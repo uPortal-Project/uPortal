@@ -6,23 +6,13 @@ body
   font-family: Helvetica, Arial, sans-serif;
 }
 
-td
-{
-  color: #000000;
-  font-size: 85%;
-  font-family: Helvetica, Arial, sans-serif;
-}
-
-
 A:link	{ color: #0000ff; }
 A:visited	{ color: #555555; }
 A:active	{ color: #cccccc; }
 
 .PortalTitleText     { text-decoration:none; color: #000000;
-
                        font-weight:bold; font-family:arial,helvetica,times,courier;}
 
 .PortalText          { text-decoration:none; color: #000000;
-
                        font-weight:plain; font-family:arial,helvetica,times,courier;}
 
