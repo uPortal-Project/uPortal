@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- $Revision$ -->
+
+<!--
+  This list of services is processed by org.jasig.portal.services.ExternalServices.
+  When uPortal is started, it will attempt to fire up all the services listed here.
+-->
+
+<servicelist>
+
+  <!--
+  <service>
+    <name>Connection Pool</name>
+    <class>com.codestudio.sql.PoolMan</class>
+    <method type="static">start</method>
+  </service>
+  -->
+
+  <!--
+  <service>
+    <name>Some other service</name>
+    <class>edu.myschool.services.MyPortalService</class>
+    <method type="static">main</method>
+  </service>
+  -->
+
+</servicelist>
