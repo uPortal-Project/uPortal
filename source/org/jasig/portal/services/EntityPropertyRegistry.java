@@ -37,6 +37,7 @@
 package  org.jasig.portal.services;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.entityproperties.EntityProperties;
 import org.jasig.portal.services.entityproperties.IEntityPropertyFinder;
 import org.jasig.portal.services.entityproperties.IEntityPropertyStore;
@@ -105,7 +106,7 @@ public class EntityPropertyRegistry {
         propsType = Class.forName("org.jasig.portal.services.entityproperties.EntityProperties");
     }
 
-    protected synchronized static EntityPropertyRegistry instance() {
+    public synchronized static EntityPropertyRegistry instance() {
         if (_instance == null) {
             try {
                 _instance = new EntityPropertyRegistry();
@@ -167,6 +168,46 @@ public class EntityPropertyRegistry {
       }
       return  ep;
    }
+
+   public void clearCache(EntityIdentifier entityID) {
+      try {
+         EntityCachingService.instance().remove(propsType, getPropKey(entityID));
+      } catch (CachingException e) {
+         LogService.log(LogService.ERROR, e);
+         Exception ee = e.getRecordedException();
+         if (ee != null) {
+            LogService.log(LogService.ERROR, ee);
+         }
+      }
+   }
+
+   public void addToCache(EntityProperties ep) {
+      try {
+         EntityCachingService.instance().add(ep);
+      } catch (CachingException e) {
+         LogService.log(LogService.ERROR, e);
+         Exception ee = e.getRecordedException();
+         if (ee != null) {
+            LogService.log(LogService.ERROR, ee);
+         }
+      }
+   }
+
+   public EntityProperties getCachedProperties(EntityIdentifier entityID) {
+      EntityProperties ep = null;
+      try {
+         ep = (EntityProperties) EntityCachingService.instance().get(propsType,
+                                                                     entityID.getKey());
+      } catch (CachingException e) {
+         LogService.log(LogService.ERROR, e);
+         Exception ee = e.getRecordedException();
+         if (ee != null) {
+            LogService.log(LogService.ERROR, ee);
+         }
+      }
+      return ep;
+   }
+   
 }
 
 
