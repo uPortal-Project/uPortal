@@ -94,7 +94,7 @@ if (sAction != null)
 <html>
 <head>
 <title>Personalize Tabs</title>
-<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
+<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
 <script language="JavaScript">
 <!-- hide
 function getActionAndSubmit(theForm, buttonValue)

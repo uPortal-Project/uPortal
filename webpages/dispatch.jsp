@@ -59,7 +59,7 @@ session.setAttribute ("headerTitle", sTitle);
 <html>
 <head>
 <title><%= sTitle %></title>
-<link rel="stylesheet" href="stylesheets/general.css" TYPE="text/css" />
+<link rel="stylesheet" href="stylesheets/portal.css" TYPE="text/css" />
 </head>
 
 <% layoutBean.writeBodyStyle (request, response, out); %>

@@ -65,7 +65,7 @@ if (sAction != null)
 <html>
 <head>
 <title>Publish Channel</title>
-<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
+<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
 
 <SCRIPT LANGUAGE="JavaScript">
 <!--

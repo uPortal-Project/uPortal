@@ -53,7 +53,7 @@ String sPub_email = request.getParameter("pub_email");
 <html>
 <head>
 <title>Publish Channel</title>
-<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
+<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
 </head>
 
 <% layoutBean.writeBodyStyle (request, response, out); %>
