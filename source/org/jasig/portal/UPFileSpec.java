@@ -396,6 +396,11 @@ public class UPFileSpec {
                 // yes, target is specified
                 if(uPTokenizer.hasMoreElements()) {
                     targetNodeId=uPTokenizer.nextToken();
+                    if (uPTokenizer.hasMoreElements()) {
+                        currentToken = uPTokenizer.nextToken();
+                    } else {
+                        currentToken = null;
+                    }
                 } else {
                     return;
                 }
@@ -421,7 +426,7 @@ public class UPFileSpec {
      */
     private static String sinkTokenization(StringTokenizer st,  String delimiter, String initialValue) {
         StringBuffer sb;
-        if(initialValue!=null) {
+        if(initialValue!=null && !PORTAL_URL_SUFFIX.equals(initialValue)) {
             sb=new StringBuffer(initialValue);
         } else {
             sb=new StringBuffer();
@@ -429,11 +434,13 @@ public class UPFileSpec {
 
         while(st.hasMoreTokens()) {
             String token=st.nextToken();
-            if(st.hasMoreTokens()) {
-                sb.append(delimiter);
-                sb.append(token);
+            if (!PORTAL_URL_SUFFIX.equals(token)) {
+                if(st.hasMoreTokens()) {
+                    sb.append(delimiter);
+                    sb.append(token);
+                }
             }
         }
-        return sb.toString();
+        return sb.length() == 0 ? null : sb.toString();
     }
 }
