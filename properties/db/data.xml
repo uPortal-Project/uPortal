@@ -3658,14 +3658,14 @@
         </row>
 
        <!-- For AL_TabColumn structure -->
-       <row>
+       <row sinceMajor="2" sinceMinor="2">
          <column><name>SS_ID</name><value>3</value></column>
          <column><name>PARAM_NAME</name><value>lastSessionTabID</value></column>
          <column><name>PARAM_DEFAULT_VAL</name><value>no lastSessionTabID parameter</value></column>
          <column><name>PARAM_DESCRIPT</name><value>The ID of the tab that is active after login</value></column>
          <column><name>TYPE</name><value>1</value></column>
         </row>
-       <row>
+       <row sinceMajor="2" sinceMinor="2">
          <column><name>SS_ID</name><value>3</value></column>
          <column><name>PARAM_NAME</name><value>width</value></column>
          <column><name>PARAM_DEFAULT_VAL</name><value>100</value></column>
