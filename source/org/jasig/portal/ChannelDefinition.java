@@ -35,9 +35,9 @@
 
 package org.jasig.portal;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Date;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -63,7 +63,7 @@ public class ChannelDefinition {
   private boolean chanEditable;
   private boolean chanHasHelp;
   private boolean chanHasAbout;
-  private List parameters;
+  private Map parameters; // Consider implementing as a Set
 
   /**
    * Constructs a channel definition.
@@ -74,7 +74,7 @@ public class ChannelDefinition {
     this.chanTitle = "";
     this.chanDesc = "";
     this.chanClass = "";
-    this.parameters = new ArrayList();
+    this.parameters = new HashMap();
   }
 
   // Getter methods
@@ -93,7 +93,7 @@ public class ChannelDefinition {
   public boolean isEditable() { return chanEditable; }
   public boolean hasHelp() { return chanHasHelp; }
   public boolean hasAbout() { return chanHasAbout; }
-  public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.toArray(new ChannelParameter[0]); }
+  public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
 
   // Setter methods
   public void setFName(String fname) {this.chanFName =fname; }
@@ -110,10 +110,44 @@ public class ChannelDefinition {
   public void setEditable(boolean editable) {this.chanEditable = editable; }
   public void setHasHelp(boolean hasHelp) {this.chanHasHelp = hasHelp; }
   public void setHasAbout(boolean hasAbout) {this.chanHasAbout = hasAbout; }
-  public void setParameters(ChannelParameter[] parameters) { this.parameters = Arrays.asList(parameters); };
+  public void setParameters(ChannelParameter[] parameters) {
+    for (int i = 0; i < parameters.length; i++) {
+      this.parameters.put(parameters[i].getName(), parameters[i]);
+    }
+  }
 
+  /**
+   * Adds a parameter to this channel definition
+   * @param parameter, the channel parameter to add
+   */      
+  public void addParameter(ChannelParameter parameter) {
+    addParameter(parameter.getName(), parameter.getValue(), String.valueOf(parameter.getOverride()));
+  }
+  
+  /**
+   * Adds a parameter to this channel definition
+   * @param name, the channel parameter name
+   * @param value, the channel parameter value
+   * @param override, the channel parameter override setting
+   */   
   public void addParameter(String name, String value, String override) {
-    parameters.add(new ChannelParameter(name, value, override));
+    parameters.put(name, new ChannelParameter(name, value, override));
+  }
+  
+  /**
+   * Removes a parameter from this channel definition
+   * @param parameter, the channel parameter to remove
+   */    
+  public void removeParameter(ChannelParameter parameter) {
+    removeParameter(parameter.getName());
+  }  
+  
+  /**
+   * Removes a parameter from this channel definition
+   * @param name, the parameter name
+   */  
+  public void removeParameter(String name) {
+    parameters.remove(name);
   }
 
   /**
@@ -150,8 +184,9 @@ public class ChannelDefinition {
 
   private final void addParameters(Document doc, Element channel) {
     if (parameters != null) {
-      for (int i = 0; i < parameters.size(); i++) {
-        ChannelParameter cp = (ChannelParameter) parameters.get(i);
+      Iterator iter = parameters.values().iterator();
+      while (iter.hasNext()) {
+        ChannelParameter cp = (ChannelParameter)iter.next();
 
         Element parameter = nodeParameter(doc, cp.name, cp.value);
         if (cp.override) {
