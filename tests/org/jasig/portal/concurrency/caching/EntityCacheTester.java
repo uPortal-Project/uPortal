@@ -178,7 +178,6 @@ public static void main(java.lang.String[] args) throws Exception
 
 }
 /**
- * @param msg java.lang.String
  */
 private static void print (IBasicEntity[] entities)
 {
@@ -197,7 +196,6 @@ private static void print(String msg)
     System.out.println(ts + " : " + msg);
 }
 /**
- * @param msg java.lang.String
  */
 private static void printBlankLine()
 {

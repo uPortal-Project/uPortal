@@ -284,7 +284,7 @@ class ExceptionInInitializerHandler
      *
      * @param client client calling the handle method
      *
-     * @param property property name associated with error message
+     * @param name property name associated with error message
      * 
      * @param objects objects associated with the error message, or
      * <code>null</code>
@@ -329,7 +329,7 @@ class IllegalAccessHandler
      *
      * @param client client calling the handle method
      *
-     * @param property property name associated with error message
+     * @param name property name associated with error message
      * 
      * @param objects objects associated with the error message, or
      * <code>null</code>
@@ -377,7 +377,7 @@ class InstantiationExceptionHandler
      *
      * @param client client calling the handle method
      *
-     * @param property property name associated with error message
+     * @param name property name associated with error message
      * 
      * @param objects objects associated with the error message, or
      * <code>null</code>

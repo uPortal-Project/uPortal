@@ -115,7 +115,7 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
      *
      * @param person User
      * @param profileId profile id
-     * @param stylesheetName structure stylesheet name
+     * @param stylesheetId structure stylesheet id
      * @return structure stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(org.jasig.portal.security.IPerson person, int profileId, int stylesheetId) throws Exception {
@@ -160,7 +160,7 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
     }
     /** Obtains a list of theme stylesheets available for a particular structure stylesheet.
      *
-     * @param structureStylesheetName name of the structure stylehsset
+     * @param structureStylesheetId id of the structure stylehsset
      * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
      */
     public java.util.Hashtable getThemeStylesheetList(int structureStylesheetId) throws Exception {
@@ -170,7 +170,7 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
      *
      * @param person User
      * @param profileId profile id
-     * @param stylesheetName theme stylesheet name
+     * @param stylesheetId theme stylesheet id
      * @return theme stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(org.jasig.portal.security.IPerson person, int profileId, int stylesheetId) throws Exception {
@@ -179,7 +179,7 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
     /**
      * Retreive a user layout document.
      *
-     * @param Person an <code>IPerson</code> object specifying the user
+     * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile 
      * @return a <code>Document</code> containing user layout (conforms to userLayout.dtd)
      * @exception Exception if an error occurs
@@ -267,7 +267,7 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
     /**
      * Persist user layout document.
      *
-     * @param Person an <code>IPerson</code> object specifying the user
+     * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
      * @param layoutXML a <code>Document</code> containing user layout (conforming to userLayout.dtd)
      * @param channelsAdded a boolean flag specifying if new channels have been added to the current user layout (for performance optimization purposes)

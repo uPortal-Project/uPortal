@@ -1,8 +1,6 @@
 package org.jasig.portal.layout;
 
-import junit.framework.*;
-import junit.runner.BaseTestRunner;
-import org.jasig.portal.layout.SimpleUserLayoutManager;
+import junit.framework.TestSuite;
 
 public class AllLayoutTests {
 

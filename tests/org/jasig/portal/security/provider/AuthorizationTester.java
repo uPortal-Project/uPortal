@@ -344,9 +344,6 @@ private static void print(String msg)
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
     System.out.println(ts + " : " + msg);
 }
-/**
- * @param msg java.lang.String
- */
 private static void printBlankLine()
 {
     System.out.println("");

@@ -16,7 +16,6 @@ import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
-import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 
 /**
@@ -271,7 +270,6 @@ public static void main(java.lang.String[] args) throws Exception
 
 }
 /**
- * @param msg java.lang.String
  */
 private static void print (IEntity[] entities)
 {
@@ -289,9 +287,6 @@ private static void print(String msg)
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
     System.out.println(ts + " : " + msg);
 }
-/**
- * @param msg java.lang.String
- */
 private static void printBlankLine()
 {
     System.out.println("");
