@@ -227,6 +227,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
         ITitleOrUrlOrLinkOrWidthOrHeightOrDescription[] imageAttr = image.getTitleOrUrlOrLinkOrWidthOrHeightOrDescriptions ();
         String sImageUrl = null;
         String sImageLink = null;
+        String sImageDescr = "RSS Image";
 
         for (int i = 0; i < imageAttr.length; i++)
         {
@@ -234,18 +235,21 @@ public class CRSSChannel implements org.jasig.portal.IChannel
             sImageUrl = imageAttr[i].getUrl ();
           if (imageAttr[i].getLink () != null)
             sImageLink = imageAttr[i].getLink ();
+          if (imageAttr[i].getDescription () != null)
+            sImageDescr = imageAttr[i].getDescription ();
         }
         // if there is an image and an image-link use it as intended
-        if (sImageLink!= null) out.println ("<a href=\"" + sImageLink + "\"><img src=\"" + sImageUrl + "\" border=0 align=right /></a>");
+        if (sImageLink!= null)
+          out.println ("<a href=\"" + sImageLink + "\"><img src=\"" + sImageUrl + "\" alt=\"" + sImageDescr + "\" border=\"0\" align=\"right\" /></a>");
         else
           // if no image-link but have title-link put title-link on the image
-          if (sTitleLink != null) out.println ("<a href=\"" + sTitleLink + "\"><img src=\"" + sImageUrl + "\" border=0 align=right /></a>");
+          if (sTitleLink != null) out.println ("<a href=\"" + sTitleLink + "\"><img src=\"" + sImageUrl + "\" alt=\"" + sImageDescr + "\" border=0 align=right /></a>");
           // if no image-link and no title-link just put the image out with no link
-          else out.println ("<img src=\"" + sImageUrl + "\" border=0 align=right />");
+          else out.println ("<img src=\"" + sImageUrl + "\" alt=\"" + sImageDescr + "\" border=0 align=right />");
       }
       // if there is a title link but no image then insert our own little icon for the link
       else
-        if (sTitleLink != null) out.println ("<a href=\"" + sTitleLink + "\"><img src=\"images/rsslink.gif\" border=0 align=right /></a>");
+        if (sTitleLink != null) out.println ("<a href=\"" + sTitleLink + "\"><img src=\"images/rsslink.gif\" alt=\"Default image\" border=0 align=right /></a>");
 
       out.println ("<p><em>" + sDescription + "</em></p>");
 
