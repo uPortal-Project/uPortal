@@ -35,13 +35,14 @@
 
 package  org.jasig.portal.utils;
 
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.BrowserInfo;
+import org.jasig.portal.services.LogService;
 import org.apache.xalan.xslt.*;
 import org.apache.xerces.parsers.SAXParser;
 import java.io.File;
@@ -80,14 +81,10 @@ import org.w3c.dom.Node;
  * @version $Revision$
  */
 public class XSLT {
-  // cacheEnabled flag should be set to true for production to
-  // ensure that pre-compiled stylesheets are cached
-  // I'm hoping that this setting can come from some globally-set
-  // property.  I'll leave this for later.
-  // Until then, it'll stay checked in set to false so that
-  // developers can simply reload the page to see the effect of
-  // a modified XSLT stylesheet
-  private static boolean cacheEnabled = false;
+  // These flags should be set to true for production to
+  // ensure that pre-compiled stylesheets and stylesheet sets are cached.
+  private static boolean stylesheetRootCacheEnabled = PropertiesManager.getBooleanProperty("org.jasig.portal.utils.XSLT.stylesheet_root_caching");
+  private static boolean stylesheetSetCacheEnabled = PropertiesManager.getBooleanProperty("org.jasig.portal.utils.XSLT.stylesheet_set_caching");
   private static final String mediaProps = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
   private static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
   private static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
@@ -806,7 +803,7 @@ public class XSLT {
       // Get the StylesheetRoot and cache it
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
       stylesheetRoot = processor.processStylesheet(stylesheetURI);
-      if (cacheEnabled) {
+      if (stylesheetRootCacheEnabled) {
         stylesheetRootCache.put(stylesheetURI, stylesheetRoot);
         LogService.instance().log(LogService.INFO, "Caching StylesheetRoot for: " + stylesheetURI);
       }
@@ -826,7 +823,7 @@ public class XSLT {
     if (stylesheetSet == null) {
       // Get the StylesheetSet and cache it
       stylesheetSet = new StylesheetSet(stylesheetListURI);
-      if (cacheEnabled) {
+      if (stylesheetSetCacheEnabled) {
         stylesheetSetCache.put(stylesheetListURI, stylesheetSet);
         LogService.instance().log(LogService.INFO, "Caching StylesheetSet for: " + stylesheetListURI);
       }
