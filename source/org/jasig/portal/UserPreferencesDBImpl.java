@@ -49,7 +49,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 	String media=up.getMedia();
 	this.setStylesheetNames(stylesheetNames,userName,media);
 	this.setStructureStylesheetUserPreferences(userName,fsup);
-	this.setThemeStylesheetUserPreferences(userName,fsup);
+	this.setThemeStylesheetUserPreferences(userName,ssup);
 	this.setCSSStylesheetUserPreferences(userName,cssup);
     }
 
