@@ -163,9 +163,9 @@ public class CLayoutManager implements ISpecialChannel
     */
     
     //need to get a fresh copy in case another channel has made changes
-    //if(userLayoutXML==null) {
+    if(userLayoutXML==null) {
 	userLayoutXML=ulm.getUserLayoutCopy();
-    //}
+    }
     
     action = runtimeData.getParameter ("action");
     
