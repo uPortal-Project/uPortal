@@ -1,10 +1,8 @@
 <!--
      This is the build.xml for uPortal which can be used in
-     conjunction with Ant (http://jakarta.apache.org/ant/) to
+     conjunction with Ant (http://ant.apache.org/) to
      build, deploy, and distribute the uPortal project. Type
-     "ant -projecthelp" to see a list of ant targets.  This
-     build file is based on a sample build.xml distributed with
-     Jakarta's Tomcat 4.
+     "ant -projecthelp" to see a list of ant targets.
 
      Notes:
 
@@ -12,11 +10,12 @@
      build.properties which contains configurable paths to jar
      files and other resources.
 
-     "ant db" will load your database, but you must first
-     set up the JDBC properties in rdbm.properties and possibly
-     PersonDirs.xml, both of which are in the properties directory.
+     "ant initportal" will deploy uPortal and load your database,
+     but you must first set up the JDBC properties in 
+     rdbm.properties and possibly PersonDirs.xml, 
+     both of which are in the properties directory.
 
-     Author: Ken Weiner, kweiner@interactivebusiness.com
+     Author: Ken Weiner, kweiner@unicon.net
      Version $Revision$
 -->
 
@@ -280,6 +279,7 @@
   <property name="junit.jar" value="(set this in build.properties!)"/>
 
 
+
 <!-- ==================== Compilation Classpath =========================== -->
 
 <!--
@@ -319,6 +319,7 @@
   </path>
 
 
+
 <!-- ====================== Tests Classpath =============================== -->
 
 <!--
@@ -331,6 +332,7 @@
     <path refid="compile.classpath"/>
     <pathelement location="${junit.jar}"/>
   </path>
+
 
 
 <!-- ==================== All Target ====================================== -->
@@ -560,7 +562,8 @@
   
 -->
   
-  <target name="initportal" description="Publish a channel">
+  <target name="initportal" 
+   description="Runs all the targets necessary to deploy the portal and prepare the portal database">
     <echo message="Initializing uPortal"/> 
     <antcall target="deploy"/>   
     <antcall target="db"/>   
@@ -574,7 +577,8 @@
     <echo message="Finished initializing uPortal"/>
   </target>
   
-  
+
+
 <!-- ==================== DbLoader Target ================================= -->
 
 <!--
@@ -634,7 +638,8 @@
 -->
 
 
-  <target name="db" depends="compile">
+  <target name="db" depends="compile"
+   description="Loads database tables and data">
     <echo message="Invoking DbLoader"/>
     <property name="usetable" value=" "/>
     <property name="tablefile" value=" "/>
@@ -665,7 +670,8 @@
     </java>
   </target>
 
-  <target name="i18n-db" depends="compile">
+  <target name="i18n-db" depends="compile"
+    description="Loads internationalization tables and data">
     <echo message="Invoking DbLoader for internationalized database setting"/>
     <property name="usetable" value="-t"/>
     <property name="tablefile" value="/properties/db/tables-i18n.xml"/>
@@ -696,7 +702,8 @@
     </java>
   </target>
 
-  <target name="l10n-db" depends="compile">
+  <target name="l10n-db" depends="compile"
+    description="Loads localized data">
     <echo message="Invoking DbLoader for localizationed database setting"/>
     <property name="locale" value="en_US"/>
     <property name="usetable" value="-t"/>
@@ -746,7 +753,8 @@
 -->
 
 
-  <target name="dbunload" depends="compile">
+  <target name="dbunload" depends="compile"
+   description="Dumps a database table to a flat file in XML format">
     <echo message="Invoking DbUnload"/>
     <property name="tablename" value=" "/>
     <property name="xmlfile" value=" "/>
@@ -771,7 +779,8 @@
 -->
 
 
-  <target name="dbtest" depends="compile">
+  <target name="dbtest" depends="compile"
+   description="Displays information about the database defined in rdbm.properties">
     <echo message="Invoking DbTest"/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
       <classpath>
@@ -780,6 +789,7 @@
       </classpath>
     </java>
   </target>
+
 
 
 <!-- ========= The push fragment loader for aggregated layouts =========  -->
@@ -792,7 +802,8 @@
 -->
 
 
-  <target name="pushfragment" depends="compile">
+  <target name="pushfragment" depends="compile"
+   description="Loads pushed fragments into the uPortal database">
     <property name="tempDataXML" value="/properties/al/push.fragment.temp.data.xml"/>
     <property name="fragmentFile" value=" "/>
     <echo message="Resetting layout fragments configuration."/>
@@ -824,6 +835,7 @@
   </target>
 
 
+
 <!-- ==================== md5passwd Target ================================ -->
 
 <!--
@@ -837,7 +849,8 @@
 -->
 
 
-  <target name="md5passwd" depends="compile">
+  <target name="md5passwd" depends="compile"
+   description="Creates a user in the UP_PERSON_DIR table">
     <echo message="Invoking md5passwd"/>
     <property name="username" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.security.md5passwd">
@@ -850,17 +863,19 @@
     </java>
   </target>
 
+
+
 <!-- ==================== deluser Target ============================ -->
 <!--
    The deluser target runs uPortal's DeleteUser program to delete all
    traces of a uportal user from the uPortal database.
-Example:
+   Examples:
    ant deluser -Duser=username
-
    ant deluser -Duser=ashenoy
 -->
 
-  <target name="deluser" >
+  <target name="deluser" 
+   description="Delete traces of a user from the portal database">
     <echo message="Invoking DeleteUser"/>
     <property name="user" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true" >
@@ -871,6 +886,8 @@ Example:
       <arg value="${user}"/>
     </java>
   </target>
+
+
 
 <!-- ==================== regchantype Target ============================== -->
 
@@ -890,7 +907,8 @@ Example:
 -->
 
 
-  <target name="regchantype" depends="compile">
+  <target name="regchantype" depends="compile"
+   description="Registers a new channel type">
     <echo message="Invoking RegisterChannelType"/>
     <property name="class" value=" "/>
     <property name="name" value=" "/>
@@ -907,6 +925,7 @@ Example:
       <arg value="${uri}"/>
     </java>
   </target>
+
 
 
 <!-- ==================== addstylesheet Target ============================ -->
@@ -929,7 +948,8 @@ Example:
 -->
 
 
-  <target name="addstylesheet" depends="compile">
+  <target name="addstylesheet" depends="compile"
+   description="Registers a new theme or structure">
     <echo message="Invoking RegisterStylesheet (add)"/>
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetUri" value=" "/>
@@ -967,7 +987,8 @@ Example:
 -->
 
 
-  <target name="modstylesheet" depends="compile">
+  <target name="modstylesheet" depends="compile"
+   description="Modifies an existing theme or structure">
     <echo message="Invoking RegisterStylesheet (modify)"/>
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetUri" value=" "/>
@@ -987,6 +1008,7 @@ Example:
   </target>
 
 
+
 <!-- ==================== delstylesheet Target ============================ -->
 
 <!--
@@ -1004,7 +1026,8 @@ Example:
 -->
 
 
-  <target name="delstylesheet" depends="compile">
+  <target name="delstylesheet" depends="compile"
+   description="Deletes an existing theme or structure">
     <echo message="Invoking RegisterStylesheet (delete)"/>
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetId" value=" "/>
@@ -1020,13 +1043,15 @@ Example:
   </target>
 
 
+
 <!-- ====================== compiletests Target =========================== -->
 
 <!--
 
-  Peter, please comment here...
+  Compiles JUnit tests.
 
 -->
+
 
   <target name="compiletests" depends="compile"
    description="Compile JUnit Tests">
@@ -1045,6 +1070,7 @@ Example:
   </target>
 
 
+
 <!-- ======================= runtests Target ============================== -->
 
 <!--
@@ -1052,6 +1078,7 @@ Example:
   Runs all uPortal JUnit-based test code
 
 -->
+
 
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
     <java fork="true" classname="org.jasig.portal.AllTests">
@@ -1063,13 +1090,15 @@ Example:
   </target>
 
 
+
 <!-- ======================= swingtests Target ============================ -->
 
 <!--
 
-  Peter, please comment here...
+  Run JUnit tests with Swing.
 
 -->
+
 
   <target name="swingtests" depends="compiletests" description="Run JUnit Test Suite">
     <java fork="true" classname="junit.swingui.TestRunner">
@@ -1080,6 +1109,8 @@ Example:
       <arg value="org.jasig.portal.AllTests"/>
     </java>
   </target>
+
+
 
 <!-- ==================== RunXSLT Target ================================ -->
 
@@ -1097,12 +1128,13 @@ Example:
 -->
 
 
-  <target name="RunXSLT" depends="compile">
+  <target name="runxslt" depends="compile"
+   description="Performs an XSLT transformation">
     <echo message="Invoking RunXSLT"/>
     <mkdir    dir="${build.home}/RunXSLT"/>
-   <copy todir="${build.home}/RunXSLT" >
+    <copy todir="${build.home}/RunXSLT" >
       <fileset dir="${build.home}/stylesheets/org/jasig/portal/tools/RunXSLT"/>
-   </copy>
+    </copy>
 
     <property name="XmlInput" value=" "/>
     <property name="Xslfile" value=" "/>
@@ -1120,19 +1152,25 @@ Example:
   </target>
 
 
+
 <!-- ==================== pubchan Target ================================ -->
 
 <!--
 
-  The "pubchan" target runs the ChannelPublisher tool
+  The "pubchan" target runs the ChannelPublisher tool.
+  Channel definitions are defined in XML files.  Each
+  channel definition is published or modified if one 
+  already existed with the same functional name.  You
+  can publish all the channel definitions at once or just
+  one at a time.
   Examples:
-  
   ant pubchan -Dchannel=all
   ant pubchan -Dchannel=daily-business-cartoon.xml
 
 -->
+
   
-  <target name="pubchan" description="Publish a channel" depends="compile">
+  <target name="pubchan" description="Publishes channels" depends="compile">
     <echo message="Invoking Channel Publisher Tool"/>
     
     <copy file="${basedir}/webpages/dtd/channelDefinition.dtd" todir="${build.home}/WEB-INF/classes/properties/chanpub/chandefs"/>
@@ -1147,5 +1185,6 @@ Example:
       <arg value="${channel}"/>
     </java>
   </target>
+  
   
 </project>
