@@ -1,13 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
 <HTML> 
 <HEAD> 
-<TITLE>MySQL Configuration guide</TITLE> 
+<TITLE>MySQL Databases</TITLE> 
 <LINK HREF="../uportal.css" REL="stylesheet">
-<!-- Use the following script to do rollovers in the left column of the
-page.  If you don't want to do rollovers, you can delete these script lines 
-from this html.  If you do use this .js file to do the rollovers, be sure 
-to name your images using the format filename-on.gif and filename-off.gif.  -->
-<SCRIPT LANGUAGE="Javascript" SRC="SwapImage.js"></SCRIPT> 
+
 </HEAD> 
 <BODY BGCOLOR="#FFFFFF"> 
 <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
@@ -15,84 +11,159 @@ to name your images using the format filename-on.gif and filename-off.gif.  -->
 <TD ALIGN="LEFT" VALIGN="BOTTOM" COLSPAN="3"><IMG SRC="../images/uportal-head.gif" ALT="uPortal by JA-SIG" BORDER="0" HEIGHT="87" WIDTH="592"></TD> 
 </TR> 
 <TR> 
-<TD COLSPAN="3" BGCOLOR="#FF6600"><IMG SRC="../images/spacer.gif" ALT="" BORDER="0" HEIGHT="2" WIDTH="1"></TD> 
+<TD><IMG SRC="../images/spacer.gif" ALT="." BORDER="0" HEIGHT="4" WIDTH="1"></TD> 
 </TR> 
-<TR VALIGN="TOP"> 
-<TD ALIGN="LEFT" WIDTH="150"> 
-<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%" BORDER="0"> 
-<TBODY> 
-<TR> 
-<TD>
-<A HREF="http://www.ja-sig.org/" ONMOUSEOVER="swapImage('jahome','on')" ONMOUSEOUT="swapImage('jahome','off')"> <IMG NAME="jahome" SRC="../images/jahome-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../index.html" ONMOUSEOVER="swapImage('about','on')" ONMOUSEOUT="swapImage('about','off')"> <IMG NAME="about" SRC="../images/about-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../faq.html" ONMOUSEOVER="swapImage('faq','on')" ONMOUSEOUT="swapImage('faq','off')"> <IMG NAME="faq" SRC="../images/faq-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../download.html" ONMOUSEOVER="swapImage('downld','on')" ONMOUSEOUT="swapImage('downld','off')"> <IMG NAME="downld" SRC="../images/downld-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../docs.html" ONMOUSEOVER="swapImage('docs','on')" ONMOUSEOUT="swapImage('docs','off')"> <IMG NAME="docs" SRC="../images/docs-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../getinv.html" ONMOUSEOVER="swapImage('getinv','on')" ONMOUSEOUT="swapImage('getinv','off')"> <IMG NAME="getinv" SRC="../images/getinv-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../cvs.html" ONMOUSEOVER="swapImage('coderep','on')" ONMOUSEOUT="swapImage('coderep','off')"> <IMG NAME="coderep" SRC="../images/coderep-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../bugs.html" ONMOUSEOVER="swapImage('bug','on')" ONMOUSEOUT="swapImage('bug','off')"> <IMG NAME="bug" SRC="../images/bug-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-<TR> 
-<TD><A HREF="../license.html" ONMOUSEOVER="swapImage('license','on')" ONMOUSEOUT="swapImage('license','off')"> <IMG NAME="license" SRC="../images/license-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32"></A>
-</TD> 
-</TR> 
-</TBODY> 
 </TABLE>
-<BR><BR>
-<!--nested table for mellon logo -->
-<IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"> 
-</TD> 
-<TD WIDTH="10">&nbsp;</TD> 
 
-<!-- insert main body into this table cell here -->
-<TD>
+<TABLE CELLSPACING="0" CELLPADDING="5" WIDTH="100%" BORDER="0"> 
+   <TBODY> 
+   <TR> 
+   <TD VALIGN="TOP" WIDTH="150" BGCOLOR="#CCCCFF">
+   <IMG SRC="../images/spacer.gif" BORDER="0" HEIGHT="4"><BR/>
+   <P><A CLASS="sidelinks" HREF="http://www.ja-sig.org/" ><B> JA-SIG Home</B></A></P>
+   <P><A CLASS="sidelinks"  HREF="../index.html" ><B> About uPortal</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../docs.html" ><B> Documentation</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../administrators/index.html" ><B> Getting Started</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../developers/index.html" ><B> Developers</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Architecture</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
+   <P><A CLASS="sidelinks" HREF="../release/index.html" ><B> Release</B></A></P>
+   <P><A CLASS="sidelinks" HREF="../minutes/index.html" ><B> Meeting Minutes</B></A></P>
+   <P><IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"></P> 
+   </TD>
 
-   <h4 class="title"> <a name="hsql-database"></a> Setting up A Mysql Database</h4>
-	<blockquote class="highlight"> This document needs content.
- See the <a href="../getinv.html">Getting Involved</a> page
-to read how you can contribute to the uPortal project.
-</blockquote>
+<!-- main body goes in this table cell -->
+   <TD WIDTH="692">
+   <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
+   
+   <h3 class="title"> <a name="top"></a> Setting up A Mysql Database</h3>
 
-   <p>
+   <h4>
+   Overview
+   </h4>
+   <p>MySQL is a commercial database available from 
+   <a href="http://www.mysql.com"> http://www.mysql.com </a>
+   <h4>
    Obtaining the Driver
+   </h4>
+   <p>
+   A MySQL JDBC driver is also available through 
+   <a href="http://www.mysql.com/downloads/api-jdbc.html"> http://www.mysql.com/downloads/api-jdbc.html</a>
+   </p>
+   <p>
+   The driver has recently had its name changed to reflect its author's 
+   new association - it is now "mysql-connector-java-{version}-bin.jar" 
+   rather than "mm.mysql-{version}-bin.jar. It can be downloaded as either 
+   a .tar.gz or .zip. The file should be stored in a directory where it 
+   will be accessible from the uPortal build environment 
+   (for example /usr/local/java/mysql/lib/mysql-connector-java-2.0.14-bin.jar)
+   </p>
+   <p>
+   See Issues section about possible issues using this driver
    </p>
 
-   <p>
+   <h4>
    Properties Configuration
-   </p>
-
+   </h4>
    <p>
-   Loading the Database
-   </p>
-
+   The uPortal build.properties will need to be modifed. Find the property called jdbcDriver and change it to point to the MySQL jar file, for example:
+   </p>   
+   <pre>
+   jdbcDriver.jar=./lib/mm.mysql-2.0.14-bin.jar
+  </pre> 
+   
    <p>
-   Issues and Known Bugs
+   The uPortal rdbm.properties file (in the properties directory) will 
+   need to modified to specify the driver properties. First, comment out 
+   the property definitions which are currently defined (most likely, for 
+   HypersonicSQL). The rdbm.properties file contains several sample 
+   entries. Uncomment (or add) the lines for the MySQL database and make 
+   whatever changes necessary to match your local database installation, For example: 
    </p>
    
+   <pre>
+   #### MySQL 
+   #jdbcDriver=org.gjt.mm.mysql.Driver
+   #jdbcUrl=jdbc:mysql://localhost/uportaldatabase
+   #jdbcUser=testuportal
+   #jdbcPassword=test
+   </pre> 
+   <p>The dbloader.xml properties file (also in the properties directory) 
+   may also need to be modified. This file is used by the DbLoader tool to 
+   create the uPortal database tables and populate the database. It 
+   contains several sample entries which create db-type-mappings for 
+   different databases. Find the tags for an MySQL database and modify the 
+   db-version, driver-name, and driver-version as necessary. For example: 
+   </p> 
+   
+
+   <pre>
+    &lt;db-type-mapping&gt;
+       &lt;db-name>MySQL&lt;/db-name&gt;
+       &lt;db-version>3.23.26&lt;/db-version&gt;
+       &lt;driver-name&gt;Mark Matthews' driver&lt;/driver-name&gt;
+       &lt;driver-version&gt;2.0.14&lt;/driver-version&gt;
+       &lt;type&gt;&lt;generic&gt;LONGVARCHAR&lt;/generic&gt;&lt;local&gt;TEXT&lt;/local&gt;&lt;/type&gt;
+       &lt;!-- map more types here --&gt;
+    &lt;/db-type-mapping&gt;
+   </pre>
+   <p>
+   The PersonDirs.xml file (also in the properties directory) needs to be modified; MySQL does not handle the "<uidquery>" element properly as it is written in the standard release. This file should be modified just before the start of the <attributes> elements: 
+   </p>
+   <pre>
+    &lt;!-- JDBC Properties --&gt;
+    &lt;driver&gt;org.gjt.mm.mysql.Driver&lt;/driver&gt;
+    &lt;url&gt;jdbc:mysql://localhost/uportaldatabase&lt;/url&gt;
+    &lt;logonid&gt;testuportal&lt;/logonid&gt;
+    &lt;logonpassword&gt;test&lt;/logonpassword&gt;
+    &lt;!-- changed for MySQL - was SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=? --&gt;
+    &lt;uidquery&gt;SELECT CONCAT_WS(" ",FIRST_NAME,LAST_NAME) AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?&lt;/uidquery&gt;
+    
+    </pre>
+
+   <h4>
+   Loading the Database
+   </h4>
+   <p>
+   Loading the database requires a couple of steps
+   </p>
+   <p>Create the database: Refer to the MySQL database documentation for 
+   instructions regarding how to create an MySQL database instances. The 
+   database name, port number, and driver information must reflect what 
+   was defined in the rdbm.properties file.
+   </p>
+   <p>Create the tables and populate the database: From the uPortal build 
+   directory, run "ant db" to execute the ant target which loads the 
+   database. The ant target uses the Dbloader tool. 
+   </p>
+   <h4>
+   Issues and Known Bugs
+   </h4>
+   
+   <p>When MySQL creates the tables for uPortal, all the tables will be 
+   of the default type - MyISAM. This table type is NOT transaction safe. 
+   While uPortal does not specifically require the use of transaction-safe 
+   tables (TST), it is a good idea to use this type of table. 
+   This becomes an issue because some versions of the mm.mysql driver give 
+   a false result and report that the database is transaction safe when 
+   it isn't. 
+   </p>
+   <p>The uPortal RDBMServices attempts to detect whether transactions are safe
+   by performing, a "test" update, followed by a rollback. If a database fails
+   this test,  the string "(driver lies)" will be appended to the statment 
+   in portal.log concerning whether or not the database supports transactions. 
+   However, there are some parts of uPortal where the this methodology isn't 
+   followed, and any externally-written channels which require transaction 
+   support may fail as well.
+   </p>
+   
+  
+   <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
 </TD> 
+
 </TR> 
+
+</TBODY> 
 </TABLE>
 
 <!-- page footer -->
@@ -101,10 +172,7 @@ to read how you can contribute to the uPortal project.
    <TR> 
    <TD ALIGN="CENTER">&nbsp;</TD> 
    </TR> 
-   <TR> 
-   <TD BGCOLOR="#ff6600" ALIGN="CENTER"><IMG HEIGHT="2"
-   SRC="../images/spacer.gif" WIDTH="1" BORDER="0" ALT="."></TD> 
-   </TR> 
+   
    <TR> 
    <TD ALIGN="CENTER"><IMG HEIGHT="3" SRC="../images/spacer.gif" WIDTH="1"
    BORDER="0" ALT="."><BR><FONT FACE="Verdana, Arial, sans-serif"
