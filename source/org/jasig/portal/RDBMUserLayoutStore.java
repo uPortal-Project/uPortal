@@ -841,7 +841,7 @@ public class RDBMUserLayoutStore
               sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
             }
             sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
-            stmt = con.createStatement();
+            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             HashMap layoutStructure = new HashMap();
             try {
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
