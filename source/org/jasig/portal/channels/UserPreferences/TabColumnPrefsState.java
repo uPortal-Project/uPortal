@@ -59,7 +59,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
@@ -67,6 +67,12 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import org.jasig.portal.utils.XMLEscaper;
+
+import javax.xml.transform.*;
+import javax.xml.transform.sax.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+import org.xml.sax.ext.LexicalHandler;
 
 
 /**
@@ -170,7 +176,7 @@ final class TabColumnPrefsState extends BaseState
     }
   }
 
-  public void renderXML(DocumentHandler out) throws PortalException
+  public void renderXML(ContentHandler out) throws PortalException
   {
     if (this.internalState != null)
       this.internalState.renderXML(out);
@@ -847,44 +853,50 @@ final class TabColumnPrefsState extends BaseState
     }
 
 
-    public void renderXML (DocumentHandler out) throws PortalException
-    {
-      try
-      {
-        // Set up chain: userLayout --> Structure Attributes Incorp. Filter --> out
-        // Currently this code assumes the use of Xalan as does much of the framework
-        org.apache.xalan.xslt.XSLTProcessor processor = org.apache.xalan.xslt.XSLTProcessorFactory.getProcessor();
-        String xslURI = set.getStylesheetURI("default",runtimeData.getBrowserInfo());
-        org.apache.xalan.xslt.StylesheetRoot ssRoot = XSLT.getStylesheetRoot(xslURI);
-        processor.setStylesheet(ssRoot);
-        processor.setDocumentHandler(out);
-        processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
-        processor.setStylesheetParam("activeTab", processor.createXString(activeTab));
-        processor.setStylesheetParam("action", processor.createXString(action));
-        processor.setStylesheetParam("elementID", processor.createXString(elementID));
-        processor.setStylesheetParam("errorMessage", processor.createXString(errorMessage));
+      public void renderXML (ContentHandler out) throws PortalException {
+          try  {
+              // Set up chain: userLayout --> Structure Attributes Incorp. Filter --> out
 
-        StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
-        StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(processor, ssup);
+              TransformerFactory tFactory=TransformerFactory.newInstance();
+              if(tFactory instanceof SAXTransformerFactory) {
+                  SAXTransformerFactory saxTFactory=(SAXTransformerFactory) tFactory;
+              
+                  // empty transformer to do the initial dom2sax transition
+                  Transformer emptytr=tFactory.newTransformer();
+          
+                  // stylesheet transformer
+                  String xslURI = set.getStylesheetURI("default",runtimeData.getBrowserInfo());
+                  TransformerHandler th=saxTFactory.newTransformerHandler(XSLT.getTemplates(xslURI));
+                  th.setResult(new SAXResult(out));
+                  Transformer sstr=th.getTransformer();
+                  // set the parameters
+                  sstr.setParameter("baseActionURL", runtimeData.getBaseActionURL());
+                  sstr.setParameter("activeTab", activeTab);
+                  sstr.setParameter("action", action);
+                  sstr.setParameter("elementID", elementID);
+                  sstr.setParameter("errorMessage", errorMessage);
 
-        // Incorporate channel registry document into userLayout if user is in the subscribe process
-        if (action.equals("newChannel"))
-        {
-          Node channelRegistry = ChannelRegistryManager.getChannelRegistry().getDocumentElement();
-          userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));
-        }
+                  StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+                  StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(th, ssup);
 
-        // Begin SAX chain
-        UtilitiesBean.node2SAX(userLayout, saif);
+                  // Incorporate channel registry document into userLayout if user is in the subscribe process
+                  if (action.equals("newChannel")) {
+                      Node channelRegistry = ChannelRegistryManager.getChannelRegistry().getDocumentElement();
+                      userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));
+                  }
+                  // Begin SAX chain
+                  emptytr.transform(new DOMSource(userLayout),new SAXResult(saif));
+              
+                  //if (action.equals("newChannel"))
+                  //  System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
 
-        //if (action.equals("newChannel"))
-        //  System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
+              } else {
+                  LogService.instance().log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
+              }
+          } catch (Exception e) {
+              throw new GeneralRenderingException(e.getMessage());
+          }
       }
-      catch (Exception e)
-      {
-        throw new GeneralRenderingException(e.getMessage());
-      }
-    }
   }
 
   /**
@@ -921,7 +933,7 @@ final class TabColumnPrefsState extends BaseState
           }
       }
 
-      public void renderXML (DocumentHandler out) throws PortalException
+      public void renderXML (ContentHandler out) throws PortalException
       {
         String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
         if (SkinsInfoDocument == null)
@@ -943,7 +955,7 @@ final class TabColumnPrefsState extends BaseState
         {
             throw new GeneralRenderingException(e.getMessage());
         }
-    }
+      }
 
     void getAvailableSkinsInfo ()
     {
@@ -1089,7 +1101,7 @@ final class TabColumnPrefsState extends BaseState
       }
     }
 
-    public void renderXML (DocumentHandler out) throws PortalException
+    public void renderXML (ContentHandler out) throws PortalException
     {
       Document doc = ChannelRegistryManager.getChannelRegistry();
 
