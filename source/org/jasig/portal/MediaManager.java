@@ -43,8 +43,10 @@ public class MediaManager {
   protected OrderedProps mediaProps = null;
   protected OrderedProps mimeProps = null;
   protected OrderedProps serializerProps = null;
-  private static boolean outputIndenting = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting");
-  private static boolean omitDoctype = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype");
+  private static boolean outputIndenting = 
+      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting", false);
+  private static boolean omitDoctype = 
+      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype", true);
 
   /**
    * A user agent string to use when the user-agent header value itself is null.
