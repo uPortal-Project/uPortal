@@ -61,7 +61,7 @@ public class ReferenceGroupService implements ILockableGroupService
     // Factories for IGroupMembers:
     protected IEntityStore entityFactory = null;
     protected IEntityGroupStore groupFactory = null;
-    
+
     // Entity searcher
     protected IEntitySearcher entitySearcher = null;
 
@@ -287,7 +287,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
     public IGroupMember getGroupMember(String key, Class type) throws GroupsException
     {
       IGroupMember gm = null;
-      if ( type == EntityTypes.GROUP_ENTITY_TYPE )
+      if ( type == org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE )
         gm = findGroup(key);
       else
         gm = getEntity(key, type);
@@ -514,7 +514,7 @@ throws GroupsException
   public EntityIdentifier[] searchForEntities(String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
     return filterEntities(searchForEntities(query,method,type),ancestor);
   }
-  
+
   private EntityIdentifier[] filterEntities(EntityIdentifier[] entities, IEntityGroup ancestor) throws GroupsException{
     ArrayList ar = new ArrayList(entities.length);
     for(int i=0; i< entities.length;i++){
@@ -525,7 +525,7 @@ throws GroupsException
     }
     return (EntityIdentifier[]) ar.toArray(new EntityIdentifier[0]);
   }
-  
+
   private EntityIdentifier[] removeDuplicates(EntityIdentifier[] entities){
     ArrayList ar = new ArrayList(entities.length);
     for(int i=0; i< entities.length;i++){
