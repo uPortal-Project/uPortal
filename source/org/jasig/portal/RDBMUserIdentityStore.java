@@ -178,6 +178,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     Connection con = rdbmService.getConnection();
     Statement stmt = null;
     Statement insertStmt = null;
+    ResultSet rset = null;
 
     try
     {
@@ -209,7 +210,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       // DEBUG
       LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
       // Execute the query
-      ResultSet rset = stmt.executeQuery(query);
+      rset = stmt.executeQuery(query);
 
       // Check to see if we've got a result
       if (rset.next())
@@ -246,6 +247,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         // Execute the query
+        rset.close();
         rset = stmt.executeQuery(query);
         // Check to see if the template user exists
         if (rset.next())
@@ -266,6 +268,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             templateName+"'";
           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
           // Execute the query
+          rset.close();
           rset = stmt.executeQuery(query);
           // Check to see if the template user exists
           if (rset.next())   {
@@ -342,6 +345,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         query =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID) "+
@@ -359,6 +363,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         query = "SELECT USER_ID,USER_PARAM_NAME,USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
@@ -378,6 +383,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                 "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
 
@@ -401,6 +407,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                 " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
@@ -419,6 +426,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           " FROM UP_SS_USER_PARM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
@@ -481,6 +489,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     finally
     {
+      try { 
+        if (rset != null) rset.close(); 
+      } catch (Exception e) { 
+        LogService.log(LogService.ERROR, e); 
+      } 
+    
+      try { 
+        if (stmt != null) stmt.close(); 
+      } catch (Exception e) { 
+        LogService.log(LogService.ERROR, e); 
+      } 
+    
+      try { 
+        if (insertStmt != null) insertStmt.close(); 
+      } catch (Exception e) { 
+        LogService.log(LogService.ERROR, e); 
+      } 
+
       rdbmService.releaseConnection(con);
     }
     // Return the user's ID
