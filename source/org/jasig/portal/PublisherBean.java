@@ -177,12 +177,13 @@ public class PublisherBean extends GenericPortalBean{
 
   /**
    * Saves channel to database
+   * @param the servlet request object
    */
-  public boolean registerChannel ()
+  public boolean registerChannel (HttpServletRequest req)
   {
     RdbmServices rdbmService = new RdbmServices ();
     Connection con = null;
-
+    ResultSet rs = null;
     boolean status = false;
 
     try
@@ -190,19 +191,22 @@ public class PublisherBean extends GenericPortalBean{
       con = rdbmService.getConnection ();
       Statement stmt = con.createStatement();
 
+      String sQuery = "SELECT max(chan_id)+1  FROM PORTAL_CHANNELS";
+      rs = stmt.executeQuery(sQuery);
+      rs.next();
+      int nextID = rs.getInt(1);
+      debug("nextID: "+nextID);
+
       StringWriter sw = new StringWriter ();
-      //debug("chan: "+chan);
-      //chanXml = chan;
-      //debug("chanXml: "+chanXml);
-      //debug("sChanName: "+ sChanName);
       chanXml.saveDocument(sw);
       String sChanXml = sw.toString();
 
-      String sInsert = "INSERT INTO PORTAL_CHANNELS (TITLE, PUB_EMAIL, CHANNEL_XML) VALUES ('" + sChanName + "','"+  sPubEmail +"','" + sChanXml + "')";
+      String sInsert = "INSERT INTO PORTAL_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, CHANNEL_XML) VALUES ("+nextID+",'" + sChanName + "','"+  sPubEmail +"','" + sChanXml + "')";
       int iInserted = stmt.executeUpdate (sInsert);
       if (iInserted == 1) status = true;
       Logger.log (Logger.DEBUG, "Saving channel xml for " + sChanName + ". Inserted " + iInserted + " rows.");
       stmt.close ();
+      status = setChannelCats(req, nextID);
       return status;
     }
     catch (Exception e)
@@ -213,8 +217,44 @@ public class PublisherBean extends GenericPortalBean{
     finally
     {
       rdbmService.releaseConnection (con);
-    }    
-  }      
+    }
+  }
+
+  /**
+   * Relates channel to classifications
+   * @param the servlet request object
+   */
+  public boolean setChannelCats (HttpServletRequest req, int id)
+  {
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = null;
+    boolean status = false;
+
+    try
+    {
+      con = rdbmService.getConnection ();
+      Statement stmt = con.createStatement();
+
+      String[] cats = req.getParameterValues("class");
+      for(int i=0; i<cats.length; i++){
+        String sInsert = "INSERT INTO PORTAL_CHAN_CLASS (CLASS_ID, CHAN_ID) VALUES ("+cats[i]+","+ id + ")";
+        Logger.log (Logger.DEBUG, sInsert);
+        int iInserted = stmt.executeUpdate (sInsert);
+        if (iInserted == 1) status = true;
+       }
+      stmt.close ();
+      return status;
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+      return false;
+    }
+    finally
+    {
+      rdbmService.releaseConnection (con);
+    }
+  }
 
   /**
    * Writes a list of publishable channel types
@@ -251,6 +291,45 @@ public class PublisherBean extends GenericPortalBean{
         out.println("<td width=\"3%\" height=\"2\">&nbsp;</td>");
         out.println("<td width=\"71%\" height=\"2\">&nbsp;</td>");
         out.println("</tr>");
+        }
+        stmt.close();
+    }
+    catch (Exception e)
+    {
+      Logger.log (Logger.ERROR, e);
+    }
+    finally
+    {
+      rdbmService.releaseConnection (con);
+    }    
+  }
+
+  /**
+   * Writes a list of channel classifications for publishing.
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
+  public void writeChannelCats (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = null;
+    ResultSet rs = null;
+    Statement stmt = null;
+
+    try
+    {
+      con = rdbmService.getConnection ();
+      stmt = con.createStatement();
+
+      String sQuery = "SELECT CLASS_ID, NAME FROM PORTAL_CLASS";
+      Logger.log (Logger.DEBUG, sQuery);
+
+        rs = stmt.executeQuery (sQuery);
+
+        while(rs.next()) {
+        out.println("<input name=class type=checkbox value="+rs.getString("CLASS_ID")+">"+rs.getString("NAME")+"<br>");
+
         }
         stmt.close();
     }
