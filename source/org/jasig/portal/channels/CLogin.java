@@ -164,4 +164,19 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   public boolean isCacheValid(Object validity) {
     return true;
   }
+  
+  public String toString(){
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName());
+        sb.append(" authenticated:");
+        sb.append(this.bAuthenticated);
+        sb.append(" authenticationAttemptFailed:"); 
+        sb.append(this.bauthenticationAttemptFailed);
+        sb.append(" securityError:");
+        sb.append(this.bSecurityError);
+        sb.append(" attemptedUserName=[");
+        sb.append(this.attemptedUserName);
+        sb.append("]");
+        return sb.toString();
+    }
 }

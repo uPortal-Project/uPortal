@@ -45,5 +45,31 @@ public class CGroupsManagerUnrestrictedSessionData
       this.gmPermissions = gmPermissions;
       this.authPrincipal = authPrincipal;
    }
+   
+   public String toString() {
+        StringBuffer sb =  new StringBuffer();
+        sb.append("[");
+        sb.append(CGroupsManagerUnrestrictedSessionData.class.getName());
+        if (this.user != null){
+            sb.append(" user=");
+            sb.append(this.user);
+        }
+        sb.append(" isAdminUser=");
+        sb.append(this.isAdminUser);
+        if (this.gmPermissions != null){
+            sb.append(" gmPermissions=");
+            sb.append(this.gmPermissions);
+        }
+        if (this.authPrincipal != null){
+            sb.append(" authPrincipal=");
+            sb.append(this.authPrincipal);
+        }
+        if (this.model != null){
+            sb.append(" model=");
+            sb.append(this.model);
+        }
+        sb.append("]");
+        return sb.toString();
+      }
 }
 
