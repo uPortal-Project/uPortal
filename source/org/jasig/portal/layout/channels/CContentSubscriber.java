@@ -75,6 +75,8 @@ public class CContentSubscriber extends FragmentManager {
 	private final static String CHANNEL = "channel";
 	private final static String FRAGMENT = "fragment";
 	private final static String CATEGORY = "category";	 
+	
+	private boolean initRegistry;
 
 
     private class ListItem {
@@ -123,6 +125,7 @@ public class CContentSubscriber extends FragmentManager {
        super();
 	   expandedItems = new Vector();
 	   condensedItems = new Vector();
+	   initRegistry = true;
     }
 
 
@@ -314,8 +317,11 @@ public class CContentSubscriber extends FragmentManager {
 	}
 
     public void initRegistry() throws PortalException {
+      if ( initRegistry ) {	
       	registry = DocumentFactory.getNewDocument();
       	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));	
+      	initRegistry = false;
+      }	
         getFragmentList(registry,registry.getDocumentElement());
     }
 
