@@ -124,10 +124,9 @@ public class CHeader extends BaseChannel
       Context globalIDContext = null;
       try {
         // Get the context that holds the global IDs for this user
-        globalIDContext = (Context)staticData.getPortalContext().lookup("/users/" + staticData.getPerson().getID() + "/channel-ids");
+        globalIDContext = (Context)staticData.getJNDIContext().lookup("/channel-ids");
       } catch (NotContextException nce) {
-        LogService.instance().log(LogService.ERROR, "CHeader.getUserXML(): Could not find subcontext " + "/users/" + staticData.getPerson().getID()
-            + "/channel-ids" + " in JNDI");
+        LogService.instance().log(LogService.ERROR, "CHeader.getUserXML(): Could not find subcontext /channel-ids in JNDI");
       } catch (NamingException e) {
         LogService.instance().log(LogService.ERROR, e);
       }
