@@ -31,8 +31,10 @@ public class EntityTypes {
 	private static String TYPE_NAME_COLUMN = "ENTITY_TYPE_NAME";
 
 	// SQL strings for ENTITY TYPE crud:
-	private static String selectEntityTypesSql; 
-	
+	private static String selectEntityTypesSql;
+
+	// For retrieving all types:
+	public static int NULL_TYPE_ID = -1;
 /**
  * EntityTypes constructor comment.
  */
