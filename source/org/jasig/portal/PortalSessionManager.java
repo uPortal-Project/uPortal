@@ -237,16 +237,30 @@ public class PortalSessionManager extends HttpServlet {
                     userInstance.writeContent(new RequestParamWrapper(req,request_verified), new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }
             } catch (PortalException pe) {
-                StringWriter sw=new StringWriter();
+                // Go through all the possible nested exceptions...
+                // Right now, all the exceptions are logged, but we might
+                // want to consider logging only the root cause
+                //   -Ken
+                StringWriter sw = new StringWriter();
                 pe.printStackTrace(new PrintWriter(sw));
                 sw.flush();
-                LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
-                if(pe.getRecordedException()!=null) {
-                    StringWriter sw2=new StringWriter();
-                    pe.getRecordedException().printStackTrace(new PrintWriter(sw2));
-                    sw2.flush();
-                    LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an encolsed PortalException stated : "+sw2.toString());
-                    throw new ServletException(pe.getRecordedException());
+                LogService.instance().log(LogService.ERROR, "PortalSessionManager::doGet() : a PortalException has occurred: " + sw.toString());
+                Throwable t = pe.getRecordedException();
+                if (t == null)
+                  throw new ServletException(pe);
+                while (t != null) {
+                  sw = new StringWriter();
+                  t.printStackTrace(new PrintWriter(sw));
+                  sw.flush();
+                  LogService.instance().log(LogService.ERROR, "PortalSessionManager::doGet() : with nested Exception: " + sw.toString());
+                  if (t instanceof PortalException) {
+                    t = ((PortalException)t).getRecordedException();
+                  } else if (t instanceof java.lang.reflect.InvocationTargetException) {
+                    t = ((java.lang.reflect.InvocationTargetException)t).getTargetException();
+                  } else {
+                    // Throw the root cause
+                    throw new ServletException(t);
+                  }
                 }
             } catch (Exception e) {
                 StringWriter sw=new StringWriter();
