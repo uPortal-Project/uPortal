@@ -69,7 +69,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @return uPortalUID number
    * @throws Authorization exception if no user is found.
    */
-  public int getPortalUID (IPerson person) throws Exception {
+  public int getPortalUID (IPerson person) throws AuthorizationException {
     int uPortalUID=-1;
     uPortalUID=this.getPortalUID(person, false);
     return uPortalUID;
