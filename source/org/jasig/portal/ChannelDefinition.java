@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
@@ -80,17 +81,35 @@ public class ChannelDefinition implements IBasicEntity {
   public boolean hasHelp() { return chanHasHelp; }
   public boolean hasAbout() { return chanHasAbout; }
   public boolean isSecure() { return chanIsSecure; }    
+  
+  /**
+   * Returns true if this channel definition defines a portlet.
+   * Returns false if this channel definition does not define a portlet or
+   * whether this channel definition defines a portlet or not cannot be 
+   * determined because this definition's channel class is not set or cannot
+   * be loaded.
+   * @return true if we know we're a portlet, false otherwise
+   */
   public boolean isPortlet() {
+  	
+  	/*
+  	 * We believe we are a portlet if the channel class implements 
+  	 * IPortletAdaptor.
+  	 */
+  	
       if (this.chanClass != null) {
-          final String portletClassName = PropertiesManager.getProperty("org.jasig.portal.portletAdapter", "org.jasig.portal.channels.portlet.CPortletAdapter");
-          
-          if (this.chanClass.equals(portletClassName)) {
-              return true;
-          }
+          try {
+			Class channelClass = Class.forName(this.chanClass);
+			return IPortletAdaptor.class.isAssignableFrom(channelClass);
+		} catch (ClassNotFoundException e) {
+			log.error("Unable to load class for name [" + this.chanClass 
+					+ "] and so do not know whether is a portlet.");
+		}
       }
       
       return false;
   }
+  
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
   public String getLocale() { return chanLocale; }
   

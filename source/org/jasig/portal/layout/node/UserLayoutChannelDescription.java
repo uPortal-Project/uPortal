@@ -11,7 +11,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.properties.PropertiesManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,6 +29,8 @@ import org.w3c.dom.Node;
  */
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription implements IUserLayoutChannelDescription  {
 
+	private static final Log log = LogFactory.getLog(UserLayoutChannelDescription.class);
+	
     Hashtable parameters;
     Hashtable override;
 
@@ -209,15 +214,22 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return the channel type for portlet / not portlet
      */
     public boolean isPortlet() {
-        if (this.className != null) {
-            final String portletClassName = PropertiesManager.getProperty("org.jasig.portal.portletAdapter");
-            
-            if (this.className.equals(portletClassName)) {
-                return true;
-            }
-        }
-        
-        return false;
+    	/*
+      	 * We believe we are a portlet if the channel class implements 
+      	 * IPortletAdaptor.
+      	 */
+      	
+          if (this.className != null) {
+              try {
+    			Class channelClass = Class.forName(this.className);
+    			return IPortletAdaptor.class.isAssignableFrom(channelClass);
+    		} catch (ClassNotFoundException e) {
+    			log.error("Unable to load class for name [" + this.className 
+    					+ "] and so do not know whether is a portlet.");
+    		}
+          }
+          
+          return false;
     }
 
     /**
