@@ -40,6 +40,7 @@ package  org.jasig.portal;
 
 import  java.io.*;
 import  java.util.*;
+import  java.net.URL;
 import  java.lang.SecurityManager;
 import  javax.naming.Context;
 import  javax.naming.InitialContext;
@@ -61,27 +62,9 @@ import  com.oreilly.servlet.multipart.ParamPart;
 public class PortalSessionManager extends HttpServlet {
   public static String renderBase = "render.uP";
   public static String detachBaseStart = "detach_";
-  private static String portalBaseDir = null;
   private static int sizeLimit = 3000000;       // Should be channel specific
   private static boolean initialized = false;
-
-  /**
-   * Set the top level directory for the portal.  This makes it possible
-   * to use relative paths in the application for loading properties files, etc.
-   * @param pbd, the portal base directory
-   */
-  public static void setPortalBaseDir(String pbd) {
-    portalBaseDir = fixPortalBaseDir(pbd);
-  }
-
-  /**
-   * Gets the portal base directory which makes it possible
-   * to use relative paths in the application for loading properties files, etc.
-   * @return portalBaseDir
-   */
-  public static String getPortalBaseDir() {
-    return portalBaseDir;
-  }
+  private static ServletContext servletContext = null;
 
   /**
    * Initialize the PortalSessionManager servlet
@@ -96,9 +79,7 @@ public class PortalSessionManager extends HttpServlet {
       if (sc == null) {
         throw new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
-
-      // Get and set the portal base directory
-      setPortalBaseDir(sc.getInitParameter("portalBaseDir"));
+      servletContext = sc.getServletContext();
 
       JNDIManager.initializePortalContext();
       // Flag that the portal has been initialized
@@ -198,34 +179,6 @@ public class PortalSessionManager extends HttpServlet {
     }
   }
 
-
-  /**
-   * Fixes portal base directory by adding a file separater to the end and making
-   * sure the directory actually exists.
-   * @param portalBaseDir
-   * @return fixed portal base directory
-   */
-   private static String fixPortalBaseDir (String pbd) {
-     if (pbd != null) {
-       // Make sure the directory is a properly formatted string
-       pbd.replace('/', File.separatorChar);
-       pbd.replace('\\', File.separatorChar);
-       // Add a seperator on the end of the path if it's missing
-       if (!pbd.endsWith(File.separator)) {
-         pbd += File.separator;
-       }
-       // Try to create a file pointing to the portal base directory
-       File portalBaseDirFile = new File(pbd);
-       // Make sure the directory exists
-       if (!portalBaseDirFile.exists()) {
-         throw  new RuntimeException("PortalSessionManager.fixPortalBaseDir(): Portal base directory " + pbd + " does not exist. Check its setting in your servlet engine\'s web.xml file");
-       }
-     } else {
-       throw  new RuntimeException("PortalSessionManager.fixPortalBaseDir(): portalBaseDir not found. Check its setting in your servlet engine\'s web.xml file.");
-     }
-     return pbd;
-   }
-
   /**
    * This function determines if a given request needs to be redirected
    * @param req
@@ -254,6 +207,43 @@ public class PortalSessionManager extends HttpServlet {
     return  "/" + renderBase;
   }
 
+  /**
+   * Gets a URL associated with the named resource.
+   * Call this to access files with paths relative to the
+   * document root.  Paths should begin with a "/".
+   * @param resource relative to the document root
+   * @return a URL associated with the named resource or null if the URL isn't accessible
+   * @throws java.net.MalformedURLException
+   */
+  public static URL getResourceAsURL(String resource) {
+    //Make sure resource string starts with a "/"
+    if (!resource.startsWith("/"))
+      resource = "/" + resource;
+
+    URL url = null;
+
+    try {
+      url = servletContext.getResource(resource);
+    } catch (java.net.MalformedURLException murle) {
+      // if the URL is bad, just return null
+    }
+    return url;
+  }
+
+  /**
+   * Gets an input stream associated with the named resource.
+   * Call this to access files with paths relative to the
+   * document root. Paths should begin with a "/".
+   * @param resource relative to the document root
+   * @return an input stream assosiated with the named resource
+   */
+  public static java.io.InputStream getResourceAsStream(String resource) {
+    //Make sure resource string starts with a "/"
+    if (!resource.startsWith("/"))
+      resource = "/" + resource;
+
+    return servletContext.getResourceAsStream(resource);
+  }
 
 
   /**
