@@ -187,7 +187,7 @@
 
               <option value="{.}">
 
-                <xsl:if test="/userPrefParams/channel/parameter[@name=$paramName]/@value=$paramValue]">
+                <xsl:if test="/userPrefParams/channel/parameter[@name=$paramName]/@value=$paramValue">
                   <xsl:attribute name="selected">selected</xsl:attribute>
                 </xsl:if>
 
@@ -211,6 +211,13 @@
           <xsl:apply-templates select="example"/>
           <br/>
           <xsl:for-each select="type/restriction/value">
+                      <xsl:for-each select="type/restriction/value">
+              <xsl:variable name="paramName">
+                <xsl:value-of select="../../../name"/>
+              </xsl:variable>
+              <xsl:variable name="paramValue">
+                <xsl:value-of select="."/>
+              </xsl:variable>
             <input type="radio" name="{name}" value="{.}" class="uportal-input-text">
               <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
                 <xsl:attribute name="checked">checked</xsl:attribute>
@@ -234,6 +241,13 @@
           <br/>
           <select name="{name}" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
+                        <xsl:for-each select="type/restriction/value">
+              <xsl:variable name="paramName">
+                <xsl:value-of select="../../../name"/>
+              </xsl:variable>
+              <xsl:variable name="paramValue">
+                <xsl:value-of select="."/>
+              </xsl:variable>
               <xsl:call-template name="subscribe"/>
               <option value="{.}">
                 <xsl:if test=". = /userPrefParams/channel/parameter[@name=$paramName]/@value">
