@@ -756,7 +756,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * @return next free structure ID
    * @exception Exception
    */
-  protected String getNextStructId (IPerson person, String prefix) throws Exception {
+  protected synchronized String getNextStructId (IPerson person, String prefix) throws Exception {
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
     try {
