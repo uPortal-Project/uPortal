@@ -108,8 +108,6 @@ public class ChannelManager {
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
     public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
-    // table of multithreaded channels
-    public static final Hashtable staticChannels=new Hashtable();
     public static final String channelAddressingPathElement="channel";
 
     private Set repeatRenderings=new HashSet();
@@ -135,10 +133,15 @@ public class ChannelManager {
         pcs=new PortalControlStructures();
         pcs.setUserPreferencesManager(upm);
         pcs.setChannelManager(this);
-        this.setReqNRes(request,response,uPElement);
+        this.startRenderingCycle(request,response,uPElement);
     }
 
 
+    /**
+     * Creates a new <code>ChannelManager</code> instance.
+     *
+     * @param manager an <code>IUserPreferencesManager</code> value
+     */
     public ChannelManager(IUserPreferencesManager manager) {
         this();
         this.upm=manager;
@@ -172,7 +175,7 @@ public class ChannelManager {
     /**
      * Clean up after a rendering round.
      */
-    public void finishedRendering() {
+    public void finishedRenderingCycle() {
         // clean up
         rendererTable.clear();
         clearRepeatedRenderings();
@@ -185,7 +188,7 @@ public class ChannelManager {
      *
      */
     public void finishedSession() {
-        this.finishedRendering();
+        this.finishedRenderingCycle();
 
         // send SESSION_DONE event to all the channels
         PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
@@ -193,10 +196,23 @@ public class ChannelManager {
             ((IChannel)e.nextElement()).receiveEvent(ev);
         }
 
+        // we dont' really need to clean anything here,
+        // since the entire session will be destroyed
         //channelCacheTable.clear();
         //channelTable.clear()
     }
 
+    /**
+     * Outputs a channel in to a given content handler.
+     * If the current rendering cycle is targeting character
+     * cache output, and the content handler passed to the method
+     * is an instance of <code>CachingSerializer</code>, the method
+     * will take care of character cache compilation and store cache
+     * in the tables.
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     * @param ch a <code>ContentHandler</code> value
+     */
     public void outputChannel(String channelSubscribeId,ContentHandler ch) {
         // obtain ChannelRenderer
         ChannelRenderer cr=(ChannelRenderer)rendererTable.get(channelSubscribeId);
@@ -302,14 +318,29 @@ public class ChannelManager {
         }
     }
 
+    /**
+     * Check if repeated rendering has been attempted for a given channel.
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     * @return a <code>boolean</code> value
+     */
     private boolean isRepeatedRenderingAttempt(String channelSubscribeId) {
         return repeatRenderings.contains(channelSubscribeId);
     }
 
+    /**
+     * Register a repeated rendering attempt for a particular channel.
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     */
     private void setRepeatedRenderingAttempt(String channelSubscribeId) {
         repeatRenderings.add(channelSubscribeId);
     }
 
+    /**
+     * Clear information about repeated rendering attempts.
+     *
+     */
     private void clearRepeatedRenderings() {
         repeatRenderings.clear();
     }
@@ -374,6 +405,16 @@ public class ChannelManager {
         }
     }
 
+    /**
+     * A helper method to replace all occurences of a given channel instance with that of an error channel.
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     * @param errorCode an <code>int</code> value from CError.* constants
+     * @param t a <code>Throwable</code> an exception that caused the problem
+     * @param message a <code>String</code> an optional message to pass to the error channel
+     * @param setRuntimeData a <code>boolean</code> wether the method should also set the ChannelRuntimeData for the newly instantiated error channel
+     * @return an <code>IChannel</code> value of an error channel instance
+     */
     private IChannel replaceWithErrorChannel(String channelSubscribeId,int errorCode, Throwable t, String message,boolean setRuntimeData) {
         // get and delete old channel instance
         IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
@@ -384,6 +425,7 @@ public class ChannelManager {
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
+            rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             rd.setChannelSubscribeId(channelSubscribeId);
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
@@ -414,7 +456,7 @@ public class ChannelManager {
      * @param layotId id of the layout used by the user
      * @return a channel <code>InitialContext</code> value
      */
-    private static Context getChannelContext(Context portalContext,String sessionId,String userId,String layoutId) throws NamingException {
+    private static Context getChannelJndiContext(Context portalContext,String sessionId,String userId,String layoutId) throws NamingException {
         // create a new InitialContext
         Context cic=new MemoryContext(new Hashtable());
         // get services context
@@ -459,77 +501,30 @@ public class ChannelManager {
         // get channel information from the user layout manager
         UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
         if(channel!=null) {
-            String className=channel.getClassName();
-            String channelPublishId=channel.getChannelPublishId();
-            long timeOut=channel.getTimeout();
-            Hashtable params=new Hashtable(channel.getParameterMap());
-            try {
-                return instantiateChannel(channelSubscribeId,channelPublishId, className,timeOut,params);
-            } catch (Exception ex) {
-                LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
-                return null;
-            }
+            return instantiateChannel(channel);
+            //LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+channel.getClassName()+"\". "+ex);
         } else return null;
-
     }
 
-
-    private IChannel instantiateChannel(String channelSubscribeId, String channelPublishId, String className, long timeOut, Map params) throws Exception {
+    private IChannel instantiateChannel(UserLayoutChannelDescription cd) throws PortalException {
         IChannel ch=null;
-
+        String channelSubscribeId=cd.getChannelSubscribeId();
+        String channelPublishId=cd.getChannelPublishId();
         // check if the user has permissions to instantiate this channel
         if(ap==null) {
             ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
         }
 
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
-
-            boolean exists=false;
-            // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
-            // channel more then once, but it's difficult to implement "instanceof" operation on
-            // the java.lang.Class. So, I just look into the staticChannels table.
-            Object cobj=staticChannels.get(className);
-            if(cobj!=null) {
-                exists=true;
-            } else {
-                cobj =  Class.forName(className).newInstance();
-            }
-
-            // determine what kind of a channel it is.
-            // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
-            if(cobj instanceof IMultithreadedChannel) {
-                String uid=this.pcs.getHttpServletRequest().getSession(false).getId()+"/"+channelSubscribeId;
-                if(cobj instanceof IMultithreadedCacheable) {
-                    if(cobj instanceof IPrivileged) {
-                        // both cacheable and privileged
-                        ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
-                    } else {
-                        // just cacheable
-                        ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
-                    }
-                } else if(cobj instanceof IPrivileged) {
-                    ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
-                } else {
-                    // plain multithreaded
-                    ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
-                }
-                // see if we need to add the instance to the staticChannels
-                if(!exists) {
-                    staticChannels.put(className,cobj);
-                }
-            } else {
-                // vanilla IChannel
-                ch=(IChannel)cobj;
-            }
-
+            ch=ChannelFactory.instantiateLayoutChannel(cd,this.pcs.getHttpServletRequest().getSession(false).getId());
             // construct a ChannelStaticData object
             ChannelStaticData sd = new ChannelStaticData();
             sd.setChannelSubscribeId(channelSubscribeId);
-            sd.setTimeout(timeOut);
-            sd.setParameters(params);
+            sd.setTimeout(cd.getTimeout());
+            sd.setParameters(cd.getParameterMap());
             // Set the Id of the channel that exists in UP_CHANNELS
             try {
-                UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
+                UserLayoutChannelDescription channel=(UserLayoutChannelDescription) upm.getUserLayoutManager().getNode(cd.getChannelSubscribeId());
                 if(channel!=null) {
                     sd.setChannelPublishId(channel.getChannelPublishId());
                 }
@@ -608,30 +603,27 @@ public class ChannelManager {
             }
             // check if the channel is an IPrivilegedChannel, and if it is,
             // pass portal control structures and runtime data.
-            Object chObj;
-            if ((chObj=channelTable.get(channelTarget)) == null) {
+            IChannel chObj;
+            if ((chObj=(IChannel)channelTable.get(channelTarget)) == null) {
                 try {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Exception e) {
-                    CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,channelTarget,null);
-                    channelTable.put(channelTarget,errorChannel);
-                    chObj=errorChannel;
                     LogService.instance().log(LogService.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
-            if(chObj!=null && (chObj instanceof IPrivilegedChannel)) {
-                IPrivilegedChannel isc=(IPrivilegedChannel) chObj;
+            if(chObj!=null && (chObj instanceof IPrivileged)) {
+                IPrivileged isc=(IPrivileged) chObj;
 
                 try {
                     isc.setPortalControlStructures(pcs);
                 } catch (Exception e) {
-                    channelTable.remove(isc);
-                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,channelTarget,isc);
-                    channelTable.put(channelTarget,errorChannel);
-                    isc=errorChannel;
+                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_PCS_EXCEPTION,e,null,false);
+                    isc=(IPrivileged) chObj;
+
                     // set portal control structures
                     try {
-                        errorChannel.setPortalControlStructures(pcs);
+                        isc.setPortalControlStructures(pcs);
                     } catch (Exception e2) {
                         // things are looking bad for our hero
                         StringWriter sw=new StringWriter();
@@ -639,11 +631,13 @@ public class ChannelManager {
                         sw.flush();
                         LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
+
                 }
 
                 ChannelRuntimeData rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
+                rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
                 rd.setChannelSubscribeId(channelTarget);
 
                 UPFileSpec up=new UPFileSpec(uPElement);
@@ -651,32 +645,10 @@ public class ChannelManager {
                 rd.setUPFile(up);
 
                 try {
-                    isc.setRuntimeData(rd);
+                    chObj.setRuntimeData(rd);
                 }
                 catch (Exception e) {
-                    channelTable.remove(isc);
-                    CError errorChannel=new CError(CError.SET_RUNTIME_DATA_EXCEPTION,e,channelTarget,isc);
-                    channelTable.put(channelTarget,errorChannel);
-                    isc=errorChannel;
-                    // demand output
-                    try {
-                        ChannelRuntimeData erd = new ChannelRuntimeData();
-                        erd.setBrowserInfo(binfo);
-                        erd.setChannelSubscribeId(channelTarget);
-
-                        UPFileSpec eup=new UPFileSpec(uPElement);
-                        eup.setTargetNodeId(channelTarget);
-                        erd.setUPFile(up);
-
-                        errorChannel.setPortalControlStructures(pcs);
-                        errorChannel.setRuntimeData(erd);
-                    } catch (Exception e2) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e2.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
+                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
                 }
             }
         }
@@ -701,6 +673,11 @@ public class ChannelManager {
     }
 
 
+    /**
+     * Removes channel instance from the user layout and internal caches.
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     */
     public void removeChannel(String channelSubscribeId) {
         IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch!=null) {
@@ -717,18 +694,14 @@ public class ChannelManager {
         }
     }
 
-    
-    public void setChannelCharacterCache(String channelSubscribeId,String ccache) {
-        ChannelRenderer cr;
-        if ((cr=(ChannelRenderer)rendererTable.get(channelSubscribeId)) != null) {
-            cr.setCharacterCache(ccache);
-        } else {
-            LogService.instance().log(LogService.ERROR,"ChannelManager::setChannelCharacterCache() : channel with channelSubscribeId=\""+channelSubscribeId+"\" is not present in the renderer cache!");
-        }
-    }
-
-
-    public void setReqNRes(HttpServletRequest request, HttpServletResponse response, UPFileSpec uPElement) {
+    /**
+     * Signals the start of a new rendering cycle.
+     *
+     * @param request a <code>HttpServletRequest</code> value
+     * @param response a <code>HttpServletResponse</code> value
+     * @param uPElement an <code>UPFileSpec</code> value
+     */
+    public void startRenderingCycle(HttpServletRequest request, HttpServletResponse response, UPFileSpec uPElement) {
         this.pcs.setHttpServletRequest(request);
         this.pcs.setHttpServletResponse(response);
         this.binfo=new BrowserInfo(request);
@@ -747,33 +720,73 @@ public class ChannelManager {
         // construct a channel context
         if(channelContext==null) {
             try {
-                channelContext=getChannelContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()),Integer.toString(this.pcs.getUserPreferencesManager().getCurrentProfile().getProfileId()));
+                channelContext=getChannelJndiContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()),Integer.toString(this.pcs.getUserPreferencesManager().getCurrentProfile().getProfileId()));
             } catch (NamingException ne) {
                 LogService.instance().log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : "+ne);
             }
         }
     }
 
+    /**
+     * Specifies if this particular rendering cycle is using
+     * character caching.
+     *
+     * @return a <code>boolean</code> value
+     */
     public boolean isCharacterCaching() {
         return this.ccaching;
     }
 
+    /**
+     * Specify that the current rendering cycle should be
+     * using (or not) character caching.
+     *
+     * @param setting a <code>boolean</code> value
+     */
     public void setCharacterCaching(boolean setting) {
         this.ccaching=setting;
     }
 
+    /**
+     * Specify <code>UPFileSpec</code> object that will be
+     * used to construct file portion of the context path
+     * in the auto-generated URLs (i.e. baseActionURL)
+     *
+     * @param uPElement an <code>UPFileSpec</code> value
+     */
     public void setUPElement(UPFileSpec uPElement) {
         this.uPElement=uPElement;
     }
 
+    /**
+     * Specify <code>IUserPreferencesManager</code> to use.
+     *
+     * @param m an <code>IUserPreferencesManager</code> value
+     */
     public void setUserPreferencesManager(IUserPreferencesManager m) {
         upm=m;
     }
 
+    /**
+     * Initiate channel rendering cycle.
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     * @return a <code>ChannelRenderer</code> value
+     * @exception PortalException if an error occurs
+     */
     public ChannelRenderer startChannelRendering(String channelSubscribeId) throws PortalException {
         return startChannelRendering(channelSubscribeId,false);
     }
 
+    /**
+     * Initiate channel rendering cycle, possibly disabling timeout. 
+     *
+     * @param channelSubscribeId a <code>String</code> value
+     * @param noTimeout a <code>boolean</code> value specifying if the 
+     *                  time out rendering control should be disabled.
+     * @return a <code>ChannelRenderer</code> value
+     * @exception PortalException if an error occurs
+     */
     private ChannelRenderer startChannelRendering(String channelSubscribeId,boolean noTimeout) throws PortalException {
         // see if the channel has already been instantiated
         // see if the channel is cached
@@ -790,27 +803,26 @@ public class ChannelManager {
 
         if ((ch = (IChannel) channelTable.get(channelSubscribeId)) == null) {
             try {
-                ch=instantiateChannel(channelSubscribeId,channel.getChannelPublishId(),channel.getClassName(),channel.getTimeout(),channel.getParameterMap());
-            } catch (Exception e) {
-                ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
+                ch=instantiateChannel(channel);
+            } catch (PortalException pe) {
+                ch=replaceWithErrorChannel(channelSubscribeId,CError.SET_STATIC_DATA_EXCEPTION,pe,null,false);
             }
         }
 
         ChannelRuntimeData rd=null;
 
         if(!channelSubscribeId.equals(channelTarget)) {
-            if((ch instanceof IPrivilegedChannel)) {
+            if((ch instanceof IPrivileged)) {
                 // send the control structures
                 try {
-                    ((IPrivilegedChannel) ch).setPortalControlStructures(pcs);
+                    ((IPrivileged) ch).setPortalControlStructures(pcs);
                 } catch (Exception e) {
+                    ch=replaceWithErrorChannel(channelTarget,CError.SET_PCS_EXCEPTION,e,null,false);
                     channelTable.remove(ch);
-                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,channelSubscribeId,ch);
-                    channelTable.put(channelSubscribeId,errorChannel);
-                    ch=errorChannel;
-                    // set portal control structures
+
+                    // set portal control structures for the error channel
                     try {
-                        errorChannel.setPortalControlStructures(pcs);
+                        ((IPrivileged) ch).setPortalControlStructures(pcs);
                     } catch (Exception e2) {
                         // things are looking bad for our hero
                         StringWriter sw=new StringWriter();
@@ -822,6 +834,7 @@ public class ChannelManager {
             }
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
+            rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             rd.setChannelSubscribeId(channelSubscribeId);
 
             UPFileSpec up=new UPFileSpec(uPElement);
@@ -829,23 +842,25 @@ public class ChannelManager {
             rd.setUPFile(up);
 
         } else {
-            if(!(ch instanceof IPrivilegedChannel)) {
+            // set up runtime data that will be passed to the ChannelRenderer
+            if(!(ch instanceof IPrivileged)) {
                 rd = new ChannelRuntimeData();
                 rd.setParameters(targetParams);
                 rd.setBrowserInfo(binfo);
+                rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
                 rd.setChannelSubscribeId(channelSubscribeId);
 
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelSubscribeId);
                 rd.setUPFile(up);
-
             }
         }
 
         // Check if channel is rendering as the root element of the layout
         String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
-        if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals("root"))
-          rd.setRenderingAsRoot(true);
+        if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals("root")) {
+            rd.setRenderingAsRoot(true);
+        }
 
         ChannelRenderer cr = new ChannelRenderer(ch,rd);
         cr.setCharacterCacheable(this.isCharacterCaching());
@@ -863,91 +878,5 @@ public class ChannelManager {
         rendererTable.put(channelSubscribeId,cr);
         return cr;        
 
-    }
-
-    /**
-     * Start rendering the channel in a separate thread.
-     * This function retreives a particular channel from cache, passes parameters to the
-     * channel and then creates a new ChannelRenderer object to render the channel in a
-     * separate thread.
-     * @param channelSubscribeId channel subscribe id
-     * @param className name of the channel class
-     * @param params a table of parameters
-     */
-    public ChannelRenderer startChannelRendering(String channelSubscribeId, String channelPublishId, String className, long timeOut, Hashtable params,boolean ccacheable)
-    {
-        // see if the channel is cached
-        IChannel ch;
-
-        if ((ch = (IChannel) channelTable.get(channelSubscribeId)) == null) {
-            try {
-                ch=instantiateChannel(channelSubscribeId,channelPublishId,className,timeOut,params);
-            } catch (Exception e) {
-                CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,channelSubscribeId,null);
-                channelTable.put(channelSubscribeId,errorChannel);
-                ch=errorChannel;
-            }
-        }
-
-        ChannelRuntimeData rd=null;
-
-        if(!channelSubscribeId.equals(channelTarget)) {
-            if((ch instanceof IPrivilegedChannel)) {
-                // send the control structures
-                try {
-                    ((IPrivilegedChannel) ch).setPortalControlStructures(pcs);
-                } catch (Exception e) {
-                    channelTable.remove(ch);
-                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,channelSubscribeId,ch);
-                    channelTable.put(channelSubscribeId,errorChannel);
-                    ch=errorChannel;
-                    // set portal control structures
-                    try {
-                        errorChannel.setPortalControlStructures(pcs);
-                    } catch (Exception e2) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e2.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
-                }
-            }
-            rd = new ChannelRuntimeData();
-            rd.setBrowserInfo(binfo);
-            rd.setChannelSubscribeId(channelSubscribeId);
-
-            UPFileSpec up=new UPFileSpec(uPElement);
-            up.setTargetNodeId(channelSubscribeId);
-            rd.setUPFile(up);
-
-        } else {
-            if(!(ch instanceof IPrivilegedChannel)) {
-                rd = new ChannelRuntimeData();
-                rd.setParameters(targetParams);
-                rd.setBrowserInfo(binfo);
-                rd.setChannelSubscribeId(channelSubscribeId);
-
-                UPFileSpec up=new UPFileSpec(uPElement);
-                up.setTargetNodeId(channelSubscribeId);
-                rd.setUPFile(up);
-
-            }
-        }
-
-        // Check if channel is rendering as the root element of the layout
-        String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
-        if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals("root"))
-          rd.setRenderingAsRoot(true);
-
-        ChannelRenderer cr = new ChannelRenderer(ch,rd);
-        cr.setCharacterCacheable(ccacheable);
-        if(ch instanceof ICacheable) {
-            cr.setCacheTables(this.channelCacheTable);
-        }
-        cr.setTimeout(timeOut);
-        cr.startRendering();
-        rendererTable.put(channelSubscribeId,cr);
-        return cr;
     }
 }
