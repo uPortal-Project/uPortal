@@ -70,7 +70,7 @@ public class WebAppDtdResolver implements EntityResolver {
                 inputSource =  new InputSource(inStream);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
       
         return inputSource;            
