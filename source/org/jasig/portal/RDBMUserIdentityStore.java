@@ -222,22 +222,21 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         int templateUSER_DFLT_USR_ID ;
         int templateUSER_DFLT_LAY_ID;
         java.sql.Date templateLST_CHAN_UPDT_DT = new java.sql.Date(System.currentTimeMillis());
+        String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
 
         // Retrieve the username of the user to use as a template for this new user
         String templateName=(String) person.getAttribute(templateAttrName);
-        if (DEBUG>0) System.err.println("template name is "+templateName);
+        if (DEBUG>0) System.err.println("Attempting to autocreate user from template "+templateName);
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + "template name is " + templateName);
 
-        // Just use the guest account if the template could not be found
+        // Just use the default template if requested template not populated
         if (templateName == null || templateName=="")
         {
-          templateUID = guestUID;
+          templateName=defaultTemplateUserName;
         }
 
         // Retrieve the information for the template user
         query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
-        // DEBUG
-        if (DEBUG>0) System.err.println(query);        
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         // Execute the query
         rset = stmt.executeQuery(query);
@@ -248,9 +247,28 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           templateUSER_DFLT_USR_ID = templateUID;
           templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
         }
-        else
-        {
-          throw new AuthorizationException("No information found for template user = " + templateName + ". Cannot create new account for " + person.getAttribute("username"));
+        // if no results on default template throw error
+        // otherwise try the default
+        else {
+          if (templateName.equals(defaultTemplateUserName))
+            throw new AuthorizationException("No information found for template user = " + templateName
+              + ". Cannot create new account for " + person.getAttribute("username"));
+          else {
+          templateName=defaultTemplateUserName;
+          query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+
+            templateName+"'";
+          LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
+          // Execute the query
+          rset = stmt.executeQuery(query);
+          // Check to see if the template user exists
+          if (rset.next())   {
+            templateUID = rset.getInt("USER_ID");
+            templateUSER_DFLT_USR_ID = templateUID;
+            templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
+            }
+          else throw new AuthorizationException("No information found for template user = " + templateName
+              + ". Cannot create new account for " + person.getAttribute("username"));
+          }
         }
 
         /* get a new uid for the person */
@@ -315,7 +333,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_layout */
         query =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);        
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
         rset = stmt.executeQuery(query);
         while (rset.next()) {
@@ -332,7 +350,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_param */
         query = "SELECT USER_ID,USER_PARAM_NAME,USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);        
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
         rset = stmt.executeQuery(query);
         while (rset.next()) {
@@ -351,7 +369,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
                 "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);        
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
         rset = stmt.executeQuery(query);
         while (rset.next()) {
@@ -374,7 +392,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         /* insert row into up_user_ua_map */
         query = " SELECT USER_ID, USER_AGENT, PROFILE_ID"+
                 " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);        
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
         rset = stmt.executeQuery(query);
         while (rset.next()) {
@@ -392,7 +410,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         /* insert row(s) into up_ss_user_parm */
         query = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
           " FROM UP_SS_USER_PARM WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);        
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
         rset = stmt.executeQuery(query);
         while (rset.next()) {
