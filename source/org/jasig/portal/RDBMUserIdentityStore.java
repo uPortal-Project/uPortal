@@ -677,6 +677,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_NAME=" + userName + ", USER_DFLT_USR_ID=" + templateUser.getUserId() + ", USER_DFLT_LAY_ID=" + templateUser.getDefaultLayoutId() + "): " + insert);
               insertStmt.executeUpdate();
               insertStmt.close();
+              insertStmt = null;
               
               
               // Start copying...
@@ -711,8 +712,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   }
                   rs.close();
                   queryStmt.close();
-                  insertStmt.close();
-                 
+
+                  if (insertStmt != null) {
+                      insertStmt.close();
+                      insertStmt = null;
+                  }
+
 
                   // Add to UP_USER_PROFILE                    
                   query =
@@ -744,7 +749,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   }
                   rs.close();
                   queryStmt.close();
-                  insertStmt.close();
+
+                  if (insertStmt != null) {
+                      insertStmt.close();
+                      insertStmt = null;
+                  }
 
                   
                   query =
@@ -773,7 +782,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   }
                   rs.close();
                   queryStmt.close();
-                  insertStmt.close();
+                  queryStmt = null;
+
+                  if (insertStmt != null) {
+                      insertStmt.close();
+                      insertStmt = null;
+                  }
 
                   
                   // If we made it all the way though, commit the transaction
@@ -786,8 +800,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   try { rs.close(); } catch (Exception e) {}
               }                              
           } finally {
-              try { queryStmt.close(); } catch (Exception e) {}
-              try { insertStmt.close(); } catch (Exception e) {}
+              try { if (queryStmt != null) queryStmt.close(); } catch (Exception e) {}
+              try { if (insertStmt != null) insertStmt.close(); } catch (Exception e) {}
           }
       } catch (SQLException sqle) {
           if (RDBMServices.supportsTransactions)
