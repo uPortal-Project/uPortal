@@ -38,12 +38,13 @@ package org.jasig.portal.channels;
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import org.xml.sax.DocumentHandler;
 import java.io.File;
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * Provides methods associated with subscribing to a channel.
@@ -261,11 +262,12 @@ public class CSubscriber implements IPrivilegedChannel
 
                     for (int j=0; j<channels.getLength(); j++) {
                         channel = channels.item(j);
+                        setNextInstanceID(channel);
                         destination.insertBefore (userLayoutXML.importNode(channel, true), null);
                     }
                 }
                 else {
-
+                    setNextInstanceID(channel);
                     destination.insertBefore (userLayoutXML.importNode(channel, true), null);
                 }
             }
@@ -281,4 +283,37 @@ public class CSubscriber implements IPrivilegedChannel
     modified = false;
     ulm.setNewUserLayoutAndUserPreferences(userLayoutXML,null);
   }
+  
+    /**
+   * Returns the next instance id
+   * to be added to user's layout.xml
+   * @return String
+   */
+   public void setNextInstanceID(Node channel)
+   {
+    NodeList chans = userLayoutXML.getElementsByTagName("channel");
+
+    List instanceIDs = new ArrayList();
+
+    for (int iChan = 0; iChan < chans.getLength(); iChan++)
+    {
+        Integer id;
+        Element nChan = (Element)chans.item(iChan);
+        String sInstanceID = nChan.getAttribute("ID");
+        if (!sInstanceID.startsWith("hchan")) {
+            id = new Integer (sInstanceID.substring (4));
+            instanceIDs.add (id);
+        }
+    }
+
+    Collections.sort(instanceIDs);
+    int iHighest = -1;
+    if (instanceIDs.size() > 0)
+    {
+       iHighest = ((Integer)instanceIDs.get (instanceIDs.size () - 1)).intValue ();
+    }
+    String sInstanceID = "chan" + (iHighest + 1);
+    ((Element)channel).setAttribute("ID", sInstanceID);
+   }
+   
 }
