@@ -28,7 +28,10 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
  
 
-
+/**
+ * JUnit testcase for SimpleUserLayoutManager.
+ * @version $Revision$ $Date$
+ */
 public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEventListener {
     Document sampleUserLayout=null;
     IUserLayoutStore uls=null;
