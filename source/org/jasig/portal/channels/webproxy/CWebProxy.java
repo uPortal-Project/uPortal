@@ -664,7 +664,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   private Document getXml(String uri, ChannelState state) throws Exception
   {
     URLConnection urlConnect = getConnection(uri, state);
-  
+
     // get character encoding from Content-Type header
     String encoding = null;
     String ct = urlConnect.getContentType();
@@ -673,11 +673,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     {
       encoding = ct.substring(i+8).trim();
       if ((i=encoding.indexOf(";"))!=-1)
-        encoding = encoding.substring(0,i);
+        encoding = encoding.substring(0,i).trim();
       if (encoding.indexOf("\"")!=-1)
         encoding = encoding.substring(1,encoding.length()+1);
     }
-
+  
     if ( (state.tidy != null) && (state.tidy.equalsIgnoreCase("on")) )
     {
       Tidy tidy = new Tidy ();
@@ -687,9 +687,27 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       tidy.setShowWarnings(false);
       tidy.setNumEntities(true);
       tidy.setWord2000(true);
-      // only ASCII (default) and UTF-8 encoding currently supported
-      if (encoding!=null && encoding.equalsIgnoreCase("utf-8"))
+
+      // If charset is specified in header, set JTidy's
+      // character encoding  to either UTF-8, ISO-8859-1
+      // or ISO-2022 accordingly (NOTE that these are
+      // the only character encoding sets that are supported in
+      // JTidy).  If character encoding is not specified,
+      // UTF-8 is the default.
+      if (encoding != null)
+      {
+        if (encoding.toLowerCase().equals("iso-8859-1"))
+          tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
+        else if (encoding.toLowerCase().equals("iso-2022-jp"))
+          tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
+        else 
+          tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
+      }
+      else
+      {
         tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
+      }
+
       if ( System.getProperty("os.name").indexOf("Windows") != -1 )
          tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
       else
