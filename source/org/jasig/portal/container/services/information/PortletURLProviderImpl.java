@@ -48,7 +48,7 @@ import org.jasig.portal.container.om.window.PortletWindowImpl;
 
 /**
  * Implementation of Apache Pluto PortletURLProvider.
- * @author Ken Weiner, kweiner@unicon.net
+ * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */
 public class PortletURLProviderImpl implements PortletURLProvider {
@@ -59,11 +59,14 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private WindowState windowState;
     private boolean action;
     private boolean secure;
+    private boolean clearParameters;
     private Map parameters;
+    private PortalControlParameter controlParameter;
 
-    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow) {
+    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow, PortalControlParameter controlParameter ) {
         this.provider = provider;
         this.portletWindow = portletWindow;
+        this.controlParameter = controlParameter;
     }
     
     // PortletURLProvider methods
@@ -85,7 +88,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     }
 
     public void clearParameters() {
-        parameters = null;
+        clearParameters = true;
     }
 
     public void setParameters(Map parameters) {
@@ -96,6 +99,21 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
         String baseActionURL = runtimeData.getBaseActionURL();
 		StringBuffer url = new StringBuffer(baseActionURL);
+		
+		controlParameter.setPortletId(portletWindow);
+		
+		if ( portletMode != null )
+	        controlParameter.setMode(portletWindow, portletMode);
+        
+        if (windowState != null)
+		    controlParameter.setState(portletWindow, windowState);
+
+        if (clearParameters)
+			controlParameter.clearRenderParameters(portletWindow);
+		
+		if (action)
+		    controlParameter.setAction(portletWindow);
+        
         if ( parameters != null && !parameters.isEmpty() ) {        
          Iterator names = parameters.keySet().iterator();
          boolean firstValue = true;

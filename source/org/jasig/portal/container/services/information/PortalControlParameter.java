@@ -177,6 +177,7 @@ public class PortalControlParameter {
     public PortalControlParameter(String url) {
         this.portalURL = url;
         // GET statefulControlParameters and statelessControlParameters from portalURL!!!
+	
     }
 
     public void clearRenderParameters(PortletWindow portletWindow) {
@@ -319,7 +320,7 @@ public class PortalControlParameter {
     }
 
     public void setAction(PortletWindow window) {
-        getstatefulControlParameters().put(getActionKey(window), ACTION );
+        getstatefulControlParameters().put(getActionKey(window), ACTION.toUpperCase() );
     }
 
     public void setMode(PortletWindow window, PortletMode mode) {

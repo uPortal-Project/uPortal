@@ -90,7 +90,7 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     }
 
     public PortletURLProvider getPortletURLProvider(PortletWindow portletWindow) {
-        return new PortletURLProviderImpl(this, portletWindow);
+        return new PortletURLProviderImpl(this, portletWindow, controlParameter);
     }
 
     public ResourceURLProvider getResourceURLProvider(PortletWindow portletWindow) {
