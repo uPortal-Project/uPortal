@@ -42,6 +42,8 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IAggregatedUserLayoutManager;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -50,6 +52,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import java.util.Vector;
+import java.util.Collection;
 
   /**
    * A channel for adding new content to a layout.
@@ -67,6 +70,7 @@ import java.util.Vector;
     private Vector expandedFragments, condensedFragments;
     private Vector[] expandedItems;
 	private Vector[] condensedItems;
+	private Collection fragments;
 
     public CContentSubscriber() {
        super();
@@ -145,8 +149,7 @@ import java.util.Vector;
 				  }  		 
 			 }	
 			 
-			
-			 
+						 
 		     Vector tagNames = new Vector();
 			 
 			 if ( allFragments )
@@ -176,10 +179,14 @@ import java.util.Vector;
 			  } 
 		     } 
 		     
-		System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(channelRegistry));    
+		//System.out.println ( "registry:\n" + org.jasig.portal.utils.XML.serializeNode(channelRegistry));    
 			 
 	}		 	
 
+
+    private void attachSubscribableFragments ( Document doc ) {
+      	
+    }
 
     /**
      * Passes portal control structure to the channel.
@@ -188,6 +195,12 @@ import java.util.Vector;
     public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
         controlStructures = pcs;
         ulm = controlStructures.getUserPreferencesManager().getUserLayoutManager();
+		if (ulm instanceof TransientUserLayoutManagerWrapper)
+		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
+		if (ulm instanceof IAggregatedUserLayoutManager) {
+		  IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm; 
+		  fragments = alm.getSubscribableFragments();
+		}  
     }
 
     public void setStaticData (ChannelStaticData sd) throws PortalException {

@@ -37,8 +37,7 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Set;
-import java.util.Enumeration;
+import java.util.Collection;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IGroupMember;
 
@@ -111,11 +110,18 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 	public void deleteFragment ( String fragmentId ) throws PortalException;
 	
 	/**
-			 * Returns the fragment Ids associated with the current layout
-			 * @return <code>Set</code> a set of the fragment IDs
+			 * Returns the fragment Ids of the owner associated with the current layout
+			 * @return <code>Collection</code> a set of the fragment IDs
 			 * @exception PortalException if an error occurs
 			 */
-	public Set getFragments() throws PortalException;
+	public Collection getFragments() throws PortalException;
+	
+	/**
+				 * Returns the list of Ids of the fragments that the user can subscribe to
+				 * @return <code>Collection</code> a set of the fragment IDs
+				 * @exception PortalException if an error occurs
+				 */
+	public Collection getSubscribableFragments() throws PortalException;
 
 	
 	/**
@@ -164,10 +170,10 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 	/**
 			* Returns the user group keys which the fragment is published to
 			* @param fragmentId a <code>String</code> value
-			* @return a <code>Enumeration</code> instance containing the group keys
+			* @return a <code>Colection</code> object containing the group keys
 			* @exception PortalException if an error occurs
 			*/
-	public Enumeration getPublishGroups (String fragmentId ) throws PortalException;
+	public Collection getPublishGroups (String fragmentId ) throws PortalException;
 	
 	/**
 	  * Persists the user groups which the fragment is published to

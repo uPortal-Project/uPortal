@@ -37,7 +37,7 @@ package org.jasig.portal.layout;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Set;
+import java.util.Collection;
 import java.util.Vector;
 
 import org.jasig.portal.groups.IGroupMember;
@@ -1113,17 +1113,27 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	   layoutStore.deleteFragment(person,fragmentId);	
 	}
 
-	public Set getFragments () throws PortalException {
+
+	/**
+					 * Returns the list of Ids of the fragments that the user can subscribe to
+					 * @return <code>Collection</code> a set of the fragment IDs
+					 * @exception PortalException if an error occurs
+					 */
+	public Collection getSubscribableFragments() throws PortalException {
+	  return layoutStore.getSubscribableFragments(person);	
+	}
+
+	public Collection getFragments () throws PortalException {
 	   return layoutStore.getFragments(person).keySet();	
 	}
 	
 	/**
 				* Returns the user group keys which the fragment is published to
 				* @param fragmentId a <code>String</code> value
-				* @return a <code>Enumeration</code> instance containing the group keys
+				* @return a <code>Collection</code> object containing the group keys
 				* @exception PortalException if an error occurs
 				*/
-	public Enumeration getPublishGroups (String fragmentId ) throws PortalException {
+	public Collection getPublishGroups (String fragmentId ) throws PortalException {
 	  return layoutStore.getPublishGroups(person,fragmentId);	
 	}
 	

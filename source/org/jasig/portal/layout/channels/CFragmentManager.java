@@ -36,10 +36,8 @@
 package org.jasig.portal.layout.channels;
 
 import java.util.Iterator;
-import java.util.Enumeration;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.jasig.portal.groups.IGroupMember;
@@ -115,18 +113,14 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	}
 
     private synchronized IGroupMember[] getGroupMembers(String fragmentId) throws PortalException {
-       Enumeration groupsEnum = alm.getPublishGroups(fragmentId);	
-       ArrayList groups = new ArrayList(); 
-       while ( groupsEnum.hasMoreElements() ) {
-       	String groupKey = (String) groupsEnum.nextElement();
-       	IGroupMember member = GroupService.findGroup(groupKey); 
-       	if ( member != null )
-       	 groups.add(member);  
+       Collection groupKeys = alm.getPublishGroups(fragmentId);	
+	   IGroupMember[] members = new IGroupMember[groupKeys.size()];
+	   int i = 0; 
+	   for ( Iterator keys = groupKeys.iterator(); keys.hasNext(); i++ ) {
+       	String groupKey = (String) keys.next();
+       	IGroupMember member = GroupService.findGroup(groupKey);
+       	members[i] = member;  
        }
-		IGroupMember[] members = new IGroupMember[groups.size()];
-        for ( int i = 0; i < members.length; i++ ) {
-          	members[i] = (IGroupMember) groups.get(i);
-        }
         return members;
     }   
 
@@ -283,6 +277,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
 	    if (ulm instanceof IAggregatedUserLayoutManager)
 		  alm = (IAggregatedUserLayoutManager) ulm;
+		else 
+		  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!"); 
 		themePrefs = pcs.getUserPreferencesManager().getUserPreferences().getThemeStylesheetUserPreferences();	
 		// Refresh the fragment list
 		refreshFragments();
@@ -345,7 +341,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 			if ( updateList )
 			  refreshFragments();
 		}
-		//System.out.println ( org.jasig.portal.utils.XML.serializeNode(document));
+		
 		return document;
 	}
 
@@ -353,11 +349,11 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		staticData = sd;
 	}
 	public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
-	  runtimeData = rd;	
+	    runtimeData = rd;	
 	}
 
 	public void refreshFragments() throws PortalException {
-		  Set fragmentIds = alm.getFragments();
+		  Collection fragmentIds = alm.getFragments();
 		  fragments = new HashMap();
 			for (Iterator ids = fragmentIds.iterator(); ids.hasNext(); ) {
 				String fragmentId = (String) ids.next();

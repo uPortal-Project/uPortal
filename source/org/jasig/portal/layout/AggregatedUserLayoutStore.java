@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
@@ -3122,7 +3123,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     "UOF.PUSHED_FRAGMENT='Y' AND ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId+" AND ULS.FRAGMENT_ID=UOF.FRAGMENT_ID AND ULS.FRAGMENT_ID=UGF.FRAGMENT_ID";
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery(query1);
-    String fragmentIds = null;
     Set groupKeys = new HashSet();
 
     while ( rs.next() ) {
@@ -3153,14 +3153,59 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     return incorrectIds.elements();
  }
  
+ 
+    /**
+	  * Returns the list of Ids of the fragments that the user can subscribe to
+	  * @param person an <code>IPerson</code> object specifying the user
+	  * @return <code>Collection</code> a set of the fragment IDs
+	  * @exception PortalException if an error occurs
+	  */
+  public Collection getSubscribableFragments(IPerson person) throws PortalException {
+	int userId = person.getID();
+    Vector fragmentIds = new Vector();
+    Connection con = RDBMServices.getConnection();
+    try {
+	 IGroupMember groupPerson = null;
+	 String query1 = "SELECT FRAGMENT_ID,GROUP_KEY FROM UP_GROUP_FRAGMENT";
+	 Statement stmt = con.createStatement();
+	 ResultSet rs = stmt.executeQuery(query1);
+	 Set groupKeys = new HashSet();
+
+	 while ( rs.next() ) {
+	  if ( groupPerson == null ) {
+	   EntityIdentifier personIdentifier = person.getEntityIdentifier();
+	   groupPerson = GroupService.getGroupMember(personIdentifier);
+	  }
+	   int fragmentId = rs.getInt(1);
+	   String groupKey = rs.getString(2);
+	   if ( groupKeys.contains(groupKey) )
+		  fragmentIds.add(fragmentId+"");
+	   else {
+		 IEntityGroup group = GroupService.findGroup(groupKey);
+		 if ( group != null && groupPerson.isDeepMemberOf(group) ) {
+		  fragmentIds.add(fragmentId+"");
+		  groupKeys.add(groupKey);
+		 }
+	   }
+	 }
+	   if ( rs != null ) rs.close();
+	   if ( stmt != null ) stmt.close();
+    } catch ( Exception e ) {
+		throw new PortalException(e);
+	 } finally {
+		RDBMServices.releaseConnection(con);
+	   }
+	 return fragmentIds;
+  }
+ 
    /**
 		* Returns the user group keys which the fragment is published to
 		* @param person an <code>IPerson</code> object specifying the user
 		* @param fragmentId a <code>String</code> value
-		* @return a <code>Enumeration</code> instance containing the group keys
+		* @return a <code>Collection</code> object containing the group keys
 		* @exception PortalException if an error occurs
 		*/
-   public Enumeration getPublishGroups (IPerson person, String fragmentId ) throws PortalException {
+   public Collection getPublishGroups (IPerson person, String fragmentId ) throws PortalException {
 	  int userId = person.getID();
 	  Vector groupKeys = new Vector();
 	  Connection con = RDBMServices.getConnection();
@@ -3182,7 +3227,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		} finally {
 		   RDBMServices.releaseConnection(con);
 		  }
-		return groupKeys.elements();
+		return groupKeys;
    }
    
    /**
