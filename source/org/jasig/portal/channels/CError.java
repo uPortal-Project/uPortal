@@ -126,11 +126,16 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         this.errorID=errorCode;
     }
 
+    public CError(int errorCode, Throwable exception, String channelSubscribeId,IChannel channelInstance, String message) {
+        this(errorCode,exception,channelSubscribeId,channelInstance);
+        this.setMessage(message);
+    }
+
     public void setMessage(String m) {
         this.str_message=m;
     }
 
-    private void resetCError(int errorCode, Exception exception, String channelSubscribeId,IChannel channelInstance,String message) {
+    private void resetCError(int errorCode, Throwable exception, String channelSubscribeId,IChannel channelInstance,String message) {
         str_channelSubscribeId=channelSubscribeId;
         this.channelException=exception;
         this.the_channel=channelInstance;
@@ -176,7 +181,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                             ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                         the_channel.setRuntimeData (crd);
                         ChannelManager cm=portcs.getChannelManager();
-                        cm.addChannelInstance(this.str_channelSubscribeId,this.the_channel);
+                        cm.setChannelInstance(this.str_channelSubscribeId,this.the_channel);
                         the_channel.renderXML(out);
                         return;
                     } catch (Exception e) {
@@ -204,7 +209,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
                                 resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelSubscribeId,this.the_channel,"Channel failed a reload attempt.");
-                                cm.addChannelInstance(str_channelSubscribeId,this);
+                                cm.setChannelInstance(str_channelSubscribeId,this);
                                 LogService.instance().log(LogService.ERROR,"CError::setRuntimeData() : an error occurred during channel reinitialization. "+e);
                             }
                         }
