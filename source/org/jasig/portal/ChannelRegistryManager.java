@@ -38,9 +38,12 @@ package  org.jasig.portal;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
 import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import java.util.Set;
 import java.sql.SQLException;
+import org.apache.xpath.XPathAPI;
 
 /**
  * Manages the channel registry which is a listing of published channels
@@ -84,11 +87,50 @@ public class ChannelRegistryManager {
   }
 
   /**
+   * Looks in channel registry for a channel element matching the
+   * given channel ID.
+   * @param the channel ID
+   * @return the channel element matching chanID
+   * @throws PortalException
+   */
+  public static Element getChannel (String chanID) throws PortalException {
+    Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
+    Element channelE = null;
+    try {
+      // This is unfortunately dependent on Xalan 2.  Is there a way to use a standard interface?
+      channelE = (Element)XPathAPI.selectSingleNode(channelRegistry, "(//channel[@ID = '" + chanID + "'])[1]");
+    } catch (javax.xml.transform.TransformerException te) {
+      throw new GeneralRenderingException("Not able to find channel " + chanID + " within channel registry: " + te.getMessageAndLocation());
+    }
+    return channelE;
+  }
+
+  /**
+   * Looks in channel registry for a channel element matching the
+   * given channel ID.
+   * @param the channel ID
+   * @return the channel element matching chanID
+   * @throws org.jasig.portal.PortalException
+   */
+  public static NodeList getCategories (String chanID) throws PortalException {
+    Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
+    NodeList categories = null;
+    try {
+      // This is unfortunately dependent on Xalan 2.  Is there a way to use a standard interface?
+      categories = (NodeList)XPathAPI.selectNodeList(channelRegistry, "//category[channel/@ID = '" + chanID + "']");
+    } catch (javax.xml.transform.TransformerException te) {
+      throw new GeneralRenderingException("Not able to find channel " + chanID + " within channel registry: " + te.getMessageAndLocation());
+    }
+    return categories;
+  }
+
+  /**
    * Publishes a channel.
    * @param the channel XML fragment
    * @param a list of categories that the channel belongs to
    * @param a list of roles that are permitted to subscribe to the channel
    * @param the user ID of the channel publisher
+   * @throws java.lang.Exception
    */
   public static void publishChannel (Node channel, Set categoryIDs, Set roles, int publisherID) throws Exception {
     // Wipe out the channel registry
