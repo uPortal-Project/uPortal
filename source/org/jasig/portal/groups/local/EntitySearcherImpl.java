@@ -36,8 +36,8 @@
 package org.jasig.portal.groups.local;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntitySearcher;
-import org.jasig.portal.groups.*;
 
 /**
  * An IEntitySearcher implementation for the local portal group service. 

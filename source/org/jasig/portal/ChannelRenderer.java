@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,14 +35,17 @@
 
 package org.jasig.portal;
 
-import org.xml.sax.*;
-import org.jasig.portal.utils.*;
-import org.jasig.portal.services.LogService;
 import java.util.Map;
-import org.jasig.portal.PropertiesManager;
+
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SetCheckInSemaphore;
+import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.threading.ThreadPool;
 import org.jasig.portal.utils.threading.WorkTracker;
 import org.jasig.portal.utils.threading.WorkerTask;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,11 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.ChannelDefinition;
 
 /**
  * Formulates stats messages which can be logged, printed, etc.

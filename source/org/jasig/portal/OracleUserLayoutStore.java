@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,14 +38,11 @@
 
 
 package  org.jasig.portal;
-import  org.jasig.portal.services.LogService;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-import  java.sql.Connection;
-import  java.sql.ResultSet;
-import  java.sql.Statement;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
 
 
 /**

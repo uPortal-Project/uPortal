@@ -36,19 +36,20 @@
 
 package  org.jasig.portal.security.provider;
 
-import  org.jasig.portal.security.PortalSecurityException;
-import  org.jasig.portal.security.ISecurityContext;
-import  org.jasig.portal.LdapServices;
-import  org.jasig.portal.services.LogService;
-import  java.util.Vector;
-import  java.security.MessageDigest;
-import  javax.naming.NamingException;
-import  javax.naming.NamingEnumeration;
-import  javax.naming.directory.SearchResult;
-import  javax.naming.directory.DirContext;
-import  javax.naming.directory.Attribute;
-import  javax.naming.directory.SearchControls;
-import  javax.naming.directory.Attributes;
+import java.util.Vector;
+
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
+import org.jasig.portal.LdapServices;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 
 /**

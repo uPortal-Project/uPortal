@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,14 @@
 
 package org.jasig.portal;
 
+import java.util.Hashtable;
+
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.Attributes;
-import java.util.Hashtable;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.services.LogService;
 
 /**
  * Channel Rendering buffer allows portal to accumulate a list

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 package org.jasig.portal.utils.threading;
 
 import java.util.Vector;
+
 import org.jasig.portal.services.LogService;
 
 

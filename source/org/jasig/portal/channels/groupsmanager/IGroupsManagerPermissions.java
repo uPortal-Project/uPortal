@@ -1,7 +1,7 @@
 package org.jasig.portal.channels.groupsmanager;
 
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.security.*;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 
 /**
  * IGroupsManagerPermissions allows servants to be created using pluggable

@@ -1,4 +1,4 @@
-/* Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,9 @@
 
 package org.jasig.portal.groups.ldap;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.groups.*;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntityStore;
+import org.jasig.portal.groups.IEntityStoreFactory;
 
 /**
  * Returns an instance of the ldap <code>IEntityStore</code>.

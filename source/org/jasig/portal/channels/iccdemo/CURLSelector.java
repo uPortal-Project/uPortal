@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,17 +36,21 @@
 package org.jasig.portal.channels.iccdemo;
 
 
-import org.jasig.portal.*;
-import org.jasig.portal.channels.*;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.NotContextException;
-import org.xml.sax.ContentHandler;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ICCRegistry;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DocumentFactory;
+import org.xml.sax.ContentHandler;
 
 /**
  * A url selector channel (part of the Inter-channel communication demo).

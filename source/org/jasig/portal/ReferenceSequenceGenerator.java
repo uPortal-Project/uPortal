@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,11 +37,10 @@ package org.jasig.portal;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
-import org.jasig.portal.RDBMServices;
+import java.sql.Statement;
+
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.SqlTransaction;
 /**
  * @author: Dan Ellentuck
  * @version $Revision$

@@ -1,4 +1,4 @@
-/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright ï¿½ 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,10 @@
 
 package org.jasig.portal.groups;
 
-import java.util.*;
-import org.jasig.portal.IBasicEntity;
+import java.util.Iterator;
+
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 
 /**
  * An <code>IGroupMember</code> defines common behavior for both the leaf

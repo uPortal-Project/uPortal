@@ -1,7 +1,7 @@
 package org.jasig.portal.security;
 
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,11 @@ package org.jasig.portal.security;
  *
  */
 
-import java.util.*;
-import org.jasig.portal.groups.*;
+import java.util.Vector;
+
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IGroupMember;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

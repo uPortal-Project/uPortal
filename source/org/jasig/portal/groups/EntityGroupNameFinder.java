@@ -38,10 +38,11 @@
 
 package  org.jasig.portal.groups;
 
-import  java.util.HashMap;
-import  java.util.Map;
-import  org.jasig.portal.services.GroupService;
-import  org.jasig.portal.services.LogService;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 
 
 /**

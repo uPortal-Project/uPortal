@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,40 +38,37 @@
 
 package org.jasig.portal.layout;
 
-import org.jasig.portal.RDBMUserLayoutStore;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.RDBMServices;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.layout.*;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.RDBMUserLayoutStore;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.restrictions.PriorityRestriction;
+import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.utils.CounterStoreFactory;
-import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
-import org.jasig.portal.layout.restrictions.*;
-import org.jasig.portal.groups.*;
-
-
-import  java.sql.Connection;
-import  java.sql.ResultSet;
-import  java.sql.Statement;
-import  java.sql.PreparedStatement;
-import  java.sql.Types;
-import  java.sql.Timestamp;
-import  java.sql.SQLException;
-import  java.util.List;
-import  java.util.Vector;
-import  java.util.Collections;
-import  java.util.ArrayList;
-import  java.util.Date;
-import  java.util.Enumeration;
-import  java.util.Iterator;
-import  java.util.HashMap;
-import  java.util.Hashtable;
 
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All Nrights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All Nrights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,60 +35,56 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.UserPreferencesManager;
-import org.jasig.portal.UserPreferences;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.StructureAttributesIncorporationFilter;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.ChannelSAXStreamFilter;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.UserLayoutStoreFactory;
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Hashtable;
-import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.dom.DOMSource;
 
-import org.apache.xpath.XPathAPI;
-import org.w3c.dom.traversal.NodeIterator;
-
-import org.jasig.portal.layout.*;
+import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelSAXStreamFilter;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.StructureAttributesIncorporationFilter;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutFolderDescription;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.ContentHandler;
 
 
 

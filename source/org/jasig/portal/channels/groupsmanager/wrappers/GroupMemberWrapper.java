@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,14 @@
 
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Document;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerUnrestrictedSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.IGroupsManagerWrapper;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.groups.IGroupMember;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Returns an xml element for an IGroupMember.

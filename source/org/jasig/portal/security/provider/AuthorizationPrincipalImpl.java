@@ -35,8 +35,11 @@
 
 package org.jasig.portal.security.provider;
 
-import org.jasig.portal.*;
-import org.jasig.portal.security.*;
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionPolicy;
 
 /**
  * @author Dan Ellentuck

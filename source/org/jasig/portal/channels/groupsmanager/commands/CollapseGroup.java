@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,13 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  java.util.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * This command sets the expanded attribute for an element to "false" and lets

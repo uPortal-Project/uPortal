@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,13 @@
 
 package org.jasig.portal.layout;
 
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.PortalException;
-import org.xml.sax.ContentHandler;
 import java.util.List;
 
-import  org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.dom.DocumentImpl;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
+import org.xml.sax.ContentHandler;
 
 
 /**

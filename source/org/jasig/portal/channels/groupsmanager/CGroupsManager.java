@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,25 +35,30 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.*;
-import  java.io.*;
-import  org.jasig.portal.services.*;
-import  org.apache.log4j.Priority;
-import  org.jasig.portal.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.*;
-import  org.jasig.portal.utils.*;
-import  org.jasig.portal.channels.permissionsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
-import  org.w3c.dom.Document;
-import  org.apache.xml.serialize.XMLSerializer;
-import  org.apache.xml.serialize.OutputFormat;
-import  org.xml.sax.ContentHandler;
-import  org.xml.sax.InputSource;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IMultithreadedCacheable;
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.xml.sax.ContentHandler;
 
 /**
  * CGroupsManager allows users to graphically administer all groups for which

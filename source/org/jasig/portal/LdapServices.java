@@ -35,18 +35,15 @@
 
 package org.jasig.portal;
 
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+
 import org.jasig.portal.services.LogService;
-
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-
-import java.io.*;
-import java.util.*;
-import java.sql.*;
-
-import javax.naming.*;
-import javax.naming.directory.*;
 
 /**
  * Provides LDAP access in a way similar to a relational DBMS.

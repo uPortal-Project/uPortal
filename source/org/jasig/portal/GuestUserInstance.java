@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,18 +35,19 @@
 
 package org.jasig.portal;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.net.*;
-import org.w3c.dom.*;
 
 /**
  * A multithreaded version of a UserInstance.

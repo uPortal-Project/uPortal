@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,14 @@ package org.jasig.portal.security.provider;
 
 import java.util.Date;
 import java.util.Iterator;
+
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.security.*;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionPolicy;
 
 /**
  * Implements a strategy for answering the basic authorization question: does the

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,19 +35,16 @@
 
 package org.jasig.portal;
 
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.services.LogService;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import org.jasig.portal.serialize.CachingSerializer;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SAX2FilterImpl;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  * A filter that incorporates channel content into the main SAX stream.

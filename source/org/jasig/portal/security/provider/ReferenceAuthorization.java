@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,19 +38,15 @@
 
 package  org.jasig.portal.security.provider;
 
-import  java.util.Vector;
-import  java.util.Properties;
-import  java.io.File;
-import  java.io.IOException;
-import  java.io.FileInputStream;
-import  org.jasig.portal.utils.SmartCache;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.provider.PersonImpl;
-import  org.jasig.portal.security.IAuthorization;
-import  org.jasig.portal.security.PortalSecurityException;
-import  org.jasig.portal.PortalSessionManager;
-import  org.jasig.portal.UserLayoutStoreFactory;
-import  org.jasig.portal.services.LogService;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Vector;
+
+import org.jasig.portal.security.IAuthorization;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SmartCache;
 
 
 /**

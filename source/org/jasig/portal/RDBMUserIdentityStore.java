@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,14 +39,17 @@ COLLABORATIVE "AS IS" AND ANY
 
 package  org.jasig.portal;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.GroupService;
-import  java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CounterStoreFactory;
 /**
  * SQL implementation for managing creation and removal of User Portal Data

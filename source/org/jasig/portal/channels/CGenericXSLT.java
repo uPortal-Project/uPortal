@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,30 +35,36 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.*;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DTDResolver;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.security.LocalConnectionContext;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Document;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.net.URLConnection;
-import java.net.URL;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IMultithreadedCacheable;
+import org.jasig.portal.IMultithreadedChannel;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.security.LocalConnectionContext;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DTDResolver;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.xml.sax.ContentHandler;
 
 /**
  * <p>A channel which transforms XML for rendering in the portal.</p>

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,9 @@
 
 package  org.jasig.portal;
 
-import  java.util.Map;
-import  java.io.IOException;
-import  java.io.OutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * An interface that a multithreaded channel that wants to download MIME files must implement.

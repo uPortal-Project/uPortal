@@ -1,4 +1,4 @@
-/* Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ import org.jasig.portal.groups.local.EntitySearcherImpl;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
 import org.jasig.portal.groups.local.searchers.RDBMChannelDefSearcher;
 import org.jasig.portal.groups.local.searchers.RDBMPersonSearcher;
-import org.jasig.portal.services.LogService;
 
 /**
  * Creates an instance of the reference <code>IEntitySearcher</code>.

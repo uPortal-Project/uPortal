@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,12 +38,11 @@
 package org.jasig.portal.security.provider;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.security.IPersonManager;
+
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 /**
  When retrieving a new person, the value of the REMOTEUSER environment variable

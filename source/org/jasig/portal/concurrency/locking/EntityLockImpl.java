@@ -36,7 +36,10 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.util.Date;
-import org.jasig.portal.concurrency.*;
+
+import org.jasig.portal.concurrency.IEntityLock;
+import org.jasig.portal.concurrency.IEntityLockService;
+import org.jasig.portal.concurrency.LockingException;
 /**
   * An implementation of IEntityLock.  A lock is granted to a
   * <code>lockOwner</code> for an <code>entityType</code> and

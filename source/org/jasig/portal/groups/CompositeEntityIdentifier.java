@@ -1,4 +1,4 @@
-/* Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,13 @@
 
 package org.jasig.portal.groups;
 
-import javax.naming.*;
 import java.util.Properties;
+
+import javax.naming.CompoundName;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NameParser;
+import javax.naming.NamingException;
 /**
  * A composite key and type that uniquely identify a portal entity.  The composite
  * key contains a service name, which may be compound, and a native key, which is

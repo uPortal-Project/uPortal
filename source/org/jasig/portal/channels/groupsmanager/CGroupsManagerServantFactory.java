@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,14 +34,21 @@
  */
 
 package org.jasig.portal.channels.groupsmanager;
-import org.jasig.portal.services.*;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.IServant;
-import org.jasig.portal.*;
+import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.*;
-import java.lang.reflect.Constructor;
-import org.w3c.dom.*;
+import java.util.Iterator;
+
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IServant;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.services.GroupService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A Factory that produces a Groups Manager <code>IServant</code> for

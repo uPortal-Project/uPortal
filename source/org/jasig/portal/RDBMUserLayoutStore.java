@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,39 +35,32 @@
 
 package org.jasig.portal;
 
-import  org.w3c.dom.Document;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NamedNodeMap;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
-import  org.apache.xerces.parsers.DOMParser;
-import  java.io.StringWriter;
-import  java.sql.Connection;
-import  java.sql.ResultSet;
-import  java.sql.Statement;
-import  java.sql.SQLException;
-import  java.util.ArrayList;
-import  java.util.Date;
-import  java.util.Enumeration;
-import  java.util.HashMap;
-import  java.util.HashSet;
-import  java.util.Hashtable;
-import  java.util.Vector;
-import  org.xml.sax.EntityResolver;
-import  org.xml.sax.InputSource;
-import  org.jasig.portal.utils.DTDResolver;
-import  org.jasig.portal.services.LogService;
-import  org.apache.xml.serialize.OutputFormat;
-import  org.apache.xml.serialize.XMLSerializer;
-import org.jasig.portal.utils.DocumentFactory;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.parsers.DOMParser;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.utils.ICounterStore;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CounterStoreFactory;
+import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.RDBMServices;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 /**
  * SQL implementation for the 2.x relational database model
  * @author George Lindholm

@@ -67,8 +67,6 @@
 package org.jasig.portal.serialize;
 
 
-import java.util.Hashtable;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Node;

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,8 @@ package org.jasig.portal.security.provider;
  * @author susan Bramhall susan.bramhall@yale.edu
  */
 
-import org.jasig.portal.security.*;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.ISecurityContextFactory;
 
 public class UnionSecurityContextFactory implements ISecurityContextFactory {
 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,10 +36,10 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.groups.*;
-import  org.w3c.dom.*;
-import  org.jasig.portal.services.*;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.services.LogService;
 
 
 /**

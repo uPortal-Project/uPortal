@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,24 +36,36 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
-import org.jasig.portal.*;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.services.LogService;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.ContentHandler;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.net.URL;
 
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.IUserLayoutFolderDescription;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.StructureStylesheetDescription;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.ThemeStylesheetDescription;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 
 /** <p>Manages User Layout and user stylesheet preferences </p>
  * This is a general UserPreference component. A structure/theme

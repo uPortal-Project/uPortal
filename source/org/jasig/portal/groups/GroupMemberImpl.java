@@ -1,4 +1,4 @@
-/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright ï¿½ 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,14 @@
 
 package org.jasig.portal.groups;
 
-import org.jasig.portal.*;
-import org.jasig.portal.security.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
-import java.util.*;
 
 /**
  * @author Dan Ellentuck

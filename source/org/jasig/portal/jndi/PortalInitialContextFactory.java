@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,10 @@
 package org.jasig.portal.jndi;
 
 import java.util.Hashtable;
-import javax.naming.NamingException;
+
 import javax.naming.Context;
 import javax.naming.spi.InitialContextFactory;
+
 import tyrex.naming.MemoryContext;
 
 /**

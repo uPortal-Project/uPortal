@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,19 +38,18 @@
 
 package  org.jasig.portal.channels.permissionsmanager.commands;
 
-import  org.jasig.portal.channels.permissionsmanager.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.*;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
-import  java.util.Enumeration;
-import  java.util.HashMap;
-import  java.util.ArrayList;
-import  java.util.Set;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+
+import org.jasig.portal.channels.permissionsmanager.CommandFactory;
+import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
+import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Element;
 
 
 /**

@@ -1,7 +1,7 @@
 package org.jasig.portal.security.provider;
 
 /**
- * Copyright ©  2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½  2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,15 +44,16 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.naming.Name;
+import javax.naming.NamingException;
+
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.CompositeEntityIdentifier;
-import javax.naming.*;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.SqlTransaction;
 
 /**
  * Reference implementation of IPermissionStore.  Performs CRUD operations

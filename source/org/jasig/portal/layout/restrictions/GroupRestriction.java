@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,17 +36,17 @@
 package org.jasig.portal.layout.restrictions;
 
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.CommonUtils;
-import java.util.StringTokenizer;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ReferenceGroupServiceFactory;
-import org.jasig.portal.layout.*;
+import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.IALNodeDescription;
 
 
 /**

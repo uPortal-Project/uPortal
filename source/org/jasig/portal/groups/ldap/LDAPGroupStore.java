@@ -35,16 +35,41 @@
 
 package org.jasig.portal.groups.ldap;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
-import org.jasig.portal.groups.*;
+import java.util.List;
+
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.EntityGroupImpl;
+import org.jasig.portal.groups.EntityImpl;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IEntityGroupStore;
+import org.jasig.portal.groups.IEntitySearcher;
+import org.jasig.portal.groups.IEntityStore;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
-import javax.naming.directory.*;
-import java.util.*;
-import org.w3c.dom.*;
-import javax.naming.*;
-import org.jasig.portal.services.*;
-import org.jasig.portal.utils.*;
+import org.jasig.portal.utils.SmartCache;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * LDAPGroupStore.

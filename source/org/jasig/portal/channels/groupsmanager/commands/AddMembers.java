@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,15 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  java.util.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.services.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.GroupService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /** This command sets the id of the parent group (ie. the group to which child
  *  members will be added). Control is then passed to a selection view where

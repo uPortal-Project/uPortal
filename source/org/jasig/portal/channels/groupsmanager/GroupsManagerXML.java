@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,20 +35,33 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.*;
-import  java.io.*;
-import  org.jasig.portal.EntityTypes;  /** @todo remove when groups/EntityTypes is removed */
-import  org.jasig.portal.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.ChannelStaticData;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
-import  javax.xml.parsers.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.EntityTypes;
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
  /**
  * Contains a groups of static methods used to centralize the generation and

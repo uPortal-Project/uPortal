@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,15 @@
 
 package org.jasig.portal;
 
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Locale;
 import java.util.Enumeration;
-import org.jasig.portal.car.CarResources;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Map;
+
 import org.jasig.portal.car.CarClassLoader;
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.services.LogService;
+
 import com.oreilly.servlet.multipart.Part;
 
 /**

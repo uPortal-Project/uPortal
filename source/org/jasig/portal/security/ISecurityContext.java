@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
 package org.jasig.portal.security;
 
 import java.util.Enumeration;
-import org.jasig.portal.security.*;
 
 /**
  * <p>This is the main interface for the JASIG portal effort's security

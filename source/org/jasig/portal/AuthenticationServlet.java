@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,19 +36,22 @@
 
 package  org.jasig.portal;
 
-import  javax.servlet.http.HttpServlet;
-import  javax.servlet.http.HttpServletRequest;
-import  javax.servlet.http.HttpServletResponse;
-import  javax.servlet.http.HttpSession;
-import  javax.servlet.ServletException;
-import  java.io.IOException;
-import  java.util.*;
-import  org.jasig.portal.services.Authentication;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.PersonManagerFactory;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.utils.ResourceLoader;
-import  java.util.Properties;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.services.Authentication;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.ResourceLoader;
 
 /**
  * Receives the username and password and tries to authenticate the user.
