@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">channelDef</xsl:param>
+  <xsl:param name="action">selectChannelType</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -134,7 +134,7 @@
                               <tr class="uportal-channel-text" valign="top">
                   <td nowrap="nowrap" align="center">
                     <input type="radio" name="ID" value="-1">
-                    <xsl:if test="manageChannels/selectChannelType/params/step/channel/@TypeID=-1">
+                    <xsl:if test="manageChannels/selectChannelType/params/step/channel/@typeID=-1">
                      <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input></td>
                   <td nowrap="nowrap">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
@@ -177,7 +177,7 @@
                 <tr class="uportal-channel-text" valign="top">
                   <td nowrap="nowrap" align="center">
                     <input type="radio" name="ID" value="{@ID}">
-                    <xsl:if test="@ID=../../channel/@TypeID">
+                    <xsl:if test="@ID=../../channel/@typeID">
                      <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input> </td>
                   <td nowrap="nowrap">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
@@ -1054,7 +1054,7 @@
       <xsl:template name="help">
     <a>
     <xsl:attribute name="href">
-    javascript:alert('Name: <xsl:value-of select="name"/>/rExample: <xsl:value-of select="example"/>')</xsl:attribute>
+    javascript:alert('Name: <xsl:value-of select="label"/>\nExample: <xsl:value-of select="example"/>\n\nDescription: <xsl:value-of select="description"/>')</xsl:attribute>
     <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
     </a>
   </xsl:template>
