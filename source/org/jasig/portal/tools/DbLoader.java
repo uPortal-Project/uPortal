@@ -39,6 +39,9 @@ import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.RdbmServices;
 import org.jasig.portal.utils.DTDResolver;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,14 +115,19 @@ import org.apache.xerces.dom.DocumentImpl;
  */
 public class DbLoader
 {
-  private static String portalBaseDir = null;
+  private static String portalBaseDir;
   private static String propertiesUri;
-  private static Connection con = null;
-  private static Statement stmt = null;
-  private static PreparedStatement pstmt = null;
-  private static RdbmServices rdbmService = null;
-  private static Document tablesDoc = null;
-  private static Document tablesDocGeneric = null;
+  private static Connection con;
+  private static Statement stmt;
+  private static PreparedStatement pstmt;
+  private static RdbmServices rdbmService;
+  private static Document tablesDoc;
+  private static Document tablesDocGeneric;
+  private static boolean createScript;
+  private static boolean dropTables;
+  private static boolean createTables;
+  private static boolean populateTables;
+  private static PrintWriter scriptOut;
 
   public static void main(String[] args)
   {
@@ -137,6 +145,16 @@ public class DbLoader
         XMLReader parser = getXMLReader();
         printInfo();
         readProperties(parser);
+
+        // Read drop/create/populate table settings
+        dropTables = Boolean.valueOf(PropertiesHandler.properties.getDropTables()).booleanValue();
+        createTables = Boolean.valueOf(PropertiesHandler.properties.getCreateTables()).booleanValue();
+        populateTables = Boolean.valueOf(PropertiesHandler.properties.getPopulateTables()).booleanValue();
+
+        // Set up script
+        createScript = Boolean.valueOf(PropertiesHandler.properties.getCreateScript()).booleanValue();
+        if (createScript)
+          initScript();
 
         // Read tables.xml
         DOMParser domParser = new DOMParser();
@@ -165,6 +183,7 @@ public class DbLoader
         System.out.println("Done!");
         long endTime = System.currentTimeMillis();
         System.out.println("Elapsed time: " + ((endTime - startTime) / 1000f) + " seconds");
+        exit();
       }
       else
         System.out.println("DbLoader couldn't obtain a database connection. See '" + portalBaseDir + "logs" + File.separator + "portal.log' for details.");
@@ -232,6 +251,16 @@ public class DbLoader
     parser.setContentHandler(dataHandler);
     parser.setErrorHandler(dataHandler);
     parser.parse(UtilitiesBean.fixURI(PropertiesHandler.properties.getDataUri()));
+  }
+
+  private static void initScript() throws java.io.IOException
+  {
+    String scriptFileName = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + PropertiesHandler.properties.getScriptFileName().replace('/', File.separatorChar);
+    File scriptFile = new File(scriptFileName);
+    if (scriptFile.exists())
+      scriptFile.delete();
+    scriptFile.createNewFile();
+    scriptOut = new PrintWriter (new BufferedWriter (new FileWriter (scriptFileName, true)));
   }
 
   private static void replaceDataTypes (Document tablesDoc)
@@ -468,7 +497,9 @@ public class DbLoader
   private static void dropTable (String dropTableStatement)
   {
     System.out.print("...");
-    //System.out.println(dropTableStatement);
+
+    if (createScript)
+      scriptOut.println(dropTableStatement + PropertiesHandler.properties.getStatementTerminator());
 
     try
     {
@@ -488,7 +519,9 @@ public class DbLoader
   private static void createTable (String createTableStatement)
   {
     System.out.print("...");
-    //System.out.println(createTableStatement);
+
+    if (createScript)
+      scriptOut.println(createTableStatement + PropertiesHandler.properties.getStatementTerminator());
 
     try
     {
@@ -546,16 +579,22 @@ public class DbLoader
 
     public void endElement (String uri, String name, String qName)
     {
-      if (name.equals("tables-uri")) // tables URI
+      if (name.equals("drop-tables")) // drop tables ("true" or "false")
+        properties.setDropTables(charBuff.toString());
+      else if (name.equals("create-tables")) // create tables ("true" or "false")
+        properties.setCreateTables(charBuff.toString());
+      else if (name.equals("populate-tables")) // populate tables ("true" or "false")
+        properties.setPopulateTables(charBuff.toString());
+      else if (name.equals("tables-uri")) // tables URI
         properties.setTablesUri(charBuff.toString());
       else if (name.equals("tables-xsl-uri")) // tables xsl URI
         properties.setTablesXslUri(charBuff.toString());
       else if (name.equals("data-uri")) // data xml URI
         properties.setDataUri(charBuff.toString());
-      else if (name.equals("create-script")) // create script ("yes" or "no")
+      else if (name.equals("create-script")) // create script ("true" or "false")
         properties.setCreateScript(charBuff.toString());
-      else if (name.equals("script-uri")) // script URI
-        properties.setScriptUri(charBuff.toString());
+      else if (name.equals("script-file-name")) // script file name
+        properties.setScriptFileName(charBuff.toString());
       else if (name.equals("statement-terminator")) // statement terminator
         properties.setStatementTerminator(charBuff.toString());
       else if (name.equals("db-type-mapping"))
@@ -583,30 +622,39 @@ public class DbLoader
 
     class Properties
     {
+      private String dropTables;
+      private String createTables;
+      private String populateTables;
       private String tablesUri;
       private String tablesXslUri;
       private String dataUri;
       private String dataXslUri;
       private String createScript;
-      private String scriptUri;
+      private String scriptFileName;
       private String statementTerminator;
       private ArrayList dbTypeMappings = new ArrayList();
 
+      public String getDropTables() { return dropTables; }
+      public String getCreateTables() { return createTables; }
+      public String getPopulateTables() { return populateTables; }
       public String getTablesUri() { return tablesUri; }
       public String getTablesXslUri() { return tablesXslUri; }
       public String getDataUri() { return dataUri; }
       public String getDataXslUri() { return dataXslUri; }
       public String getCreateScript() { return createScript; }
-      public String getScriptUri() { return scriptUri; }
+      public String getScriptFileName() { return scriptFileName; }
       public String getStatementTerminator() { return statementTerminator; }
       public ArrayList getDbTypeMappings() { return dbTypeMappings; }
 
+      public void setDropTables(String dropTables) { this.dropTables = dropTables; }
+      public void setCreateTables(String createTables) { this.createTables = createTables; }
+      public void setPopulateTables(String populateTables) { this.populateTables = populateTables; }
       public void setTablesUri(String tablesUri) { this.tablesUri = tablesUri; }
       public void setTablesXslUri(String tablesXslUri) { this.tablesXslUri = tablesXslUri; }
       public void setDataUri(String dataUri) { this.dataUri = dataUri; }
       public void setDataXslUri(String dataXslUri) { this.dataXslUri = dataXslUri; }
       public void setCreateScript(String createScript) { this.createScript = createScript; }
-      public void setScriptUri(String scriptUri) { this.scriptUri = scriptUri; }
+      public void setScriptFileName(String scriptFileName) { this.scriptFileName = scriptFileName; }
       public void setStatementTerminator(String statementTerminator) { this.statementTerminator = statementTerminator; }
       public void addDbTypeMapping(DbTypeMapping dbTypeMapping) { dbTypeMappings.add(dbTypeMapping); }
 
@@ -711,12 +759,20 @@ public class DbLoader
         if (mode == UNSET || mode == CREATE && statementType != null && statementType.equals("drop"))
         {
           mode = DROP;
+
           System.out.print("Dropping tables...");
+
+          if (!dropTables)
+            System.out.print("disabled.");
         }
         else if (mode == UNSET || mode == DROP && statementType != null && statementType.equals("create"))
         {
           mode = CREATE;
+
           System.out.print("\nCreating tables...");
+
+          if (!createTables)
+            System.out.print("disabled.");
         }
       }
     }
@@ -730,10 +786,12 @@ public class DbLoader
         switch (mode)
         {
           case DROP:
-            dropTable(statement);
+            if (dropTables)
+              dropTable(statement);
             break;
           case CREATE:
-            createTable(statement);
+            if (createTables)
+              createTable(statement);
             break;
           default:
             break;
@@ -774,7 +832,10 @@ public class DbLoader
 
     public void startDocument ()
     {
-      System.out.print("Inserting data...");
+      System.out.print("Populating tables...");
+
+      if (!populateTables)
+        System.out.print("disabled.");
     }
 
     public void endDocument ()
@@ -818,7 +879,9 @@ public class DbLoader
         else if (name.equals("row"))
         {
           insideRow = false;
-          insertRow(table, row);
+
+          if (populateTables)
+            insertRow(table, row);
         }
         else if (name.equals("column"))
         {
@@ -890,6 +953,10 @@ public class DbLoader
     private void insertRow (Table table, Row row)
     {
       System.out.print("...");
+
+      if (createScript)
+        scriptOut.println(prepareInsertStatement(table.getName(), row, false) + PropertiesHandler.properties.getStatementTerminator());
+
       boolean supportsPreparedStatements = supportsPreparedStatements();
 
       if (supportsPreparedStatements)
@@ -1049,6 +1116,10 @@ public class DbLoader
   private static void exit()
   {
     rdbmService.releaseConnection(con);
+
+    if (scriptOut != null)
+      scriptOut.close();
+
     System.exit(0);
   }
 }

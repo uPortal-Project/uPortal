@@ -2,6 +2,12 @@
 
 <properties xmlns="http://www.jasig.org/uPortal/database/properties">
 
+  <!-- Set to false to disable execution of DROP, CREATE, and/or POPULATE TABLE SQL statements -->
+
+  <drop-tables>true</drop-tables>
+  <create-tables>true</create-tables>
+  <populate-tables>true</populate-tables>
+
   <!-- Location of tables.xml file -->
   <tables-uri>properties/tables.xml</tables-uri>
 
@@ -11,11 +17,11 @@
   <!-- Location of data.xml file -->  
   <data-uri>properties/data.xml</data-uri>
 
-  <!-- DbLoader will be able to dump DROP, CREATE, and INSERT statements to a file.
-       This feature is coming soon.  For now, you can ignore these 3 properties. -->
+  <!-- DbLoader can dump DROP, CREATE, and INSERT statements to a file. If <create-script> is
+       set to true, the script file will be created in <portal base directory>/properties -->
        
-  <create-script>no</create-script>
-  <script-uri>scripts/dbloader.script</script-uri>
+  <create-script>true</create-script>
+  <script-file-name>dbloader.script</script-file-name>
   <statement-terminator>;</statement-terminator>
   
   <!-- Mappings for cases where database metadata is incomplete.
@@ -56,7 +62,7 @@
   <db-type-mapping>
     <db-name>MySQL</db-name>
     <db-version>3.23.34a</db-version>
-    <driver-name><![CDATA[Mark Matthews' MySQL Driver]]></driver-name>
+    <driver-name>Mark Matthews&apos; MySQL Driver</driver-name>
     <driver-version>1.2b</driver-version>    
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <!-- map more types here -->
