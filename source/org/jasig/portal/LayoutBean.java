@@ -25,6 +25,7 @@ public class LayoutBean extends GenericPortalBean
   private static boolean bPropsLoaded = false;
   private static String sPathToLayoutDtd = null;
   private static String sLayoutDtd = "layout.dtd";
+  private Hashtable htChannelInstances = new Hashtable ();
 
   /**
    * Default constructor
@@ -883,8 +884,10 @@ public class LayoutBean extends GenericPortalBean
   }      
 
   /**
-   * Initializes and returns an instance of a channel
+   * Initializes and returns an instance of a channel, or gets it from 
+   * a member hashtable if the channel has been previously initalized.
    * @param channel object from layout XML
+   * @return portal channel object
    */
   public org.jasig.portal.IChannel getChannelInstance (org.jasig.portal.layout.IChannel channel)
   {    
@@ -892,24 +895,48 @@ public class LayoutBean extends GenericPortalBean
     {
       String sClass = channel.getAttribute ("class");
       
-      org.jasig.portal.IChannel ch = (org.jasig.portal.IChannel) Class.forName (sClass).newInstance ();
-      
-      // Create a hashtable of this channel's parameters
-      Hashtable params = new Hashtable ();
+      // Build a string from channel class and parameter values to be used
+      // as a key for looking up channel instances
+      StringBuffer sbKey = new StringBuffer (sClass);      
       org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
             
       if (parameters != null)
       {
-        for (int k = 0; k < parameters.length; k++)
+        for (int iParam = 0; iParam < parameters.length; iParam++)
         {
-          String sParamName = parameters[k].getAttribute("name");
-          String sParamValue = parameters[k].getAttribute("value");
-          params.put(sParamName, sParamValue);
+          String sParamValue = parameters[iParam].getAttribute ("value");
+          sbKey.append (sParamValue);
         }
       }
-            
-      // Send the channel its parameters
-      ch.initParams (params);   
+      
+      String sKey = sbKey.toString ();
+      org.jasig.portal.IChannel ch = (org.jasig.portal.IChannel) htChannelInstances.get (sKey);
+      
+      if (ch == null)
+      {
+        // Create a hashtable of this channel's parameters
+        Hashtable params = new Hashtable ();
+              
+        if (parameters != null)
+        {
+          for (int iParam = 0; iParam < parameters.length; iParam++)
+          {
+            String sParamName = parameters[iParam].getAttribute ("name");
+            String sParamValue = parameters[iParam].getAttribute ("value");
+            params.put (sParamName, sParamValue);
+          }
+        }
+        
+        // Get new instance of channel
+        ch = (org.jasig.portal.IChannel) Class.forName (sClass).newInstance ();
+     
+        // Send the channel its parameters
+        ch.initParams (params);   
+        
+        // Store an instance of this channel for later use
+        htChannelInstances.put (sKey, ch);
+System.out.println ("Putting " + sKey + " in htChannelInstances.");
+      }
       
       return ch;
     }
