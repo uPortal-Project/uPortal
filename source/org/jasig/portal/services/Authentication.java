@@ -138,7 +138,7 @@ public class Authentication {
       // Populate the person object using the PersonDirectory if applicable
       if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
         // Retrieve all of the attributes associated with the person logging in
-        Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation(username);
+        Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation((String)person.getAttribute("username"));
         // Add each of the attributes to the IPerson
         Enumeration en = attribs.keys();
         while (en.hasMoreElements()) {
