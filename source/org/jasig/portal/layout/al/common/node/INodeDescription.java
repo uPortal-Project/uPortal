@@ -25,21 +25,6 @@ public interface INodeDescription {
     public static final int FOLDER = 2;
 
     /**
-     * Returns a node Id.
-     * The Id has to be unique in the entire user layout document.
-     *
-     * @return a <code>String</code> value
-     */
-    public INodeId getId();
-
-    /**
-     * Set a new node Id.
-     * The Id has to be unique in the entire user layout document.
-     *
-     */
-    public void setId(INodeId id);
-
-    /**
      * Determine a name associated with this node.
      *
      * @return a folder/channel name.

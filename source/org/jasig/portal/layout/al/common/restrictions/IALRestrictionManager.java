@@ -6,7 +6,7 @@
 package org.jasig.portal.layout.al.common.restrictions;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.ALNode;
+import org.jasig.portal.layout.al.IALNode;
 
 
 /**
@@ -27,7 +27,7 @@ public interface IALRestrictionManager extends IRestrictionManager {
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(ALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException;
+  public boolean checkRestriction(IALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException;
 
   /**
      * Checks the local restriction specified by the parameters below.
@@ -37,6 +37,6 @@ public interface IALRestrictionManager extends IRestrictionManager {
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(ALNode node, String restrictionName, String propertyValue ) throws PortalException;
+  public boolean checkRestriction(IALNode node, String restrictionName, String propertyValue ) throws PortalException;
   
 }

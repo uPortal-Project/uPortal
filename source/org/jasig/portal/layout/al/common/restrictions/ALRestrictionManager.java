@@ -12,14 +12,15 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.ALFolder;
-import org.jasig.portal.layout.al.ALNode;
+import org.jasig.portal.layout.al.IALFolder;
+import org.jasig.portal.layout.al.IALNode;
 import org.jasig.portal.layout.al.IALNodeDescription;
 import org.jasig.portal.layout.al.IAggregatedLayout;
 import org.jasig.portal.layout.al.common.IUserLayout;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
+import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.NodeType;
 
 
@@ -58,7 +59,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkRestriction(INodeId nodeId, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
-    ALNode node = layout.getLayoutNode(nodeId);
+    IALNode node = layout.getLayoutNode(nodeId);
     return (node!=null)?checkRestriction(node,restrictionName,restrictionPath,propertyValue):true;
   }
 
@@ -84,7 +85,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(ALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
+  public boolean checkRestriction(IALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
     IUserLayoutRestriction restriction = node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
     if ( restriction != null )
      return restriction.checkRestriction(propertyValue);
@@ -100,7 +101,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(ALNode node, String restrictionName, String propertyValue ) throws PortalException {
+  public boolean checkRestriction(IALNode node, String restrictionName, String propertyValue ) throws PortalException {
     return checkRestriction(node, restrictionName, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue);
   }
 
@@ -115,18 +116,18 @@ public class ALRestrictionManager implements IALRestrictionManager {
      */
   public boolean checkAddRestrictions( ILayoutNode node, INodeId parentId, INodeId nextSiblingId ) throws PortalException {
   	
-  	if ( !(node instanceof ALNode) )
-       throw new PortalException ("The node must be ALNode type!");
+  	if ( !(node instanceof IALNode) )
+       throw new PortalException ("The node must be IALNode type!");
   	
-  	ALNode newNode = (ALNode) node;
+  	IALNode newNode = (IALNode) node;
     INodeId newNodeId = newNode.getId();
-    ALNode parentNode = layout.getLayoutNode(parentId);
+    IALNode parentNode = layout.getLayoutNode(parentId);
 
     if ( !(parentNode.getNodeType()==NodeType.FOLDER ) )
       throw new PortalException ("The target parent node should be a folder!");
 
     //if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
-    if ( !parentNode.getNodeDescription().isImmutable() ) {
+    if ( !parentNode.isImmutable() ) {
 
      // Checking children related restrictions
      Collection restrictions = parentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
@@ -173,13 +174,13 @@ public class ALRestrictionManager implements IALRestrictionManager {
      */
   public boolean checkMoveRestrictions( INodeId nodeId, INodeId newParentId, INodeId nextSiblingId ) throws PortalException {
   	
-    ALNode node = layout.getLayoutNode(nodeId);
-    ALNode oldParentNode = (ALNode) node.getParentNode();
-    ALFolder newParentNode = layout.getLayoutFolder(newParentId);
+    IALNode node = layout.getLayoutNode(nodeId);
+    IALNode oldParentNode = (IALNode) node.getParentNode();
+    IALFolder newParentNode = layout.getLayoutFolder(newParentId);
 
     /*if ( checkRestriction(oldParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") &&
          checkRestriction(newParentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {*/
-    if ( !oldParentNode.getNodeDescription().isImmutable() && !newParentNode.getNodeDescription().isImmutable() ) {
+    if ( !oldParentNode.isImmutable() && !newParentNode.isImmutable() ) {
 
      if ( !oldParentNode.equals(newParentNode) ) {
       // Checking children related restrictions
@@ -219,13 +220,13 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkDeleteRestrictions( INodeId nodeId ) throws PortalException {
-    ALNode node = layout.getLayoutNode(nodeId);
+    IALNode node = layout.getLayoutNode(nodeId);
     if ( nodeId == null || node == null ) return true;
     //if ( checkRestriction(node.getParentNodeId(),RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
     if ( !node.getParentNode().isImmutable() ) {
          // Checking the unremovable restriction on the node to be deleted
          //return checkRestriction(nodeId,RestrictionTypes.UNREMOVABLE_RESTRICTION,"false");
-         return !node.getNodeDescription().isUnremovable();
+         return !node.isUnremovable();
     } else
          return false;
   }
@@ -255,13 +256,14 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkDepthRestrictions( INodeId nodeId, int depth ) throws PortalException {
-    ALNode node = layout.getLayoutNode(nodeId);
+    IALNode node = layout.getLayoutNode(nodeId);
     // Checking restrictions for the node
     if ( !checkRestriction(node.getId(),RestrictionTypes.DEPTH_RESTRICTION,depth+"") )
             return false;
     if ( node.getNodeType() == NodeType.FOLDER ) {
-     for ( node = (ALNode) node.getFirstChildNode(); node != null; node = (ALNode) node.getNextSiblingNode() ) {
-      if ( !checkDepthRestrictions(node.getId(),depth+1) )
+     IALFolder folder = (IALFolder) node;	
+     for ( INode n = folder.getFirstChildNode(); n != null; n = n.getNextSiblingNode() ) {
+      if ( !checkDepthRestrictions(((ILayoutNode)n).getId(),depth+1) )
             return false;
      }
     }
@@ -277,7 +279,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @return a <code>IUserLayoutRestriction</code> instance
      * @exception PortalException if an error occurs
      */
-  public static IUserLayoutRestriction getRestriction( ALNode node, String restrictionName, String restrictionPath ) throws PortalException {
+  public static IUserLayoutRestriction getRestriction( IALNode node, String restrictionName, String restrictionPath ) throws PortalException {
      return node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
   }
 
@@ -286,7 +288,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @return a <code>PriorityRestriction</code> object
      * @exception PortalException if an error occurs
      */
-  public static PriorityRestriction getPriorityRestriction( ALNode node ) throws PortalException {
+  public static PriorityRestriction getPriorityRestriction( IALNode node ) throws PortalException {
      PriorityRestriction priorRestriction = getPriorityRestriction(node,IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);
      if ( priorRestriction == null ) {
        priorRestriction = (PriorityRestriction)
@@ -301,7 +303,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @return a <code>PriorityRestriction</code> object
      * @exception PortalException if an error occurs
      */
-  public static PriorityRestriction getPriorityRestriction( ALNode node, String restrictionPath ) throws PortalException {
+  public static PriorityRestriction getPriorityRestriction( IALNode node, String restrictionPath ) throws PortalException {
      return (PriorityRestriction) getRestriction(node,RestrictionTypes.PRIORITY_RESTRICTION,restrictionPath);
   }
 
@@ -310,11 +312,14 @@ public class ALRestrictionManager implements IALRestrictionManager {
     
 
   public boolean checkUpdateRestrictions(INodeDescription nodeDescription) throws PortalException {
-        IALNodeDescription nodeDesc=(IALNodeDescription)nodeDescription;
+  	   
+  	    // TODO
+  	
+        /*IALNodeDescription nodeDesc=(IALNodeDescription)nodeDescription;
         INodeId nodeId = nodeDesc.getId();
 
         if ( nodeId == null ) return false;
-        ALNode node = layout.getLayoutNode(nodeId);
+        IALNode node = layout.getLayoutNode(nodeId);
         IALNodeDescription currentNodeDesc = (IALNodeDescription) node.getNodeDescription();
         // If the node Ids do no match to each other then return false
         if ( !nodeId.equals(currentNodeDesc.getId()) ) return false;
@@ -382,7 +387,10 @@ public class ALRestrictionManager implements IALRestrictionManager {
          }
         }
 
-        return true;
-    }
+        return true; */
+  	
+  	    return true;
+    }  
+  	
 
 }

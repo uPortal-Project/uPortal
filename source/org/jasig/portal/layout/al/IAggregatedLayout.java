@@ -63,7 +63,7 @@ public interface IAggregatedLayout extends IUserLayout {
      * @param nodeId a <code>String</code> value
      * @return a <code>ALNode</code> instance
      */
-    public ALNode getLayoutNode(INodeId nodeId);
+    public IALNode getLayoutNode(INodeId nodeId);
     
     /**
      * Returns the folder by a given folder ID.
@@ -71,7 +71,7 @@ public interface IAggregatedLayout extends IUserLayout {
      * @param folderId a folder node id
      * @return a <code>ALFolder</code> instance
      */
-    public ALFolder getLayoutFolder(INodeId folderId);
+    public IALFolder getLayoutFolder(INodeId folderId);
     
     /**
      * Gets the tree depth for a given node

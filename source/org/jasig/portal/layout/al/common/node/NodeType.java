@@ -11,6 +11,7 @@ package org.jasig.portal.layout.al.common.node;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  */
 public class NodeType {
+	
     private final String name;
     
     public final static NodeType CHANNEL=new NodeType("channel");

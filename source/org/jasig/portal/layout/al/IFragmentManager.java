@@ -11,4 +11,5 @@ package org.jasig.portal.layout.al;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  */
 public interface IFragmentManager {
+	
 }

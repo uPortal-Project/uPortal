@@ -34,6 +34,7 @@ public class ChannelDescriptionImpl extends NodeDescriptionImpl implements IChan
     String channelPublishId=null;
     String channelTypeId=null;
     String functionalName=null;
+    String channelSubscribeId=null;
     long timeout=-1;
     boolean editable=false;
     boolean hasHelp=false;
@@ -80,7 +81,6 @@ public class ChannelDescriptionImpl extends NodeDescriptionImpl implements IChan
         // could do some validation here, but this code will probably go away anyhow
 
         // standard Node attributes
-        this.setId(NodeIdFactory.createNodeId(xmlNode.getAttribute("ID")));
         this.setName(xmlNode.getAttribute("name"));
         this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
         this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());
@@ -240,7 +240,7 @@ public class ChannelDescriptionImpl extends NodeDescriptionImpl implements IChan
      * @return value of channelSubscribeId.
      */
     public String getChannelSubscribeId() {
-        return super.getId().toString();
+        return channelSubscribeId;
     }
 
     /**
@@ -248,7 +248,7 @@ public class ChannelDescriptionImpl extends NodeDescriptionImpl implements IChan
      * @param v  Value to assign to channelSubscribeId.
      */
     public void setChannelSubscribeId(String  v) {
-        super.setId(NodeIdFactory.createNodeId(v));
+        this.channelSubscribeId = v;
     }
 
     /**

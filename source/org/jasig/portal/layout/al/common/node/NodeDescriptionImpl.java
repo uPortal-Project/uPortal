@@ -15,10 +15,11 @@ import org.w3c.dom.Element;
  * that is channels and folders
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.0
  */
 public abstract class NodeDescriptionImpl implements INodeDescription {
-    protected INodeId id=null;
+	
     protected String name=null;
     protected boolean immutable=false;
     protected boolean unremovable=false;
@@ -27,30 +28,10 @@ public abstract class NodeDescriptionImpl implements INodeDescription {
 
     public NodeDescriptionImpl() {};
     public NodeDescriptionImpl(INodeDescription d) {
-        this.id=d.getId();
         this.name=d.getName();
         this.immutable=d.isImmutable();
         this.unremovable=d.isUnremovable();
         this.hidden=d.isHidden();
-    }
-
-    /**
-     * Returns a node Id.
-     * The Id has to be unique in the entire user layout document.
-     *
-     * @return layout id of that node
-     */
-    public INodeId getId() {
-        return this.id;
-    }
-
-    /**
-     * Set a new node Id.
-     * The Id has to be unique in the entire user layout document.
-     *
-     */
-    public void setId(INodeId id) {
-        this.id=id;
     }
 
     /**
@@ -109,7 +90,6 @@ public abstract class NodeDescriptionImpl implements INodeDescription {
      * @param node an <code>Element</code> value
      */
     public void addNodeAttributes(Element node) {
-        node.setAttribute("ID",this.getId().toString());
         node.setAttribute("name",this.getName());
         node.setAttribute("unremovable",(new Boolean(this.isUnremovable())).toString());
         node.setAttribute("immutable",(new Boolean(this.isImmutable())).toString());

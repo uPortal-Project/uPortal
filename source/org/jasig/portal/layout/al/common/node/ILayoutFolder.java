@@ -8,15 +8,13 @@ package org.jasig.portal.layout.al.common.node;
 
 
 /**
- * ILayoutNode interface.
- * Defines the generic set of methods on the user layout node.
+ * ILayoutFolder interface.
+ * Defines the generic set of methods on the user layout folder.
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
 
-public interface ILayoutNode extends INode {
-	
-	public INodeId getId(); 
+public interface ILayoutFolder extends ILayoutNode, IFolder {
 	
 }

@@ -14,6 +14,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
+import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.NodeType;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
 import org.w3c.dom.Document;
@@ -35,6 +36,7 @@ public abstract class ALNode implements IALNode {
     protected ALNode nextSiblingNode;
     protected ALNode previousSiblingNode;
     protected ALNode firstChildNode;
+    protected INodeId id;
     
     protected int priority = 0;
     
@@ -59,7 +61,7 @@ public abstract class ALNode implements IALNode {
     /**
      * @return Returns the nextSiblingNode.
      */
-    public ILayoutNode getNextSiblingNode() {
+    public INode getNextSiblingNode() {
         return nextSiblingNode;
     }
     /**
@@ -71,7 +73,7 @@ public abstract class ALNode implements IALNode {
     /**
      * @return Returns the parentNode.
      */
-    public ILayoutNode getParentNode() {
+    public INode getParentNode() {
         return parentNode;
     }
     /**
@@ -83,7 +85,7 @@ public abstract class ALNode implements IALNode {
     /**
      * @return Returns the previousSiblingNode.
      */
-    public ILayoutNode getPreviousSiblingNode() {
+    public INode getPreviousSiblingNode() {
         return previousSiblingNode;
     }
     /**
@@ -93,7 +95,7 @@ public abstract class ALNode implements IALNode {
         this.previousSiblingNode = previousSiblingNode;
     }
     public INodeId getId() {
-        return nodeDescription.getId();
+        return id;
     }
     public IFragmentId getFragmentId() {
         return nodeDescription.getFragmentId();
@@ -106,6 +108,7 @@ public abstract class ALNode implements IALNode {
      * @return a node type
      */
     public abstract NodeType getNodeType();
+    
     public void setNodeDescription(IALNodeDescription nd) {
         nodeDescription = nd;
     }
@@ -285,7 +288,7 @@ public abstract class ALNode implements IALNode {
      * @param id
      */
     public void setId(INodeId id) {
-        nodeDescription.setId(id);
+       this.id = id;
     }
     /**
      * @param setting

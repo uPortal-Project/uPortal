@@ -21,6 +21,7 @@ import org.jasig.portal.layout.restrictions.IRestrictionManager;
  * @version $Revision$
  */
 public class LayoutManagerImpl implements  ILayoutManager {
+	
     private ILayoutCommandManager layoutCommandManager;
     private IRestrictionManager restrictionManager;
     
@@ -162,7 +163,7 @@ public class LayoutManagerImpl implements  ILayoutManager {
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.layout.al.ILayoutManager#canUpdateNode(org.jasig.portal.layout.node.INodeDescription)
 	 */
-	public boolean canUpdateNode(INodeDescription node)
+	public boolean canUpdateNode(INodeDescription node,INodeId nodeId)
 			throws PortalException {
 		// TODO Auto-generated method stub
 		return false;

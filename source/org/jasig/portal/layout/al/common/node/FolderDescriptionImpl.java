@@ -38,7 +38,6 @@ public class FolderDescriptionImpl extends NodeDescriptionImpl implements IFolde
         // could do some validation here, but this code will probably go away anyhow
 
         // standard Node attributes
-        this.setId(NodeIdFactory.createNodeId(xmlNode.getAttribute("ID")));
         this.setName(xmlNode.getAttribute("name"));
         this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
         this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());

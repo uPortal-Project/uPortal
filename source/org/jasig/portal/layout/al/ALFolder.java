@@ -59,7 +59,7 @@ public class ALFolder extends ALNode {
     public static ALFolder createLostFolder() {
         ALFolder lostFolder = new ALFolder();
         ALFolderDescription folderDesc = new ALFolderDescription();
-        folderDesc.setId(IALFolderDescription.LOST_FOLDER_ID);
+        lostFolder.setId(IALFolderDescription.LOST_FOLDER_ID);
         folderDesc.setHidden(true);
         folderDesc.setImmutable(false);
         folderDesc.setUnremovable(true);
@@ -73,7 +73,7 @@ public class ALFolder extends ALNode {
     public static ALFolder createRootFolder() {
         ALFolder rootFolder = new ALFolder();
         ALFolderDescription folderDesc = new ALFolderDescription();
-        folderDesc.setId(IALFolderDescription.ROOT_FOLDER_ID);
+        rootFolder.setId(IALFolderDescription.ROOT_FOLDER_ID);
         folderDesc.setHidden(false);
         folderDesc.setImmutable(false);
         folderDesc.setUnremovable(true);

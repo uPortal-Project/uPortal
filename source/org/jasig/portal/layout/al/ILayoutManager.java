@@ -77,9 +77,10 @@ public interface ILayoutManager {
     /**
      * Test if a certain node can be updated.
      *
-     * @param node a <code>INodeDescription</code> node id.
+     * @param node a new <code>INodeDescription</code> node description.
+     * @param nodeId a new <code>INodeId</code> node id.
      * @return a <code>boolean</code> value
      * @exception PortalException if an error occurs
      */
-    public boolean canUpdateNode(INodeDescription node) throws PortalException;
+    public boolean canUpdateNode(INodeDescription node,INodeId nodeId) throws PortalException;
 }
