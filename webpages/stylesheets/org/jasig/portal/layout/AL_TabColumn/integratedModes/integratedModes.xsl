@@ -57,7 +57,7 @@ Version $Revision$
     <xsl:param name="channelManager" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
     <!--These variables and parameters are used in fragment mode-->
-    <xsl:param name="currentLayoutID" select="'default_layout'"/>
+    <xsl:param name="currentFragmentID" select="'default_layout'"/>
     <xsl:param name="fragmentAuthor" select="'true'"/>
     <!--These variables and parameters are used in preferences mode-->
     <xsl:param name="moveID" select="/layout/@selectedID"/>
@@ -1574,13 +1574,17 @@ Version $Revision$
                             <span> |<xsl:text>&#160;</xsl:text>
                             </span>Manage:<form name="selectFragments" method="post" action="{$baseActionURL}">
                                 <select name="uP_fragment_ID" class="uportal-input-text uportal-background-content">
+                                    <!-- This test wil need to be modified when multiple layouts are allowed -->
+                                    <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
+                                    <option selected="selected">Unsaved New Fragment [ID:<xsl:value-of select="$currentFragmentID"/>]</option>
+                                    </xsl:if>
                                     <option value="default_layout">
-                                        <xsl:if test="$currentLayoutID='default_layout'">
+                                        <xsl:if test="$currentFragmentID='default_layout'">
                                             <xsl:attribute name="selected">selected</xsl:attribute>
                                         </xsl:if> My layout</option>
                                     <xsl:for-each select="fragments/fragment">
                                         <option value="{@ID}">
-                                            <xsl:if test="$currentLayoutID=@ID">
+                                            <xsl:if test="$currentFragmentID=@ID">
                                                 <xsl:attribute name="selected">selected</xsl:attribute>
                                             </xsl:if>
                                             <xsl:value-of select="@desc"/>
