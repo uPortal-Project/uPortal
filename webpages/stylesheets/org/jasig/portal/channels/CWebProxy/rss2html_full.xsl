@@ -4,7 +4,6 @@
 <xsl:output method="html"/>
   
  <xsl:param name="baseActionURL">default</xsl:param>
- <xsl:param name="passThrough">default</xsl:param>
 
  <xsl:template match="rss">
  <html><body>
@@ -48,19 +47,7 @@
  <xsl:template match="item">
    <li><a>
     <xsl:attribute name="href">
-    <xsl:choose>
-      <xsl:when test="string-length(normalize-space(link))=0">
-        <xsl:if test="$passThrough='marked'">
-          <xsl:value-of select="concat($baseActionURL, '?inChannelLink=true')"/>
-        </xsl:if>
-        <xsl:if test="$passThrough='all'">
-          <xsl:value-of select="$baseActionURL"/>
-        </xsl:if>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="link"/>
-      </xsl:otherwise>
-    </xsl:choose>
+      <xsl:value-of select="link"/>
     </xsl:attribute>
     <xsl:value-of select="title"/>
    </a><br/>
@@ -76,9 +63,6 @@
   <xsl:choose>
     <xsl:when test="string-length(normalize-space(link))=0">
       <form action="{$baseActionURL}" method="get">
-        <xsl:if test="$passThrough='marked'">
-          <input type="hidden" name="inChannelLink" value="true"/>
-        </xsl:if>
         <input type="text" name="{$param-name}" size="20"/>
         <input type="submit" value="{$button-name}"/>
       </form>  
