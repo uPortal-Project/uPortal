@@ -1406,7 +1406,9 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <img src="{$mediaPath}/folder_open.gif" width="16" height="16" border="0" alt="" title=""/>
-              <strong> Fragments </strong>
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID='Fragments'">
+                <strong> Fragments </strong>
+              </a>
             </td>
           </tr>
           <tr class="uportal-background-content" valign="top" align="left">
@@ -1435,7 +1437,9 @@ Version $Revision$
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <img src="{$mediaPath}/folder_closed.gif" width="16" height="16" border="0" alt="" title=""/>
               <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
-              <strong> Fragments </strong>
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID='Fragments'">
+                <strong> Fragments </strong>
+              </a>
             </td>
           </tr>
           <tr class="uportal-background-content" valign="top" align="left">
