@@ -97,10 +97,9 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
         String baseActionURL = runtimeData.getBaseActionURL();
 		StringBuffer url = new StringBuffer(baseActionURL);
-        if ( parameters != null && !parameters.isEmpty() ) {
-         
+        if ( parameters != null && !parameters.isEmpty() ) {        
          Iterator names = parameters.keySet().iterator();
-         boolean firstValue = true;;
+         boolean firstValue = true;
          while (names.hasNext()) {
          	if ( firstValue ) {
 			   url.append("?");
