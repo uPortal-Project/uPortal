@@ -361,9 +361,6 @@ public class ChannelManager {
         // get person object from UsreLayoutManager
         sd.setPerson(ulm.getPerson());
 
-        if(channelContext==null) {
-            LogService.instance().log(LogService.ERROR,"ChannelManager::startChannelRendering : channelContext is NULL !!!");
-        }
         sd.setJNDIContext(channelContext);
 
         ch.setStaticData (sd);
