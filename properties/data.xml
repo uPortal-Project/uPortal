@@ -62,7 +62,6 @@
     <name>UP_PERSON_DIR</name>
       <rows>
         <row>
-          <column><name>USER_ID</name><value>2</value></column>
           <column><name>USER_NAME</name><value>demo</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value></column>
           <column><name>FIRST_NAME</name><value>Demo</value></column>
