@@ -55,7 +55,7 @@
        <xsl:otherwise>
        <!--handles relative URIs for action attributes-->
          <xsl:choose>
-          <xsl:when test="not(contains(@action, ':')) or ( contains(@action, ':') and not(contains(substring-before(@action, ':'), '/')) )">
+          <xsl:when test="not(contains(@action, ':')) or not( contains(@action, ':') and not(contains(substring-before(@action, ':'), '/')) )">
            <xsl:copy-of select="attribute::*[not(name()='action')]"/>
            <xsl:attribute name="action">
               <xsl:choose>
@@ -111,7 +111,7 @@
        <xsl:otherwise>
        <!--handles relative URIs for href attributes-->
          <xsl:choose>
-          <xsl:when test="not(contains(@href, ':')) or ( contains(@href, ':') and not(contains(substring-before(@href, ':'), '/')) )">
+          <xsl:when test="not(contains(@href, ':')) or not( contains(@href, ':') and not(contains(substring-before(@href, ':'), '/')) )">
            <xsl:copy-of select="attribute::*[not(name()='href')]"/>
            <xsl:attribute name="href">
               <xsl:choose>
@@ -145,7 +145,7 @@
    <xsl:template match="img">
       <xsl:copy>
       <xsl:choose>
-         <xsl:when test="not(contains(@src, ':')) or ( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
+         <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
            <xsl:copy-of select="attribute::*[not(name()='src')]"/>
            <xsl:attribute name="src">
               <xsl:choose>
