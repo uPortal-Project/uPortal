@@ -126,7 +126,6 @@ public class RDBMUserLayoutStore
    */
   protected static final void addChannelHeaderAttribute (String name, String value, Element channel, Element system) {
     channel.setAttribute(name, value);
-    system.setAttribute("H" + name, "");        // Tag as not being changeable
   }
 
   /**
@@ -171,8 +170,6 @@ public class RDBMUserLayoutStore
     doc.putIdentifier(idTag, channel);
     addChannelHeaderAttribute("ID", idTag, channel, system);
     channel.setAttribute("chanID", chanId + "");
-    system.setAttribute("chanID", chanId + "");
-    system.setAttribute("HchanID", chanId + "");                // Tag as not being changeable
     if (DEBUG > 1)
       System.err.println("channel " + chanName + "@" + chanId + " has tag " + chanId);
     addChannelHeaderAttribute("name", chanName, channel, system);
