@@ -22,7 +22,7 @@ function xml(nodelist){
 		
 	<!-- Display the channel types available for publish-->
 	<xsl:template match="channelTypes">
-		<p align="center">Pick the channel type you wish to publish.</p>
+		<p align="center">Pick the channel type you wish to publish.		
 		<form action="{$baseActionURL}" method="post">
 			<input type="hidden" name="action" value="choose"/>
 			<select name="channel">
@@ -35,6 +35,8 @@ function xml(nodelist){
 			</select>
 			<input type="submit" name="choose" value="Choose"/>
 		</form>
+		<br/>
+		</p>
 	</xsl:template>
 	
 	<xsl:template match="channelDef">
@@ -49,6 +51,10 @@ function xml(nodelist){
 		<xsl:apply-templates select="params/step[ID=$currentStep]"/>
       	  <p align="center"><input type="submit" name="publish" value="Next"/></p>
         </form>
+	<form action="{$baseActionURL}" method="post">
+	<input type="hidden" name="action" value="cancel"/>
+      	  <p align="center"><input type="submit" name="cancel" value="Cancel"/></p>
+	</form>
 	</xsl:template>
 	
 	<!-- The current step info-->
