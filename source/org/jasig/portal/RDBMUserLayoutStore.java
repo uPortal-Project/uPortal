@@ -597,7 +597,7 @@ public class RDBMUserLayoutStore
     String chanId = "NULL";
     String structName = "NULL";
     if (node.getNodeName().equals("channel")) {
-      chanId = system.getAttribute("chanID");
+      chanId = node.getAttributes().getNamedItem("chanID").getNodeValue();
     }
     else {
       structName = "'" + sqlEscape(structure.getAttribute("name")) + "'";
