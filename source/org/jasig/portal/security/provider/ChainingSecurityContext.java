@@ -57,7 +57,9 @@ public abstract class ChainingSecurityContext implements SecurityContext {
    */
 
   public synchronized void authenticate() {
+    int i;
     Enumeration e = mySubContexts.elements();
+
     while (e.hasMoreElements()) {
       SecurityContext sctx = (SecurityContext)e.nextElement();
       Principal sp = sctx.getPrincipalInstance();
@@ -66,6 +68,11 @@ public abstract class ChainingSecurityContext implements SecurityContext {
       op.setCredentials(this.myOpaqueCredentials.credentialstring);
       sctx.authenticate();
     }
+
+    // Zero out the actual credentials
+
+    for (i = 0; i < this.myOpaqueCredentials.credentialstring.length; i++)
+      this.myOpaqueCredentials.credentialstring[i] = 0;
     myOpaqueCredentials.credentialstring = null;
     return;
   }
@@ -150,14 +157,23 @@ public abstract class ChainingSecurityContext implements SecurityContext {
 
     protected byte[] credentialstring;
 
+    // Since we want to explicitly zero our credentials after authenticate,
+    // copy the credentials here in case a sub-authenticator doesn't want
+    // to perform the operation immediately.
+
     public void setCredentials(byte[] credentials) {
-      if (this.credentialstring == null)
-        this.credentialstring = credentials;
+      int i;
+
+      if (this.credentialstring == null) {
+        this.credentialstring = new byte[credentials.length];
+        for (i = 0; i < credentials.length; i++)
+          this.credentialstring[i] = credentials[i];
+      }
     }
 
     public void setCredentials(String credentials) {
       if (this.credentialstring == null)
-        this.credentialstring = credentials.getBytes();
+        setCredentials(credentials.getBytes());
     }
   }
 
