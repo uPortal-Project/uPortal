@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,7 @@ import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.CommonUtils;
 
 /**
  * Receives the username and password and tries to authenticate the user.
@@ -131,7 +132,8 @@ public class LoginServlet extends HttpServlet {
    * @exception IOException
    */
   public void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // Clear out the existing session for the user
+  	CommonUtils.setNoCache(response);
+  	// Clear out the existing session for the user
     request.getSession().invalidate();
     // Retrieve the user's session
     request.getSession(true);

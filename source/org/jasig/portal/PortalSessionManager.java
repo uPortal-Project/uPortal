@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@ import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.CommonUtils;
 
 
 /**
@@ -155,6 +156,7 @@ public class PortalSessionManager extends HttpServlet {
   }
 
 
+
     /**
      * Process HTTP POST request
      *
@@ -176,6 +178,7 @@ public class PortalSessionManager extends HttpServlet {
      * @exception IOException if an error occurs
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
+    	CommonUtils.setNoCache(res);
         // Send the uPortal version in a header
         res.setHeader("uPortal-version", "uPortal_rel-2-3+");
         

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * CommonUtils class contains base useful utilities
@@ -50,6 +51,16 @@ import java.util.StringTokenizer;
  * @version $Revision$
  */
 public class CommonUtils {
+	
+	/**
+     * Sets "no cache" directives to the given response
+     * @param res <code>HttpServletResponse</code> response
+     */
+	public static void setNoCache( HttpServletResponse res ) {
+	    res.setHeader("Pragma","no-cache");
+	    res.setHeader("Cache-Control","no-cache");
+	    res.setDateHeader("Expires",0);
+	}
 
     /**
      * Replaces "sourceString" with "replaceString" if sourceString equals null

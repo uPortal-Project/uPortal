@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -671,20 +671,20 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
-        if(channelManager!=null)
-            channelManager.finishedSession();
-        if(uPreferencesManager!=null)
-            uPreferencesManager.finishedSession(bindingEvent);
-      try {      
+     if( channelManager != null)
+         channelManager.finishedSession();
+     if( uPreferencesManager != null ) {
+       uPreferencesManager.finishedSession(bindingEvent);
+       try {      
         IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager(); 
 		if ( ulm instanceof TransientUserLayoutManagerWrapper )
 		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();   
         if ( !(ulm instanceof IAggregatedUserLayoutManager) )
           ulm.saveUserLayout();    
-      } catch ( Exception e ) {
+       } catch ( Exception e ) {
 		  LogService.log(LogService.ERROR, "UserInstance::valueUnbound(): Error occured while saving the user layout "+e);    
-      }
-
+         }
+     } 
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
         GroupService.finishedSession(person);
