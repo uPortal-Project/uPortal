@@ -28,7 +28,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return false;}
   public boolean isRemovable () {return true;}
-  public boolean isEditable () {return true;}  
+  public boolean isEditable () {return false;}  
   public boolean hasHelp () {return false;}  
   
   public int getDefaultDetachWidth () {return 0;}
@@ -84,70 +84,12 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
-    try 
-    {
-      String sAction = req.getParameter ("action");
-      
-      if (sAction == null)
-        doEditPage (req, res, out);
-      else
-        doSavePage (req, res, out);
-    }
-    catch (Exception e)
-    {
-      System.out.println ("\nERROR: \n" + e);
-    }
+    // This channel is not editable
   }
   
-  protected void doEditPage (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
-    {
-      out.println ("<form action=\"dispatch.jsp\">");
-      out.println ("<table border=0 cellpadding=2 cellspacing=2>");
-      out.println ("  <tr>");
-      out.println ("    <td>Name:</td>");
-      out.println ("    <td><input type=text name=name size=50 value=\"" + params.get ("name") + "\"></td>");
-      out.println ("  </tr>");
-      out.println ("  <tr>");
-      out.println ("    <td>URL:</td>");
-      out.println ("    <td><input type=text name=url size=50 value=\"" + params.get ("url") + "\"></td>");
-      out.println ("  </tr>");
-      out.println ("</table>");
-      out.println ("<input type=hidden name=method value=\"edit\">");
-      out.println ("<input type=hidden name=action value=\"save\">");
-      out.println ("<input type=submit name=submit value=\"Submit\">");
-      out.println ("</form>");
-    }
-    catch (Exception e)
-    {
-      System.out.println ("\nERROR: \n" + e);
-    }
-  }
-
-  protected void doSavePage (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
-    {
-      HttpSession session = req.getSession (false);
-      org.jasig.portal.layout.IChannel dispatchChannel = (org.jasig.portal.layout.IChannel) session.getAttribute ("dispatchChannel");
-      
-      for (int i = 0; i < dispatchChannel.getParameterCount (); i++)
-      {
-        if (dispatchChannel.getParameterAt (i).getAttribute ("name").equals ("name"))
-          dispatchChannel.getParameterAt (i).setAttribute ("value", req.getParameter ("name"));
-        
-        if (dispatchChannel.getParameterAt (i).getAttribute ("name").equals ("url"))
-          dispatchChannel.getParameterAt (i).setAttribute ("value", req.getParameter ("url"));
-      }
-      
-      DispatchBean dispatchBean = (DispatchBean) session.getAttribute ("dispatchBean");
-      dispatchBean.finish (req, res);
-    }
-    catch (Exception e)
-    {
-      System.out.println ("\nERROR: \n" + e);
-    }
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+  {
+    // This channel has no help
   }
   
   protected String grabHtmlBody (String sHTML)
@@ -219,10 +161,5 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       System.out.println ("\nERROR: \n" + e);
     }
     return null;
-  }
-  
-  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    // This channel has no help
   }
 }
