@@ -38,7 +38,6 @@
 <html>
 <head>
 <title>Portal: An error has occured</title>
-<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
 <body>
