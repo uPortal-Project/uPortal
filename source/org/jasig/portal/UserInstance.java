@@ -718,8 +718,10 @@ public class UserInstance implements HttpSessionBindingListener {
           if ( userName != null && userName.trim().length() > 0 )
            themePrefs.putParameterValue("userName",userName);
           try {
-            if ( ChannelStaticData.getAuthorizationPrincipal(person).canPublish() )
-             themePrefs.putParameterValue("channelManager","true");
+            if ( ChannelStaticData.getAuthorizationPrincipal(person).canPublish() ) {
+             themePrefs.putParameterValue("authorizedFragmentPublisher","true");
+			 themePrefs.putParameterValue("authorizedChannelPublisher","true");
+            } 
           } catch ( Exception e ) {
               LogService.log(LogService.ERROR, e);
             }
