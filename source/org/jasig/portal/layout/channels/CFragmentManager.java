@@ -255,7 +255,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				   }
 				   
 				   // Loading the default layout if the fragment is loaded in the theme
-				   if ( noAction && alm.isFragmentLoaded() )
+				   if ( "default".equals(action) && alm.isFragmentLoaded() )
 				      alm.loadUserLayout();
 				
 				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
