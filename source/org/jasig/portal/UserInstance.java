@@ -755,7 +755,11 @@ public class UserInstance implements HttpSessionBindingListener {
             IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
             nodeDesc.setName("Unnamed");
             if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (values1 = req.getParameterValues("contentPublishID")) != null ) {
-             ((IUserLayoutChannelDescription)nodeDesc).setChannelPublishId(values1[0]);
+             String contentPublishId = values1[0].trim();
+             if ( contentPublishId.length() > 0 ) {
+              ((IUserLayoutChannelDescription)nodeDesc).setChannelPublishId(contentPublishId);
+              themePrefs.putParameterValue("contentPublishID",contentPublishId);
+             }
             }
             newNodeDescription = nodeDesc;
             ulm.markAddTargets(newNodeDescription);
@@ -771,13 +775,15 @@ public class UserInstance implements HttpSessionBindingListener {
          if ( values1 != null && values1.length > 0 )
             value = values1[0];
          if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
+          if (  newNodeDescription != null ) {
             if ( CommonUtils.nvl(value).trim().length() == 0 ) value = null;
-            if ( newNodeDescription == null ) {
+            /*if ( newNodeDescription == null ) {
              newNodeDescription = ulm.createNodeDescription(nodeType);
              newNodeDescription.setName("Unnamed");
-            }
+            }*/
              // Adding a new node
              ulm.addNode(newNodeDescription,values2[0],value);
+          }
          }
             newNodeDescription = null;
         }
