@@ -190,7 +190,7 @@ public class AuthenticationServlet extends HttpServlet {
       String parmValue = request.getParameter(parmName);
       // null value causes exception in context.authentication
       // alternately we could just not set parm if value is null
-      parmValue = (parmValue == null ? "" : parmValue);
+      parmValue = (parmValue == null ? "" : parmValue).trim();
       // The relationship between the way the properties are stored and the way
       // the subcontexts are named has to be closely looked at to make this work.
       // The keys are either "root" or the subcontext name that follows "root.". As
