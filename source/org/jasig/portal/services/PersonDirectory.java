@@ -72,6 +72,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.WeakValueMap;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -96,12 +97,10 @@ public class PersonDirectory {
   static Vector sources = null; // List of PersonDirInfo objects
   static Hashtable drivers = new Hashtable(); // Registered JDBC drivers
   public static HashSet propertynames = new HashSet();
+  private static Map personCache = new WeakValueMap();
   
   private static PersonDirectory instance;
   
-  // a protected static Map persons, from user uids to IPerson objects, 
-  // used to cache IPersons.  It was removed for uP 2.4.2 per Bugzilla 1787
-
   private PersonDirectory() {
     getParameters();
   }
@@ -321,8 +320,8 @@ public class PersonDirectory {
         Object value = attribs.get(key);
         m_Person.setAttribute(key,value);
       }
-      // this method placed the attribute-populated IPerson into the
-      // static persons cache prior to uP 2.4.2. See bugzilla 1787.
+      
+      cachePerson(m_Person);
   }
 
   /**
@@ -587,22 +586,39 @@ public class PersonDirectory {
    * @return the corresponding person, restricted so that its security context is inaccessible
    */
   public static RestrictedPerson getRestrictedPerson(String uid) {
-        // prior to uP 2.4.2, this method first attempted to
-        // return a cached IPerson instance.
+      IPerson person = getCachedPerson(uid);
+      
+      if (person == null) {
+          person = PersonFactory.createPerson();
+        
+          person.setAttribute(IPerson.USERNAME, uid);
+          try {
+              person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl()
+                      .getPortalUID(person));
+          } catch (Exception e) {
+              log.error("Exception setting ID for our "
+                      + "restricted person for uid [" + uid + "]", e);
+          }
+          instance().getUserDirectoryInformation(uid, person);
+      }
 
-        IPerson person = PersonFactory.createPerson();
-        person.setAttribute(IPerson.USERNAME, uid);
-        try {
-            person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl()
-                    .getPortalUID(person));
-        } catch (Exception e) {
-            log.error("Exception setting ID for our "
-                    + "restricted person for uid [" + uid + "]", e);
-        }
-        instance().getUserDirectoryInformation(uid, person);
-
-        return new RestrictedPerson(person);
-    }
+      return new RestrictedPerson(person);
+  }
+  
+  public static void cachePerson(final IPerson p) {
+      final Object uid = p.getAttribute(IPerson.USERNAME);
+      if (uid != null) {
+          personCache.put(uid, p);
+          
+          if (log.isDebugEnabled()) {
+              log.debug("Cached IPerson with key: " + uid + " There are currently " + personCache.size() + " IPerson objects in the cache.");
+          }
+      }
+  }
+  
+  public static IPerson getCachedPerson(final Object uid) {
+      return (IPerson)personCache.get(uid);
+  }
 
   private class PersonDirInfo {
     String url; // protocol, server, and initial connection parameters

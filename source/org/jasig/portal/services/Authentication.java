@@ -186,9 +186,8 @@ public class Authentication {
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
-         // PersonDirectory.persons.put(person.getAttribute(IPerson.USERNAME), person);
-         // prior to uP 2.4.2, PersonDirectory exposed a cache into which
-         // Authentication placed this newly logged in IPerson
+         //Ensure the person cache is using the most recent version
+         PersonDirectory.cachePerson(person);
          
          
          // Record the successful authentication
@@ -256,7 +255,6 @@ public class Authentication {
     * @param credentials
     * @param person
     * @param securityContext
-    * @param BASE_CONTEXT_NAME
     * @throws PortalSecurityException
     */
    private void configureSecurityContextChain(final HashMap principals, final HashMap credentials, final IPerson person, final ISecurityContext securityContext, final String baseContextName) throws PortalSecurityException {
