@@ -912,7 +912,7 @@ on   an  LDAP  service as the primary source of group information and supplement
       and 1 for the reference portal database (<code>RDBMEntityGroupStore</code>).
       &nbsp;If you only intend to use these 2 sources, you do not have to
 write      a custom group store. &nbsp;If you do need to draw groups from
-another   source,   you will have to implement the <code>IGroupStore</code>
+another   source,   you will have to implement the <code>IEntityGroupStore</code>
 and <code>IEntitySearcher</code>      interfaces. &nbsp;You should not have
 to write a custom group serivce  (an    <code>IIndividualGroupService</code>)
 unless you need to change the  transactional    rules of the service. &nbsp;Of
