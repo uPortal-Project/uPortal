@@ -132,7 +132,7 @@ A.uportal-navigation-channel:hover{
 	font-weight : bold;
 }
 .uportal-channel-emphasis{
-	font-style : italic;
+	font-weight : bold;
 	font-size : 12px;
 	font-family : Georgia, "Times New Roman", Times, serif;
 }
@@ -201,4 +201,6 @@ A.uportal-navigation-channel:hover{
 .uportal-background-content{
 	background : #99aabb;
 }
-
+.uportal-background-highlight{
+	background : #996666;
+}
