@@ -329,7 +329,7 @@ public class CChannelManager extends BaseChannel {
                 String javaClass = runtimeData.getParameter("class");
                 if (name != null)
                     channelDef.setName(name.trim());
-                if (description != null)
+                if (fname != null)
                     channelDef.setFunctionalName(fname.trim());
                 if (description != null)
                     channelDef.setDescription(description.trim());
