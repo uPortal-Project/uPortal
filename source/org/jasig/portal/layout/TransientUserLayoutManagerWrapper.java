@@ -52,7 +52,6 @@ import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -107,56 +106,18 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
-
-        if ( man.getNode(nodeId) == null ) {
-
-            DocumentImpl emptyDoc = new DocumentImpl();
-            // assumption is the request is for a transient channel from
-            // the layout... since there isn't actually one in the layout
-            // just create and transform
-            ChannelDefinition chanDef = getChannelDefinition(nodeId);
-
-            Element tChannel = emptyDoc.createElement("channel");
-            tChannel.setAttribute("ID",nodeId);
-            tChannel.setAttribute("hidden","false");
-            tChannel.setAttribute("unremovable","true");
-            tChannel.setAttribute("immutable","true");
-
-            if ( chanDef != null ) {
-             tChannel.setAttribute("typeID", "" + chanDef.getTypeId());
-             tChannel.setAttribute("editable", CommonUtils.boolToStr(chanDef.isEditable()));
-             tChannel.setAttribute("name",chanDef.getName());
-             tChannel.setAttribute("description", chanDef.getDescription());
-             tChannel.setAttribute("title",chanDef.getTitle());
-             tChannel.setAttribute("class",chanDef.getJavaClass());
-             tChannel.setAttribute("chanID", "" + chanDef.getId());
-             tChannel.setAttribute("fname",chanDef.getFName());
-             tChannel.setAttribute("timeout", "" + chanDef.getTimeout());
-             tChannel.setAttribute("hasHelp", CommonUtils.boolToStr(chanDef.hasHelp()));
-             tChannel.setAttribute("hasAbout", CommonUtils.boolToStr(chanDef.hasAbout()));
-             // now add channel parameters
-             ChannelParameter[] chanParms = chanDef.getParameters();
-             for( int i=0; i<chanParms.length; i++ ) {
-                ChannelParameter parm = (ChannelParameter)chanParms[i];
-                Element tParm = emptyDoc.createElement("parameter");
-                tParm.setAttribute("name",parm.getName());
-                tParm.setAttribute("value",parm.getValue());
-                tChannel.appendChild(tParm);
-             }
-            }
-
-             emptyDoc.appendChild(tChannel);
-
+        IUserLayoutNodeDescription node = this.getNode(nodeId);
+        if ( null != node ){
+            DocumentImpl doc = new DocumentImpl();
             try{
-                Transformer emptyt=TransformerFactory.newInstance().newTransformer();
-                emptyt.transform(new DOMSource(emptyDoc), new SAXResult(ch));
+                Element e = node.getXML(doc);
+                doc.appendChild(e);
+                Transformer trans=TransformerFactory.newInstance().newTransformer();
+                trans.transform(new DOMSource(doc), new SAXResult(ch));
             }
             catch( Exception e ){
                 throw new PortalException("Encountered an exception trying to output user layout",e);
             }
-        }
-        else{
-            man.getUserLayout(nodeId,new TransientUserLayoutManagerSAXFilter(ch));
         }
     }
 
@@ -340,6 +301,9 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
         if ( null == chanDef ){
             String fname = getFname(subId);
+            
+            LogService.log(LogService.DEBUG,"TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
+                           "attempting to get a channel definition using functional name: " + fname );
             try{
                 chanDef = ChannelRegistryStoreFactory.
                     getChannelRegistryStoreImpl().getChannelDefinition(fname);
