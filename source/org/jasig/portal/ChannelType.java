@@ -53,7 +53,6 @@ public class ChannelType {
   /**
    * Constructs a channel type.
    * @param id the channel type ID
-   * @throws java.lang.Exception
    */
   public ChannelType(int id) {
     this.id = id;
