@@ -637,6 +637,69 @@
     </java>
   </target>
 
+  <target name="i18n-db" depends="compile">
+    <echo message="Invoking DbLoader for internationalized database setting"/>
+    <property name="usetable" value="-t"/>
+    <property name="tablefile" value="/properties/tables-i18n.xml"/>
+    <property name="usedata" value="-d"/>
+    <property name="datafile" value="/properties/data-i18n.xml"/>
+    <property name="createscript" value=" "/>
+    <property name="droptables" value=""/>
+    <property name="createtables" value=" "/>
+    <property name="populatetables" value=" "/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xalan.jar}"/>
+        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+
+      <arg value="${usetable}"/>
+      <arg value="${tablefile}"/>
+      <arg value="${usedata}"/>
+      <arg value="${datafile}"/>
+      <arg value="${createscript}"/>
+      <arg value="${droptables}"/>
+      <arg value="${createtables}"/>
+      <arg value="${populatetables}"/>
+    </java>
+  </target>
+
+  <target name="l10n-db" depends="compile">
+    <echo message="Invoking DbLoader for localizationed database setting"/>
+    <property name="usetable" value="-t"/>
+    <property name="tablefile" value="/properties/tables-l10n.xml"/>
+    <property name="usedata" value="-d"/>
+    <property name="datafile" value="/properties/data-l10n.xml"/>
+    <property name="createscript" value=" "/>
+    <property name="droptables" value=" "/>
+    <property name="createtables" value=""/>
+    <property name="populatetables" value=" "/>
+    <property name="localeaware" value="-l"/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xalan.jar}"/>
+        <pathelement path="${xercesImpl.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+
+      <arg value="${usetable}"/>
+      <arg value="${tablefile}"/>
+      <arg value="${usedata}"/>
+      <arg value="${datafile}"/>
+      <arg value="${createscript}"/>
+      <arg value="${droptables}"/>
+      <arg value="${createtables}"/>
+      <arg value="${populatetables}"/>
+      <arg value="${localeaware}"/>
+    </java>
+  </target>
 
 <!-- ==================== DbUnload Target ================================= -->
 
