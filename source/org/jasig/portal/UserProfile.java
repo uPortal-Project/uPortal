@@ -75,4 +75,13 @@ public class UserProfile {
     public void setStructureStylesheetId(int ss_id) { struct_ss_id=ss_id; }
     public void setThemeStylesheetId(int ss_id) { theme_ss_id=ss_id; }
     public void setSystemProfile(boolean s) { system=s; }
+    
+    public boolean equals(Object o) {
+      boolean retValue = false;
+      if (o instanceof UserProfile) {
+        UserProfile profile = (UserProfile)o;
+        retValue = this.id == profile.id && this.system == profile.system;
+      }
+      return retValue;
+    }
 }
