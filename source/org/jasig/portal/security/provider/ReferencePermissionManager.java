@@ -168,7 +168,10 @@ public class ReferencePermissionManager extends PermissionManager {
       return  ((Permission[])permissions.toArray(new Permission[0]));
     } catch (Exception e) {
       throw  new AuthorizationException(e.getMessage());
+    } finally {
+      RdbmServices.releaseConnection(connection);
     }
+
   }
 }
 
