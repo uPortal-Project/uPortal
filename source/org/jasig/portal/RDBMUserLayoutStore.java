@@ -1577,6 +1577,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       DocumentImpl doc = new DocumentImpl();
       Element root = doc.createElement("layout");
+      root.setAttribute("ID","root");
+      doc.putIdentifier("root",root);
       Statement stmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
