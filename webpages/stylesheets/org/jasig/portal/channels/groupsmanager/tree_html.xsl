@@ -41,7 +41,7 @@
         </xsl:if>
         <form action="{$baseActionURL}" method="POST">
           <input type="hidden" name="uP_root" value="me"/>
-          <xsl:apply-templates select="CGroupsManager/group[@id=$grpViewId]" />
+          <xsl:apply-templates select="//group[@id=$grpViewId]" />
           <xsl:if test="$grpMode='select'">
             <tr>
               <td colspan="2">
