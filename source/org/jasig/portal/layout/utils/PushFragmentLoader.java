@@ -50,6 +50,9 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.jasig.portal.layout.IAggregatedUserLayoutStore;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
@@ -136,7 +139,7 @@ public class PushFragmentLoader {
           }
 
         // Cleaning the database before the DbLoader is called
-        DbCleaner.fragmentIds = filter.getFragmentIds();
+        DbCleaner.fragmentNames = filter.getFragmentNames();
         DbCleaner.cleanTables();
 
         System.out.println("DEBUG: done.");
@@ -148,52 +151,67 @@ public class PushFragmentLoader {
      * It is used before the DbLoader utility is called
      *
      */
-    private static class DbCleaner {
+  private static class DbCleaner {
 
-      private static Vector fragmentIds;
+   private static Vector fragmentNames;
 
-      public DbCleaner ( Vector fragmentIds ) {
-        DbCleaner.fragmentIds = fragmentIds;
+   public static void cleanTables() {
+
+    Connection con = RDBMServices.getConnection();
+
+    if ( fragmentNames != null ) {
+
+     try {
+
+      PreparedStatement fragmentIdstmt = con.prepareStatement("SELECT FRAGMENT_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_NAME = ?");
+      Vector fragmentIds = new Vector();
+      for ( int i = 0; i < fragmentNames.size(); i++ ) {
+       fragmentIdstmt.setString(1,((String)fragmentNames.get(i)));
+       ResultSet rs = fragmentIdstmt.executeQuery();
+       if ( rs.next() ) fragmentIds.add(rs.getString(1));
+       if ( rs != null ) rs.close();
       }
+      if ( fragmentIdstmt != null ) fragmentIdstmt.close();
 
-      public static void cleanTables() {
-       if ( fragmentIds != null && fragmentIds.size() > 0 ) {
+      if ( fragmentIds.size() > 0 ) {
+
         System.out.println("DEBUG: cleaning tables...");
-
-        Connection con = RDBMServices.getConnection();
-        try {
 
          con.setAutoCommit(false);
 
-         PreparedStatement deleteLayoutStruct = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE fragment_id = ?");
-         PreparedStatement deleteFragments = con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE fragment_id = ?");
-         PreparedStatement deleteFragmentRestrictions = con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE fragment_id = ?");
-         PreparedStatement deleteFragmentParams = con.prepareStatement("DELETE FROM UP_FRAGMENT_PARAM WHERE fragment_id = ?");
-         PreparedStatement deleteOwnerFragment = con.prepareStatement("DELETE FROM UP_OWNER_FRAGMENT WHERE fragment_id = ?");
-         PreparedStatement deleteGroupFragment = con.prepareStatement("DELETE FROM UP_GROUP_FRAGMENT WHERE fragment_id = ?");
+         PreparedStatement deleteLayoutStruct = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE FRAGMENT_ID = ?");
+         PreparedStatement deleteFragments = con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID = ?");
+         PreparedStatement deleteFragmentRestrictions = con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID = ?");
+         PreparedStatement deleteFragmentParams = con.prepareStatement("DELETE FROM UP_FRAGMENT_PARAM WHERE FRAGMENT_ID = ?");
+         PreparedStatement deleteOwnerFragment = con.prepareStatement("DELETE FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID = ?");
+         PreparedStatement deleteGroupFragment = con.prepareStatement("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID = ?");
 
-         for ( int i = 0; i < fragmentIds.size(); i++ ) {
-          int fragmentId = Integer.parseInt(fragmentIds.get(i).toString());
-          // Setting the parameter - fragment id
-          deleteLayoutStruct.setInt(1,fragmentId);
-          deleteFragments.setInt(1,fragmentId);
-          deleteFragmentRestrictions.setInt(1,fragmentId);
-          deleteFragmentParams.setInt(1,fragmentId);
-          deleteOwnerFragment.setInt(1,fragmentId);
-          deleteGroupFragment.setInt(1,fragmentId);
+         try {
+          for ( int i = 0; i < fragmentIds.size(); i++ ) {
+           int fragmentId = Integer.parseInt(fragmentIds.get(i).toString());
+           // Setting the parameter - fragment id
+           deleteLayoutStruct.setInt(1,fragmentId);
+           deleteFragments.setInt(1,fragmentId);
+           deleteFragmentRestrictions.setInt(1,fragmentId);
+           deleteFragmentParams.setInt(1,fragmentId);
+           deleteOwnerFragment.setInt(1,fragmentId);
+           deleteGroupFragment.setInt(1,fragmentId);
 
-          // Executing statements
-          deleteLayoutStruct.executeUpdate();
-          deleteFragments.executeUpdate();
-          deleteFragmentRestrictions.executeUpdate();
-          deleteFragmentParams.executeUpdate();
-          deleteOwnerFragment.executeUpdate();
-          deleteGroupFragment.executeUpdate();
-
-         }
-
-         // Commit
-         con.commit();
+           // Executing statements
+           deleteLayoutStruct.executeUpdate();
+           deleteFragments.executeUpdate();
+           deleteFragmentRestrictions.executeUpdate();
+           deleteFragmentParams.executeUpdate();
+           deleteOwnerFragment.executeUpdate();
+           deleteGroupFragment.executeUpdate();
+          }
+          // Commit
+          con.commit();
+         } catch ( Exception sqle ) {
+            con.rollback();
+            System.out.println ( "DEBUG: " + sqle.getMessage() );
+            sqle.printStackTrace();
+           }
 
          if ( deleteLayoutStruct != null ) deleteLayoutStruct.close();
          if ( deleteFragments != null ) deleteFragments.close();
@@ -205,15 +223,15 @@ public class PushFragmentLoader {
          if ( con != null ) con.close();
 
          System.out.println("DEBUG: cleaning done...");
-
-        } catch ( Exception e ) {
+       } // if end
+      } catch ( Exception e ) {
             System.out.println ( "DEBUG: " + e.getMessage() );
             e.printStackTrace();
-          }
-       }
-      }
+        }
+     } // if end
+    }
 
-    };
+  }
 
 
 
@@ -271,16 +289,21 @@ public class PushFragmentLoader {
         String groupLocalName;
         String groupUri;
         String groupData=null;
-        private Vector fragmentIds;
+        private Vector fragmentNames;
+        IAggregatedUserLayoutStore layoutStore = null;
 
-        public ConfigFilter(ContentHandler ch,Map rMap) {
+        public ConfigFilter(ContentHandler ch,Map rMap) throws PortalException {
             super(ch);
             this.rMap=rMap;
-            fragmentIds= new Vector();
+            fragmentNames= new Vector();
+            IUserLayoutStore layoutStoreImpl = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+            if ( layoutStoreImpl == null || !(layoutStoreImpl instanceof IAggregatedUserLayoutStore) )
+              throw new PortalException ( "The user layout store is NULL or must implement IAggregatedUserLayoutStore!" );
+            layoutStore =  (IAggregatedUserLayoutStore) layoutStoreImpl;
         }
 
-        public Vector getFragmentIds() {
-           return fragmentIds;
+        public Vector getFragmentNames() {
+           return fragmentNames;
         }
 
         public void characters (char ch[], int start, int length) throws SAXException   {
@@ -299,16 +322,25 @@ public class PushFragmentLoader {
 
         public void startElement (String uri, String localName, String qName, Attributes atts) throws SAXException {
 
+            AttributesImpl ai=new AttributesImpl(atts);
+
              // Adding the fragment id to the vector
-            if ( qName.equals("fragment") )
-             fragmentIds.add(atts.getValue("id"));
+            if ( qName.equals("fragment") ) {
+             String name = atts.getValue("name");
+             if ( !fragmentNames.contains(name) )
+              fragmentNames.add(name);
+             try {
+              ai.addAttribute(uri,"id","id","CDATA",layoutStore.getNextFragmentId());
+             } catch ( PortalException pe ) {
+                 throw new SAXException(pe.getMessage());
+               }
+            }
 
             if(qName.equals("group")) { // this could be made more robust by adding another mode for "groups" element
                 groupMode=true;
                 groupUri=uri; groupLocalName=localName; groupAtts=new AttributesImpl(atts);
 
             } else if(qName.equals("restriction")) { // this can also be made more robust by adding another mode for "restrictions" element
-                AttributesImpl ai=new AttributesImpl(atts);
                 // look up restriction name in the DB
                 String restrType;
                 if(ai.getIndex("type")!=-1) {
@@ -321,7 +353,7 @@ public class PushFragmentLoader {
                             System.out.println("ERROR: specified restriction type \""+ai.getValue("type")+"\" does not match the specified name \""+ai.getValue("name")+"\" in the database. name \""+ai.getValue("name")+"\" matches restriction type \""+(String)rMap.get(ai.getValue("name"))+"\"");
                             System.exit(1);
                         } else {
-                            super.startElement(uri,localName,qName,atts);
+                            super.startElement(uri,localName,qName,ai);
                         }
                     }
                 } else {
@@ -336,7 +368,7 @@ public class PushFragmentLoader {
                     super.startElement(uri,localName,qName,ai);
                 }
             } else {
-                super.startElement(uri,localName,qName,atts);
+                super.startElement(uri,localName,qName,ai);
             }
 
         }

@@ -2744,20 +2744,20 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       try {
         RDBMServices.setAutoCommit(con, false);
         stmt = con.createStatement();
-        String sQuery = "SELECT NEXT_ID FROM UP_FRAGMENT_SEQ";
+        String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='UP_FRAGMENT'";
         for (int i = 0; i < attemptsNumber; i++) {
          try {
           LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getNextFragmentId(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
-          int currentStructId = 0;
+          int currentId = 0;
           rs.next();
-          currentStructId = rs.getInt(1);
+          currentId = rs.getInt(1);
           if ( rs != null ) rs.close();
-            String sUpdate = "UPDATE UP_FRAGMENT_SEQ SET NEXT_ID=" + (currentStructId + 1);
+            String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+(currentId + 1)+" WHERE SEQUENCE_NAME='UP_FRAGMENT'";
             LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getNextFragmentId(): " + sUpdate);
             stmt.executeUpdate(sUpdate);
             RDBMServices.commit(con);
-            return new String (  (currentStructId + 1) + "" );
+            return new String (  (currentId + 1) + "" );
           } catch (Exception sqle) {
             RDBMServices.rollback(con);
             // Assume a concurrent update. Try again after some random amount of milliseconds.
