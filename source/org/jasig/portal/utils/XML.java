@@ -74,9 +74,8 @@ public class XML {
    * This method is useful for debugging.
    * @param node the Node to print; must be of type Document or Element
    * @return a nicely formatted String suitable for printing
-   * @throws java.io.IOException
    */
-  public static String serializeNode(Node node) throws IOException {
+  public static String serializeNode(Node node) {
     String returnString = null;
     StringWriter outString = new StringWriter();
     OutputFormat format = new OutputFormat();
@@ -84,14 +83,18 @@ public class XML {
     format.setIndenting(true);
     XMLSerializer xsl = new XMLSerializer(outString, format);
 
-    if (node.getNodeType() == Node.DOCUMENT_NODE) {
-      xsl.serialize((Document)node);
-      returnString = outString.toString();
-    } else if (node.getNodeType() == Node.ELEMENT_NODE) {
-      xsl.serialize((Element)node);
-      returnString = outString.toString();
-    } else {
-      returnString = "The node you passed to getNodeAsString() must be of type org.w3c.dom.Document or org.w3c.dom.Element in order to be serialized.";
+    try {
+      if (node.getNodeType() == Node.DOCUMENT_NODE) {
+        xsl.serialize((Document)node);
+        returnString = outString.toString();
+      } else if (node.getNodeType() == Node.ELEMENT_NODE) {
+        xsl.serialize((Element)node);
+        returnString = outString.toString();
+      } else {
+        returnString = "The node you passed to getNodeAsString() must be of type org.w3c.dom.Document or org.w3c.dom.Element in order to be serialized.";
+      }
+    } catch (IOException ioe) {
+      returnString = "Error occurred while trying to serialize node: " + ioe.getMessage();
     }
 
     return returnString;
