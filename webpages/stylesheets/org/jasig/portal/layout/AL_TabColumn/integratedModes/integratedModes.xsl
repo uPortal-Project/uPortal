@@ -36,7 +36,6 @@ Version $Revision$
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" indent="no"/>
-	<!--  comment -->
 	<!--These variables and parameters are used in all modes-->
 	<xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
 	<!--modes: view (default), preferences, fragment-->
@@ -67,6 +66,7 @@ Version $Revision$
 	<xsl:variable name="targetAction" select="/layout/@targetAction"/>
 	<xsl:variable name="unauthenticated" select="/layout/@unauthenticated"/>
 	<xsl:variable name="userLayoutRoot" select="/layout/@userLayoutRoot"/>
+        <xsl:param name="contentPublishID" select="''"/>
 	<!--  Used for detached content  -->
 	<xsl:template match="layout_fragment">
 		<html>
@@ -157,7 +157,7 @@ Version $Revision$
 										</xsl:when>
 										<xsl:when test="$mode='preferences'">
 											<td>
-												<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+												<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
 													<img width="24" height="24" alt="Turn off Preferences" title="Turn off Preferences" src="{$mediaPathIcons}/preferencesoff.gif" border="0"/>
 												</a>
 											</td>
@@ -855,7 +855,7 @@ Version $Revision$
 	<xsl:template name="preferencesControls">
 		<xsl:choose>
 			<xsl:when test="$selectedID=@ID and $targetAction='Channel Move'">
-				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
 					<img src="{$mediaPathIcons}/contentcancelmove.gif" width="26" height="23" alt="Cancel Channel Move" title="Cancel Channel Move" border="0"/>
 				</a>
 			</xsl:when>
@@ -1102,13 +1102,18 @@ Version $Revision$
 												<xsl:value-of select="@name"/>
 											</a>
 										</xsl:when>
-										<xsl:when test="$targetAction='New Tab' or $targetAction='New Channel' or $targetAction='New Column'">
-											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+										<xsl:when test="$targetAction='New Tab' or $targetAction='New Column'">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+												<xsl:value-of select="@name"/>
+											</a>
+										</xsl:when>
+                                                                                <xsl:when test="$targetAction='New Channel'">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets=channel&amp;uP_sparam=contentPublishID&amp;contentPublishID={$contentPublishID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
 												<xsl:value-of select="@name"/>
 											</a>
 										</xsl:when>
 										<xsl:otherwise>
-											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
 												<xsl:value-of select="@name"/>
 											</a>
 										</xsl:otherwise>
@@ -1567,7 +1572,7 @@ Version $Revision$
 										<xsl:value-of select="@name"/>
 									</span>
 									<img src="{$mediaPathSkin}/transparent.gif" width="8" height="8"/>
-									<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+									<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
 										<img src="{$mediaPathIcons}/cancelmoveicon.gif" width="20" height="17" alt="Cancel Tab Move" title="Cancel Tab Move" border="0"/>
 									</a>
 								</td>
@@ -1691,7 +1696,7 @@ Version $Revision$
 								<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
 							</td>
 							<td valign="middle" width="100%">
-								<a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+								<a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
 									<img alt="Click to select target location" title="Click to select target location" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
 								</a>
 							</td>
@@ -1727,7 +1732,7 @@ Version $Revision$
 			</xsl:when>
 			<xsl:when test="$type='column'">
 				<td valign="top">
-					<a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+					<a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
 						<img alt="Click to move column here" title="Click to move column here" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
 					</a>
 				</td>
@@ -1736,7 +1741,7 @@ Version $Revision$
 				<table width="100%" border="0" cellspacing="0" cellpadding="4">
 					<tr>
 						<td align="center">
-							<a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+							<a href="{$baseActionURL}?uP_move_target={$selectedID}&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
 								<img alt="Click to move channel here" title="Click to move channel here" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
 							</a>
 						</td>
@@ -1755,7 +1760,7 @@ Version $Revision$
 							<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
 						</td>
 						<td valign="middle">
-							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=">
+							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}">
 								<img alt="Click to add new tab here" title="Click to add new tab here" src="{$mediaPathIcons}/airplanetarget.gif" width="16" height="16" border="0"/>
 							</a>
 						</td>
@@ -1795,7 +1800,7 @@ Version $Revision$
 				<table border="0" cellspacing="0" cellpadding="5" class="uportal-background-neutral-light">
 					<tr>
 						<td valign="top">
-							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=">
+							<a href="{$baseActionURL}?uP_add_target=folder&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}">
 								<img alt="Click to add new column here" title="Click to add new column here" src="{$mediaPathIcons}/add_column_ani.gif" width="22" height="18" border="0"/>
 							</a>
 						</td>
@@ -1809,7 +1814,7 @@ Version $Revision$
 			<table width="100%" border="0" cellspacing="0" cellpadding="4">
 				<tr>
 					<td align="center">
-						<a href="{$baseActionURL}?uP_add_target=channel&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=">
+						<a href="{$baseActionURL}?uP_add_target=channel&amp;targetNextID={@nextID}&amp;targetParentID={@parentID}&amp;uP_sparam=mode&amp;mode={$mode}">
 							<img alt="Click to add new channel here" title="Click to add new channel here" src="{$mediaPathIcons}/add_channel_ani.gif" width="22" height="18" border="0"/>
 						</a>
 					</td>
@@ -2024,12 +2029,12 @@ Version $Revision$
 				<td align="left" class="uportal-background-light">
 					<span class="uportal-label">
 						<xsl:if test="not($targetRestriction='no targetRestriction parameter')">
-							<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">Cancel&#160;<xsl:value-of select="$targetAction"/>
+							<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">Cancel&#160;<xsl:value-of select="$targetAction"/>
 							</a>
 							<span>&#160;|<xsl:text> </xsl:text>
 							</span>
 						</xsl:if>
-						<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">Turn&#160;Preferneces&#160;Off</a>
+						<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">Turn&#160;Preferences&#160;Off</a>
 						<span>&#160;|<xsl:text> </xsl:text>
 						</span>
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">New&#160;Tab</a>
@@ -2553,7 +2558,7 @@ Version $Revision$
 										<td>
 											<xsl:choose>
 												<xsl:when test="$selectedID=@ID and $targetAction='Column Move'">
-													<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
+													<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
 														<img src="{$mediaPathIcons}/columncancelmove.gif" width="28" height="25" alt="cancel move action" title="cancel move action" border="0"/>
 													</a>
 												</xsl:when>
@@ -2662,8 +2667,6 @@ Version $Revision$
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
 					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="selectedID"/>
-					<input type="hidden" name="selectedID" value=""/>
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
@@ -2681,8 +2684,6 @@ Version $Revision$
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
 					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="selectedID"/>
-					<input type="hidden" name="selectedID" value=""/>
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
@@ -2707,8 +2708,6 @@ Version $Revision$
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
 					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="selectedID"/>
-					<input type="hidden" name="selectedID" value=""/>
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
@@ -2726,8 +2725,6 @@ Version $Revision$
 					<input type="hidden" name="mode" value="{$mode}"/>
 					<input type="hidden" name="uP_sparam" value="focusedTabID"/>
 					<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-					<input type="hidden" name="uP_sparam" value="selectedID"/>
-					<input type="hidden" name="selectedID" value=""/>
 					<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 					<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 					<input type="hidden" name="uP_sfattr" value="width"/>
@@ -2748,8 +2745,6 @@ Version $Revision$
 				<input type="hidden" name="mode" value="{$mode}"/>
 				<input type="hidden" name="uP_sparam" value="focusedTabID"/>
 				<input type="hidden" name="focusedTabID" value="{$focusedTabID}"/>
-				<input type="hidden" name="uP_sparam" value="selectedID"/>
-				<input type="hidden" name="selectedID" value=""/>
 				<input type="hidden" name="uP_sparam" value="targetRestriction"/>
 				<input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
 				<xsl:for-each select="../column">
