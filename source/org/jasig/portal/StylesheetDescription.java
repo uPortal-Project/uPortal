@@ -34,13 +34,14 @@
  */
 
 package org.jasig.portal;
-import org.w3c.dom.*;
-import java.util.*;
+import org.w3c.dom.ProcessingInstruction;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 /**
  * Combines all of the information required to describe
  * an XSLT stylesheet.
- * @author Peter Kharchenko
+ * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
  */
 public class StylesheetDescription
@@ -58,7 +59,7 @@ public class StylesheetDescription
 
   public StylesheetDescription (String uri, String type)
   {
-    s_href = UtilitiesBean.fixURI (uri);
+    s_href = uri;
     s_type=type;
     s_media = new String ("");
     s_charset = null;
@@ -68,7 +69,7 @@ public class StylesheetDescription
 
   public StylesheetDescription (String uri, String type, String title, String media, String charset, boolean alternate)
   {
-    s_href = UtilitiesBean.fixURI (uri);
+    s_href = uri;
     s_type = type;
     s_media = media;
     s_charset = charset;
@@ -82,7 +83,7 @@ public class StylesheetDescription
     if (pi.getNodeName ().equals ("xml-stylesheet"))
     {
       PIAttributes pia = new PIAttributes (pi);
-      s_href = UtilitiesBean.fixURI (pia.getAttribute ("href"));
+      s_href = pia.getAttribute ("href");
       s_type = pia.getAttribute ("type");
       s_title = pia.getAttribute ("title");
       s_media = pia.getAttribute ("media");
@@ -102,7 +103,7 @@ public class StylesheetDescription
   public StylesheetDescription (String data)
   {
     PIAttributes pia = new PIAttributes (data);
-    s_href = UtilitiesBean.fixURI (pia.getAttribute ("href"));
+    s_href = pia.getAttribute ("href");
     s_type = pia.getAttribute ("type");
     s_title = pia.getAttribute ("title");
     s_media = pia.getAttribute ("media");
