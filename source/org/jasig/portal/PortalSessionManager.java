@@ -115,7 +115,9 @@ public class PortalSessionManager extends HttpServlet {
             URLConnection conn = url.openConnection();
             conn.setDefaultUseCaches(false);
          } catch (Exception e) {
-            log.warn("PortalSessionManager.init(): Caught Exception trying to disable URL Caching", e);
+             if (log.isWarnEnabled())
+                 log.warn("PortalSessionManager.init(): " +
+                        "Caught Exception trying to disable URL Caching", e);
          }
       }
 
@@ -200,8 +202,9 @@ public class PortalSessionManager extends HttpServlet {
                     request_verified = true;
                     requestTags.remove(tag);
                 }
-
-                log.debug("PortalSessionManager::doGet() : request verified: "+request_verified);
+                if (log.isDebugEnabled())
+                    log.debug("PortalSessionManager::doGet() : request verified: "
+                            + request_verified);
             }
 
             try {
@@ -222,7 +225,9 @@ public class PortalSessionManager extends HttpServlet {
                 } else {
                     // generate and register a new tag
                     String newTag=Long.toHexString(randomGenerator.nextLong());
-                    log.debug("PortalSessionManager::doGet() : generated new tag \""+newTag+"\" for the session "+session.getId());
+                    if (log.isDebugEnabled())
+                        log.debug("PortalSessionManager::doGet() : generated new tag \""+
+                                newTag+"\" for the session "+session.getId());
                     // no need to check for duplicates :) we'd have to wait a lifetime of a universe for this time happen
                     if(!requestTags.add(newTag)) {
                         log.error("PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
