@@ -57,7 +57,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
 
     // Constants for the LOCK table:
     private static String LOCK_TABLE = "UP_ENTITY_LOCK";
-    private static String ENTITY_TYPE_COLUMN = "ENTITY_TYPE";
+    private static String ENTITY_TYPE_COLUMN = "ENTITY_TYPE_ID";
     private static String ENTITY_KEY_COLUMN = "ENTITY_KEY";
     private static String EXPIRATION_TIME_COLUMN = "EXPIRATION_TIME";
     private static String LOCK_OWNER_COLUMN = "LOCK_OWNER";
@@ -603,13 +603,13 @@ throws LockingException
     if ( lockType != null )
     {
         sqlQuery.append(" AND " + LOCK_TYPE_COLUMN + EQ + lockType);
-	}
+    }
 
     if ( expiration != null )
     {
         Timestamp ts = new Timestamp(expiration.getTime());
         sqlQuery.append(" AND " + EXPIRATION_TIME_COLUMN + EQ + sqlQuote(ts));
-	}
+    }
 
     if ( lockOwner != null )
     {
@@ -653,7 +653,7 @@ throws LockingException
     if ( lockType != null )
     {
         sqlQuery.append(" AND " + LOCK_TYPE_COLUMN + EQ + lockType);
-	}
+    }
 
     if ( lockOwner != null )
     {
