@@ -62,7 +62,7 @@ import  org.jasig.portal.security.provider.RoleImpl;
 public class DBImpl
     implements IDBImpl {
 
-  private RdbmServices rdbmService = null;
+  protected RdbmServices rdbmService = null;
 
   public void DBImpl() {
     rdbmService = new RdbmServices();
@@ -473,7 +473,7 @@ public class DBImpl
     Connection con = rdbmService.getConnection();
     try {
       int id = getIncrementIntegerId("UP_USER_PROFILES");
-      profile.setProfileId(id.intValue());
+      profile.setProfileId(id);
       Statement stmt = con.createStatement();
       String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_NAME,THEME_SS_NAME,DESCRIPTION) VALUES ("
           + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "','" + profile.getStructureStylesheetName()
