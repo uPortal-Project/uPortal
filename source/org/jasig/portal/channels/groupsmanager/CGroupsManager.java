@@ -167,7 +167,7 @@ public class CGroupsManager
                //GroupsManagerCommandFactory.get("Unlock").execute(sd);
             }
             if (sd.servantChannel != null){
-               sd.servantChannel.isFinished();
+               sd.servantChannel.receiveEvent(ev);  
             }
             sessionsMap.remove(uid); // Clean up
          } catch (Exception e){
