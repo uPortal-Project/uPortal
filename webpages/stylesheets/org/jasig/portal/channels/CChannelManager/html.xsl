@@ -2,8 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
-  <xsl:param name="action">channelDef</xsl:param>
-  <xsl:param name="stepID">3</xsl:param>
+  <xsl:param name="action">defaultView</xsl:param>
+  <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
   <xsl:variable name="defaultLength">10</xsl:variable>
@@ -1855,7 +1855,8 @@
                </table>
              </td>
            </tr>           
-           
+
+           <!-- Channel Description -->           
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
@@ -1874,6 +1875,7 @@
              </td>
            </tr>
 
+           <!-- Channel Timeout -->
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
              <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
@@ -1893,6 +1895,7 @@
             </td>
           </tr>
 
+           <!-- Channel Parameters -->
           <xsl:choose>
             <xsl:when test="/manageChannels/reviewChannel/params/step/channel/@typeID = -1">
 
@@ -1942,7 +1945,7 @@
           <xsl:for-each select="/manageChannels/reviewChannel/params/step/channel/parameter">
           <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
           <xsl:variable name="value"><xsl:value-of select="@value"/></xsl:variable>
-<xsl:if test="/manageChannels/channelDef/params/step/parameter[name=$name]/type/@display != 'hidden'">
+          <xsl:if test="/manageChannels/channelDef/params/step/parameter[name=$name]/type/@display != 'hidden' or /manageChannels/channelDef/params/step/arbitrary-parameters">
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" align="center"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@override = 'yes'">
@@ -1977,7 +1980,8 @@
 
         </td>
 
-      </tr></xsl:if>
+      </tr>
+      </xsl:if>
       </xsl:for-each>
 </xsl:otherwise>
 </xsl:choose>
