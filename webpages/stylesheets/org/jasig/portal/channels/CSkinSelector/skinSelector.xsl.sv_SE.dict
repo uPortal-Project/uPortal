@@ -1,0 +1,10 @@
+en_US ::: sv_SE
+>Skin Selection:< ::: >Val av skal:<
+Select a portal skin below, then click \[Change Skin\]. ::: Välj ett uPortal-skal nedan, och klicka [Byt skal].
+>Option< ::: >Val<
+>Thumbnail< ::: >Tumnagel<
+"Change Skin" ::: "Byt skal"
+\{skin-name\} thumbnail ::: {skin-name} tumnagel
+>Name:< ::: >Namn:<
+>Description:< ::: >Beskrivning:<
+"interface image" ::: "utfyllnad"

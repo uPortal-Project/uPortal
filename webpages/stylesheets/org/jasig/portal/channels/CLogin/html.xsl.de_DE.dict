@@ -1,0 +1,23 @@
+en_US ::: de_DE
+The user name/password combination entered is not recognized. Please try again. ::: Der eingegebene Benutzername/Passwort konnte nicht erkannt werden. Bitte probieren Sie es erneut.
+An error occured during authentication. The portal is unable to log you on at this time. Try again later. ::: Bei der Authentifizierung ist ein Fehler aufgetreten. Das Portal ist zur Zeit nicht in der Lage Sie einzuloggen. Bitte probieren Sie es später noch einmal.
+Welcome Guest - Please Login: ::: Willkommen Gast - Bitte loggen Sie sich ein:
+Welcome <xsl:value-of select="full-name"/> ::: Willkommen <xsl:value-of select="full-name"/>
+Name: ::: Name:
+Password: ::: Passwort:
+You are currently logged in. ::: Sie sind bereits eingeloggt.
+value=\"Login\" ::: value=\"Login\"
+January ::: Januar
+February ::: Februar
+March ::: März
+April ::: April
+May ::: Mai
+June ::: Juni
+July ::: Juli
+August ::: August
+September ::: September
+October ::: Oktober
+November ::: November
+December ::: Dezember
+document\.write\(lmonth \+ ' '\); ::: document\.write(lmonth + ' ');
+document\.write\(date \+ ', ' \+ year\); ::: document\.write(date + ', ' + year);

@@ -1,0 +1,5 @@
+en_US ::: sv_SE
+Default ::: Förvalt
+Choose a folder to move selected items to and then click Move. ::: Välj en mapp att flytta val till
+value=\"Move\" ::: value="Flytta"
+My Channels ::: Mina kanaler

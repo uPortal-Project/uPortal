@@ -1,0 +1,13 @@
+en_US ::: sv_SE
+uPortal channels have access to user attributes ::: uPortal-kanaler har tillgång till användarens attribut
+via the <span class="uportal-channel-code">org.jasig.portal.security.IPerson</span> object. ::: genom <span class="uportal-channel-code">org.jasig.portal.security.IPerson</span>-objektet.
+Attribute names are defined in the ::: Attributnamn definieras i
+<a href="http://www.educause.edu/eduperson/">eduPerson object class</a> version 1.0. ::: <a href="http://www.educause.edu/eduperson/">eduPerson objektklass</a> version 1.0
+uPortal implementors are to map these standard attribute names to ::: De som implementerar uPortal knyter dessa standard attributnamn till
+local names in their person directory or database.  Mappings are contained in ::: lokala attributnamn i sina person-kataloger eller -databaser. Knytningarna finns i
+the <span class="uportal-channel-code">properties/PersonDirs.xml</span> file. ::: filen <span class="uportal-channel-code">properties/PersonDirs.xml</span>.
+Att. Name ::: Attr.namn
+Att. Value ::: Attr.värde
+Available attributes: ::: Tillgängliga attribut
+Unavailable attributes: ::: Ej tillgängliga attribut
+\[Not available\] ::: [Ej tillgänglig]

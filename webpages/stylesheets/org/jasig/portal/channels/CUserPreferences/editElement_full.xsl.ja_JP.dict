@@ -1,0 +1,11 @@
+en_US ::: ja_JP
+Editing <xsl:value-of select="type"/> "<xsl:value-of select="name"/>": ::: <xsl:value-of select="type"/> "<xsl:value-of select="name"/>"の編集：
+value=\"Save\" ::: value="保存"
+value=\"Cancel\" ::: value="キャンセル"
+<b>variable</b> ::: <b>変数</b>
+<b>value</b> ::: <b>値</b>
+<b>description</b> ::: <b>説明</b>
+intrinsic <xsl:value-of select="type"/> attributes ::: 内部<xsl:value-of select="type"/>属性
+<xsl:value-of select="type"/> name ::: <xsl:value-of select="type"/>名前
+<td colspan="3" align="right"> structure stylesheet attributes</td> ::: <td colspan="3" align="right">構造スタイルシート属性</td>
+<td colspan="3" align="right">theme stylesheet attributes</td> ::: <td colspan="3" align="right">テーマスタイルシート属性</td>

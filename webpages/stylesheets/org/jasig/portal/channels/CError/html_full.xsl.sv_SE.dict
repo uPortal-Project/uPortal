@@ -1,0 +1,33 @@
+en_US ::: sv_SE
+Error Report ::: Felrapport
+Channel ID: ::: Kanal-ID:
+Message: ::: Meddelande:
+Message not available ::: Meddelande inte tillgängligt
+Error type: ::: Feltyp:
+Channel timed out \(code 4\) ::: Kanalen överskred maximal tid (timeout) (kod 4)
+Channel failed to render \(code 1\) ::: Kanalen misslyckades rendera (kod 1)
+Channel failed to initialize \(code 2\) ::: Kanalen lyckades inte initialisera sig själv (kod 2)
+Channel failed to accept runtime data \(code 3\) ::: Kanalen accepterade inte RTD (kod 3)
+General error \(code 0\) ::: Allmänt fel (kod 0)
+Channel failed to accept PCS \(code 5\) ::: Kanalen accepterade inte PCS (kod 5)
+User not authorized \(code 6\) ::: Användaren är inte auktoriserad  (kod 6)
+Channel not available \(code 7\) ::: Kanalen är inte tillgänglig (kod 7)
+uPortal error \(code -1\) ::: uPortal-fel (kod -1)
+Retry the channel ::: Försök igen
+Restart the channel ::: Starta om kanalen
+Show stack trace ::: Visa spårutskrift
+Problem type: ::: Problemtyp
+Runtime exception \(code -1\) ::: Runtime-fel (kod -1)
+General rendering problem \(code 1\) ::: Allmänt renderingsfel (kod 1)
+Internal timeout \(code 2\) ::: Intern timeout (kod 2)
+Authorization problem \(code 3\) ::: Auktoriseringsproblem (kod 4)
+Missing resource \(code 4\) ::: Resurs saknas (kod 4)
+Timeout limit</p> ::: Maximal svarstid</p>
+Timeout limit not available ::: Maximal svarstid inte tillgänglig
+Resource description</p> ::: Resursbeskrivning</p>
+Resource description not available ::: Resursbeskrivning inte tillgänglig
+Resource URI</p> ::: Resurs-URI
+Resource URI not available ::: Resurs-URI inte tillgänglig
+Error message</p> ::: Felmeddelande</p>
+Error message not available ::: Felmeddelande inte tillgängligt
+Stack Trace ::: Spårutskrift

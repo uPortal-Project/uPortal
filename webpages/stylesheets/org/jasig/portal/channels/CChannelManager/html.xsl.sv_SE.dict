@@ -1,0 +1,145 @@
+en_US ::: sv_SE
+Selected Categories: ::: Selected Categories:
+Selected Groups and\/or People: ::: Selected Groups and/or People:
+Options for Managing Channels: ::: Options for Managing Channels:
+Publish a new channel ::: Publish a new channel
+Modify a currently published channel ::: Modify a currently published channel
+Select the type of channel to add by clicking a select icon in the option column ::: Select the type of channel to add by clicking a select icon in the option column
+Option</td> ::: Option</td>
+Channel Type</td> ::: Channel Type</td>
+Description</td> ::: Description</td>
+interface image ::: interface image
+<strong>Custom</strong> ::: <strong>Custom</strong>
+This channel type allows the publication of channels with no accompanying CPD \(Channel Publishing Document\). It is typically used to publish channels with only one corresponding channel definition. ::: This channel type allows the publication of channels with no accompanying CPD (Channel Publishing Document). It is typically used to publish channels with only one corresponding channel definition.
+Modify a currently published channel: ::: Modify a currently published channel:
+Select an option by clicking one of the icons in the table below. ::: Select an option by clicking one of the icons in the table below.
+Cancel and return ::: Cancel and return
+Name: Channel Title ::: Name: Channel Title
+Example: StockCharts ::: Example: StockCharts
+This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same. ::: This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same.
+This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same. ::: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.
+>Channel Name< ::: >Channel Name<
+Edit settings for \{\@ID\} ::: Edit settings for {@ID}
+Remove published channel - \{\@ID\} ::: Remove published channel - {@ID}
+No channels to display ::: No channels to display
+>Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="\$recsPerPage"\/><\/xsl:attribute><\/input>records at a time. ::: >Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input>records at a time.
+alt="Previous" ::: alt="Previous"
+Go to page \[\{\(\/\/currentPage\)-1\}\] ::: Go to page [{(//currentPage)-1}]
+Go to page \[\{\(\/\/currentPage\)\+1\}\] ::: Go to page [{(//currentPage)+1}]
+Go to page \[\{\(\$currPage\)\+1\}\] ::: Go to page [{($currPage)+1}]
+alt="Next" ::: alt="Next"
+Channel Parameters ::: Channel Parameters
+Settings \[one\]: ::: Settings [one]:
+Complete the Settings form below ::: Complete the Settings form below
+User can<br/> Modify ::: User can<br/> Modify
+width="16" height="8"/>Options ::: width="16" height="8"/>Options
+General Settings ::: General Settings
+Display help information ::: Display help information
+\[example - StockCharts\] ::: [example - StockCharts]
+Name: Channel Name\\n\\nExample: StockCharts\\n\\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same. ::: Name: Channel Name\n\nExample: StockCharts\n\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same.
+Name: Channel Description\\n\\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\\n\\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ::: Name: Channel Description\n\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel
+Channel Description: ::: Channel Description:
+Name: Channel Timeout ::: Name: Channel Timeout
+Example: 10000 ::: Example: 10000
+Description: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering. ::: Description: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering.
+Name: Channel Class ::: Name: Channel Class
+Example: edu.myuniversity.portal.channels.myChannel.MyChannelClass ::: Example: edu.myuniversity.portal.channels.myChannel.MyChannelClass
+Description: This is the java class for a custom channel. A channel class is mandatory ::: Description: This is the java class for a custom channel. A channel class is mandatory
+value="&lt; Back" ::: value="&lt; Back"
+value="Next &gt;" ::: value="Next &gt;"
+value="Review" ::: value="Review"
+value="Cancel" ::: value="Cancel"
+value="Finished" ::: value="Finished"
+Step Name ::: Step Name
+<xsl:otherwise>Description</xsl:otherwise> ::: <xsl:otherwise>Description</xsl:otherwise>
+\[example - <xsl:value-of select="."/>\] ::: [example - <xsl:value-of select="."/>]
+<span class="uportal-text-small">Description: ::: <span class="uportal-text-small">Description:
+Select channel controls in the form below ::: Select channel controls in the form below
+Channel Controls ::: Channel Controls
+<td nowrap="nowrap" align="center">Icon</td> ::: <td nowrap="nowrap" align="center">Icon</td>
+<td width="100%">Description</td> ::: <td width="100%">Description</td>
+<strong>Editable</strong> ::: <strong>Editable</strong>
+when selected, passes edit events ::: when selected, passes edit events
+Editable<br/> ::: Editable<br/>
+Has Help ::: Has Help
+when selected, passes help events ::: when selected, passes help events
+Has About ::: Has About
+when selected, passes about events ::: when selected, passes about events
+<strong>Categories:</strong> ::: <strong>Categories:</strong>
+Browse and add the categories in which this channel will appear ::: Browse and add the categories in which this channel will appear
+Select All ::: Select All
+Applications ::: Applications
+Development ::: Development
+News1 ::: News1
+from "All catagories" ::: from "All catagories"
+Begin Channel Listing ::: Begin Channel Listing
+-This category contains no channels- ::: -This category contains no channels-
+Get more informaton about the selected channel: ::: Get more informaton about the selected channel:
+\[optional\] ::: [optional]
+Add the selected channel: ::: Add the selected channel:
+value="Add" ::: value="Add"
+No Channel registry data is available at this time... ::: No Channel registry data is available at this time...
+Selected Category ::: Selected Category
+No categories have been selected ::: No categories have been selected
+Roles: ::: Roles:
+Select roles which are allowed access to this channel. <em>\*\*If no roles are checked all roles will have access to this channel. ::: Select roles which are allowed access to this channel. <em>**If no roles are checked all roles will have access to this channel.
+There are no roles to display ::: There are no roles to display
+Review: ::: Review:
+Please review the settings for accuracy \(click workflow icons or items in the table below to edit settings\) ::: Please review the settings for accuracy (click workflow icons or items in the table below to edit settings)
+User can<br /> ::: User can<br />
+modify\?</td> ::: modify?</td>
+<td nowrap="nowrap">Name</td> ::: <td nowrap="nowrap">Name</td>
+<td width="100%">Value</td> ::: <td width="100%">Value</td>
+Channel Type: ::: Channel Type:
+Channel Title: ::: Channel Title:
+Channel Name: ::: Channel Name:
+Name: Channel Functional Name: ::: Name: Channel Functional Name:
+Name: Channel Functional Name ::: Name: Channel Functional Name
+Channel Functional Name: ::: Channel Functional Name:
+Name: Channel Description: ::: Name: Channel Description:
+Name: Channel Description ::: Name: Channel Description
+Channel Class: ::: Channel Class:
+Channel Timeout: ::: Channel Timeout:
+User cannot modify ::: User cannot modify
+Parameter: ::: Parameter:
+User can modify ::: User can modify
+Selected Roles: ::: Selected Roles:
+All roles have access to this channel ::: All roles have access to this channel
+Selected Groups: ::: Selected Groups:
+Add Parameters: ::: Add Parameters:
+Complete the form below to add channel parameters ::: Complete the form below to add channel parameters
+value="add" ::: value="add"
+<td nowrap="nowrap">Value</td> ::: <td nowrap="nowrap">Value</td>
+No parameters ::: No parameters
+<strong>Groups:</strong> ::: <strong>Groups:</strong>
+Browse and add the groups that have access to this channel ::: Browse and add the groups that have access to this channel
+No Groups data is available at this time... ::: No Groups data is available at this time...
+User can<br/>Modify ::: User can<br/>Modify
+Remove this group ::: Remove this group
+No Filter ::: No Filter
+Filter by category ::: Filter by category
+You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this? ::: You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this?
+value="go" ::: value="go"
+alt="Go to page [{($currPage)+1}]" ::: alt="Go to page [{($currPage)+1}]"
+Example: ::: Exempel:
+Description: ::: Beskrivning:
+Workflow: ::: Arbetsflöde:
+Remove this parameter ::: Ta bort denna parameter
+milliseconds \(1000 = 1 second\) ::: millisekunder (1000 = 1 sekund)
+<td>Value:<br /> ::: <td>Värde:<br />
+Name</td> ::: Namn</td>
+Value</td> ::: Värde</td>
+Select</td> ::: Välj</td>
+milliseconds</a></td> ::: millisekunder</a></td>
+This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identiy this channel definition. ::: Detta är kanalens funktionella namn som används för att identifiera kanalen vid JNDI-uppslagningar och webbtjänster. Namnet bör var en unik identifierare för kanalen.
+\[example - ::: [exempel -
+>Name:< ::: >Name:<
+StockCharts is a financial services channel offering services such as charting a stocks performance over time. ::: StockCharts är en kanal som ger tillgång till tjänster som att se en akties utveckling över tiden.
+This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ::: Detta är beskrivningen av kanalen. De används för att ge användaren extra information om kanalens syfte
+This is the java class for a custom channel. A channel class is mandatory ::: Detta är Java-klassen för en valfri kanal. Obligatorsk uppgift
+>page:< ::: >sida:<
+Name: Channel Secure ::: Namn: Säker kanal
+This indicates whether or not a channel should only be rendered in a secure setting \(i.e. https\). ::: Detta indikerar om kanalen ska visas enbart i säkert läge (https:).
+Channel Secure: ::: Säker kanal:
+"Secure" ::: "Säker"
+"Not Secure" ::: "Inte säker"

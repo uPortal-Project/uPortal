@@ -1,0 +1,13 @@
+en_US ::: sv_SE
+Your guess of <xsl:value-of select="guess"/> was incorrect. ::: Din gissning <xsl:value-of select="guess"/> var fel...
+Try again -- guess <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>! ::: Försök igen! Gissa <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!
+You have made <xsl:value-of select="guesses"/> guesses. ::: Du har gissat <xsl:value-of select="guesses"/> gånger
+You got it after <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> tries! ::: Det tog dig <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> försök att gissa rätt!
+The answer was <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br /> ::: Svaret var <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
+Please play again... ::: Varsågod att försöka igen...
+I am thinking of a number between ::: Jag tänker på ett nummer mellan
+<xsl:value-of select="minNum"/> and ::: <xsl:value-of select="minNum"/> och
+<xsl:value-of select="maxNum"/>.<br /> ::: <xsl:value-of select="maxNum"/>.<br />
+What's your guess\? ::: Vad gissar du?
+value="Submit" ::: value="Gissa"
+This is a number guessing game. ::: Gissa mitt tal!

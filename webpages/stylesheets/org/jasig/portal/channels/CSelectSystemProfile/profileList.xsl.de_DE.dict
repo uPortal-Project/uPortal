@@ -1,0 +1,8 @@
+en_US ::: de_DE
+The browser build you are currently using has not been previously encountered. ::: Der Browser den Sie gerade benutzen wurde noch nicht angetroffen.
+Please select a fitting profile. ::: Bitte wählen Sie ein passendes Profil aus.
+System Profiles ::: System-Profile
+<p class="uportal-channel-subtitle">Action</p> ::: <p class="uportal-channel-subtitle">Aktion</p>
+Profile Name ::: Profil-Name
+Profile Description ::: Profil-Beschreibung
+Map current browser to this profile ::: Bilden Sie gegenwärtigen Browser auf diese Profile ab.

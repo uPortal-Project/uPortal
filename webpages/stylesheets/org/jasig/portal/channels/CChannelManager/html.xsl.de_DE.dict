@@ -1,0 +1,145 @@
+en_US ::: de_DE
+Selected Categories: ::: Ausgewählte Kategorien:
+Selected Groups and\/or People: ::: Ausgewählte Gruppen und/oder Leute:
+Options for Managing Channels: ::: Optionen zum Verwalten von Channels:
+Publish a new channel ::: Veröffentlichung eines neuen Channels
+Modify a currently published channel ::: Ändern eines veröffentlichten Channel
+Select the type of channel to add by clicking a select icon in the option column ::: Wählen Sie den hinzuzufügenden Typen des Channels, indem Sie ein Symbol in der Wahlspalte anklicken
+Option</td> ::: Option</td>
+Channel Type</td> ::: Channeltyp</td>
+Description</td> ::: Beschreibung</td>
+interface image ::: Bildschnittstelle
+<strong>Custom</strong> ::: <strong>benutzerspezifisch</strong>
+This channel type allows the publication of channels with no accompanying CPD \(Channel Publishing Document\). It is typically used to publish channels with only one corresponding channel definition. ::: Dieser Channeltyp erlaubt die Publikation der Kanäle ohne begleitendes CPD (Channel Publishing Document). Er wird gewöhnlich verwendet, um Kanäle mit nur einer entsprechenden Channel-Definition zu veröffentlichen.
+Modify a currently published channel: ::: Ändern eines veröffentlichten Channels:
+Select an option by clicking one of the icons in the table below. ::: Wählen Sie eine Option aus, indem Sie auf ein Symbol in der Tabelle unten klicken.
+Cancel and return ::: Abbrechen und Zurück
+Name: Channel Title ::: Name: Titel des Channels
+Example: StockCharts ::: Beispiel: StockCharts
+This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same. ::: Dies ist der Titel des Channels. Gewöhnlich erscheint dieser Text als Überschrift, wenn der Channel übertragen wird. Titel und Name sind gewöhnlich gleich.
+This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same. ::: Dies ist der Name des Channels. Wenn die Benutzer den Channel abbonieren ist dies der Name den Sie sehen werden. Gewöhnlich sind Titel und Name gleich.
+>Channel Name< ::: >Channel Name<
+Edit settings for \{\@ID\} ::: Einstellungen ändern für {@ID}
+Remove published channel - \{\@ID\} ::: Veröffentlichte Channels löschen - {@ID}
+No channels to display ::: Keine Channels zur Anzeige
+>Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="\$recsPerPage"\/><\/xsl:attribute><\/input>records at a time. ::: >Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input>records at a time.
+alt="Previous" ::: alt="Vorherige(r)"
+Go to page \[\{\(\/\/currentPage\)-1\}\] ::: Gehe zur Seite [{(//currentPage)-1}]
+Go to page \[\{\(\/\/currentPage\)\+1\}\] ::: Gehe zur Seite [{(//currentPage)+1}]
+Go to page \[\{\(\$currPage\)\+1\}\] ::: Gehe zur Seite [{($currPage)+1}]
+alt="Next" ::: alt="Nächster"
+Channel Parameters ::: Channel Parameter
+Settings \[one\]: ::: Einstellungen [Eins]:
+Complete the Settings form below ::: Füllen Sie die Einstellungsformular unten aus
+User can<br/> Modify ::: benutzer kann<br/> Ändern
+width="16" height="8"/>Options ::: width="16" height="8"/>Optionen
+General Settings ::: Allgemeine Einstellungen
+Display help information ::: Anzeige Hilfe-Informationen
+\[example - StockCharts\] ::: [Beispiel - StockCharts]
+Name: Channel Name\\n\\nExample: StockCharts\\n\\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same. ::: Name: Name des Channels\n\n´Beispiel: StockCharts\n\nbeschreibung: Dies ist der Name des Channels. Wenn die Benutzer den Channel abbonieren, ist dies der Name den Sie sehen werden. Gewöhnlich sind Titel und Name gleich.
+Name: Channel Description\\n\\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\\n\\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ::: Name: Beschreibung des Channels\n\nBeispiel: StockCharts ist ein finanzieller DienstleistungsChannel, welcher Leistungen auf Zeit anbietet, wie die Aktienleistung.\n\nBeschreibung: Dies ist die Beschreibung des Channels.Diese ist für den Benutzer hilfreich, wenn zusätzliche Informationen über den Channel notwendig sind.
+Channel Description: ::: Beschreibung des Channels:
+Name: Channel Timeout ::: Name: Channel 'Timeout'
+Example: 10000 ::: Beispiel: 10000
+Description: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering. ::: Beschreibung: Dies ist die Zahl von Millisekunden, die der Channel versucht zu übertragen, bevor das Portal die Übertragung beendet.
+Name: Channel Class ::: Name: Channel Klasse
+Example: edu.myuniversity.portal.channels.myChannel.MyChannelClass ::: Beispiel: edu.myuniversity.portal.channels.myChannel.MyChannelClass
+Description: This is the java class for a custom channel. A channel class is mandatory ::: Beschreibung: Dies ist die Java-Klasse für einen gewöhnlichen Channel. Die Klasse eines Channels ist vorgeschrieben.
+value="&lt; Back" ::: value="&lt; Zurück"
+value="Next &gt;" ::: value="Weiter &gt;"
+value="Review" ::: value="Review"
+value="Cancel" ::: value="Abbrechen"
+value="Finished" ::: value="Ende"
+Step Name ::: Step Name
+<xsl:otherwise>Description</xsl:otherwise> ::: <xsl:otherwise>Beschreibung</xsl:otherwise>
+\[example - <xsl:value-of select="."/>\] ::: [example - <xsl:value-of select="."/>]
+<span class="uportal-text-small">Description: ::: <span class="uportal-text-small">Beschreibung:
+Select channel controls in the form below ::: Wählen Sie die Channelkontrolle unten aus
+Channel Controls ::: Kontrolle des Channels
+<td nowrap="nowrap" align="center">Icon</td> ::: <td nowrap="nowrap" align="center">Symbol</td>
+<td width="100%">Description</td> ::: <td width="100%">Beschreibung</td>
+<strong>Editable</strong> ::: <strong>Editierbar</strong>
+when selected, passes edit events ::: wenn ausgewählt, durchlaufen der editierten Fälle
+Editable<br/> ::: Editierbar<br/>
+Has Help ::: Hilfe vorhanden
+when selected, passes help events ::: wenn ausgewählt, Durchlaufen der Hilfefälle
+Has About ::: Ungefähr vorhanden
+when selected, passes about events ::: wenn ausgewählt, Durchlaufen der Ereignisse
+<strong>Categories:</strong> ::: <strong>Kategorien:</strong>
+Browse and add the categories in which this channel will appear ::: Füge die Kategorien hinzu, wo der Channel erscheinen soll
+Select All ::: Alles auswählen
+Applications ::: Anwendungen
+Development ::: Entwicklung
+News1 ::: Nachrichten1
+from "All catagories" ::: von "Alle Kategorien"
+Begin Channel Listing ::: Beginne Channelauflistung
+-This category contains no channels- ::: -Diese Kategorie enthält keine Channel-
+Get more informaton about the selected channel: ::: Mehr Informationen über die ausgewählten Channels erhalten:
+\[optional\] ::: [optional]
+Add the selected channel: ::: Hinzufügen des ausgewählten Channels:
+value="Add" ::: value="Hinzufügen"
+No Channel registry data is available at this time... ::: Zur Zeit sind keine Channel Registrierdaten vorhanden...
+Selected Category ::: Ausgewählte Kategorie
+No categories have been selected ::: Es sind keine Kategorien ausgewählt worden
+Roles: ::: Rollen:
+Select roles which are allowed access to this channel. <em>\*\*If no roles are checked all roles will have access to this channel. ::: Wählen Sie Rollen aus, die Zugang zu diesem Channel haben. <em>**Falls keine Rollen überprüft werden, haben alle Rollen Zugang zu diesem Channel
+There are no roles to display ::: Es sind keine Rollen zur Anzeige vorhanden
+Review: ::: Review:
+Please review the settings for accuracy \(click workflow icons or items in the table below to edit settings\) ::: Überprüfen Sie bitte die Einstellungen für die Genauigkeit (klicken Sie Workflowsymbole oder Einzelteile in der Tabelle unten, um Einstellungen zu editieren)
+User can<br /> ::: Benutzer kann<br />
+modify\?</td> ::: Ändern?</td>
+<td nowrap="nowrap">Name</td> ::: <td nowrap="nowrap">Name</td>
+<td width="100%">Value</td> ::: <td width="100%">Wert</td>
+Channel Type: ::: Typ des Channels:
+Channel Title: ::: Titel des Channels:
+Channel Name: ::: Name des Channels:
+Name: Channel Functional Name: ::: Name: Channel Funktionsname:
+Name: Channel Functional Name ::: Name: Channel Funktionsname
+Channel Functional Name: ::: Channel Funktionsname:
+Name: Channel Description: ::: Name: Beschreibung des Channels:
+Name: Channel Description ::: Name: Beschreibung des Channels
+Channel Class: ::: Klasse des Channels:
+Channel Timeout: ::: Channel Abschalten:
+User cannot modify ::: Benutzer kann nicht ändern
+Parameter: ::: Parameter:
+User can modify ::: Benutzer kann ändern
+Selected Roles: ::: Ausgewählte Rollen:
+All roles have access to this channel ::: Alle Rollen haben Zugang zu diesem Channel
+Selected Groups: ::: Ausgewählte Gruppen:
+Add Parameters: ::: Füge Parameter hinzu:
+Complete the form below to add channel parameters ::: Füllen Sie das Formular unten aus, um die Channelparameter hinzuzufügen
+value="add" ::: value="Hinzufügen"
+<td nowrap="nowrap">Value</td> ::: <td nowrap="nowrap">Wert</td>
+No parameters ::: Keine Parameter
+<strong>Groups:</strong> ::: <strong>Gruppen:</strong>
+Browse and add the groups that have access to this channel ::: Füge die Gruppen hinzu, die Zugang zu dem Channel haben
+No Groups data is available at this time... ::: Zur Zeit sind keine Gruppendaten vorhanden...
+User can<br/>Modify ::: Benutzer kann<br/>Ändern
+Remove this group ::: Löschen Sie diese Gruppe
+No Filter ::: Keine Filter
+Filter by category ::: Filter durch Kategorie
+You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this? ::: Sie sind dabei den Channel als auch seine Rolle und die Kategorie-Einstellungen zu löschen!\nSind Sie sicher?
+value="go" ::: value="Gehe"
+alt="Go to page [{($currPage)+1}]" ::: alt="Gehe zur Seite [{($currPage)+1}]"
+Example: ::: Beispiel:
+Description: ::: Beschreibung:
+Workflow: ::: Workflow:
+Remove this parameter ::: Diese Parameter löschen
+milliseconds \(1000 = 1 second\) ::: Millisekunden (1000 = 1 second)
+<td>Value:<br /> ::: <td>Wert:<br />
+Name</td> ::: Name</td>
+Value</td> ::: Wert</td>
+Select</td> ::: Ausgewählt</td>
+milliseconds</a></td> ::: Millisekunden</a></td>
+This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identiy this channel definition. ::: Dies ist der Funktionsname des Channels, benutzt für die Identifikation für JNDI und der Netzdienstleistungen. Der Channel Funktionsname sollte eindeutig diese Channeldefinition identifizieren.
+\[example - ::: [Beispiel -
+>Name:< ::: >Name:<
+StockCharts is a financial services channel offering services such as charting a stocks performance over time. ::: StockCharts ist ein finanzielles DienstleistungsChannel, welches Leistungen auf Zeit anbietet, wie Aktienleistung
+This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ::: Dies ist die Beschreibung des Channels. Diese sind für den Benutzer hilfreich, wenn zusätzliche Informationen über den Channel notwendig sind
+This is the java class for a custom channel. A channel class is mandatory ::: Dies ist die Java-Klasse für einen gewöhnlichen Channel. Eine Channelklasse ist vorgeschrieben
+>page:< ::: >page:<
+Name: Channel Secure ::: Name: Channel Secure
+This indicates whether or not a channel should only be rendered in a secure setting \(i.e. https\). ::: This indicates whether or not a channel should only be rendered in a secure setting (i.e. https).
+Channel Secure: ::: Channel Secure:
+"Secure" ::: "Secure"
+"Not Secure" ::: "Not Secure"

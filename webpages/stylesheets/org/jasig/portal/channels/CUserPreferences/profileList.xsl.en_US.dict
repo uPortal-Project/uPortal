@@ -1,0 +1,21 @@
+en_US ::: en_US
+<td class="uportal-channel-text">Name:</td> ::: <td class="uportal-channel-text">Name:</td>
+This profile is mapped to the current browser ::: This profile is mapped to the current browser
+<td>Description:</td> ::: <td>Description:</td>
+<td>Actions:</td> ::: <td>Actions:</td>
+Map this profile to my current browser ::: Map this profile to my current browser
+Copy this profile to my personal profiles ::: Copy this profile to my personal profiles
+Show details ::: Show details
+Personal Profiles ::: Personal Profiles
+Expand all ::: Expand all
+Condense all ::: Condense all
+Hide details ::: Hide details
+Edit this personal profile ::: Edit this personal profile
+Make a copy of this personal profile ::: Make a copy of this personal profile
+Advanced profile mapping ::: Advanced profile mapping
+Are you sure you want to remove this profile? ::: Are you sure you want to remove this profile?
+Delete this profile ::: Delete this profile
+Create a new personal profile ::: Create a new personal profile
+System Profiles ::: System Profiles
+Edit the preferences for this profile ::: Edit the preferences for this profile
+value=\"Cancel\" ::: value="Cancel"

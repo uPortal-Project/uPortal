@@ -1,0 +1,15 @@
+en_US ::: sv_SE
+>RSS< ::: >RSS<
+>Renders content provided in the popular RSS \(Rich Site Summary\) format< ::: >Visar innehåll från källor i RSS (Rich Site Summary) format<
+>XML Transformation< ::: >XML transformation<
+>Transforms an XML document into a fragment of markup language given a set of XSLT stylesheets specified in a uPortal stylesheet list \(SSL\) file.< ::: >Transformerar ett XML-dokument med en transform given i en stylesheet list-fil (ssl-fil).<
+>Inline Frame< ::: >Inline Frame<
+>Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.< ::: >Visar en HTML-sida i en inline frame. Stöds inte av webläsare äldre än Netscape 6 och Internet Explorer 5.<
+>Image< ::: >Image<
+>Displays an image with optional caption and subcaption< ::: >Visar en bild ev. kompletterat med rubrik och bildtext<
+>Web Proxy< ::: >Web Proxy<
+>Incorporates a dynamic HTML or XML application< ::: >Visar en dynamisk HTML eller XML-applikation<
+>Remote Channel Proxy< ::: >Remote Channel Proxy<
+>Uses SOAP to communicate with and present to the user the contents of a channel living in a remote instance of uPortal< ::: >Visar en kanal från en annan uPortal-instans. Informationen hämtas genom SOAP-anrop.<
+>Applet< ::: >Applet<
+>Displays a java applet< ::: >Visar en Java-applet<

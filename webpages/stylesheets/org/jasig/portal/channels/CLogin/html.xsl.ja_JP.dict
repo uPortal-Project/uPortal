@@ -1,0 +1,23 @@
+en_US ::: ja_JP
+The user name/password combination entered is not recognized. Please try again. ::: ユーザID またはパスワードが間違っています．もう一度入力してください．
+An error occured during authentication. The portal is unable to log you on at this time. Try again later. ::: 認証中にエラーが発生しました．ポータルにログインすることは現在できません．しばらくしてから再度お試しください．
+Welcome Guest - Please Login: ::: 名古屋大学ポータルへようこそ
+Welcome <xsl:value-of select="full-name"/> ::: <xsl:value-of select="full-name"/>さん，ようこそ
+Name: ::: ユーザID：
+Password: ::: パスワード：
+You are currently logged in. ::: 現在，ログインしています．
+value=\"Login\" ::: value="ログイン"
+January ::: 1月
+February ::: 2月
+March ::: 3月
+April ::: 4月
+May ::: 5月
+June ::: 6月
+July ::: 7月
+August ::: 8月
+September ::: 9月
+October ::: 10月
+November ::: 11月
+December ::: 12月
+document\.write\(lmonth \+ ' '\); ::: 
+document\.write\(date \+ ', ' \+ year\); ::: document.write(year + '年' + lmonth + date + '日');

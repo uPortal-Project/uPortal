@@ -1,0 +1,5 @@
+en_US ::: en_US
+Default ::: Default
+Choose a folder to move selected items to and then click Move. ::: Choose a folder to move selected items to and then click Move.
+value=\"Move\" ::: value="Move"
+My Channels ::: My Channels

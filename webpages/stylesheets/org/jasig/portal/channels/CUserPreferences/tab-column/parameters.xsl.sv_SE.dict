@@ -1,0 +1,10 @@
+en_US ::: sv_SE
+Channel Settings: ::: Kanalinställningar:
+Channel Settings ::: Kanalinställningar
+Error Message ::: Felmeddelande
+The channel you have selected has settings which may be modified. ::: Du kan anpassa kanalens inställningar
+Custom Channel Settings ::: Anpassade kanalinställningar
+interface image ::: utfyllnadsbild
+value=\"Back\" ::: value="Tillbaka"
+value=\"Finished\" ::: value="Klar"
+value=\"Cancel\" ::: value="Avbryt"

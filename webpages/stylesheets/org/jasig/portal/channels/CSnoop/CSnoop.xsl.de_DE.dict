@@ -1,0 +1,21 @@
+en_US ::: de_DE
+Request Info ::: Antragsinfo
+HTTP Header Info ::: HTTP Überschrift-Info
+Request Protocol ::: Antrags-Protokoll
+Request Method ::: Antrags-Methode
+Server Name ::: Server Name
+Server Port ::: Server Port
+Request URI ::: Antrag URI
+Context Path ::: Kontext Pfad
+Servlet Path ::: Servlet Pfad
+Query String ::: Query String
+Path Info ::: Pfad Info
+Path Translated ::: Übersetzer Pfad
+Content Length ::: Inhaltslänge
+Content Type ::: Typ des Inhalts
+Remote User ::: Remotebenutzer
+Remote Address ::: Remoteadresse
+Remote Host ::: Remote Host
+Authorization Scheme ::: Authorizationsentwurf
+Locale ::: Lokal
+Referrer ::: Referrer

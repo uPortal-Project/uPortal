@@ -1,0 +1,10 @@
+en_US ::: de_DE
+Channel Settings: ::: Channeleinstellungen:
+Channel Settings ::: Channeleinstellungen
+Error Message ::: Fehlermeldung
+The channel you have selected has settings which may be modified. ::: Der Channel den Sie ausgewählt haben hat Einstellungen die geändert werden müssen.
+Custom Channel Settings ::: Allgemeine Channeleinstellungen
+interface image ::: Schnittstellenbild
+value=\"Back\" ::: value=\"Zurück\"
+value=\"Finished\" ::: value=\"Zu Ende\"
+value=\"Cancel\" ::: value=\"Abbrechen\"

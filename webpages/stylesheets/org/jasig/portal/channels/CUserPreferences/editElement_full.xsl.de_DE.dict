@@ -1,0 +1,11 @@
+en_US ::: de_DE
+Editing <xsl:value-of select="type"/> "<xsl:value-of select="name"/>": ::: Editieren<xsl:value-of select="type"/> "<xsl:value-of select="name"/>":
+value=\"Save\" ::: value=\"Speichern\"
+value=\"Cancel\" ::: value=\"Abbrechen\"
+<b>variable</b> ::: <b>Variabel</b>
+<b>value</b> ::: <b>Wert</b>
+<b>description</b> ::: <b>Beschreibung</b>
+intrinsic <xsl:value-of select="type"/> attributes ::: Tatsächliche <xsl:value-of select="type"/> Attribute
+<xsl:value-of select="type"/> name ::: <xsl:value-of select="type"/> name
+<td colspan="3" align="right"> structure stylesheet attributes</td> ::: <td colspan="3" align="right"> Struktur Stylesheet Attribute</td>
+<td colspan="3" align="right">theme stylesheet attributes</td> ::: <td colspan="3" align="right">Thema Stylesheet Attribute</td>

@@ -1,0 +1,10 @@
+en_US ::: en_US
+Channel Settings: ::: Channel Settings:
+Channel Settings ::: Channel Settings
+Error Message ::: Error Message
+The channel you have selected has settings which may be modified. ::: The channel you have selected has settings which may be modified.
+Custom Channel Settings ::: Custom Channel Settings
+interface image ::: interface image
+value=\"Back\" ::: value="Back"
+value=\"Finished\" ::: value="Finished"
+value=\"Cancel\" ::: value="Cancel"

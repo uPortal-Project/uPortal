@@ -1,0 +1,8 @@
+en_US ::: ja_JP
+The browser build you are currently using has not been previously encountered. ::: 現在使用されているブラウザでは過去にアクセスされたことがありません．
+Please select a fitting profile. ::: 適合するプロファイルを選択してください．
+System Profiles ::: システムプロファイル
+<p class="uportal-channel-subtitle">Action</p> ::: <p class="uportal-channel-subtitle">アクション</p>
+Profile Name ::: プロファイル名
+Profile Description ::: プロファイルの説明
+Map current browser to this profile ::: このプロファイルを現在のブラウザにマップ

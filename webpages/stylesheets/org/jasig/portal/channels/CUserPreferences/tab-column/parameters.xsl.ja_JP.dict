@@ -1,0 +1,10 @@
+en_US ::: ja_JP
+Channel Settings: ::: チャネル設定：
+Channel Settings ::: チャネル設定
+Error Message ::: エラーメッセージ
+The channel you have selected has settings which may be modified. ::: 選択したチャネルには修正できる設定があります．
+Custom Channel Settings ::: カスタムチャネル設定
+interface image ::: インターフェイス画像
+value=\"Back\" ::: value="戻る"
+value=\"Finished\" ::: value="終了"
+value=\"Cancel\" ::: value="キャンセル"

@@ -1,0 +1,13 @@
+en_US ::: ja_JP
+Your guess of <xsl:value-of select="guess"/> was incorrect. ::: 残念! <xsl:value-of select="guess"/> じゃないよ．
+Try again -- guess <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>! ::: もうちょっと <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span> だ!
+You have made <xsl:value-of select="guesses"/> guesses. ::: <xsl:value-of select="guesses"/>回目は失敗だ．
+You got it after <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> tries! ::: 当り! <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span>回目のトライで当てたね!
+The answer was <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br /> ::: 答えは <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span> でした!<br />
+Please play again... ::: もう1回やろうよ...
+I am thinking of a number between ::: 僕は今，
+<xsl:value-of select="minNum"/> and ::: <xsl:value-of select="minNum"/> と
+<xsl:value-of select="maxNum"/>.<br /> ::: <xsl:value-of select="maxNum"/> の間の数を頭に思い浮かべてるんだけど，いくつだと思う?<br />
+What's your guess\? ::: 
+value="Submit" ::: value="送信"
+This is a number guessing game. ::: 数当てゲームやろうよ．

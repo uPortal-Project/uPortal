@@ -1,0 +1,21 @@
+en_US ::: sv_SE
+<td class="uportal-channel-text">Name:</td> ::: <td class="uportal-channel-text" nowrap="nowrap">Namn:</td>
+This profile is mapped to the current browser ::: Profilen är knuten till nuvarande webbläsare
+<td>Description:</td> ::: <td nowrap="nowrap">Beskrivning:</td>
+<td>Actions:</td> ::: <td nowrap="nowrap">Val:</td>
+Map this profile to my current browser ::: Knyt profilen till min nuvarande webbläsare
+Copy this profile to my personal profiles ::: Kopiera profilen till mina personliga profiler
+Show details ::: Visa detaljer
+Personal Profiles ::: Personliga profiler
+Expand all ::: Öppna alla
+Condense all ::: Stäng alla
+Hide details ::: Dölj detaljer
+Edit this personal profile ::: Ändra denna personliga profil
+Make a copy of this personal profile ::: Kopiera denna personliga profil
+Advanced profile mapping ::: Avancerad profilmatchning
+Are you sure you want to remove this profile? ::: Är du säker på att du vill ta bort profilen?
+Delete this profile ::: Ta bort profilen
+Create a new personal profile ::: Skapa en ny personlig profil
+System Profiles ::: Systemprofil
+Edit the preferences for this profile ::: Ändra inställningar för profilen
+value=\"Cancel\" ::: value="Avbryt"

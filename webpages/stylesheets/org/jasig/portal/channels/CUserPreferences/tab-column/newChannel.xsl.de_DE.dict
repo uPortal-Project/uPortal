@@ -1,0 +1,11 @@
+en_US ::: de_DE
+Steps for adding a new channel: ::: Schritte zum Einfügen eines neuen Channels:
+Select a category to browse: ::: Wählen Sie eine Kategorie zum Steuern aus:
+Select All ::: Alles auswählen
+Select a subcategory of "<xsl:value-of select="//category[@ID=$catID]/@name"/>" or select a channel from step 2: ::: Wählen Sie eine Unterkategorie "<xsl:value-of select="//category[@ID=$catID]/@name"/>" oder wählen sie einen Channel von Schritt 2:
+Select a subcategory ::: Wählen Sie eine Unterkategorie
+Get more informaton about the selected channel:<input type="submit" name="channelMoreInfo" value="?" class="uportal-button"/> \[optional\] ::: Erhalt von mehr Informationen über den ausgewählten Channel:<input type="submit" name="channelMoreInfo" value="?" class="uportal-button"/> [optional]
+Add the selected channel: ::: Fügen sie den gewählten Channel hinzu:
+value="Add" ::: value="Hinzufügen"
+No Channel registry data is available at this time... ::: Zur Zeit sind keine Channel-Registrierungsdaten verfügbar...
+Cancel and return ::: Abbrechen und Zurück

@@ -1,0 +1,6 @@
+en_US ::: ja_JP
+This is a history channel, part of the inter-channel communication demonstration. This channel shows the last 10 URLs that have been viewed in the viewer channel. Click on a URL to view it again in the CViewer channel. Note that this will, in turn, cause CViewer to update the history. ::: これは一種の「履歴」チャネルで，チャネル間通信のデモンストレーションでもあります．このチャネルには，ビューアチャネルに表示された最後の 10 URL が表示されています．URL をクリックすると，CViewer チャネルに再度表示されます．この操作により CViewer は履歴を更新します．
+<span class="uportal-label">URL history</span>: ::: <span class="uportal-label">URL 履歴</span>：
+Hitting one of the URLs in the above list will cause CHistory to pass the URL to the CViewer channel.  One way of doing this is internally \(through JNDI contexts, directly to the CViewer channel\).  Another is by using uPortal's URL syntax \(uP_channelTarget\) and passing a "url" parameter to the CURLSelector, so that the selector channel could then signal CViewer. ::: 上記の一覧から URL をクリックすると，CHistory は CViewer チャネルにその URL を渡します．これを実現する1つの方法として考えられるのは， 内部的に行う方法です．もう1つ uPortal の URL シンタックス(uP_channelTarget)を用いる方法で，"url" パラメータが CURLSelector に渡されますので，セレクタチャネルは CViewer に情報を伝えることができます．
+Currently passing URLs externally, using uP_channelTarget: ::: 現在，uP_channelTarget により外部的に URL を渡しています：
+Currently passing URLs internally to CViewer, using JNDI: ::: 現在，JNDI により内部的に CViewer に URL を渡しています：

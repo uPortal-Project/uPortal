@@ -1,0 +1,8 @@
+>en_US< ::: >ja_JP<
+English ::: 英語
+Japanese ::: 日本語
+Swedish ::: スウェーデン語
+German ::: ドイツ語
+Italian ::: イタリア語
+<option value=\"en_US\" selected=\"selected\"> ::: <option value="en_US">
+<option value=\"ja_JP\"> ::: <option value="ja_JP" selected="selected">

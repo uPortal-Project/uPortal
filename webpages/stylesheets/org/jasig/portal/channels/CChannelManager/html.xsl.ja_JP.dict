@@ -1,0 +1,145 @@
+en_US ::: ja_JP
+Selected Categories: ::: 選択されたカテゴリ：
+Selected Groups and\/or People: ::: 選択されたグループまたは人物:
+Options for Managing Channels: ::: チャネル管理オプション：
+Publish a new channel ::: 新規チャネルの出版
+Modify a currently published channel ::: 出版済みチャネルの修正
+Select the type of channel to add by clicking a select icon in the option column ::: オプションカラムにある選択アイコンをクリックし，追加したいチャネルタイプを選択します
+Option</td> ::: オプション</td>
+Channel Type</td> ::: チャネルタイプ</td>
+Description</td> ::: 説明</td>
+interface image ::: インターフェイス画像
+<strong>Custom</strong> ::: <strong>カスタム</strong>
+This channel type allows the publication of channels with no accompanying CPD \(Channel Publishing Document\). It is typically used to publish channels with only one corresponding channel definition. ::: このチャネルタイプを使用すると，CPD(Channel Publishing Document)を伴わないチャネルを出版することができます．通常，チャネル定義が1つしかないチャネルの出版に使用されます．
+Modify a currently published channel: ::: 現在出版されているチャネルの修正
+Select an option by clicking one of the icons in the table below. ::: 下のテーブルのアイコンをクリックしてオプションを選択します．
+Cancel and return ::: キャンセルして戻る
+Name: Channel Title ::: 名称： チャネルタイトル
+Example: StockCharts ::: 例： StockCharts
+This is the title of the channel. Typically, this text appears as the header when the channel is rendered. Typically, title and name are the same. ::: これはチャネルのタイトルです．通常，チャネルがレンダリングされると，このテキストがヘッダとして表示されます．たいていの場合，タイトルと名前は同じです．
+This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same. ::: これはチャネルの名前です．ユーザがチャネルが購読すると，そのチャネルの名前としてこれが用いられます．たいていの場合，タイトルと名前は同じです．
+>Channel Name< ::: >チャネル名<
+Edit settings for \{\@ID\} ::: {@ID} 設定の編集
+Remove published channel - \{\@ID\} ::: 出版済みのチャネル {@ID} の削除
+No channels to display ::: 表示するチャネルがありません
+>Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="\$recsPerPage"\/><\/xsl:attribute><\/input>records at a time. ::: ><input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input> 個のレコードを一度に表示．
+alt="Previous" ::: alt="前"
+Go to page \[\{\(\/\/currentPage\)-1\}\] ::: ページ [{(//currentPage)-1}] へ
+Go to page \[\{\(\/\/currentPage\)\+1\}\] ::: ページ [{(//currentPage)+1}] へ
+Go to page \[\{\(\$currPage\)\+1\}\] ::: ページ [{($currPage)+1}] へ
+alt="Next" ::: alt="次"
+Channel Parameters ::: チャネルパラメータ
+Settings \[one\]: ::: 設定 [1]：
+Complete the Settings form below ::: 以下のフォームに設定を入力します
+User can<br/> Modify ::: ユーザは<br/> 修正可能
+width="16" height="8"/>Options ::: width="16" height="8"/>オプション
+General Settings ::: 全体設定
+Display help information ::: ヘルプ情報の表示
+\[example - StockCharts\] ::: [例 - StockCharts]
+Name: Channel Name\\n\\nExample: StockCharts\\n\\nDescription: This is the name of the channel. When users subscribe to the channel this is the name they will see. Typically, title and name are the same. ::: 名前： チャネルタイトル\n\n例： StockCharts\n\n説明： これはチャネルのタイトルです．通常，ユーザがチャネルを購読すると，ユーザが見ることになる名前です．ヘッダとして表示されます．たいていの場合，タイトルと名前は同じです．
+Name: Channel Description\\n\\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\\n\\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ::: 名前： チャネルの説明\n\n例： StockCharts はフィナンシャルサービスチャネルで，時間ごとの株式情報を表示するサービス等を提供します．\n\nこれがチャネルの説明です．チャネルに関する追加情報をユーザに提示する際に使用すると有用です．
+Channel Description: ::: チャネルの説明
+Name: Channel Timeout ::: 名称： チャネルタイムアウト
+Example: 10000 ::: 例： 10000
+Description: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering. ::: 説明： これは，ポータルがチャネルのレンダリングを停止するまでどのくらいレンダリングを行うかをミリ秒で指定します．
+Name: Channel Class ::: チャネルクラス
+Example: edu.myuniversity.portal.channels.myChannel.MyChannelClass ::: 例： edu.myuniversity.portal.channels.myChannel.MyChannelClass
+Description: This is the java class for a custom channel. A channel class is mandatory ::: 説明： これはカスタムチャネル用の Java クラスです．チャネルクラスは必須です．
+value="&lt; Back" ::: value="&lt; 戻る"
+value="Next &gt;" ::: value="次 &gt;"
+value="Review" ::: value="確認"
+value="Cancel" ::: value="キャンセル"
+value="Finished" ::: value="完了"
+Step Name ::: ステップ名
+<xsl:otherwise>Description</xsl:otherwise> ::: <xsl:otherwise>説明</xsl:otherwise>
+\[example - <xsl:value-of select="."/>\] ::: [例 - <xsl:value-of select="."/>]
+<span class="uportal-text-small">Description: ::: <span class="uportal-text-small">説明：
+Select channel controls in the form below ::: 下のフォームからチャネルコントロールを選択します
+Channel Controls ::: チャネルコントロール
+<td nowrap="nowrap" align="center">Icon</td> ::: <td nowrap="nowrap" align="center">アイコン</td>
+<td width="100%">Description</td> ::: <td width="100%">説明</td>
+<strong>Editable</strong> ::: <strong>編集可能</strong>
+when selected, passes edit events ::: 選択すると，編集イベントが渡されます
+Editable<br/> ::: 編集可能
+Has Help ::: ヘルプあり
+when selected, passes help events ::: 選択すると，ヘルプイベントが渡されます
+Has About ::: バージョン情報あり
+when selected, passes about events ::: 選択すると，バージョン情報イベントが渡されます
+<strong>Categories:</strong> ::: <strong>カテゴリ：</strong>
+Browse and add the categories in which this channel will appear ::: このチャネルが表示されるカテゴリをブラウズし追加します
+Select All ::: すべて選択
+Applications ::: アプリケーション
+Development ::: 開発
+News1 ::: ニュース1
+from "All catagories" ::: 「すべてのカテゴリ」から
+Begin Channel Listing ::: チャネル一覧の開始
+-This category contains no channels- ::: -このカテゴリにはチャネルがありません-
+Get more informaton about the selected channel: ::: 選択されたチャネルに関する詳しい情報を取得
+\[optional\] ::: [任意]
+Add the selected channel: ::: 選択されたチャネルを追加：
+value="Add" ::: value="追加"
+No Channel registry data is available at this time... ::: チャネルレジストリデータが現時点では利用できません...
+Selected Category ::: 選択されたカテゴリ
+No categories have been selected ::: カテゴリが選択されていません
+Roles: ::: 役割：
+Select roles which are allowed access to this channel. <em>\*\*If no roles are checked all roles will have access to this channel. ::: このチャネルにアクセスを許可する役割を選択します．<em>** 役割が選択されない場合は，すべての役割がこのチャネルにアクセスできます．
+There are no roles to display ::: 表示する役割がありません
+Review: ::: 見直し：
+Please review the settings for accuracy \(click workflow icons or items in the table below to edit settings\) ::: 設定が正しいかどうか確認してください （設定を編集する場合は下のテーブルのワークフローアイコンまたはアイテムをクリックします）
+User can<br /> ::: ユーザによる<br />
+modify\?</td> ::: 修正を許可</td>
+<td nowrap="nowrap">Name</td> ::: <td nowrap="nowrap">名前</td>
+<td width="100%">Value</td> ::: <td width="100%">値</td>
+Channel Type: ::: タイプ：
+Channel Title: ::: タイトル：
+Channel Name: ::: 名前：
+Name: Channel Functional Name: ::: ファンクション名：
+Name: Channel Functional Name ::: ファンクション名
+Channel Functional Name: ::: ファンクション名：
+Name: Channel Description: ::: 説明：
+Name: Channel Description ::: 説明
+Channel Class: ::: クラス：
+Channel Timeout: ::: タイムアウト：
+User cannot modify ::: ユーザは修正不可
+Parameter: ::: パラメータ：
+User can modify ::: ユーザは修正可能
+Selected Roles: ::: 選択された役割：
+All roles have access to this channel ::: すべての役割がこのチャネルにアクセスできます
+Selected Groups: ::: 選択されたグループ：
+Add Parameters: ::: パラメータの追加：
+Complete the form below to add channel parameters ::: チャネルのパラメータを追加する場合は以下のフォームに入力します
+value="add" ::: value="追加"
+<td nowrap="nowrap">Value</td> ::: <td nowrap="nowrap">値</td>
+No parameters ::: パラメータなし
+<strong>Groups:</strong> ::: <strong>グループ：</strong>
+Browse and add the groups that have access to this channel ::: このチャネルがアクセスできるグループをブラウズし追加します．
+No Groups data is available at this time... ::: グループデータが現時点では利用できません...
+User can<br/>Modify ::: ユーザは<br/>修正可能
+Remove this group ::: このグループを削除
+No Filter ::: フィルタなし
+Filter by category ::: カテゴリによるフィルタ
+You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this? ::: チャネルを削除すると，そのロール設定およびカテゴリ設定も削除されます．よろしいですか?
+value="go" ::: value="Go"
+alt="Go to page [{($currPage)+1}]" ::: alt="ページ [{($currPage)+1}] へ"
+Example: ::: 例：
+Description: ::: 説明：
+Workflow: ::: 処理の流れ：
+Remove this parameter ::: このパラメータを削除
+milliseconds \(1000 = 1 second\) ::: ミリ秒 (1000ミリ秒 = 1秒)
+<td>Value:<br /> ::: <td>値：<br />
+Name</td> ::: 名前</td>
+Value</td> ::: 値</td>
+Select</td> ::: 選択</td>
+milliseconds</a></td> ::: ミリ秒</a></td>
+This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identiy this channel definition. ::: これは，JNDI 参照や Web サービス用の認証のために使用されるチャネルのファンクション名です．チャネルファンクション名によりこのチャネル定義が一様に定まるようにすべきです．
+\[example - ::: [例 -
+>Name:< ::: >名前：<
+StockCharts is a financial services channel offering services such as charting a stocks performance over time. ::: StockCharts はフィナンシャルサービスチャネルで株価を時系列チャートで表示します．
+This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ::: これはチャネルの説明です．チャネルに関する追加情報をユーザに提示すると役に立つときに使用されます．
+This is the java class for a custom channel. A channel class is mandatory ::: これはカスタムチャネル用の Java クラスです．この項目は必須です．
+>page:< ::: >ページ：<
+Name: Channel Secure ::: 名前： チャネルセキュア
+This indicates whether or not a channel should only be rendered in a secure setting \(i.e. https\). ::: セキュア設定（例： https）によりレンダリングされるべきかどうかを指定します．
+Channel Secure: ::: チャネルセキュア：
+"Secure" ::: "セキュア"
+"Not Secure" ::: "セキュアでない"

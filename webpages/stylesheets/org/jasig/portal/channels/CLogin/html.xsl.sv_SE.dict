@@ -1,0 +1,23 @@
+en_US ::: sv_SE
+The user name/password combination entered is not recognized. Please try again. ::: Felaktigt användarnamn och/eller lösenord. Försök igen.
+An error occured during authentication. The portal is unable to log you on at this time. Try again later. ::: Det gick inte att logga in dig för ögonblicket. Var god försök senare.
+Welcome Guest - Please Login: ::: Välkommen - Vänligen logga in:
+Welcome <xsl:value-of select="full-name"/> ::: Välkommen <xsl:value-of select="full-name"/>
+Name: ::: Användarnamn
+Password: ::: Lösenord
+You are currently logged in. ::: Du är inloggad.
+value=\"Login\" ::: value="Login"
+January ::: 01
+February ::: 02
+March ::: 03
+April ::: 04
+May ::: 05
+June ::: 06
+July ::: 07
+August ::: 08
+September ::: 09
+October ::: 10
+November ::: 11
+December ::: 12
+document\.write\(lmonth \+ ' '\); ::: 
+document\.write\(date \+ ', ' \+ year\); ::: document.write(year + '-' + lmonth + '-' + date);

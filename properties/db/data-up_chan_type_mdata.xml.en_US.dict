@@ -1,0 +1,15 @@
+en_US ::: en_US
+>RSS< ::: >RSS<
+>Renders content provided in the popular RSS \(Rich Site Summary\) format< ::: >Renders content provided in the popular RSS (Rich Site Summary) format<
+>XML Transformation< ::: >XML Transformation<
+>Transforms an XML document into a fragment of markup language given a set of XSLT stylesheets specified in a uPortal stylesheet list \(SSL\) file.< ::: >Transforms an XML document into a fragment of markup language given a set of XSLT stylesheets specified in a uPortal stylesheet list (SSL) file.<
+>Inline Frame< ::: >Inline Frame<
+>Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.< ::: >Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.<
+>Image< ::: >Image<
+>Displays an image with optional caption and subcaption< ::: >Displays an image with optional caption and subcaption<
+>Web Proxy< ::: >Web Proxy<
+>Incorporates a dynamic HTML or XML application< ::: >Incorporates a dynamic HTML or XML application<
+>Remote Channel Proxy< ::: >Remote Channel Proxy<
+>Uses SOAP to communicate with and present to the user the contents of a channel living in a remote instance of uPortal< ::: >Uses SOAP to communicate with and present to the user the contents of a channel living in a remote instance of uPortal<
+>Applet< ::: >Applet<
+>Displays a java applet< ::: >Displays a java applet<

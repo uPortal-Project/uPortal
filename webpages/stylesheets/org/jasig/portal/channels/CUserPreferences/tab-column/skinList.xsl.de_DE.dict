@@ -1,0 +1,10 @@
+en_US ::: de_DE
+Skin Selection: ::: Skin Selection:
+Select a portal skin below, then click \[Apply\]. ::: Wählen Sie einen Portalskin unten aus und klicken dann [Apply].
+interface image ::: Schnittstellenbild
+<td class="uportal-channel-table-header">Name:</td> ::: <td class="uportal-channel-table-header">Name:</td>
+Description: ::: Beschreibung:
+value="Apply" ::: value="Anwenden"
+value="Cancel" ::: value="Abbrechen"
+Option ::: Option
+Thumbnail ::: Thumbnail

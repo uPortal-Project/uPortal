@@ -1,0 +1,68 @@
+en_US ::: ja_JP
+<?xml version="1.0" encoding="ascii"?> ::: <?xml version="1.0" encoding="UTF-8"?>
+Interface image ::: インターフェイス画像
+interface image ::: インターフェイス画像
+This column is locked ::: このカラムはロックされています
+This channel is locked ::: このチャネルはロックされています
+This tab is locked ::: このタブはロックされています
+Click to move this column left ::: クリックするとこのカラムが左に移動されます
+Click to move this column right ::: クリックするとこのカラムが右に移動されます
+Click to move this tab right ::: クリックするとこれが右に移動されます
+Click to move this tab left ::: クリックするとこれが左に移動されます
+click to add a new column in this location \[after \{\@ID\}\] ::: クリックするとこの場所に新しいカラムが追加されます[{@ID}の後]
+Click to add a new column in this location \[after \{\@ID\}\] ::: クリックするとこの場所に新しいカラムが追加されます[{@ID}の後]
+click to add a new column in this location \[before \{\@ID\}\] ::: クリックするとこの場所に新しいカラムが追加されます[{@ID}の前]
+Click to add a new column in this location \[before \{\@ID\}\] ::: クリックするとこの場所に新しいカラムが追加されます[{@ID}の前]
+Click to add a new channel in this location \[after \{\@ID\}\] ::: クリックするとこの場所に新しいチャネルが追加されます[{@ID}の後]
+Click to add a new channel in this location \[before \{\@ID\}\] ::: クリックするとこの場所に新しいチャネルが追加されます[{@ID}の前]
+click to move the selected column to this location \[before \{\@ID\}\] ::: クリックするとこの場所に選択されたカラムが移動されます[{@ID}の前]
+Click to move the selected column to this location \[after \{\@ID\}\] ::: クリックするとこの場所に選択されたカラムが移動されます[{@ID}の後]
+click to move the selected column to this location \[after \{\@ID\}\] ::: クリックするとこの場所に選択されたカラムが移動されます[{@ID}の後]
+Click to move the selected channel to this location \[after \{\@ID\}\] ::: クリックするとこの場所に選択されたチャネルが移動されます[{@ID}の後]
+Click to move the selected channel to this location \[before \{\@ID\}\] ::: クリックするとこの場所に選択されたチャネルが移動されます[{@ID}の前]
+Click to add a new column here ::: クリックするとここに新しいカラムが追加されます
+Click to add a new tab here ::: クリックするとここに新しいタブが追加されます
+Click to add a new channel here ::: クリックするとここに新しいチャネルが追加されます
+Click to select this column ::: クリックするとこのカラムが選択されます
+No Channel Name ::: チャネル名なし
+Click to move this channel up ::: クリックするとこのチャネルが上に移動されます
+Click to move this channel down ::: クリックするとこのチャネルが下に移動されます
+Click to remove this channel ::: クリックするとこのチャネルが削除されます
+Click to move this channel to the top of the previous column ::: クリックするとこのチャネルが前のカラムのトップに移動されます
+Click to move this channel to the top of the next column ::: クリックするとこのチャネルが次のカラムのトップに移動されます
+Click to select this channel ::: クリックするとこのチャネルが選択されます
+Options for modifying Preferences: ::: 設定の修正：
+Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the ::: タブを操作するか，または，現在のタブにあるエレメントを選択します．例えば，
+buttons to add a new channel in that location. ::: ボタンをクリックすると，新しいチャネルをその場所に追加します．
+Choose a skin ::: スキン選択
+Manage profiles \[advanced\] ::: プロファイル管理（上級者用）
+Options for modifying this tab: ::: タブの修正オプション：
+Options for modifying this column: ::: カラムの修正オプション：
+Options for modifying this channel: ::: チャネルの修正オプション：
+Make this the default \"Active Tab\" \(the tab that is selected when you log into the portal\) ::: これをデフォルトの「アクティブタブ」（ポータルにログインした際に選択されるタブ）にする
+Rename the tab: ::: タブの名前変更：
+Rename this channel: ::: チャネルの名前変更：
+value="Rename" ::: value="名前変更"
+Move this tab to a different position: \(select below then click Move button\) ::: このタブを違う場所へ移動：（下で選択し，「移動」ボタンをクリックします）
+Move this channel to a different location ::: このチャネルを違う場所へ移動
+Move this column to a different location ::: このカラムを違う場所へ移動
+Unlock this tab ::: タブのロックを解除
+Lock this tab ::: タブをロック
+Delete this tab ::: タブを削除
+Delete this channel ::: チャネルを削除
+Delete this column ::: カラムを削除
+Cancel and return ::: キャンセルして戻る
+Change the width of the columns \(column widths should total 100\%\): ::: カラムの幅を変更（幅は合計で100%になるようにします）：
+Set the width of the columns \(column widths should total 100\%\): ::: カラムの幅を設定（幅は合計で100%になるようにします）：
+value="Submit" ::: value="送信"
+Modify this channel's parameters ::: このチャネルのパラメータを修正
+Steps for adding this new tab: ::: この新しいタブを追加するためのステップ：
+Steps for adding this new column: ::: この新しいカラムを追加するためのステップ：
+Select a position for the tab: ::: タブの位置を選択します：
+Options for moving this column: ::: このカラムの移動オプション：
+Options for moving this channel: ::: このチャネルの移動オプション：
+Select one of the highlighted locations below, or select a different tab on which to place this column ::: ハイライトされている場所を1つ選択するか，このカラムを配置する他のタブを選択します
+Select one of the highlighted locations below, or select a different tab on which to place this channel ::: ハイライトされている場所を1つ選択するか，このチャネルを配置する他のタブを選択します
+The following error was reported: ::: 次のエラーが報告されました：
+Submit the choices: ::: 選択結果の送信
+Are you sure you want to remove this channel? ::: このチャネルを移動しますか?

@@ -1,0 +1,13 @@
+en_US ::: ja_JP
+uPortal channels have access to user attributes ::: 
+via the <span class="uportal-channel-code">org.jasig.portal.security.IPerson</span> object. ::: uPortal チャネルは，<span class="uportal-channel-code">org.jasig.portal.security.IPerson</span> オブジェクトを通じてユーザ属性にアクセスできます．
+Attribute names are defined in the ::: 属性名は，
+<a href="http://www.educause.edu/eduperson/">eduPerson object class</a> version 1.0. ::: <a href="http://www.educause.edu/eduperson/">eduPerson object class</a> バージョン1.0 で定義されています．
+uPortal implementors are to map these standard attribute names to ::: uPortal のインプリメンタは，人に関するディレクトリまたはデータベースでのローカル情報にこれらの標準的な名前をマップします．
+local names in their person directory or database.  Mappings are contained in ::: 
+the <span class="uportal-channel-code">properties/PersonDirs.xml</span> file. ::: マッピングは，<span class="uportal-channel-code">properties/PersonDirs.xml</span> ファイルに含まれています．
+Att. Name ::: 属性名
+Att. Value ::: 属性値
+Available attributes: ::: 利用可能な属性：
+Unavailable attributes: ::: 利用不可能な属性：
+\[Not available\] ::: [利用不可]

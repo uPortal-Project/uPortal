@@ -1,0 +1,13 @@
+en_US ::: en_US
+Your guess of <xsl:value-of select="guess"/> was incorrect. ::: Your guess of <xsl:value-of select="guess"/> was incorrect.
+Try again -- guess <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>! ::: Try again -- guess <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!
+You have made <xsl:value-of select="guesses"/> guesses. ::: You have made <xsl:value-of select="guesses"/> guesses.
+You got it after <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> tries! ::: You got it after <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> tries!
+The answer was <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br /> ::: The answer was <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
+Please play again... ::: Please play again...
+I am thinking of a number between ::: I am thinking of a number between
+<xsl:value-of select="minNum"/> and ::: <xsl:value-of select="minNum"/> and
+<xsl:value-of select="maxNum"/>.<br /> ::: <xsl:value-of select="maxNum"/>.<br />
+What's your guess\? ::: What's your guess?
+value="Submit" ::: value="Submit"
+This is a number guessing game. ::: This is a number guessing game.
