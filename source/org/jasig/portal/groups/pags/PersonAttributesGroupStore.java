@@ -37,10 +37,14 @@ package org.jasig.portal.groups.pags;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.jasig.portal.EntityIdentifier;
@@ -74,8 +78,10 @@ import org.w3c.dom.Text;
  * @version $Revision$
  */
 public class PersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
+   private Map groupDefinitions;
    private Map groups;
-   
+   private Map containingGroups;
+      
    public PersonAttributesGroupStore() {
       Document config = null;
       try {
@@ -84,7 +90,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          throw new RuntimeException("PersonAttributesGroupStore: Unable to find configuration configuration document");
       }
       init(config);
-      LogService.log(LogService.DEBUG, "PersonAttributeGroupStore: initialized with "+groups.size()+" groups");
+      LogService.log(LogService.DEBUG, "PersonAttributeGroupStore: initialized with "+groupDefinitions.size()+" groups");
    }
    
    public PersonAttributesGroupStore(Document config) {
@@ -97,18 +103,46 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
     * @param config xml config document
     */
    private void init(Document config) {
-      groups = new Hashtable();
+      groupDefinitions = new HashMap();
+      groups = new HashMap();
+      containingGroups = new HashMap();
       config.normalize();
       Element groupStoreElement = config.getDocumentElement();
       NodeList groupElements = groupStoreElement.getChildNodes();
       for (int i = 0; i < groupElements.getLength(); i++) {
          if (groupElements.item(i) instanceof Element) {
-            initGroup((Element)groupElements.item(i));
+            initGroupDef((Element)groupElements.item(i));
          }
       }
+      try 
+          { initGroups(); }
+      catch ( GroupsException ge )
+      {
+          LogService.log(LogService.ERROR, "PersonAttributeGroupStore.init(): " + 
+            "problem initializing groups: " + ge.getMessage());
+          throw new RuntimeException(ge);
+      }
+   }
+   /**
+    * Iterates over the groupDefinitions Collection and creates the
+    * corresponding groups.  Then, caches parents for each child group.
+    */
+   private void initGroups() throws GroupsException {
+       Iterator i = null;
+       Collection groupDefs = groupDefinitions.values();
+       
+       for ( i=groupDefs.iterator(); i.hasNext(); )
+       {
+           GroupDefinition groupDef = (GroupDefinition) i.next();
+           IEntityGroup group = new EntityGroupImpl(groupDef.getKey(), IPerson.class);
+           group.setName(groupDef.getName());
+           group.setDescription(groupDef.getDescription());
+           cachePut(group);
+       }
+       cacheContainingGroupsForGroups();
    }
    
-   private void initGroup(Element groupElement) {
+   private void initGroupDef(Element groupElement) {
       GroupDefinition groupDef = new GroupDefinition();
       NodeList children = groupElement.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
@@ -124,7 +158,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
                groupDef.setKey(text);
             } else if (tagName.equals("group-name")) {
                groupDef.setName(text);
-            } else if (tagName.equals("description")) {
+            } else if (tagName.equals("group-description")) {
                groupDef.setDescription(text);
             } else if (tagName.equals("selection-test")) {
                NodeList testGroups = element.getChildNodes();
@@ -168,14 +202,14 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
             }
          }
       }
-      groups.put(groupDef.getKey(), groupDef);
+      groupDefinitions.put(groupDef.getKey(), groupDef);
    }
    
    private void addMemberKeys(GroupDefinition groupDef, Element members) {
       NodeList children = members.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
          Node node = children.item(i);
-         if (node instanceof Element && node.getNodeName().equals("member")) {
+         if (node instanceof Element && node.getNodeName().equals("member-key")) {
             Element member = (Element)node;
             member.normalize();
             if (member.getFirstChild() instanceof Text) {
@@ -196,15 +230,25 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          return null;
       }
    }
-
-   public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
-      GroupDefinition groupDef = (GroupDefinition)groups.get(group.getKey());
+   
+   private IEntityGroup cacheGet(String key) {
+        return (IEntityGroup) groups.get(key);
+    }
+   private void cachePut(IEntityGroup group) {
+       groups.put(group.getLocalKey(), group);
+   }
+   
+   public boolean contains(IEntityGroup group, IGroupMember member) 
+   throws GroupsException {
+      GroupDefinition groupDef = (GroupDefinition)groupDefinitions.get(group.getLocalKey());
       if (member.isGroup()) {
-         return groupDef.hasMember(member.getKey());
+         String key = ((IEntityGroup)member).getLocalKey();
+         return groupDef.hasMember(key);
       } else {
          // get the IPerson for the member and test
          IPerson person = PersonDirectory.getRestrictedPerson(member.getKey());
-         return groupDef.test(person);
+         // return groupDef.test(person);
+         return testRecursively(groupDef, person);
       }
    }
 
@@ -213,33 +257,97 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    }
 
    public IEntityGroup find(String key) throws GroupsException {
-      GroupDefinition groupDef = (GroupDefinition)groups.get(key);
-      IEntityGroup group = new EntityGroupImpl(groupDef.getKey(), IPerson.class);
-      group.setName(groupDef.getName());
-      group.setDescription(groupDef.getDescription());
-      return group;
+      return (IEntityGroup)groups.get(key);
+   }
+   
+   private void cacheContainingGroupsForGroups() throws GroupsException
+   {
+       Iterator i = null;
+       // Find potential parent groups, those whose GroupDefinitions have members.
+       List parentGroupsList = new ArrayList();
+       for (i=groupDefinitions.values().iterator(); i.hasNext();)
+       {
+           GroupDefinition groupDef = (GroupDefinition) i.next();
+           if (! groupDef.members.isEmpty())
+               { parentGroupsList.add(cacheGet(groupDef.getKey())); }
+       }
+       IEntityGroup[] parentGroupsArray = (IEntityGroup[]) 
+         parentGroupsList.toArray(new IEntityGroup[parentGroupsList.size()]);
+         
+       // Check each group for its parents and cache the references.
+       for (i=groups.values().iterator(); i.hasNext();)
+       {
+           IEntityGroup childGroup = (IEntityGroup) i.next();
+           parentGroupsList = new ArrayList(5);
+           for (int idx=0; idx<parentGroupsArray.length; idx++)
+           {
+               if ( contains(parentGroupsArray[idx], childGroup) )
+                   { parentGroupsList.add(parentGroupsArray[idx]); } 
+           }
+           containingGroups.put(childGroup.getLocalKey(), parentGroupsList);
+       }
    }
 
-   public Iterator findContainingGroups(IGroupMember gm) throws GroupsException {
-      List results = new ArrayList();
-      for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
-         GroupDefinition groupDef = (GroupDefinition)i.next();
-         if (gm.isGroup()) {
-            if (groupDef.hasMember(gm.getKey())) {
-               results.add(new EntityGroupImpl(groupDef.getKey(), IPerson.class));
-            }
-         } else {
-            IPerson person = PersonDirectory.getRestrictedPerson(gm.getKey());
-            if (groupDef.test(person)) {
-               results.add(new EntityGroupImpl(groupDef.getKey(), IPerson.class));
-            }
-         }
-      }
-      return results.iterator();
+   private boolean testRecursively(GroupDefinition groupDef, IPerson person)
+   throws GroupsException {
+       if ( ! groupDef.test(person) )
+           { return false;}
+       else
+       {
+           IEntityGroup group = cacheGet(groupDef.getKey());
+           Set allParents = primGetAllContainingGroups(group, new HashSet());
+           boolean testPassed = true;
+           for (Iterator i=allParents.iterator(); i.hasNext() && testPassed;)
+           {
+               IEntityGroup parentGroup = (IEntityGroup) i.next();
+               GroupDefinition parentGroupDef = 
+                 (GroupDefinition) groupDefinitions.get(parentGroup.getLocalKey());
+               testPassed = parentGroupDef.test(person);               
+           }
+           return testPassed;
+       }
+   }
+   private java.util.Set primGetAllContainingGroups(IEntityGroup group, Set s)
+   throws GroupsException
+   {
+       Iterator i = findContainingGroups(group);
+       while ( i.hasNext() )
+       {
+           IEntityGroup parentGroup = (IEntityGroup) i.next();
+           s.add(parentGroup);
+           primGetAllContainingGroups(parentGroup, s);
+       }
+       return s;
+   }
+
+   public Iterator findContainingGroups(IGroupMember member) 
+   throws GroupsException 
+   {
+      return (member.isEntity()) 
+        ? findContainingGroupsForEntity((IEntity)member)
+        : findContainingGroupsForGroup((IEntityGroup)member);
+   }
+   
+   private Iterator findContainingGroupsForGroup(IEntityGroup group)
+   {
+       List parents = (List)containingGroups.get(group.getLocalKey());
+       return (parents !=null)
+         ? parents.iterator()
+         : Collections.EMPTY_LIST.iterator();
+   }
+   private Iterator findContainingGroupsForEntity(IEntity member)
+   throws GroupsException {
+       List results = new ArrayList();
+       for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
+          IEntityGroup group = (IEntityGroup)i.next();
+          if ( contains(group, member)) 
+              { results.add(group); }
+       }
+       return results.iterator();
    }
 
    public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
-      return new ArrayList().iterator();
+      return Collections.EMPTY_LIST.iterator();
    }
 
    public ILockableEntityGroup findLockable(String key) throws GroupsException {
@@ -248,11 +356,11 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
 
    public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
       List keys = new ArrayList();
-      for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
-         GroupDefinition groupDef = (GroupDefinition)i.next();
-         if (groupDef.hasMember(group.getKey())) {
-            keys.add(groupDef.getKey());
-         }
+      GroupDefinition groupDef = (GroupDefinition) groupDefinitions.get(group.getLocalKey());
+      if (groupDef != null)
+      {
+          for (Iterator i = groupDef.members.iterator(); i.hasNext(); ) 
+              { keys.add((String) i.next()); }
       }
       return (String [])keys.toArray(new String[]{});
    }
@@ -261,7 +369,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       String[] keys = findMemberGroupKeys(group);
       List results = new ArrayList();
       for (int i = 0; i < keys.length; i++) {
-         results.add(new EntityGroupImpl(keys[i], IPerson.class));
+         results.add(cacheGet(keys[i]));
       }
       return results.iterator();
    }
@@ -275,33 +383,33 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       switch (method) {
          case IS:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
-               GroupDefinition groupDef = (GroupDefinition)i.next();
-               if (groupDef.getName().equals(query)) {
-                  results.add(new EntityIdentifier(groupDef.getKey(), IEntityGroup.class));
+               IEntityGroup g = (IEntityGroup)i.next();
+               if (g.getName().equals(query)) {
+                  results.add(g.getEntityIdentifier());
                }
             }
             break;
          case STARTS_WITH:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
-               GroupDefinition groupDef = (GroupDefinition)i.next();
-               if (groupDef.getName().startsWith(query)) {
-                  results.add(new EntityIdentifier(groupDef.getKey(), IEntityGroup.class));
+               IEntityGroup g = (IEntityGroup)i.next();
+               if (g.getName().startsWith(query)) {
+                  results.add(g.getEntityIdentifier());
                }
             }
             break;
          case ENDS_WITH:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
-               GroupDefinition groupDef = (GroupDefinition)i.next();
-               if (groupDef.getName().endsWith(query)) {
-                  results.add(new EntityIdentifier(groupDef.getKey(), IEntityGroup.class));
+               IEntityGroup g = (IEntityGroup)i.next();
+               if (g.getName().endsWith(query)) {
+                  results.add(g.getEntityIdentifier());
               }
             }
             break;
          case CONTAINS:
             for (Iterator i = groups.values().iterator(); i.hasNext(); ) {
-               GroupDefinition groupDef = (GroupDefinition)i.next();
-               if (groupDef.getName().indexOf(query) != -1) {
-                  results.add(new EntityIdentifier(groupDef.getKey(), IEntityGroup.class));
+               IEntityGroup g = (IEntityGroup)i.next();
+               if (g.getName().indexOf(query) != -1) {
+                  results.add(g.getEntityIdentifier());
               }
             }
             break;
@@ -359,6 +467,8 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          testGroups.add(testGroup);
       }
       public boolean test(IPerson person) {
+         if (testGroups.isEmpty())
+             return true;
          for (Iterator i = testGroups.iterator(); i.hasNext(); ) {
             TestGroup testGroup = (TestGroup)i.next();
             if (testGroup.test(person)) {
@@ -366,6 +476,9 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
             }
          }
          return false;
+      }
+      public String toString() {
+          return "GroupDefinition " + key + " (" + name + ")";
       }
    }
    
