@@ -574,8 +574,7 @@ public class DbLoader
     parser.parse(propertiesUri);
   }
 
-  static class PropertiesHandler
-    extends DefaultHandler
+  static class PropertiesHandler extends DefaultHandler
   {
     private static StringBuffer charBuff = null;
 
@@ -851,6 +850,8 @@ public class DbLoader
 
   static class DataHandler extends DefaultHandler
   {
+    private static StringBuffer charBuff = null;
+
     private static boolean insideData = false;
     private static boolean insideTable = false;
     private static boolean insideName = false;
@@ -880,62 +881,70 @@ public class DbLoader
 
     public void startElement (String namespaceURI, String localName, String qName, Attributes atts)
     {
-        if (qName.equals("data"))
-          insideData = true;
-        else if (qName.equals("table"))
-        {
-          insideTable = true;
-          table = new Table();
-        }
-        else if (qName.equals("name"))
-          insideName = true;
-        else if (qName.equals("row"))
-        {
-          insideRow = true;
-          row = new Row();
-        }
-        else if (qName.equals("column"))
-        {
-          insideColumn = true;
-          column = new Column();
-        }
-        else if (qName.equals("value"))
-          insideValue = true;
+      charBuff = new StringBuffer();
+
+      if (qName.equals("data"))
+        insideData = true;
+      else if (qName.equals("table"))
+      {
+        insideTable = true;
+        table = new Table();
+      }
+      else if (qName.equals("name"))
+        insideName = true;
+      else if (qName.equals("row"))
+      {
+        insideRow = true;
+        row = new Row();
+      }
+      else if (qName.equals("column"))
+      {
+        insideColumn = true;
+        column = new Column();
+      }
+      else if (qName.equals("value"))
+        insideValue = true;
     }
 
     public void endElement (String namespaceURI, String localName, String qName)
     {
-        if (qName.equals("data"))
-          insideData = false;
-        else if (qName.equals("table"))
-          insideTable = false;
-        else if (qName.equals("name"))
-          insideName = false;
-        else if (qName.equals("row"))
-        {
-          insideRow = false;
+      if (qName.equals("data"))
+        insideData = false;
+      else if (qName.equals("table"))
+        insideTable = false;
+      else if (qName.equals("name"))
+      {
+        insideName = false;
 
-          if (populateTables)
-            insertRow(table, row);
-        }
-        else if (qName.equals("column"))
-        {
-          insideColumn = false;
-          row.addColumn(column);
-        }
-        else if (qName.equals("value"))
-          insideValue = false;
+        if (!insideColumn) // table name
+          table.setName(charBuff.toString());
+        else // column name
+          column.setName(charBuff.toString());
+      }
+      else if (qName.equals("row"))
+      {
+        insideRow = false;
+
+        if (populateTables)
+          insertRow(table, row);
+      }
+      else if (qName.equals("column"))
+      {
+        insideColumn = false;
+        row.addColumn(column);
+      }
+      else if (qName.equals("value"))
+      {
+        insideValue = false;
+
+        if (insideColumn) // column value
+          column.setValue(charBuff.toString());
+      }
     }
 
     public void characters (char ch[], int start, int length)
     {
-      // Implicitly inside <data> and <table>
-      if (insideName && !insideColumn) // table name
-        table.setName(new String(ch, start, length));
-      else if (insideColumn && insideName) // column name
-        column.setName(new String(ch, start, length));
-      else if (insideColumn && insideValue) // column value
-        column.setValue(new String(ch, start, length));
+      charBuff.append(ch, start, length);
     }
 
     private String prepareInsertStatement (String tableName, Row row, boolean preparedStatement)
