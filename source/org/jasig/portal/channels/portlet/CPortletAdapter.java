@@ -136,6 +136,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         
     private void initPortletWindow(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelRuntimeData rd = channelState.getRuntimeData();
         ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
@@ -172,7 +173,8 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             
             cd.setPortletWindow(portletWindow);
                 
-            portletContainer.portletLoad(portletWindow, pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
+            HttpServletRequest requestWrapper = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
+            portletContainer.portletLoad(portletWindow, requestWrapper, pcs.getHttpServletResponse());
             
             cd.setPortletWindowInitialized(true);
             
@@ -315,6 +317,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
+            System.out.println("CPortletAdapter: " + wrappedRequest.getClass().getClassLoader().getClass().getName());
             //HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
             portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
