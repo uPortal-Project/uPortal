@@ -5,7 +5,7 @@
   <xsl:param name="baseActionURL">baseActionURL not set</xsl:param>
     
   <xsl:template match="/">
-      Please indicate your language preference:<br/>
+      [Translate to sv_SE!] Please indicate your language preference:<br/>
       <xsl:apply-templates select="locales"/>
   </xsl:template>
   
