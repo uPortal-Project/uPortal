@@ -25,10 +25,12 @@
    <P><A CLASS="sidelinks" HREF="../docs.html" ><B> Documentation</B></A></P>
    <P><A CLASS="sidelinks" HREF="../administrators/index.html" ><B> Getting Started</B></A></P>
    <P><A CLASS="sidelinks" HREF="../developers/index.html" ><B> Developers</B></A></P>
-   <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Architecture</B></A></P>
-   <P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
+	<P><A CLASS="sidelinks" HREF="../implementors/index.html" ><B> Implementors</B></A></P>
+	<P><A CLASS="sidelinks" HREF="../users/index.html" ><B> Users</b></A></P>
+   <P><A CLASS="sidelinks" HREF="../architecture/index.html" ><B> Background</B></A></P>
    <P><A CLASS="sidelinks" HREF="../release/index.html" ><B> Release</B></A></P>
    <P><A CLASS="sidelinks" HREF="../minutes/index.html" ><B> Meeting Minutes</B></A></P>
+	
    <P><IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93"></P> 
    </TD>
 
@@ -755,12 +757,22 @@ on unix or <tt> C:/Tomcat </tt> on windows. </p>
 				
         <h4 class="title"> <a name="issues"></a> Issues and known problems</h4>
 
-        
+<h5>JDK version issues</h5>        
 <p> Some people have encountered problems starting up uPortal on systems with 
 newer versions of the JDK. Typically it resultes in a NoClassDefFoundError exception. 
 The solution is to recompile uPortal with the JDK which resides on the system. 
 Go to the build directory (<code>uPortal_rel-2-0-2</code>) and type &quot;<code>ant 
 deploy</code>&quot; to recompile uPortal.</p>
+
+<h5>Proxy/Firewall issues</h5>
+<p> If uPortal is installed on a system which requires a proxy server for access to remote 
+web sites, the web application server will have to be configured to use the proxy server.
+Information on how to set up uPortal with a proxy server can be found in the following document:
+</p>
+<p><a href="proxy.html">Configuring uPortal to use a Proxy Server</a></p>
+
+
+
    
    <IMG HEIGHT="4" WIDTH="692" SRC="../images/orange-pixel.gif" BORDER="0" ALT=".">
 	
