@@ -46,36 +46,35 @@ $Revision$
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <xsl:template match="layout">
-      <body>
-        <!--    $activeTab:<xsl:value-of select="$activeTab"/><br/>
+    <!--    $activeTab:<xsl:value-of select="$activeTab"/><br/>
     $action:<xsl:value-of select="$action"/><br/>
     $position:<xsl:value-of select="$position"/><br/>
     $elementID:<xsl:value-of select="$elementID"/><br/>-->
-        <xsl:call-template name="optionMenu"/>
-        <br/>
-        <!--Begin Layout Table -->
-        <table width="100%" border="0" cellspacing="20" cellpadding="0" class="uportal-background-dark">
-          <tr align="center" valign="top">
-            <td>
-              <!--Begin Layout Sub-Table -->
-              <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td>
-                    <xsl:call-template name="tabRow"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <xsl:call-template name="contentRow"/>
-                  </td>
-                </tr>
-              </table>
-              <!--End Layout Sub-Table -->
-            </td>
-          </tr>
-        </table>
-        <!--End Layout Table -->
-</xsl:template>
+    <xsl:call-template name="optionMenu"/>
+    <br/>
+    <!--Begin Layout Table -->
+    <table width="100%" border="0" cellspacing="20" cellpadding="0" class="uportal-background-dark">
+      <tr align="center" valign="top">
+        <td>
+          <!--Begin Layout Sub-Table -->
+          <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td>
+                <xsl:call-template name="tabRow"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <xsl:call-template name="contentRow"/>
+              </td>
+            </tr>
+          </table>
+          <!--End Layout Sub-Table -->
+        </td>
+      </tr>
+    </table>
+    <!--End Layout Table -->
+  </xsl:template>
   <xsl:template name="tabRow">
     <!--Begin Tab Table -->
     <table summary="add summary" border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -513,7 +512,7 @@ $Revision$
     </p>
     <table class="uportal-channel-text" width="100%">
       <tr>
-        <td colspan="2">Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the <img alt="interface image" src="{$mediaPath}/newchannel.gif" width="79" height="20"/>
+        <td colspan="2">Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the<img alt="interface image" src="{$mediaPath}/newchannel.gif" width="79" height="20"/>
          buttons to add a new channel in that location.</td>
       </tr>
       <tr>
