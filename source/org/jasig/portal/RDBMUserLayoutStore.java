@@ -1597,12 +1597,17 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     int profileId = 0;
     Connection con = RDBMServices.getConnection();
     try {
-      Statement stmt = con.createStatement();
+      String sQuery = 
+        "SELECT PROFILE_ID, USER_ID " +
+        "FROM UP_USER_UA_MAP WHERE USER_ID=? AND USER_AGENT=?";
+      PreparedStatement pstmt = con.prepareStatement(sQuery);
+      
       try {
-        String sQuery = "SELECT PROFILE_ID, USER_ID FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND USER_AGENT='" +
-            userAgent + "'";
+        pstmt.setInt(1, userId);
+        pstmt.setString(2, userAgent);
+
         log.debug("RDBMUserLayoutStore::getUserBrowserMapping(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
+        ResultSet rs = pstmt.executeQuery();
         try {
           if (rs.next()) {
             profileId = rs.getInt("PROFILE_ID");
@@ -1617,7 +1622,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
         }
       } finally {
-        stmt.close();
+        pstmt.close();
       }
     } finally {
       RDBMServices.releaseConnection(con);
