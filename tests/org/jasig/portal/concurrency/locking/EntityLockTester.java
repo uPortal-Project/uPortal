@@ -299,7 +299,7 @@ public void testService() throws Exception
     readLock1 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[0]);
 
     print("Creating second read lock (for same entity).");
-    readLock2 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[1]);
+    readLock2 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[0]);
 
     msg = "Attempting to create a write lock for the entity: should fail.";
     print(msg);
