@@ -83,13 +83,17 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   protected String xslUri;
   protected ChannelRuntimeData runtimeData;
   protected String media;
-
+    MediaManager mm;
   protected static String fs = File.separator;
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
   protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
 
   public CGenericXSLT ()
   {
+    // The media will soon be passed to the channel I think.
+    // This code can then be replaced with runtimeData.getMedia()
+    mm = new MediaManager();
+    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
   }
 
   // Get channel parameters.
@@ -130,10 +134,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     if (xslUri != null)
        this.xslUri = xslUri;
 
-    // The media will soon be passed to the channel I think.
-    // This code can then be replaced with runtimeData.getMedia()
-    MediaManager mm = new MediaManager();
-    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+
     media = mm.getMedia(runtimeData.getHttpRequest());
   }
 

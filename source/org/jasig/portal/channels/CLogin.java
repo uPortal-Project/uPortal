@@ -58,6 +58,13 @@ public class CLogin implements ISpecialChannel
   private boolean bAuthenticated = false;
   private boolean bAuthorizationAttemptFailed = false;
 
+    MediaManager mm;
+
+    public CLogin() {
+	mm = new MediaManager();
+	mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    }
+
   public ChannelSubscriptionProperties getSubscriptionProperties()
   {
     ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties();
@@ -98,8 +105,7 @@ public class CLogin implements ISpecialChannel
 
     // The media will soon be passed to the channel I think.
     // This code can then be replaced with runtimeData.getMedia()
-    MediaManager mm = new MediaManager();
-    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+
     media = mm.getMedia(runtimeData.getHttpRequest());
   }
 
