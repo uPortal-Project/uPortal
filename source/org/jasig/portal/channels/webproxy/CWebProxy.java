@@ -36,6 +36,7 @@
 package org.jasig.portal.channels.webproxy;
 
 import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -607,9 +608,13 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     else
       {
       Document xml = null;
+      String tidiedXml = null;
       try
       {
-	xml = getXml(state.fullxmlUri, state);
+        if (state.tidy != null && state.tidy.equals("on"))
+          tidiedXml = getTidiedXml(state.fullxmlUri, state);
+        else
+	  xml = getXml(state.fullxmlUri, state);
       }
       catch (Exception e)
       {
@@ -647,7 +652,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
       XSLT xslt = new XSLT(this);
-      if (xml != null)
+      if (tidiedXml != null)
+        xslt.setXML(tidiedXml);
+      else
         xslt.setXML(xml);
       if (state.xslUri != null && (!state.xslUri.trim().equals("")))
         xslt.setXSL(state.xslUri);
@@ -680,6 +687,24 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
     URLConnection urlConnect = getConnection(uri, state);
 
+    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+    docBuilderFactory.setNamespaceAware(false);
+    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+    DTDResolver dtdResolver = new DTDResolver();
+    docBuilder.setEntityResolver(dtdResolver);
+    return  docBuilder.parse(urlConnect.getInputStream());
+  }
+
+  /**   
+    * Get the contents of a URI as a String but send it through tidy first.   
+    * Also includes support for cookies.   
+    * @param uri the URI   
+    * @return the data pointed to by a URI as a String   
+    */   
+  private String getTidiedXml(String uri, ChannelState state) throws Exception
+  {
+    URLConnection urlConnect = getConnection(uri, state);
+
     // get character encoding from Content-Type header
     String encoding = null;
     String ct = urlConnect.getContentType();
@@ -693,56 +718,46 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         encoding = encoding.substring(1,encoding.length()+1);
     }
 
-    if ( (state.tidy != null) && (state.tidy.equalsIgnoreCase("on")) )
+    Tidy tidy = new Tidy ();
+    tidy.setXHTML (true);
+    tidy.setDocType ("omit");
+    tidy.setQuiet(true);
+    tidy.setShowWarnings(false);
+    tidy.setNumEntities(true);
+    tidy.setWord2000(true);
+
+    // If charset is specified in header, set JTidy's
+    // character encoding  to either UTF-8, ISO-8859-1
+    // or ISO-2022 accordingly (NOTE that these are
+    // the only character encoding sets that are supported in
+    // JTidy).  If character encoding is not specified,
+    // UTF-8 is the default.
+    if (encoding != null)
     {
-      Tidy tidy = new Tidy ();
-      tidy.setXHTML (true);
-      tidy.setDocType ("omit");
-      tidy.setQuiet(true);
-      tidy.setShowWarnings(false);
-      tidy.setNumEntities(true);
-      tidy.setWord2000(true);
-
-      // If charset is specified in header, set JTidy's
-      // character encoding  to either UTF-8, ISO-8859-1
-      // or ISO-2022 accordingly (NOTE that these are
-      // the only character encoding sets that are supported in
-      // JTidy).  If character encoding is not specified,
-      // UTF-8 is the default.
-      if (encoding != null)
-      {
-        if (encoding.toLowerCase().equals("iso-8859-1"))
-          tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
-        else if (encoding.toLowerCase().equals("iso-2022-jp"))
-          tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
-        else
-          tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
-      }
+      if (encoding.toLowerCase().equals("iso-8859-1"))
+        tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
+      else if (encoding.toLowerCase().equals("iso-2022-jp"))
+        tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
       else
-      {
         tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
-      }
-
-      if ( System.getProperty("os.name").indexOf("Windows") != -1 )
-         tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
-      else
-         tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
-      ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
-
-      Document doc = tidy.parseDOM (urlConnect.getInputStream(), null);
-      if ( tidy.getParseErrors() > 0 )
-        throw new GeneralRenderingException("Unable to convert input document to XHTML");
-      return doc;
     }
     else
     {
-      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-      docBuilderFactory.setNamespaceAware(false);
-      DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-      DTDResolver dtdResolver = new DTDResolver();
-      docBuilder.setEntityResolver(dtdResolver);
-      return  docBuilder.parse(urlConnect.getInputStream());
+      tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
     }
+
+    if ( System.getProperty("os.name").indexOf("Windows") != -1 )
+      tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
+    else
+      tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
+    ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
+
+    tidy.parse (urlConnect.getInputStream(), new BufferedOutputStream (stream));
+
+    if ( tidy.getParseErrors() > 0 )
+      throw new GeneralRenderingException("Unable to convert input document to XHTML");
+
+    return stream.toString();
   }
 
   private URLConnection getConnection(String uri, ChannelState state) throws Exception
