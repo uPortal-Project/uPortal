@@ -1586,7 +1586,7 @@
     <rows>
       <row>
         <column><name>TYPE_ID</name><value>0</value></column>
-        <column><name>TYPE_NAME</name><value>RSS 0.9x</value></column>
+        <column><name>TYPE_NAME</name><value>RSS (Rich Site Summary)</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>TYPE_DESCR</name><value>RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.</value></column>
         <column><name>TYPE_DEF_URI</name><value>webpages/media/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</value></column>
