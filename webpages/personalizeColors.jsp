@@ -3,6 +3,7 @@
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import = "java.sql.*" %>
+<%@ page import="org.jasig.portal.Logger" %>
 <%@ page errorPage="error.jsp" %>
 <%@ include file="checkinit.jsp" %>
 <%@ include file="checkGuest.jsp" %>
@@ -329,7 +330,8 @@ For testing without DB
       Statement statement = connection.createStatement();
       try
       {
-         String SQLString = "select distinct color_scheme_name from portal_colors";
+         String SQLString = "SELECT DISTINCT COLOR_SCHEME_NAME FROM PORTAL_COLORS";
+         Logger.log (Logger.DEBUG, SQLString);
          ResultSet rs = statement.executeQuery(SQLString);
          while(rs.next()) {
             color_scheme_name = rs.getString(1);
@@ -393,7 +395,8 @@ For testing without DB
    try {
        connection = rdbmService.getConnection();
        Statement statement = connection.createStatement();
-       String SQLString = "select Seq_ID, BGColor, Text, Link, VLink, ALink from portal_colors where color_scheme_name='" + fColorScheme + "' order by BGColor desc, Text desc, Link desc, VLink desc";
+       String SQLString = "SELECT SEQ_ID, BGCOLOR, TEXT, LINK, VLINK, ALINK FROM PORTAL_COLORS WHERE COLOR_SCHEME_NAME='" + fColorScheme + "' ORDER BY BGCOLOR DESC, TEXT DESC, LINK DESC, VLINK DESC";
+       Logger.log (Logger.DEBUG, SQLString);
        ResultSet rs = statement.executeQuery(SQLString);
        while(rs.next()) {
           SeqID     = rs.getString(1);
