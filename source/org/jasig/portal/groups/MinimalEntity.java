@@ -35,6 +35,7 @@
 package org.jasig.portal.groups;
 
 import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * @author Dan Ellentuck
@@ -62,8 +63,8 @@ public boolean equals(Object o) {
     if ( ! (o instanceof IBasicEntity) )
         return false;
     IBasicEntity ent = (IBasicEntity) o;
-    return ent.getType() == getType() &&
-        ent.getKey().equals(key);
+    return ent.getEntityIdentifier().getType() == getType() &&
+        ent.getEntityIdentifier().getKey().equals(key);
 }
 /**
  * @return java.lang.String
@@ -77,6 +78,14 @@ public String getKey() {
 public Class getType() {
     return type;
 }
+
+/**
+ * @return org.jasig.portal.EntityIdentifier
+ */
+public EntityIdentifier getEntityIdentifier() {
+    return new EntityIdentifier(key, type);
+}
+
 /**
  * @return an integer hash code for the receiver
  */
