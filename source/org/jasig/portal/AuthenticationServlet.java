@@ -49,6 +49,7 @@ import  java.util.HashMap;
 import  org.jasig.portal.services.Authentication;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.PersonManager;
+import  org.jasig.portal.services.LogService;
 
 
 /**
@@ -88,9 +89,9 @@ public class AuthenticationServlet extends HttpServlet {
     request.getSession().invalidate();
     // Retrieve the user's session
     HttpSession session = request.getSession(true);
+    // Get the person object associated with the request
+    IPerson person = PersonManager.getPerson(request);
     try {
-      // Get the person object associated with the request
-      IPerson person = PersonManager.getPerson(request);
       // Grab all of the principals from the request
       // NOTE: This should refer to a properties file
       HashMap principals = new HashMap(1);
@@ -102,11 +103,22 @@ public class AuthenticationServlet extends HttpServlet {
       // Attempt to authenticate using the incoming request
       m_authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
-      e.printStackTrace();
+      // Log the exception
+      LogService.log(LogService.ERROR, e);
+      // Store the error in the session
+      session.setAttribute("up_authorizationError", "true");
     }
-    // Send the user back to the PortalSessionManager servlet
-    response.sendRedirect("http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath()
-        + "/" + redirectString);
+    // Store the fact that this user has attempted authorization in the session
+    session.setAttribute("up_authorizationAttempted", "true");
+    if (person.getSecurityContext().isAuthenticated()) {
+      // Send the now authenticated user back to the PortalSessionManager servlet
+      response.sendRedirect("http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath()
+          + "/" + redirectString);
+    } 
+    else {
+      // Send the unauthenticated to the baseActionURL
+      response.sendRedirect(request.getParameter("baseActionURL") + "?userName=" + request.getParameter("userName"));
+    }
   }
 }
 
