@@ -43,6 +43,7 @@ import org.w3c.dom.Document;
 
 /**
  * Session data that is a subset of CGroupsManagerSessionData.
+ * 
  * @author Don Fracapane
  * @version $Revision$
  */
@@ -54,17 +55,18 @@ public class CGroupsManagerUnrestrictedSessionData
    public IGroupsManagerPermissions gmPermissions;
    public IAuthorizationPrincipal authPrincipal;
 
-   /** Creates new CGroupsManagerUnrestrictedSessionData
+   /** 
+    * Creates new CGroupsManagerUnrestrictedSessionData
     */
    public CGroupsManagerUnrestrictedSessionData () {}
 
-   /** Creates new CGroupsManagerUnrestrictedSessionData
+   /** 
+    * Creates new CGroupsManagerUnrestrictedSessionData
     * @param model Document
     * @param user IPerson
     * @param isAdminUser boolean
     * @param gmPermissions IGroupsManagerPermissions
     * @param authPrincipal IAuthorizationPrincipal
-    * @return an <code>CGroupsManagerUnrestrictedSessionData</code> object
     */
    public CGroupsManagerUnrestrictedSessionData (Document model, IPerson user, boolean isAdminUser,
          IGroupsManagerPermissions gmPermissions, IAuthorizationPrincipal authPrincipal) {
