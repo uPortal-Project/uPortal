@@ -58,7 +58,7 @@ public class SimplePersonManager
   /**
    * Retrieve an IPerson object for the incoming request
    * @param request
-   * @return 
+   * @return IPerson object for the incoming request
    */
   public IPerson getPerson (HttpServletRequest request) throws PortalSecurityException {
     // Return the person object if it exists in the user's session

@@ -98,7 +98,7 @@ public class CBookmarks extends BaseChannel {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return DOM representation of user bookmarks
    */
   private DocumentImpl getBookmarkXML () {
     Connection connection = null;
@@ -603,7 +603,7 @@ public class CBookmarks extends BaseChannel {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return unique ID
    */
   private String createUniqueID () {
     String uniqueID = "n" + System.currentTimeMillis();
@@ -616,7 +616,7 @@ public class CBookmarks extends BaseChannel {
   /**
    * put your documentation comment here
    * @param url
-   * @return
+   * @return formatted URL
    */
   private static String makeUrlSafe (String url) {
     // Return if the url is correctly formed
@@ -642,7 +642,7 @@ public class CBookmarks extends BaseChannel {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return database connection
    */
   private Connection getConnection () {
     try {

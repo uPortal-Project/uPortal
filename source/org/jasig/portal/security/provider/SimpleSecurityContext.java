@@ -66,7 +66,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
 
   /**
    * put your documentation comment here
-   * @return
+   * @return int
    */
   public int getAuthType () {
     return  this.SIMPLESECURITYAUTHTYPE;
@@ -156,7 +156,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
   /**
    * put your documentation comment here
    * @param c
-   * @return
+   * @return int
    */
   protected static int getValue (char c) {
     if (c >= 'A' && c <= 'Z')

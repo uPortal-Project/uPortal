@@ -68,7 +68,7 @@ public class PersonImpl
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return  ISecurityContext
    */
   public ISecurityContext getSecurityContext () {
     return  (m_securityContext);
@@ -102,12 +102,12 @@ public class PersonImpl
 
   /**
    * Returns an enumeration of all of the attribute names associated with the user
-   * @return 
+   * @return enumeration of all of the attribute names associated with the user
    */
   public Enumeration getAttributeNames () {
     if (m_Attributes == null) {
       return  (null);
-    } 
+    }
     else {
       return  (m_Attributes.keys());
     }
@@ -168,12 +168,12 @@ public class PersonImpl
    * This implementation of a person object is considered a guest if:
    *   UID = 1
    *   Unauthenticated
-   * @return 
+   * @return true if person is a guest
    */
   public boolean isGuest () {
     if (getID() == 1 && !m_securityContext.isAuthenticated()) {
       return  (true);
-    } 
+    }
     else {
       return  (false);
     }

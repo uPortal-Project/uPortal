@@ -145,7 +145,7 @@ public class ReferencePermissionManager extends PermissionManager {
    * @param activity
    * @param target
    * @param type
-   * @return
+   * @return array of Permission objects
    * @exception AuthorizationException
    */
   public Permission[] getPermissions (String principal, String activity, String target, String type) throws AuthorizationException {

@@ -43,10 +43,10 @@ import  org.jasig.portal.groups.EntityTypes;
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  * @author Dan Ellentuck
- * @version $Revision$ 
+ * @version $Revision$
  */
 public class PermissionImpl implements IPermission{
-  private String m_owner = null;	
+  private String m_owner = null;
   private String m_principal = null;
   private String m_activity = null;
   private String m_target = null;
@@ -65,34 +65,34 @@ public class PermissionImpl implements IPermission{
   }
   /**
    * Returns the token that represents the activity associated with this <code>IPermission</code>.
-   * @return String 
+   * @return String
    */
   public String getActivity () {
     return  (m_activity);
   }
   /**
    * Returns the effective date that was set for this Permission.
-   * @return 
+   * @return the effective date that was set for this Permission
    */
   public Date getEffective () {
     return  (m_effective);
   }
   /**
    * Returns the expires date that was set for this Permission.
-   * @return 
+   * @return the expires date that was set for this Permission
    */
   public Date getExpires () {
     return  (m_expires);
   }
   /**
    * Returns the owner of this Permission
-   * @return 
+   * @return the owner of this Permission
    */
   public String getOwner () {
     return  (m_owner);
   }
   /**
-   * Returns the token that represents the <code>IAuthorizationPrincipal</code> 
+   * Returns the token that represents the <code>IAuthorizationPrincipal</code>
    * associated with this <code>IPermission</code>.
    * @return String
    */
@@ -134,7 +134,7 @@ public class PermissionImpl implements IPermission{
     m_expires = expires;
   }
   /**
-   * Specifies the token that represents the <code>IAuthorizationPrincipal</code> 
+   * Specifies the token that represents the <code>IAuthorizationPrincipal</code>
    * associated with this <code>IPermission</code>.
    * @param newPrincipal String
    */

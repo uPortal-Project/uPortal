@@ -57,7 +57,7 @@ public class SimpleLdapSecurityContextFactory
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return ISecurityContext
    */
   public ISecurityContext getSecurityContext () {
     return  new SimpleLdapSecurityContext();

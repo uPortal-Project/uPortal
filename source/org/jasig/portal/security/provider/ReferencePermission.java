@@ -65,7 +65,7 @@ public class ReferencePermission extends Permission {
 
   /**
    * Returns the token that represents the principal that this Permission is associated with.
-   * @return 
+   * @return token that represents the principal that this Permission is associated with
    */
   public String getPrincipal () {
     return  (m_principal);
@@ -81,7 +81,7 @@ public class ReferencePermission extends Permission {
 
   /**
    * Returns the token that represents the activity that this Permission is associated with.
-   * @return 
+   * @return token that represents the activity that this Permission is associated with
    */
   public String getActivity () {
     return  (m_activity);
@@ -112,7 +112,7 @@ public class ReferencePermission extends Permission {
 
   /**
    * Returns the type of permission that this is, generally GRANT or DENY
-   * @return 
+   * @return type of permission that this is, generally GRANT or DENY
    */
   public String getType () {
     return  (m_type);
@@ -128,7 +128,7 @@ public class ReferencePermission extends Permission {
 
   /**
    * Returns the effective date that was set for this Permission.
-   * @return 
+   * @return effective date that was set for this Permission
    */
   public Date getEffective () {
     return  (m_effective);
@@ -144,7 +144,7 @@ public class ReferencePermission extends Permission {
 
   /**
    * Returns the expires date that was set for this Permission.
-   * @return 
+   * @return expires date that was set for this Permission
    */
   public Date getExpires () {
     return  (m_expires);

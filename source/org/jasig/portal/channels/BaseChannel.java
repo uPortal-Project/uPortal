@@ -60,7 +60,7 @@ public abstract class BaseChannel
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return ChannelRuntimeProperties
    */
   public ChannelRuntimeProperties getRuntimeProperties () {
     return  new ChannelRuntimeProperties();

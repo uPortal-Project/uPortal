@@ -92,7 +92,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return hashtable of system profile
    * @exception PortalException
    */
   protected Hashtable getSystemProfileList () throws PortalException {

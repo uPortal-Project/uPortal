@@ -77,7 +77,7 @@ class CacheSecurityContext extends ChainingSecurityContext
 
   /**
    * put your documentation comment here
-   * @return
+   * @return CACHE SECURITY AUTH TYPE
    */
   public int getAuthType () {
     return  this.CACHESECURITYAUTHTYPE;
@@ -142,7 +142,7 @@ class CacheSecurityContext extends ChainingSecurityContext
 
     /**
      * put your documentation comment here
-     * @return
+     * @return Credentials
      */
     public String getCredentials () {
       if (this.credentialstring != null)

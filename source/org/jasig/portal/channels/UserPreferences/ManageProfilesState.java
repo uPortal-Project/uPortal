@@ -78,7 +78,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return userProfileList
    * @exception PortalException
    */
   protected Hashtable getUserProfileList () throws PortalException {
@@ -94,7 +94,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return systemProfileList
    * @exception PortalException
    */
   protected Hashtable getSystemProfileList () throws PortalException {
@@ -233,7 +233,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return IPerson
    */
   private IPerson getPerson () {
     return  context.getUserLayoutManager().getPerson();
@@ -241,7 +241,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return StylesheetSet
    */
   private StylesheetSet getStylesheetSet () {
     return  context.getStylesheetSet();
@@ -249,7 +249,7 @@ class ManageProfilesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return IUserLayoutStore
    * @exception PortalException
    */
   private IUserLayoutStore getUserLayoutStore () throws PortalException {
@@ -333,7 +333,7 @@ class ManageProfilesState extends BaseState {
       org.apache.xml.serialize.OutputFormat outputFormat = new org.apache.xml.serialize.OutputFormat();
       outputFormat.setIndenting(true);
       org.apache.xml.serialize.XMLSerializer dbser1 = new org.apache.xml.serialize.XMLSerializer(dbwr1, outputFormat);
-      try { 
+      try {
           dbser1.serialize(doc);
       LogService.instance().log(LogService.DEBUG, "ManageProfilesState::renderXML() : XML incoming to the XSLT :\n\n" + dbwr1.toString() + "\n\n");
       } catch (Exception e) {

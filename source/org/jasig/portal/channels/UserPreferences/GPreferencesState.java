@@ -75,7 +75,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return modified
    */
   public boolean isModified () {
     return  modified;
@@ -101,7 +101,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return folderID
    */
   public String getFolderID () {
     if (folderID == null)
@@ -111,7 +111,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return layoutID
    */
   public String getLayoutRootID () {
     return  layoutID;
@@ -148,7 +148,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return userLayoutXML
    * @exception PortalException
    */
   public Document getUserLayoutXML () throws PortalException {
@@ -167,7 +167,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return IUserLayoutManager
    */
   public IUserLayoutManager getUserLayoutManager () {
     return  context.getUserLayoutManager();
@@ -175,7 +175,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return UserPreferences
    * @exception ResourceMissingException, PortalException
    */
   public UserPreferences getUserPreferences () throws ResourceMissingException, PortalException {
@@ -193,7 +193,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return ThemeStylesheetDescription
    * @exception PortalException
    */
   public ThemeStylesheetDescription getThemeStylesheetDescription () throws PortalException{
@@ -210,7 +210,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return StructureStylesheetDescription
    * @exception ResourceMissingException, PortalException
    */
   public StructureStylesheetDescription getStructureStylesheetDescription () throws ResourceMissingException, PortalException {
@@ -238,7 +238,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return StylesheetSet
    */
   public StylesheetSet getStylesheetSet () {
     return  context.getStylesheetSet();
@@ -246,7 +246,7 @@ class GPreferencesState extends BaseState {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return UserProfile
    */
   public UserProfile getProfile () {
     if (profile == null)

@@ -67,7 +67,7 @@ class TrustSecurityContext extends ChainingSecurityContext
 
   /**
    * put your documentation comment here
-   * @return
+   * @return int
    */
   public int getAuthType () {
     return  this.TRUSTSECURITYAUTHTYPE;
