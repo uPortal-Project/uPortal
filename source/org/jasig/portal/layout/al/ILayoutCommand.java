@@ -17,5 +17,5 @@ public interface ILayoutCommand {
      * @param manager
      * @return
      */
-    boolean execute(ILayoutManager manager);
+    public boolean execute(ILayoutManager manager);
 }

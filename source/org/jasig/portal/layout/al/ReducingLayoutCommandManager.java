@@ -8,7 +8,6 @@ package org.jasig.portal.layout.al;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
  * A layout command manager that optimizies command recording
@@ -16,18 +15,14 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * removing commands that can no longer be performed.
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  */
-public class ReducingLayoutCommandManager implements ILayoutCommandManager {
-    List commands;
-    ILayoutManager layoutManager;
+public class ReducingLayoutCommandManager extends AbstractLayoutCommandManager {
     
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#clearCommands()
-     */
-    public void clearCommands() {
-        commands.clear();
+    public ReducingLayoutCommandManager() {
+       super();
     }
+  
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommandManager#executeLayoutCommands(org.jasig.portal.layout.al.ILayoutManager)
      */
@@ -42,37 +37,12 @@ public class ReducingLayoutCommandManager implements ILayoutCommandManager {
         // replace existing command list with the set of successfull commands
         this.commands=successfulCommands;
     }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommandManager#recordAttachCommand(org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
      */
-    public void recordAttachCommand(INodeId nodeId, INodeId parentId, INodeId nextId) {
-        // reduction rules: attach operation is always done on a new node, so there
-        // are should not be any commands to reduce
+    public void recordLayoutCommand(ILayoutCommand layoutCommand) {
+        // TODO
     }
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#recordDeleteCommand(org.jasig.portal.layout.node.INodeId)
-     */
-    public void recordDeleteCommand(INodeId nodeId) {
-        // reduction rules: reduce all commands involving that node id, unless
-        //   nodeId is a fragment root and there are commands involving
-        //   that fragment (not node!) in history besides the attach command.
-    }
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommandManager#recordMoveCommand(org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
-     */
-    public void recordMoveCommand(INodeId nodeId, INodeId parentId, INodeId nextId) {
-        // reduction rules: 
-    }
-    /**
-     * @return Returns the layoutManager.
-     */
-    public ILayoutManager getLayoutManager() {
-        return layoutManager;
-    }
-    /**
-     * @param layoutManager The layoutManager to set.
-     */
-    public void setLayoutManager(ILayoutManager layoutManager) {
-        this.layoutManager = layoutManager;
-    }
+   
 }
