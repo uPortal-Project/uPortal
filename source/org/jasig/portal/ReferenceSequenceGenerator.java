@@ -157,10 +157,10 @@ private int getCurrentCounterValue(String tableName, Connection conn)
 throws SQLException
 {
     ResultSet rs = null;
-    RDBMServices.PreparedStatement ps = null;
+    RDBMPreparedStatement ps = null;
     try
     {
-        ps = new RDBMServices.PreparedStatement( conn, getSelectCounterSql() );
+        ps = new RDBMPreparedStatement( conn, getSelectCounterSql() );
         try
         {
             ps.setString(1, tableName);
@@ -320,11 +320,11 @@ throws SQLException
 private void primIncrementCounter(String tableName, int currentCounterValue, Connection conn)
 throws SQLException
 {
-    RDBMServices.PreparedStatement ps = null;
+    RDBMPreparedStatement ps = null;
     int nextCounterValue = currentCounterValue + 1;
     try
     {
-        ps = new RDBMServices.PreparedStatement( conn, getUpdateCounterForIncrementSql() );
+        ps = new RDBMPreparedStatement( conn, getUpdateCounterForIncrementSql() );
         try
         {
             ps.setInt(1, nextCounterValue);
@@ -387,10 +387,10 @@ public synchronized void setCounter (String tableName, int newCounterValue) thro
 private void setCounter(String tableName, int newCounterValue, Connection conn)
 throws SQLException
 {
-    RDBMServices.PreparedStatement ps = null;
+    RDBMPreparedStatement ps = null;
     try
     {
-        ps = new RDBMServices.PreparedStatement( conn, getUpdateCounterSql() );
+        ps = new RDBMPreparedStatement( conn, getUpdateCounterSql() );
         try
         {
             ps.setInt(1, newCounterValue);
