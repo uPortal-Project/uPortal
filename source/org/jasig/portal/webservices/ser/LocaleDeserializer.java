@@ -112,7 +112,9 @@ public class LocaleDeserializer extends DeserializerImpl {
       } else if (lLanguage != null && lCountry != null) {
         locale = new Locale(lLanguage, lCountry);
       } else if (lLanguage != null) {
-        locale = new Locale(lLanguage);
+        // This constructor was introduced in JDK 1.4.
+        // Uncomment when we require JDK 1.4 for uPortal
+        //locale = new Locale(lLanguage);
       }
       
       // Set the value of this deserializer to the locale      
