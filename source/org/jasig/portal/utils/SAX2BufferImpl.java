@@ -339,7 +339,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         // unqueue all of the buffered events
 
         // for speed purposes, we don't allow contentHandler to be null
-        if(contentHandler!=null) {
+        if(ch!=null) {
             // determine what a given content handler represents
             DTDHandler dtdh=null;
             if(ch instanceof DTDHandler) {
