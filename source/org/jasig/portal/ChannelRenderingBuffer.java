@@ -62,6 +62,7 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
   private String channelClassName;
   private String channelID;
   private long timeOut;
+    boolean ccaching;
 
   /**
    * Default constructor.
@@ -70,11 +71,22 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
    */
   public ChannelRenderingBuffer (ChannelManager chanman)
   {
-    super ();
+    super();
+    ccaching=false;
     this.cm = chanman;
     this.startBuffering();
     this.setDocumentHandler(null);
   }
+
+  public ChannelRenderingBuffer (ChannelManager chanman,boolean ccaching)
+  {
+    this(chanman);
+    this.setCharacterCaching(ccaching);
+  }
+
+    public void setCharacterCaching(boolean setting) {
+        this.ccaching=setting;
+    }
 
   public void startDocument () throws SAXException
   {
@@ -120,7 +132,7 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
     {
       if (name.equals ("channel"))
       {
-        cm.startChannelRendering (channelID, channelClassName, timeOut,params);
+        cm.startChannelRendering (channelID, channelClassName, timeOut,params,this.ccaching);
         insideChannelElement=false;
       }
     }

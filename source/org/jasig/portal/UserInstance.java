@@ -36,6 +36,7 @@
 
 package  org.jasig.portal;
 
+import org.jasig.portal.utils.*;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
 import  javax.servlet.*;
@@ -75,7 +76,14 @@ public class UserInstance implements HttpSessionBindingListener {
     
     // lock preventing concurrent rendering
     private Object p_rendering_lock;
-    
+
+    // global rendering cache
+    public static final boolean CACHE_ENABLED=true;
+    private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=100; // this should be in a file somewhere
+    private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=100; // this should be in a file somewhere
+    private static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
+    private static final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
+    public static final boolean CHARACTER_CACHE_ENABLED=true;
     
     IPerson person;
     
@@ -178,6 +186,7 @@ public class UserInstance implements HttpSessionBindingListener {
             //        JspWriter
             //
 
+
             // determine rendering root -start
             // In general transformations will start at the userLayoutRoot node, unless
             // we are rendering something in a detach mode.
@@ -225,14 +234,6 @@ public class UserInstance implements HttpSessionBindingListener {
             }
             // determine rendering root -end
 
-            // obtain both structure and theme transformation stylesheet roots
-            StylesheetRoot ss = XSLT.getStylesheetRoot(UtilitiesBean.fixURI(ssd.getStylesheetURI()));
-            StylesheetRoot ts = XSLT.getStylesheetRoot(UtilitiesBean.fixURI(tsd.getStylesheetURI()));
-            // obtain an XSLT processor
-            XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-            // prepare .uP element and detach flag to be passed to the stylesheets
-            // Including the context path in front of uPElement is necessary for phone.com browsers to work
-            XString xuPElement = processor.createXString(req.getContextPath() + "/" + uPElement);
 
             // set up the channel manager
             channelManager.setReqNRes(req, res, uPElement);
@@ -250,66 +251,211 @@ public class UserInstance implements HttpSessionBindingListener {
             BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
             // set up the serializer
             markupSerializer.asContentHandler();
+            // see if we can use character caching
+            boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
             // initialize ChannelIncorporationFilter
-            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager);
+            //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager);
+            CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,this.CHARACTER_CACHE_ENABLED);
+            String cacheKey=null;
+            boolean output_produced=false;
+            if(this.CACHE_ENABLED) {
+                boolean ccache_exists=false;
+                // obtain the cache key
+                cacheKey=constructCacheKey(this.getPerson(),userPreferences);
+                if(ccaching) {
+                    // obtain character cache
+                    CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
+                    if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
+                        ccache_exists=true;
+                        Logger.log(Logger.DEBUG,"UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
+                        // start channel threads
+                        for(int i=0;i<cCache.channelIds.size();i++) {
+                            Vector chanEntry=(Vector) cCache.channelIds.get(i);
+                            if(chanEntry!=null || chanEntry.size()!=2) {
+                                String chanId=(String)chanEntry.get(0);
+                                Long timeOut=(Long)chanEntry.get(1);
+                                channelManager.startChannelRendering(chanId,timeOut.longValue(),true);
+                            } else {
+                                Logger.log(Logger.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid !");
+                            }
+                        }
+                        // go through the output loop
+                        int ccsize=cCache.systemBuffers.size();
+                        if(cCache.channelIds.size()!=ccsize-1) {
+                            Logger.log(Logger.ERROR,"UserInstance::renderState() : channelId character cache has invalid size !");
+                        }
+                        CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
+                        for(int sb=0; sb<ccsize-1;sb++) {
+                            cSerializer.printRawCharacters((String)cCache.systemBuffers.get(sb));
+                            // get channel output
+                            Vector chanEntry=(Vector) cCache.channelIds.get(sb);
+                            String chanId=(String)chanEntry.get(0);
+                            Long timeOut=(Long)chanEntry.get(1);
+                            Object o=channelManager.getChannelCharacters (chanId, timeOut.longValue());
+                            if(o!=null) {
+                                if(o instanceof String) {
+                                    Logger.log(Logger.DEBUG,"UserInstance::renderState() : received a character result for channelId=\""+chanId+"\"");
+                                    cSerializer.printRawCharacters((String)o);
+                                } else if(o instanceof SAXBufferImpl) {
+                                    Logger.log(Logger.DEBUG,"UserInstance::renderState() : received an XSLT result for channelId=\""+chanId+"\"");
+                                    // extract a character cache 
 
-            // initialize ChannelRenderingBuffer
-            ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager);
-            // now that pipeline is set up, determine and set the stylesheet params
-            processor.setStylesheetParam("baseActionURL", xuPElement);
-            Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
-            for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
-                String pName = (String)e.nextElement();
-                String pValue = (String)supTable.get(pName);
-                Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
-                processor.setStylesheetParam(pName, processor.createXString(pValue));
+                                    // start new channel cache
+                                    if(!cSerializer.startCaching()) {
+                                        Logger.log(Logger.ERROR,"UserInstance::renderState() : unable to restart channel cache on a channel start!");
+                                    }
+
+                                    // output channel buffer
+                                    ((SAXBufferImpl)o).outputBuffer(markupSerializer);
+
+                                    // save the old cache state
+                                    if(cSerializer.stopCaching()) {
+                                        try {
+                                            channelManager.setChannelCharacterCache(chanId,cSerializer.getCache());
+                                        } catch (UnsupportedEncodingException e) {
+                                            Logger.log(Logger.ERROR,"UserInstance::renderState() : unable to obtain character cache, invalid encoding specified ! "+e);
+                                        } catch (IOException ioe) {
+                                            Logger.log(Logger.ERROR,"UserInstance::renderState() : IO exception occurred while retreiving character cache ! "+ioe);
+                                        }
+
+                                    } else {
+                                        Logger.log(Logger.ERROR,"UserInstance::renderState() : unable to reset cache state ! Serializer was not caching when it should've been !");
+                                    }
+                                } else {
+                                    Logger.log(Logger.ERROR,"UserInstance::renderState() : ChannelManager.getChannelCharacters() returned an unidentified object!");
+                                }
+                            }
+                        }
+
+                        // print out the last block
+                        out.write((String)cCache.systemBuffers.get(ccsize-1));
+                        output_produced=true;
+                    }
+                }
+                // if this failed, try XSLT cache
+                if((!ccaching) || (!ccache_exists)) {
+                    // obtain XSLT cache
+
+                    SAXBufferImpl cachedBuffer=(SAXBufferImpl) this.systemCache.get(cacheKey);
+                    if(cachedBuffer!=null) {
+                        // replay the buffer to channel incorporation filter
+                        Logger.log(Logger.DEBUG,"UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
+                        ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
+                        // check for the character cache
+                        crb.setDocumentHandler(cif);
+                        crb.setOutputAtDocumentEnd(true);
+                        cachedBuffer.outputBuffer(crb);
+                        output_produced=true;
+                    }
+                }
+            } 
+            // fallback on the regular rendering procedure
+            if(!output_produced) {
+
+                // obtain both structure and theme transformation stylesheet roots
+                StylesheetRoot ss = XSLT.getStylesheetRoot(UtilitiesBean.fixURI(ssd.getStylesheetURI()));
+                StylesheetRoot ts = XSLT.getStylesheetRoot(UtilitiesBean.fixURI(tsd.getStylesheetURI()));
+                // obtain an XSLT processor
+                XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+                // prepare .uP element and detach flag to be passed to the stylesheets
+                // Including the context path in front of uPElement is necessary for phone.com browsers to work
+                XString xuPElement = processor.createXString(req.getContextPath() + "/" + uPElement);
+                
+                // initialize ChannelRenderingBuffer
+                ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
+                // now that pipeline is set up, determine and set the stylesheet params
+                processor.setStylesheetParam("baseActionURL", xuPElement);
+                Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
+                for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
+                    String pName = (String)e.nextElement();
+                    String pValue = (String)supTable.get(pName);
+                    Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
+                    processor.setStylesheetParam(pName, processor.createXString(pValue));
+                }
+                // all the parameters are set up, fire up structure transformation
+                processor.setStylesheet(ss);
+                processor.setDocumentHandler(crb);
+                // filter to fill in channel/folder attributes for the "structure" transformation.
+                StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(processor, userPreferences.getStructureStylesheetUserPreferences());
+                // if operating in the detach mode, need wrap everything
+                // in a document node and a <layout_fragment> node
+                if (detachMode) {
+                    saif.startDocument();
+                    saif.startElement("layout_fragment", new org.xml.sax.helpers.AttributeListImpl());
+                    UtilitiesBean.node2SAX(rElement, saif);
+                    saif.endElement("layout_fragment");
+                    saif.endDocument();
+                } else if (rElement.getNodeType() == Node.DOCUMENT_NODE) {
+                    UtilitiesBean.node2SAX(rElement, saif);
+                } else {
+                    // as it is, this should never happen
+                    saif.startDocument();
+                    UtilitiesBean.node2SAX(rElement, saif);
+                    saif.endDocument();
+                }
+                // all channels should be rendering now
+                // prepare processor for the theme transformation
+                processor.reset();
+                // set up of the parameters
+                processor.setStylesheetParam("baseActionURL", xuPElement);
+                Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
+                for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
+                    String pName = (String)e.nextElement();
+                    String pValue = (String)tupTable.get(pName);
+                    Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
+                    processor.setStylesheetParam(pName, processor.createXString(pValue));
+                }
+                processor.setStylesheet(ts);
+                // initialize a filter to fill in channel attributes for the
+                // "theme" (second) transformation.
+                ThemeAttributesIncorporationFilter taif = new ThemeAttributesIncorporationFilter(processor, userPreferences.getThemeStylesheetUserPreferences());
+                
+                if(this.CACHE_ENABLED && !ccaching) {
+                    // record cache
+                    SAXBufferImpl newCache=new SAXBufferImpl(cif);
+                    systemCache.put(cacheKey,newCache);
+                    newCache.setOutputAtDocumentEnd(true);
+                    //                    newCache.stopBuffering()
+                    processor.setDocumentHandler(newCache);
+                    Logger.log(Logger.DEBUG,"UserInstance::renderState() : recorded transformation cache with key \""+cacheKey+"\"");
+                } else {
+                    processor.setDocumentHandler(cif);
+                }
+                // fire up theme transformation
+                crb.setDocumentHandler(taif);
+                crb.stopBuffering();
+
+
+                if(this.CACHE_ENABLED && ccaching) {
+                    // save character block cache
+                    CharacterCacheEntry ce=new CharacterCacheEntry();
+                    ce.systemBuffers=cif.getSystemCCacheBlocks();
+                    ce.channelIds=cif.getChannelIdBlocks();
+                    if(ce.systemBuffers==null || ce.channelIds==null) {
+                        Logger.log(Logger.ERROR,"UserInstance::renderState() : CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
+                    } else {
+                        // record cache
+                        systemCharacterCache.put(cacheKey,ce);
+                        Logger.log(Logger.DEBUG,"UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
+                        /*                        Logger.log(Logger.DEBUG,"Printing transformation cache system blocks:");
+                        for(int i=0;i<ce.systemBuffers.size();i++) {
+                            Logger.log(Logger.DEBUG,"----------piece "+Integer.toString(i));
+                            Logger.log(Logger.DEBUG,(String)ce.systemBuffers.get(i));
+                        }
+                        Logger.log(Logger.DEBUG,"Printing transformation cache channel IDs:");
+                        for(int i=0;i<ce.channelIds.size();i++) {
+                            Logger.log(Logger.DEBUG,"----------channel entry "+Integer.toString(i));
+                            Logger.log(Logger.DEBUG,(String)((Vector)ce.channelIds.get(i)).get(0));
+                            }*/
+                    }
+                }
+                
             }
-            // all the parameters are set up, fire up structure transformation
-            processor.setStylesheet(ss);
-            processor.setDocumentHandler(crb);
-            // filter to fill in channel/folder attributes for the "structure" transformation.
-            StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(processor, userPreferences.getStructureStylesheetUserPreferences());
-            // if operating in the detach mode, need wrap everything
-            // in a document node and a <layout_fragment> node
-            if (detachMode) {
-                saif.startDocument();
-                saif.startElement("layout_fragment", new org.xml.sax.helpers.AttributeListImpl());
-                UtilitiesBean.node2SAX(rElement, saif);
-                saif.endElement("layout_fragment");
-                saif.endDocument();
-            } else if (rElement.getNodeType() == Node.DOCUMENT_NODE) {
-                UtilitiesBean.node2SAX(rElement, saif);
-            } else {
-                // as it is, this should never happen
-                saif.startDocument();
-                UtilitiesBean.node2SAX(rElement, saif);
-                saif.endDocument();
-            }
-            // all channels should be rendering now
-            // prepare processor for the theme transformation
-            processor.reset();
-            // set up of the parameters
-            processor.setStylesheetParam("baseActionURL", xuPElement);
-            Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
-            for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
-                String pName = (String)e.nextElement();
-                String pValue = (String)tupTable.get(pName);
-                Logger.log(Logger.DEBUG, "UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
-                processor.setStylesheetParam(pName, processor.createXString(pValue));
-            }
-            processor.setStylesheet(ts);
-            // initialize a filter to fill in channel attributes for the
-            // "theme" (second) transformation.
-            ThemeAttributesIncorporationFilter taif = new ThemeAttributesIncorporationFilter(processor, userPreferences.getThemeStylesheetUserPreferences());
-            processor.setDocumentHandler(cif);
-            // fire up theme transformation
-            crb.setDocumentHandler(taif);
-            crb.stopBuffering();
             // signal the end of the rendering round
             channelManager.finishedRendering();
         }
     }
-
+    
     /**
      * <code>getRenderingLock</code> returns a rendering lock for this session.
      * @param sessionId current session id
@@ -320,6 +466,13 @@ public class UserInstance implements HttpSessionBindingListener {
             p_rendering_lock=new Object();
         }
         return p_rendering_lock;
+    }
+
+    private static String constructCacheKey(IPerson person,UserPreferences userPreferences) {
+        StringBuffer sbKey = new StringBuffer(1024);
+        sbKey.append(person.getID()).append(",");
+        sbKey.append(userPreferences.getCacheKey());
+        return sbKey.toString();
     }
 
 
@@ -387,6 +540,15 @@ public class UserInstance implements HttpSessionBindingListener {
             for (int i = 0; i < values.length; i++) {
                 channelManager.removeChannel(values[i]);
             }
+        }
+    }
+
+    private class CharacterCacheEntry {
+        Vector systemBuffers;
+        Vector channelIds;
+        public CharacterCacheEntry() {
+            systemBuffers=null;
+            channelIds=null;
         }
     }
 }

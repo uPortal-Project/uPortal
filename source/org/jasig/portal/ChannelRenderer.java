@@ -72,6 +72,8 @@ public class ChannelRenderer
     protected long startTime;
     protected long timeOut = java.lang.Long.MAX_VALUE;
 
+    protected boolean ccacheable;
+
     protected static ThreadPool tp=null;
     protected static Map systemCache=null;
 
@@ -84,6 +86,7 @@ public class ChannelRenderer
     this.channel=chan;
     this.rd=runtimeData;
     rendering = false;
+    ccacheable=false;
     if(tp==null && POOL_THREADS) {
 	ResourceLimits rl=new ResourceLimits();
 	rl.setOptimalSize(100); // should be on the order of concurrent users
@@ -116,6 +119,15 @@ public class ChannelRenderer
 
     public void setCacheTables(Map cacheTables) {
 	this.cacheTables=cacheTables;
+    }
+
+    /**
+     * Informs ChannelRenderer that a character caching scheme
+     * will be used for the current rendering.
+     * @param setting a <code>boolean</code> value
+     */
+    public void setCharacterCacheable(boolean setting) {
+        this.ccacheable=setting;
     }
 
   /**
@@ -222,6 +234,8 @@ public class ChannelRenderer
             Logger.log (Logger.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
             throw e;
         }
+      } else if(worker.successful() && ccacheable && worker.cbuffer!=null){
+          return RENDERING_SUCCESSFUL;
       } else {
           // rendering was not successful
           Exception e;
@@ -235,12 +249,123 @@ public class ChannelRenderer
     }
   }
 
-  /**
-   * I am not really sure if this will take care of the runaway rendering threads.
-   * The alternative is kill them explicitly in ChannelManager.
-   */
-    protected void finalize () throws Throwable
+    /**
+     * Requests renderer to complete rendering and return status. 
+     * This does exactly the same things as outputRendering except for the
+     * actual stream output.
+     *
+     * @return an <code>int</code> return status value
+     */
+    public int completeRendering () throws Exception
+  {
+    if (!rendering)
+      this.startRendering ();
+
+    boolean abandoned=false;
+    try
     {
+      long wait = timeOut - System.currentTimeMillis () + startTime;
+
+      if(POOL_THREADS) {
+	  synchronized(workerReceipt) {
+	      if(wait>0 && !workerReceipt.isJobdone())
+		  workerReceipt.wait(wait);
+	  }
+      } else {
+	  if (wait > 0)
+	      workerThread.join (wait);
+      }
+    }
+    catch (InterruptedException e)
+    {
+      Logger.log (Logger.DEBUG, "ChannelRenderer::completeRendering() : thread waiting on the WorkerThread has been interrupted : "+e);
+    }
+
+    // by this point, if the job is not done, we have to kill it.
+    // peterk: would be nice to put it on a "death row" instead of
+    // stop()ing it instantly. (sorry for the analogy). That way
+    // we could try poking it with interrupt() a few times, give it
+    // a low priority and see if it can come back up. stop() can 
+    // leave the system in an unstable state :(
+    if(POOL_THREADS) {
+	synchronized(workerReceipt) {
+	    if(!workerReceipt.isJobdone()) {
+		workerReceipt.killJob();
+		abandoned=true;
+		Logger.log(Logger.DEBUG,"ChannelRenderer::completeRendering() : killed.");
+	    } else {
+		abandoned=!workerReceipt.isJobsuccessful();
+	    }
+	}
+    } else {
+	if(!worker.done()) {
+	    // kill the working thread
+	    // yes, this is terribly crude and unsafe, but I don't see an alternative
+	    workerThread.stop ();
+	    abandoned=true;
+	}
+    }
+
+    
+    if (!abandoned && worker.done ()) 
+    {
+	SAXBufferImpl buffer;
+      if (worker.successful() && (((buffer=worker.getBuffer())!=null) || (ccacheable && worker.cbuffer!=null))) {
+          return RENDERING_SUCCESSFUL;
+      } else {
+          // rendering was not successful
+          Exception e;
+          if((e=worker.getException())!=null) throw new InternalPortalException(e);
+          // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+          return RENDERING_FAILED;
+      }
+    } else {
+        // rendering has timed out
+        return RENDERING_TIMED_OUT;
+    }
+  }
+
+    /**
+     * Returns rendered buffer.
+     * This method does not perform any status checks, so make sure to call completeRendering() prior to invoking this method.
+     *
+     * @return rendered buffer
+     */
+    public SAXBufferImpl getBuffer() {
+        if(worker!=null) {
+            return worker.getBuffer();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a character output of a channel rendering.
+     */
+    public String getCharacters() {
+        if(worker!=null) {
+            return worker.getCharacters();
+        } else {
+            Logger.log(Logger.DEBUG,"ChannelRenderer::getCharacters() : worker is null already !");
+            return null;
+        }
+    }
+
+
+    /**
+     * Sets a character cache for the current rendering.
+     */
+    public void setCharacterCache(String chars) {
+        if(worker!=null) {
+            worker.setCharacterCache(chars);
+        }
+    }
+    
+    /**
+     * I am not really sure if this will take care of the runaway rendering threads.
+     * The alternative is kill them explicitly in ChannelManager.
+     */
+    protected void finalize () throws Throwable  {
 	if(POOL_THREADS) {
 	    if(workerReceipt!=null && !workerReceipt.isJobdone())
 		workerReceipt.killJob();
@@ -257,10 +382,11 @@ public class ChannelRenderer
         private IChannel channel;
         private ChannelRuntimeData rd;
 	private SAXBufferImpl buffer;
+        private String cbuffer;
         private Exception exc=null;
 
 	protected class ChannelCacheEntry {
-	    private final SAXBufferImpl buffer;
+	    private Object buffer;
 	    private final Object validity;
 	    public ChannelCacheEntry() {
 		buffer=null;
@@ -274,13 +400,11 @@ public class ChannelRenderer
 
         public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
             this.channel=ch;  this.rd=runtimeData;
-	    buffer=null;
+            successful = false; done = false;
+	    buffer=null; cbuffer=null;
         }
 
         public void run () {
-            successful = false;
-            done = false;
-
             try {
                 if(rd!=null)
                     channel.setRuntimeData(rd);
@@ -297,14 +421,19 @@ public class ChannelRenderer
 				    // check page validity
 				    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
 					// use it
-					buffer=entry.buffer;
-					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
+                                        if(ccacheable && (entry.buffer instanceof String)) {
+                                            cbuffer=(String)entry.buffer;
+                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached character content based on a key \""+key.getKey()+"\"");
+                                        } else if(entry.buffer instanceof SAXBufferImpl) {
+                                            buffer=(SAXBufferImpl) entry.buffer;
+                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
+                                        }
 				    } else {
 					// remove it
 					systemCache.remove(key.getKey());
 					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
 				    }
-				}
+				} 
 			    } else {
 				// by default we assume INSTANCE_KEY_SCOPE
 				ChannelCacheEntry entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
@@ -313,8 +442,14 @@ public class ChannelRenderer
 				    // check page validity
 				    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
 					// use it
-					buffer=entry.buffer;
-					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
+                                        if(ccacheable && (entry.buffer instanceof String)) {
+                                            cbuffer=(String)entry.buffer;
+                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached character content based on a key \""+key.getKey()+"\"");
+
+                                        } else if(entry.buffer instanceof SAXBufferImpl) {
+                                            buffer=(SAXBufferImpl) entry.buffer;
+                                            Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
+                                        }
 				    } else {
 					// remove it
 					getChannelCache().remove(key.getKey());
@@ -323,8 +458,9 @@ public class ChannelRenderer
 				}
 			    } 
 			}
-			
-			if(buffer==null) {
+
+                        // check if need to render
+			if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
 			    // need to render again and cache the output
 			    buffer = new SAXBufferImpl ();
 			    buffer.startBuffering();
@@ -366,6 +502,58 @@ public class ChannelRenderer
 	public SAXBufferImpl getBuffer() {
 	    return this.buffer;
 	}
+
+        /**
+         * Returns a character output of a channel rendering.
+         */
+        public String getCharacters() {
+            if(ccacheable) {
+                return this.cbuffer;
+            } else {
+                Logger.log(Logger.ERROR,"ChannelRenderer.Worker::getCharacters() : attempting to obtain character data while character caching is not enabled !");
+                return null;
+            }
+        }
+
+        /**
+         * Sets a character cache for the current rendering.
+         */
+        public void setCharacterCache(String chars) {
+
+            if(CACHE_CHANNELS) {
+                // try to obtain rendering from cache
+                if(channel instanceof ICacheable ) {
+                    ChannelCacheKey key=((ICacheable)channel).generateKey();
+                    if(key!=null) {
+                        Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : called on a key \""+key.getKey()+"\"");
+                        ChannelCacheEntry entry=null;
+                        if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
+                            entry=(ChannelCacheEntry)systemCache.get(key.getKey());
+                            if(entry!=null) {
+                                entry.buffer=chars;
+                                systemCache.put(key.getKey(),entry);
+                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
+                            } else {
+                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
+                            }
+                        } else {
+                            // by default we assume INSTANCE_KEY_SCOPE
+                            entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
+                            if(entry!=null) {
+                                entry.buffer=chars;
+                                getChannelCache().put(key.getKey(),entry);
+                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : setting character cache buffer based on an instance key \""+key.getKey()+"\"");
+                            } else {
+                                Logger.log(Logger.DEBUG,"ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
+                            }
+                        }
+
+                    } else {
+                        Logger.log(Logger.WARN,"ChannelRenderer::setCharacterCache() : channel cache key is null !");
+                    }
+                } 
+            }
+        }
 
         public boolean done () {
             return this.done;
