@@ -505,7 +505,7 @@ final class TabColumnPrefsState extends BaseState
     else
       throw new Exception("Element " + elementId + " cannot be removed because it is either unremovable or it or one of its parent elements is immutable.");
   }
-  
+
   private final void updateTabLock(String elementId, boolean locked) throws Exception
   {
     Element element = userLayout.getElementById(elementId);
@@ -905,52 +905,52 @@ final class TabColumnPrefsState extends BaseState
         action = "none";
     }
 
+    public void renderXML (ContentHandler out) throws PortalException {
+      try {
+        // Set up chain: userLayout --> Structure Attributes Incorp. Filter --> out
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        if (tFactory instanceof SAXTransformerFactory) {
+          SAXTransformerFactory saxTFactory = (SAXTransformerFactory)tFactory;
 
-      public void renderXML (ContentHandler out) throws PortalException {
-          try  {
-              // Set up chain: userLayout --> Structure Attributes Incorp. Filter --> out
+          // Empty transformer to do the initial dom2sax transition
+          Transformer emptytr = tFactory.newTransformer();
 
-              TransformerFactory tFactory=TransformerFactory.newInstance();
-              if(tFactory instanceof SAXTransformerFactory) {
-                  SAXTransformerFactory saxTFactory=(SAXTransformerFactory) tFactory;
+          // Stylesheet transformer
+          String xslURI = set.getStylesheetURI("default", runtimeData.getBrowserInfo());
+          TransformerHandler th = saxTFactory.newTransformerHandler(XSLT.getTemplates(xslURI));
+          th.setResult(new SAXResult(out));
+          Transformer sstr = th.getTransformer();
 
-                  // empty transformer to do the initial dom2sax transition
-                  Transformer emptytr=tFactory.newTransformer();
+          // Set the parameters
+          sstr.setParameter("baseActionURL", runtimeData.getBaseActionURL());
+          sstr.setParameter("activeTab", activeTab);
+          sstr.setParameter("action", action);
+          sstr.setParameter("elementID", elementID != null ? elementID : "none");
+          sstr.setParameter("errorMessage", errorMessage);
 
-                  // stylesheet transformer
-                  String xslURI = set.getStylesheetURI("default",runtimeData.getBrowserInfo());
-                  TransformerHandler th=saxTFactory.newTransformerHandler(XSLT.getTemplates(xslURI));
-                  th.setResult(new SAXResult(out));
-                  Transformer sstr=th.getTransformer();
-                  // set the parameters
-                  sstr.setParameter("baseActionURL", runtimeData.getBaseActionURL());
-                  sstr.setParameter("activeTab", activeTab);
-                  sstr.setParameter("action", action);
-                  sstr.setParameter("elementID", elementID);
-                  sstr.setParameter("errorMessage", errorMessage);
+          StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+          StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(th, ssup);
 
-                  StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
-                  StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(th, ssup);
-
-                  // Incorporate channel registry document into userLayout if user is in the subscribe process
-                  if (action.equals("newChannel")) {
-                      Node channelRegistry = ChannelRegistryManager.getChannelRegistry().getDocumentElement();
-                      userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));
-                  }
-                  // Begin SAX chain
-                  emptytr.transform(new DOMSource(userLayout),new SAXResult(saif));
-
-                  //if (action.equals("newChannel"))
-                  //  System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
-
-              } else {
-                  LogService.instance().log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
-              }
-          } catch (Exception e) {
-              LogService.instance().log(LogService.ERROR, e);
-              throw new GeneralRenderingException(e.getMessage());
+          // Incorporate channel registry document into userLayout if user is in the subscribe process
+          if (action.equals("newChannel")) {
+            Node channelRegistry = ChannelRegistryManager.getChannelRegistry().getDocumentElement();
+            userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));
           }
+
+          //if (action.equals("moveChannelHere"))
+          //System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
+
+          // Begin SAX chain
+          emptytr.transform(new DOMSource(userLayout), new SAXResult(saif));
+
+        } else {
+          LogService.instance().log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
+        }
+      } catch (Exception e) {
+        LogService.instance().log(LogService.ERROR, e);
+        throw new GeneralRenderingException(e.getMessage());
       }
+    }
   }
 
   /**
