@@ -52,6 +52,11 @@
         <param>255</param>
       </column>
       <column>
+        <name>PERMISSION_TYPE</name>
+        <type>VARCHAR</type>
+        <param>255</param>
+      </column>
+      <column>
         <name>EFFECTIVE</name>
         <type>TIMESTAMP</type>
       </column>
