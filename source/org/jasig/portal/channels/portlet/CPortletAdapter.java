@@ -99,7 +99,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
-    private static final String preferencesValidatorParamName = "preferencesValidator";
     private static final String portletPreferenceNamePrefix = "PORTLET.";
 
     static {
@@ -192,13 +191,6 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     values.add(prefVal);
                     preferences.add(prefName, values, true);
                 }
-            }
-
-            // Get the portlet preferences validator implementation which can optionally
-            // be specified as a publish parameter.
-            String preferencesValidator = sd.getParameter(preferencesValidatorParamName);
-            if (preferencesValidator != null) {         
-                preferences.setPreferencesValidator(preferencesValidator);
             }
             
             portletEntity.setPreferences(preferences);

@@ -45,15 +45,6 @@
             <ovrd>N</ovrd>
         </parameter>
 
-        <!--
-        <parameter>
-            <name>preferencesValidator</name>
-            <value>org.apache.pluto.core.impl.PreferencesValidatorImpl</value>
-            <description>An optional portlet preferences validator</description>
-            <ovrd>N</ovrd>
-        </parameter>
-        -->
-
     </parameters>
     
 </channel-definition>
