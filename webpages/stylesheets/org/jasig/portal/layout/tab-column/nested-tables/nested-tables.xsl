@@ -468,9 +468,7 @@
           <img alt="" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="80" height="1"/>
         </td>
         <td align="left" valign="top" colspan="2" class="uportal-channel-text">
-          <xsl:if test="@minimized != 'true'">
             <xsl:copy-of select="."/>
-          </xsl:if>
         </td>
         <td width="45" style="background-image:url({$mediaPath}/{$skin}/focused/focused_20.gif); background-repeat:repeat-y;">
           <img alt="" src="{$mediaPath}/{$skin}/focused/focused_20.gif" width="45" height="1"/>
