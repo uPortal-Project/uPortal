@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+
+<!--
+    PAGSGroupStoreConfig.xml is used to configure the person attributes group store.  	
+    See PAGSGroupStore.dtd for xml grammar.
+
+    Author: Dan Ellentuck, de3@columbia.edu
+    Version $Revision$
+-->
+
+
+<Group-Store>
+
+<!-- Group declarations: -->
+
+<!-- 
+  Group 1: "students" 
+  classification EQ "student" and status EQ "active"
+-->
+  <group>
+    <group-key>1</group-key>
+    <group-name>students</group-name>
+    <group-description>All active students</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>classification</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>student</test-value>
+        </test>
+        <test>
+          <attribute-name>status</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <test-value>^active$</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+    <members>
+      <member-key>2</member-key>
+      <member-key>3</member-key>
+    </members>
+  </group>
+
+<!-- 
+  Group 2: "grad students" 
+  member of students and ((year GT 4 and degree matches M*) or (degree EQ "LLB"))
+-->
+  <group>
+    <group-key>2</group-key>
+    <group-name>grad students</group-name>
+    <group-description>Graduate students</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>year</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.IntegerGTTester</tester-class>
+          <test-value>4</test-value>
+        </test>
+        <test>
+          <attribute-name>degree</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <test-value>M.*</test-value>
+        </test>
+      </test-group>
+      <test-group>
+        <test>
+          <attribute-name>degree</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>LLB</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+<!-- 
+  Group 3: "undergrad students" 
+  member of students and degree matches B*
+-->
+  <group>
+    <group-key>3</group-key>
+    <group-name>undergrad students</group-name>
+    <group-description>Undergraduate students</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>degree</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <test-value>B..</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+<!-- End Group declarations: -->
+
+</Group-Store>
