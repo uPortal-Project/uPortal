@@ -79,12 +79,12 @@ public class UserInstance implements HttpSessionBindingListener {
     private Object p_rendering_lock;
 
     // global rendering cache
-    public static final boolean CACHE_ENABLED=PropertiesManager.getBooleanProperty("org.jasig.portal.UserInstance.cache_enabled");
-    private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=Integer.parseInt(PropertiesManager.getProperty("org.jasig.portal.UserInstance.system_xslt_cache_min_size")); // this should be in a file somewhere
-    private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=Integer.parseInt(PropertiesManager.getProperty("org.jasig.portal.UserInstance.system_character_block_cache_min_size")); // this should be in a file somewhere
+    public static final boolean CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.cache_enabled");
+    private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_xslt_cache_min_size");
+    private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_character_block_cache_min_size");
     private static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
     private static final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
-    public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getBooleanProperty("org.jasig.portal.UserInstance.character_cache_enabled");
+    public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.character_cache_enabled");
     
     IPerson person;
     
