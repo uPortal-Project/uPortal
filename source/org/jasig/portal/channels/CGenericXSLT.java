@@ -40,7 +40,7 @@ import org.jasig.portal.utils.XSLT;
 
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.helpers.SAXHelper;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import org.w3c.dom.Document;
@@ -194,7 +194,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     return rp;
   }
 
-  public void renderXML(DocumentHandler out,String uid) throws PortalException  
+  public void renderXML(ContentHandler out,String uid) throws PortalException  
   {
     CState state=(CState)stateTable.get(uid);
 	  

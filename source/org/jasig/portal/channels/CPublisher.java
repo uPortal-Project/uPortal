@@ -45,7 +45,7 @@ import  org.jasig.portal.services.Authorization;
 import  org.jasig.portal.security.*;
 import  org.w3c.dom.*;
 import  org.apache.xerces.dom.*;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  java.net.URL;
 import  java.io.*;
 import  java.util.*;
@@ -202,7 +202,7 @@ public class CPublisher implements IPrivilegedChannel {
    * @param out a sax document handler
    * @throws PortalException generic portal exception
    */
-  public void renderXML (final org.xml.sax.DocumentHandler out) throws org.jasig.portal.PortalException {
+  public void renderXML (final org.xml.sax.ContentHandler out) throws org.jasig.portal.PortalException {
     try {
       switch (mode) {
         case PUBLISH:
@@ -236,7 +236,7 @@ public class CPublisher implements IPrivilegedChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException, 
+  private void processXML (String stylesheetName, Document xmlSource, ContentHandler out) throws org.xml.sax.SAXException, 
       PortalException {
     String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {

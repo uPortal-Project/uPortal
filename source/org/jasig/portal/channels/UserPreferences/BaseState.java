@@ -36,7 +36,7 @@
 package org.jasig.portal.channels.UserPreferences;
 
 import org.jasig.portal.*;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 
 /** <p>A base class for a CUserPreferences state.</p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
@@ -72,7 +72,7 @@ class BaseState implements IPrivilegedChannel {
     public void setStaticData(ChannelStaticData sd) throws PortalException  {
     };
 
-    public void renderXML (DocumentHandler out) throws PortalException {
+    public void renderXML (ContentHandler out) throws PortalException {
         // render header controls
     }
 

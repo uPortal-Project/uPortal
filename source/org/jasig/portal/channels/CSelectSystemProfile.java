@@ -41,7 +41,7 @@ package  org.jasig.portal.channels;
 import  org.jasig.portal.*;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  java.util.*;
 import  javax.servlet.http.*;
 import  org.w3c.dom.*;
@@ -117,7 +117,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
    * @param out
    * @exception PortalException
    */
-  public void renderXML (DocumentHandler out) throws PortalException {
+  public void renderXML (ContentHandler out) throws PortalException {
     Document doc = new org.apache.xerces.dom.DocumentImpl();
     Element edEl = doc.createElement("profiles");
     doc.appendChild(edEl);
@@ -144,8 +144,6 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
     params.put("baseActionURL", runtimeData.getBaseActionURL());
     try {
       XSLT.transform(doc, new URL(sslLocation), out, params, runtimeData.getBrowserInfo());
-    } catch (org.xml.sax.SAXException e) {
-      throw  new GeneralRenderingException("Unable to complete transformation");
     } catch (java.io.IOException i) {
       throw  new GeneralRenderingException("IOException has been encountered");
     }

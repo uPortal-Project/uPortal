@@ -153,7 +153,7 @@ import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import java.util.zip.*;
 
 import org.w3c.tidy.Tidy;
@@ -2185,9 +2185,9 @@ public final class CIMAPMail extends GenericPortalBean implements IChannel, Http
 
   /**
    * Ask channel to render its content.
-   * @param out the SAX DocumentHandler to output content to
+   * @param out the SAX ContentHandler to output content to
    */
-  public void renderXML (DocumentHandler out) {
+  public void renderXML (ContentHandler out) {
     String xmlHeader = "<?xml version=\"1.0\"?>\n";
       try {
         String weAre;

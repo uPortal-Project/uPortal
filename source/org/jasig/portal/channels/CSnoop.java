@@ -46,7 +46,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.XMLEscaper;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -129,7 +129,7 @@ public class CSnoop implements IPrivilegedChannel
    * Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (DocumentHandler out) throws PortalException
+  public void renderXML (ContentHandler out) throws PortalException
   {
     HttpServletRequest request = pcs.getHttpServletRequest();
     StringBuffer sb = new StringBuffer();

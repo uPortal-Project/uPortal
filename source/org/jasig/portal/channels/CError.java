@@ -35,7 +35,7 @@
 
 package org.jasig.portal.channels;
 
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivilegedChannel;
@@ -122,7 +122,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel
         this.portcs=pcs;
     }
 
-    public void renderXML(DocumentHandler out) {
+    public void renderXML(ContentHandler out) {
 	    // runtime data processing needs to be done here, otherwise replaced 
 	    // channel will get duplicated setRuntimeData() calls
 	    if(str_channelID!=null) {
@@ -183,7 +183,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel
 	      localRenderXML(out);
     }
     
-    private void localRenderXML(DocumentHandler out) {
+    private void localRenderXML(ContentHandler out) {
         // note: this method should be made very robust. Optimally, it should
         // not rely on XSLT to do the job. That means that mime-type dependent
         // output should be generated directly within the method.

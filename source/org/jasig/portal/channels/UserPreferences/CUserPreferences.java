@@ -41,7 +41,7 @@ package  org.jasig.portal.channels.UserPreferences;
 import  org.jasig.portal.*;
 import  org.jasig.portal.services.LogService;
 import  org.w3c.dom.Document;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  java.io.File;
 
 
@@ -254,7 +254,7 @@ public class CUserPreferences implements IPrivilegedChannel {
    * Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (DocumentHandler out) throws PortalException {
+  public void renderXML (ContentHandler out) throws PortalException {
     internalState.renderXML(out);
   }
 

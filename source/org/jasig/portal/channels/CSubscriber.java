@@ -46,7 +46,7 @@ import  org.w3c.dom.Node;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Document;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  java.io.File;
 import  java.net.URL;
 import  java.util.*;
@@ -177,7 +177,7 @@ public class CSubscriber
    * Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (DocumentHandler out) {
+  public void renderXML (ContentHandler out) {
     try {
       switch (mode) {
         case BROWSE:
@@ -205,7 +205,7 @@ public class CSubscriber
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException,
+  private void processXML (String stylesheetName, Document xmlSource, ContentHandler out) throws org.xml.sax.SAXException,
       PortalException {
     String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {

@@ -43,7 +43,7 @@ import  java.io.IOException;
 import  java.util.Hashtable;
 import  java.net.URL;
 import  java.net.MalformedURLException;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  org.xml.sax.SAXException;
 import  org.jasig.portal.utils.XSLT;
 import  org.jasig.portal.services.LogService;
@@ -78,7 +78,7 @@ public class CInlineFrame extends BaseChannel {
    * Build an XML string and transform for display using org.jasig.portal.util.XSLT
    * Creates IFrame or link depending on browser capability.
    */
-  public void renderXML (DocumentHandler out) throws PortalException {
+  public void renderXML (ContentHandler out) throws PortalException {
     StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
     sbXML.append("<iframe>");
     sbXML.append("  <url>").append(srcUrl).append("</url>");

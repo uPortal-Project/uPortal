@@ -43,7 +43,7 @@ import  org.jasig.portal.utils.XSLT;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  java.io.StringWriter;
 import  java.util.Enumeration;
 import  java.util.Hashtable;
@@ -309,7 +309,7 @@ class GPreferencesState extends BaseState {
    * @param out
    * @exception PortalException
    */
-  public void renderXML (DocumentHandler out) throws PortalException {
+  public void renderXML (ContentHandler out) throws PortalException {
     if (this.internalState != null)
       this.internalState.renderXML(out);
     else
@@ -405,7 +405,7 @@ class GPreferencesState extends BaseState {
      * @param out
      * @exception PortalException
      */
-    public void renderXML (DocumentHandler out) throws PortalException {
+    public void renderXML (ContentHandler out) throws PortalException {
       Element target = context.getUserLayoutXML().getElementById(editElementID);
       String elType = target.getTagName();
       // construct the descriptive XML
@@ -514,8 +514,6 @@ class GPreferencesState extends BaseState {
       if (xslURI != null) {
         try {
           org.jasig.portal.utils.XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (org.xml.sax.SAXException e) {
-          throw  new GeneralRenderingException("Unable to complete transformation");
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
@@ -566,7 +564,7 @@ class GPreferencesState extends BaseState {
      * @param out
      * @exception PortalException
      */
-    public void renderXML (DocumentHandler out) throws PortalException {
+    public void renderXML (ContentHandler out) throws PortalException {
       // construct gpref XML
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element edEl = doc.createElement("gpref");
@@ -637,8 +635,6 @@ class GPreferencesState extends BaseState {
       if (xslURI != null) {
         try {
           XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (org.xml.sax.SAXException e) {
-          throw  new GeneralRenderingException("Unable to complete transformation");
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
@@ -733,7 +729,7 @@ class GPreferencesState extends BaseState {
      * @param out
      * @exception PortalException
      */
-    public void renderXML (DocumentHandler out) throws PortalException {
+    public void renderXML (ContentHandler out) throws PortalException {
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
@@ -751,8 +747,6 @@ class GPreferencesState extends BaseState {
       if (xslURI != null) {
         try {
           XSLT.transform(context.getUserLayoutXML(), new URL(xslURI), out, params);
-        } catch (org.xml.sax.SAXException e) {
-          throw  new GeneralRenderingException("Unable to complete transformation");
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
@@ -846,7 +840,7 @@ class GPreferencesState extends BaseState {
      * @param out
      * @exception PortalException
      */
-    public void renderXML (DocumentHandler out) throws PortalException {
+    public void renderXML (ContentHandler out) throws PortalException {
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
@@ -857,8 +851,6 @@ class GPreferencesState extends BaseState {
       if (xslURI != null) {
         try {
           XSLT.transform(context.getUserLayoutXML(), new URL(xslURI), out, params);
-        } catch (org.xml.sax.SAXException e) {
-          throw  new GeneralRenderingException("Unable to complete transformation");
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }

@@ -61,7 +61,7 @@ import  org.apache.xerces.dom.DocumentImpl;
 import  org.apache.xml.serialize.XMLSerializer;
 import  org.apache.xml.serialize.OutputFormat;
 import  org.xml.sax.InputSource;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  org.xml.sax.EntityResolver;
 import  org.xml.sax.SAXException;
 import  java.sql.Connection;
@@ -220,7 +220,7 @@ public class CBookmarks extends BaseChannel {
   /**
    *  Render the user's layout based on the current state of the channel
    */
-  public void renderXML (DocumentHandler out) {
+  public void renderXML (ContentHandler out) {
     // Retrieve the command passed in by the user
     String command = runtimeData.getParameter("command");
     if (command != null) {
@@ -478,7 +478,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderViewModeXML (DocumentHandler out) throws Exception {
+  private void renderViewModeXML (ContentHandler out) throws Exception {
     transformXML(out, "view_mode", getBookmarkXML());
   }
 
@@ -487,7 +487,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderEditModeXML (DocumentHandler out) throws Exception {
+  private void renderEditModeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
     parameters.put("TreeMode", "EditMode");
@@ -499,7 +499,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderEditNodeXML (DocumentHandler out) throws Exception {
+  private void renderEditNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
     parameters.put("TreeMode", "DeleteNode");
@@ -511,7 +511,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderAddNodeXML (DocumentHandler out) throws Exception {
+  private void renderAddNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
       LogService.instance().log(LogService.ERROR, "CBookmarks.renderAddNodeXML: No active node type has been set");
@@ -536,7 +536,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderMoveNodeXML (DocumentHandler out) throws Exception {
+  private void renderMoveNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(2);
     parameters.put("NodeType", m_activeNodeType);
     parameters.put("TreeMode", "MoveNode");
@@ -548,7 +548,7 @@ public class CBookmarks extends BaseChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void renderDeleteNodeXML (DocumentHandler out) throws Exception {
+  private void renderDeleteNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
       LogService.instance().log(LogService.ERROR, "CBookmarks.renderDeleteNodeXML: No active node type has been set");
@@ -574,7 +574,7 @@ public class CBookmarks extends BaseChannel {
    * @param styleSheetName
    * @param inputXML
    */
-  private void transformXML (DocumentHandler out, String stylesheetName, DocumentImpl inputXML) throws Exception {
+  private void transformXML (ContentHandler out, String stylesheetName, DocumentImpl inputXML) throws Exception {
     transformXML(out, stylesheetName, inputXML, null);
   }
 
@@ -585,7 +585,7 @@ public class CBookmarks extends BaseChannel {
    * @param inputXML
    * @param parameters
    */
-  private void transformXML (DocumentHandler out, String stylesheetName, DocumentImpl inputXML, Hashtable parameters) throws Exception {
+  private void transformXML (ContentHandler out, String stylesheetName, DocumentImpl inputXML, Hashtable parameters) throws Exception {
     // Create the parameters hashtable if it is null
     if (parameters == null) {
       parameters = new Hashtable(1);

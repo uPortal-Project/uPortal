@@ -57,7 +57,7 @@ import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.utils.XSLT;
 import  org.jasig.portal.utils.SmartCache;
 import  org.jasig.portal.factories.DocumentFactory;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.Element;
 
@@ -82,7 +82,7 @@ public class CHeader extends BaseChannel implements ICacheable {
    * @param out
    * @exception PortalException
    */
-  public void renderXML (DocumentHandler out) throws PortalException {
+  public void renderXML (ContentHandler out) throws PortalException {
     // Perform the transformation
     XSLT xslt = new XSLT();
     xslt.setXML(getUserXML());

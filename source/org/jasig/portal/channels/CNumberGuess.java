@@ -44,7 +44,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import java.io.StringWriter;
 
 /** <p>A number guessing game which asks the user to enter a number within
@@ -148,7 +148,7 @@ public class CNumberGuess implements IChannel
   /** Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (DocumentHandler out) throws PortalException
+  public void renderXML (ContentHandler out) throws PortalException
   {
     String sSuggest = null;
 

@@ -38,7 +38,7 @@
 
 package  org.jasig.portal.channels;
 
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  org.jasig.portal.IChannel;
 import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.ChannelRuntimeProperties;
@@ -95,7 +95,7 @@ public abstract class BaseChannel
    * @param out
    * @exception PortalException
    */
-  public void renderXML (DocumentHandler out) throws PortalException {}
+  public void renderXML (ContentHandler out) throws PortalException {}
 }
 
 

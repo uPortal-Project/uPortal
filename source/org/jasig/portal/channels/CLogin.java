@@ -49,7 +49,7 @@ import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.security.*;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import javax.servlet.http.HttpSession;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -119,7 +119,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     attemptedUserName = runtimeData.getParameter("userName");
   }
 
-  public void renderXML (DocumentHandler out) throws PortalException
+  public void renderXML (ContentHandler out) throws PortalException
   {
     String fullName = (String)staticData.getPerson().getFullName();
     Document doc = new org.apache.xerces.dom.DocumentImpl();

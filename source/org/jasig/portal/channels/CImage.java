@@ -38,7 +38,7 @@ package org.jasig.portal.channels;
 import org.jasig.portal.*;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 
 /** <p>A simple channel which renders an image along with an optional
  * caption and subcaption.</p>
@@ -88,7 +88,7 @@ public class CImage extends BaseChannel
    * @param out a sax document handler
    * @throws org.jasig.portal.PortalException
    */
-  public void renderXML (DocumentHandler out) throws PortalException
+  public void renderXML (ContentHandler out) throws PortalException
   {
     StringBuffer sb = new StringBuffer(1024);
     sb.append("<?xml version='1.0'?>\n");

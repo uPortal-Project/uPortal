@@ -38,7 +38,7 @@ package org.jasig.portal.channels;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import java.io.StringWriter;
 
 /** <p>Displays an applet. To pass in applet parameters, construct
@@ -59,7 +59,7 @@ public class CApplet extends BaseChannel
   /** Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (DocumentHandler out)
+  public void renderXML (ContentHandler out)
   {
     try
     {

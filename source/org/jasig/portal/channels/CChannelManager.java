@@ -44,7 +44,7 @@ import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.factories.DocumentFactory;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,7 +93,7 @@ public class CChannelManager extends BaseChannel {
     doAction();
   }
 
-  public void renderXML (DocumentHandler out) throws PortalException {
+  public void renderXML (ContentHandler out) throws PortalException {
     XSLT xslt = new XSLT();
     xslt.setXML(channelManagerDoc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());

@@ -42,7 +42,7 @@ import  org.jasig.portal.*;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
 import  org.jasig.portal.services.LogService;
-import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.ContentHandler;
 import  java.util.*;
 import  javax.servlet.http.*;
 import  org.w3c.dom.*;
@@ -214,7 +214,7 @@ class ManageProfilesState extends BaseState {
    * @param out
    * @exception PortalException
    */
-  public void renderXML (DocumentHandler out) throws PortalException {
+  public void renderXML (ContentHandler out) throws PortalException {
     // check if internal state exists, and if not, proceed with the
     // default screen rendering (profile list screen)
     if (internalState != null) {
@@ -272,8 +272,6 @@ class ManageProfilesState extends BaseState {
       if (xslURI != null) {
         try {
           XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (org.xml.sax.SAXException e) {
-          throw  new GeneralRenderingException("Unable to complete transformation");
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }
@@ -391,7 +389,7 @@ class ManageProfilesState extends BaseState {
      * @param out
      * @exception PortalException
      */
-    public void renderXML (DocumentHandler out) throws PortalException {
+    public void renderXML (ContentHandler out) throws PortalException {
       // construct gpref XML
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element profileEl = doc.createElement("profile");
@@ -580,8 +578,6 @@ class ManageProfilesState extends BaseState {
       if (xslURI != null) {
         try {
           XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (org.xml.sax.SAXException e) {
-          throw  new GeneralRenderingException("Unable to complete transformation");
         } catch (java.io.IOException i) {
           throw  new GeneralRenderingException("IOException has been encountered");
         }

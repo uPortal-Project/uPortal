@@ -35,7 +35,7 @@
 
 package org.jasig.portal.channels;
 
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import java.util.*;
 import java.io.*;
 import java.net.*;
@@ -268,7 +268,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     return new ChannelRuntimeProperties ();
   }
 
-  public void renderXML (DocumentHandler out) throws PortalException
+  public void renderXML (ContentHandler out) throws PortalException
   {
     String xml;
 
