@@ -471,8 +471,8 @@ public class PublisherBean extends GenericPortalBean
       sChanXml = sChanXml.substring(trim);
 
       // Insert the channel data
-      String sInsert  = "INSERT INTO PORTAL_CHANNELS (CHAN_ID, TITLE, APPROVED, CHANNEL_XML) ";
-             sInsert += "VALUES (" + nextID + ",'" + m_sChanName + "',0,'" + sChanXml + "')";
+      String sInsert  = "INSERT INTO PORTAL_CHANNELS (CHAN_ID, TITLE, APPROVED, CHANNEL_XML, USER_NAME) ";
+             sInsert += "VALUES (" + nextID + ",'" + m_sChanName + "',0,'" + sChanXml + "','" + person.getID() + "')";
 
       int iInserted = stmt.executeUpdate (sInsert);
 
