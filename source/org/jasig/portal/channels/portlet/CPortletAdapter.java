@@ -1,4 +1,4 @@
-/* Copyright 2003 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2003 - 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -74,6 +74,7 @@ import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.NullOutputStream;
 import org.jasig.portal.utils.SAXHelper;
 import org.xml.sax.ContentHandler;
@@ -110,7 +111,8 @@ public class CPortletAdapter
     private static ChannelCacheKey systemCacheKey;
     private static ChannelCacheKey instanceCacheKey;
     
-    private static final String uniqueContainerName = "Pluto-in-uPortal";
+    private static final String uniqueContainerName = 
+        PropertiesManager.getProperty("org.jasig.portal.channels.portlet.CPortletAdapter.uniqueContainerName", "Pluto-in-uPortal");
         
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
