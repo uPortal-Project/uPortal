@@ -400,69 +400,6 @@ public class ChannelManager {
     }
 
     /**
-     * A version of startChannelRendering that assumes that the channel is already in the channel table
-     * @param chanId channel Id (unique)
-     * @param className name of the channel class
-     * @param params a table of parameters
-     */
-    public void startChannelRendering (String chanId, long timeOut,boolean ccacheable)
-    {
-        // see if the channel is cached
-        IChannel ch;
-
-        if ((ch = (IChannel) channelTable.get(chanId)) == null) {
-            Logger.log(Logger.ERROR,"ChannelManager::startChannelRendering() : the channel has not been instantiated ! Please call a complete version of ChannelManager.startChannelRendering()");
-            return;
-        }
-
-        ChannelRuntimeData rd=null;
-
-        if(!chanId.equals(channelTarget)) {
-            if((ch instanceof IPrivilegedChannel)) {
-                // send the control structures
-                try {
-                    ((IPrivilegedChannel) ch).setPortalControlStructures(pcs);
-                } catch (Exception e) {
-                    channelTable.remove(ch);
-                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,chanId,ch);
-                    channelTable.put(chanId,errorChannel);
-                    ch=errorChannel;
-                    // set portal control structures
-                    try {
-                        errorChannel.setPortalControlStructures(pcs);
-                    } catch (Exception e2) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e2.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        Logger.log(Logger.ERROR,"ChannelManager::startChannelRendering() : Error channel threw ! "+sw.toString());
-                    }
-                }
-            }
-            rd = new ChannelRuntimeData ();
-            rd.setBrowserInfo(binfo);
-            rd.setBaseActionURL(this.pcs.getHttpServletRequest().getContextPath()+"/channel/"+chanId+"/"+uPElement);
-        } else {
-            if(!(ch instanceof IPrivilegedChannel)) {
-                rd = new ChannelRuntimeData ();
-                rd.setParameters(targetParams);
-                rd.setBrowserInfo(binfo);
-                rd.setBaseActionURL(this.pcs.getHttpServletRequest().getContextPath()+"/channel/"+chanId+"/"+uPElement);
-            }
-        }
-
-        ChannelRenderer cr = new ChannelRenderer (ch,rd);
-        cr.setCharacterCacheable(ccacheable);
-	if(ch instanceof ICacheable) {
-	    cr.setCacheTables(this.channelCacheTable);
-	}
-        cr.setTimeout (timeOut);
-        cr.startRendering ();
-        rendererTable.put (chanId,cr);
-    }
-
-
-    /**
      * Clean up after a rendering round.
      */
     public void finishedRendering() {
@@ -688,18 +625,6 @@ public class ChannelManager {
         }
 
         return null;
-    }
-
-
-    /**
-     * A short version of getChannelCharacters() that assumes that the channel has already been instantiated.
-     *
-     * @param chanId a <code>String</code> value
-     * @param timeOut a <code>long</code> value
-     * @return an <code>Object</code> value corresponding to either a character <code>String</code> or an <code>SAXBufferImpl</code>
-     */
-    public Object getChannelCharacters (String chanId, long timeOut) { 
-        return getChannelCharacters(chanId,null,timeOut,null);
     }
 
     /**

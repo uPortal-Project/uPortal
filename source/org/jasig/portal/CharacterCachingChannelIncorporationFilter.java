@@ -154,7 +154,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAXFilterImpl
                 channelClassName = atts.getValue ("class");
                 channelID = atts.getValue ("ID");
                 timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
-                params = new Hashtable ();
+                params = new Hashtable (0);
                 if(ccaching) {
                     // save the old cache state
                     if(ser.stopCaching()) {
@@ -186,8 +186,11 @@ public class CharacterCachingChannelIncorporationFilter extends SAXFilterImpl
                 insideChannelElement = false;
                 if (super.outDocumentHandler != null) {
                     if(ccaching) {
-                        Vector chanEntry=new Vector(2);
-                        chanEntry.add(channelID); chanEntry.add(new Long(timeOut));
+                        Vector chanEntry=new Vector(4);
+                        chanEntry.add(this.channelID); 
+                        chanEntry.add(this.channelClassName); 
+                        chanEntry.add(new Long(timeOut));
+                        chanEntry.add(this.params); 
                         channelIdBlocks.add(chanEntry);
                         Object o=cm.getChannelCharacters (channelID, this.channelClassName,this.timeOut,this.params);
                         if(o!=null) {

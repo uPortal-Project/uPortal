@@ -50,6 +50,7 @@ import  org.w3c.dom.*;
 import  org.apache.xalan.xpath.*;
 import  org.apache.xalan.xslt.*;
 import  org.apache.xml.serialize.*;
+import org.jasig.portal.PropertiesManager;
 
 
 /**
@@ -78,12 +79,12 @@ public class UserInstance implements HttpSessionBindingListener {
     private Object p_rendering_lock;
 
     // global rendering cache
-    public static final boolean CACHE_ENABLED=true;
-    private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=100; // this should be in a file somewhere
-    private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=100; // this should be in a file somewhere
+    public static final boolean CACHE_ENABLED=PropertiesManager.getBooleanProperty("org.jasig.portal.UserInstance.cache_enabled");
+    private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=Integer.parseInt(PropertiesManager.getProperty("org.jasig.portal.UserInstance.system_xslt_cache_min_size")); // this should be in a file somewhere
+    private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=Integer.parseInt(PropertiesManager.getProperty("org.jasig.portal.UserInstance.system_character_block_cache_min_size")); // this should be in a file somewhere
     private static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
     private static final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
-    public static final boolean CHARACTER_CACHE_ENABLED=true;
+    public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getBooleanProperty("org.jasig.portal.UserInstance.character_cache_enabled");
     
     IPerson person;
     
@@ -255,7 +256,7 @@ public class UserInstance implements HttpSessionBindingListener {
             boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
             // initialize ChannelIncorporationFilter
             //            ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager);
-            CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,this.CHARACTER_CACHE_ENABLED);
+            CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,this.CACHE_ENABLED && this.CHARACTER_CACHE_ENABLED);
             String cacheKey=null;
             boolean output_produced=false;
             if(this.CACHE_ENABLED) {
@@ -273,8 +274,10 @@ public class UserInstance implements HttpSessionBindingListener {
                             Vector chanEntry=(Vector) cCache.channelIds.get(i);
                             if(chanEntry!=null || chanEntry.size()!=2) {
                                 String chanId=(String)chanEntry.get(0);
-                                Long timeOut=(Long)chanEntry.get(1);
-                                channelManager.startChannelRendering(chanId,timeOut.longValue(),true);
+                                String chanClassName=(String)chanEntry.get(1);
+                                Long timeOut=(Long)chanEntry.get(2);
+                                Hashtable chanParams=(Hashtable)chanEntry.get(3);
+                                channelManager.startChannelRendering(chanId,chanClassName,timeOut.longValue(),chanParams,true);
                             } else {
                                 Logger.log(Logger.ERROR,"UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid !");
                             }
@@ -290,8 +293,10 @@ public class UserInstance implements HttpSessionBindingListener {
                             // get channel output
                             Vector chanEntry=(Vector) cCache.channelIds.get(sb);
                             String chanId=(String)chanEntry.get(0);
-                            Long timeOut=(Long)chanEntry.get(1);
-                            Object o=channelManager.getChannelCharacters (chanId, timeOut.longValue());
+                            String chanClassName=(String)chanEntry.get(1);
+                            Long timeOut=(Long)chanEntry.get(2);
+                            Hashtable chanParams=(Hashtable)chanEntry.get(3);
+                            Object o=channelManager.getChannelCharacters (chanId, chanClassName,timeOut.longValue(),chanParams);
                             if(o!=null) {
                                 if(o instanceof String) {
                                     Logger.log(Logger.DEBUG,"UserInstance::renderState() : received a character result for channelId=\""+chanId+"\"");
