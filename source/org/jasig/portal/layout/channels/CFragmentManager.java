@@ -250,10 +250,15 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					servantRender = false;
 		           } 	 
 				
-				   if ( servantRender && action.length() == 0 ) {
+				   boolean noAction = action.equals("");
+				   if ( servantRender && noAction ) {
 				     fragmentId = servantFragmentId;
 				     action = "publish";	
 				   }
+				   
+				   // Loading the default layout if the fragment is loaded in the theme
+				   if ( noAction && alm.isFragmentLoaded() )
+				      alm.loadUserLayout();
 				
 				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
 			    xslt.setStylesheetParameter("uPcFM_action",action);	

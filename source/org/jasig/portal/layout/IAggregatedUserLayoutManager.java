@@ -125,6 +125,14 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 				 * @exception PortalException if an error occurs
 				 */
 	public ILayoutFragment getFragment ( String fragmentId ) throws PortalException;
+	
+	/**
+		* Returns true if any fragment is currently loaded into the layout manager, 
+		* false - otherwise
+		* @return a boolean value
+		* @exception PortalException if an error occurs
+		*/
+	public boolean isFragmentLoaded() throws PortalException;
 
     /**
      * Returns the description of the node currently being added to the layout

@@ -834,6 +834,11 @@ public class UserInstance implements HttpSessionBindingListener {
            newNodeDescription = null;
         }
         
+		param = req.getParameter("uP_reload_layout");
+		if ( param != null && param.equals("true") ) {
+		  ulm.loadUserLayout();
+		}
+        
 		param = req.getParameter("uPcFM_action");
 		if ( param != null ) { 
 		  if ( ulm instanceof TransientUserLayoutManagerWrapper )

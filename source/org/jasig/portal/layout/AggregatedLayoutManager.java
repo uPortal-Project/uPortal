@@ -1080,6 +1080,16 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
          throw new PortalException(e.getMessage());
        }
     }
+    
+	/**
+		* Returns true if any fragment is currently loaded into the layout manager, 
+		* false - otherwise
+		* @return a boolean value
+		* @exception PortalException if an error occurs
+		*/
+	public boolean isFragmentLoaded() throws PortalException {
+   	 return isLayoutFragment();
+    }
 
     public void saveUserLayout() throws PortalException {
       try {
