@@ -2420,7 +2420,7 @@ public class RDBMUserLayoutStore
       // remove the old mapping and add the new one
       Statement stmt = con.createStatement();
       try {
-        String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID='" + userId + "' AND USER_AGENT='" + userAgent + "'";
+        String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND USER_AGENT='" + userAgent + "'";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "',"
