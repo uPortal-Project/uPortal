@@ -790,11 +790,7 @@
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
 
       <arg value="${usetable}"/>
