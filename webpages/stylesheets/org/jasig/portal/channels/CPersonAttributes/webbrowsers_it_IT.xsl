@@ -7,15 +7,15 @@
 
   <xsl:template match="/">
     <p class="uportal-text">
-      uPortal channels have access to user attributes
-      via the <span class="uportal-channel-code">org.jasig.portal.security.IPerson</span> object.
-      Attribute names are defined in the 
-      <a href="http://www.educause.edu/eduperson/">eduPerson object class</a> version 1.0.
+      I canali di uPortal hanno accesso agli attributi dell'utente
+      attraverso l'oggetto <span class="uportal-channel-code">org.jasig.portal.security.IPerson</span>.
+      I nomi degli attributi sono definiti nella 
+      <a href="http://www.educause.edu/eduperson/">eduPerson object class</a> versione 1.0.
     </p>
     <p>
-      uPortal implementors are to map these standard attribute names to
-      local names in their person directory or database.  Mappings are contained in
-      the <span class="uportal-channel-code">properties/PersonDirs.xml</span> file.
+      i realizzatori di uPortal hanno associato i nomi standard degli attributi ai
+      nomi locali nella directory locale (LDAP) o sul database degli utenti. Le associazioni sono contenute
+      nel file <span class="uportal-channel-code">properties/PersonDirs.xml</span>.
     </p>
     <xsl:apply-templates select="attributes"/>
   </xsl:template>
@@ -23,15 +23,15 @@
   <xsl:template match="attributes">
     <table border="0" cellpadding="2" cellspacing="3">
       <tr class="uportal-background-med">
-        <th>Att. Name</th>
-        <th>Att. Value</th>
+        <th>Nome Att.</th>
+        <th>Valore Att.</th>
       </tr>
       <tr class="uportal-background-light">
-        <td colspan="2">Available attributes:</td>
+        <td colspan="2">Attributi disponibili:</td>
       </tr>
       <xsl:apply-templates select="attribute" mode="defined"/>
       <tr class="uportal-background-light">
-        <td colspan="2">Unavailable attributes:</td>
+        <td colspan="2">Attributi non disponibili:</td>
       </tr>
       <xsl:apply-templates select="attribute" mode="undefined"/>
     </table>
@@ -57,7 +57,7 @@
     <xsl:if test="not(value)">
       <tr>
         <td><xsl:value-of select="name"/></td>
-        <td>[Not available]</td>
+        <td>[Non disponibile]</td>
       </tr>
     </xsl:if>
   </xsl:template>

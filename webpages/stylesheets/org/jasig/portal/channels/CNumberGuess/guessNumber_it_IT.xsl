@@ -44,26 +44,26 @@ Version $Revision$
 <xsl:template match="content">
   <xsl:choose>
     <xsl:when test="suggest">
-      Your guess of <xsl:value-of select="guess"/> was incorrect.
-      Try again -- guess <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!<br />
-      You have made <xsl:value-of select="guesses"/> guesses.
+      La risposta <xsl:value-of select="guess"/> è sbagliata.
+      Ritenta -- Indovina <span class="uportal-channel-strong"><xsl:value-of select="suggest"/></span>!<br />
+      Hai fatto <xsl:value-of select="guesses"/> tentativi.
     </xsl:when>
     <xsl:when test="answer">
-      You got it after <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> tries!
-      The answer was <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
-      <p>Please play again...</p>
+      L'hai indovinato dopo <span class="uportal-channel-strong"><xsl:value-of select="guesses"/></span> tentativi!
+      La risposta esatta era <span class="uportal-channel-strong"><xsl:value-of select="answer"/></span>!<br />
+      <p>Riprova con un nuova partita...</p>
     </xsl:when>
-    <xsl:otherwise>This is a number guessing game.<br /></xsl:otherwise>
+    <xsl:otherwise>Questo è il gioco: "Indovina il numero".<br /></xsl:otherwise>
   </xsl:choose> 
   
-  I am thinking of a number between 
-  <xsl:value-of select="minNum"/> and 
+  Penso che il numero sia compreso tra 
+  <xsl:value-of select="minNum"/> e 
   <xsl:value-of select="maxNum"/>.<br />
-  What's your guess?
+  Qual è il numero esatto?
     <form action="{$baseActionURL}" method="post">
       <input type="hidden" name="uP_root" value="me"/>
       <input type="text" name="guess" size="4" class="uportal-input-text"/>
-      <input type="submit" value="Submit" class="uportal-button"/>
+      <input type="submit" value="Conferma" class="uportal-button"/>
     </form>
 </xsl:template>
 

@@ -7,37 +7,37 @@
   <xsl:template match="/">
     <xsl:apply-templates select="snooper"/>
   </xsl:template>
-
+  
   <xsl:template match="snooper">
     <table width="100%" cellspacing="0" cellpadding="2" border="0">
       <tr>
         <td colspan="2" class="uportal-background-med">
-  	      <span class="uportal-channel-table-caption">Richiesta Informazioni</span>
-  	    </td>
-  	  </tr>
+  	      <span class="uportal-channel-table-caption">HTTP Richiesta Informazioni</span>
+        </td>
+      </tr>
       <xsl:apply-templates select="request-info"/>
       <tr>
         <td colspan="2" class="uportal-background-med">
   	      <span class="uportal-channel-table-caption">Informazioni su HTTP Header</span>
-  	    </td>
-  	  </tr>
+        </td>
+      </tr>
       <xsl:apply-templates select="request-info/headers"/>   
       <tr>
         <td colspan="2" class="uportal-background-med">
   	      <span class="uportal-channel-table-caption">Channel Runtime Data Info</span>
         </td>
       </tr>
-      <xsl:apply-templates select="channel-runtime-data"/>      
+      <xsl:apply-templates select="channel-runtime-data"/>   
     </table>
   </xsl:template>
 
   <xsl:template match="request-info">
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Richiesta Protocollo: </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Protocollo di Richiesta: </p></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="request-protocol"/></td>
     </tr>  
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Richiesta Metodo: </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Metodo di Richiesta: </p></td>
       <td width="100%" class="uportal-channel-table-row-odd"><xsl:value-of select="request-method"/></td>
     </tr>
     <tr>
@@ -165,5 +165,5 @@
       <td class="uportal-channel-table-row-odd" nowrap="nowrap"><xsl:value-of select="variant/@displayName"/> (<xsl:value-of select="variant/@code"/>)</td>
     </tr>
   </xsl:template>
-  
+
 </xsl:stylesheet>
