@@ -33,7 +33,7 @@
  *
  */
 
-package  org.jasig.portal;
+package org.jasig.portal;
 
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.services.LogService;
@@ -57,6 +57,27 @@ import java.util.Iterator;
  * @version $Revision$
  */
 public class RDBMChannelRegistryStore implements IChannelRegistryStore {
+
+  static {
+    try {
+      if (RDBMServices.supportsOuterJoins) {
+        if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
+          RDBMServices.joinQuery.addQuery("channel",
+            "{oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE");
+        } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
+           RDBMServices.joinQuery.addQuery("channel",
+            "UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE");
+       } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
+          RDBMServices.joinQuery.addQuery("channel",
+            "UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND");
+        } else {
+          throw new Exception("Unknown database driver");
+        }
+      }
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, "RDBMChannelRegistryStore: Error in static initializer", e);
+    }
+  }
 
   /**
    * Get a channel definition.
@@ -247,7 +268,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
       // Then insert new category memberships
       for (int i = 0; i < categories.length; i++) {
-        categories[i].addChannelDefinition(channelDef);
+        addChannelToCategory(channelDef, categories[i]);
       }
 
     } finally {
@@ -323,6 +344,50 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     } finally {
       RDBMServices.releaseConnection(con);
     }
+  }
+
+  /**
+   * Creates a new channel category.
+   * @param category, the channel category to create
+   * @throws org.jasig.portal.PortalException
+   */
+   /*
+  public void addCategory(ChannelCategory category) throws PortalException {
+    IEntityGroup categoryGroup = GroupService.newGroup(ChannelDefinition.class);
+    categoryGroup.setName(category.getName());
+    categoryGroup.setDescription(category.getDescription());
+    categoryGroup.update();
+  }
+  */
+
+  /**
+   * Associates a channel definition with a category.
+   * @param channelDef, the channel definition
+   * @param category, the channel category to which to associate the channel definition
+   * @throws org.jasig.portal.PortalException
+   */
+  public void addChannelToCategory(ChannelDefinition channelDef, ChannelCategory category) throws PortalException {
+    String channelDefKey = String.valueOf(channelDef.getPublishId());
+    IEntity channelDefEntity = GroupService.getEntity(channelDefKey, ChannelDefinition.class);
+    String categoryKey = String.valueOf(category.getId());
+    IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
+    categoryGroup.addMember(channelDefEntity);
+    categoryGroup.updateMembers();
+  }
+
+  /**
+   * Disassociates a channel definition from a category.
+   * @param channelDef, the channel definition
+   * @param category, the channel category from which to disassociate the channel definition
+   * @throws org.jasig.portal.PortalException
+   */
+  public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws PortalException {
+    String channelDefKey = String.valueOf(channelDef.getPublishId());
+    IEntity channelDefEntity = GroupService.getEntity(channelDefKey, ChannelDefinition.class);
+    String categoryKey = String.valueOf(category.getId());
+    IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
+    categoryGroup.removeMember(channelDefEntity);
+    categoryGroup.updateMembers();
   }
 
   /**
