@@ -11,7 +11,7 @@ package org.jasig.portal;
 import org.xml.sax.*;
 
 public class ChannelRenderer {
-    protected IXMLChannel channel;
+    protected IChannel channel;
     protected SAXBufferImpl buffer;
 
     protected boolean rendering;
@@ -27,7 +27,7 @@ public class ChannelRenderer {
      * Default constructor.
      * @param chan Channel associated with this ChannelRenderer
      */
-    public ChannelRenderer(IXMLChannel chan) {
+    public ChannelRenderer(IChannel chan) {
 	this.channel=chan;
 	rendering=false;
     };
@@ -116,10 +116,10 @@ public class ChannelRenderer {
     protected class Worker implements Runnable {
 	private boolean successful; 
 	private boolean done;
-	private IXMLChannel channel;
+	private IChannel channel;
 	private DocumentHandler documentHandler;
 
-	public Worker(IXMLChannel ch, DocumentHandler dh) {
+	public Worker(IChannel ch, DocumentHandler dh) {
 	    this.channel=ch; this.documentHandler=dh;
 	}
 

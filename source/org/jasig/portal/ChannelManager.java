@@ -84,9 +84,9 @@ public class ChannelManager {
     public void startChannelRendering(String chanID, String className, long timeOut, Hashtable params) {
 	try{
 	    // see if the channel is cached
-	    IXMLChannel ch;
-	    if((ch=(IXMLChannel) channelTable.get(chanID))==null) {
-		ch = (org.jasig.portal.IXMLChannel) Class.forName (className).newInstance ();
+	    IChannel ch;
+	    if((ch=(IChannel) channelTable.get(chanID))==null) {
+		ch = (org.jasig.portal.IChannel) Class.forName (className).newInstance ();
 		// construct a ChannelStaticData object 
 		ChannelStaticData sd=new ChannelStaticData();
 		sd.setChannelID(chanID);
@@ -148,9 +148,9 @@ public class ChannelManager {
     public void processChannel(String chanID,String className,Hashtable params,DocumentHandler dh) {
 	try{
 	    // see if the channel is cached
-	    IXMLChannel ch;
-	    if((ch=(IXMLChannel) channelTable.get(chanID))==null) {
-		ch = (org.jasig.portal.IXMLChannel) Class.forName (className).newInstance ();
+	    IChannel ch;
+	    if((ch=(IChannel) channelTable.get(chanID))==null) {
+		ch = (org.jasig.portal.IChannel) Class.forName (className).newInstance ();
 		// construct a ChannelStaticData object 
 		ChannelStaticData sd=new ChannelStaticData();
 		sd.setChannelID(chanID);
@@ -183,7 +183,7 @@ public class ChannelManager {
      * @param LayoutEvent object
      */
     public void passLayoutEvent(String chanID,LayoutEvent le) {
-	IXMLChannel ch=(IXMLChannel) channelTable.get(chanID);
+	IChannel ch=(IChannel) channelTable.get(chanID);
 	if(ch!=null) {
 	    ch.receiveEvent(le);
 	} else Logger.log(Logger.ERROR,"ChannelManager::passLayoutEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\""+chanID+"\")");

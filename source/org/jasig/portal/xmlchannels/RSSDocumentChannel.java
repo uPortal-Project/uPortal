@@ -10,13 +10,13 @@ import org.jasig.portal.*;
 import org.apache.xalan.xslt.*;
 
 /**
- * A simple example of IXMLChannel that views an RSS Document.
+ * A simple example of IChannel that views an RSS Document.
  * @author Peter Kharchenko
  * @version $Revision$
  */
 
 
-public class RSSDocumentChannel extends GenericPortalBean implements IXMLChannel
+public class RSSDocumentChannel extends GenericPortalBean implements IChannel
 {
     String uri;
     StylesheetSet set;

@@ -14,7 +14,7 @@ import org.w3c.dom.*;
 
 /**
  * A reference implementation of the Bookmarks xmlchannel.
- * The purpose of this code is to demonstrate the basic use of IXMLChannel interface.
+ * The purpose of this code is to demonstrate the basic use of IChannel interface.
  * <p>Bookmarks channel reads a simple XML file containing a list of bookmarks in it.
  * Depending on the request action type ("view", "edit", etc.) 
  * Bookmarks channel applies different stylesheets to different locations of the DOM structure produced by reading the bookmarks.xml file. </p>
@@ -24,7 +24,7 @@ import org.w3c.dom.*;
  */
 
 
-public class BookmarksChannel extends GenericPortalBean implements IXMLChannel
+public class BookmarksChannel extends GenericPortalBean implements IChannel
 {
 
     // a DOM where all the bookmark information will be contained
@@ -164,7 +164,7 @@ public class BookmarksChannel extends GenericPortalBean implements IXMLChannel
 
     private void renderViewXML(DocumentHandler out) throws org.xml.sax.SAXException {
 
-	// a block, typical for the IXMLChannel:
+	// a block, typical for the IChannel:
 	//  - use the StylesheetSet to get an appropriate stylesheet
 	//  - instansiation an XSLT processor
 	//  - fire up the transformation

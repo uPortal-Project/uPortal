@@ -18,7 +18,7 @@ import org.jasig.portal.*;
 
 
 
-public class HeaderChannel implements IXMLChannel
+public class HeaderChannel implements IChannel
 {
     
     private ChannelRuntimeData runtimeData;

@@ -28,7 +28,7 @@ import org.jasig.portal.*;
 // of SAX streams. 
 
 
-public class XMLDocumentChannel implements IXMLChannel
+public class XMLDocumentChannel implements IChannel
 {
     String uri;
     ChannelRuntimeData runtimeData;
