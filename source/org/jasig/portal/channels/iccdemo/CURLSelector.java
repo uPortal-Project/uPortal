@@ -182,7 +182,7 @@ public class CURLSelector extends BaseChannel {
             // time to render and miss the event in the case when the rendering
             // groups are not used.
             try {
-                Thread.currentThread().sleep(1000);
+                Thread.sleep(1000);
             } catch (InterruptedException ie) {}
 
             // now, finally pass the url

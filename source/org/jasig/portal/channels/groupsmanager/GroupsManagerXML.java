@@ -671,7 +671,7 @@ public class GroupsManagerXML
       GroupsManagerWrapperFactory wf = GroupsManagerWrapperFactory.instance();
       String tagname =  (type.equals(ENTITY_TAGNAME) || type.equals(ENTITY_CLASSNAME)) ?
          ENTITY_TAGNAME : GROUP_TAGNAME;
-      IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(tagname);
+      IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.get(tagname);
       return rap;
    }
 

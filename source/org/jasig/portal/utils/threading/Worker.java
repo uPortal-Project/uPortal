@@ -104,7 +104,7 @@ public final class Worker extends Thread {
 					cleanState();
 				}
 				//clear this threads interrupted status
-				this.interrupted();
+				Worker.interrupted();
 
 			} finally {
                             Thread.yield();

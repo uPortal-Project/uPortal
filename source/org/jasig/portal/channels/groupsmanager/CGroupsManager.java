@@ -285,7 +285,7 @@ public class CGroupsManager
             String theCommand = runtimeData.getParameter("grpCommand");
             Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): COMMAND PROCESS About to get the'"
                   + theCommand + "' command");
-            IGroupsManagerCommand c = cf.get(theCommand);
+            IGroupsManagerCommand c = GroupsManagerCommandFactory.get(theCommand);
             Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): Got the '"
                   + theCommand + "' command = " + (c != null));
             if (c != null) {

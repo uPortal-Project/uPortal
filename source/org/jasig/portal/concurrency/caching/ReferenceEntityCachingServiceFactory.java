@@ -64,8 +64,7 @@ public IEntityCachingService newCachingService() throws CachingException
         { return ReferenceEntityCachingService.singleton(); }
     catch ( CachingException ce )
     {
-        LogService.instance().log
-            (LogService.ERROR, "ReferenceEntityLockServiceFactory.newCachingService(): " + ce);
+        LogService.log(LogService.ERROR, "ReferenceEntityLockServiceFactory.newCachingService(): " + ce);
         throw ce;
     }
 }

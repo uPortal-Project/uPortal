@@ -64,8 +64,7 @@ public IEntityLockService newLockService() throws LockingException
         { return ReferenceEntityLockService.singleton(); }
     catch ( LockingException le )
     {
-        LogService.instance().log
-            (LogService.ERROR, "ReferenceEntityLockServiceFactory.newLockService(): " + le);
+        LogService.log(LogService.ERROR, "ReferenceEntityLockServiceFactory.newLockService(): " + le);
         throw new LockingException(le.getMessage());
     }
 }
