@@ -1,0 +1,18 @@
+TR {
+	VERTICAL-ALIGN: top
+}
+TD {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A:link {
+	TEXT-DECORATION: none
+}
+A:visited {
+	TEXT-DECORATION: none
+}
+A:active {
+	TEXT-DECORATION: none
+}
+A:hover {
+	COLOR: #cc0000; FONT-FAMILY: Arial, Verdana, sans-serif; TEXT-DECORATION: underline
+}
