@@ -18,8 +18,9 @@ import org.jasig.portal.services.persondir.support.merger.MultivaluedAttributeMe
 
 /**
  * A {@link IPersonAttributeDao} implementation which iterates over children 
- * IPersonAttributeDaos and merges their reported attributes in a configurable
- * way. The default merger is {@link MultivaluedAttributeMerger}.
+ * IPersonAttributeDaos queries each with the same data and merges their
+ * reported attributes in a configurable way. The default merger is
+ * {@link MultivaluedAttributeMerger}.
  * 
  * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>

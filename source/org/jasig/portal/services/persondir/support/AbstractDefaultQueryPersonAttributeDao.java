@@ -39,7 +39,7 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
      * 
      * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.lang.String)
      */
-    public Map getUserAttributes(final String uid) {
+    public final Map getUserAttributes(final String uid) {
         final Map seed = Collections.singletonMap(this.getDefaultAttributeName(), uid);
         
         return this.getUserAttributes(seed);
@@ -50,9 +50,9 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
      * Returns the attribute set by {@link #setDefaultAttributeName(String)} or
      * if it has not been called the default value "uid" is returned.
      * 
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getDefaultAttributeName()
+     * @return The default single string query attribute
      */
-    public String getDefaultAttributeName() {
+    public final String getDefaultAttributeName() {
         return this.defaultAttribute;
     }
     
@@ -63,7 +63,7 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
      * @param name The attribute name to set as default.
      * @throws IllegalArgumentException if <code>name</code> is <code>null</code>.
      */
-    public void setDefaultAttributeName(final String name) {
+    public final void setDefaultAttributeName(final String name) {
         if (name == null)
             throw new IllegalArgumentException("The default attribute name must be null");
 

@@ -19,13 +19,27 @@ import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdde
 
 /**
  * This {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao}
- * implementation iterates through an ordered {@link java.util.List} of
- * {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao} impls,
- * taking the resulting Map from each and passing it on as the query seed for
- * the next dao. This may cause problems for multi-valued attributes since the
- * current dao implementations do not understand values of type {@link java.util.List}.
+ * implementation iterates through an ordered {@link List} of
+ * {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao} impls
+ * when getting user attributes.
  * <br>
- * The default merger is {@link ReplacingAttributeAdder}
+ * The first DAO is queried using the seed {@link Map} passed to this class. The results
+ * of the query are merged into a general result map. After the first DAO this general
+ * result map used as the query seed for each DAO and each DAOs results are merged into it.
+ * <br>
+ * This behavior allows a DAO lower on the list to rely on attributes returned by a DAO
+ * higher on the list.
+ * <br>
+ * The default merger for the general result set is {@link ReplacingAttributeAdder}.
+ * <br>
+ * Note that most DAOs expect a Map of String->String. Some of the DAOs return a Map of
+ * String->Object or String->List. This may cause problems in the DAO if the key for an
+ * attribute with a non String value matches a key needed by the DAO for the query it is
+ * running.
+ * <br>
+ * It is <u>highly</u> recomended that the first DAO on the list for this class is
+ * the {@link org.jasig.portal.services.persondir.support.EchoPersonAttributeDaoImpl}
+ * to ensure the seed gets placed into the general result map.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
@@ -64,7 +78,10 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
             throw new IllegalStateException("No IPersonAttributeDaos have been specified.");
         
         
-        Map resultAttributes = new HashMap(seed);
+        Map resultAttributes = new HashMap();
+        
+        //Denotes that this is the first time we are running a query and the seed should be used
+        boolean isFirstQuery = true;
         
         //Iterate through the configured IPersonAttributeDaos, querying each.
         for (final Iterator iter = this.personAttributeDaos.iterator(); iter.hasNext();) {
@@ -72,7 +89,12 @@ public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttri
             
             Map currentAttributes = new HashMap();
             try {
-                currentAttributes = currentlyConsidering.getUserAttributes(resultAttributes);
+                if (isFirstQuery) {
+                    currentAttributes = currentlyConsidering.getUserAttributes(seed);
+                    isFirstQuery = false; //Ran a query successfully, stop using the seed
+                }
+                else
+                    currentAttributes = currentlyConsidering.getUserAttributes(resultAttributes);
             }
             catch (final RuntimeException rte) {
                 final String msg = "Exception thrown by DAO: " + currentlyConsidering;

@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl;
+import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -62,19 +63,14 @@ public class LegacyPersonDirectoryToPersonAttributeDaoAdapter implements IPerson
         
         // build a merger over the list of sources
         final MergingPersonAttributeDaoImpl merger = new MergingPersonAttributeDaoImpl();
+        //Enforce the requisite merger
+        merger.setMerger(new ReplacingAttributeAdder());
         merger.setPersonAttributeDaos(personAttributeDaos);
         
         // store the constructed PersonDirectory implementation.
         this.delegate = merger;
     }
 
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getDefaultAttributeName()
-     */
-    public String getDefaultAttributeName() {
-        return this.delegate.getDefaultAttributeName();
-    }
-    
     /*
      * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
      */

@@ -19,13 +19,6 @@ public class MockPersonAttributeDao implements IPersonAttributeDao {
     private Map backingMap;
     
     /**
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getDefaultAttributeName()
-     */
-    public String getDefaultAttributeName() {
-        return null;
-    }
-    
-    /**
      * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
      */
     public Set getPossibleUserAttributeNames() {

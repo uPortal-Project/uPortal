@@ -20,7 +20,6 @@ import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.rdbm.RDBMServicesDataSource;
-import org.jasig.portal.services.persondir.support.AbstractDefaultQueryPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
@@ -79,16 +78,13 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
         if (this.delegate == null)
             throw new IllegalStateException("There was an unknown problem creating the IPersonAttributeDao delegate.");
         
-        if (this.delegate instanceof AbstractDefaultQueryPersonAttributeDao) {
-            ((AbstractDefaultQueryPersonAttributeDao)this.delegate).setDefaultAttributeName(QUERY_ATTRIBUTE);
-        }
-        
         if (LOG.isTraceEnabled())
             LOG.trace("constructed " + this);
     }
     
-    /*
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getDefaultAttributeName()
+    /**
+     * Gets the attribute used for putting the single string queries
+     * into a Map.
      */
     public String getDefaultAttributeName() {
         return QUERY_ATTRIBUTE;
@@ -176,6 +172,7 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
         }
         
         jdbcImpl.setColumnsToAttributes(jdbcToPortalAttribs);
+        jdbcImpl.setDefaultAttributeName(QUERY_ATTRIBUTE);
         
         return jdbcImpl;
     }
@@ -231,6 +228,7 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
         }
        
         ldapImpl.setLdapAttributesToPortalAttributes(ldapToPortalAttribs);
+        ldapImpl.setDefaultAttributeName(QUERY_ATTRIBUTE);
        
         return ldapImpl;
     }

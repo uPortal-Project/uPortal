@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
-import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 import org.jasig.portal.utils.SoftHashMap;
 
 
@@ -35,7 +35,7 @@ public class PersonDirNameFinder
     private PersonDirNameFinder () throws SQLException
     {
         super();
-        pa = new SpringPersonAttributeDaoImpl();
+        pa = PersonDirectory.getPersonAttributeDaoInstance();
         names = new SoftHashMap();
     }
 

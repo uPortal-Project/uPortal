@@ -214,10 +214,6 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         public Set getPossibleUserAttributeNames() {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
         }
-        
-        public String getDefaultAttributeName() {
-            throw new RuntimeException("ThrowingPersonAttributeDao always throws");
-        }
     }
     
     /**
@@ -239,11 +235,6 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         public Set getPossibleUserAttributeNames() {
             return null;
         }
-        
-        public String getDefaultAttributeName() {
-            return null;
-        }
-        
     }
     
 }

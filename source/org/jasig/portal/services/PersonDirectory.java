@@ -18,7 +18,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
-import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
+import org.jasig.portal.spring.PortalApplicationContextFacade;
+import org.springframework.beans.factory.BeanFactory;
 
 /**
  * PersonDirectory is a source for user attributes.  It is configurable via a
@@ -38,10 +39,6 @@ import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
  * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
- * 
- * @deprecated Use Spring to get a {@link IPersonAttributeDao} instance via
- * {@link org.jasig.portal.spring.PortalApplicationContextFacade} or use the
- * {@link SpringPersonAttributeDaoImpl} class.
  */
 public class PersonDirectory {
 
@@ -71,19 +68,37 @@ public class PersonDirectory {
     private PersonDirectory(IPersonAttributeDao impl) {
         this.impl = impl;
     }
+    
+    /**
+     * Static lookup for a the Spring configured {@link IPersonAttributeDao}
+     * implementation.
+     * 
+     * @return The Spring configured {@link IPersonAttributeDao} implementation.
+     */
+    public static IPersonAttributeDao getPersonAttributeDaoInstance() {
+        final BeanFactory factory = PortalApplicationContextFacade.getPortalApplicationContext();
+        
+        final Object objectDelegate = factory.getBean("personDirectory");
+        
+        if (objectDelegate == null)
+            throw new NullPointerException("Spring config file did not declare a bean named 'personDirectory'.");
+        
+        if (!(objectDelegate instanceof IPersonAttributeDao))
+            throw new ClassCastException("Spring config file declared a 'personDirectory' bean which was not an instance of IPersonAttributeDao.");
+        
+        return (IPersonAttributeDao)objectDelegate;
+    }
 
     /**
      * Obtain the singleton instance of PersonDirectory.
      * 
      * @return the singleton instance of PersonDirectory.
-     * @deprecated Use Spring to get a {@link IPersonAttributeDao} instance via
-     * {@link org.jasig.portal.spring.PortalApplicationContextFacade} or use the
-     * {@link SpringPersonAttributeDaoImpl} class.
+     * @deprecated Use {@link #getPersonAttributeDaoInstance()}
      */
     public static synchronized PersonDirectory instance() {
         if (instance == null) {
             try {
-                instance = new PersonDirectory(new SpringPersonAttributeDaoImpl());
+                instance = new PersonDirectory(getPersonAttributeDaoInstance());
             }
             catch (Throwable t) {
                 log.error("Error instantiating PersonDirectory", t);

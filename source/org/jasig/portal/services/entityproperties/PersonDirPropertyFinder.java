@@ -13,10 +13,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
-import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 import org.jasig.portal.utils.SoftHashMap;
-
 
 /**
  * A finder implementation to provide IPerson properties derived from the
@@ -35,7 +34,7 @@ public class PersonDirPropertyFinder
     private SoftHashMap cache;
 
     public PersonDirPropertyFinder() {
-        pa = new SpringPersonAttributeDaoImpl();
+        pa = PersonDirectory.getPersonAttributeDaoInstance();
         cache = new SoftHashMap(120);
     }
 

@@ -70,14 +70,4 @@ public interface IPersonAttributeDao {
      * @return A {link Set} of possible attribute names for user queries.
      */
     public Set getPossibleUserAttributeNames();
-
-
-    /**
-     * A default attribute to be used with the {@link #getUserAttributes(String)}
-     * method to create the seed {@link Map}. This method will never rerturn
-     * <code>null</code>
-     * 
-     * @return The default attribute for a seed.
-     */
-    public String getDefaultAttributeName();
 }

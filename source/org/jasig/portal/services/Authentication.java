@@ -22,7 +22,6 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
-import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -113,7 +112,7 @@ public class Authentication {
          // Populate the person object using the PersonDirectory if applicable
          if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
             // Retrieve all of the attributes associated with the person logging in
-            IPersonAttributeDao pa = new SpringPersonAttributeDaoImpl();
+            IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDaoInstance();
             Map attribs = pa.getUserAttributes((String)person.getAttribute(IPerson.USERNAME));
             // Add each of the attributes to the IPerson
             Iterator en = attribs.keySet().iterator();
