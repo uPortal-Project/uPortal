@@ -19,6 +19,7 @@
 		<constructor-arg>
 			<list>
 				<value>properties/personDirectory.xml</value>
+				<value>properties/applicationContext.xml</value>
 			</list>
 		</constructor-arg>
 	</bean>
