@@ -45,6 +45,7 @@ import java.util.Date;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.utils.AddressTester;
+import org.jasig.portal.utils.CommonUtils;
 
 /**
  * This Class allows appending PROXY_REWRITE_PREFIX String in front of all the references to images, javascript files, etc.. 
@@ -255,19 +256,19 @@ public class ProxyWriter {
     */
     private static String fileNameGenerator(String addr)
     {
-        String newName = addr.replaceAll("/","");	
-        newName = newName.replaceAll("http:","");
-	newName = newName.replaceAll("www.","");
-	newName = newName.replaceAll("[.]","");
-	newName= newName.replaceAll("[?]","");
-	newName= newName.replaceAll("&","");
-        try{
-	   newName = newName.substring(0,16) + ".html";
-        }catch(IndexOutOfBoundsException ignore){
+        String newName = CommonUtils.replaceText(addr, "/", "");   
+        newName = CommonUtils.replaceText(newName, "http:", "");
+        newName = CommonUtils.replaceText(newName, "www.", "");
+        newName = CommonUtils.replaceText(newName, ".", "");
+        newName = CommonUtils.replaceText(newName, "?", "");
+        newName = CommonUtils.replaceText(newName, "&", "");
+        try {
+	       newName = newName.substring(0,16) + ".html";
+        } catch(IndexOutOfBoundsException ignore){
            //could not truncate the file name then it is short enough send it as it is
            return newName + ".html"; 
         }
-	return newName;
+	   return newName;
     }
 
     
@@ -283,7 +284,7 @@ public class ProxyWriter {
         if((line.indexOf(" src") != -1)&&(line.indexOf("http://")!= -1)){
             String srcValue = extractURL(line);
             String srcNewValue = createProxyURL(srcValue);
-            line = line.replaceAll(srcValue,srcNewValue);
+            line = CommonUtils.replaceText(line, srcValue, srcNewValue);
             int firstPartIndex = line.lastIndexOf(srcNewValue) + srcNewValue.length();
             String remaining = line.substring(firstPartIndex);
             return line.substring(0,firstPartIndex) + "  " + processLine(remaining);
@@ -334,7 +335,7 @@ public class ProxyWriter {
 		if(srcValue.indexOf("https://")!= -1)
 		   return srcValue;        
         else if(srcValue.indexOf("http://")!= -1)
-           srcNewValue = srcValue.replaceAll("http://",PROXY_REWRITE_PREFIX);
+           srcNewValue = CommonUtils.replaceText(srcValue, "http://", PROXY_REWRITE_PREFIX);
         else
            srcNewValue = "";
         return srcNewValue;
