@@ -20,6 +20,7 @@ import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.rdbm.RDBMServicesDataSource;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
@@ -35,7 +36,7 @@ public class PersonDirInfoAdaptor implements IPersonAttributeDao {
     private static final Log LOG = LogFactory.getLog(PersonDirInfoAdaptor.class);
     
     //Needed since our Jdbc Dao needs an attribute to map queries with 
-    private static final String QUERY_ATTRIBUTE = "uid";
+    protected static final String QUERY_ATTRIBUTE = IPerson.USERNAME;
     private static final List QUERY_ATTRIBUTE_LIST = Collections.singletonList(QUERY_ATTRIBUTE);
     
     /**

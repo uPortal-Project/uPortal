@@ -66,6 +66,7 @@ public class LegacyPersonDirectoryToPersonAttributeDaoAdapter implements IPerson
         //Enforce the requisite merger
         merger.setMerger(new ReplacingAttributeAdder());
         merger.setPersonAttributeDaos(personAttributeDaos);
+        merger.setDefaultAttributeName(PersonDirInfoAdaptor.QUERY_ATTRIBUTE);
         
         // store the constructed PersonDirectory implementation.
         this.delegate = merger;
