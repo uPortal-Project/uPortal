@@ -37,8 +37,7 @@ package org.jasig.portal;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-
-
+import java.util.Date;
 /**
  * Base portal exception class.
  * Information contained in this class allows ErrorChannel
@@ -51,15 +50,22 @@ public class PortalException extends Exception {
 
     // should the user be given an option to reinstantiate
     // the channel in a given session ?
-    boolean b_reinst=true;
+    boolean reinstantiable=true;
     // should the user be given an option to retry rendering
     // that same channel instance ?
-    boolean b_refresh=true;
+    boolean refreshable=true;
 
-    // exception trace
-    Exception e_exc;
+    boolean logPending = true;
+    ErrorID errorID = Errors.legacy;
+    String parameter = null;
+    Date timestamp = new Date();
+    
 
-    public PortalException() {
+    // Precursor to Throwable.cause property
+    // for Java < 1.4
+    Exception recordedException;
+
+    public PortalException() { 
     }
 
     /**
@@ -69,7 +75,7 @@ public class PortalException extends Exception {
      * @param exc an <code>Exception</code> value
      */
     public PortalException(Exception exc) {
-        this.e_exc=exc;
+        this.recordedException=exc;
     }
 
     /**
@@ -81,39 +87,55 @@ public class PortalException extends Exception {
     public PortalException(String msg) {
         super(msg);
     }
+    
+    public PortalException(ErrorID errorid) {
+    	super(errorid.getMessage());
+    	this.errorID=errorid;
+    }
 
     public PortalException(String msg,Exception exc) {
         super(msg);
-        this.e_exc=exc;
+        this.recordedException=exc;
     }
 
-    public PortalException(String msg, boolean refresh, boolean reinstantiate) {
-        super(msg);
-        b_reinst=reinstantiate;
-        b_refresh=refresh;
-    }
+	public PortalException(ErrorID errorid, Exception exc) {
+		super(errorid.getMessage());
+		this.errorID=errorid;
+		this.recordedException=exc;
+	}
 
-    public PortalException(String msg, Exception exc, boolean refresh, boolean reinstantiate) {
-        this(msg,refresh,reinstantiate);
-        this.e_exc=exc;
-    }
 
     /**
      * Check if user-mediated referesh is allowed.
-     *
-     * @return a <code>boolean</code> value
      */
-    public boolean allowRefresh() {
-        return b_refresh;
+    public boolean isRefreshable() {
+        return refreshable;
     }
+    
+	/**
+	 * Legacy support for badly named property accessor
+	 * 
+	 * @return isRefreshable()
+	 */
+	public boolean allowRefresh() {
+		return isRefreshable();
+	}
 
     /**
      * Check if user-mediated reinstantiation is allowed.
      *
      * @return a <code>boolean</code> value
      */
+    public boolean isReinstantiable() {
+        return reinstantiable;
+    }
+    
+    /**
+     * Legacy support for badly named property accessor
+     * @return isRinstantiable();
+     */
     public boolean allowReinstantiation() {
-        return b_reinst;
+    	return isReinstantiable();
     }
 
     /**
@@ -123,7 +145,7 @@ public class PortalException extends Exception {
      * @return an <code>Exception</code> value
      */
     public Exception getRecordedException() {
-        return this.e_exc; 
+        return this.recordedException; 
     }
 
     /**
@@ -134,9 +156,9 @@ public class PortalException extends Exception {
      * @param refresh a <code>boolean</code> value
      */
     public void setRefreshable(boolean refresh) {
-        this.b_refresh=refresh;
+        this.refreshable=refresh;
     }
-
+    
     /**
      * Set if the user should be presented with an option
      * to reinstantiate the component (channel) that generated
@@ -145,7 +167,7 @@ public class PortalException extends Exception {
      * @param reinstantiate a <code>boolean</code> value
      */
     public void setReinstantiable(boolean reinstantiate) {
-        this.b_reinst=reinstantiate;
+        this.reinstantiable=reinstantiate;
     }
 
     /**
@@ -156,47 +178,116 @@ public class PortalException extends Exception {
      * @param exc an <code>Exception</code> value
      */
     public void setRecordedException(Exception exc) {
-        this.e_exc=exc;
+        this.recordedException=exc;
+    }
+    /**
+     * @return
+     */
+    public boolean isLogPending() {
+        return logPending;
+    }
+
+    /**
+     * @param b
+     */
+    public void setLogPending(boolean b) {
+        logPending = b;
+    }
+
+    /**
+     * @return
+     */
+    public ErrorID getErrorID() {
+        return errorID;
+    }
+
+    /**
+     * @param errorID
+     */
+    public void setErrorID(ErrorID errorID) {
+        this.errorID = errorID;
     }
     
+
     /**
-     * Override <code>Exception</code> getMessage() method to 
-     * append the recorded exception message, if applicable
-     *
-     * @return the message
+     * @return
      */
-    public String getMessage(){
-      StringBuffer sb = new StringBuffer(String.valueOf(super.getMessage()));
-      if (getRecordedException() !=null){
-        sb.append("; "+getRecordedException().getMessage()); 
-      }
-      return sb.toString();
+    public String getParameter() {
+        return parameter;
     }
+
+    /**
+     * @param string
+     */
+    public void setParameter(String string) {
+        parameter = string;
+    }
+
+
+	public PortalException(String msg, boolean refresh, boolean reinstantiate) {
+		super(msg);
+		this.setReinstantiable(reinstantiate);
+		this.setRefreshable(refresh);
+	}
+
+	public PortalException(String msg, Exception exc, boolean refresh, boolean reinstantiate) {
+		this(msg,refresh,reinstantiate);
+		this.setRecordedException(exc);
+	}
+
+	/**
+		 * Override <code>Exception</code> getMessage() method to 
+		 * append the recorded exception message, if applicable
+		 *
+		 * @return the message
+		 */
+		public String getMessage(){
+		  StringBuffer sb = new StringBuffer(String.valueOf(super.getMessage()));
+		  
+		  Exception ex = getRecordedException();
+		  if (ex != null) {
+			  String lmsg = ex.getMessage();
+			  if (lmsg!=null) {
+				  sb.append("\n   [based on exception: ");
+				  sb.append(lmsg);
+				  sb.append("]");
+			  }
+		  }
+		  
+		  return sb.toString();
+		}
     
-    /**
-     * Overrides <code>Exception</code> printStackTrace() method 
-     */
-    public void printStackTrace(){
-      this.printStackTrace(System.out);
-    }
+		/**
+		 * Overrides <code>Exception</code> printStackTrace() method 
+		 */
+		public void printStackTrace(){
+		  this.printStackTrace(System.out);
+		}
     
-    /**
-     * Overrides <code>Exception</code> printStackTrace(PrintWriter writer) 
-     * method to print recorded exception stack trace if applicable
-     */
-    public void printStackTrace(PrintWriter writer){
-      if (getRecordedException()!=null){
-        getRecordedException().printStackTrace(writer);
-      }
-      else{
-        super.printStackTrace(writer);
-      }
-    }
+		/**
+		 * Overrides <code>Exception</code> printStackTrace(PrintWriter writer) 
+		 * method to print recorded exception stack trace if applicable
+		 */
+		public void printStackTrace(PrintWriter writer){
+		  if (getRecordedException()!=null){
+			getRecordedException().printStackTrace(writer);
+		  }
+		  else{
+			super.printStackTrace(writer);
+		  }
+		}
     
-    /**
-     * Overrides <code>Exception</code> printStackTrace(PrintStream stream) method 
-     */
-    public void printStackTrace(PrintStream stream){
-      this.printStackTrace(new PrintWriter(stream,true));
-    }
+		/**
+		 * Overrides <code>Exception</code> printStackTrace(PrintStream stream) method 
+		 */
+		public void printStackTrace(PrintStream stream){
+		  this.printStackTrace(new PrintWriter(stream,true));
+		}
+	/**
+	 * @return Returns the timestamp.
+	 */
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
 }
