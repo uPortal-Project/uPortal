@@ -73,15 +73,11 @@ public IEntityGroup findGroup(String key) throws GroupsException
     return groupFactory.find(key);
 }
   /*
-   * Returns an <code>IGroupMember</code> for a pre-existing group or entity.
-   * In the case of an entity, the entity is presumed to exist since we have no way
-   * of checking.  In the case of a group, if it does not exist, we return null.
+   * Returns an <code>IEntity</code> representing a portal entity.  This does
+   * not guarantee that the entity actually exists.
    */
-  public IGroupMember findGroupMember(String key, Class type)
-  throws GroupsException
+  public IEntity getEntity(String key, Class type) throws GroupsException
   {
-    if ( type == EntityTypes.GROUP_ENTITY_TYPE )
-      { return findGroup(key); }
     return entityFactory.newInstance(key, type);
   }
   /*

@@ -53,12 +53,10 @@ public interface IGroupService {
   public IEntityGroup findGroup(String key) throws GroupsException;
 
   /*
-   * Returns a pre-existing <code>IGroupMember</code> or null if the
-   * <code>IGroupMember</code> does not exist.  The <code>IGroupMember</code>
-   * can be either an <code>IEntityGroup</code> or an <code>IEntity</code>.
+   * Returns an <code>IEntity</code> representing a portal entity.  This does
+   * not guarantee that the entity actually exists.
    */
-  public IGroupMember findGroupMember(String key, Class type)
-    throws GroupsException;
+  public IEntity getEntity(String key, Class type) throws GroupsException;
 
   /*
    * Refers to the security.properties file to get the key for the group

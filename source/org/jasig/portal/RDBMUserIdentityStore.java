@@ -261,9 +261,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         /* put new user in groups that template is in */
         try{
           IEntityGroup everyone = GroupService.getEveryoneGroup();
-          IGroupMember me = GroupService.findGroupMember(String.valueOf(newUID), Class.forName("org.jasig.portal.security.IPerson"));
+          IGroupMember me = GroupService.getEntity(String.valueOf(newUID), Class.forName("org.jasig.portal.security.IPerson"));
 
-          IGroupMember template = GroupService.findGroupMember(String.valueOf(templateUID), Class.forName("org.jasig.portal.security.IPerson"));
+          IGroupMember template = GroupService.getEntity(String.valueOf(templateUID), Class.forName("org.jasig.portal.security.IPerson"));
           java.util.Iterator templateGroups =  template.getContainingGroups();
           while (templateGroups.hasNext())
           {

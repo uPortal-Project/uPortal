@@ -68,17 +68,16 @@ public class GroupService
         return instance().ifindGroup(key);
     }
    /*
-    * Returns a pre-existing <code>IGroupMember</code> or null if the
-    * <code>IGroupMember</code> does not exist.  The <code>IGroupMember</code>
-    * can be either an <code>IEntityGroup</code> or an <code>IEntity</code>.
+    * Returns an <code>IEntity</code> representing a portal entity.  This does
+    * not guarantee that the entity actually exists.
     * @param key String - the group key.
     * @param type Class - the Class of the underlying IGroupMember.
     * @return org.jasig.portal.groups.IGroupMember
     */
-    public static IGroupMember findGroupMember(String key, Class type)
+    public static IEntity getEntity(String key, Class type)
     throws GroupsException
     {
-        return instance().ifindGroupMember(key, type);
+        return instance().igetEntity(key, type);
     }
     /**
      * Returns the distinguished group called "everyone".
@@ -99,16 +98,14 @@ public class GroupService
         return groupService.findGroup(key);
     }
    /*
-    * Returns a pre-existing <code>IGroupMember</code> or null if the
-    * <code>IGroupMember</code> does not exist.  The <code>IGroupMember</code>
-    * can be either an <code>IEntityGroup</code> or an <code>IEntity</code>.
+    * Returns an <code>IEntity</code> representing a pre-existing portal entity.
     * @param key String - the group key.
     * @param type Class - the Class of the underlying IGroupMember.
-    * @return org.jasig.portal.groups.IGroupMember
+    * @return org.jasig.portal.groups.IEntity
     */
-    protected IGroupMember ifindGroupMember(String key, Class type) throws GroupsException
+    protected IEntity igetEntity(String key, Class type) throws GroupsException
     {
-        return groupService.findGroupMember(key, type);
+        return groupService.getEntity(key, type);
     }
     /**
      * Returns the distinguished group called "everyone".
