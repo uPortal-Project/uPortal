@@ -3624,8 +3624,8 @@
         <column><name>PROFILE_NAME</name><value>Guest Web Browser Profile</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
 
       <row>
@@ -3644,8 +3644,8 @@
         <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
 
       <row>
@@ -3664,8 +3664,8 @@
         <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
 
       <row>
@@ -3674,8 +3674,8 @@
         <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
 
       <row>
@@ -3684,8 +3684,8 @@
         <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
 
       <row>
@@ -3694,8 +3694,8 @@
         <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
 
     </rows>
