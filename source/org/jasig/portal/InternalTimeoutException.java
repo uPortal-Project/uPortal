@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,28 +50,28 @@ public class InternalTimeoutException extends PortalException {
     }
 
     public InternalTimeoutException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public InternalTimeoutException(String msg,long timeoutValue) {
-	super(msg);
-	l_timeoutValue=new Long(timeoutValue);
+        super(msg);
+        l_timeoutValue=new Long(timeoutValue);
     }
 
     public InternalTimeoutException(String msg,long timeoutValue,boolean refresh,boolean reinstantiate) {
-	super(msg,refresh, reinstantiate);
-	l_timeoutValue=new Long(timeoutValue);
+        super(msg,refresh, reinstantiate);
+        l_timeoutValue=new Long(timeoutValue);
     }
 
     public InternalTimeoutException(String msg,boolean refresh, boolean reinstantiate) {
-	super(msg,refresh,reinstantiate);
+        super(msg,refresh,reinstantiate);
     }
 
     public Long getTimeoutValue() {
-	return l_timeoutValue;
+        return l_timeoutValue;
     }
 
     public int getExceptionCode() {
-	return PortalException.INTERNAL_TIMEOUT_EXCEPTION;
+        return PortalException.INTERNAL_TIMEOUT_EXCEPTION;
     }
 }

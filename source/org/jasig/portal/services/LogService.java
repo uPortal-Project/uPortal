@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,8 +63,8 @@ import org.jasig.portal.services.PortalFileAppender;
  * will only be logged if their log level is the same or more severe than
  * the static member log level, which can be changed by calling setLogLevel().
  *
- * @author Ken Weiner (IBS)
- * @author Bernie Durfee (IBS)
+ * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
 
@@ -96,20 +95,20 @@ public class LogService extends GenericPortalBean
   private static PortalFileAppender m_logFile = null;
 
   // Maximum number of log files (Default is 10)
-  private static int m_maxBackupIndex = 10; 
+  private static int m_maxBackupIndex = 10;
 
   // Maximum size of each log file (Default is 500k)
-  private static int m_maxFileSize = 500000; 
+  private static int m_maxFileSize = 500000;
 
   private static LogService m_logger;
-  
+
   /**
    * Protected constructor to make this class a singleton
    */
   protected void LogService()
   {
   }
-  
+
   /**
    * Return an instance of logger
    */
@@ -119,10 +118,10 @@ public class LogService extends GenericPortalBean
     {
       m_logger = new LogService();
     }
-    
+
     return(m_logger);
   }
-  
+
   /**
    * Sets the current log level.  Use one of the static integer members
    * of this class ranging from  Logger.DEBUG to Logger.NONE.
@@ -130,7 +129,7 @@ public class LogService extends GenericPortalBean
    * messages.  The more lenient the log level, the more log messages will be logged.
    *
    * @param a log level
-   * 
+   *
    * @todo The appender must be abstracted out so that other can be swapped in.
    */
   public void setLogLevel(int iLogLevel)
@@ -151,7 +150,7 @@ public class LogService extends GenericPortalBean
 
   /**
    * Gets the current log level setting
-   * 
+   *
    * @return the current log level setting
    */
   public int getLogLevel()
@@ -162,7 +161,7 @@ public class LogService extends GenericPortalBean
   /**
    * Increments the old logs and creates a new log with the
    * current time and log level written at the top
-   * 
+   *
    * @todo If the file cannot be created, the log write should be pointed at stdout
    */
   public void initialize()
@@ -188,7 +187,7 @@ public class LogService extends GenericPortalBean
         {
           System.out.println("Defaulting to " + sLogLevelSetting + " for portal log level.");
         }
-        
+
         if(portalProperties.getProperty("logger.maxLogFiles") != null)
         {
           m_maxBackupIndex = Integer.parseInt(portalProperties.getProperty("logger.maxLogFiles"));
@@ -197,7 +196,7 @@ public class LogService extends GenericPortalBean
         {
           System.out.println("Defaulting to " + m_maxBackupIndex + " for maximum number of portal log files.");
         }
-        
+
         if(portalProperties.getProperty("logger.maxFileSize") != null)
         {
           m_maxFileSize = Integer.parseInt(portalProperties.getProperty("logger.maxFileSize"));
@@ -216,30 +215,30 @@ public class LogService extends GenericPortalBean
     {
       e.printStackTrace();
     }
-    
+
     try
     {
       if(sPortalBaseDir != null && new File(sPortalBaseDir).exists())
       {
         PatternLayout patternLayout = new PatternLayout("%-5p %-23d{ISO8601} %m%n");
-        
+
         // Make sure the relative path ends with a seperator
         if(!sLogRelativePath.endsWith(File.separator))
         {
           sLogRelativePath = sLogRelativePath + File.separator;
         }
-        
+
         // Make sure the portal base directory path ends with a seperator
         if(!sPortalBaseDir.endsWith(File.separator))
         {
           sPortalBaseDir = sPortalBaseDir + File.separator;
         }
-        
+
         // Create the log file directory path
         String logFileDirectoryPath = sPortalBaseDir + sLogRelativePath;
-        
+
         File logFileDirectory = new File(logFileDirectoryPath);
-        
+
         // Make sure the log file directory exists
         if(!logFileDirectory.exists())
         {
@@ -248,7 +247,7 @@ public class LogService extends GenericPortalBean
             System.out.println("Could not create log file directory!");
           }
         }
-        
+
         // Create the file appender
         m_logFile = new PortalFileAppender(patternLayout, logFileDirectoryPath + "portal.log");
 
@@ -282,10 +281,10 @@ public class LogService extends GenericPortalBean
 
   /**
    * Log a message at the specified log level
-   * 
+   *
    * @param Level at which to log the file
    * @param Message to send to the log
-   * 
+   *
    */
   public void log(int iLogLevel, String sMessage)
   {
@@ -338,7 +337,7 @@ public class LogService extends GenericPortalBean
   }
 
   /**
-   * 
+   *
    * @param the log level
    * @param an exception to log
    */
@@ -398,7 +397,7 @@ public class LogService extends GenericPortalBean
   /**
    * Translates integer version of log level into
    * string version for printing to the log
-   * 
+   *
    * @param the log level
    * @return a string representation of the log level
    * @throws IllegalArgumentException if the log level is not one of the acceptable log levels

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,14 +98,14 @@ public class ChannelRenderingBuffer extends SAXBufferImpl
       if (name.equals ("channel"))
       {
         insideChannelElement = true;
-        
+
         // get class attribute
         channelClassName = atts.getValue ("class");
         channelID = atts.getValue ("ID");
         timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
         params = new Hashtable ();
       }
-    } 
+    }
     else if (name.equals ("parameter"))
     {
       params.put (atts.getValue ("name"), atts.getValue ("value"));

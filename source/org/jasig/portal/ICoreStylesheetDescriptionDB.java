@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +37,9 @@ package org.jasig.portal;
 
 import java.util.Hashtable;
 
-/** 
+/**
  * Interface by which portal talks to the stylesheet description database
- * 
+ *
  * @author Peter Kharchenko
  * @version $Revision$
  */
@@ -47,22 +47,22 @@ public interface ICoreStylesheetDescriptionDB {
 
     // functions that allow one to browse available core stylesheets in various ways
     /** Obtain a listing of structure stylesheets from the database
-     * 
-     * @param mimeType 
-     * @return Returns a hashtable mapping structure stylesheet names to a 
+     *
+     * @param mimeType
+     * @return Returns a hashtable mapping structure stylesheet names to a
      *     word-description (a simple String) of that stylesheet
      */
     public Hashtable getStructureStylesheetList(String mimeType);
     /** Obtains a list of theme stylesheets available for a particular structure stylesheet
-     * 
+     *
      * @param structureStylesheetName name of the structure stylehsset
-     * @return Returns a hashtable mapping theme stylesheet names to a word 
+     * @return Returns a hashtable mapping theme stylesheet names to a word
      *     description of the stylesheet ( a simple String)
      */
     public Hashtable getThemeStylesheetList(String structureStylesheetName);
     /** Obtains a list of mime types available on the installation
-     * 
-     * @return Returns a hasbtale mapping mime type strings to their word 
+     *
+     * @return Returns a hasbtale mapping mime type strings to their word
      *     descriptions (simple String)
      */
     public Hashtable getMimeTypeList();
@@ -70,13 +70,13 @@ public interface ICoreStylesheetDescriptionDB {
     // functions that allow access to the entire CoreStylesheetDescription object.
     // These functions are used when working with the stylesheet, and not for browsing purposes.
     /** Obtains a complete description of the structure stylesheet
-     * 
+     *
      * @param stylesheetName name of the structure stylesheet
      * @return a description of the structure stylesheet
      */
     public StructureStylesheetDescription getStructureStylesheetDescription(String stylesheetName);
     /** Obtains a complete description of a theme stylesheet
-     * 
+     *
      * @param stylesheetName name of a theme stylesheet
      * @return a description of a theme stylesheet
      */
@@ -84,25 +84,25 @@ public interface ICoreStylesheetDescriptionDB {
 
     // functions that allow to manage core stylesheet description collection
     /** removes stylesheet description
-     * 
+     *
      * @param stylesheetName name of the stylesheet
      */
     public void removeStructureStylesheetDescription(String stylesheetName);
     /** Removes theme stylesheet
-     * 
+     *
      * @param stylesheetName name of the stylesheet
      */
     public void removeThemeStylesheetDescription(String stylesheetName);
     /** Registers new structure stylesheet with the portal database
-     * 
-     * @param stylesheetDescriptionURI Location of the stylesheet description 
+     *
+     * @param stylesheetDescriptionURI Location of the stylesheet description
      *     XML file
      * @param stylesheetURI Location of the actual stylesshet XML file
      */
     public void addStructureStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI);
     /** Registers a new theme stylesheet with the portal databases
-     * 
-     * @param stylesheetDescriptionURI Location of the stylesheet description 
+     *
+     * @param stylesheetDescriptionURI Location of the stylesheet description
      *     XML file
      * @param stylesheetURI Location of the actual stylesheet XML file
      */

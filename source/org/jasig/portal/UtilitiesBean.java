@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -323,73 +323,73 @@ public class UtilitiesBean extends GenericPortalBean
 
     public static String dom2PrettyString(Document doc) throws IOException
     {
-	java.io.StringWriter outString = new java.io.StringWriter ();
-	org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
-	format.setOmitXMLDeclaration(true);
-	format.setIndenting(true);
-	org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
-	xsl.serialize (doc);
-	return outString.toString();
+        java.io.StringWriter outString = new java.io.StringWriter ();
+        org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+        format.setOmitXMLDeclaration(true);
+        format.setIndenting(true);
+        org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+        xsl.serialize (doc);
+        return outString.toString();
     }
 
 
     /**
-     * Generate a series of SAX events from a node. 
+     * Generate a series of SAX events from a node.
      */
     public static void node2SAX(Node node, DocumentHandler dh) throws SAXException {
-	    LexicalHandler lh = (LexicalHandler)dh;
-	    if(node!=null) {
-		switch (node.getNodeType()) {
-		case Node.DOCUMENT_NODE:
-		    if(dh!=null)
-			dh.startDocument();
-		    break;
-		case Node.ELEMENT_NODE:
-		    AttributeListImpl al=new AttributeListImpl();
-		    NamedNodeMap nm=node.getAttributes();
-		    for (int i=0; i<nm.getLength(); i++) {
-			Attr attribute = (Attr) nm.item(i);
-			al.addAttribute(attribute.getName(),"CDATA",attribute.getNodeValue());
-		    }				
-		    if(dh!=null)
-			dh.startElement(node.getNodeName(),al);
-		    break;
-		case Node.TEXT_NODE:
-		    if(dh!=null)
-			dh.characters(node.getNodeValue().toCharArray(), 0, node.getNodeValue().length());
-		    break;
-		case Node.CDATA_SECTION_NODE:
-		    if (lh!=null && dh!=null) {
-			lh.startCDATA();
-			dh.characters(node.getNodeValue().toCharArray(), 0, node.getNodeValue().length());
-			lh.endCDATA();
-		    }
-		    break;
-		case Node.PROCESSING_INSTRUCTION_NODE:
-		    if(dh!=null)
-			dh.processingInstruction(node.getNodeName(), node.getNodeValue());
-		    break;
-		case Node.COMMENT_NODE:
-		    if (lh!=null && dh!=null) 
-		    lh.comment(node.getNodeValue().toCharArray(), 0, node.getNodeValue().length());
-		    break;
-		default:
-		    break;
-		}
-		// recursive traversal of the children
-		for (int i=0;i<node.getChildNodes().getLength();i++) {
-		    Node child = node.getChildNodes().item(i);
-		    node2SAX(child, dh);
-		}
-		
-		if (Node.ELEMENT_NODE == node.getNodeType()) {
-		    if(dh!=null)
-			dh.endElement(node.getNodeName());
-		} else if (node.DOCUMENT_NODE == node.getNodeType()) {
-		    if(dh!=null)
-			dh.endDocument();
-		}
-	    }
+            LexicalHandler lh = (LexicalHandler)dh;
+            if(node!=null) {
+                switch (node.getNodeType()) {
+                case Node.DOCUMENT_NODE:
+                    if(dh!=null)
+                        dh.startDocument();
+                    break;
+                case Node.ELEMENT_NODE:
+                    AttributeListImpl al=new AttributeListImpl();
+                    NamedNodeMap nm=node.getAttributes();
+                    for (int i=0; i<nm.getLength(); i++) {
+                        Attr attribute = (Attr) nm.item(i);
+                        al.addAttribute(attribute.getName(),"CDATA",attribute.getNodeValue());
+                    }
+                    if(dh!=null)
+                        dh.startElement(node.getNodeName(),al);
+                    break;
+                case Node.TEXT_NODE:
+                    if(dh!=null)
+                        dh.characters(node.getNodeValue().toCharArray(), 0, node.getNodeValue().length());
+                    break;
+                case Node.CDATA_SECTION_NODE:
+                    if (lh!=null && dh!=null) {
+                        lh.startCDATA();
+                        dh.characters(node.getNodeValue().toCharArray(), 0, node.getNodeValue().length());
+                        lh.endCDATA();
+                    }
+                    break;
+                case Node.PROCESSING_INSTRUCTION_NODE:
+                    if(dh!=null)
+                        dh.processingInstruction(node.getNodeName(), node.getNodeValue());
+                    break;
+                case Node.COMMENT_NODE:
+                    if (lh!=null && dh!=null)
+                    lh.comment(node.getNodeValue().toCharArray(), 0, node.getNodeValue().length());
+                    break;
+                default:
+                    break;
+                }
+                // recursive traversal of the children
+                for (int i=0;i<node.getChildNodes().getLength();i++) {
+                    Node child = node.getChildNodes().item(i);
+                    node2SAX(child, dh);
+                }
+
+                if (Node.ELEMENT_NODE == node.getNodeType()) {
+                    if(dh!=null)
+                        dh.endElement(node.getNodeName());
+                } else if (node.DOCUMENT_NODE == node.getNodeType()) {
+                    if(dh!=null)
+                        dh.endDocument();
+                }
+            }
     }
 }
 

@@ -1,3 +1,40 @@
+/**
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
+ */
+
 package org.jasig.portal;
 
 import org.w3c.dom.*;
@@ -12,7 +49,7 @@ import java.util.*;
 public class UserPreferences {
 
     protected UserProfile profile;
-    
+
     protected StructureStylesheetUserPreferences fsup;
     protected ThemeStylesheetUserPreferences ssup;
 
@@ -20,35 +57,35 @@ public class UserPreferences {
      * Copy-constructor
      */
     public UserPreferences(UserPreferences up) {
-	fsup=new StructureStylesheetUserPreferences(up.getStructureStylesheetUserPreferences());
- 	ssup=new ThemeStylesheetUserPreferences(up.getThemeStylesheetUserPreferences());
-	profile=up.getProfile();
+        fsup=new StructureStylesheetUserPreferences(up.getStructureStylesheetUserPreferences());
+        ssup=new ThemeStylesheetUserPreferences(up.getThemeStylesheetUserPreferences());
+        profile=up.getProfile();
     }
 
-    
+
     public void setProfile(UserProfile p) { profile=p; }
     public UserProfile getProfile() { return profile; }
 
     public UserPreferences(UserProfile p) { this.profile=p; }
 
     public void setStructureStylesheetUserPreferences(StructureStylesheetUserPreferences up) {
-	this.fsup=up;
+        this.fsup=up;
     }
 
     public void setThemeStylesheetUserPreferences(ThemeStylesheetUserPreferences up) {
-	this.ssup=up;
+        this.ssup=up;
     }
 
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences() {
-	return this.fsup;
+        return this.fsup;
     }
 
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences() {
-	return this.ssup;
+        return this.ssup;
     }
-    
+
     public void synchronizeWithUserLayoutXML(Document uLayoutXML) {
-	// make a list of channels in the XML Layout
+        // make a list of channels in the XML Layout
         NodeList channelNodes=uLayoutXML.getElementsByTagName("channel");
         HashSet channelSet=new HashSet();
         for(int i=0;i<channelNodes.getLength();i++) {

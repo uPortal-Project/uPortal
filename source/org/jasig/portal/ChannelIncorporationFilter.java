@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,45 +52,45 @@ public class ChannelIncorporationFilter extends SAXFilterImpl
   private boolean insideChannelElement = false;
   ChannelManager cm;
 
-  // information about the current channel 
+  // information about the current channel
   private String channelID;
 
   // public functions
 
   public ChannelIncorporationFilter (DocumentHandler handler, ChannelManager chanm)
-  { 
-    super (handler); 
+  {
+    super (handler);
     this.cm = chanm;
   }
 
   public void startElement (java.lang.String name, org.xml.sax.AttributeList atts) throws SAXException
   {
-    if (!insideChannelElement) 
+    if (!insideChannelElement)
     {
-      // recognizing "channel"   
-      if (name.equals ("channel")) 
+      // recognizing "channel"
+      if (name.equals ("channel"))
       {
         insideChannelElement = true;
         channelID = atts.getValue ("ID");
-      } 
-      else 
+      }
+      else
         super.startElement (name, atts);
-    } 
+    }
   }
 
   public void endElement (java.lang.String name) throws SAXException
   {
     if (insideChannelElement)
     {
-      if (name.equals ("channel")) 
+      if (name.equals ("channel"))
       {
-        if (super.outDocumentHandler != null) 
+        if (super.outDocumentHandler != null)
         {
           cm.outputChannel (channelID, this.getDocumentHandler ());
           insideChannelElement = false;
         }
       }
-    } 
+    }
     else super.endElement (name);
   }
 }

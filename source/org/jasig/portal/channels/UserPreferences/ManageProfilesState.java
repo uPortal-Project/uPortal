@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,16 +63,16 @@ class ManageProfilesState extends BaseState {
         super(context);
     }
 
-    protected Hashtable getUserProfileList() throws PortalException { 
+    protected Hashtable getUserProfileList() throws PortalException {
         if(userProfileList==null)
             userProfileList=this.getUserPreferencesDB().getUserProfileList(context.getUserLayoutManager().getPerson().getID());
-	return userProfileList;
+        return userProfileList;
     }
 
     protected Hashtable getSystemProfileList() throws PortalException {
         if(systemProfileList==null)
             systemProfileList=this.getUserPreferencesDB().getSystemProfileList();
-	return systemProfileList;
+        return systemProfileList;
     }
 
     public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
@@ -80,35 +80,35 @@ class ManageProfilesState extends BaseState {
         // local action processing
         String action=runtimeData.getParameter("action");
         if(action!=null) {
-	    String profileId=runtimeData.getParameter("profileId");
-	    boolean systemProfile=false;
-	    if(profileId!=null) {
-		String profileType=runtimeData.getParameter("profileType");
-		if(profileType!=null && profileType.equals("system")) systemProfile=true;
-		if(action.equals("edit")) {
-		    // initialize internal edit state
-		    CEditProfile epstate=new CEditProfile(this);
-		    // clear cached profile list tables
-		    userProfileList=systemProfileList=null;
-		    epstate.setRuntimeData(rd);
-		    internalState=epstate;
-		} else if(action.equals("delete")) {
-		    // delete a profile
-		    if(systemProfile) {
-			// need to check permissions here
-			//			context.getUserPreferencesDB().deleteSystemProfile(Integer.parseInt(profileId));
-			//			systemProfileList=null;
-		    } else {
-			this.getUserPreferencesDB().deleteUserProfile(context.getUserLayoutManager().getPerson().getID(),Integer.parseInt(profileId));
-			userProfileList=null;
-		    }
-		} else if(action.equals("map")) {
-		    this.getUserPreferencesDB().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(),this.runtimeData.getBrowserInfo().getUserAgent(),Integer.parseInt(profileId));
-		    // let userLayoutManager know that the current profile has changed : everything must be reloaded
-		    
-		}
-	    }
-		
+            String profileId=runtimeData.getParameter("profileId");
+            boolean systemProfile=false;
+            if(profileId!=null) {
+                String profileType=runtimeData.getParameter("profileType");
+                if(profileType!=null && profileType.equals("system")) systemProfile=true;
+                if(action.equals("edit")) {
+                    // initialize internal edit state
+                    CEditProfile epstate=new CEditProfile(this);
+                    // clear cached profile list tables
+                    userProfileList=systemProfileList=null;
+                    epstate.setRuntimeData(rd);
+                    internalState=epstate;
+                } else if(action.equals("delete")) {
+                    // delete a profile
+                    if(systemProfile) {
+                        // need to check permissions here
+                        //			context.getUserPreferencesDB().deleteSystemProfile(Integer.parseInt(profileId));
+                        //			systemProfileList=null;
+                    } else {
+                        this.getUserPreferencesDB().deleteUserProfile(context.getUserLayoutManager().getPerson().getID(),Integer.parseInt(profileId));
+                        userProfileList=null;
+                    }
+                } else if(action.equals("map")) {
+                    this.getUserPreferencesDB().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(),this.runtimeData.getBrowserInfo().getUserAgent(),Integer.parseInt(profileId));
+                    // let userLayoutManager know that the current profile has changed : everything must be reloaded
+
+                }
+            }
+
 
         }
         if(internalState!=null) internalState.setRuntimeData(rd);
@@ -261,11 +261,11 @@ class ManageProfilesState extends BaseState {
                         context.setState(null);
                     } else if(submit.equals("Save")) {
                         // save edit profile
-			if(profile.isSystemProfile())
-			    // only administrative users should be able to do this
-			    context.getUserPreferencesDB().updateSystemProfile(profile);
-			else 
-			    context.getUserPreferencesDB().updateUserProfile(context.getPerson().getID(),profile);
+                        if(profile.isSystemProfile())
+                            // only administrative users should be able to do this
+                            context.getUserPreferencesDB().updateSystemProfile(profile);
+                        else
+                            context.getUserPreferencesDB().updateUserProfile(context.getPerson().getID(),profile);
 
                         context.setState(null);
                     }
@@ -278,11 +278,11 @@ class ManageProfilesState extends BaseState {
                     String newType=runtimeData.getParameter("mimeType");
                     if(newType!=null) currentMimeType=newType;
                 } else if(action.equals("setStructureStylesheet")) {
-		    String sName=runtimeData.getParameter("structureStylesheet");
-		    if(sName!=null) profile.setStructureStylesheetName(sName);
+                    String sName=runtimeData.getParameter("structureStylesheet");
+                    if(sName!=null) profile.setStructureStylesheetName(sName);
                 } else if(action.equals("setThemeStylesheet")) {
-		    String sName=runtimeData.getParameter("themeStylesheet");
-		    if(sName!=null) profile.setThemeStylesheetName(sName);
+                    String sName=runtimeData.getParameter("themeStylesheet");
+                    if(sName!=null) profile.setThemeStylesheetName(sName);
                 }
             }
         }

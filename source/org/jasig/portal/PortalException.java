@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ package org.jasig.portal;
 /**
  * An abstract base for the uPortal channel exceptions.
  * Information contained in this class allows ErrorChannel
- * to handle errors gracefully. 
+ * to handle errors gracefully.
  * @author Peter Kharchenko
  * @version $Revision$
  */
@@ -59,28 +59,28 @@ public abstract class PortalException extends Exception {
     boolean b_refresh=true;
 
     public PortalException(boolean refresh, boolean reinstantiate) {
-	b_reinst=reinstantiate;
+        b_reinst=reinstantiate;
     }
 
     public PortalException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public PortalException(String msg, boolean refresh, boolean reinstantiate) {
-	super(msg);
-	b_reinst=reinstantiate;
+        super(msg);
+        b_reinst=reinstantiate;
     }
 
     public PortalException() {
     }
 
     abstract public int getExceptionCode();
-    
+
     public boolean allowRefresh() {
-	return b_refresh;
+        return b_refresh;
     }
 
     public boolean allowReinstantiation() {
-	return b_reinst;
+        return b_reinst;
     }
 }

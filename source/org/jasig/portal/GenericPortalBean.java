@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,15 +43,15 @@ import java.io.*;
 /**
  * This is a base class for all the Portal beans to extend.
  * The base class functionality contains all of the reusable code.
- * 
+ *
  * @author Ken Weiner
  * @author John Laker
  */
 public class GenericPortalBean
-{  
+{
   private static String sPortalBaseDir = null;
   public boolean DEBUG = false;
-  
+
   /**
    * Set the top level directory for the portal.  This makes it possible
    * to use relative paths in the application for loading properties files, etc.
@@ -61,7 +61,7 @@ public class GenericPortalBean
   {
     sPortalBaseDir = sPathToPortal;
   }
-  
+
   /**
    * Get the top level directory for the portal.  This makes it possible
    * to use relative paths in the application for loading properties files, etc.

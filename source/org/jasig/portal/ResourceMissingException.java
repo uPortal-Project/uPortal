@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,31 +50,31 @@ public class ResourceMissingException extends PortalException {
     private String str_description=null;
 
     public ResourceMissingException(String resourceURI, String resourceDescription, String msg) {
-	super(msg);
-	str_resourceURI=resourceURI;
-	str_description=resourceDescription;
+        super(msg);
+        str_resourceURI=resourceURI;
+        str_description=resourceDescription;
     }
 
     public ResourceMissingException(String resourceURI, String resourceDescription, String msg, boolean refresh, boolean reinstantiate) {
-	super(msg,refresh,reinstantiate);
-	str_resourceURI=resourceURI;
-	str_description=resourceDescription;
+        super(msg,refresh,reinstantiate);
+        str_resourceURI=resourceURI;
+        str_description=resourceDescription;
     }
 
     public ResourceMissingException() {
-	super();
+        super();
     }
 
     public String getResourceURI() {
-	return str_resourceURI;
+        return str_resourceURI;
     }
 
     public String getResourceDescription() {
-	return str_description;
+        return str_description;
     }
 
     public int getExceptionCode() {
-	return PortalException.RESOURCE_MISSING_EXCEPTION;
+        return PortalException.RESOURCE_MISSING_EXCEPTION;
     }
 
 }

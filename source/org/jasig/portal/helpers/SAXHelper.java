@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,10 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 /**
  * Title:        uPortal 20
- * Description:  
+ * Description:
  * @author Bernie Durfee (IBS)
  * @version 1.0
  */
@@ -55,14 +55,14 @@ public class SAXHelper
   public SAXHelper()
   {
   }
-  
+
   public static synchronized void outputContent(DocumentHandler out, String content)
     throws SAXException, IOException
   {
     SAXParser saxParser = new SAXParser();
-    
+
     saxParser.setDocumentHandler(out);
-    
+
     saxParser.parse(new InputSource(new StringReader(content)));
   }
 }

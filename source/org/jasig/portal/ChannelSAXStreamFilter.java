@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ import org.xml.sax.helpers.*;
 import java.io.*;
 
 /**
- * Filters out startDocument and endDocument from the 
+ * Filters out startDocument and endDocument from the
  * channel content.
  * This filter is invoked by the ChannelManager
  * prior to passing channel content to the ChannelIncorporationFilter.
@@ -53,15 +53,15 @@ public class ChannelSAXStreamFilter extends SAXFilterImpl
   {
     super (handler);
   }
- 
+
   public void startDocument() throws SAXException
-  { 
+  {
   }
-   
+
   public void endDocument() throws SAXException
   {
   }
-  
+
   public void processingInstruction(java.lang.String target, java.lang.String data) throws SAXException
   {
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,17 +59,17 @@ public class XMLEscaper
   {
     String result = null;
 
-    if ( source != null) 
+    if ( source != null)
     {
       StringBuffer sb = new StringBuffer (source.length () + 256);
 
       for (int i = 0 ; i < source.length() ; i++)
         sb.append (escape (source.charAt (i)));
- 
+
       result = sb.toString();
 
-    } 
- 
+    }
+
     return (result);
   }
 

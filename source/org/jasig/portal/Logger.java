@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -188,24 +187,24 @@ public class Logger extends GenericPortalBean
       if(sPortalBaseDir != null && new File(sPortalBaseDir).exists())
       {
         PatternLayout patternLayout = new PatternLayout("%-5p %-23d{ISO8601} %m%n");
-        
+
         // Make sure the relative path ends with a seperator
         if(!sLogRelativePath.endsWith(File.separator))
         {
           sLogRelativePath = sLogRelativePath + File.separator;
         }
-        
+
         // Make sure the portal base directory path ends with a seperator
         if(!sPortalBaseDir.endsWith(File.separator))
         {
           sPortalBaseDir = sPortalBaseDir + File.separator;
         }
-        
+
         // Create the log file directory path
         String logFileDirectoryPath = sPortalBaseDir + sLogRelativePath;
-        
+
         File logFileDirectory = new File(logFileDirectoryPath);
-        
+
         // Make sure the log file directory exists
         if(!logFileDirectory.exists())
         {
@@ -214,7 +213,7 @@ public class Logger extends GenericPortalBean
             System.out.println("Could not create log file directory!");
           }
         }
-        
+
         // Create the file appender
         m_logFile = new PortalFileAppender(patternLayout, logFileDirectoryPath + "portal.log");
 

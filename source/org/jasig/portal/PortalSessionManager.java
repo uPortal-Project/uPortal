@@ -1,4 +1,39 @@
-package org.jasig.portal;
+/**
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+ package org.jasig.portal;
 
 import java.io.*;
 import java.util.*;
@@ -26,122 +61,122 @@ public class PortalSessionManager extends HttpServlet
     private boolean baseDirSet=false;
     public static String renderBase="render.uP";
     public static String detachBaseStart="detach_";
-    
-    public void init() throws ServletException {
-	JNDIManager.initializePortalContext();
-    }
-    
-    public void doPost (HttpServletRequest req, HttpServletResponse res)
-	throws ServletException, IOException  {
-	doGet( req, res );
-    }
-    
-    public void doGet (HttpServletRequest req, HttpServletResponse res)
-	throws ServletException, IOException
-    {
-	// Should be text/xml !
-	if(!baseDirSet) {
-	    ServletConfig sc=this.getServletConfig();
-		
-	    if(sc!=null) {
-		String sPortalBaseDir=this.getServletConfig().getInitParameter("portalBaseDir");
-		
-		if(sPortalBaseDir!=null)  {
-		    File portalBaseDir = new java.io.File (sPortalBaseDir);
-		    
-		    if(portalBaseDir.exists())  {
-			GenericPortalBean.setPortalBaseDir (sPortalBaseDir);
-			baseDirSet=true;
-		    }
-		}
-	    }
-	}
-	
-	if(baseDirSet) {
-	    // forwarding
-	    ServletContext sc=this.getServletContext();
-	    
-	    HttpSession session = req.getSession ();
-	    if(session!=null) {
-		//		Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
-		String redirectBase=null;
-		if((redirectBase=this.doRedirect(req))!=null) {
-		    // cache request
-		    sc.setAttribute("oreqp_"+session.getId(),new RequestParamWrapper(req));
-		    // initial request, requeres forwarding
-		    session.setAttribute("forwarded",new Boolean(true));
-		    // forward
-		    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
-		    //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
-		    res.sendRedirect(req.getContextPath()+redirectBase);
-		} else {
-		    // delete old request
-		    Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
-		    if(forwarded!=null) session.removeAttribute("forwarded");
-		    // proceed with rendering
-		    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");		    
-		    // look if the LayoutBean object is already in the session, otherwise
-		    // make a new one
-		    LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
-		    if(layout==null) {
-			layout=new LayoutBean();
-			session.setAttribute("LayoutBean",layout);
-			//			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
-		    }
-		    RequestParamWrapper oreqp=null;
-		    if(forwarded!=null && forwarded.booleanValue()) oreqp=(RequestParamWrapper) sc.getAttribute("oreqp_"+session.getId());
 
-		    if(oreqp!=null) {
-			oreqp.setBaseRequest(req);
-			layout.writeContent(oreqp,res,res.getWriter());
-		    } else {
-			layout.writeContent(req,res,res.getWriter());
-		    }
-		}
-	    } else {
-		res.setContentType("text/html");
-		PrintWriter out = res.getWriter ();
-		out.println("<html>");
-		out.println("<body>");
-		
-		out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
-		out.println("Session object is null !??");
-		out.println("</body></html>");
-	    }
-	    
-	} else {
-	    res.setContentType("text/html");
-	    PrintWriter out = res.getWriter ();
-	    out.println("<html>");
-	    out.println("<body>");
-	    
-	    out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
-	    out.println("Base portal directory is not set ! Unable to proceed");
-	    out.println("</body></html>");
-	}
-	
+    public void init() throws ServletException {
+        JNDIManager.initializePortalContext();
+    }
+
+    public void doPost (HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException  {
+        doGet( req, res );
+    }
+
+    public void doGet (HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException
+    {
+        // Should be text/xml !
+        if(!baseDirSet) {
+            ServletConfig sc=this.getServletConfig();
+
+            if(sc!=null) {
+                String sPortalBaseDir=this.getServletConfig().getInitParameter("portalBaseDir");
+
+                if(sPortalBaseDir!=null)  {
+                    File portalBaseDir = new java.io.File (sPortalBaseDir);
+
+                    if(portalBaseDir.exists())  {
+                        GenericPortalBean.setPortalBaseDir (sPortalBaseDir);
+                        baseDirSet=true;
+                    }
+                }
+            }
+        }
+
+        if(baseDirSet) {
+            // forwarding
+            ServletContext sc=this.getServletContext();
+
+            HttpSession session = req.getSession ();
+            if(session!=null) {
+                //		Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : request path \""+req.getServletPath()+"\".");
+                String redirectBase=null;
+                if((redirectBase=this.doRedirect(req))!=null) {
+                    // cache request
+                    sc.setAttribute("oreqp_"+session.getId(),new RequestParamWrapper(req));
+                    // initial request, requeres forwarding
+                    session.setAttribute("forwarded",new Boolean(true));
+                    // forward
+                    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+                    //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
+                    res.sendRedirect(req.getContextPath()+redirectBase);
+                } else {
+                    // delete old request
+                    Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
+                    if(forwarded!=null) session.removeAttribute("forwarded");
+                    // proceed with rendering
+                    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");
+                    // look if the LayoutBean object is already in the session, otherwise
+                    // make a new one
+                    LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
+                    if(layout==null) {
+                        layout=new LayoutBean();
+                        session.setAttribute("LayoutBean",layout);
+                        //			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
+                    }
+                    RequestParamWrapper oreqp=null;
+                    if(forwarded!=null && forwarded.booleanValue()) oreqp=(RequestParamWrapper) sc.getAttribute("oreqp_"+session.getId());
+
+                    if(oreqp!=null) {
+                        oreqp.setBaseRequest(req);
+                        layout.writeContent(oreqp,res,res.getWriter());
+                    } else {
+                        layout.writeContent(req,res,res.getWriter());
+                    }
+                }
+            } else {
+                res.setContentType("text/html");
+                PrintWriter out = res.getWriter ();
+                out.println("<html>");
+                out.println("<body>");
+
+                out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
+                out.println("Session object is null !??");
+                out.println("</body></html>");
+            }
+
+        } else {
+            res.setContentType("text/html");
+            PrintWriter out = res.getWriter ();
+            out.println("<html>");
+            out.println("<body>");
+
+            out.println("<h1>" + getServletConfig().getServletName() + "</h1>");
+            out.println("Base portal directory is not set ! Unable to proceed");
+            out.println("</body></html>");
+        }
+
     }
     // this function determines if a given request needs to be redirected
     private String doRedirect(HttpServletRequest req) {
-	HttpSession session = req.getSession ();
-	if(session!=null) {
-	    Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
-	    if(forwarded!=null && forwarded.booleanValue()) return null;
-	    // don't forward request with no parameters
-	    if(!req.getParameterNames().hasMoreElements()) return null;
-	    String servletPath=req.getServletPath();
-	    // redirect to renderBase
-	    if(servletPath.equals("/"+renderBase)) return servletPath;
-	    // redirect to the same base, but no parameters
-	    String uPFile=servletPath.substring(servletPath.lastIndexOf('/'),servletPath.length());
-	    //	    Logger.log(Logger.DEBUG,"PortalSessionManager::doRedirect() : uPFile=\""+uPFile+"\".");		    
-	    if(uPFile.startsWith("/"+detachBaseStart) && uPFile.endsWith(".uP")) return uPFile;
-	} 
-	// redirect by default
-	return "/"+renderBase;
+        HttpSession session = req.getSession ();
+        if(session!=null) {
+            Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
+            if(forwarded!=null && forwarded.booleanValue()) return null;
+            // don't forward request with no parameters
+            if(!req.getParameterNames().hasMoreElements()) return null;
+            String servletPath=req.getServletPath();
+            // redirect to renderBase
+            if(servletPath.equals("/"+renderBase)) return servletPath;
+            // redirect to the same base, but no parameters
+            String uPFile=servletPath.substring(servletPath.lastIndexOf('/'),servletPath.length());
+            //	    Logger.log(Logger.DEBUG,"PortalSessionManager::doRedirect() : uPFile=\""+uPFile+"\".");
+            if(uPFile.startsWith("/"+detachBaseStart) && uPFile.endsWith(".uP")) return uPFile;
+        }
+        // redirect by default
+        return "/"+renderBase;
     }
 
-    /* RequestParamWrapper persists various information 
+    /* RequestParamWrapper persists various information
      * from the source request.
      * Once given a "base request", it substitutes corresponding
      * base information with that acquired from the source.
@@ -165,7 +200,7 @@ public class PortalSessionManager extends HttpServlet
   private String queryString;
   private String servletPath;
   private String requestURI;
-  
+
   public RequestParamWrapper(HttpServletRequest source) {
       // leech all of the information from the source request
       parameters=new Hashtable();
@@ -173,7 +208,7 @@ public class PortalSessionManager extends HttpServlet
     String pName=(String) e.nextElement();
     this.parameters.put(pName,source.getParameterValues(pName));
       }
-      
+
       pathInfo=source.getPathInfo();
       pathTranslated=source.getPathTranslated();
       contextPath=source.getContextPath();
@@ -181,19 +216,19 @@ public class PortalSessionManager extends HttpServlet
       servletPath=source.getServletPath();
       requestURI=source.getRequestURI();
   }
-  
+
   public void setBaseRequest(HttpServletRequest base) {
       this.req=base;
   }
 
   // overloaded methods
-  public String getParameter(String name){ 
+  public String getParameter(String name){
       String[] value_array=this.getParameterValues(name);
       if((value_array!=null) && (value_array.length>0)) return value_array[0];
       else return null;
   }
   public Enumeration getParameterNames(){ return this.parameters.keys(); }
-  public String[] getParameterValues(String name){ 
+  public String[] getParameterValues(String name){
       return (String[]) this.parameters.get(name);
   }
 
@@ -245,7 +280,7 @@ public class PortalSessionManager extends HttpServlet
   public boolean isSecure(){ return req.isSecure(); }
   public RequestDispatcher getRequestDispatcher(String path){ return req.getRequestDispatcher(path); }
   public String getRealPath(String path){ return req.getRealPath(path); }
-  
+
     }
-     
+
 }

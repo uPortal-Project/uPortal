@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ public class ChannelRenderer
     public static final int RENDERING_SUCCESSFUL=0;
     public static final int RENDERING_FAILED=1;
     public static final int RENDERING_TIMED_OUT=2;
-      
+
 
   protected IChannel channel;
     protected ChannelRuntimeData rd;
@@ -107,7 +107,7 @@ public class ChannelRenderer
    * outputRendering() is a blocking function. It will return only when the channel completes rendering
    * or fails to render by exceeding allowed rendering time.
    * @param out Document Handler that will receive information rendered by the channel.
-   * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut; 
+   * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut;
    */
   public int outputRendering (DocumentHandler out) throws Exception
   {
@@ -139,25 +139,25 @@ public class ChannelRenderer
         // unplug the buffer :)
         try
         {
-	    buffer.setDocumentHandler(out);
-	    buffer.stopBuffering();
-	    return RENDERING_SUCCESSFUL;
+            buffer.setDocumentHandler(out);
+            buffer.stopBuffering();
+            return RENDERING_SUCCESSFUL;
         }
         catch (SAXException e) {
-	    // worst case scenario: partial content output :(
-	    Logger.log (Logger.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
-	    throw e;
+            // worst case scenario: partial content output :(
+            Logger.log (Logger.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
+            throw e;
         }
       } else {
-	  // rendering was not successful
-	  Exception e;
-	  if((e=worker.getException())!=null) throw new InternalPortalException(e);
-	  // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
-	  return RENDERING_FAILED;
+          // rendering was not successful
+          Exception e;
+          if((e=worker.getException())!=null) throw new InternalPortalException(e);
+          // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+          return RENDERING_FAILED;
       }
     } else {
-	// rendering has timed out
-	return RENDERING_TIMED_OUT;
+        // rendering has timed out
+        return RENDERING_TIMED_OUT;
     }
   }
 
@@ -167,50 +167,50 @@ public class ChannelRenderer
    */
     protected void finalize () throws Throwable
     {
-	if (workerThread.isAlive ())
-	    workerThread.stop ();
-	
-	super.finalize ();
+        if (workerThread.isAlive ())
+            workerThread.stop ();
+
+        super.finalize ();
     }
 
     protected class Worker implements Runnable {
-	private boolean successful;
-	private boolean done;
-	private IChannel channel;
-	private ChannelRuntimeData rd;
-	private DocumentHandler documentHandler;
-	private Exception exc=null;
-	
-	public Worker (IChannel ch, ChannelRuntimeData runtimeData,DocumentHandler dh) {
-	    this.channel=ch; this.documentHandler=dh; this.rd=runtimeData;
-	}
-	
-	public void run () {
-	    successful = false;
-	    done = false;
-	    
-	    try {
-		if(rd!=null)
-		    channel.setRuntimeData(rd);
-		channel.renderXML (documentHandler);
-		successful = true;
-	    } catch (Exception e) {
-		this.exc=e;
-	    }
-	    done = true;
-	}
-	
-	public boolean successful () {
-	    return this.successful;
-	}
-	
-	public boolean done () {
-	    return this.done;
-	}
-	
-	public Exception getException() {
-	    return exc;
-	}
+        private boolean successful;
+        private boolean done;
+        private IChannel channel;
+        private ChannelRuntimeData rd;
+        private DocumentHandler documentHandler;
+        private Exception exc=null;
+
+        public Worker (IChannel ch, ChannelRuntimeData runtimeData,DocumentHandler dh) {
+            this.channel=ch; this.documentHandler=dh; this.rd=runtimeData;
+        }
+
+        public void run () {
+            successful = false;
+            done = false;
+
+            try {
+                if(rd!=null)
+                    channel.setRuntimeData(rd);
+                channel.renderXML (documentHandler);
+                successful = true;
+            } catch (Exception e) {
+                this.exc=e;
+            }
+            done = true;
+        }
+
+        public boolean successful () {
+            return this.successful;
+        }
+
+        public boolean done () {
+            return this.done;
+        }
+
+        public Exception getException() {
+            return exc;
+        }
 
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,13 +104,13 @@ public class UserLayoutManager {
         IUserLayoutDB uldb = new UserLayoutDBImpl();
         uLayoutXML = uldb.getUserLayout(this.person.getID(), upl.getProfileId());
         if (uLayoutXML == null)
-          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
+          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
               this.person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
         this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(), upl));
-        
+
         // Initialize the JNDI context for this user
         JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), this.person);
-      } 
+      }
       else {
         // there is no user-defined mapping for this particular browser.
         // user should be redirected to a browser-registration page.
@@ -205,7 +205,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public IPerson getPerson () {
     return  person;
@@ -213,7 +213,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public boolean userAgentUnmapped () {
     return  unmapped_user_agent;
@@ -286,7 +286,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public UserPreferences getCompleteCurrentUserPreferences () {
     return  complete_up;
@@ -306,7 +306,7 @@ public class UserLayoutManager {
     StructureStylesheetDescription fssd = csddb.getStructureStylesheetDescription(fsup.getStylesheetName());
     if (fssd == null) {
     // assign a default stylesheet instead
-    } 
+    }
     else {
       fsup.synchronizeWithDescription(fssd);
     }
@@ -314,7 +314,7 @@ public class UserLayoutManager {
     ThemeStylesheetDescription sssd = csddb.getThemeStylesheetDescription(ssup.getStylesheetName());
     if (sssd == null) {
     // assign a default stylesheet instead
-    } 
+    }
     else {
       ssup.synchronizeWithDescription(sssd);
     }
@@ -352,7 +352,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Document getUserLayoutCopy () {
     return  UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl)uLayoutXML);
@@ -360,7 +360,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public UserPreferences getUserPreferencesCopy () {
     return  new UserPreferences(this.getUserPreferences());
@@ -368,7 +368,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private UserPreferences getUserPreferences () {
     //        return up;
@@ -377,7 +377,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public UserProfile getCurrentProfile () {
     return  this.getUserPreferences().getProfile();
@@ -385,7 +385,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private ThemeStylesheetDescription getThemeStylesheetDescription () {
     if (this.tsd == null) {
@@ -397,7 +397,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private StructureStylesheetDescription getStructureStylesheetDescription () {
     if (this.ssd == null) {
@@ -440,7 +440,7 @@ public class UserLayoutManager {
   /**
    * put your documentation comment here
    * @param elementID
-   * @return 
+   * @return
    */
   public Node getNode (String elementID) {
     return  uLayoutXML.getElementById(elementID);
@@ -448,7 +448,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Node getRoot () {
     return  uLayoutXML;
@@ -460,8 +460,8 @@ public class UserLayoutManager {
     Element node = uLayoutXML.getElementById(nodeID);
     if (node != null) {
       return  node.getAttribute("name");
-    } 
-    else 
+    }
+    else
       return  null;
   }
 
@@ -475,11 +475,11 @@ public class UserLayoutManager {
     if (channel != null) {
       Node parent = channel.getParentNode();
       if (parent != null)
-        parent.removeChild(channel); 
-      else 
+        parent.removeChild(channel);
+      else
         Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : attempt to remove a root node !");
-    } 
-    else 
+    }
+    else
       Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID=" + str_ID);
   }
 
@@ -487,7 +487,7 @@ public class UserLayoutManager {
    * put your documentation comment here
    * @param node
    * @param tagName
-   * @return 
+   * @return
    */
   private Element getChildByTagName (Node node, String tagName) {
     if (node == null)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,8 +65,8 @@ public class CHeader extends BaseChannel
 
     public void renderXML (DocumentHandler out)
     {
-	    
-	String userName= (String) staticData.getPerson().getFullName();
+
+        String userName= (String) staticData.getPerson().getFullName();
 
         Document doc = new org.apache.xerces.dom.DocumentImpl();
         Element headerEl=doc.createElement("header");
@@ -85,8 +85,8 @@ public class CHeader extends BaseChannel
             XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
             XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-	    if(userName!=null && userName.equals("Guest")) 
-		processor.setStylesheetParam("guest",processor.createXString("true"));
+            if(userName!=null && userName.equals("Guest"))
+                processor.setStylesheetParam("guest",processor.createXString("true"));
             processor.process (xmlSource, xslSource, xmlResult);
         } catch (Exception e) { Logger.log(Logger.ERROR,e); }
     }

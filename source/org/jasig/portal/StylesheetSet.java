@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -192,7 +192,7 @@ public class StylesheetSet extends SAXFilterImpl
   }
 
     public String getStylesheetURI (String title, HttpServletRequest req) {
-	return getStylesheetURI(title,getMedia(req));
+        return getStylesheetURI(title,getMedia(req));
     }
 
   /**

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,27 +50,27 @@ public class BrowserInfo {
     protected Hashtable headers;
 
     public BrowserInfo(HttpServletRequest req) {
-	headers=new Hashtable();
-	for(Enumeration e=req.getHeaderNames(); e.hasMoreElements();) {
-	    String hName=(String) e.nextElement(); 
-	    headers.put(hName,req.getHeader(hName));
-	}
-	cookies=req.getCookies();
+        headers=new Hashtable();
+        for(Enumeration e=req.getHeaderNames(); e.hasMoreElements();) {
+            String hName=(String) e.nextElement();
+            headers.put(hName,req.getHeader(hName));
+        }
+        cookies=req.getCookies();
     }
 
     public Cookie[] getCookies() {
-	return cookies;
+        return cookies;
     }
 
     public String getHeader(String hName) {
-	return (String) headers.get(hName);
+        return (String) headers.get(hName);
     }
 
     public Enumeration getHeaderNames() {
-	return headers.keys();
+        return headers.keys();
     }
 
     public String getUserAgent() {
-	return (String) headers.get("User-Agent");
+        return (String) headers.get("User-Agent");
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,26 +36,26 @@
 package org.jasig.portal;
 
 /**
- * This exception would inform uPortal that an 
+ * This exception would inform uPortal that an
  * authorization violation has occured within a channel.
  * @author Peter Kharchenko
  * @version $Revision$
  */
 
 public class AuthorizationException extends PortalException {
-    
+
     public AuthorizationException() {
     }
 
     public AuthorizationException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public AuthorizationException(String msg,boolean refresh, boolean reinstantiate) {
-	super(msg,refresh, reinstantiate);
+        super(msg,refresh, reinstantiate);
     }
 
     public int getExceptionCode() {
-	return PortalException.AUTHORIZATION_EXCEPTION;
+        return PortalException.AUTHORIZATION_EXCEPTION;
     }
 }

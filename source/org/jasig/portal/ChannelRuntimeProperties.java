@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,25 +44,25 @@ package org.jasig.portal;
  * @version $Revision$
  * @author Peter Kharchenko
  */
-public class ChannelRuntimeProperties 
+public class ChannelRuntimeProperties
 {
   private boolean bool_willRender;
-    
-  public ChannelRuntimeProperties () 
+
+  public ChannelRuntimeProperties ()
   {
-	  // set the default values here
+          // set the default values here
     bool_willRender = true;
   }
 
   // the set functions ...
-  public void setWillRender (boolean value) 
-  { 
-    bool_willRender = value; 
+  public void setWillRender (boolean value)
+  {
+    bool_willRender = value;
   }
-    
+
   // the get functions ...
-  public boolean willRender() 
-  { 
-    return bool_willRender; 
+  public boolean willRender()
+  {
+    return bool_willRender;
   }
 }

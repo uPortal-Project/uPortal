@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or withoutu
  * modification, are permitted provided that the following conditions
@@ -105,7 +105,7 @@ public class XSLT
     setStylesheetParams(processor, stylesheetParams);
     stylesheetRoot.process(processor, xmlSource, xmlResult);
   }
-  
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -130,10 +130,10 @@ public class XSLT
     StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetTitle, media));
     processor.reset();
     setStylesheetParams(processor, stylesheetParams);
-    
+
     // Make sure to generate XML in order to cache it
     stylesheetRoot.setOutputMethod("xml");
-    
+
     // Process the XML/XSLT and store the result in the StringWriter
     stylesheetRoot.process(processor, xmlSource, xmlResult);
   }
@@ -212,7 +212,7 @@ public class XSLT
     setStylesheetParams(processor, stylesheetParams);
     stylesheetRoot.process(processor, xmlSource, xmlResult);
   }
-  
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -272,7 +272,7 @@ public class XSLT
   {
     transform(xmlDoc, sslUri, out, stylesheetParams, (String)null, media);
   }
-  
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.
@@ -365,7 +365,7 @@ public class XSLT
     setStylesheetParams(processor, stylesheetParams);
     stylesheetRoot.process(processor, xmlSource, xmlResult);
   }
-  
+
   /**
    * Performs an XSL transformation. Accepts stylesheet parameters
    * (key, value pairs) stored in a Hashtable.

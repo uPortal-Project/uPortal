@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,18 +106,18 @@ class GPreferencesState extends BaseState {
 
     public Document getUserLayoutXML() {
         if(userLayoutXML==null) {
-	    // get the layout from the database
-	    userLayoutXML=this.getUserLayoutDB().getUserLayout(context.getUserLayoutManager().getPerson().getID(),context.getCurrentUserPreferences().getProfile().getProfileId());
+            // get the layout from the database
+            userLayoutXML=this.getUserLayoutDB().getUserLayout(context.getUserLayoutManager().getPerson().getID(),context.getCurrentUserPreferences().getProfile().getProfileId());
         }
         return userLayoutXML;
     }
 
     public UserLayoutManager getUserLayoutManager() { return context.getUserLayoutManager() ; }
 
-    public IUserPreferencesDB getUserPreferencesDB() throws ResourceMissingException { 
+    public IUserPreferencesDB getUserPreferencesDB() throws ResourceMissingException {
         if(updb==null) updb=new UserPreferencesDBImpl();
         if(updb==null) throw new ResourceMissingException("","User preference database","Unable to obtain the list of user profiles, since the user preference database is currently down");
-	return updb;
+        return updb;
     }
 
     public UserPreferences getUserPreferences() throws ResourceMissingException {
@@ -667,7 +667,7 @@ class GPreferencesState extends BaseState {
                 context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),context.getUserPreferences());
             } else {
                 // do a database save on the preferences
-		context.getUserPreferencesDB().putUserPreferences(context.getUserLayoutManager().getPerson().getID(),context.getUserPreferences());
+                context.getUserPreferencesDB().putUserPreferences(context.getUserLayoutManager().getPerson().getID(),context.getUserPreferences());
                 context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(),null);
 
             }

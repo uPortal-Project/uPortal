@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,26 +52,26 @@ public class StylesheetDescription
   public String s_charset;
   public boolean b_alternate;
 
-  public StylesheetDescription () 
+  public StylesheetDescription ()
   {
   }
 
   public StylesheetDescription (String uri, String type)
   {
-    s_href = UtilitiesBean.fixURI (uri); 
+    s_href = UtilitiesBean.fixURI (uri);
     s_type=type;
-    s_media = new String (""); 
-    s_charset = null; 
+    s_media = new String ("");
+    s_charset = null;
     b_alternate = false;
     s_title = new String ("");
   }
 
   public StylesheetDescription (String uri, String type, String title, String media, String charset, boolean alternate)
   {
-    s_href = UtilitiesBean.fixURI (uri); 
+    s_href = UtilitiesBean.fixURI (uri);
     s_type = type;
-    s_media = media; 
-    s_charset = charset; 
+    s_media = media;
+    s_charset = charset;
     b_alternate = alternate;
     s_title = title;
   }
@@ -87,14 +87,14 @@ public class StylesheetDescription
       s_title = pia.getAttribute ("title");
       s_media = pia.getAttribute ("media");
       s_charset = pia.getAttribute ("charset");
-      
-      if ("yes".equals (pia.getAttribute ("alternate"))) 
+
+      if ("yes".equals (pia.getAttribute ("alternate")))
         b_alternate=true; else b_alternate=false;
-      
-      if (s_media==null) 
+
+      if (s_media==null)
         s_media=new String ("");
-      
-      if (s_title==null) 
+
+      if (s_title==null)
         s_title=new String ("");
     }
   }
@@ -107,77 +107,77 @@ public class StylesheetDescription
     s_title = pia.getAttribute ("title");
     s_media = pia.getAttribute ("media");
     s_charset = pia.getAttribute ("charset");
-    
-    if ("yes".equals (pia.getAttribute ("alternate"))) 
-      b_alternate=true; 
-    else 
+
+    if ("yes".equals (pia.getAttribute ("alternate")))
+      b_alternate=true;
+    else
       b_alternate=false;
-    
-    if (s_media==null) 
+
+    if (s_media==null)
       s_media=new String ("");
-    
-    if (s_title==null) 
+
+    if (s_title==null)
       s_title=new String ("");
   }
 
   public String getTitle ()
-  { 
-    return s_title; 
+  {
+    return s_title;
   }
-  
+
   public String getURI ()
-  { 
-    return s_href; 
+  {
+    return s_href;
   }
-  
+
   public String getType ()
   {
-    return s_type; 
+    return s_type;
   }
-  
+
   public String getMedia ()
   {
     return s_media;
   }
-  
+
   public boolean getAlternate ()
   {
-    return b_alternate; 
+    return b_alternate;
   }
-  
+
   public String getCharset ()
   {
-    return s_charset; 
+    return s_charset;
   }
 
   public void setTitle (String title)
-  { 
-    s_title=title; 
+  {
+    s_title=title;
   }
-  
+
   public void setType (String type)
   {
-    s_type=type; 
+    s_type=type;
   }
-  
+
   public void setMedia (String media)
-  { 
-    s_media=media; 
+  {
+    s_media=media;
   }
-  
+
   public void setURI (String uri)
   {
-    s_href=uri; 
+    s_href=uri;
   }
-  
+
   public void setCharset (String charset)
-  { 
-    s_charset=charset; 
+  {
+    s_charset=charset;
   }
-  
+
   public void setAlternate (boolean alternate)
-  { 
-    b_alternate=alternate; 
+  {
+    b_alternate=alternate;
   }
 
     /**
@@ -185,36 +185,36 @@ public class StylesheetDescription
      */
     class PIAttributes
     {
-	private Hashtable piAttributes = null;
-	
-	PIAttributes (String data)
-	{
-	    piAttributes = new Hashtable ();
-	    StringTokenizer tokenizer = new StringTokenizer (data, "=\"");
-	    while (tokenizer.hasMoreTokens ())
-		{
-		    piAttributes.put (tokenizer.nextToken ().trim (), tokenizer.nextToken ().trim ());
-		}
-	}
-	
-	/**
-	 * Constructor.
-	 * @param pi The processing instruction whose attributes are to be parsed
-	 */
-	PIAttributes (ProcessingInstruction pi)
-	{
-	    this (pi.getNodeValue ());
-	}
-	
-	/**
-	 * Returns value of specified attribute.
-	 *  @param name Attribute name
-	 *  @return Attribute value, or null if the attribute name does not exist
-	 */
-	String getAttribute (String name)
-	{
-	    return (String) piAttributes.get (name);
-	}
+        private Hashtable piAttributes = null;
+
+        PIAttributes (String data)
+        {
+            piAttributes = new Hashtable ();
+            StringTokenizer tokenizer = new StringTokenizer (data, "=\"");
+            while (tokenizer.hasMoreTokens ())
+                {
+                    piAttributes.put (tokenizer.nextToken ().trim (), tokenizer.nextToken ().trim ());
+                }
+        }
+
+        /**
+         * Constructor.
+         * @param pi The processing instruction whose attributes are to be parsed
+         */
+        PIAttributes (ProcessingInstruction pi)
+        {
+            this (pi.getNodeValue ());
+        }
+
+        /**
+         * Returns value of specified attribute.
+         *  @param name Attribute name
+         *  @return Attribute value, or null if the attribute name does not exist
+         */
+        String getAttribute (String name)
+        {
+            return (String) piAttributes.get (name);
+        }
     }
 
 }

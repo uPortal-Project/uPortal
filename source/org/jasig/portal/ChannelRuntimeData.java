@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,11 +93,11 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
   }
 
     public void setBrowserInfo(BrowserInfo bi) {
-	this.binfo=bi;
+        this.binfo=bi;
     }
 
     public BrowserInfo getBrowserInfo() {
-	return binfo; 
+        return binfo;
     }
 
   public void setHttpRequest (HttpServletRequest req)
@@ -117,15 +117,15 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
   }
 
     public synchronized String[]  setParameterValues(String pName, String[] values) {
-	return (String[]) super.put(pName,values);
+        return (String[]) super.put(pName,values);
     }
 
     public synchronized void setParameter (String key, String value)
     {
-	String[] valueArray=new String[1];
-	valueArray[0]=value;
-	super.put(key,valueArray);
-    } 
+        String[] valueArray=new String[1];
+        valueArray[0]=value;
+        super.put(key,valueArray);
+    }
 
       // the get methods ...
 
