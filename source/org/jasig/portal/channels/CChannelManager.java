@@ -450,11 +450,14 @@ public class CChannelManager extends BaseChannel {
           try {
             int oldPage = Integer.parseInt(modChanSettings.getCurrentPage());
             int oldRecordsPerPage = Integer.parseInt(modChanSettings.getRecordsPerPage());
-            // Thanks to jweight@campuspipeline.com for the following formula:
-            String newPage = String.valueOf(((((oldPage-1)*oldRecordsPerPage)+1)/(Integer.parseInt(recordsPerPage))+1));
-            modChanSettings.setCurrentPage(newPage);
-            modChanSettings.setRecordsPerPage(recordsPerPage);
-            channelManagerDoc = getChannelManagerDoc(modChanSettings);
+            int recsPerPage = Integer.parseInt(recordsPerPage);
+            if (recsPerPage > 0 && recsPerPage != oldRecordsPerPage) {            
+              // Thanks to jweight@campuspipeline.com for the following formula:
+              String newPage = String.valueOf(((((oldPage-1)*oldRecordsPerPage)+1)/(recsPerPage)+1));
+              modChanSettings.setCurrentPage(newPage);
+              modChanSettings.setRecordsPerPage(recordsPerPage);
+              channelManagerDoc = getChannelManagerDoc(modChanSettings);
+            }
           } catch (NumberFormatException nfe) {
             // do nothing here, just leave the current page as is.
           }
