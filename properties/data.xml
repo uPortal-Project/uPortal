@@ -1,16 +1,28 @@
 <?xml version="1.0"?>
-
 <data xmlns="http://www.jasig.org/uPortal/database/data">
-
-  <table>
-    <name>UP_USERS</name>
-    <rows>
-      <row>
-        <column><name>ID</name><value>0</value></column>
-        <column><name>USER_NAME</name><value>guest</value></column>      
-        <column><name>FIRST_NAME</name><value></value></column>      
-        <column><name>LAST_NAME</name><value></value></column>
-        <column><name>USER_LAYOUT_XML</name><value><![CDATA[
+	<table>
+		<name>UP_USERS</name>
+		<rows>
+			<row>
+				<column>
+					<name>ID</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>USER_NAME</name>
+					<value>guest</value>
+				</column>
+				<column>
+					<name>FIRST_NAME</name>
+					<value/>
+				</column>
+				<column>
+					<name>LAST_NAME</name>
+					<value/>
+				</column>
+				<column>
+					<name>USER_LAYOUT_XML</name>
+					<value><![CDATA[
 
           <?xml version="1.0"?>
           <!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
@@ -40,6 +52,8 @@
             <folder ID="t02" priority="0" name="uPortal Tools">
               <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe">
                 </channel>
+		<channel ID="chan92" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish">
+      		</channel>
               <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CUserPreferences" name="User Preferences">
                 </channel>
             </folder>
@@ -67,14 +81,29 @@
             </folder>
           </layout>
 
-        ]]></value></column>
-      </row>
-      <row>
-        <column><name>ID</name><value>1</value></column>
-        <column><name>USER_NAME</name><value>demo</value></column>      
-        <column><name>FIRST_NAME</name><value>Demo</value></column>      
-        <column><name>LAST_NAME</name><value>User</value></column>
-        <column><name>USER_LAYOUT_XML</name><value><![CDATA[
+        ]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>ID</name>
+					<value>1</value>
+				</column>
+				<column>
+					<name>USER_NAME</name>
+					<value>demo</value>
+				</column>
+				<column>
+					<name>FIRST_NAME</name>
+					<value>Demo</value>
+				</column>
+				<column>
+					<name>LAST_NAME</name>
+					<value>User</value>
+				</column>
+				<column>
+					<name>USER_LAYOUT_XML</name>
+					<value><![CDATA[
 
           <?xml version="1.0"?>
           <!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
@@ -103,117 +132,479 @@
             </folder>
           </layout>
 
-        ]]></value></column>      
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_SHADOW</name>
-    <rows>
-      <row>
-        <column><name>USER_NAME</name><value>demo</value></column>
-        <column><name>PASSWORD</name><value>{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value></column>      
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_CHANNELS</name>
-    <rows>
-      <row>
-        <column><name>ID</name><value>0</value></column>
-        <column><name>CHANNEL_REG</name><value><![CDATA[
-
-          <?xml version="1.0" encoding="UTF-8" ?>
-          <!DOCTYPE registry SYSTEM "channelRegistry.dtd">
-          <registry>
-            <category ID="cat01" name="News">     
-              <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
-               <parameter value="webpages/rss/netscape.rss" name="xml"/>
-               <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-             </channel>      
-             <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
-               <parameter value="webpages/rss/stockcharts.rss" name="xml"/>
-               <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-             </channel> 
-             <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
-             </channel>
-             <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
-               <parameter value="webpages/rss/news.rss" name="xml"/>
-               <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-             </channel>      
-            </category>
-            <category ID="cat02" name="Applications">
-              <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
-              </channel>
-            </category>
-            <category ID="cat03" name="Development">
-              <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
-                <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
-                <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-              </channel>
-              <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
-                <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
-                <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-              </channel>
-              <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
-                <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
-                <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-              </channel>
-              <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
-                <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
-                <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-              </channel>
-            </category>
-          </registry>
-
-        ]]></value></column>
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_USER_PREFS</name>
-    <rows>
-      <row>
-        <column><name>USER_NAME</name><value>guest</value></column>
-        <column><name>MEDIA</name><value>netscape</value></column>      
-        <column><name>STRUCTURE_STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-        <column><name>THEME_STYLESHEET_NAME</name><value>Nested tables</value></column>           
-        <column><name>CSS_STYLESHEET_NAME</name><value>general CSS</value></column>           
-      </row>
-      <row>
-        <column><name>USER_NAME</name><value>guest</value></column>
-        <column><name>MEDIA</name><value>explorer</value></column>      
-        <column><name>STRUCTURE_STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-        <column><name>THEME_STYLESHEET_NAME</name><value>Nested tables</value></column>           
-        <column><name>CSS_STYLESHEET_NAME</name><value>general CSS</value></column>           
-      </row>
-      <row>
-        <column><name>USER_NAME</name><value>demo</value></column>
-        <column><name>MEDIA</name><value>netscape</value></column>      
-        <column><name>STRUCTURE_STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-        <column><name>THEME_STYLESHEET_NAME</name><value>Nested tables</value></column>           
-        <column><name>CSS_STYLESHEET_NAME</name><value>general CSS</value></column>           
-      </row>
-      <row>
-        <column><name>USER_NAME</name><value>demo</value></column>
-        <column><name>MEDIA</name><value>explorer</value></column>      
-        <column><name>STRUCTURE_STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-        <column><name>THEME_STYLESHEET_NAME</name><value>Nested tables</value></column>           
-        <column><name>CSS_STYLESHEET_NAME</name><value>general CSS</value></column>           
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_USER_SS_PREFS</name>
-    <rows>
-      <row>
-        <column><name>USER_NAME</name><value>guest</value></column>
-        <column><name>STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
+        ]]></value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_SHADOW</name>
+		<rows>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>demo</value>
+				</column>
+				<column>
+					<name>PASSWORD</name>
+					<value>{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_CHANNELS</name>
+		<rows>
+			<row>
+				<column>
+					<name>CHAN_ID</name>
+					<value>1</value>
+				</column>
+				<column>
+					<name>TITLE</name>
+					<value>Mozillazine</value>
+				</column>
+				<column>
+					<name>PUB_ID</name>
+					<value>NULL</value>
+				</column>
+				<column>
+					<name>APPROVED</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>CHANNEL_XML</name>
+					<value><![CDATA[
+					<channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
+     <parameter value="webpages/rss/netscape.rss" name="xml"/>
+     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+   </channel>
+        				]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>CHAN_ID</name>
+					<value>2</value>
+				</column>
+				<column>
+					<name>TITLE</name>
+					<value>Stockcharts</value>
+				</column>
+				<column>
+					<name>PUB_ID</name>
+					<value>NULL</value>
+				</column>
+				<column>
+					<name>APPROVED</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>CHANNEL_XML</name>
+					<value><![CDATA[
+					<channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
+     <parameter value="webpages/rss/stockcharts.rss" name="xml"/>
+     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+   </channel>       				 
+					]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>CHAN_ID</name>
+					<value>3</value>
+				</column>
+				<column>
+					<name>TITLE</name>
+					<value>Bookmarks</value>
+				</column>
+				<column>
+					<name>PUB_ID</name>
+					<value>NULL</value>
+				</column>
+				<column>
+					<name>APPROVED</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>CHANNEL_XML</name>
+					<value><![CDATA[
+					<channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
+   </channel>      				 
+					]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>CHAN_ID</name>
+					<value>4</value>
+				</column>
+				<column>
+					<name>TITLE</name>
+					<value>XML.com</value>
+				</column>
+				<column>
+					<name>PUB_ID</name>
+					<value>NULL</value>
+				</column>
+				<column>
+					<name>APPROVED</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>CHANNEL_XML</name>
+					<value><![CDATA[
+					<channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
+     <parameter value="webpages/rss/news.rss" name="xml"/>
+     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+   </channel>     				 
+					]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>CHAN_ID</name>
+					<value>5</value>
+				</column>
+				<column>
+					<name>TITLE</name>
+					<value>uPortal Demos</value>
+				</column>
+				<column>
+					<name>PUB_ID</name>
+					<value>NULL</value>
+				</column>
+				<column>
+					<name>APPROVED</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>CHANNEL_XML</name>
+					<value><![CDATA[
+					<channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
+      <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
+      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+    </channel>     				 
+					]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>CHAN_ID</name>
+					<value>6</value>
+				</column>
+				<column>
+					<name>TITLE</name>
+					<value>IBS News</value>
+				</column>
+				<column>
+					<name>PUB_ID</name>
+					<value>NULL</value>
+				</column>
+				<column>
+					<name>APPROVED</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>CHANNEL_XML</name>
+					<value><![CDATA[
+					<channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
+      <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
+      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+    </channel>    				 
+					]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>CHAN_ID</name>
+					<value>7</value>
+				</column>
+				<column>
+					<name>TITLE</name>
+					<value>uPortal Developers Reference</value>
+				</column>
+				<column>
+					<name>PUB_ID</name>
+					<value>NULL</value>
+				</column>
+				<column>
+					<name>APPROVED</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>CHANNEL_XML</name>
+					<value><![CDATA[
+					<channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
+      <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
+      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+    </channel>    				 
+					]]></value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_CHAN_TYPES</name>
+		<rows>
+			<row>
+			<column>
+				<name>NAME</name>
+				<value>RSS Channel</value>			
+			</column>
+			<column>
+				<name>TYPE</name>
+				<value>org.jasig.portal.channels.CGenericXSLT</value>			
+			</column>
+			<column>
+				<name>DESCR</name>
+				<value>RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.
+				</value>			
+			</column>
+			<column>
+				<name>DEF_URI</name>
+				<value>properties/channel_defs/RSS.xml</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>NAME</name>
+				<value>XSL Channel</value>			
+			</column>
+			<column>
+				<name>TYPE</name>
+				<value>org.jasig.portal.channels.CGenericXSLT</value>			
+			</column>
+			<column>
+				<name>DESCR</name>
+				<value>XSL renders XML to a particular style, is a channel which has its content defined through an XML document. Anyone may publish an XSL channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL or Path for the XML and XSL file.				
+				</value>			
+			</column>
+			<column>
+				<name>DEF_URI</name>
+				<value>properties/channel_defs/XSL.xml</value>			
+			</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_CLASS</name>
+		<rows>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>0</value>			
+			</column>
+			<column>
+				<name>NAME</name>
+				<value>News</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>1</value>			
+			</column>
+			<column>
+				<name>NAME</name>
+				<value>Development</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>2</value>			
+			</column>
+			<column>
+				<name>NAME</name>
+				<value>Applications</value>			
+			</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_CHAN_CLASS</name>
+		<rows>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>0</value>			
+			</column>
+			<column>
+				<name>CHAN_ID</name>
+				<value>1</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>0</value>			
+			</column>
+			<column>
+				<name>CHAN_ID</name>
+				<value>2</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>0</value>			
+			</column>
+			<column>
+				<name>CHAN_ID</name>
+				<value>6</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>1</value>			
+			</column>
+			<column>
+				<name>CHAN_ID</name>
+				<value>4</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>1</value>			
+			</column>
+			<column>
+				<name>CHAN_ID</name>
+				<value>5</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>1</value>			
+			</column>
+			<column>
+				<name>CHAN_ID</name>
+				<value>7</value>			
+			</column>
+			</row>
+			<row>
+			<column>
+				<name>CLASS_ID</name>
+				<value>2</value>			
+			</column>
+			<column>
+				<name>CHAN_ID</name>
+				<value>3</value>			
+			</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_USER_PREFS</name>
+		<rows>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>guest</value>
+				</column>
+				<column>
+					<name>MEDIA</name>
+					<value>netscape</value>
+				</column>
+				<column>
+					<name>STRUCTURE_STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+				<column>
+					<name>THEME_STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>CSS_STYLESHEET_NAME</name>
+					<value>general CSS</value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>guest</value>
+				</column>
+				<column>
+					<name>MEDIA</name>
+					<value>explorer</value>
+				</column>
+				<column>
+					<name>STRUCTURE_STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+				<column>
+					<name>THEME_STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>CSS_STYLESHEET_NAME</name>
+					<value>general CSS</value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>demo</value>
+				</column>
+				<column>
+					<name>MEDIA</name>
+					<value>netscape</value>
+				</column>
+				<column>
+					<name>STRUCTURE_STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+				<column>
+					<name>THEME_STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>CSS_STYLESHEET_NAME</name>
+					<value>general CSS</value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>demo</value>
+				</column>
+				<column>
+					<name>MEDIA</name>
+					<value>explorer</value>
+				</column>
+				<column>
+					<name>STRUCTURE_STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+				<column>
+					<name>THEME_STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>CSS_STYLESHEET_NAME</name>
+					<value>general CSS</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_USER_SS_PREFS</name>
+		<rows>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>guest</value>
+				</column>
+				<column>
+					<name>STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+				<column>
+					<name>USER_PREFERENCES_XML</name>
+					<value><![CDATA[
 
           <structurestylesheetuserpreferences>
             <parameters>
@@ -230,12 +621,21 @@
             </channelattributes>
           </structurestylesheetuserpreferences>
 
-        ]]></value></column>      
-      </row>
-      <row>
-        <column><name>USER_NAME</name><value>guest</value></column>
-        <column><name>STYLESHEET_NAME</name><value>Nested tables</value></column>      
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
+        ]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>guest</value>
+				</column>
+				<column>
+					<name>STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>USER_PREFERENCES_XML</name>
+					<value><![CDATA[
 
           <themestylesheetuserpreferences>
             <parameters>
@@ -252,12 +652,21 @@
             </channelattributes>
           </themestylesheetuserpreferences>
 
-        ]]></value></column>      
-      </row>
-      <row>
-        <column><name>USER_NAME</name><value>demo</value></column>
-        <column><name>STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
+        ]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>demo</value>
+				</column>
+				<column>
+					<name>STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+				<column>
+					<name>USER_PREFERENCES_XML</name>
+					<value><![CDATA[
 
           <structurestylesheetuserpreferences>
             <parameters>
@@ -274,12 +683,21 @@
             </channelattributes>
           </structurestylesheetuserpreferences>
 
-        ]]></value></column>      
-      </row>
-      <row>
-        <column><name>USER_NAME</name><value>demo</value></column>
-        <column><name>STYLESHEET_NAME</name><value>Nested tables</value></column>      
-        <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
+        ]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>USER_NAME</name>
+					<value>demo</value>
+				</column>
+				<column>
+					<name>STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>USER_PREFERENCES_XML</name>
+					<value><![CDATA[
 
           <themestylesheetuserpreferences>
             <parameters>
@@ -296,88 +714,150 @@
             </channelattributes>
           </themestylesheetuserpreferences>
 
-        ]]></value></column>      
-      </row>      
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_STRUCT_SS</name>
-    <rows>
-      <row>
-        <column><name>STYLESHEET_NAME</name><value>Tab and Column layout</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.xsl</value></column>      
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.sdf</value></column>      
-        <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns.</value></column>           
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_THEME_SS</name>
-    <rows>
-      <row>
-        <column><name>STYLESHEET_NAME</name><value>Nested tables</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.xsl</value></column>      
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.sdf</value></column>      
-        <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Renders tabs and columns as nested tables</value></column>           
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_CSS_SS</name>
-    <rows>
-      <row>
-        <column><name>STYLESHEET_NAME</name><value>general CSS</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/media/org/jasig/portal/layout/tabColumn/general.css</value></column>      
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/media/org/jasig/portal/layout/tabColumn/general.sdf</value></column>      
-        <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Body, channel tabs and link coloring and fonts</value></column>           
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_CSS_SS_MAP</name>
-    <rows>
-      <row>
-        <column><name>CSS_STYLESHEET_NAME</name><value>general CSS</value></column>
-        <column><name>THEME_STYLESHEET_NAME</name><value>Nested tables</value></column>      
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_THEME_SS_MAP</name>
-    <rows>
-      <row>
-        <column><name>THEME_STYLESHEET_NAME</name><value>Nested tables</value></column>
-        <column><name>STRUCTURE_STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_STRUCT_SS_MAP</name>
-    <rows>
-      <row>
-        <column><name>MEDIA</name><value>netscape</value></column>
-        <column><name>STRUCTURE_STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-      </row>
-      <row>
-        <column><name>MEDIA</name><value>explorer</value></column>
-        <column><name>STRUCTURE_STYLESHEET_NAME</name><value>Tab and Column layout</value></column>      
-      </row>      
-    </rows>
-  </table>
-
-  <table>
-    <name>UPC_BOOKMARKS</name>
-    <rows>
-      <row>
-        <column><name>ID</name><value>0</value></column>
-        <column><name>PORTAL_USER_ID</name><value>0</value></column>      
-        <column><name>BOOKMARK_XML</name><value><![CDATA[
+        ]]></value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_STRUCT_SS</name>
+		<rows>
+			<row>
+				<column>
+					<name>STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+				<column>
+					<name>STYLESHEET_URI</name>
+					<value>webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.xsl</value>
+				</column>
+				<column>
+					<name>STYLESHEET_DESCRIPTION_URI</name>
+					<value>webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.sdf</value>
+				</column>
+				<column>
+					<name>STYLESHEET_DESCRIPTION_TEXT</name>
+					<value>Presents the layout in terms of tabs and columns.</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_THEME_SS</name>
+		<rows>
+			<row>
+				<column>
+					<name>STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>STYLESHEET_URI</name>
+					<value>webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.xsl</value>
+				</column>
+				<column>
+					<name>STYLESHEET_DESCRIPTION_URI</name>
+					<value>webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.sdf</value>
+				</column>
+				<column>
+					<name>STYLESHEET_DESCRIPTION_TEXT</name>
+					<value>Renders tabs and columns as nested tables</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_CSS_SS</name>
+		<rows>
+			<row>
+				<column>
+					<name>STYLESHEET_NAME</name>
+					<value>general CSS</value>
+				</column>
+				<column>
+					<name>STYLESHEET_URI</name>
+					<value>webpages/media/org/jasig/portal/layout/tabColumn/general.css</value>
+				</column>
+				<column>
+					<name>STYLESHEET_DESCRIPTION_URI</name>
+					<value>webpages/media/org/jasig/portal/layout/tabColumn/general.sdf</value>
+				</column>
+				<column>
+					<name>STYLESHEET_DESCRIPTION_TEXT</name>
+					<value>Body, channel tabs and link coloring and fonts</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_CSS_SS_MAP</name>
+		<rows>
+			<row>
+				<column>
+					<name>CSS_STYLESHEET_NAME</name>
+					<value>general CSS</value>
+				</column>
+				<column>
+					<name>THEME_STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_THEME_SS_MAP</name>
+		<rows>
+			<row>
+				<column>
+					<name>THEME_STYLESHEET_NAME</name>
+					<value>Nested tables</value>
+				</column>
+				<column>
+					<name>STRUCTURE_STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UP_STRUCT_SS_MAP</name>
+		<rows>
+			<row>
+				<column>
+					<name>MEDIA</name>
+					<value>netscape</value>
+				</column>
+				<column>
+					<name>STRUCTURE_STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>MEDIA</name>
+					<value>explorer</value>
+				</column>
+				<column>
+					<name>STRUCTURE_STYLESHEET_NAME</name>
+					<value>Tab and Column layout</value>
+				</column>
+			</row>
+		</rows>
+	</table>
+	<table>
+		<name>UPC_BOOKMARKS</name>
+		<rows>
+			<row>
+				<column>
+					<name>ID</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>PORTAL_USER_ID</name>
+					<value>0</value>
+				</column>
+				<column>
+					<name>BOOKMARK_XML</name>
+					<value><![CDATA[
 
           <?xml version="1.0"?>
           <bookmarks>
@@ -387,12 +867,21 @@
             <bookmark url="http://google.com" name="Google" comments="great search engine"/>
           </bookmarks>
           
-         ]]></value></column>      
-      </row>
-      <row>
-        <column><name>ID</name><value>1</value></column>
-        <column><name>PORTAL_USER_ID</name><value>1</value></column>      
-        <column><name>BOOKMARK_XML</name><value><![CDATA[
+         ]]></value>
+				</column>
+			</row>
+			<row>
+				<column>
+					<name>ID</name>
+					<value>1</value>
+				</column>
+				<column>
+					<name>PORTAL_USER_ID</name>
+					<value>1</value>
+				</column>
+				<column>
+					<name>BOOKMARK_XML</name>
+					<value><![CDATA[
 
           <?xml version="1.0"?>
           <bookmarks>
@@ -402,9 +891,9 @@
             <bookmark url="http://google.com" name="Google" comments="great search engine"/>
           </bookmarks>
           
-         ]]></value></column>      
-      </row>      
-    </rows>
-  </table>
-
+         ]]></value>
+				</column>
+			</row>
+		</rows>
+	</table>
 </data>
