@@ -91,6 +91,8 @@ public class Authentication {
     securityContext.authenticate();
     // Check to see if the user was authenticated
     if (securityContext.isAuthenticated()) {
+      // Add the person's login username
+      person.setAttribute("username", username);
       // Retrieve the additional descriptor from the security context
       IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
       // Process the additional descriptor if one was created
