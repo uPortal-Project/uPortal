@@ -80,21 +80,33 @@ class ManageProfilesState extends BaseState {
         // local action processing
         String action=runtimeData.getParameter("action");
         if(action!=null) {
-            if(action.equals("edit")) {
-                String profileName=runtimeData.getParameter("profileName");
-                boolean systemProfile=false;
-                if(profileName!=null) {
-                    String profileType=runtimeData.getParameter("profileType");
-                    if(profileType!=null && profileType.equals("system")) systemProfile=true;
-                }
-                // initialize internal edit state
-                CEditProfile epstate=new CEditProfile(this);
-		// clear cached profile list tables
-		userProfileList=systemProfileList=null;
-                epstate.setRuntimeData(rd);
-                internalState=epstate;
-
-            }
+	    String profileId=runtimeData.getParameter("profileId");
+	    boolean systemProfile=false;
+	    if(profileId!=null) {
+		String profileType=runtimeData.getParameter("profileType");
+		if(profileType!=null && profileType.equals("system")) systemProfile=true;
+		if(action.equals("edit")) {
+		    // initialize internal edit state
+		    CEditProfile epstate=new CEditProfile(this);
+		    // clear cached profile list tables
+		    userProfileList=systemProfileList=null;
+		    epstate.setRuntimeData(rd);
+		    internalState=epstate;
+		} else if(action.equals("delete")) {
+		    // delete a profile
+		    if(systemProfile) {
+			// need to check permissions here
+			//			context.getUserPreferencesDB().deleteSystemProfile(Integer.parseInt(profileId));
+			//			systemProfileList=null;
+		    } else {
+			this.getUserPreferencesDB().deleteUserProfile(context.getUserLayoutManager().getPerson().getID(),Integer.parseInt(profileId));
+			userProfileList=null;
+		    }
+		} else if(action.equals("map")) {
+		    //		    this.getUserPreferencesDB().setUserBrowserMapping(context.getUserLayoutManager().getPerson().getID(),"user-agent-header",Integer.parseInt(profileId));
+		}
+	    }
+		
 
         }
         if(internalState!=null) internalState.setRuntimeData(rd);
@@ -249,9 +261,9 @@ class ManageProfilesState extends BaseState {
                         // save edit profile
 			if(profile.isSystemProfile())
 			    // only administrative users should be able to do this
-			    context.getUserPreferencesDB().setSystemProfile(profile);
+			    context.getUserPreferencesDB().updateSystemProfile(profile);
 			else 
-			    context.getUserPreferencesDB().setUserProfile(context.getPerson().getID(),profile);
+			    context.getUserPreferencesDB().updateUserProfile(context.getPerson().getID(),profile);
 
                         context.setState(null);
                     }
