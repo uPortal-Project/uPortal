@@ -106,7 +106,7 @@ public boolean existsInStore(IEntityLock lock) throws LockingException
     String owner = lock.getLockOwner();
     IEntityLock[] lockArray = getLockStore().find(entityType, key, lockType, expiration, owner);
 
-    return (lockArray.length == 1);
+    return (lockArray.length > 0);
 }
 
 /**
