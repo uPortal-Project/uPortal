@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Channel ARchives</title>
+  <meta http-equiv="content-type">
+  <link href="../../uportal.css" rel="stylesheet">
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="bottom" colspan="3"><img
+ src="../../images/uportal-head.gif" alt="uPortal by JA-SIG" border="0"
+ height="87" width="592"> </td>
+    </tr>
+    <tr>
+      <td><img src="../../images/spacer.gif" alt="." border="0"
+ height="4" width="1"> </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="0" cellpadding="5" width="100%" border="0">
+  <tbody>
+    <tr>
+      <td valign="top" width="150" bgcolor="#ccccff"> <img
+ src="../../images/spacer.gif" border="0" height="4"> <br>
+      <p><a class="sidelinks" href="http://www.ja-sig.org/"><b> JA-SIG
+Home</b></a></p>
+      <p><a class="sidelinks" href="../../index.html"><b> About uPortal</b></a></p>
+      <p><a class="sidelinks" href="../../docs.html"><b> Documentation</b></a></p>
+      <p><a class="sidelinks" href="../../administrators/index.html"><b>
+Getting Started</b></a></p>
+      <p><a class="sidelinks" href="../../developers/index.html"><b>
+Developers</b></a></p>
+	
+      <p><a class="sidelinks" href="../index.html"><b> Implementors</b></a></p>
+	
+      <p><a class="sidelinks" href="../../users/index.html"><b> Users</b></a></p>
+      <p><a class="sidelinks" href="../../architecture/index.html"><b>
+Background</b></a></p>
+      <p><a class="sidelinks" href="../../release/index.html"><b> Release</b></a></p>
+      <p><img src="../../images/mellon.gif" alt="" border="0"
+ width="145" height="93"> </p>
+      </td>
+<!-- main body goes in this table cell  (see BELOW)   --> <td
+ valign="top"> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> <a
+ href="concurrencyServices_prt.html"> <img
+ src="../../images/print_this.gif" border="0" width="86" height="20"
+ alt="Printable version of this document" align="right"> </a> <br>
+<!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
+      <div align="center"><big><big>uPortal Channel ARchives</big></big><br>
+      </div>
+      <br>
+      <big><br>
+      <span style="font-weight: bold;"> Contents</span><br>
+      </big>
+      <blockquote><a href="#what_is_a_CAR">What is a Channel ARchive?</a><br>
+        <a href="#how_are_they_installed">How Are They Installed?</a><br>
+        <a href="#do_they_require_different_code">Do They Require Different Code?</a><br>
+        <a href="#what_is_a_deployment_descriptor">What is a Deployment Descriptor?</a><br>
+        <a href="#how_to_build_them">How Do You Build Them?</a><br>
+        <a href="#what_does_the_future_hold">What Does the Future Hold?</a><br>
+      </blockquote>
+      <br>
+      <br>
+      <big><a name="what_is_a_CAR"></a><span style="font-weight: bold;">What is a Channel ARchive?</span></big><br>
+      <p> A Channel ARchive, or <span style="font-style: italic;">CAR</span>, in its simplest form is just a java archive with a  ".car" extension. They are created with the <span style="font-style: italic;">Jar</span> utility provided with the Java SDK. CARs can contain all elements used for the construction and presentation of custom java channel types and their contents. A fully functional CAR is included <a href="carlot.car">here</a> to illustrate their capability. This car contains a channel known as the CAR LOT. It shows what cars exist in the portal and shows their contents. It contains the source java file, the compiled class file, a stylesheet list file, an XSLT stylesheet, and two images that are served up to the browser from within the CAR.  &nbsp;</p>
+      <p> You must have uPortal 2.1 or later to use CARs. You can publish CAR LOT using the following values.<br>
+      </p>
+      <p><br>
+      </p>
+      <table cellpadding="2" cellspacing="2" border="1"
+ style="text-align: left; width: 642px; margin-left: 40px;">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top; text-align: center;"><small><span
+ style="font-weight: bold;">Property</span><br>
+            </small></td>
+            <td style="vertical-align: top; text-align: center;"><small><span
+ style="font-weight: bold;">Value</span><br>
+            </small></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><small>Channel Type<br>
+            </small></td>
+            <td style="vertical-align: top;"><small>Custom Java<br>
+            </small></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><small>Channel Title,<br>
+	     Channel Name,<br>
+	     Channel Funtional Name,<br>
+	     Channel Description<br>
+            </small></td>
+            <td style="vertical-align: top;"><small>CARLOT<br>
+            </small></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><small>Channel Timeout<br>
+            </small></td>
+            <td style="vertical-align: top;"><small>4000<br>
+            </small></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><small>Channel Class<br>
+            </small></td>
+            <td style="vertical-align: top;"><small>com.sct.pipeline.uportal.channels.carlot.Channel<br>
+            </small></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><small>Channel Controls<br>
+            </small></td>
+            <td style="vertical-align: top;"><small>Has none.<br>
+            </small></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><small>Selected Categories<br>
+            </small></td>
+            <td style="vertical-align: top;"><small>Choose as desired.<br>
+            </small></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><small>Selected Groups and/or People<br>
+            </small></td>
+            <td style="vertical-align: top;"><small>Choose as desired.<br>
+            </small></td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <p> In uPortal 2.2, CARs received the added capabilities of housing services and workers and being able to declare them using a deployment descriptor file. (See "<a href="#what_is_a_deployment_descriptor">What is a Deployment Descriptor?</a>" later in this document.) A channel archive named deployTest.car containing a service, a worker, and an extension block can be obtained <a href="deployTest.car">here</a>. The deployTest.car archive does not contain a channel. Its sole purpose is to illustrate the power and use of the deployment descriptor support. You must have uPortal 2.2 or later for this archive to work. Upon installation and restarting the portal click on the following link to access the worker which will be automatically installed.<br><br> <a href="http://localhost:8080/uPortal/worker.com_sct_pipeline_uportal_channels_deployTest_HelloWorker.uP">http://localhost:8080/uPortal/worker.com_sct_pipeline_uportal_channels_deployTest_HelloWorker.uP</a><br><br>This link assumes the portal is running on the local machine on port 8080. If it isn't, then replace the appropriate host and port in URL. You'll notice that the returned page shows if the worker and service were installed and if the extension block of the deployment descriptor executed successfully.</p>
+      <p>Through these examples we see that CARs are containers that can house multiple channels, their resources, workers and services, and a deployment descriptor indicating what resources they contain so that in the case of workers and services the portal can instantiate and use them. CARs can be used to package up and deploy from a single channel, worker, or service to an entire channel application suite.</p>
+      <big><a name="how_are_they_installed"></a><span
+ style="font-weight: bold;">How Are They Installed?</span></big><br>
+      <p> By default the portal looks in <webApplicationRoot>/WEB-INF/cars or any of its subdirectories for channel archives. To install a CAR simply place it in that directory or its subdirectories and restart the portal. Upon start up, the portal scans the cars directory structure for all CARs and loads internal tables with paths to each of the resources available from the archives. It also processes all extension blocks declared in any deployment descriptors found in the archives. (See "<a href="#what_is_a_deployment_descriptor">What is a Deployment Descriptor?</a>" later in this document.)</p>
+      <p>If the portal is deployed in a container that uses a WAR file for deployment that container may not allow access to the default car directory in the WEB-INF directory. If such is the case or if you simply want to place your CARs in some other location you can define the following property in the portal.properties file with a fully qualified path to the location of the directory that will house your channel archives.<br><br>
+      <blockquote><code>org.jasig.portal.car.CarResources.directory</code></blockquote>
+      <p>The name of a channel archive has no affect on its contents or the use of those contents by the portal. If two CARs aquired from different sources but containing different components need to be deployed in the same directory, then simply rename one or the other prior to installing in the directory. Alternatively, you could create subdirectories beneath the car directory based on the java package directories of the provider of the CAR. Then the CARs can be placed into the appropriate subdirectories with their names unchanged.</p>
+      <big><a name="do_they_require_different_code"></a><span
+ style="font-weight: bold;">Do They Require Different Code?</span></big><br>
+      <p>Channels may require minor changes to be deployed in a CAR. For example, an image used in the channel and located in some subdirectory of the <webApplicationRoot>/media directory would most likely have an XSLT stylesheet with code like the following:</p>
+      <blockquote><code>&lt;xsl:variable name="mediaPath"&gt;media/org/jasig/portal/channels/Cbookmarks&lt;/xsl:variable&gt;</code><br>
+        <code>&nbsp; ...</code><br>
+        <code>&lt;img src="{$mediaPath}/folder_delete.gif"/&gt;</code><br>
+        <code>&nbsp; ...</code><br>
+      </blockquote>
+      <p>This would still be appropriate if the folder_delete.gif image were still located in the appropriate place beneath the media directory. But such and approach would negate one of the major goals of a CAR; namely to place all resources needed by a channel into the archive to prevent tight coupling between the stylesheet and a file located in some other directory. Such a deployment is susceptible to installation errors if the image is not located in the correct location or is subsequently deleted.</p>
+      <p>A better solution is to place the image in the CAR and modify the channel to obtain an appropriate URL for aquiring the image from the CAR. To do so typically requires calling one of three versions of a method in <code>ChannelRuntimeData</code> specifically designed to construct the base of this URL and then passing that value to the XSLT stylesheet for use in constructing the full URLs to the various images used by the channel.</p>
+      <p><code>ChannelRuntimeData</code> has three methods to assist with constructing URLs appropriate for browsers to aquire resources out of channel archives. These are:</p>
+      <blockquote><code>getBaseMediaURL( Object aChannelObject )</code><br>
+        <code>getBaseMediaURL( Class aChannelClass )</code><br>
+        <code>getBaseMediaURL( String resourcePath )</code><br>
+      </blockquote>
+      <p>The first two can be passed some object or class that is known to only be deployed with the channel. Typically, this is the channel itself. These two methods then look to see whether or not the class of the object was loaded from a CAR. If it was then the method returns a URL base that can be used to aquire images from a CAR. If the class was not loaded from a CAR, then the method returns the traditional URL base path for images namely, "<i>/media</i>.". The format for the URL base for CAR-accessible images is similar in form to:</p>
+      <blockquote><code>tag.idempotent.worker.carRsrc.uP?carRsrc=</code><br>
+      </blockquote>
+      <p>As you can see the URL still needs a value appended indicating what car resource is desired. That value must be the path as found within the channel archive. For example, if you execute <code>jar tf carlot.car</code> you'll see that the car.jpg image has a path of <code>com/sct/pipeline/uportal/channels/carlot/car.jpg</code>. This would be the value to append to the base URL to allow the browser to aquire that image directly from carlot.car.</p>
+      <p>Note, the package relative directories are used not only for CAR LOT'S compiled class files but also for all of its resources. Like Java code in general all resources deployed in CARs should be placed in globally unique, package relative directories as specified in Java Language Specification, section 7.7. This is because all resources aquired from CARs share the same namespace. If CAR LOT didn't use package relative directories, then the path to its <code>car.jpg</code> image would consist only of the file name itself. The probability of contention between such a path in one CAR and an identical path to a similarly named but completely different image in another CAR would cause one of the two images to be served up in place of both and the other would never be accessible.<p>
+      <p>For stylesheet lists the XSLT stylesheets can be specified with either the full path to the stylesheet or a path relative to the location of the stylesheet list. For example, each of the following enties are valid and point to the same resource within the CAR, assuming that the stylesheet list file channel.ssl containing such entries had a path within the CAR of <code>com/sct/pipeline/uportal/channels/carlot/channel.ssl</code>. The first two are relative. The third has the full path specified.</p>
+      <blockquote><code>&lt;?xml-stylesheet title="CarListStyleSheet" href="stylesheets/channel.xsl"&gt;</code><br><br>
+      <code>&lt;?xml-stylesheet title="CarListStyleSheet" href="../carlot/stylesheets/channel.xsl"&gt;</code><br><br>
+      <code>&lt;?xml-stylesheet title="CarListStyleSheet" href="com/sct/pipeline/uportal/channels/carlot/stylesheets/channel.xsl"&gt;</code><br>
+      </blockquote>
+      <p> Note that the parent directory traversal regular expression "../" was added in uPortal version 2.2. Similar full or relative paths can be used for an XSLT's <code>xsl:include</code> and <code>xsl:import</code> elements and for its <code>document()</code> method as shown below. Again, the first two are relative and the third is fully qualified.</p>
+      <blockquote><code>&lt;?xsl:variable name="palette" select="document('v2colors.xml')/*/color"/&gt;</code><br><br>
+      <code>&lt;?xsl:import href="../tree/view.xsl"/&gt;</code><br><br>
+      <code>&lt;?xsl:include href="com/sct/uportal/channels/accnt/edits.xsl"/&gt;</code><br>
+      </blockquote>
+      <p>If a channel needs to access other resources located in a CAR, these resources are available just as any other resource obtained from a class loader. However, the class loader provided by the channel archive infrastructure must be used. You can obtain a handle on this class loader by using the <code>org.jasig.portal.car.CarResources</code> class. Then you can ask for a resource using the fully qualified path within the CAR. In the following code snippet I am aquiring the bytes for the image housed in deployTest.car.</p>
+      <blockquote><code>CarResources cRes = CarResources.getInstance();</code><br>
+      <code>ClassLoader cl = cRes.getClassLoader();</code><br>
+      <code>String img = "com.sct.pipeline.uportal.channels.deployTest.youveGotIt.jpg";</code><br>
+      <code>InputStream iStream = cl.getResourceAsStream( img );</code><br>
+      <code>// now read the stream of bytes.</code><br>
+      </blockquote>
+      <p>Alternatively, if you have a class that was loaded from a CAR, you can use its <code>getResource()</code> and <code>getResourceAsStream()</code> methods because all classes delegate to the class loader by which they were loaded. Additionally, since the CAR class loader delegates first to the parent class loader before looking in CARs you can use this class loader for any resource expected on the classpath.</p>
+      <p>Finally, the <code>org.jasig.portal.util.ResourceLoader</code> class uses the CAR class loader. Therefore, this class can obtain resources from both the regular classpath and within CARs.</p>
+      <big><a name="what_is_a_deployment_descriptor"></a><span
+ style="font-weight: bold;">What is a Deployment Descriptor?</span></big><br>
+      <p>A deployment descriptor provides a mechanism whereby elements contained within the CAR can be conveyed to the portal and the portal can take action to access and use those elements. The deployment descriptor for a CAR has the name <code>comp.xml</code>. This name is case sensitive and must be located in the <code>META-INF</code> directory within a CAR. Performing <code>jar tf deployTest.car</code> on the deployTest CAR reveals the full path to its deployment descriptor conforming to this requirement: <code>META-INF/comp.xml</code>.</p>
+      <p>The deployment descriptor currently has the following general form for its document type. </p> 
+      <blockquote><code>&lt;!ELEMENT component (description, worker, service, ext)&gt;</code><br>
+      <code>&lt;!ELEMENT description (#PCDATA)&gt;</code><br>
+      <code>&lt;!ELEMENT ext (#PCDATA)&gt;</code><br>
+      <code>&lt;!ATTLIST ext contentHandler CDATA #REQUIRED&gt;</code><br>
+      <code>&lt;!ELEMENT service (#PCDATA)&gt;</code><br>
+      <code>&lt;!ELEMENT worker EMPTY&gt;</code><br>
+      <code>&lt;!ATTLIST worker class CDATA #REQUIRED&gt;</code><br>
+      </blockquote>
+      <p>The contents of the <code>service</code> and <code>ext</code> elements are opaque to the channel archive deployment descriptor processing code and are defined by the utility that uses those contents. Additionally, since <code>comp.xml</code> is an XML file and must be well formed, the contents of each of these blocks must also be well formed XML. An example of a deployment descriptor is that used in deployTest.car:</p>
+      <blockquote><code>&lt;component&gt;</code><br><br>
+      <code>&nbsp;&lt;description&gt;Simple CAR containing a worker, service, and image extractor and a deployment descriptor, this file, that deploys these elements in the portal to illustrate the use of the deployment descriptor features.&lt;/description&gt;</code><br><br>
+      <code>&nbsp;&lt;worker class="com.sct.pipeline.uportal.channels.deployTest.HelloWorker"/&gt;</code><br><br>
+      <code>&nbsp;&lt;service&gt;</code><br>
+      <code>&nbsp;&nbsp;&lt;name&gt;Hello Worker Hits-Count Service&lt;/name&gt;</code><br>
+      <code>&nbsp;&nbsp;&lt;class&gt;com.sct.pipeline.uportal.channels.deployTest.HitsService&lt;/class&gt;</code><br>
+      <code>&nbsp;&nbsp;&lt;jndi_name&gt;hitsService&lt;/jndi_name&gt;</code><br>
+      <code>&nbsp;&lt;/service&gt;</code><br><br>
+      <code>&nbsp;&lt;ext contentHandler="com.sct.pipeline.uportal.channels.deployTest.Extractor"&gt;</code><br>
+      <code>&nbsp;&nbsp;&lt;file pathInCar="com/sct/pipeline/uportal/channels/deployTest/youveGotIt.jpg"/&gt;</code><br>
+      <code>&nbsp;&lt;/ext&gt;</code><br><br>
+      <code>&lt;/component&gt;</code><br>
+      </blockquote>
+      <p>The <code>worker</code> element adds to the worker definitions found in properites/worker.properties. This element has no content and one required attribute: class. This attribute must contain the fully qualified name of a java class that implements the <code>org.jasig.portal.IWorkerRequestProcessor</code> interface. To prevent naming collisions, the name of the worker is the same as the class name with all periods, (.), replaced with underscores, (_). This greatly reduces the posibility of naming collisions between workers declared in different CARs.</p>
+      <p> To access such a worker, a channel must generate an appropriate URL by using the <code>getBaseWorkerURL()</code> methods in <code>ChannelRuntimeData</code> and passing in the worker's name. For deployTest.car's worker, we would aquire a URL to access that worker with the following code within our channel, assuming the <code>rd</code> variable contains the <code>ChannelRuntimeData</code> object and that the full path has been truncated for brevity.<p>    
+      <blockquote><code>rd.getBaseWorkerURL( "com_sct_..._HelloWorker" );</code><br>
+      </blockquote>
+      <p>The returned value could then be passed into the channel's XSLT stylesheets to provide links to access the worker as needed.</p>
+      <p>The <code>service</code> element adds to the service definitions found in properties/services.xml. There is no interface defined for services; they are simply utilities that should be started when the portal is started. Optionally they may be accessed by the portal's JNDI context. The contents of the <code>service</code> element must conform to the allowed structures of the services elements in the properties/services.xml file.</p>
+      <p>The <code>ext</code> element is an extension block used to declare code that should be processed when the portal is started and may include configuration information that should be passed to that code. This element has a single required attribute: contentHandler. This attribute must contain the fully qualified name of a Java class that implements the <code>org.xml.sax.ContentHandler</code> interface. The contents of the <code>ext</code> element are opaque to the CAR deployment descriptor processing code. The content handler declared is instantiated and its <code>startDocument</code> method is called. Then the SAX content handler events for the contents of the <code>ext</code> element are passed to this object. When the contents are fully parsed, the content handler's <code>endDocument</code> method is called.</p>
+      <p>For example, the deployTest.car deployment descriptor's <code>ext</code> element contains a single element: <code>file</code>. It has a single attribute, <code>pathInCar</code>, containing the path to an image that should be moved to the web visible media directory. The content handler uses this to see if the image is already available in the web visible area and if not to extract it from the CAR and place it in that location.</p>
+      <p>Another example of using an extension block can be seen in an archive provided for integrating an external system with SCT's Luminis product. The Luminis product provides the ability to declaratively indicate how some URLs are accessed (e.g. accessed by HTTPS, by someone with the "student" role, etc.) As part of integration, this external system provides a CAR housing a worker that can receive information from the external system and take action in Luminis based on that information. The extension block declared in the CAR's deployment descriptor is illustrated below. Note the much more complex and yet perfectly acceptable XML structure contained within the <code>ext</code> block.</p>
+      <blockquote><code>&nbsp;&lt;ext contentHandler="com.sct.pipeline.SecureURLMapHandler"&gt;</code><br>
+      <code>&nbsp;&nbsp;&lt;DEFINITION rootAt="cp"&gt;</code><br>
+      <code>&nbsp;&nbsp;&nbsp;&lt;NODE name="worker.com_sct_pipeline_Worker.uP"&gt;</code><br>
+      <code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;LABEL name="secure"&gt; true &lt;/LABEL&gt;</code><br>
+      <code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;LABEL name="acl"&gt; role:admin &lt;/LABEL&gt;</code><br>
+      <code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;LABEL name="auth-method"&gt; BASIC &lt;/LABEL&gt;</code><br>
+      <code>&nbsp;&nbsp;&nbsp;&lt;/NODE&gt;</code><br>
+      <code>&nbsp;&nbsp;&lt;/DEFINITION&gt;</code><br>
+      <code>&nbsp;&lt;/ext&gt;</code><br>
+      </blockquote>
+      <p> This block is used by the SecureURLMapHandler to configure the secure URL map to enforce that access to the URL "cp/worker.com_sct_pipeline_Worker.uP" is only allowed for a user with the admin role making the request via HTTPS. Additionally, since a deamon process initiates these requests, basic authentication is used so that this transaction can take place in a single HTTP request and response cycle including authentication.</p>
+      </blockquote>
+      <big><a name="how_to_build_them"></a><span
+ style="font-weight: bold;">How Do You Build Them?</span></big><br>
+      <p>To build a CAR first create the directory structure that is desired within the CAR. For example, lets extract, delete, and then rebuild  deployTest.car. Assume that we have created a <code>temp</code> directory and placed in it deployTemp.car. Now in a command shell change directory into <code>temp</code> and extract the CAR's contents.</p>
+      <blockquote><code>jar -xf deployTest.car</code><br></blockquote>
+      <p>There will now be two subdirectories in <code>temp</code>: <code>META-INF</code> and <code>com</code>. <code>META-INF</code> contains the <code>comp.xml</code> deployment descriptor and the standard manifest file generated by the <code>jar</code> utility. The <code>com</code> directory is the top of the package relative directories housing the java source files, compiled class files, and an image file. After deleting deployTest.car we recreate it by executing:</p>
+      <blockquote><code>jar -cf deployTest.car com META-INF</code><br></blockquote>
+      <p>We now see deployTest.car again. Don't forget to specify both <code>META-INF</code> and <code>com</code> in the above command or the CAR will be lacking some of its resources.</p>
+      <p> Although this is generally how a channel archive is created the process is usually more involved. For example, in a development environment using CVS to version and backup your code, there would be a <code>CVS</code> directory in each of the subdirectories. These should not be placed into the archive. A better approach would be to use a tool like <a href="http://ant.apache.org"><code>ant</code></a> to automate copying the files needed into a temporary directory. Files will most likely come from multiple locations: java sources from a source area, class files from a build area, images from somewhere else, etc. <code>ant</code> can bring them all together, execute the jar utilty, and then place the CAR wherever it is supposed to go. It takes a little time to get familiar with <code>ant</code> but the time savings are well worth it.</p>
+      <big><a name="what_does_the_future_hold"></a><span
+ style="font-weight: bold;">What Does the Future Hold?</span></big><br>
+      <p>One feature that is still in the works is automatic publishing of channels. So stay tuned for that feature to be completed. If channel archives don't offer some other feature that you desire, then get involved with the JASIG uPortal development effort and either create that feature yourself and contribute it back or at least share your ideas in the active email list.</p><br>
+      <i>mrb 9/09/2003</i><br>
+      <br>
+<!-- end cut this section to put into jasig table cell format --> <br>
+<!-- end of main body table cell --> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> 	 </td>
+    </tr>
+  </tbody>
+</table>
+<!-- page footer -->
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="center">&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><img height="3" src="../../images/spacer.gif"
+ width="1" border="0" alt="."> <br>
+      <font face="Verdana, Arial, sans-serif" size="1"><a
+ href="http://www.ja-sig.org/">JA-SIG Home</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../index.html"> About uPortal</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../faq.html">FAQ</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../download.html">Download</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../docs.html">Documentation</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../getinv.html">Getting Involved</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <br>
+      <a href="../../cvs.html">Code Repository</a> <img height="13"
+ alt="*" src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../bugs.html">Reporting Bugs</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../license.html">License</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> </font></td>
+    </tr>
+  </tbody>
+</table>
+<!-- end page footer --> <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>
