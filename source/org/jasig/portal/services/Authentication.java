@@ -33,32 +33,34 @@
  *
  */
 
-
 package  org.jasig.portal.services;
 
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.PersonImpl;
-import  org.jasig.portal.UserIdentityStoreFactory;
-import  org.jasig.portal.IUserIdentityStore;
-import  org.jasig.portal.AuthorizationException;
-import  org.jasig.portal.PropertiesManager;
-import  java.util.HashMap;
-import  java.util.Hashtable;
-import  java.util.Enumeration;
-import  java.util.Map;
-import  java.util.Set;
-import  java.util.Iterator;
+import org.jasig.portal.security.*;
+import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.IUserIdentityStore;
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.PropertiesManager;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
 
 /**
+ * Attempts to authenticate a user and retrieve attributes
+ * associated with the user.
  * @author Ken Weiner, kweiner@interactivebusiness.com
- * @version $Revision$
- * Changes put in to allow credentials and principals to be defined and held by each
- * context.
  * @author Don Fracapane (df7@columbia.edu)
  * Added properties in the security properties file that hold the tokens used to
  * represent the principal and credential for each security context. This version
  * differs in the way the principal and credentials are set (all contexts are set
  * up front after evaluating the tokens). See setContextParameters() also.
+ * @version $Revision$
+ * Changes put in to allow credentials and principals to be defined and held by each
+ * context.
  */
 public class Authentication {
    protected org.jasig.portal.security.IPerson m_Person = null;
@@ -183,6 +185,9 @@ public class Authentication {
             LogService.instance().log(LogService.ERROR, ae);
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
+         
+         // Record the successful authentication
+         StatsRecorder.recordLogin(person);
       }
    }
 
