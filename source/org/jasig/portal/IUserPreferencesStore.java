@@ -85,7 +85,7 @@ public interface IUserPreferencesStore {
     /** retreive a list of user profiles
      *
      * @param userId user id
-     * @return hashtable mapping user profile names to the profile objects
+     * @return hashtable mapping user profile ids (Integer objects) to the profile objects
      */
     public Hashtable getUserProfileList(int userId);
 
@@ -118,7 +118,7 @@ public interface IUserPreferencesStore {
     public UserProfile getSystemProfileById(int profileId);
     /** obtain a list of system profiles
      *
-     * @return a hasbtable mapping system profile names to the profile objects
+     * @return a hasbtable mapping system profile ids (Integer objects) to the profile objects
      */
     public Hashtable getSystemProfileList();
 
