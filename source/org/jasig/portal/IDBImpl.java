@@ -56,10 +56,10 @@ public interface IDBImpl {
   public UserProfile getUserProfileById(int userId, int profileId) throws Exception;
   public Hashtable getUserProfileList(int userId) throws Exception;
   public void setUserProfile(int userId,UserProfile profile) throws Exception;
-  public Document getStructureStylesheetUserPreferences(int userId,int profileId,String stylesheetName) throws Exception;
-  public Document getThemeStylesheetUserPreferences(int userId,int profileId,String stylesheetName) throws Exception;
-  public void setStructureStylesheetUserPreferences(int userId,int profileId, String stylesheetName, Document upXML) throws Exception;
-  public void setThemeStylesheetUserPreferences(int userId, int profileId, String stylesheetName, Document upXML) throws Exception;
+  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,String stylesheetName) throws Exception;
+  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,String stylesheetName) throws Exception;
+  public void setStructureStylesheetUserPreferences(int userId,int profileId, StructureStylesheetUserPreferences fsup) throws Exception;
+  public void setThemeStylesheetUserPreferences(int userId, int profileId, ThemeStylesheetUserPreferences ssup) throws Exception;
   public void updateUserProfile(int userId,UserProfile profile) throws Exception;
   public UserProfile addUserProfile(int userId,UserProfile profile) throws Exception;
   public void deleteUserProfile(int userId,int profileId) throws Exception;

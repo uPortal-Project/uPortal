@@ -38,10 +38,6 @@ package org.jasig.portal;
 import java.util.*;
 import java.io.*;
 
-import org.w3c.dom.*;
-import org.apache.xerces.parsers.*;
-
-import org.apache.xml.serialize.*;
 
 /**
  * Reference implementation of IUserPreferencesDB
@@ -196,88 +192,27 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     }
 
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,String stylesheetName) {
-        StructureStylesheetUserPreferences fsup=new StructureStylesheetUserPreferences();
-        fsup.setStylesheetName(stylesheetName);
         try {
-            Document upXML=GenericPortalBean.getDbImplObject().getStructureStylesheetUserPreferences(userId, profileId, stylesheetName);
-            if(upXML!=null) {
-                this.populateUserParameterPreferences(upXML,fsup);
-                this.populateUserParameterChannelAttributes(upXML,fsup);
-                this.populateUserParameterFolderAttributes(upXML,fsup);
-            } else {
-		// construct user preference object with the default values
-		// CoreStylesheetDescriptionDB object should not be instantiated here. 
-		// This will go away once everything is merged under one DB interface.
-		ICoreStylesheetDescriptionDB sddb=new CoreStylesheetDescriptionDBImpl();
-		StructureStylesheetDescription ssd=sddb.getStructureStylesheetDescription(stylesheetName);
-		// set the default values for parameters
-		for(Enumeration e=ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
-		    String name=(String) e.nextElement();
-		    fsup.putParameterValue(name,ssd.getStylesheetParameterDefaultValue(name));
-		}
-		// set folder attributes
-		for(Enumeration e=ssd.getFolderAttributeNames(); e.hasMoreElements(); ) {
-		    String name=(String) e.nextElement();
-		    fsup.addFolderAttribute(name,ssd.getFolderAttributeDefaultValue(name));
-		}
-		// set channel attributes
-		for(Enumeration e=ssd.getChannelAttributeNames(); e.hasMoreElements(); ) {
-		    String name=(String) e.nextElement();
-		    fsup.addChannelAttribute(name,ssd.getChannelAttributeDefaultValue(name));
-		}
-		//                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getStructureStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
-            }
+            return GenericPortalBean.getDbImplObject().getStructureStylesheetUserPreferences(userId, profileId, stylesheetName);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
-        return fsup;
+        return null;
     }
 
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,String stylesheetName) {
-        ThemeStylesheetUserPreferences ssup=new ThemeStylesheetUserPreferences();
-        ssup.setStylesheetName(stylesheetName);
         try {
-            Document upXML = GenericPortalBean.getDbImplObject().getThemeStylesheetUserPreferences(userId, profileId, stylesheetName);
-            if(upXML!=null) {
-                this.populateUserParameterPreferences(upXML,ssup);
-                this.populateUserParameterChannelAttributes(upXML,ssup);
-            } else {
-		// construct user preference object with the default values
-		// CoreStylesheetDescriptionDB object should not be instantiated here. 
-		// This will go away once everything is merged under one DB interface.
-		ICoreStylesheetDescriptionDB sddb=new CoreStylesheetDescriptionDBImpl();
-		ThemeStylesheetDescription ssd=sddb.getThemeStylesheetDescription(stylesheetName);
-		// set the default values for parameters
-		for(Enumeration e=ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
-		    String name=(String) e.nextElement();
-		    ssup.putParameterValue(name,ssd.getStylesheetParameterDefaultValue(name));
-		}
-		// set channel attributes
-		for(Enumeration e=ssd.getChannelAttributeNames(); e.hasMoreElements(); ) {
-		    String name=(String) e.nextElement();
-		    ssup.addChannelAttribute(name,ssd.getChannelAttributeDefaultValue(name));
-		}
-		//                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getThemeStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
-            }
+            return GenericPortalBean.getDbImplObject().getThemeStylesheetUserPreferences(userId, profileId, stylesheetName);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
-        return ssup;
+        return null;
     }
 
     public void setStructureStylesheetUserPreferences(int userId,int profileId,StructureStylesheetUserPreferences fsup) {
-        String stylesheetName=fsup.getStylesheetName();
-        // construct a DOM tree
-        Document doc = new org.apache.xerces.dom.DocumentImpl();
-        Element spEl = doc.createElement("stylesheetuserpreferences");
-        spEl.appendChild(constructParametersElement(fsup,doc));
-        spEl.appendChild(constructChannelAttributesElement(fsup,doc));
-        spEl.appendChild(constructFolderAttributesElement(fsup,doc));
-        doc.appendChild(spEl);
-
         // update the database
         try {
-            GenericPortalBean.getDbImplObject().setStructureStylesheetUserPreferences(userId, profileId, stylesheetName, doc);
+            GenericPortalBean.getDbImplObject().setStructureStylesheetUserPreferences(userId, profileId, fsup);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR,e);
@@ -285,17 +220,9 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     }
 
     public void setThemeStylesheetUserPreferences(int userId, int profileId,ThemeStylesheetUserPreferences ssup) {
-        String stylesheetName=ssup.getStylesheetName();
-        // construct a DOM tree
-        Document doc = new org.apache.xerces.dom.DocumentImpl();
-        Element spEl = doc.createElement("stylesheetuserpreferences");
-        spEl.appendChild(constructParametersElement(ssup,doc));
-        spEl.appendChild(constructChannelAttributesElement(ssup,doc));
-        doc.appendChild(spEl);
-
         // update the database
         try {
-          GenericPortalBean.getDbImplObject().setThemeStylesheetUserPreferences(userId, profileId, stylesheetName, doc);
+          GenericPortalBean.getDbImplObject().setThemeStylesheetUserPreferences(userId, profileId, ssup);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR,e);
@@ -303,121 +230,6 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     }
 
 
-    private void populateUserParameterPreferences(Document upXML,StylesheetUserPreferences up) {
-        NodeList parametersNodes=upXML.getElementsByTagName("parameters");
-        // just get the first matching node. Since this XML is portal generated, we trust it.
-        Element parametersNode=(Element) parametersNodes.item(0);
-        if(parametersNode!=null) {
-            NodeList elements=parametersNode.getElementsByTagName("parameter");
-            for(int i=elements.getLength()-1;i>=0;i--) {
-                Element parameterElement=(Element) elements.item(i);
-                up.putParameterValue(parameterElement.getAttribute("name"),this.getTextChildNodeValue(parameterElement));
-                //		Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterPreferences() : adding paramtere name=\""+parameterElement.getAttribute("name")+"\" value=\""+this.getTextChildNodeValue(parameterElement)+"\".");
-            }
-        }
-    }
 
 
-    private void populateUserParameterChannelAttributes(Document upXML,ThemeStylesheetUserPreferences up) {
-        NodeList attributesNodes=upXML.getElementsByTagName("channelattributes");
-        // just get the first matching node. Since this XML is portal generated, we trust it.
-        Element attributesNode=(Element) attributesNodes.item(0);
-        if(attributesNode!=null) {
-            NodeList attributeElements=attributesNode.getElementsByTagName("attribute");
-            for(int i=attributeElements.getLength()-1;i>=0;i--) {
-                // process a particular attribute
-                Element attributeElement=(Element) attributeElements.item(i);
-                String attributeName=attributeElement.getAttribute("name");
-                String attributeDefaultValue=attributeElement.getAttribute("defaultvalue");
-                up.addChannelAttribute(attributeName,attributeDefaultValue);
-                NodeList channelElements=attributeElement.getElementsByTagName("channel");
-                for(int j=channelElements.getLength()-1;j>=0;j--) {
-                    Element channelElement=(Element) channelElements.item(j);
-                    up.setChannelAttributeValue(channelElement.getAttribute("channelid"),attributeName,channelElement.getAttribute("value"));
-                    //		    Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterChannelAttributes() : adding channel attribute attributeName=\""+attributeName+"\" channelID=\""+channelElement.getAttribute("channelid")+"\" attributeValue=\""+channelElement.getAttribute("value")+"\".");
-                }
-            }
-        }
-    }
-
-    private void populateUserParameterFolderAttributes(Document upXML,StructureStylesheetUserPreferences up) {
-        NodeList attributesNodes=upXML.getElementsByTagName("folderattributes");
-        // just get the first matching node. Since this XML is portal generated, we trust it.
-        Element attributesNode=(Element) attributesNodes.item(0);
-        if(attributesNode!=null) {
-            NodeList attributeElements=attributesNode.getElementsByTagName("attribute");
-            for(int i=attributeElements.getLength()-1;i>=0;i--) {
-                // process a particular attribute
-                Element attributeElement=(Element) attributeElements.item(i);
-                String attributeName=attributeElement.getAttribute("name");
-                String attributeDefaultValue=attributeElement.getAttribute("defaultvalue");
-                up.addFolderAttribute(attributeName,attributeDefaultValue);
-                NodeList folderElements=attributeElement.getElementsByTagName("folder");
-                for(int j=folderElements.getLength()-1;j>=0;j--) {
-                    Element folderElement=(Element) folderElements.item(j);
-                    up.setFolderAttributeValue(folderElement.getAttribute("folderid"),attributeName,folderElement.getAttribute("value"));
-                    //		    Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterFolderAttributes() : adding folder attribute attributeName=\""+attributeName+"\" folderID=\""+folderElement.getAttribute("folderid")+"\" attributeValue=\""+folderElement.getAttribute("value")+"\".");
-                }
-            }
-        }
-    }
-
-    private Element constructParametersElement(StylesheetUserPreferences up,Document doc) {
-        Element parametersEl = doc.createElement("parameters");
-        Hashtable pv=up.getParameterValues();
-        for (Enumeration e = pv.keys() ; e.hasMoreElements() ;) {
-            String parameterName=(String) e.nextElement();
-            Element parameterEl=doc.createElement("parameter");
-            parameterEl.setAttribute("name",parameterName);
-            parameterEl.appendChild(doc.createTextNode((String) pv.get(parameterName)));
-            parametersEl.appendChild(parameterEl);
-        }
-        return parametersEl;
-    }
-
-    private Element constructChannelAttributesElement(ThemeStylesheetUserPreferences up,Document doc) {
-        Element attributesEl = doc.createElement("channelattributes");
-        for(Enumeration ae=up.getChannelAttributeNames();ae.hasMoreElements();) {
-            String attributeName=(String) ae.nextElement();
-            Element attributeEl=doc.createElement("attribute");
-            attributeEl.setAttribute("name",attributeName);
-            for(Enumeration e=up.getChannels();e.hasMoreElements();) {
-                String channelID=(String) e.nextElement();
-                Element channelEl=doc.createElement("channel");
-                channelEl.setAttribute("channelid",channelID);
-                channelEl.setAttribute("value",up.getChannelAttributeValue(channelID,attributeName));
-                attributeEl.appendChild(channelEl);
-            }
-            attributesEl.appendChild(attributeEl);
-        }
-        return attributesEl;
-    }
-
-    private Element constructFolderAttributesElement(StructureStylesheetUserPreferences up,Document doc) {
-        Element attributesEl = doc.createElement("folderattributes");
-        for(Enumeration ae=up.getFolderAttributeNames();ae.hasMoreElements();) {
-            String attributeName=(String) ae.nextElement();
-            Element attributeEl=doc.createElement("attribute");
-            attributeEl.setAttribute("name",attributeName);
-            for(Enumeration e=up.getFolders();e.hasMoreElements();) {
-                String folderID=(String) e.nextElement();
-                Element folderEl=doc.createElement("folder");
-                folderEl.setAttribute("folderid",folderID);
-                folderEl.setAttribute("value",up.getFolderAttributeValue(folderID,attributeName));
-                attributeEl.appendChild(folderEl);
-            }
-            attributesEl.appendChild(attributeEl);
-        }
-        return attributesEl;
-    }
-
-    private String getTextChildNodeValue(Node node) {
-        if(node==null) return null;
-        NodeList children=node.getChildNodes();
-        for(int i=children.getLength()-1;i>=0;i--) {
-            Node child=children.item(i);
-            if(child.getNodeType()==Node.TEXT_NODE) return child.getNodeValue();
-        }
-        return null;
-    }
 }

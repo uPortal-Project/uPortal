@@ -64,7 +64,8 @@ import  org.jasig.portal.security.provider.RoleImpl;
  */
 public class DBImpl implements IDBImpl
 {
-  //This class is instantiated ONCE so NO class variables can be used
+  //This class is instantiated ONCE so NO class variables can be used to keep state between calls
+
   static int DEBUG = 0;
   protected RdbmServices rdbmService = null;
 
@@ -97,33 +98,25 @@ public class DBImpl implements IDBImpl
     dumpDoc(node.getNextSibling(), indent);
   }
 
-  private void addChannelHeaderAttribute(String name, int value, Element channel, Element system)
+  protected static final void addChannelHeaderAttribute(String name, int value, Element channel, Element system)
   {
     addChannelHeaderAttribute(name, value+"", channel, system);
   }
 
-  private void addChannelHeaderAttribute(String name, String value, Element channel, Element system)
+  protected static final void addChannelHeaderAttribute(String name, String value, Element channel, Element system)
   {
     channel.setAttribute(name, value);
     system.setAttribute("H"+name, ""); // Tag as not being changeable
   }
 
-  private void addChannelHeaderAttributeFlag(String name, String value, Element channel, Element system)
+  protected static final void addChannelHeaderAttributeFlag(String name, String value, Element channel, Element system)
   {
     addChannelHeaderAttribute(name, (value != null && value.equals("Y") ? "true" : "false"), channel, system);
   }
 
-  private Element createChannelNode(Connection con, DocumentImpl doc, int chanId) throws java.sql.SQLException
+  protected static final void createChannelNodeHeaders(DocumentImpl doc, int chanId, ResultSet rs, Element channel, Element system) throws java.sql.SQLException
   {
-    Element channel = null;
-    String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
-    Logger.log (Logger.DEBUG, sQuery);
 
-    ResultSet rs = null;
-    Statement stmt = con.createStatement ();
-    try {
-      rs = stmt.executeQuery (sQuery);
-      if (rs.next()) {
         String chanTitle = rs.getString("CHAN_TITLE");
         String chanDesc = rs.getString("CHAN_DESC");
         String chanClass = rs.getString("CHAN_CLASS");
@@ -141,11 +134,6 @@ public class DBImpl implements IDBImpl
         String chanRemovable = rs.getString("CHAN_REMOVABLE");
         String chanDetachable = rs.getString("CHAN_DETACHABLE");
         String chanName = rs.getString("CHAN_NAME");
-        rs.close();
-        stmt.close();
-
-        channel = doc.createElement("channel");
-        Element system = doc.createElement("system");
 
         doc.putIdentifier(chanIdTag, channel);
         addChannelHeaderAttribute("ID", chanIdTag, channel, system);
@@ -163,12 +151,9 @@ public class DBImpl implements IDBImpl
         addChannelHeaderAttributeFlag("hasAbout", chanHasAbout, channel, system);
         addChannelHeaderAttributeFlag("removable", chanRemovable, channel, system);
         addChannelHeaderAttributeFlag("detachable", chanDetachable, channel, system);
-
-        sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
-        Logger.log (Logger.DEBUG, sQuery);
-        stmt = con.createStatement ();
-        rs = stmt.executeQuery (sQuery);
-          while(rs.next()) {
+  }
+  protected static final void createChannelNodeParameters(DocumentImpl doc, ResultSet rs, Element channel, Element system) throws java.sql.SQLException
+  {
             String chanHDInd = rs.getString("CHAN_H_D_IND");
             String chanParmNM = rs.getString("CHAN_PARM_NM");
             String chanParmVal = rs.getString("CHAN_PARM_VAL");
@@ -189,9 +174,35 @@ public class DBImpl implements IDBImpl
               }
               channel.appendChild(parameter);
             } else {
-              throw new SQLException("Invalid value for CHAN_H_D_IND for channel " + chanId);
+              throw new SQLException("Invalid value for CHAN_H_D_IND for channel " + channel.getAttribute("chanID"));
             }
-          }
+  }
+
+  protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId) throws java.sql.SQLException
+  {
+    Element channel = null;
+    String sQuery = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
+    Logger.log (Logger.DEBUG, sQuery);
+
+    ResultSet rs = null;
+    Statement stmt = con.createStatement ();
+    try {
+      rs = stmt.executeQuery (sQuery);
+      if (rs.next()) {
+        channel = doc.createElement("channel");
+        Element system = doc.createElement("system");
+        createChannelNodeHeaders(doc, chanId, rs, channel, system);
+        rs.close();
+        stmt.close();
+
+
+        sQuery = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
+        Logger.log (Logger.DEBUG, sQuery);
+        stmt = con.createStatement ();
+        rs = stmt.executeQuery (sQuery);
+        while(rs.next()) {
+          createChannelNodeParameters(doc, rs, channel, system);
+        }
         channel.appendChild(system);
       }
     } finally {
@@ -203,7 +214,7 @@ public class DBImpl implements IDBImpl
     return channel;
   }
 
-  private static final NamedNodeMap findSystemNamedNodeMap(Element node, String tag)
+  protected static final NamedNodeMap findSystemNamedNodeMap(Element node, String tag)
   {
     NodeList nl = node.getChildNodes();
     for (int i = 0; i < nl.getLength(); i++) {
@@ -214,7 +225,7 @@ public class DBImpl implements IDBImpl
     return null;
   }
 
-  private static final Element findSystemNode(Node node)
+  protected static final Element findSystemNode(Node node)
   {
     NodeList nl = node.getChildNodes();
     for (int i = 0; i < nl.getLength(); i++) {
@@ -225,7 +236,7 @@ public class DBImpl implements IDBImpl
     return null;
   }
 
-  private void createLayout(Connection con, DocumentImpl doc, Element root, int userId, int profileId, int structId) throws java.sql.SQLException
+  protected void createLayout(Connection con, DocumentImpl doc, Element root, int userId, int profileId, int structId) throws java.sql.SQLException
   {
 
     if (structId == 0) { // End of line
@@ -282,7 +293,7 @@ public class DBImpl implements IDBImpl
         /* No access to channel. Replace it with the error channel and a suitable message */
 
         /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-        Logger.log(Logger.DEBUG, "No role access (ignored) for channel " + chanId + " for user " + userId);
+        Logger.log(Logger.INFO, "No role access (ignored at the moment) for channel " + chanId + " for user " + userId);
 
       }
 
@@ -460,7 +471,7 @@ public class DBImpl implements IDBImpl
         }
   }
 
-  private class StructId {
+  protected class StructId {
     public int id = 1;
   }
 
@@ -469,7 +480,7 @@ public class DBImpl implements IDBImpl
    * @param value to check
    * @result Y/N
    */
-  private static String dbBool(String value)
+  protected static String dbBool(String value)
   {
     if (value != null && value.equals("true")) {
       return "Y";
@@ -478,7 +489,7 @@ public class DBImpl implements IDBImpl
     }
   }
 
-  private int saveStructure(Node node, Statement stmt, int userId, int layoutId, StructId structId) throws java.sql.SQLException {
+  protected int saveStructure(Node node, Statement stmt, int userId, int layoutId, StructId structId) throws java.sql.SQLException {
       if (node == null) {
         return 0;
       } else if (node.getNodeName().equals("parameter")) {
@@ -1092,7 +1103,7 @@ public class DBImpl implements IDBImpl
       }
   }
 
-  private void setAutoCommit(Connection connection, boolean autocommit)
+  protected void setAutoCommit(Connection connection, boolean autocommit)
   {
     try
     {
@@ -1105,7 +1116,7 @@ public class DBImpl implements IDBImpl
     }
   }
 
-  private void commit(Connection connection)
+  protected void commit(Connection connection)
   {
     try
     {
@@ -1118,7 +1129,7 @@ public class DBImpl implements IDBImpl
     }
   }
 
-  private void rollback(Connection connection)
+  protected void rollback(Connection connection)
   {
     try
     {
@@ -1283,30 +1294,62 @@ public class DBImpl implements IDBImpl
    * @return
    * @exception Exception
    */
-  public Document getStructureStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
+  public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
     Connection con = rdbmService.getConnection();
+
+    StructureStylesheetUserPreferences fsup=new StructureStylesheetUserPreferences();
+    fsup.setStylesheetName(stylesheetName);
     Document upXML = null;
     try {
       Statement stmt = con.createStatement();
       String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
-          + stylesheetName + "' AND PROFILE_ID=" + profileId;
-      Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      String str_upXML = null;
-      if (rs.next()) {
-        str_upXML = rs.getString("USER_PREFERENCES_XML");
+        + stylesheetName + "' AND PROFILE_ID=" + profileId;
+        Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        String str_upXML = null;
+        if (rs.next()) {
+          str_upXML = rs.getString("USER_PREFERENCES_XML");
+        }
+
+        if (str_upXML != null) {
+          Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + str_upXML);
+          DOMParser parser = new DOMParser();
+          parser.parse(new org.xml.sax.InputSource(new StringReader(str_upXML)));
+          upXML = parser.getDocument();
+        }
+      } finally {
+        rdbmService.releaseConnection(con);
       }
-      if (str_upXML != null) {
-        Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetUserPreferences() : " + str_upXML);
-        DOMParser parser = new DOMParser();
-        parser.parse(new org.xml.sax.InputSource(new StringReader(str_upXML)));
-        upXML = parser.getDocument();
+
+      if(upXML!=null) {
+        this.populateUserParameterPreferences(upXML,fsup);
+        this.populateUserParameterChannelAttributes(upXML,fsup);
+        this.populateUserParameterFolderAttributes(upXML,fsup);
+      } else {
+        // construct user preference object with the default values
+        // CoreStylesheetDescriptionDB object should not be instantiated here.
+        // This will go away once everything is merged under one DB interface.
+        ICoreStylesheetDescriptionDB sddb=new CoreStylesheetDescriptionDBImpl();
+        StructureStylesheetDescription ssd=sddb.getStructureStylesheetDescription(stylesheetName);
+        // set the default values for parameters
+        for(Enumeration e=ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
+          String name=(String) e.nextElement();
+          fsup.putParameterValue(name,ssd.getStylesheetParameterDefaultValue(name));
+        }
+        // set folder attributes
+        for(Enumeration e=ssd.getFolderAttributeNames(); e.hasMoreElements(); ) {
+          String name=(String) e.nextElement();
+          fsup.addFolderAttribute(name,ssd.getFolderAttributeDefaultValue(name));
+        }
+        // set channel attributes
+        for(Enumeration e=ssd.getChannelAttributeNames(); e.hasMoreElements(); ) {
+          String name=(String) e.nextElement();
+          fsup.addChannelAttribute(name,ssd.getChannelAttributeDefaultValue(name));
+        }
+        //                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getStructureStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
       }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-    return  upXML;
-  }
+      return fsup;
+   }
 
   /**
    * put your documentation comment here
@@ -1316,29 +1359,123 @@ public class DBImpl implements IDBImpl
    * @return
    * @exception Exception
    */
-  public Document getThemeStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
+  public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
     Connection con = rdbmService.getConnection();
+
+    ThemeStylesheetUserPreferences ssup=new ThemeStylesheetUserPreferences();
+    ssup.setStylesheetName(stylesheetName);
+
     Document upXML = null;
     try {
       Statement stmt = con.createStatement();
       String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
-          + stylesheetName + "' AND PROFILE_ID=" + profileId;
-      Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetUserPreferences() : " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      String str_upXML = null;
-      if (rs.next())
-        str_upXML = rs.getString("USER_PREFERENCES_XML");
-      if (str_upXML != null) {
-        Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetUserPreferences() : " + str_upXML);
-        DOMParser parser = new DOMParser();
-        parser.parse(new org.xml.sax.InputSource(new StringReader(str_upXML)));
-        upXML = parser.getDocument();
+        + stylesheetName + "' AND PROFILE_ID=" + profileId;
+        Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetUserPreferences() : " + sQuery);
+        ResultSet rs = stmt.executeQuery(sQuery);
+        String str_upXML = null;
+        if (rs.next()) {
+          str_upXML = rs.getString("USER_PREFERENCES_XML");
+        }
+
+        if (str_upXML != null) {
+          Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetUserPreferences() : " + str_upXML);
+          DOMParser parser = new DOMParser();
+          parser.parse(new org.xml.sax.InputSource(new StringReader(str_upXML)));
+          upXML = parser.getDocument();
+        }
+      } finally {
+        rdbmService.releaseConnection(con);
       }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-    return  upXML;
+
+      if(upXML!=null) {
+        this.populateUserParameterPreferences(upXML,ssup);
+        this.populateUserParameterChannelAttributes(upXML,ssup);
+      } else {
+        // construct user preference object with the default values
+        // CoreStylesheetDescriptionDB object should not be instantiated here.
+        // This will go away once everything is merged under one DB interface.
+        ICoreStylesheetDescriptionDB sddb=new CoreStylesheetDescriptionDBImpl();
+        ThemeStylesheetDescription ssd=sddb.getThemeStylesheetDescription(stylesheetName);
+        // set the default values for parameters
+        for(Enumeration e=ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
+          String name=(String) e.nextElement();
+          ssup.putParameterValue(name,ssd.getStylesheetParameterDefaultValue(name));
+        }
+        // set channel attributes
+        for(Enumeration e=ssd.getChannelAttributeNames(); e.hasMoreElements(); ) {
+          String name=(String) e.nextElement();
+          ssup.addChannelAttribute(name,ssd.getChannelAttributeDefaultValue(name));
+        }
+        //                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getThemeStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
+      }
+      return ssup;
   }
+    static protected final void populateUserParameterChannelAttributes(Document upXML,ThemeStylesheetUserPreferences up) {
+        NodeList attributesNodes=upXML.getElementsByTagName("channelattributes");
+        // just get the first matching node. Since this XML is portal generated, we trust it.
+        Element attributesNode=(Element) attributesNodes.item(0);
+        if(attributesNode!=null) {
+            NodeList attributeElements=attributesNode.getElementsByTagName("attribute");
+            for(int i=attributeElements.getLength()-1;i>=0;i--) {
+                // process a particular attribute
+                Element attributeElement=(Element) attributeElements.item(i);
+                String attributeName=attributeElement.getAttribute("name");
+                String attributeDefaultValue=attributeElement.getAttribute("defaultvalue");
+                up.addChannelAttribute(attributeName,attributeDefaultValue);
+                NodeList channelElements=attributeElement.getElementsByTagName("channel");
+                for(int j=channelElements.getLength()-1;j>=0;j--) {
+                    Element channelElement=(Element) channelElements.item(j);
+                    up.setChannelAttributeValue(channelElement.getAttribute("channelid"),attributeName,channelElement.getAttribute("value"));
+                    //		    Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterChannelAttributes() : adding channel attribute attributeName=\""+attributeName+"\" channelID=\""+channelElement.getAttribute("channelid")+"\" attributeValue=\""+channelElement.getAttribute("value")+"\".");
+                }
+            }
+        }
+    }
+
+    static protected final void populateUserParameterFolderAttributes(Document upXML,StructureStylesheetUserPreferences up) {
+        NodeList attributesNodes=upXML.getElementsByTagName("folderattributes");
+        // just get the first matching node. Since this XML is portal generated, we trust it.
+        Element attributesNode=(Element) attributesNodes.item(0);
+        if(attributesNode!=null) {
+            NodeList attributeElements=attributesNode.getElementsByTagName("attribute");
+            for(int i=attributeElements.getLength()-1;i>=0;i--) {
+                // process a particular attribute
+                Element attributeElement=(Element) attributeElements.item(i);
+                String attributeName=attributeElement.getAttribute("name");
+                String attributeDefaultValue=attributeElement.getAttribute("defaultvalue");
+                up.addFolderAttribute(attributeName,attributeDefaultValue);
+                NodeList folderElements=attributeElement.getElementsByTagName("folder");
+                for(int j=folderElements.getLength()-1;j>=0;j--) {
+                    Element folderElement=(Element) folderElements.item(j);
+                    up.setFolderAttributeValue(folderElement.getAttribute("folderid"),attributeName,folderElement.getAttribute("value"));
+                    //		    Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterFolderAttributes() : adding folder attribute attributeName=\""+attributeName+"\" folderID=\""+folderElement.getAttribute("folderid")+"\" attributeValue=\""+folderElement.getAttribute("value")+"\".");
+                }
+            }
+        }
+    }
+    static protected final void populateUserParameterPreferences(Document upXML,StylesheetUserPreferences up) {
+        NodeList parametersNodes=upXML.getElementsByTagName("parameters");
+        // just get the first matching node. Since this XML is portal generated, we trust it.
+        Element parametersNode=(Element) parametersNodes.item(0);
+        if(parametersNode!=null) {
+            NodeList elements=parametersNode.getElementsByTagName("parameter");
+            for(int i=elements.getLength()-1;i>=0;i--) {
+                Element parameterElement=(Element) elements.item(i);
+                up.putParameterValue(parameterElement.getAttribute("name"), getTextChildNodeValue(parameterElement));
+                //		Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::populateUserParameterPreferences() : adding paramtere name=\""+parameterElement.getAttribute("name")+"\" value=\""+this.getTextChildNodeValue(parameterElement)+"\".");
+            }
+        }
+    }
+    static protected final String getTextChildNodeValue(Node node) {
+        if(node==null) return null;
+        NodeList children=node.getChildNodes();
+        for(int i=children.getLength()-1;i>=0;i--) {
+            Node child=children.item(i);
+            if(child.getNodeType()==Node.TEXT_NODE) return child.getNodeValue();
+        }
+        return null;
+    }
+
 
   /**
    * put your documentation comment here
@@ -1348,15 +1485,26 @@ public class DBImpl implements IDBImpl
    * @param upXML
    * @exception Exception
    */
-  public void setStructureStylesheetUserPreferences (int userId, int profileId, String stylesheetName, Document upXML) throws Exception {
+  public void setStructureStylesheetUserPreferences (int userId, int profileId, StructureStylesheetUserPreferences fsup) throws Exception {
     Connection con = rdbmService.getConnection();
+
+    String stylesheetName=fsup.getStylesheetName();
+    // construct a DOM tree
+    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Element spEl = doc.createElement("stylesheetuserpreferences");
+    spEl.appendChild(constructParametersElement(fsup,doc));
+    spEl.appendChild(constructChannelAttributesElement(fsup,doc));
+    spEl.appendChild(constructFolderAttributesElement(fsup,doc));
+    doc.appendChild(spEl);
+
+
     try {
       // update the database
       StringWriter outString = new StringWriter();
-      OutputFormat format = new OutputFormat(upXML);
+      OutputFormat format = new OutputFormat(doc);
       format.setOmitXMLDeclaration(true);
       XMLSerializer xsl = new XMLSerializer(outString, format);
-      xsl.serialize(upXML);
+      xsl.serialize(doc);
       Statement stmt = con.createStatement();
       // this is ugly, but we have to know wether to do INSERT or UPDATE
       String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
@@ -1379,6 +1527,56 @@ public class DBImpl implements IDBImpl
       rdbmService.releaseConnection(con);
     }
   }
+    protected Element constructParametersElement(StylesheetUserPreferences up,Document doc) {
+        Element parametersEl = doc.createElement("parameters");
+        Hashtable pv=up.getParameterValues();
+        for (Enumeration e = pv.keys() ; e.hasMoreElements() ;) {
+            String parameterName=(String) e.nextElement();
+            Element parameterEl=doc.createElement("parameter");
+            parameterEl.setAttribute("name",parameterName);
+            parameterEl.appendChild(doc.createTextNode((String) pv.get(parameterName)));
+            parametersEl.appendChild(parameterEl);
+        }
+        return parametersEl;
+    }
+
+    protected Element constructChannelAttributesElement(ThemeStylesheetUserPreferences up,Document doc) {
+        Element attributesEl = doc.createElement("channelattributes");
+        for(Enumeration ae=up.getChannelAttributeNames();ae.hasMoreElements();) {
+            String attributeName=(String) ae.nextElement();
+            Element attributeEl=doc.createElement("attribute");
+            attributeEl.setAttribute("name",attributeName);
+            for(Enumeration e=up.getChannels();e.hasMoreElements();) {
+                String channelID=(String) e.nextElement();
+                Element channelEl=doc.createElement("channel");
+                channelEl.setAttribute("channelid",channelID);
+                channelEl.setAttribute("value",up.getChannelAttributeValue(channelID,attributeName));
+                attributeEl.appendChild(channelEl);
+            }
+            attributesEl.appendChild(attributeEl);
+        }
+        return attributesEl;
+    }
+
+    protected Element constructFolderAttributesElement(StructureStylesheetUserPreferences up,Document doc) {
+        Element attributesEl = doc.createElement("folderattributes");
+        for(Enumeration ae=up.getFolderAttributeNames();ae.hasMoreElements();) {
+            String attributeName=(String) ae.nextElement();
+            Element attributeEl=doc.createElement("attribute");
+            attributeEl.setAttribute("name",attributeName);
+            for(Enumeration e=up.getFolders();e.hasMoreElements();) {
+                String folderID=(String) e.nextElement();
+                Element folderEl=doc.createElement("folder");
+                folderEl.setAttribute("folderid",folderID);
+                folderEl.setAttribute("value",up.getFolderAttributeValue(folderID,attributeName));
+                attributeEl.appendChild(folderEl);
+            }
+            attributesEl.appendChild(attributeEl);
+        }
+        return attributesEl;
+    }
+
+
 
   /**
    * put your documentation comment here
@@ -1388,15 +1586,24 @@ public class DBImpl implements IDBImpl
    * @param upXML
    * @exception Exception
    */
-  public void setThemeStylesheetUserPreferences (int userId, int profileId, String stylesheetName, Document upXML) throws Exception {
+  public void setThemeStylesheetUserPreferences (int userId, int profileId, ThemeStylesheetUserPreferences ssup) throws Exception {
     Connection con = rdbmService.getConnection();
+
+    String stylesheetName=ssup.getStylesheetName();
+    // construct a DOM tree
+    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Element spEl = doc.createElement("stylesheetuserpreferences");
+    spEl.appendChild(constructParametersElement(ssup,doc));
+    spEl.appendChild(constructChannelAttributesElement(ssup,doc));
+    doc.appendChild(spEl);
+
     try {
       // update the database
       StringWriter outString = new StringWriter();
-      OutputFormat format = new OutputFormat(upXML);
+      OutputFormat format = new OutputFormat(doc);
       format.setOmitXMLDeclaration(true);
       XMLSerializer xsl = new XMLSerializer(outString, format);
-      xsl.serialize(upXML);
+      xsl.serialize(doc);
       Statement stmt = con.createStatement();
       // this is ugly, but we have to know wether to do INSERT or UPDATE
       String sQuery = "SELECT USER_ID, USER_PREFERENCES_XML FROM UP_USER_SS_PREFS WHERE USER_ID=" + userId + " AND STYLESHEET_NAME='"
@@ -1488,7 +1695,7 @@ public class DBImpl implements IDBImpl
    * @param chanDoc
    * @return
    */
-  private String serializeDOM (Document chanDoc) {
+  protected String serializeDOM (Document chanDoc) {
     StringWriter stringOut = null;
     try {
       OutputFormat format = new OutputFormat(chanDoc);          //Serialize DOM
