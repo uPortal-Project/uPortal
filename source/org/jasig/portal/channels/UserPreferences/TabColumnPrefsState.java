@@ -81,6 +81,10 @@ final class TabColumnPrefsState extends BaseState
   private static IUserPreferencesStore upStore = RdbmServices.getUserPreferencesStoreImpl();
   private StylesheetSet set;
   private static SmartCache channelRegistryCache = new SmartCache(60); // One minute
+  
+  private String action = "none";
+  private String activeTab = "none";
+  private String elementID = "none";
 
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
@@ -96,8 +100,8 @@ final class TabColumnPrefsState extends BaseState
   private static final String errorMessageMoveColumn = "Problem trying to move column";
   private static final String errorMessageNewColumn = "Problem trying to add a new column";
   private static final String errorMessageDeleteColumn = "Problem trying to delete column";
+  private static final String errorMessageNewChannel = "Problem trying to add a new channel";
   private static final String errorMessageMoveChannel = "Problem trying to move channel";
-  private static final String errorMessageNewChannel = "Problem trying to create a new channel";
   private static final String errorMessageDeleteChannel = "Problem trying to delete channel";
 
   public TabColumnPrefsState() throws PortalException
@@ -127,17 +131,25 @@ final class TabColumnPrefsState extends BaseState
   {
     this.runtimeData = rd;
 
-    // see if a top-level action has been given
+    // See if a top-level action has been given
     String action=rd.getParameter("action");
-    if(action!=null && action.equals("manageSkins")) {
-        // switch the internal state
-        internalState=new SelectSkinsState(this);
+    if (action != null) {
+      if (action.equals("newChannel")) {
+        if (!(internalState instanceof NewChannelState)) {
+          internalState = new NewChannelState(this);
+          internalState.setStaticData(staticData);
+        }
+      } else if (action.equals("manageSkins")) {
+        if (!(internalState instanceof SelectSkinsState)) {
+          internalState = new SelectSkinsState(this);
+          internalState.setStaticData(staticData);
+        }
+      } else if (action.equals("managePreferences")) {
+        internalState = new DefaultState(this);
         internalState.setStaticData(staticData);
-    } else if(action!=null && action.equals("managePreferences")) {
-        internalState=new DefaultState(this);
-        internalState.setStaticData(staticData);
+      }
     }
-    this.internalState.setRuntimeData(rd);
+    internalState.setRuntimeData(rd);
 
     try
     {
@@ -474,12 +486,6 @@ final class TabColumnPrefsState extends BaseState
       UserLayoutManager.moveNode(newChannel, targetColumn, siblingChannel);
     }
     
-    // Remove the <registry> XML from the user layout before saving
-    for (Node n = layout.getLastChild(); n != null && n.getNodeType() == Node.ELEMENT_NODE; n = n.getPreviousSibling())
-    {
-      if (n.getNodeName().equals("registry") && n.getParentNode().equals(layout))
-        layout.removeChild(n);
-    }
     saveLayout();
   }
   
@@ -576,12 +582,6 @@ final class TabColumnPrefsState extends BaseState
   protected class DefaultState extends BaseState
   {
     protected TabColumnPrefsState context;
-
-    private String action = "none";
-    private String activeTab = "none";
-    private String elementID = "none";
-    private String position = "none";
-    private String catID = "none";
 
     public DefaultState(TabColumnPrefsState context)
     {
@@ -831,49 +831,6 @@ final class TabColumnPrefsState extends BaseState
             errorMessage = errorMessageMoveChannel;
           }
         }
-        // New channel
-        else if (action.equals("newChannel"))
-        {
-          try
-          {
-            // User clicked "?"
-            if (runtimeData.getParameter("channelMoreInfo") != null)
-            {
-              
-            }
-            // User clicked "Add"
-            else if (runtimeData.getParameter("addChannel") != null)
-            {
-              String selectedChannel = runtimeData.getParameter("selectedChannel");              
-              addChannel(selectedChannel, position, elementID);
-              elementID = "none";
-              position = "none";
-              action = "none";
-            }
-            // User clicked "Go"
-            else
-            {
-              String passedPosition = runtimeData.getParameter("position");
-              String passedElementID = runtimeData.getParameter("elementID");
-              if (passedPosition != null)
-                position = passedPosition;
-              if (passedElementID != null)
-                elementID = passedElementID;
-              
-              String selectedCategory = runtimeData.getParameter("selectedCategory");
-              if (selectedCategory != null)
-                catID = selectedCategory;
-              else
-                catID= "top";
-            }            
-          }
-          catch (Exception e)
-          {
-            LogService.instance().log(LogService.ERROR, e);
-            action = "error";
-            errorMessage = errorMessageNewChannel;
-          }
-        }        
         // Delete channel
         else if (action.equals("deleteChannel"))
         {
@@ -894,8 +851,6 @@ final class TabColumnPrefsState extends BaseState
         else if (action.equals("cancel"))
         {
           elementID = "none";
-          position = "none";
-          catID = "none";
         }
       }
       else
@@ -918,8 +873,6 @@ final class TabColumnPrefsState extends BaseState
         processor.setStylesheetParam("activeTab", processor.createXString(activeTab));
         processor.setStylesheetParam("action", processor.createXString(action));
         processor.setStylesheetParam("elementID", processor.createXString(elementID));     
-        processor.setStylesheetParam("position", processor.createXString(position)); // For subscribe     
-        processor.setStylesheetParam("catID", processor.createXString(catID)); // For subscribe
         processor.setStylesheetParam("errorMessage", processor.createXString(errorMessage));
 
         StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
@@ -944,6 +897,7 @@ final class TabColumnPrefsState extends BaseState
       }
     }
   }
+
   /**
    * A sub-state of TabColumnPrefsState for selecting skins
    */
@@ -968,13 +922,11 @@ final class TabColumnPrefsState extends BaseState
                   // reset state
                   BaseState df=new DefaultState(context);
                   df.setStaticData(staticData);
-                  df.setRuntimeData(runtimeData);
                   context.setState(df);
               } else if (runtimeData.getParameter("submitCancel")!=null) {
                   // return to the default state
                   BaseState df=new DefaultState(context);
                   df.setStaticData(staticData);
-                  df.setRuntimeData(runtimeData);
                   context.setState(df);
               }
           }
@@ -1000,4 +952,91 @@ final class TabColumnPrefsState extends BaseState
 
       }
   }
+  
+  /**
+   * A sub-state of TabColumnPrefsState for choosing a new channel (formerly subscribe)
+   */
+  protected class NewChannelState extends BaseState
+  {
+    protected TabColumnPrefsState context;
+    private String position = "none";
+    private String catID = "top";        
+
+    public NewChannelState(TabColumnPrefsState context) {
+      this.context = context;
+    }
+
+    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+      runtimeData = rd;
+      String action = runtimeData.getParameter("action");
+      if (action != null) {
+        if (action.equals("cancel")) {
+          returnToDefaultState();
+        } else {
+          // User clicked "?"  
+          if (runtimeData.getParameter("channelMoreInfo") != null) {
+            // Implement channel preview here!
+          } else if (runtimeData.getParameter("addChannel") != null) {
+            // User clicked "Add"
+            String selectedChannel = runtimeData.getParameter("selectedChannel"); 
+            if (selectedChannel != null) {
+              try {
+                addChannel(selectedChannel, position, elementID);
+                returnToDefaultState();
+              } catch (Exception e) {
+                errorMessage = errorMessageNewChannel;
+              }
+            }
+          } else {
+            // Collect the position and element ID the first time
+            String passedPosition = runtimeData.getParameter("position");
+            String passedElementID = runtimeData.getParameter("elementID");
+            if (passedPosition != null)
+              position = passedPosition;
+            if (passedElementID != null)
+              elementID = passedElementID;    
+            
+            // User clicked "Go"             
+            String selectedCategory = runtimeData.getParameter("selectedCategory");
+            if (selectedCategory != null  && selectedCategory.trim().length() > 0)
+              catID = selectedCategory;
+          }
+        }
+      }
+    }
+
+    public void renderXML (DocumentHandler out) throws PortalException
+    {
+      Document doc = null;
+
+      try {
+        doc = getChannelRegistry();
+      } catch (java.sql.SQLException sqle) {
+        LogService.instance().log(LogService.ERROR, sqle);
+        errorMessage = errorMessageNewChannel;
+      }
+      
+      XSLT xslt = new XSLT();
+      xslt.setXML(doc);
+      xslt.setSSL(sslLocation, "newChannel", runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+      xslt.setStylesheetParameter("elementID", elementID);     
+      xslt.setStylesheetParameter("position", position);   
+      xslt.setStylesheetParameter("catID", catID);
+      xslt.setStylesheetParameter("errorMessage", errorMessage);
+      xslt.transform();
+    }
+      
+    private void returnToDefaultState() throws PortalException {
+      // Reset global variables
+      elementID = "none";
+      position = "none";
+      action = "none";
+
+      BaseState defaultState = new DefaultState(context);
+      defaultState.setStaticData(staticData);
+      context.setState(defaultState);                 
+    }
+  }  
 }
