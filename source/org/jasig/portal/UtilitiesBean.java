@@ -108,12 +108,7 @@ public class UtilitiesBean extends GenericPortalBean
     char ch0 = str.charAt (0);
     char ch1 = str.charAt (1);
 
-    if (str.indexOf ("://") == -1 && ch1 != ':')
-    {
-      // Relative path was specified, so prepend portal base dir
-      str = (bWindows ? "file:/" : "file://") + GenericPortalBean.getPortalBaseDir () + str;
-    }
-    else if (bWindows && str.startsWith ("file://"))
+    if (bWindows && str.startsWith ("file://"))
     {
       // Replace "file://" with "file:/" on Windows machines
       str = "file:/" + str.substring (7);
@@ -122,6 +117,11 @@ public class UtilitiesBean extends GenericPortalBean
     {
       // It's a full path without "file://"
       str = (bWindows ? "file:/" : "file://") + str;
+    }
+    else if (str.indexOf ("://") == -1 && ch1 != ':')
+    {
+      // Relative path was specified, so prepend portal base dir
+      str = (bWindows ? "file:/" : "file://") + GenericPortalBean.getPortalBaseDir () + str;
     }
 
     // Handle platform-dependent strings
