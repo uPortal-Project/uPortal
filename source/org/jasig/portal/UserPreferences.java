@@ -84,7 +84,7 @@ public class UserPreferences {
         return this.ssup;
     }
 
-    public void synchronizeWithUserLayoutXML(Document uLayoutXML) {
+    public void synchronizeWithUserLayoutXML(Document uLayoutXML) throws PortalException {
         // make a list of channels in the XML Layout
         NodeList channelNodes=uLayoutXML.getElementsByTagName("channel");
         HashSet channelSet=new HashSet();

@@ -75,8 +75,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
     public int getUserBrowserMapping(int userId,String userAgent) {
         try {
-          IDBImpl dbImpl = new DBImpl();
-          return dbImpl.getUserBrowserMapping(userId, userAgent);
+          return GenericPortalBean.getDbImplObject().getUserBrowserMapping(userId, userAgent);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -85,8 +84,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
     public void setUserBrowserMapping(int userId,String userAgent, int profileId) {
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.setUserBrowserMapping(userId, userAgent, profileId);
+          GenericPortalBean.getDbImplObject().setUserBrowserMapping(userId, userAgent, profileId);
          } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -124,8 +122,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     public UserProfile getUserProfileById(int userId, int profileId) {
         UserProfile upl=null;
         try {
-          IDBImpl dbImpl = new DBImpl();
-          upl = dbImpl.getUserProfileById(userId, profileId);
+          upl = GenericPortalBean.getDbImplObject().getUserProfileById(userId, profileId);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -136,8 +133,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     public Hashtable getUserProfileList(int userId) {
         Hashtable pv=null;
         try {
-          IDBImpl dbImpl = new DBImpl();
-          pv = dbImpl.getUserProfileList(userId);
+          pv = GenericPortalBean.getDbImplObject().getUserProfileList(userId);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -155,8 +151,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
     public void updateUserProfile(int userId,UserProfile profile) {
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.updateUserProfile(userId, profile);
+          GenericPortalBean.getDbImplObject().updateUserProfile(userId, profile);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -166,9 +161,8 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         this.updateUserProfile(0,profile);
     }
     public UserProfile addUserProfile(int userId,UserProfile profile) {
-      IDBImpl dbImpl = new DBImpl();
         try {
-          profile = dbImpl.addUserProfile(userId, profile);
+          profile = GenericPortalBean.getDbImplObject().addUserProfile(userId, profile);
         } catch (Exception e) {
             Logger.log (Logger.ERROR,e);
         }
@@ -181,8 +175,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
     public void deleteUserProfile(int userId,int profileId) {
       try {
-        IDBImpl dbImpl = new DBImpl();
-        dbImpl.deleteUserProfile(userId, profileId);
+        GenericPortalBean.getDbImplObject().deleteUserProfile(userId, profileId);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR,e);
@@ -206,9 +199,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         StructureStylesheetUserPreferences fsup=new StructureStylesheetUserPreferences();
         fsup.setStylesheetName(stylesheetName);
         try {
-            IDBImpl dbImpl = new DBImpl();
-
-            Document upXML=dbImpl.getStructureStylesheetUserPreferences(userId, profileId, stylesheetName);
+            Document upXML=GenericPortalBean.getDbImplObject().getStructureStylesheetUserPreferences(userId, profileId, stylesheetName);
             if(upXML!=null) {
                 this.populateUserParameterPreferences(upXML,fsup);
                 this.populateUserParameterChannelAttributes(upXML,fsup);
@@ -226,8 +217,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         ThemeStylesheetUserPreferences ssup=new ThemeStylesheetUserPreferences();
         ssup.setStylesheetName(stylesheetName);
         try {
-            IDBImpl dbImpl = new DBImpl();
-            Document upXML = dbImpl.getThemeStylesheetUserPreferences(userId, profileId, stylesheetName);
+            Document upXML = GenericPortalBean.getDbImplObject().getThemeStylesheetUserPreferences(userId, profileId, stylesheetName);
             if(upXML!=null) {
                 this.populateUserParameterPreferences(upXML,ssup);
                 this.populateUserParameterChannelAttributes(upXML,ssup);
@@ -252,8 +242,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
 
         // update the database
         try {
-            IDBImpl dbImpl = new DBImpl();
-            dbImpl.setStructureStylesheetUserPreferences(userId, profileId, stylesheetName, doc);
+            GenericPortalBean.getDbImplObject().setStructureStylesheetUserPreferences(userId, profileId, stylesheetName, doc);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR,e);
@@ -269,11 +258,9 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
         spEl.appendChild(constructChannelAttributesElement(ssup,doc));
         doc.appendChild(spEl);
 
-        IDBImpl dbImpl = new DBImpl();
-
         // update the database
         try {
-          dbImpl.setThemeStylesheetUserPreferences(userId, profileId, stylesheetName, doc);
+          GenericPortalBean.getDbImplObject().setThemeStylesheetUserPreferences(userId, profileId, stylesheetName, doc);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR,e);

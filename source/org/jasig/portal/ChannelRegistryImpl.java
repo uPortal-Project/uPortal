@@ -67,8 +67,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
         try {
           chanDoc = new org.apache.xerces.dom.DocumentImpl();
           Element root = chanDoc.createElement("registry");
-          IDBImpl dbImpl = new DBImpl();
-          root.appendChild(dbImpl.getRegistryXML(chanDoc, root, catID, role));
+          root.appendChild(GenericPortalBean.getDbImplObject().getRegistryXML(chanDoc, root, catID, role));
           chanDoc.appendChild(root);
          } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -86,8 +85,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
         try {
           types = new DocumentImpl();
           Element root = types.createElement("channelTypes");
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.getTypesXML(types, root, role);
+          GenericPortalBean.getDbImplObject().getTypesXML(types, root, role);
           types.appendChild(root);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -106,8 +104,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
           catsDoc = new org.apache.xerces.dom.DocumentImpl();
           Element root = catsDoc.createElement("channelCats");
 
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.getCategoryXML(catsDoc, root, role);
+          GenericPortalBean.getDbImplObject().getCategoryXML(catsDoc, root, role);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -122,9 +119,8 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  */
     public void addChannel(int id, String title, Document doc, String catID[]) {
 
-         try {   
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.addChannel(id, title, doc, catID);
+         try {
+          GenericPortalBean.getDbImplObject().addChannel(id, title, doc, catID);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR, e);
@@ -139,8 +135,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
     public void addChannel(int id, String title, Document doc) {
 
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.addChannel(id, title, doc);
+          GenericPortalBean.getDbImplObject().addChannel(id, title, doc);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR, e);

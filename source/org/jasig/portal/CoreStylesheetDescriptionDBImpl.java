@@ -58,8 +58,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     public Hashtable getMimeTypeList() {
         Hashtable list=new Hashtable();
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.getMimeTypeList(list);
+          GenericPortalBean.getDbImplObject().getMimeTypeList(list);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -71,8 +70,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         Hashtable list=new Hashtable();
 
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.getStructureStylesheetList(mimeType, list);
+          GenericPortalBean.getDbImplObject().getStructureStylesheetList(mimeType, list);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -83,8 +81,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         Hashtable list=new Hashtable();
 
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.getThemeStylesheetList(structureStylesheetName, list);
+          GenericPortalBean.getDbImplObject().getThemeStylesheetList(structureStylesheetName, list);
         } catch (Exception e) {
           Logger.log(Logger.ERROR,e);
         }
@@ -96,9 +93,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     public StructureStylesheetDescription getStructureStylesheetDescription(String stylesheetName) {
         StructureStylesheetDescription fssd=null;
         try {
-          IDBImpl dbImpl = new DBImpl();
-
-          String[] db = dbImpl.getStructureStylesheetDescription(stylesheetName);
+          String[] db = GenericPortalBean.getDbImplObject().getStructureStylesheetDescription(stylesheetName);
           String dbStylesheetName=db[0];
           String dbStylesheetDescriptionText=db[1];
           String dbURI=db[2];
@@ -142,9 +137,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     public ThemeStylesheetDescription getThemeStylesheetDescription(String stylesheetName) {
         ThemeStylesheetDescription sssd=null;
         try {
-
-          IDBImpl dbImpl = new DBImpl();
-          String[] db = dbImpl.getThemeStylesheetDescription(stylesheetName);
+          String[] db = GenericPortalBean.getDbImplObject().getThemeStylesheetDescription(stylesheetName);
           String dbStylesheetName=db[0];
           String dbStylesheetDescriptionText=db[1];
           String dbURI=db[2];
@@ -194,8 +187,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 
     public void removeStructureStylesheetDescription(String stylesheetName){
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.removeStructureStylesheetDescription(stylesheetName);
+          GenericPortalBean.getDbImplObject().removeStructureStylesheetDescription(stylesheetName);
 
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -203,8 +195,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     }
     public void removeThemeStylesheetDescription(String stylesheetName){
         try {
-          IDBImpl dbImpl = new DBImpl();
-          dbImpl.removeThemeStylesheetDescription(stylesheetName);
+          GenericPortalBean.getDbImplObject().removeThemeStylesheetDescription(stylesheetName);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
@@ -237,8 +228,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
             // now write out the database record
 
             // first the basic record
-            IDBImpl dbImpl = new DBImpl();
-            dbImpl.addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
+            GenericPortalBean.getDbImplObject().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
 
         } catch (Exception e) {
             Logger.log(Logger.DEBUG,e);
@@ -269,8 +259,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
             //sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
             //sssd.setMimeTypeList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"mimetype"));
 
-            IDBImpl dbImpl = new DBImpl();
-            dbImpl.addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI,
+            GenericPortalBean.getDbImplObject().addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI,
                 xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
         } catch (Exception e) {
             Logger.log(Logger.DEBUG,e);
