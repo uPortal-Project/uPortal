@@ -6,6 +6,7 @@
 <!--xsl:strip-space elements="*"/-->
 <!--xsl:param name="activeTabID" select="/layout/child::*[position()=1]/@ID"/-->
 <xsl:param name="activeTab" select="1"/>
+<xsl:param name="userName" select="'Guest'"/>
 
 <!-- The following shouldn't really be here. You should not pass them as
   params at this level of processing. This should be left to CSS in one way
@@ -195,9 +196,7 @@
   </xsl:template>
 
   <xsl:template match="title">
-    <h1 align="right">
-      <xsl:value-of select="." />
-    </h1>
+    <h1 align="right">Welcome <xsl:value-of select="$userName"/> :)</h1>
   </xsl:template>
 
   <xsl:template match="image">
