@@ -1,0 +1,41 @@
+WebDevShare 2000
+
+uPortal Workshop
+
+
+1. Introduction to uPortal
+* What is the uPortal project?
+* Why should you use it?
+* Demo implementations
+
+2. What makes it tick
+* Java technology at work
+  * JSP
+  * J2EE
+* portal framework
+* XML
+* LayoutBean
+
+3. Setting up and running uPortal
+* What you need and where to get it
+* Getting the JA-SIG distribution
+* Setting up and starting Tomcat
+* Setting up uPortal in Tomcat
+* The database backend
+* Populate the database
+* Test uPortal installation
+* Put uPortal through the motions
+
+4. Channel creation and installation
+* The channel interface
+* Look at some code
+* Creating the 'Hello WebDevShare' channel
+* Install the new channel and subscribe
+ 
+5. Things to come
+* Version 2.0
+* Device independent rendering
+* uPortal in your pocket
+* More edu's coming on board
+* Community support
+* The JA-SIG ClearingHouse... your one stop shop for uPortal channels
