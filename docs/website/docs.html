@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
 <HTML> 
   <HEAD> 
 	 <TITLE>uPortal</TITLE> <LINK HREF="uportal.css" REL="stylesheet"> 
@@ -66,8 +67,157 @@
 			 <TD><BR> 
 				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
 				  SIZE="3"><B>Documentation</B></FONT> </P> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif"><FONT
+				  SIZE="-1"></FONT></FONT> </P> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif"><FONT SIZE="-1">We
+				  have separated the documentation into several categories.</FONT></FONT></P> 
+				<TABLE CELLPADDING="4" CELLSPACING=" "> 
+				  <TR> 
+					 <TD><A HREF="#gettingstarted">Getting Started </A></TD> 
+					 <TD>You've got the download, now what? Getting Started does
+						just that, get you started running uPortal</TD> 
+				  </TR> 
+				  <TR> 
+					 <TD><A HREF="#developer">Developer Information</A></TD> 
+					 <TD>You have your uPortal running, set up some users, published
+						an HTML, possibly an RSS channel, now you want to do more. You are ready to
+						write your own custom Java channels specific to your institution. Here you will
+						find all you need to write your own channels.</TD> 
+				  </TR> 
+				  <TR> 
+					 <TD><A HREF="#architecture">Background/Architecture</A></TD> 
+					 <TD>Want to find out how uPortal began, its purpose, how and
+						why higher education came together to collaborate and create uPortal? </TD> 
+				  </TR> 
+				  <TR> 
+					 <TD><A HREF="#minutes">Meeting Minutes</A></TD> 
+					 <TD>What began as a number of meetings to start the uPortal
+						effort, quickly grew into meetings designed to bring contributing uPortal
+						developers to discuss design, architecture, programming techniques for
+						uPortal.</TD> 
+				  </TR> 
+				  <TR> 
+					 <TD><A HREF="#rfc">Request for Comment</A></TD> 
+					 <TD>What next? Is there something you think is missing from
+						uPortal? Something that could be improved? Do you want to propose a new
+						database implementation or have a suggestion for a new channel type? </TD> 
+				  </TR> 
+				</TABLE><BR> 
+				<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR> 
+						<TD BGCOLOR="#ff6600"><IMG HEIGHT="1" SRC="images/spacer.gif"
+						  WIDTH="1" BORDER="0" ALT="."></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE> 
 				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
-				  SIZE="2"><B>Portal Resources and Background Information</B></FONT><BR> </P> 
+				  SIZE="2"><B><A NAME="gettingstarted">Getting Started</A></B></FONT> </P> 
+				<TABLE CELLSPACING="2" CELLPADDING="3" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR VALIGN="top"> 
+						<TD WIDTH="20" ROWSPAN="5">&nbsp;</TD> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A
+						  HREF="http://asigdev.princeton.edu:82/portal/docs/development/installation.html">Installation
+						  Requirements</A></FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A
+						  HREF="http://www.mis2.udel.edu/ja-sig/feature.html">Feature Set</A></FONT></TD>
+						
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A
+						  HREF="http://www.mis2.udel.edu/ja-sig/datamodel.html">Data
+						  Model</A></FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A
+						  HREF="http://www.mis2.udel.edu/ja-sig/write-channel">Writing A
+						  Channel</A></FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A
+						  HREF="http://www.mis2.udel.edu/ja-sig/portalspecs.html">Specifications</A></FONT></TD>
+						
+					 </TR> 
+				  </TBODY> 
+				</TABLE><BR> 
+				<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR> 
+						<TD BGCOLOR="#ff6600"><IMG HEIGHT="1" SRC="images/spacer.gif"
+						  WIDTH="1" BORDER="0" ALT="."></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
+				  SIZE="2"><B><A NAME="developer">Developer Information</A></B></FONT> </P> 
+				<TABLE CELLSPACING="2" CELLPADDING="3"> 
+				  <TBODY> 
+					 <TR VALIGN="top"> 
+						<TD WIDTH="20" ROWSPAN="6">&nbsp;</TD> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A
+						  HREF="http://www.yale.edu/tp/uPortalDiagramsV1.5/">Object Model</A></FONT></TD>
+						
+						<TD WIDTH="%"><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2"> Up to date class diagrams for uPortal 1.5 with integrated
+						  Javadoc.<BR> Produced by Susan Bramhall (Yale University)</FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A
+						  HREF="http://www.mis2.udel.edu/ja-sig/write-channel">How to write a
+						  Channel</A></FONT></TD> 
+						<TD WIDTH="%"><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2"> by Michael Oltz (Cornell University)</FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+						<TD WIDTH="%"></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+						<TD WIDTH="%"></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+						<TD WIDTH="%"></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+						<TD WIDTH="%"></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE><BR> 
+				<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR> 
+						<TD BGCOLOR="#ff6600"><IMG HEIGHT="1" SRC="images/spacer.gif"
+						  WIDTH="1" BORDER="0" ALT="."></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
+				  SIZE="2"><B><A NAME="architecture">Background Information /
+				  Architecture</A></B></FONT> </P> 
 				<TABLE CELLSPACING="2" CELLPADDING="3" WIDTH="100%"> 
 				  <TBODY> 
 					 <TR VALIGN="top"> 
@@ -114,7 +264,101 @@
 						  format) </FONT></TD> 
 					 </TR> 
 				  </TBODY> 
-				</TABLE></TD> 
+				</TABLE><BR> 
+				<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR> 
+						<TD BGCOLOR="#ff6600"><IMG HEIGHT="1" SRC="images/spacer.gif"
+						  WIDTH="1" BORDER="0" ALT="."></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
+				  SIZE="2"><B><A NAME="minutes">Meeting Minutes</A></B></FONT> </P> 
+				<TABLE CELLSPACING="2" CELLPADDING="3" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR VALIGN="top"> 
+						<TD WIDTH="20" ROWSPAN="6">&nbsp;</TD> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2"><A>University of Delaware</A> - Feb. 20-23,2001</FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2"><A>Destin JA-SIG Conference</A> - Feb. 3-6, 2001 (MS Word
+						  format)</FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif" SIZE="2"><A>San
+						  Diego</A> Dec 18-22, 2000 (MS Word format)</FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2"></FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2"></FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2"></FONT></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE> 
+				<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR> 
+						<TD BGCOLOR="#ff6600"><IMG HEIGHT="1" SRC="images/spacer.gif"
+						  WIDTH="1" BORDER="0" ALT="."></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE> 
+				<P><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#000066"
+				  SIZE="2"><B><A NAME="rfc">Request for Comments</A></B></FONT> </P> 
+				<TABLE CELLSPACING="2" CELLPADDING="3" WIDTH="100%"> 
+				  <TBODY> 
+					 <TR VALIGN="top"> 
+						<TD WIDTH="20" ROWSPAN="6">&nbsp;</TD> 
+						<TD ALIGN="right" WIDTH="20"><IMG HEIGHT="13" ALT=""
+						  SRC="images/diamond.gif" WIDTH="8" BORDER="0">&nbsp;</TD> 
+						<TD><FONT FACE="Arial, Helvetica, sans-serif"
+						  SIZE="2">&lt;&lt;&lt; This should be a separate page with means to submit an
+						  RFC. &gt;&gt;&gt;</FONT></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+					 </TR> 
+					 <TR VALIGN="top"> 
+						<TD ALIGN="right" WIDTH="20"></TD> 
+						<TD></TD> 
+					 </TR> 
+				  </TBODY> 
+				</TABLE><BR> </TD> 
 		  </TR> 
 		</TBODY> 
 	 </TABLE><!-- page footer -->
