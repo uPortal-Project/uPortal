@@ -112,7 +112,6 @@ public class CWebProxy implements org.jasig.portal.IChannel
   protected ChannelRuntimeData runtimeData;
   protected String media;
   protected Vector cookies;
-  protected Timer timer;
   protected boolean supportSetCookie2;
 
   protected static String fs = File.separator;
@@ -121,7 +120,6 @@ public class CWebProxy implements org.jasig.portal.IChannel
   public CWebProxy ()
   {
     this.cookies = new Vector();
-    this.timer = new Timer();
     this.supportSetCookie2 = false;
     this.buttonxmlUri = null;
   }
@@ -341,8 +339,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param uri the URI
    * @return the data pointed to by a URI
    */
-  private String getXmlString (String uri)
-  throws IOException, MalformedURLException, PortalException, ParseException
+  private String getXmlString (String uri) throws Exception
   {
     URL url = new URL (UtilitiesBean.fixURI(uri));
     String domain = url.getHost().trim();
@@ -357,7 +354,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     URLConnection urlConnect = url.openConnection();
     String protocol = url.getProtocol();
 
-    if (protocol.equals("http"))
+    if (protocol.equals("http"))   
     {
       HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
       httpUrlConnect.setInstanceFollowRedirects(true);
@@ -405,11 +402,14 @@ public class CWebProxy implements org.jasig.portal.IChannel
   // Sends any cookies in the cookie vector as a request header and stores 
   // any incoming cookies in the cookie vector (according to rfc 2109,
   // 2965 & netscape)
-  private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port) throws ParseException
+  private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port) throws Exception
   {
     // send appropriate cookies to origin server from cookie vector
     if (cookies.size() > 0)
       sendCookieHeader(httpUrlConnect, domain, path, port);
+
+    if (httpUrlConnect.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND)
+        throw new ResourceMissingException(httpUrlConnect.getURL().toExternalForm(), "", "HTTP Status-Code 404: Not Found");
 
     // store any cookies sent by the channel in the cookie vector
     int index = 1;
@@ -448,6 +448,13 @@ public class CWebProxy implements org.jasig.portal.IChannel
      for (int index=0; index<cookies.size(); index++)
      {
         cookie = (WebProxyCookie) cookies.elementAt(index);
+        boolean isExpired;
+        Date current = new Date();
+        Date cookieExpiryDate = cookie.getExpiryDate();
+        if (cookieExpiryDate != null)
+           isExpired = cookieExpiryDate.before(current);
+        else
+           isExpired = false;
         if (cookie.isPortSet())
         {
            cport = cookie.getPort();
@@ -458,8 +465,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
            if (cport.indexOf(port) != -1)
              portOk = true;
         }
-        if ( (domain.endsWith(cookie.getDomain()) && path.startsWith(cookie.getPath()))
-             && portOk)
+        if ( domain.endsWith(cookie.getDomain()) && path.startsWith(cookie.getPath()) && portOk && !isExpired )
           cookiesToSend.addElement(cookie);
      }
      if (cookiesToSend.size()>0)
@@ -601,7 +607,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
           if (expires < 0)
           {
             // cookie persists until browser shutdown so add cookie to
-            // cookie vector, no need to set timer
+            // cookie vector
             cookies.addElement(cookie);
           }
           else if (expires == 0)
@@ -611,11 +617,10 @@ public class CWebProxy implements org.jasig.portal.IChannel
           else
           {
             // add the cookie to the cookie vector and then
-            // set a timer that will remove the cookie from the vector
-            // when the max-age has been reached
-            cookies.addElement(cookie);
+            // set the expiry date for the cookie
             Date d = new Date();
-            timer.schedule( new RemoveCookieTimerTask(cookie), new Date( (long) d.getTime()+(expires*1000)) );
+            cookie.setExpiryDate(new Date((long) d.getTime()+(expires*1000)) );
+            cookies.addElement(cookie);
           }
       }
     }
@@ -713,7 +718,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
          if (expires < 0)
          {
            // cookie persists until browser shutdown so add cookie to
-           // cookie vector, no need to set timer
+           // cookie vector
            cookies.addElement(cookie);
          }
          else if (expires == 0)
@@ -723,11 +728,10 @@ public class CWebProxy implements org.jasig.portal.IChannel
          else
          {
            // add the cookie to the cookie vector and then
-           // set a timer that will remove the cookie from the vector
-           // when the max-age has been reached
-           cookies.addElement(cookie);
+           // set the expiry date for the cookie
            Date d = new Date();
-           timer.schedule( new RemoveCookieTimerTask(cookie), new Date( (long) d.getTime()+(expires*1000)) );
+           cookie.setExpiryDate( new Date((long)d.getTime()+(expires*1000) ) );
+           cookies.addElement(cookie);
          }
        }
      }
@@ -738,24 +742,6 @@ public class CWebProxy implements org.jasig.portal.IChannel
      }
   }
 
-  // Removes the cookie from the vector of stored cookies when the cookie 
-  // expires.
-  private class RemoveCookieTimerTask extends TimerTask
-  {
-
-     WebProxyCookie cookie;
-
-     public RemoveCookieTimerTask (WebProxyCookie cookie)
-     {
-       this.cookie = cookie;
-     }
-
-     public void run()
-     {
-       cookies.removeElement(cookie);
-     }
-  }
- 
   private class WebProxyCookie extends Cookie
   {
      
@@ -763,10 +749,21 @@ public class CWebProxy implements org.jasig.portal.IChannel
      protected boolean pathSet = false;
      protected boolean domainSet = false;
      protected boolean portSet = false;
+     protected Date expiryDate = null;
 
      public WebProxyCookie(String name, String value)
      {
        super(name, value);
+     }
+
+     public void setExpiryDate(Date expiryDate)
+     {
+       this.expiryDate = expiryDate;
+     }
+  
+     public Date getExpiryDate()
+     {
+       return expiryDate;
      }
 
      public String getPath()
