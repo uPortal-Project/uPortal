@@ -45,7 +45,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -57,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.channels.CError;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.LayoutEvent;
@@ -73,8 +73,6 @@ import org.jasig.portal.utils.SoftHashMap;
 import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
-
-import org.jasig.portal.i18n.LocaleManager;
 
 /**
  * ChannelManager shall have the burden of squeezing content out of channels.
