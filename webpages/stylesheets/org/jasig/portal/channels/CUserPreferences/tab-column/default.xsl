@@ -42,6 +42,7 @@ $Revision$
   <xsl:param name="position">no parameter passed</xsl:param>
   <xsl:param name="elementID">no parameter passed</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
+  <xsl:param name="showLockUnlock">true</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <xsl:template match="layout">
@@ -95,7 +96,6 @@ $Revision$
                   </xsl:choose>
                   <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                   <xsl:value-of select="@name"/>
-                  <img alt="Interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" border="0"/>
                 </a>
               </td>
               <td class="uportal-background-dark">
@@ -670,6 +670,26 @@ $Revision$
           </form>
         </td>
       </tr>
+      <!-- Add the lock/unlock icon if the user is allowed to make things immutable -->
+      <xsl:if test="$showLockUnlock">
+        <tr>
+          <td valign="top">
+            <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
+          </td>
+          <xsl:choose>
+            <xsl:when test="/layout/folder[@ID=$activeTabID]/@unremovable = 'true'">
+              <td>
+                <a href="{$baseActionURL}?action=unlockTab&amp;elementID={$activeTabID}">Unlock this tab</a>
+              </td>
+            </xsl:when>
+            <xsl:when test="/layout/folder[@ID=$activeTabID]/@unremovable = 'false'">
+              <td>
+                <a href="{$baseActionURL}?action=lockTab&amp;elementID={$activeTabID}">Lock this tab</a>
+              </td>
+            </xsl:when>
+          </xsl:choose>
+        </tr>
+      </xsl:if>
       <xsl:if test="not(/layout/folder[@ID=$activeTabID]/@unremovable = 'true')">
         <tr>
           <td valign="top">
