@@ -37,7 +37,11 @@ package  org.jasig.portal;
 
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,6 +49,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Reference implementation of IChannelRegistryStore.
@@ -126,6 +131,128 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
 
     return channelDef;
+  }
+
+  /**
+   * Publishes a channel.
+   * @param channelDef the channel definition
+   * @param categories the categories of which this channel should be a member
+   * @throws java.lang.Exception
+   */
+  public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception {
+    Connection con = RDBMServices.getConnection();
+    try {
+      int channelPublishId = channelDef.getPublishId();
+
+      // Set autocommit false for the connection
+      RDBMServices.setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+      try {
+        String sqlTitle = RDBMServices.sqlEscape(channelDef.getTitle());
+        String sqlDescription = RDBMServices.sqlEscape(channelDef.getDescription());
+        String sqlClass = channelDef.getJavaClass();
+        int sqlTypeID = channelDef.getTypeId();
+        int chanPupblUsrId = channelDef.getPublisherId();
+        String sysdate = RDBMServices.sqlTimeStamp();
+        int sqlTimeout = channelDef.getTimeout();
+        String sqlEditable = RDBMServices.dbFlag(channelDef.isEditable());
+        String sqlHasHelp = RDBMServices.dbFlag(channelDef.hasHelp());
+        String sqlHasAbout = RDBMServices.dbFlag(channelDef.hasAbout());
+        String sqlName = RDBMServices.sqlEscape(channelDef.getName());
+        String sqlFName = RDBMServices.sqlEscape(channelDef.getFName());
+
+        String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + query);
+        ResultSet rs = stmt.executeQuery(query);
+
+        // If channel is already there, do an update, otherwise do an insert
+        if (rs.next()) {
+          String update = "UPDATE UP_CHANNEL SET " +
+          "CHAN_TITLE='" + sqlTitle + "', " +
+          "CHAN_DESC='" + sqlDescription + "', " +
+          "CHAN_CLASS='" + sqlClass + "', " +
+          "CHAN_TYPE_ID=" + sqlTypeID + ", " +
+          "CHAN_PUBL_ID=" + chanPupblUsrId + ", " +
+          "CHAN_PUBL_DT=" + sysdate + ", " +
+          "CHAN_APVL_ID=NULL, " +
+          "CHAN_APVL_DT=NULL, " +
+          "CHAN_TIMEOUT=" + sqlTimeout + ", " +
+          "CHAN_EDITABLE='" + sqlEditable + "', " +
+          "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
+          "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
+          "CHAN_NAME='" + sqlName + "', " +
+          "CHAN_FNAME='" + sqlFName + "' " +
+          "WHERE CHAN_ID=" + channelPublishId;
+          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + update);
+          stmt.executeUpdate(update);
+        } else {
+          String insert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
+              + "CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
+          insert += "VALUES (" + channelPublishId + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
+              + chanPupblUsrId + ", " + sysdate + ", " + sqlTimeout
+              + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
+              + "', '" + sqlName + "', '" + sqlFName + "')";
+          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
+          stmt.executeUpdate(insert);
+        }
+
+        // First delete existing parameters for this channel
+        String delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + delete);
+        int recordsDeleted = stmt.executeUpdate(delete);
+
+        ChannelDefinition.ChannelParameter[] parameters = channelDef.getParameters();
+
+        if (parameters != null) {
+          for (int i = 0; i < parameters.length; i++) {
+            String paramName = parameters[i].getName();
+            String paramValue = parameters[i].getValue();
+            boolean paramOverride = parameters[i].getOverride();
+
+            if (paramName == null && paramValue == null) {
+              throw new RuntimeException("Invalid parameter node");
+            }
+
+            String insert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + channelPublishId +
+                ",'" + paramName + "','" + paramValue + "', '" + (paramOverride ? "Y" : "N") + "')";
+            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelDefinition(): " + insert);
+            stmt.executeUpdate(insert);
+          }
+        }
+
+        // Commit the transaction
+        RDBMServices.commit(con);
+      } catch (SQLException sqle) {
+        RDBMServices.rollback(con);
+        throw  sqle;
+      } finally {
+        stmt.close();
+      }
+
+      // Save channel categories memberships
+
+      // First delete existing category memberships for this channel
+      String channelDefEntityKey = String.valueOf(channelDef.getPublishId());
+      IEntity channelDefEntity = GroupService.getEntity(channelDefEntityKey, ChannelDefinition.class);
+      IEntityGroup topLevelCategory = GroupService.getChannelCategoriesGroup();
+      Iterator iter = topLevelCategory.getAllMembers();
+      while (iter.hasNext()) {
+        IGroupMember groupMember = (IGroupMember)iter.next();
+        if (groupMember.isGroup()) {
+          IEntityGroup group = (IEntityGroup)groupMember;
+          group.removeMember(channelDefEntity);
+          group.updateMembers();
+        }
+      }
+
+      // Then insert new category memberships
+      for (int i = 0; i < categories.length; i++) {
+        categories[i].addChannelDefinition(channelDef);
+      }
+
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
   }
 
   /**

@@ -59,15 +59,11 @@ public interface IChannelRegistryStore {
 
   /**
    * Publishes a channel.
-   * @param id the identifier for the channel
-   * @param publisher the user who is publishing this channel
-   * @param chanXML XML that describes the channel
-   * @param catID an array of category IDs
-   * @exception Exception
+   * @param channelDef the channel definition
+   * @param categories the categories of which this channel should be a member
+    * @throws java.lang.Exception
    */
-  /*
-  public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories, IPerson publisher) throws Exception;
-  */
+  public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception;
 
   /**
    * Permanently deletes a channel definition from the store.
