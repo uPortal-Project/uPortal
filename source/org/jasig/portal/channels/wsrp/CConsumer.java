@@ -52,6 +52,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
 import org.jasig.portal.wsrp.MarkupService;
 import org.jasig.portal.wsrp.types.ClientData;
@@ -153,12 +154,27 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
      */
     public void receiveEvent(PortalEvent ev, String uid) {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelData cd = channelState.getChannelData();
+        
+        // For session done and unsubscribe events, 
+        // release session resources in remote portal
+        try {
+            if (ev.getEventNumber() == PortalEvent.SESSION_DONE ||
+                ev.getEventNumber() == PortalEvent.UNSUBSCRIBE) {
+                cd.getMarkupService().releaseSessions(registrationContext, new String[] { cd.getSessionId() });
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // TODO: Take out printStackTrace for release
+            LogService.log(LogService.ERROR, "Unable to release session '" + cd.getSessionId() + "' in remote portal");      
+            LogService.log(LogService.ERROR, e);      
+        }
+               
         if (channelState != null) {
             channelState.setPortalEvent(ev);
             if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
                 channelStateMap.remove(uid); // Clean up
             }
-        }
+        }        
     }
 
     /**
