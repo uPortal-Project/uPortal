@@ -62,6 +62,7 @@ import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.CommonUtils;
+import org.jasig.portal.utils.GuidGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -115,14 +116,20 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
   // The priority coefficient for changing priority values through an user interface
   public final int PRIORITY_COEFF = 100;
 
+  // GUID generator
+  private static GuidGenerator guid = null;
+  private String cacheKey = null;
 
 
 
-  public AggregatedUserLayoutImpl( IPerson person, UserProfile userProfile ) {
+  public AggregatedUserLayoutImpl( IPerson person, UserProfile userProfile ) throws Exception {
     this.person = person;
     this.userProfile = userProfile;
     layout = new Hashtable();
     autoCommit = false;
+    if ( guid == null )
+      guid = new GuidGenerator();
+      updateCacheKey();
   }
 
   public AggregatedUserLayoutImpl( IPerson person, UserProfile userProfile, IUserLayoutStore layoutStore ) throws Exception {
@@ -131,6 +138,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     this.loadUserLayout();
   }
 
+  private void updateCacheKey() {
+     cacheKey = guid.getNewGuid();
+  }
 
   /**
      * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
@@ -166,6 +176,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      */
   public void setUserLayout(Hashtable layout) throws PortalException {
     this.layout = layout;
+    updateCacheKey();
   }
 
 
@@ -862,7 +873,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getCacheKey() throws PortalException {
-      return null;
+      return cacheKey;
   }
 
   /**
@@ -1041,7 +1052,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
               attributes.addAttribute("","hasHelp","hasHelp","CDATA",CommonUtils.boolToStr(channelDescription.hasHelp()));
               attributes.addAttribute("","hasAbout","hasAbout","CDATA",CommonUtils.boolToStr(channelDescription.hasAbout()));
               attributes.addAttribute("","secure","secure","CDATA",CommonUtils.boolToStr(channelDescription.isSecure()));
-              
+
               contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
 
               if ( channelDescription.hasParameters() ) {
@@ -1289,7 +1300,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         channelDesc.setEditable(CommonUtils.strToBool(node.getAttribute("editable")));
         channelDesc.setHasAbout(CommonUtils.strToBool(node.getAttribute("hasAbout")));
         channelDesc.setHasHelp(CommonUtils.strToBool(node.getAttribute("hasHelp")));
-        channelDesc.setIsSecure(CommonUtils.strToBool(node.getAttribute("secure")));        
+        channelDesc.setIsSecure(CommonUtils.strToBool(node.getAttribute("secure")));
         channelDesc.setFunctionalName(node.getAttribute("fname"));
         channelDesc.setTimeout(Long.parseLong(node.getAttribute("timeout")));
         channelDesc.setTitle(node.getAttribute("title"));
@@ -1346,6 +1357,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       NodeList childNodes = rootNode.getChildNodes();
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootNodeId );
+      updateCacheKey();
     }
 
     private boolean isNodeFolderOrChannel ( Element node ) {
@@ -1377,8 +1389,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       try {
         if ( !isLayoutFragment() )
          layoutStore.setAggregatedUserLayout(this.person,this.userProfile,this.layout);
+         updateCacheKey();
       } catch ( Exception e ) {
-        e.printStackTrace();
         throw new PortalException(e.getMessage());
       }
     }
@@ -1407,8 +1419,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       try {
        if ( isLayoutFragment() )
         layoutStore.setFragment(person,fragmentId,layout);
+        updateCacheKey();
       } catch ( Exception e ) {
-        e.printStackTrace();
         throw new PortalException(e.getMessage());
       }
     }
@@ -1498,6 +1510,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       result &= layoutStore.updateUserLayoutNode(person,userProfile,node);
      }
 
+      updateCacheKey();
       return result;
 
     }
@@ -1535,8 +1548,6 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
        String prevSiblingId = node.getPreviousNodeId();
        String nextSiblingId = node.getNextNodeId();
 
-
-
        if ( prevSiblingId != null ) {
         ALNode prevNode = getLayoutNode(prevSiblingId);
         prevNode.setNextNodeId(nextSiblingId);
@@ -1555,8 +1566,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
        // Deleting the nodefrom the hashtable and returning the result value
        result = (layout.remove(nodeId)!=null) && ((autoCommit)?result:true);
-       System.out.println( "Deleting result: " + result );
-       return ( result );
+
+       updateCacheKey();
+       return result;
 
     }
 
@@ -1617,12 +1629,14 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
 
 
+        updateCacheKey();
         return layoutNode.getNodeDescription();
     }
 
     private void changeDescendantsBooleanProperties (IALNodeDescription nodeDesc,IALNodeDescription oldNodeDesc, String nodeId) throws PortalException {
       changeDescendantsBooleanProperties(nodeDesc.isHidden()==oldNodeDesc.isHidden(),nodeDesc.isImmutable()==oldNodeDesc.isImmutable(),
                                          nodeDesc.isUnremovable()==oldNodeDesc.isUnremovable(),nodeDesc,nodeId);
+      updateCacheKey();
     }
 
     private void changeDescendantsBooleanProperties (boolean hiddenValuesMatch, boolean immutableValuesMatch, boolean unremovableValuesMatch,
@@ -1710,6 +1724,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
           // We have to change all the boolean properties on descendants
           changeDescendantsBooleanProperties((IALNodeDescription)nodeDesc,oldNodeDesc,nodeDesc.getId());
           node.setNodeDescription((IALNodeDescription)nodeDesc);
+
+          updateCacheKey();
+
           // Update the node into the database
           if ( autoCommit )
            return layoutStore.updateUserLayoutNode(person,userProfile,node);
@@ -1810,12 +1827,12 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     public void markAddTargets(IUserLayoutNodeDescription nodeDesc) {
       addTargetsNodeDesc = (IALNodeDescription)nodeDesc;
-      //addTargetsAllowed = (nodeDesc!=null);
+      updateCacheKey();
     }
 
     public void markMoveTargets(String nodeId) throws PortalException {
       moveTargetsNodeId = nodeId;
-      //moveTargetsAllowed = (getLayoutNode(nodeId)!=null);
+      updateCacheKey();
     }
 
     /**
