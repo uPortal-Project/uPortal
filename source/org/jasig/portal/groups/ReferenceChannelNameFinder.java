@@ -42,29 +42,29 @@ import  java.util.HashMap;
 import  java.util.Map;
 import  org.jasig.portal.services.GroupService;
 import  org.jasig.portal.services.LogService;
-
+import  org.jasig.portal.*;
 
 /**
- * Reference implementation of <code>IEntityNameFinder</code> for <code>IEntityGroup</code>.
+ * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.
  * @author Alex Vigdor
  * @version $Revision$
  */
-public class EntityGroupNameFinder
+public class ReferenceChannelNameFinder
         implements IEntityNameFinder {
     private static IEntityNameFinder _instance = null;
     private Class type = null;
 
-    protected EntityGroupNameFinder () {
+    protected ReferenceChannelNameFinder () {
         try {
-            type = Class.forName("org.jasig.portal.groups.IEntityGroup");
+            type = Class.forName("org.jasig.portal.ChannelDefinition");
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR, e);
         }
     }
 
-    public synchronized static IEntityNameFinder singleton () {
+    public static synchronized IEntityNameFinder singleton () {
         if (_instance == null) {
-            _instance = new EntityGroupNameFinder();
+            _instance = new ReferenceChannelNameFinder();
         }
         return  _instance;
     }
@@ -74,8 +74,9 @@ public class EntityGroupNameFinder
      * @param key java.lang.String
      */
     public String getName (String key) throws Exception {
-        IEntityGroup g = GroupService.findGroup(key);
-        return  g.getName();
+        IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+        ChannelDefinition cd = crs.getChannelDefinition(Integer.parseInt(key));
+        return  cd.getName();
     }
 
     /**

@@ -104,7 +104,7 @@ public class ReferenceGroupService implements IGroupService
      * <code>IEntityGroup</code>.
      */
     public IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
-      String key = PropertiesManager.getProperty(name+".GroupService.key");
+      String key = PropertiesManager.getProperty("org.jasig.portal.groups.ReferenceGroupService.key_"+name);
       if (key != null){
         return findGroup(key);
       }

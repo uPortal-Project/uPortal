@@ -90,7 +90,7 @@ private synchronized void initialize()
         Class type = (Class) types.next();
         if ( type != Object.class )
         {
-            String factoryKey = type.getName() + ".NameFinderFactory.implementation";
+            String factoryKey = "org.jasig.portal.services.EntityNameFinderService.NameFinderFactory.implementation_"+type.getName();
             try
             {
                 factoryName = PropertiesManager.getProperty(factoryKey);
