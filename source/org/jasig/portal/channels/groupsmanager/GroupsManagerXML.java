@@ -666,8 +666,11 @@ public class GroupsManagerXML
          /** @todo this should be an error */
          Utility.logMessage("INFO", "GroupsManagerXML::isPersistentGroup(): anElem is null");
       }
+      // Elements referencing non-groups (i.e. IEntities), search results, and the
+      // document's root element are consider to hold information about non-persistent groups
       if (!Utility.areEqual(anElem.getNodeName(), GROUP_TAGNAME)
-              || Utility.areEqual(anElem.getAttribute("searchResults"), "true")) {
+              || Utility.areEqual(anElem.getAttribute("searchResults"), "true")
+              || anElem.getAttribute("id").equals("0")) {
          rval= false;
       }
       return rval;
