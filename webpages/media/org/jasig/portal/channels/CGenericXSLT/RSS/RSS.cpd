@@ -49,11 +49,12 @@ Version $Revision$
       <ID>1</ID>
 
       <!-- displayed at the top of the step screen -->
-      <name>Provide RSS URL</name>
+      <name>Provide RSS URL and select stylesheeet.</name>
 
       <!-- intention is for documentation but could be used for other things -->
       <description>
-        URLs can optionally be specified relative to the classpath
+        URLs can optionally be specified relative to the classpath.  For stylesheet selection use 0.9 for original 0.9 rss files.  
+	Use 0.9x or 1.0x for rdf documents.
       </description>
 
       <parameter modify="publish">
@@ -83,12 +84,12 @@ Version $Revision$
       <!-- Choose which RSS version from a drop down list-->
       <parameter modify="publish">
         <name>sslUri</name>
-        <label>RSS Version</label>
+        <label>RSS version (for stylesheet selection)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
             <value display="0.9">CGenericXSLT/RSS/RSS-0_9.ssl</value>
-            <value display="0.9x" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
-            <value display="1.0x">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
+            <value display="0.9x (rdf format)" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
+            <value display="1.0x (rdf format)">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
           </restriction>
         </type>
       </parameter>
