@@ -19,8 +19,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.XSLT;
@@ -72,7 +70,6 @@ import org.xml.sax.XMLReader;
 public class DbLoader
 {
     private Configuration config = null;
-    private static final Log log = LogFactory.getLog(DbLoader.class);
 
   public DbLoader(Configuration c)
   {
