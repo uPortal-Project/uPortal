@@ -1,3 +1,38 @@
+/**
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.layout;
 
 /**
@@ -39,7 +74,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
   private IPerson person;
 
   // User Layout restrictions
-  private List restrictions = Collections.synchronizedList(new LinkedList());
+  private Set restrictions = Collections.synchronizedSet(new HashSet());
 
   // the tag names constants
   private static final String LAYOUT = "layout";
@@ -49,8 +84,9 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
   private static final String PARAMETER = "parameter";
 
 
-    private static final String CHANNEL_PREFIX="n";
-    private static final String FOLDER_PREFIX="s";
+  // Channel and folder perfixes
+  private static final String CHANNEL_PREFIX="n";
+  private static final String FOLDER_PREFIX="s";
 
 
   public AggregatedUserLayoutImpl( IPerson person, int layoutId) {
@@ -95,15 +131,23 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
 
   /**
-     * Determine a list of child node Ids for a given node.
+     * Returns the list of child node Ids for a given node.
      *
      * @param nodeId a <code>String</code> value
      * @return a <code>List</code> of <code>String</code> child node Ids.
      * @exception PortalException if an error occurs
      */
   public List getChildIds(String nodeId) throws PortalException {
-    return getLayoutFolder(nodeId).getChildNodes();
+    //return getLayoutFolder(nodeId).getChildNodes();
+    List childIds = Collections.synchronizedList(new LinkedList());
+    String firstChildId = ((UserLayoutFolder)getLayoutFolder(nodeId)).getFirstChildNodeId();
+    for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
+      childIds.add(nextNodeId);
+      nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
+    }
+    return childIds;
   }
+
 
 
   /**
@@ -185,14 +229,14 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
              attributes.addAttribute("","name","name","CDATA",folderDescription.getName());
 
              contentHandler.startElement("",FOLDER,FOLDER,attributes);
-             List childNodeIds = folder.getChildNodes();
-             if ( childNodeIds != null ) {
-               for ( Iterator i = childNodeIds.iterator(); i.hasNext(); ) {
-                UserLayoutNode childNode = (UserLayoutNode) layout.get(i.next());
+             // Loop for all children
+             String firstChildId = folder.getFirstChildNodeId();
+             //System.out.println("FIRST!!!!!!!!!: " + firstChildId );
+               for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
                 // !!!!!!!!!!!
-                getUserLayout(childNode.getNodeDescription().getId(),contentHandler);
+                getUserLayout(nextNodeId,contentHandler);
+                nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
                }
-             }
              contentHandler.endElement("",FOLDER,FOLDER);
 
             // Start document if we have the root node
@@ -283,14 +327,20 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     private void appendDescendants(Document domLayout,Element node, String nodeId) throws PortalException {
           UserLayoutNode layoutNode = getLayoutNode(nodeId);
           UserLayoutNodeDescription nodeDesc = layoutNode.getNodeDescription();
-          Element newNode = domLayout.createElement(layoutNode.getNodeType());
+          String nodeType = layoutNode.getNodeType();
+          Element newNode = domLayout.createElement(nodeType);
+          // We need to have this prefix in the DOM representation
+          nodeDesc.setId((CHANNEL.equals(nodeType))?CHANNEL_PREFIX:FOLDER_PREFIX+nodeDesc.getId());
           nodeDesc.addNodeAttributes(newNode);
           node.appendChild(newNode);
-          if (layoutNode.getNodeType().equals(FOLDER)) {
-           List childIds = getLayoutFolder(nodeId).getChildNodes();
-           if ( childIds != null )
-            for ( Iterator i = childIds.iterator(); i.hasNext(); )
-             appendDescendants(domLayout,newNode,(String)i.next());
+          if (nodeType.equals(FOLDER)) {
+           // Loop for all children
+           String firstChildId = ((UserLayoutFolder)layoutNode).getFirstChildNodeId();
+            for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
+             // !!!!!!!!!!!
+             appendDescendants(domLayout,newNode,nextNodeId);
+             nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
+            }
           }
     }
 
@@ -380,7 +430,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
           UserLayoutFolder parentFolder = getLayoutFolder(parentNodeId);
           // Binding the current node to the parent child list and parentNodeId to the current node
           if ( parentFolder != null ) {
-           parentFolder.addChildNode(nodeDesc.getId());
+           //parentFolder.addChildNode(nodeDesc.getId());
            layoutNode.setParentNodeId(parentNodeId);
           }
 
@@ -389,9 +439,18 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
           Element prevNode = (Element) node.getPreviousSibling();
 
           if ( nextNode != null )
-            layoutNode.setNextNodeId(nextNode.getAttribute("ID"));
+            layoutNode.setNextNodeId(nextNode.getAttribute("ID").substring((nextNode.getAttribute("timeout")!=null)?
+                                       CHANNEL_PREFIX.length():FOLDER_PREFIX.length()));
           if ( prevNode != null )
-            layoutNode.setPreviousNodeId(prevNode.getAttribute("ID"));
+            layoutNode.setPreviousNodeId(prevNode.getAttribute("ID").substring((prevNode.getAttribute("timeout")!=null)?
+                                       CHANNEL_PREFIX.length():FOLDER_PREFIX.length()));
+
+          //System.out.println("DOM FIRST: " + ((Element)node.getFirstChild()).getAttribute("ID"));
+
+          // Setting the first child node ID
+          if ( FOLDER.equals(layoutNode.getNodeType()) )
+            ((UserLayoutFolder)layoutNode).setFirstChildNodeId(
+                  ((Element)node.getFirstChild()).getAttribute("ID").substring(FOLDER_PREFIX.length()));
 
           // Putting the LayoutNode object into the layout
           layout.put(nodeDesc.getId(), layoutNode);
@@ -404,8 +463,9 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
     public void setUserLayoutDOM( Document domLayout ) throws PortalException {
       Element rootNode = domLayout.getDocumentElement();
-      layout.put(UserLayoutNodeDescription.ROOT_FOLDER_ID,
-                 new UserLayoutFolder(UserLayoutNodeDescription.createUserLayoutNodeDescription(rootNode)));
+      UserLayoutFolder rootFolder = new UserLayoutFolder(UserLayoutNodeDescription.createUserLayoutNodeDescription(rootNode));
+      rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID").substring(FOLDER_PREFIX.length()));
+      layout.put(UserLayoutNodeDescription.ROOT_FOLDER_ID,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootNodeId );
@@ -432,14 +492,21 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
      if ( prevSiblingId != null ) (getLayoutNode(prevSiblingId)).setNextNodeId(nodeId);
 
 
-     // delete the node from the old parent child list
      UserLayoutFolder sourceFolder = getLayoutFolder(node.getParentNodeId());
-     sourceFolder.deleteChildNode(nodeId);
+     if ( nodeId.equals(sourceFolder.getFirstChildNodeId()) ) {
+      // Set the new first child node ID to the source folder
+      sourceFolder.setFirstChildNodeId(node.getNextNodeId());
+     }
+
+     if ( nextSiblingId.equals(targetFolder.getFirstChildNodeId()) ) {
+      // Set the new first child node ID to the source folder
+      targetFolder.setFirstChildNodeId(nodeId);
+     }
 
 
      node.setParentNodeId(parentId);
      node.setNextNodeId(nextSiblingId);
-     targetFolder.addChildNode(nodeId);
+     //targetFolder.addChildNode(nodeId);
 
      // TO UPDATE THE APPROPRIATE INFO IN THE DB
      // TO BE DONE !!!!!!!!!!!
@@ -452,8 +519,14 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
       if ( layout != null ) {
        // Deleting the node from the parent
        UserLayoutFolder parentNode = getLayoutFolder(getLayoutNode(nodeId).getParentNodeId());
-       parentNode.deleteChildNode(nodeId);
        UserLayoutNode node = getLayoutNode(nodeId);
+
+
+       //parentNode.deleteChildNode(nodeId);
+       if ( nodeId.equals(parentNode.getFirstChildNodeId()) ) {
+         // Set the new first child node ID to the source folder
+         parentNode.setFirstChildNodeId(node.getNextNodeId());
+       }
 
        // Changing the next node id for the previous sibling node
        // and the previous node for the next sibling node
@@ -495,7 +568,10 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
         // Assign nodeId to the parent, next sibling, previous sibling nodes
         prevNode.setNextNodeId(nodeId);
         nextNode.setPreviousNodeId(nodeId);
-        parentFolder.addChildNode(nodeId);
+        //parentFolder.addChildNode(nodeId);
+        // Setting new child node ID
+        if ( nextSiblingId.equals(parentFolder.getFirstChildNodeId()) )
+          parentFolder.setFirstChildNodeId(nodeId);
 
         // update nodes
         layout.put(nodeId,layoutNode);
@@ -522,7 +598,7 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
     public void markAddTargets(UserLayoutNodeDescription node) {}
     public void markMoveTargets(String nodeId) throws PortalException {}
 
-    
+
     public boolean addLayoutEventListener(LayoutEventListener l){
         return false;
     }

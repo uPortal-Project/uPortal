@@ -190,17 +190,11 @@ public class Test {
 
      //Instantiate UserLayoutManager implementation
      AggregatedUserLayoutImpl layoutManager = new AggregatedUserLayoutImpl(person, 1 /*layoutId*/, (IAggregatedUserLayoutStore)layoutStore );
-     //System.out.println("Setting DOM layout to the UserLayout manager....");
-     //layoutManager.setUserLayoutDOM(layoutDOM);
-     System.out.println("Setting the internal layout representation to the UserLayout manager....");
-     layoutManager.setUserLayout(layout);
+     System.out.println("Setting DOM layout to the UserLayout manager....");
+     layoutManager.setUserLayoutDOM(layoutDOM);
+     //System.out.println("Setting the internal layout representation to the UserLayout manager....");
+     //layoutManager.setUserLayout(layout);
 
-
-     System.out.println("The DOM layout is set.");
-     System.out.println("Getting DOM layout from the UserLayout manager....");
-     //Document newLayoutDOM = layoutManager.getUserLayoutDOM();
-     System.out.println("Getting DOM layout from the UserLayout manager is done");
-     //System.out.println( "The string representation of the DOM is : \n" + newLayoutDOM );
 
           // Use an instance of ourselves as the SAX event handler
           DefaultHandler handler = new TestHandler();
