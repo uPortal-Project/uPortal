@@ -18,12 +18,6 @@ if (sAction != null)
     layoutBean.renameTab (request);
   else if (sAction.equals ("setDefaultTab"))
     layoutBean.setDefaultTab (request);
-  else if (sAction.equals ("removeTab"))
-    layoutBean.removeTab (request);
-  else if (sAction.equals ("moveTabDown"))
-    layoutBean.moveTabDown (request);
-  else if (sAction.equals ("moveTabUp"))
-    layoutBean.moveTabUp (request);
 
   // Columns
   else if (sAction.equals ("addColumn"))
@@ -34,19 +28,43 @@ if (sAction != null)
     layoutBean.moveColumnRight (request);
   else if (sAction.equals ("moveColumnLeft"))
     layoutBean.moveColumnLeft (request);
+  else if (sAction.equals ("setColumnWidth"))
+    layoutBean.setColumnWidth (request);
 
   // Channels
   else if (sAction.equals ("removeChannel"))
     layoutBean.removeChannel (request);
+  else if (sAction.equals ("moveChannelLeft"))
+    layoutBean.moveChannelLeft (request);
+  else if (sAction.equals ("moveChannelRight"))
+    layoutBean.moveChannelRight (request);
   else if (sAction.equals ("moveChannelUp"))
     layoutBean.moveChannelUp (request);
   else if (sAction.equals ("moveChannelDown"))
     layoutBean.moveChannelDown (request);
 
+  // Go back to default layout xml
+  else if (sAction.equals ("revertToDefaultLayoutXml"))
+  {
+    IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
+    layoutXml = layoutBean.getDefaultLayoutXml (request, layoutBean.getUserName (request));
+  }
+
   // Save the layout xml
-  IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
-  layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
-  session.removeAttribute ("layoutXml");
+  else if (sAction.equals ("save"))
+  {
+    IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
+    layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
+    session.removeAttribute ("layoutXml");
+    response.sendRedirect ("layout.jsp");
+  }
+
+  // Ignore changes and return to the layout
+  else if (sAction.equals ("cancel"))
+  {
+    session.removeAttribute ("layoutXml");
+    response.sendRedirect ("layout.jsp");
+  }
 }
 %>
 
@@ -60,7 +78,11 @@ if (sAction != null)
 function getActionAndSubmit(theForm, buttonValue)
 {
   theForm.action.value = buttonValue
-  theForm.submit ()
+
+  if (theForm.elements[0].selectedIndex > -1)
+    theForm.submit ()
+  else
+    alert ('Please select a channel and try again.')
 }
 //stop hiding-->
 </script>
@@ -68,13 +90,33 @@ function getActionAndSubmit(theForm, buttonValue)
 
 <% layoutBean.writeBodyTag (request, response, out); %>
 
-<jsp:include page="header.jsp" flush="true">
-  <jsp:param name="title" value="Personalize Layout" />
-</jsp:include>
+<%-- Header --%>
+<% session.setAttribute ("headerTitle", "Personalize Layout"); %>
+<%@ include file="header.jsp" %>
 
-<input type=button name=finished value="Finished" onClick="location='layout.jsp'"><br>
+<%-- Finished and Cancel Changes buttons --%>
+<form>
+<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+  <input type=button name=finished value="Finished" onClick="location='personalizeLayout.jsp?action=save'">
+  <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeLayout.jsp?action=cancel'">
+</td></tr></table>
+</form>
+
 <% layoutBean.writePersonalizeLayoutPage (request, response, out); %>
-<input type=button name=finished value="Finished" onClick="location='layout.jsp'"><br>
+
+<%-- Revert to default layout xml --%>
+<form action="personalizeLayout.jsp" method=post>
+<input type=hidden name="action" value="revertToDefaultLayoutXml">
+<input type=submit name=revert value="Revert to default layout">
+</form>
+
+<%-- Finished and Cancel Changes buttons --%>
+<form>
+<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+  <input type=button name=finished value="Finished" onClick="location='personalizeLayout.jsp?action=save'">
+  <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeLayout.jsp?action=cancel'">
+</td></tr></table>
+</form>
 
 <jsp:include page="footer.jsp" flush="true" />
 

@@ -50,6 +50,19 @@ public class LayoutBean extends GenericPortalBean
   }
   
   /**
+   * Gets the tabs
+   * @param the servlet request object
+   * @param the tab's index
+   */
+  public ITab[] getTabs (HttpServletRequest req)
+  {
+    IXml layoutXml = getLayoutXml (req, getUserName (req));
+    ILayout layout = (ILayout) layoutXml.getRoot ();
+    ITab[] tabs = layout.getTabs (); 
+    return tabs;
+  }  
+  
+  /**
    * Gets a tab
    * @param the servlet request object
    * @param the tab's index
@@ -211,6 +224,55 @@ public class LayoutBean extends GenericPortalBean
   }      
     
   /**
+   * Retrieves a handle to the default layout xml.
+   * @param the servlet request object
+   * @param user name
+   * @return handle to the layout xml
+   */
+  public IXml getDefaultLayoutXml (HttpServletRequest req, String sUserName)
+  {    
+    RdbmServices rdbmService = new RdbmServices ();
+    Connection con = null;
+    IXml layoutXml = null;
+    
+    try 
+    {    
+      HttpSession session = req.getSession (false);      
+      con = rdbmService.getConnection ();
+      Statement stmt = con.createStatement();
+        
+      String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
+      System.out.println (sQuery);
+      ResultSet rs = stmt.executeQuery (sQuery);
+      
+      if (rs.next ())
+      {
+        String sLayoutXml = rs.getString ("DEFAULT_LAYOUT_XML");
+        
+        // Tack on the full path to layout.dtd
+        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
+        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
+
+        String xmlFilePackage = "org.jasig.portal.layout";
+        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
+        session.setAttribute ("layoutXml", layoutXml);
+      }
+      stmt.close ();
+      
+      return layoutXml;
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace ();
+    }    
+    finally
+    {
+      rdbmService.releaseConnection (con);
+    }
+    return null;
+  }  
+        
+  /**
    * Retrieves the active tab
    * @param the servlet request object
    * @return the active tab
@@ -323,12 +385,23 @@ public class LayoutBean extends GenericPortalBean
         out.println ("<td width=1%>&nbsp;</td>");                
       }
       
-      // Links to personalize layout
-      out.println ("<td align=right bgcolor=" + sTabColor + " width=98%><font size=-1 face=Arial>Personalize&nbsp;[<a href=\"personalizeColors.jsp\">Colors</a>]&nbsp;-&nbsp;[<a href=\"personalizeLayout.jsp\">Layout</a>]&nbsp;</font></td>");
+      // Links to personalize layout for users who are logged in
+      if (getUserName (req) != null && !getUserName (req).equals ("guest"))
+        out.println ("<td align=right bgcolor=" + sTabColor + " width=98%><font size=-1 face=Arial,Helvetica>Personalize&nbsp;[<a href=\"personalizeTabs.jsp\">Tabs</a>]&nbsp;-&nbsp;[<a href=\"personalizeColors.jsp\">Colors</a>]&nbsp;-&nbsp;[<a href=\"personalizeLayout.jsp\">Layout</a>]&nbsp;</font></td>");
+      else
+        out.println ("<td width=98%></td>");
+        
       out.println ("</tr>");
       
       // This is the strip beneath the tabs
-      out.println ("<tr><td width=100% colspan=7 bgcolor=" + sActiveTabColor + " height=3></td></tr>");
+      out.println ("<!-- Strip beneath tabs -->");
+      out.println ("<tr><td width=\"100%\" colspan=\"" + (2 * tabs.length + 1) + "\">");
+      out.println ("  <table border=0 cellspacing=0 width=\"100%\">");
+      out.println ("    <tr><td bgcolor=\"" + sActiveTabColor + "\">");
+      out.println ("      <table border=0 cellspacing=0 cellpadding=0><tr><td height=3></td></tr></table>");
+      out.println ("    </td></tr>");
+      out.println ("  </table>");
+      out.println ("</td></tr>");
 
       out.println ("</table>");
       out.println ("<br>");      
@@ -477,8 +550,7 @@ public class LayoutBean extends GenericPortalBean
   }  
   
   /**
-   * Presents a GUI for manipulating the layout. Tabs, columns, and channels can
-   * be added, removed, resized, and renamed.
+   * Presents a GUI for manipulating the layout of a tab.
    * @param the servlet request object
    * @param the servlet response object
    * @param the JspWriter object
@@ -486,244 +558,173 @@ public class LayoutBean extends GenericPortalBean
   public void writePersonalizeLayoutPage (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
     try 
-    { 
-      // Hard coded for now, but eventually
-      // retrieve available channels from database
-      Vector vChannels = new Vector ();
-      vChannels.addElement ("ABC News");
-      vChannels.addElement ("My Bookmarks");
-      vChannels.addElement ("Horoscope");
-      vChannels.addElement ("My Applications");
-      vChannels.addElement ("Page Renderer");
-      vChannels.addElement ("Scoreboard");
-      vChannels.addElement ("Search");
-      vChannels.addElement ("Weather");
-      
-      // List available channels
-      out.println ("<table border=0 width=100% cellspacing=0 cellpadding=0>");
-      out.println ("<tr bgcolor=#dddddd>");
-      out.println ("<td>");
-      
-      for (int i = 0; i < vChannels.size () / 2; i++)
-        out.println ("<input type=checkbox name=\"channel" + i + "\">" + (String) vChannels.elementAt (i) + "<br>");
-      
-      out.println ("</td>");
-      out.println ("<td>");
-      
-      for (int i = vChannels.size () / 2 + 1; i < vChannels.size (); i++)
-        out.println ("<input type=checkbox name=\"channel" + i + "\">" + (String) vChannels.elementAt (i) + "<br>");
-      
-      out.println ("</td>");
-      out.println ("</tr>");
-      out.println ("</table><br>");
-    
+    {           
       IXml layoutXml = getLayoutXml (req, getUserName (req));
       ILayout layout = (ILayout) layoutXml.getRoot ();
       
       // Get Tabs
       ITab[] tabs = layout.getTabs ();
- 
-      // Add new channels
-      out.println ("<input type=submit name=\"\" value=\"Add\">");
-      out.println ("checked channels to Tab ");
-      out.println ("<select name=\"tab\">");
-                
-      for (int iTab = 0; iTab < tabs.length; iTab++)
-        out.println ("<option>" + (iTab + 1) + "</option>");
         
-      out.println ("</select>");
-      out.println ("Column ");
-      out.println ("<select name=\"column\">");
-          
-      // Find the max number of columns in any tab
-      int iMaxCol = 0;
+      String sTabName = null;
+      int iTab;
       
-      for (int iTab = 0; iTab < tabs.length; iTab++)
+      // Get tab to personalize from the request if it's there,
+      // otherwise use the active tab
+      try
       {
-        IColumn[] columns = tabs[iTab].getColumns ();
-        
-        for (int iCol = 1; iCol <= columns.length; iCol++)
-        {
-          if (iCol > iMaxCol)
-            iMaxCol = iCol;
-        }
+        iTab = Integer.parseInt (req.getParameter ("tab"));
+      }
+      catch (NumberFormatException nfe)
+      {
+        iTab = getActiveTab (req);
       }
       
-      for (int iCol = 0; iCol < iMaxCol; iCol++)
-        out.println ("<option>" + (iCol + 1) + "</option>");
-        
-      out.println ("</select>");
-      out.println ("<hr noshade>");
- 
-      // Add a new tab
-      out.println ("<form action=\"personalizeLayout.jsp\" method=post>");
-      out.println ("<input type=hidden name=\"action\" value=\"addTab\">");
-      out.println ("<input type=submit name=\"submit\" value=\"Add\">");
-      out.println ("new tab");
-      out.println ("<select name=\"tab\">");
-                
-      for (int iTab = 0; iTab < tabs.length; iTab++)
-        out.println ("<option value=\"" + iTab + "\">before tab " + (iTab + 1) + "</option>");
-        
-      out.println ("<option value=\"" + tabs.length + "\" selected>at the end</option>");
-      out.println ("</select>");
-      out.println ("</form>");
-      out.println ("<hr noshade>");
-      
-      String sTabName = null;
-      
-      for (int iTab = 0; iTab < tabs.length; iTab++)
-      {
-        sTabName = tabs[iTab].getAttribute ("name");
-        
-        out.println ("<form action=\"personalizeLayout.jsp\" method=post>");
-        out.println ("Tab " + (iTab + 1) +": ");        
-        
-        // Rename tab
-        out.println ("<input type=hidden name=\"action\" value=\"renameTab\">");
-        out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
-        out.println ("<input type=text name=\"tabName\" value=\"" + sTabName + "\">");
-        out.println ("<input type=submit name=\"submit\" value=\"Rename\">");
-        
-        // Move tab down
-        if (iTab < tabs.length - 1)
-        {
-          out.println ("<a href=\"personalizeLayout.jsp?action=moveTabDown&tab=" + iTab + "\">");
-          out.println ("<img src=\"images/down.gif\" border=0 alt=\"Move tab down\"></a>");
-        }
-        
-        // Remove tab
-        out.println ("<a href=\"personalizeLayout.jsp?action=removeTab&tab=" + iTab + "\">");
-        out.println ("<img src=\"images/remove.gif\" border=0 alt=\"Remove tab\"></a>");
-        
-        // Move tab up
-        if (iTab > 0)
-        {
-          out.println ("<a href=\"personalizeLayout.jsp?action=moveTabUp&tab=" + iTab + "\">");
-          out.println ("<img src=\"images/up.gif\" border=0 alt=\"Move tab up\"></a>");
-        }
-                  
-        // Set tab as default
-        int iDefaultTab;
-        
-        try
-        {
-          iDefaultTab = Integer.parseInt (layout.getActiveTabAttribute ());
-        }
-        catch (NumberFormatException ne)
-        {
-          iDefaultTab = 0;
-        }
-        out.println ("<input type=radio name=\"defaultTab\" onClick=\"location='personalizeLayout.jsp?action=setDefaultTab&tab=" + iTab + "'\"" + (iDefaultTab == iTab ? " checked" : "") + ">Set as default");
-        
-        out.println ("</form>");
-        
-        // Get the columns for this tab
-        IColumn[] columns = tabs[iTab].getColumns ();        
-                        
-        // Fill columns with channels
-        out.println ("<table border=0 cellpadding=3 cellspacing=3>");
-        out.println ("<tr bgcolor=#dddddd>");
-        
-        for (int iCol = 0; iCol < columns.length; iCol++)
-        {
-          out.println ("<td>"); 
-          out.println ("Column " + (iCol + 1));
-                    
-          // Move column left
-          if (iCol > 0)
-          {
-            out.println ("<a href=\"personalizeLayout.jsp?action=moveColumnLeft&tab=" + iTab + "&column=" + iCol + "\">");
-            out.println ("<img src=\"images/left.gif\" border=0 alt=\"Move column left\"></a>");
-          }
-          
-          // Remove column
-          out.println ("<a href=\"personalizeLayout.jsp?action=removeColumn&tab=" + iTab + "&column=" + iCol + "\">");
-          out.println ("<img src=\"images/remove.gif\" border=0 alt=\"Remove column\"></a>");
-        
-          // Move column right
-          if (iCol < columns.length - 1)
-          {
-            out.println ("<a href=\"personalizeLayout.jsp?action=moveColumnRight&tab=" + iTab + "&column=" + iCol + "\">");
-            out.println ("<img src=\"images/right.gif\" border=0 alt=\"Move column right\"></a>");
-          }
-          
-          // Column width
-          String sWidth = columns[iCol].getAttribute ("width");
-          String sDisplayWidth = sWidth;
-          
-          if (sWidth.endsWith ("%"))
-            sDisplayWidth = sWidth.substring(0, sWidth.length () - 1);
-          
-          out.println ("<br>");
-          out.println ("Width ");
-          out.println ("<input type=text name=\"\" value=\"" + sDisplayWidth + "\" size=4>");
-          out.println ("<select name=\"\">");
-          out.println ("<option" + (sWidth.endsWith ("%") ? "" : " selected") + ">Pixels</option>");
-          out.println ("<option" + (sWidth.endsWith ("%") ? " selected" : "") + ">%</option>");
-          out.println ("</select>");
-          out.println ("<hr noshade>");
-          
-          out.println ("<form name=\"channels" + iTab + "_" + iCol + "\" action=\"personalizeLayout.jsp\" method=post>");
-          out.println ("<table><tr>");
-          out.println ("<td>");          
-          out.println ("<select name=\"channel\" size=10>");
-          
-          // Get the channels for this column
-          org.jasig.portal.layout.IChannel[] channels = columns[iCol].getChannels ();
-          
-          // List channels for this column
-          for (int iChan = 0; iChan < channels.length; iChan++)
-          {
-            org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);            
-            out.println ("<option value=\"" + iChan + "\">" + ch.getName () + "</option>");
-          }
-          
-          out.println ("</select>");
-          out.println ("</td>"); 
-          out.println ("<td>");  
-          
-          // Move channel up
-          out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelUp')\"><img src=\"images/up.gif\" border=0 alt=\"Move channel up\"></a><br><br>");
-          
-          // Remove channel
-          out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'removeChannel')\"><img src=\"images/remove.gif\" border=0 alt=\"Remove channel\"></a><br><br>");
-          
-          // Move channel down
-          out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelDown')\"><img src=\"images/down.gif\" border=0 alt=\"Move channel down\"></a>");
 
-          out.println ("</td>");          
-          out.println ("</tr></table>");
-          out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
-          out.println ("<input type=hidden name=\"column\" value=\"" + iCol + "\">");
-          out.println ("<input type=hidden name=\"action\" value=\"none\">");
-          out.println ("</form>");
-          
-          out.println ("</td>");          
+      sTabName = tabs[iTab].getAttribute ("name");
+        
+      out.println ("<form name=\"tabControls\" action=\"personalizeLayout.jsp\" method=post>");
+      out.println ("Tab " + (iTab + 1) +": ");        
+        
+      // Rename tab
+      out.println ("<input type=hidden name=\"action\" value=\"renameTab\">");
+      out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
+      out.println ("<input type=text name=\"tabName\" value=\"" + sTabName + "\" onBlur=\"document.tabControls.submit()\">");
+                          
+      // Set tab as default
+      int iDefaultTab;
+        
+      try
+      {
+        iDefaultTab = Integer.parseInt (layout.getActiveTabAttribute ());
+      }
+      catch (NumberFormatException ne)
+      {
+        iDefaultTab = 0;
+      }
+      out.println ("<input type=radio name=\"defaultTab\" onClick=\"location='personalizeLayout.jsp?action=setDefaultTab&tab=" + iTab + "'\"" + (iDefaultTab == iTab ? " checked" : "") + ">Set as default");
+        
+      out.println ("</form>");
+        
+      // Get the columns for this tab
+      IColumn[] columns = tabs[iTab].getColumns ();        
+                        
+      // Fill columns with channels
+      out.println ("<table border=0 cellpadding=3 cellspacing=3>");
+      out.println ("<tr bgcolor=#dddddd>");
+        
+      for (int iCol = 0; iCol < columns.length; iCol++)
+      {
+        out.println ("<td>"); 
+        out.println ("Column " + (iCol + 1));
+                    
+        // Move column left
+        if (iCol > 0)
+        {
+          out.println ("<a href=\"personalizeLayout.jsp?action=moveColumnLeft&tab=" + iTab + "&column=" + iCol + "\">");
+          out.println ("<img src=\"images/left.gif\" border=0 alt=\"Move column left\"></a>");
         }
+          
+        // Remove column
+        out.println ("<a href=\"personalizeLayout.jsp?action=removeColumn&tab=" + iTab + "&column=" + iCol + "\">");
+        out.println ("<img src=\"images/remove.gif\" border=0 alt=\"Remove column\"></a>");
         
-        out.println ("</tr>");
-        out.println ("</table>");
-        
-        // Add a new column for this tab
-        out.println ("<form action=\"personalizeLayout.jsp\" method=post>");
-        out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
-        out.println ("<input type=hidden name=\"action\" value=\"addColumn\">");
-        out.println ("<input type=submit name=\"submit\" value=\"Add\">");
-        out.println ("new column");
-        out.println ("<select name=\"column\">");
-                
-        for (int iCol = 0; iCol < columns.length; iCol++)
-          out.println ("<option value=" + iCol + ">before column " + (iCol + 1) + "</option>");
-        
-        out.println ("<option value=" + columns.length + "selected>at the end</option>");
+        // Move column right
+        if (iCol < columns.length - 1)
+        {
+          out.println ("<a href=\"personalizeLayout.jsp?action=moveColumnRight&tab=" + iTab + "&column=" + iCol + "\">");
+          out.println ("<img src=\"images/right.gif\" border=0 alt=\"Move column right\"></a>");
+        }
+          
+        // Column width
+        String sWidth = columns[iCol].getAttribute ("width");
+        String sDisplayWidth = sWidth;
+          
+        if (sWidth.endsWith ("%"))
+          sDisplayWidth = sWidth.substring(0, sWidth.length () - 1);
+          
+        out.println ("<form name=\"columnWidth" + iTab + "_" + iCol + "\" action=\"personalizeLayout.jsp\" method=post>");
+        out.println ("<input type=hidden name=action value=\"setColumnWidth\">");
+        out.println ("<input type=hidden name=tab value=\"" + iTab + "\">");
+        out.println ("<input type=hidden name=column value=\"" + iCol + "\">");
+        out.println ("Width ");
+        out.println ("<input type=text name=\"columnWidth\" value=\"" + sDisplayWidth + "\" size=4 onBlur=\"document.columnWidth" + iTab + "_" + iCol + ".submit()\">");
+        out.println ("<select name=\"columnWidthType\" onChange=\"document.columnWidth" + iTab + "_" + iCol + ".submit()\">");
+        out.println ("<option value=\"\"" + (sWidth.endsWith ("%") ? "" : " selected") + ">Pixels</option>");
+        out.println ("<option value=\"%\"" + (sWidth.endsWith ("%") ? " selected" : "") + ">%</option>");
         out.println ("</select>");
         out.println ("</form>");
-        out.println ("<br><br>");
-        
         out.println ("<hr noshade>");
+          
+        out.println ("<table><tr>");
+        out.println ("<td align=center>");   
         
-      } // end for Tabs      
+        out.println ("<form name=\"channels" + iTab + "_" + iCol + "\" action=\"personalizeLayout.jsp\" method=post>");
+        
+        // Move channel left
+        if (iCol > 0)
+          out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelLeft')\"><img src=\"images/left.gif\" border=0 alt=\"Move channel left\"></a>&nbsp;");
+        
+        // Remove channel
+        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'removeChannel')\"><img src=\"images/remove.gif\" border=0 alt=\"Remove channel\"></a>&nbsp;");
+       
+        // Move channel right
+        if (iCol < columns.length - 1)
+          out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelRight')\"><img src=\"images/right.gif\" border=0 alt=\"Move channel right\"></a>");
+        
+        out.println ("<br>");
+        out.println ("<select name=\"channel\" size=10>");
+          
+        // Get the channels for this column
+        org.jasig.portal.layout.IChannel[] channels = columns[iCol].getChannels ();
+          
+        // List channels for this column
+        for (int iChan = 0; iChan < channels.length; iChan++)
+        {
+          org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);            
+          out.println ("<option value=\"" + iChan + "\">" + ch.getName () + "</option>");
+        }
+          
+        out.println ("</select>");
+        out.println ("</td>"); 
+        out.println ("<td>");  
+          
+        // Move channel up
+        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelUp')\"><img src=\"images/up.gif\" border=0 alt=\"Move channel up\"></a><br><br>");
+          
+        // Remove channel
+        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'removeChannel')\"><img src=\"images/remove.gif\" border=0 alt=\"Remove channel\"></a><br><br>");
+          
+        // Move channel down
+        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelDown')\"><img src=\"images/down.gif\" border=0 alt=\"Move channel down\"></a>");
+
+        out.println ("</td>");          
+        out.println ("</tr></table>");
+        out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
+        out.println ("<input type=hidden name=\"column\" value=\"" + iCol + "\">");
+        out.println ("<input type=hidden name=\"action\" value=\"none\">");
+        out.println ("</form>");
+          
+        out.println ("</td>");          
+      }
+        
+      out.println ("</tr>");
+      out.println ("</table>");
+        
+      // Add a new column for this tab
+      out.println ("<form action=\"personalizeLayout.jsp\" method=post>");
+      out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
+      out.println ("<input type=hidden name=\"action\" value=\"addColumn\">");
+      out.println ("<input type=submit name=\"submit\" value=\"Add\">");
+      out.println ("new column");
+      out.println ("<select name=\"column\">");
+                
+      for (int iCol = 0; iCol < columns.length; iCol++)
+        out.println ("<option value=" + iCol + ">before column " + (iCol + 1) + "</option>");
+        
+      out.println ("<option value=" + columns.length + "selected>at the end</option>");
+      out.println ("</select>");
+      out.println ("</form>");
+      out.println ("<br>");        
     }
     catch (Exception e)
     {
@@ -1066,10 +1067,14 @@ public class LayoutBean extends GenericPortalBean
 
       IXml layoutXml = getLayoutXml (req, getUserName (req));
       ILayout layout = (ILayout) layoutXml.getRoot ();
-            
       ITab tabToMoveDown = layout.getTabAt (iTab);
-      layout.removeTabAt (iTab);
-      layout.insertTabAt(tabToMoveDown, iTab + 1);
+      
+      // Only move tab if it isn't already at the bottom (right)
+      if (iTab < layout.getTabCount () - 1)
+      {
+        layout.removeTabAt (iTab);
+        layout.insertTabAt(tabToMoveDown, iTab + 1);
+      }
     }
     catch (Exception e)
     {
@@ -1089,10 +1094,14 @@ public class LayoutBean extends GenericPortalBean
 
       IXml layoutXml = getLayoutXml (req, getUserName (req));
       ILayout layout = (ILayout) layoutXml.getRoot ();
-            
       ITab tabToMoveUp = layout.getTabAt (iTab);
-      layout.removeTabAt (iTab);
-      layout.insertTabAt (tabToMoveUp, iTab - 1);
+     
+      // Only move tab if it isn't already at the top (left)
+      if (iTab > 0)
+      {
+        layout.removeTabAt (iTab);
+        layout.insertTabAt (tabToMoveUp, iTab - 1);
+      }
     }
     catch (Exception e)
     {
@@ -1189,6 +1198,28 @@ public class LayoutBean extends GenericPortalBean
   }      
 
   /**
+   * Changes the width of a column at the desired location
+   * @param the servlet request object
+   */
+  public void setColumnWidth (HttpServletRequest req)
+  {    
+    try 
+    {      
+      int iTab = Integer.parseInt (req.getParameter ("tab"));
+      int iCol = Integer.parseInt (req.getParameter ("column"));
+      String sColumnWidth = req.getParameter ("columnWidth");
+      String sColumnWidthType = req.getParameter ("columnWidthType");
+
+      IColumn column = getColumn (req, iTab, iCol);
+      column.setWidthAttribute (sColumnWidth + sColumnWidthType);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace ();
+    }
+  }      
+
+  /**
    * Minimize a channel
    * @param the servlet request object
    */
@@ -1252,6 +1283,56 @@ public class LayoutBean extends GenericPortalBean
   }      
 
   /**
+   * Moves a channel to the bottom of the list of the column to the left
+   * @param the servlet request object
+   */
+  public void moveChannelLeft (HttpServletRequest req)
+  {    
+    try 
+    {      
+      int iTab = Integer.parseInt (req.getParameter ("tab"));
+      int iCol = Integer.parseInt (req.getParameter ("column"));
+      int iChan = Integer.parseInt (req.getParameter ("channel"));
+
+      IColumn column = getColumn (req, iTab, iCol);
+      IColumn columnToTheLeft = getColumn (req, iTab, iCol - 1);
+      org.jasig.portal.layout.IChannel channelToMoveLeft = column.getChannelAt (iChan);
+      
+      column.removeChannelAt (iChan);
+      columnToTheLeft.addChannel(channelToMoveLeft);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace ();
+    }
+  }      
+
+  /**
+   * Moves a channel to the bottom of the list of the column to the right
+   * @param the servlet request object
+   */
+  public void moveChannelRight (HttpServletRequest req)
+  {    
+    try 
+    {      
+      int iTab = Integer.parseInt (req.getParameter ("tab"));
+      int iCol = Integer.parseInt (req.getParameter ("column"));
+      int iChan = Integer.parseInt (req.getParameter ("channel"));
+
+      IColumn column = getColumn (req, iTab, iCol);
+      IColumn columnToTheRight = getColumn (req, iTab, iCol + 1);
+      org.jasig.portal.layout.IChannel channelToMoveRight = column.getChannelAt (iChan);
+      
+      column.removeChannelAt (iChan);
+      columnToTheRight.addChannel(channelToMoveRight);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace ();
+    }
+  } 
+  
+  /**
    * Moves a channel up a position
    * @param the servlet request object
    */
@@ -1265,8 +1346,13 @@ public class LayoutBean extends GenericPortalBean
 
       IColumn column = getColumn (req, iTab, iCol);
       org.jasig.portal.layout.IChannel channelToMoveUp = column.getChannelAt (iChan);
-      column.removeChannelAt (iChan);
-      column.insertChannelAt (channelToMoveUp, iChan - 1);
+      
+      // Only move channel if it isn't already at the top
+      if (iChan > 0)
+      {
+        column.removeChannelAt (iChan);
+        column.insertChannelAt (channelToMoveUp, iChan - 1);
+      }
     }
     catch (Exception e)
     {
@@ -1288,8 +1374,13 @@ public class LayoutBean extends GenericPortalBean
 
       IColumn column = getColumn (req, iTab, iCol);
       org.jasig.portal.layout.IChannel channelToMoveDown = column.getChannelAt (iChan);
-      column.removeChannelAt (iChan);
-      column.insertChannelAt (channelToMoveDown, iChan + 1);
+      
+      // Only move channel if it isn't already at the bottom
+      if (iChan < column.getChannelCount () - 1)
+      {
+        column.removeChannelAt (iChan);
+        column.insertChannelAt (channelToMoveDown, iChan + 1);
+      }
     }
     catch (Exception e)
     {
