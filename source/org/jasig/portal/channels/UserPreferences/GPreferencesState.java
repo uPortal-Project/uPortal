@@ -406,14 +406,12 @@ class GPreferencesState extends BaseState {
             String xslURI=null;
             xslURI=set.getStylesheetURI("editItem", runtimeData.getHttpRequest());
 
-            XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
             Hashtable params=new Hashtable();
             params.put("baseActionURL", runtimeData.getBaseActionURL());
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(xmlResult,doc,xslURI,params);
+                    org.jasig.portal.utils.XSLT.transform(out, doc, xslURI, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
@@ -439,15 +437,15 @@ class GPreferencesState extends BaseState {
             if (action != null) {
                 if (action.equals ("submitEditValues")) {
                     String submit=runtimeData.getParameter("submit");
-		    if(submit==null || submit.equals("Save")) {
-			prepareSaveEditGPrefs();
-		    }
-		    else if(submit.equals("Cancel")) {
-			IPrivilegedChannel bstate=new GBrowseState(context);
-			bstate.setRuntimeData(runtimeData);
-			context.setState(bstate);
-		    }
-		}
+                    if(submit==null || submit.equals("Save")) {
+                        prepareSaveEditGPrefs();
+                    }
+                    else if(submit.equals("Cancel")) {
+                        IPrivilegedChannel bstate=new GBrowseState(context);
+                        bstate.setRuntimeData(runtimeData);
+                        context.setState(bstate);
+                    }
+                }
             }
         }
 
@@ -534,14 +532,12 @@ class GPreferencesState extends BaseState {
             String xslURI=null;
             xslURI=set.getStylesheetURI("editGPrefs", runtimeData.getHttpRequest());
 
-            XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
             Hashtable params=new Hashtable();
             params.put("baseActionURL", runtimeData.getBaseActionURL());
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(xmlResult,doc,xslURI,params);
+                    org.jasig.portal.utils.XSLT.transform(out, doc, xslURI, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
@@ -626,8 +622,6 @@ class GPreferencesState extends BaseState {
             String xslURI=null;
             xslURI=set.getStylesheetURI("browse", runtimeData.getHttpRequest());
 
-            XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
             Hashtable params=new Hashtable();
             params.put("folderID",context.getFolderID());
             params.put("modified",new Boolean(context.isModified()));
@@ -638,7 +632,7 @@ class GPreferencesState extends BaseState {
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(xmlResult,context.getUserLayoutXML(),xslURI,params);
+                    org.jasig.portal.utils.XSLT.transform(out, context.getUserLayoutXML(), xslURI, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
@@ -723,14 +717,12 @@ class GPreferencesState extends BaseState {
             String xslURI=null;
             xslURI=set.getStylesheetURI("moveTo", runtimeData.getHttpRequest());
 
-            XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-
             Hashtable params=new Hashtable();
             params.put("baseActionURL", runtimeData.getBaseActionURL());
 
             if (xslURI != null) {
                 try {
-                    org.jasig.portal.utils.XSLT.transform(xmlResult,context.getUserLayoutXML(),xslURI,params);
+                    org.jasig.portal.utils.XSLT.transform(out, context.getUserLayoutXML(), xslURI, params);
                 } catch (org.xml.sax.SAXException e) {
                     throw new GeneralRenderingException("Unable to complete transformation");
                 } catch (java.io.IOException i) {
