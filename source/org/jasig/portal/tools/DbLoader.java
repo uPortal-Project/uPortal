@@ -962,7 +962,6 @@ public class DbLoader
 
           if (value != null)
           {
-            // Is "SYSDATE" Oracle specific???
             if (value.equals("SYSDATE"))
               sb.append(value);
             else if (value.equals("NULL"))
@@ -1017,33 +1016,26 @@ public class DbLoader
             Column column = (Column)iterator.next();
             String value = column.getValue();
 
+            // Get a java sql data type for column name
+            int javaSqlDataType = getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName());
+
             if (value == null)
               pstmt.setString(i, "");
             else if (value.equals("NULL"))
-              pstmt.setNull(i, Types.NULL);
+              pstmt.setNull(i, javaSqlDataType);
+            else if (javaSqlDataType == Types.TIMESTAMP)
+            {
+              if (value.equals("SYSDATE"))
+                pstmt.setTimestamp(i, new java.sql.Timestamp(System.currentTimeMillis()));
+              else
+                pstmt.setTimestamp(i, java.sql.Timestamp.valueOf(value));
+            }
             else
             {
               value = value.trim(); // portal can't read xml properly without this, don't know why yet
               int valueLength = value.length();
 
-              // Get a java sql data type for column name
-              int javaSqlDataType = getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName());
-
-              if (javaSqlDataType == Types.DATE) {
-                java.sql.Date date;
-
-                try {
-                  if (value.equals("SYSDATE")) {
-                    date = new java.sql.Date(System.currentTimeMillis());
-                  } else {
-                    date = java.sql.Date.valueOf(value);
-                  }
-                  pstmt.setDate(i, date);
-                } catch (Exception e) {
-                  throw new SQLException("Invalid date: " + value);
-                }
-              }
-              else if (valueLength <= 4000)
+              if (valueLength <= 4000)
               {
                 try
                 {
