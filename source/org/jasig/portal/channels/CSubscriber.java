@@ -132,7 +132,7 @@ public class CSubscriber implements IPrivilegedChannel
    * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
-  public void setRuntimeData (ChannelRuntimeData rd)
+  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
   {
     this.runtimeData = rd;
 
@@ -276,14 +276,14 @@ public class CSubscriber implements IPrivilegedChannel
     }
   }
 
-  private void prepareSaveChanges ()
+  private void prepareSaveChanges () throws PortalException
   {
     // save layout copy
     categoryID = this.regID;
     modified = false;
     ulm.setNewUserLayoutAndUserPreferences(userLayoutXML,null);
   }
-  
+
     /**
    * Returns the next instance id
    * to be added to user's layout.xml
@@ -315,5 +315,5 @@ public class CSubscriber implements IPrivilegedChannel
     String sInstanceID = "chan" + (iHighest + 1);
     ((Element)channel).setAttribute("ID", sInstanceID);
    }
-   
+
 }
