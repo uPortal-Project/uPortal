@@ -53,6 +53,7 @@ public class Authentication
    * @return true if successful, otherwise false.
    */
   public boolean authenticate (String sUserName, String sPassword)
+    throws PortalSecurityException
   {
     ISecurityContext ic;
     IPrincipal me;
@@ -77,7 +78,7 @@ public class Authentication
         m_Person = new PersonImpl ();
         m_Person.setID(me.getGlobalUID());
         m_Person.setFullName(me.getFullName());
-        m_Person.setAttribute("globalUID", me.getGlobalUID()+"");
+        m_Person.setAttribute("globalUID", Integer.toString(me.getGlobalUID()));
       }
       else
       {
