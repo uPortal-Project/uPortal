@@ -38,7 +38,7 @@
 
 package  org.jasig.portal;
 
-import  org.jasig.portal.*;
+import  org.jasig.portal.services.LogService;
 import  javax.servlet.*;
 import  javax.servlet.jsp.*;
 import  javax.servlet.http.*;
@@ -90,7 +90,7 @@ public class RdbmServices extends GenericPortalBean {
         bPropsLoaded = true;
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -106,13 +106,13 @@ public class RdbmServices extends GenericPortalBean {
         conn = DriverManager.getConnection(sJdbcUrl, sJdbcUser, sJdbcPassword);
         prevErrorMsg = "";
       } catch (ClassNotFoundException cnfe) {
-        Logger.log(Logger.ERROR, "The driver " + sJdbcDriver + " was not found, please check the logs/rdbm.properties file and your classpath.");
+        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " was not found, please check the logs/rdbm.properties file and your classpath.");
         return  null;
       } catch (InstantiationException ie) {
-        Logger.log(Logger.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
+        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
         return  null;
       } catch (IllegalAccessException iae) {
-        Logger.log(Logger.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
+        LogService.instance().log(LogService.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
         return  null;
       } catch (SQLException SQLe) {
         String errMsg = SQLe.getMessage();
@@ -135,7 +135,7 @@ public class RdbmServices extends GenericPortalBean {
       if (con != null)
         con.close();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -171,7 +171,7 @@ public class RdbmServices extends GenericPortalBean {
     try {
       return  ((IUserLayoutStore)Class.forName(m_userLayoutStoreClassName).newInstance());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -184,7 +184,7 @@ public class RdbmServices extends GenericPortalBean {
     try {
       return  ((IUserIdentityStore)Class.forName(m_userIdentityStoreClassName).newInstance());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -197,7 +197,7 @@ public class RdbmServices extends GenericPortalBean {
     try {
       return  ((IUserPreferencesStore)Class.forName(m_userPreferencesStoreClassName).newInstance());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -210,7 +210,7 @@ public class RdbmServices extends GenericPortalBean {
     try {
       return  ((ICoreStylesheetDescriptionStore)Class.forName(m_coreStyleSheetDescriptionStoreClassName).newInstance());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -223,7 +223,7 @@ public class RdbmServices extends GenericPortalBean {
     try {
       return  ((IChannelRegistryStore)Class.forName(m_channelRegistryStoreClassName).newInstance());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }

@@ -35,7 +35,7 @@
 
 package org.jasig.portal.security;
 
-import org.jasig.portal.Logger;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.GenericPortalBean;
 import java.util.*;
 import java.io.*;
@@ -79,7 +79,7 @@ public class InitialSecurityContext implements ISecurityContext {
 
     if (ctx.indexOf('.') != -1) {
       PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
-      Logger.log(Logger.ERROR,ep);
+      LogService.instance().log(LogService.ERROR,ep);
       throw(ep);
       }
 
@@ -94,7 +94,7 @@ public class InitialSecurityContext implements ISecurityContext {
     }
     catch (IOException e) {
       PortalSecurityException ep = new PortalSecurityException(e.getMessage());
-      Logger.log(Logger.ERROR,ep);
+      LogService.instance().log(LogService.ERROR,ep);
       throw(ep);
     }
 
@@ -103,7 +103,7 @@ public class InitialSecurityContext implements ISecurityContext {
 
     if ((factoryname = pr.getProperty(ctx)) == null) {
       PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
-      Logger.log(Logger.ERROR,ep);
+      LogService.instance().log(LogService.ERROR,ep);
       throw(ep);
     }
     try {
@@ -112,7 +112,7 @@ public class InitialSecurityContext implements ISecurityContext {
     }
     catch (Exception e) {
       PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryname);
-      Logger.log(Logger.ERROR,ep);
+      LogService.instance().log(LogService.ERROR,ep);
       throw(ep);
     }
 
@@ -142,7 +142,7 @@ public class InitialSecurityContext implements ISecurityContext {
           PortalSecurityException ep =
               new PortalSecurityException("(Subcontext)Failed to instantiate " +
                 sfactoryname);
-          Logger.log(Logger.ERROR,ep);
+          LogService.instance().log(LogService.ERROR,ep);
           throw(ep);
         }
       }
