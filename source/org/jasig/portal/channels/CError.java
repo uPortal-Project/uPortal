@@ -262,7 +262,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
             // determine channel name
             if(portcs!=null) {
-                String chName=(portcs.getUserLayoutManager()).getNodeName(str_channelSubscribeId);
+                String chName=(portcs.getUserPreferencesManager()).getNodeName(str_channelSubscribeId);
                 if(chName!=null) {
                     Element nameEl=doc.createElement("name");
                     nameEl.appendChild(doc.createTextNode(chName));
@@ -358,7 +358,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         ssTitle = "friendly";
         try {
           AuthorizationService authService = AuthorizationService.instance();
-          int personID = portcs.getUserLayoutManager().getPerson().getID();
+          int personID = portcs.getUserPreferencesManager().getPerson().getID();
           IAuthorizationPrincipal ap = authService.newPrincipal(String.valueOf(personID), IPerson.class);
           if (ap.hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS"))
             ssTitle = "detailed";

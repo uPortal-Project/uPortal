@@ -49,7 +49,7 @@ import  java.io.File;
  * @version $Revision$
  */
 public class CUserPreferences implements IPrivilegedChannel {
-  IUserLayoutManager ulm;
+  IUserPreferencesManager ulm;
   ChannelRuntimeData runtimeData = null;
   ChannelStaticData staticData = null;
   StylesheetSet set = null;
@@ -78,7 +78,7 @@ public class CUserPreferences implements IPrivilegedChannel {
   }
 
 
-  protected IUserLayoutManager getUserLayoutManager() {
+  protected IUserPreferencesManager getUserPreferencesManager() {
     return  ulm;
   }
 
@@ -99,7 +99,7 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
     if (ulm == null)
-      ulm = pcs.getUserLayoutManager();
+      ulm = pcs.getUserPreferencesManager();
     if (up == null)
       up = ulm.getUserPreferencesCopy();
     // instantiate the browse state here
@@ -241,8 +241,8 @@ public class CUserPreferences implements IPrivilegedChannel {
   }
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
-      up = ulsdb.getUserPreferences(getUserLayoutManager().getPerson(), profile);
-      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserLayoutManager().getPerson(), getCurrentUserPreferences().getProfile()));
+      up = ulsdb.getUserPreferences(getUserPreferencesManager().getPerson(), profile);
+      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserPreferencesManager().getPerson(), getCurrentUserPreferences().getProfile()));
       return up;
   }
 

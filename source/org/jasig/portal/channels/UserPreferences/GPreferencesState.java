@@ -147,7 +147,7 @@ class GPreferencesState extends BaseState {
     if (userLayoutXML == null) {
       // get the layout from the database
       try {
-        userLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(context.getUserLayoutManager().getPerson(), context.getCurrentUserPreferences().getProfile());
+        userLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(context.getUserPreferencesManager().getPerson(), context.getCurrentUserPreferences().getProfile());
       } catch (Exception e) {
         LogService.instance().log(LogService.ERROR, e);
         throw  new GeneralRenderingException(e.getMessage());
@@ -157,8 +157,8 @@ class GPreferencesState extends BaseState {
   }
 
 
-  protected IUserLayoutManager getUserLayoutManager() {
-    return  context.getUserLayoutManager();
+  protected IUserPreferencesManager getUserPreferencesManager() {
+    return  context.getUserPreferencesManager();
   }
 
 
@@ -166,7 +166,7 @@ class GPreferencesState extends BaseState {
     if (up == null) {
       // load UserPreferences from the DB
       try {
-        up = ulsdb.getUserPreferences(context.getUserLayoutManager().getPerson(), this.getProfile());
+        up = ulsdb.getUserPreferences(context.getUserPreferencesManager().getPerson(), this.getProfile());
         up.synchronizeWithUserLayoutXML(this.getUserLayoutXML());
       } catch (Exception e) {
         throw new PortalException(e.getMessage(), e);
@@ -215,7 +215,7 @@ class GPreferencesState extends BaseState {
   
   protected UserProfile getProfile() {
     if (profile == null)
-      profile = context.getUserLayoutManager().getCurrentProfile();
+      profile = context.getUserPreferencesManager().getCurrentProfile();
     return  profile;
   }
 
@@ -654,20 +654,20 @@ class GPreferencesState extends BaseState {
     private void prepareSaveChanges() throws PortalException {
       context.setFolderID(context.getLayoutRootID());
       context.setModified(false);
-      // relate changes back to the UserLayoutManager if the profile that's being
+      // relate changes back to the UserPreferencesManager if the profile that's being
       // edited is the current profile.
-      // changes in userLayoutXML are always related back to the UserLayoutManager.
+      // changes in userLayoutXML are always related back to the UserPreferencesManager.
       // (unless profile-specific layouts will be introduced)
-      if (context.getUserLayoutManager().getCurrentProfile() == context.getProfile()) {
-        context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), context.getUserPreferences(), false);
+      if (context.getUserPreferencesManager().getCurrentProfile() == context.getProfile()) {
+        context.getUserPreferencesManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), context.getUserPreferences(), false);
       } else {
         // do a database save on the preferences
         try {
-          ulsdb.putUserPreferences(context.getUserLayoutManager().getPerson(), context.getUserPreferences());
+          ulsdb.putUserPreferences(context.getUserPreferencesManager().getPerson(), context.getUserPreferences());
         } catch (Exception e) {
           throw new PortalException(e.getMessage(), e);
         }
-        context.getUserLayoutManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), null, false);
+        context.getUserPreferencesManager().setNewUserLayoutAndUserPreferences(context.getUserLayoutXML(), null, false);
       }
     }
 

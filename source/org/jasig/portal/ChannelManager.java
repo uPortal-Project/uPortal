@@ -79,7 +79,7 @@ import tyrex.naming.MemoryContext;
  * @version $Revision$
  */
 public class ChannelManager {
-    private IUserLayoutManager ulm;
+    private IUserPreferencesManager ulm;
     private PortalControlStructures pcs;
 
     private Hashtable channelTable;
@@ -117,24 +117,24 @@ public class ChannelManager {
      *
      * @param request a <code>HttpServletRequest</code> value
      * @param response a <code>HttpServletResponse</code> value
-     * @param manager an <code>IUserLayoutManager</code> value
+     * @param manager an <code>IUserPreferencesManager</code> value
      * @param uPElement an <code>UPFileSpec</code> that includes a tag number.
      */
-    public ChannelManager(HttpServletRequest request, HttpServletResponse response, IUserLayoutManager manager,UPFileSpec uPElement) {
+    public ChannelManager(HttpServletRequest request, HttpServletResponse response, IUserPreferencesManager manager,UPFileSpec uPElement) {
         this();
         this.ulm=manager;
         pcs=new PortalControlStructures();
-        pcs.setUserLayoutManager(ulm);
+        pcs.setUserPreferencesManager(ulm);
         pcs.setChannelManager(this);
         this.setReqNRes(request,response,uPElement);
     }
 
 
-    public ChannelManager(IUserLayoutManager manager) {
+    public ChannelManager(IUserPreferencesManager manager) {
         this();
         this.ulm=manager;
         pcs=new PortalControlStructures();
-        pcs.setUserLayoutManager(manager);
+        pcs.setUserPreferencesManager(manager);
         pcs.setChannelManager(this);
     }
 
@@ -385,7 +385,7 @@ public class ChannelManager {
 
         // check if the user has permissions to instantiate this channel
         if(ap==null) {
-            ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserLayoutManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
+            ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
         }
 
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
@@ -752,7 +752,7 @@ public class ChannelManager {
         // construct a channel context
         if(channelContext==null) {
             try {
-                channelContext=getChannelContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserLayoutManager().getPerson().getID()),Integer.toString(this.pcs.getUserLayoutManager().getCurrentProfile().getProfileId()));
+                channelContext=getChannelContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()),Integer.toString(this.pcs.getUserPreferencesManager().getCurrentProfile().getProfileId()));
             } catch (NamingException ne) {
                 LogService.instance().log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : "+ne);
             }
@@ -764,7 +764,7 @@ public class ChannelManager {
         this.uPElement=uPElement;
     }
 
-    public void setUserLayoutManager(IUserLayoutManager m) {
+    public void setUserPreferencesManager(IUserPreferencesManager m) {
         ulm=m;
     }
 

@@ -44,28 +44,28 @@ import  java.util.*;
 
 
 /**
- * A class that allows {@link GuestUserLayoutManager} to be presented as {@link IUserlayoutManager}
+ * A class that allows {@link GuestUserpreferencesManager} to be presented as {@link IUserpreferencesManager}
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
- * @see IUserLayoutManager
- * @see GuestUserLayoutManager
+ * @see IUserpreferencesManager
+ * @see GuestUserpreferencesManager
  */
-public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
+public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManager {
     String sessionId;
-    GuestUserLayoutManager gulm;
+    GuestUserPreferencesManager gulm;
 
-    public GuestUserLayoutManagerWrapper() {
+    public GuestUserPreferencesManagerWrapper() {
         sessionId=null;
         gulm=null;
     }
 
     /**
-     * Creates a new <code>GuestUserLayoutManagerWrapper</code> instance.
+     * Creates a new <code>GuestUserpreferencesManagerWrapper</code> instance.
      *
-     * @param gulm a <code>GuestUserLayoutManager</code> value
+     * @param gulm a <code>GuestUserpreferencesManager</code> value
      * @param sessionId a <code>String</code> value
      */
-    public GuestUserLayoutManagerWrapper(GuestUserLayoutManager gulm, String sessionId) {
+    public GuestUserPreferencesManagerWrapper(GuestUserPreferencesManager gulm, String sessionId) {
         this.gulm=gulm;
         this.sessionId=sessionId;
     }

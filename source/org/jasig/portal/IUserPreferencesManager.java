@@ -45,11 +45,11 @@ import org.jasig.portal.utils.BooleanLock;
 
 
 /**
- * Interface to user layout management class.
+ * Interface to user preferences management class.
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
  */
-public interface IUserLayoutManager {
+public interface IUserPreferencesManager {
 
     /* This function processes request parameters related to
      * setting Structure/Theme stylesheet parameters and attributes.

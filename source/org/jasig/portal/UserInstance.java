@@ -90,11 +90,11 @@ public class UserInstance implements HttpSessionBindingListener {
 
     // To debug structure and/or theme transformations, set these to true
     // and the XML fed to those transformations will be printed to the log.
-    private static final boolean printXMLBeforeStructureTransformation = false;
+    private static final boolean printXMLBeforeStructureTransformation = true;
     private static final boolean printXMLBeforeThemeTransformation = false;
 
     // manages layout and preferences
-    UserLayoutManager uLayoutManager;
+    UserPreferencesManager uLayoutManager;
     // manages channel instances and channel rendering
     ChannelManager channelManager;
 
@@ -153,7 +153,7 @@ public class UserInstance implements HttpSessionBindingListener {
             }
         }
         if (uLayoutManager==null || uLayoutManager.isUserAgentUnmapped()) {
-            uLayoutManager = new UserLayoutManager(req, this.getPerson());
+            uLayoutManager = new UserPreferencesManager(req, this.getPerson());
         } else {
             // p_browserMapper is no longer needed
             p_browserMapper = null;
@@ -194,13 +194,13 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param ulm the <code>IUserLayout</code>
      * @param rendering_lock a lock for rendering on a single user
      */
-    public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, IUserLayoutManager ulm, Object rendering_lock) throws PortalException {
+    public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, IUserPreferencesManager ulm, Object rendering_lock) throws PortalException {
         // process possible worker dispatch
         if(!processWorkerDispatch(req,res,channelManager,ulm)) {
             synchronized(rendering_lock) {
                 // This function does ALL the content gathering/presentation work.
                 // The following filter sequence is processed:
-                //        userLayoutXML (in UserLayoutManager)
+                //        userLayoutXML (in UserPreferencesManager)
                 //              |
                 //        incorporate StructureAttributes
                 //              |
@@ -222,7 +222,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 try {
 
                     // call layout manager to process all user-preferences-related request parameters
-                    // this will update UserPreference object contained by UserLayoutManager, so that
+                    // this will update UserPreference object contained by UserPreferencesManager, so that
                     // appropriate attribute incorporation filters and parameter tables can be constructed.
                     ulm.processUserPreferencesParameters(req);
                     PrintWriter out=res.getWriter();
@@ -259,7 +259,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                     // set up the channel manager
                     channelManager.setReqNRes(req, res, uPElement);
-                    // process events that have to be handed directly to the userLayoutManager.
+                    // process events that have to be handed directly to the userPreferencesManager.
                     // (examples of such events are "remove channel", "minimize channel", etc.
                     //  basically things that directly affect the userLayout structure)
                     try {
@@ -714,7 +714,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param ulm the <code>IUserLayout</code>
      * @param rendering_lock a lock for rendering on a single user
      */
-    protected static boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserLayoutManager ulm) throws PortalException {
+    protected static boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserPreferencesManager ulm) throws PortalException {
 
         HttpSession session = req.getSession(false);
         if(session!=null) {

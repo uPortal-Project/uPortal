@@ -70,14 +70,14 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
 
 
     // manages layout and preferences
-    GuestUserLayoutManager uLayoutManager;
+    GuestUserPreferencesManager uLayoutManager;
 
 
     public GuestUserInstance(IPerson person) {
         super(person);
         // instantiate state table
 	stateTable=Collections.synchronizedMap(new HashMap());
-        uLayoutManager=new GuestUserLayoutManager(person);
+        uLayoutManager=new GuestUserPreferencesManager(person);
     }
 
 
@@ -88,7 +88,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      */
     public void registerSession(HttpServletRequest req) throws PortalException {
 	IState newState=new IState();
-        newState.channelManager=new ChannelManager(new GuestUserLayoutManagerWrapper(uLayoutManager,req.getSession(false).getId()));
+        newState.channelManager=new ChannelManager(new GuestUserPreferencesManagerWrapper(uLayoutManager,req.getSession(false).getId()));
         newState.p_rendering_lock=new Object();
         uLayoutManager.registerSession(req);
         stateTable.put(req.getSession(false).getId(),newState);
@@ -178,7 +178,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
             return;
         }
 
-        renderState (req, res, state.channelManager, new GuestUserLayoutManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
+        renderState (req, res, state.channelManager, new GuestUserPreferencesManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
     }
 }
 

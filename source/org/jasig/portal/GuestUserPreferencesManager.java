@@ -58,12 +58,12 @@ import java.io.IOException;
 
 
 /**
- * Multithreaded version of {@link UserLayoutManager}.
+ * Multithreaded version of {@link UserPreferencesManager}.
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
- * @see UserLayoutManager
+ * @see UserPreferencesManager
  */
-public class GuestUserLayoutManager extends UserLayoutManager  {
+public class GuestUserPreferencesManager extends UserPreferencesManager  {
     private class MState {
         private ThemeStylesheetDescription tsd;
         private StructureStylesheetDescription ssd;
@@ -90,14 +90,14 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
 
     IPerson m_person;
 
-    final static boolean SAVE_PROFILE_GUESSES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.GuestUserLayoutManager.save_profile_guesses");
+    final static boolean SAVE_PROFILE_GUESSES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.GuestUserPreferencesManager.save_profile_guesses");
 
     /**
      * Initializing constructor.
      *  @param the servlet request object
      *  @param person object
      */
-    public GuestUserLayoutManager (IPerson person) {
+    public GuestUserPreferencesManager (IPerson person) {
         super(person);
         stateTable=Collections.synchronizedMap(new HashMap());
         up_cleanUPs=new Hashtable();
@@ -159,7 +159,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                             uaMatcher = new PropsMatcher(url.openStream());
                         }
                     } catch (IOException ioe) {
-                        LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::GuestUserLayoutManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
+                        LogService.instance().log(LogService.ERROR, "GuestUserPreferencesManager::GuestUserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
                     }
                 }
 
@@ -168,14 +168,14 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     String profileId=uaMatcher.match(userAgent);
                     if(profileId!=null) {
                         // user agent has been matched
-                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
+                        LogService.instance().log(LogService.DEBUG, "GuestUserPreferencesManager::GuestUserPreferencesManager() : userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
                         upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
                         // save mapping
                         if(SAVE_PROFILE_GUESSES) {
                             ulsdb.setSystemBrowserMapping(userAgent,upl.getProfileId());
                         }
                     } else {
-                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has not matched any profile.");
+                        LogService.instance().log(LogService.DEBUG, "GuestUserPreferencesManager::GuestUserPreferencesManager() : userAgent \"" + userAgent + "\" has not matched any profile.");
                     }
                 }
             }
@@ -199,12 +199,12 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                             }
                         }
                     } catch (Exception e) {
-                        throw new PortalException("GuestUserLayoutManager::registerSession() : caught an exception while trying to retreive a userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".",e);
+                        throw new PortalException("GuestUserPreferencesManager::registerSession() : caught an exception while trying to retreive a userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".",e);
                     }
                 }
 
                 if (newState.uLayoutXML == null) {
-                    throw new PortalException("UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".");
+                    throw new PortalException("UserPreferencesManager::UserPreferencesManager() : unable to retreive userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".");
                 } else {
                     // modify the entire profile to be unremovable and immutable
                     // mark all of the folders
@@ -241,7 +241,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                             }
                         }
                     } catch (Exception e) {
-                        LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
+                        LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
                         cleanUP=new UserPreferences(upl);
                     }
                 }
@@ -249,7 +249,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 if(cleanUP!=null) {
                     newState.complete_up=new UserPreferences(cleanUP);
                 } else {
-                    LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
+                    LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
                     newState.complete_up=new UserPreferences(upl);
                 }
 
@@ -259,7 +259,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 newState.unmapped_user_agent = true;
-                LogService.instance().log(LogService.DEBUG,"GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID() + "\" and userAgent=\"" + userAgent + "\".");
+                LogService.instance().log(LogService.DEBUG,"GuestUserPreferencesManager::registerSession() : unable to find a profile for user \"" + m_person.getID() + "\" and userAgent=\"" + userAgent + "\".");
             }
         } catch (PortalException pe) {
             throw pe;
@@ -282,7 +282,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public void processUserPreferencesParameters(HttpServletRequest req) {
         MState state=(MState)stateTable.get(req.getSession(false).getId());
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::processUserPreferencesParameters() : trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::processUserPreferencesParameters() : trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
             return;
         }
         // layout root setting
@@ -298,7 +298,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             if(root!=null) {
                 state.complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);
             } else {
-                LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
+                LogService.instance().log(LogService.ERROR, "GuestUserPreferencesManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
             }
         }
         // other params
@@ -307,7 +307,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             for (int i = 0; i < sparams.length; i++) {
                 String pValue = req.getParameter(sparams[i]);
                 state.complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i], pValue);
-                LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
+                LogService.instance().log(LogService.DEBUG, "GuestUserPreferencesManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
                            + "\"=\"" + pValue + "\".");
             }
         }
@@ -316,7 +316,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             for (int i = 0; i < tparams.length; i++) {
                 String pValue = req.getParameter(tparams[i]);
                 state.complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i], pValue);
-                LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
+                LogService.instance().log(LogService.DEBUG, "GuestUserPreferencesManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
                            + "\"=\"" + pValue + "\".");
             }
         }
@@ -331,7 +331,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting sfattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "GuestUserPreferencesManager::processUserPreferencesParameters() : setting sfattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -346,7 +346,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting scattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "GuestUserPreferencesManager::processUserPreferencesParameters() : setting scattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -362,7 +362,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting tcattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "GuestUserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -393,7 +393,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public boolean isUserAgentUnmapped (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::userAgentUnmapped() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::userAgentUnmapped() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return false;
         }
         return  state.unmapped_user_agent;
@@ -406,7 +406,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public UserPreferences getUserPreferences (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::getUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         return  state.complete_up;
@@ -434,7 +434,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public Document getUserLayoutCopy (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getUserLayoutCopy() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::getUserLayoutCopy() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         return  XML.cloneDocument((org.apache.xerces.dom.DocumentImpl)state.uLayoutXML);
@@ -467,7 +467,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public ThemeStylesheetDescription getThemeStylesheetDescription (String sessionId) throws Exception {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         if (state.tsd == null) {
@@ -488,7 +488,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public StructureStylesheetDescription getStructureStylesheetDescription (String sessionId) throws Exception{
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         if (state.ssd == null) {
@@ -526,7 +526,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public Document getUserLayout (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getUserLayout() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserPreferencesManager::getUserLayout() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         return  state.uLayoutXML;
