@@ -160,6 +160,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private String cacheScope;
     private String cacheDefaultMode;
     private String cacheMode;
+    private String reqParameters;
     private long cacheDefaultTimeout;
     private long cacheTimeout;
     private ChannelRuntimeData runtimeData;
@@ -364,9 +365,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
            {
              LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
 
-             StringBuffer newXML = new StringBuffer().append(state.xmlUri);
-	     String appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
-	     // BUG 772 - this doesn't seem to catch all cases.
+             StringBuffer newXML = new StringBuffer();
+             String appendchar = "";
 
              // want all runtime parameters not specific to WebProxy
              Enumeration e=rd.getParameterNames ();
@@ -422,7 +422,14 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
 
              // to add: if not already set, make a copy of sd for
 	     // the "reset" command
-             state.fullxmlUri = newXML.toString();
+             state.reqParameters = newXML.toString();
+             state.fullxmlUri = state.xmlUri;
+             if (!state.runtimeData.getHttpRequestMethod().equals("POST")){
+                appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
+                // BUG 772 - this doesn't seem to catch all cases.
+                state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
+                state.reqParameters = null;
+             }
              LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
           }
        }
@@ -671,6 +678,18 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
     // send appropriate cookies to origin server from cookie vector
     if (state.cookies.size() > 0)
       sendCookieHeader(httpUrlConnect, domain, path, port, state.cookies);
+
+    // added 5/13/2002 by ASV - print post data
+    if (state.runtimeData.getHttpRequestMethod().equals("POST")){
+        httpUrlConnect.setRequestMethod("POST");
+        httpUrlConnect.setAllowUserInteraction(false);
+        httpUrlConnect.setDoOutput(true);
+        PrintWriter post = new PrintWriter(httpUrlConnect.getOutputStream());
+        post.print(state.reqParameters);
+        post.flush();
+        post.close();
+        state.reqParameters=null;
+    }
 
     int status = httpUrlConnect.getResponseCode();
 
