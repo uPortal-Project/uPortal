@@ -109,18 +109,26 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
     }
 
     public void store() throws IOException {
-        //TODO: Implement this!
-        throw new IOException("This method not yet supported!");
+        // Persist portlet entity (preferences)
+        //TODO Persist the portlet entity
+
+        // Save preferences as original preferences
+        originalPreferences = new PreferenceSetImpl();
+        ((PreferenceSetImpl)originalPreferences).addAll(preferences);
     }
 
     public void reset() throws IOException {
         ((PreferenceSetImpl)preferences).clear();
         if (originalPreferences != null) {
-            ((PreferenceSetImpl)preferences).addAll((PreferenceSetImpl)originalPreferences);
+            ((PreferenceSetImpl)preferences).addAll(originalPreferences);
         }
     }
 
     // Additional methods
+    
+    public void setPreferences(PreferenceSet preferences) {
+        this.preferences = preferences;
+    }
     
     public void addPortletWindow(PortletWindow portletWindow) {
         ((PortletWindowListCtrl)portletWindows).add(portletWindow);
