@@ -108,14 +108,15 @@ public class AuthenticationServlet extends HttpServlet {
       // Store the error in the session
       session.setAttribute("up_authorizationError", "true");
     }
-    // Store the fact that this user has attempted authorization in the session
-    session.setAttribute("up_authorizationAttempted", "true");
+    // Check to see if the person has been authenticated
     if (person.getSecurityContext().isAuthenticated()) {
       // Send the now authenticated user back to the PortalSessionManager servlet
       response.sendRedirect("http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath()
           + "/" + redirectString);
     } 
     else {
+      // Store the fact that this user has attempted authorization in the session
+      session.setAttribute("up_authorizationAttempted", "true");
       // Send the unauthenticated to the baseActionURL
       response.sendRedirect(request.getParameter("baseActionURL") + "?userName=" + request.getParameter("userName"));
     }
