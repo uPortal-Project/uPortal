@@ -236,7 +236,9 @@ public class InitialSecurityContextFactory {
                             }
                         }
                         catch (Exception e) {
-                            log.warn("Error parsing security context property from security.properties: " + candidate, e);
+                            if (log.isWarnEnabled())
+                                log.warn("Error parsing security context property " +
+                                        "from security.properties: " + candidate, e);
                         }
                     }
                 }
