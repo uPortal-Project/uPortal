@@ -113,7 +113,8 @@ public class ChannelRenderer
      * @param channel an <code>IChannel</code>
      */
     public void setChannel(IChannel channel) {
-        log.debug("ChannelRenderer::setChannel() : channel is being reset!");        
+        if (log.isDebugEnabled())
+            log.debug("ChannelRenderer::setChannel() : channel is being reset!");        
         this.channel=channel;
         if(worker!=null) {
             worker.setChannel(channel);
@@ -256,7 +257,9 @@ public class ChannelRenderer
             if(!worker.isSetRuntimeDataComplete() && !workTracker.isJobComplete()) {
                 workTracker.killJob();
                 abandoned=true;
-                log.debug("ChannelRenderer::outputRendering() : killed. (key="+groupRenderingKey.toString()+")");
+                if (log.isDebugEnabled())
+                    log.debug("ChannelRenderer::outputRendering() : killed. " +
+                            "(key="+groupRenderingKey.toString()+")");
             } else {
                 groupSemaphore.waitOn();
             }
@@ -278,7 +281,8 @@ public class ChannelRenderer
             if(!workTracker.isJobComplete()) {
                 workTracker.killJob();
                 abandoned=true;
-                log.debug("ChannelRenderer::outputRendering() : killed.");
+                if (log.isDebugEnabled())
+                    log.debug("ChannelRenderer::outputRendering() : killed.");
             } else {
                 abandoned=!workTracker.isJobSuccessful();
             }
@@ -330,7 +334,8 @@ public class ChannelRenderer
         if(worker!=null) {
             return worker.getCharacters();
         } else {
-            log.debug("ChannelRenderer::getCharacters() : worker is null already !");
+            if (log.isDebugEnabled())
+                log.debug("ChannelRenderer::getCharacters() : worker is null already !");
             return null;
         }
     }
