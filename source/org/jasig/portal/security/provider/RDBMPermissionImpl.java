@@ -732,7 +732,7 @@ throws AuthorizationException
 
     if ( owner != null )
     {
-        sqlQuery.append(OWNER_COLUMN);
+        sqlQuery.append(RDBMServices.sqlEscape(OWNER_COLUMN));
         sqlQuery.append(" = '");
         sqlQuery.append(owner);
         sqlQuery.append("' ");
@@ -761,7 +761,7 @@ throws AuthorizationException
             sqlQuery.append("AND ");
             sqlQuery.append(ACTIVITY_COLUMN);
             sqlQuery.append(" = '");
-            sqlQuery.append(activity);
+            sqlQuery.append(RDBMServices.sqlEscape(activity));
             sqlQuery.append("' ");
         }
 
@@ -770,7 +770,7 @@ throws AuthorizationException
             sqlQuery.append("AND ");
             sqlQuery.append(TARGET_COLUMN);
             sqlQuery.append(" = '");
-            sqlQuery.append(target);
+            sqlQuery.append(RDBMServices.sqlEscape(target));
             sqlQuery.append("' ");
         }
 
