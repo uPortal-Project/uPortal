@@ -69,7 +69,7 @@ public class LogoutServlet extends HttpServlet {
       session.invalidate();
 
     // Send the user back to the guest page
-    response.sendRedirect(redirectString);
+    response.sendRedirect(request.getContextPath() + '/' + redirectString);
   }
 }
 
