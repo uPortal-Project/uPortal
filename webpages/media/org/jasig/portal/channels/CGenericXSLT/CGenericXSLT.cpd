@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <channelDef>
 	<description>
-   	This is a channel for rendering local or remote RSS files
+   	This is a channel for XSLT transformations
 	</description>
 	<class>org.jasig.portal.channels.CGenericXSLT</class>
 	<params>
 		<step>
 			<ID>1</ID>
-			<name>Provide XSL URI.</name>
+			<name>Provide XML URI.</name>
 			<!-- displayed at the top of the step screen -->
 			<description/>
 			<!-- intention is for documentation but could be used for other things -->
+
 			<parameter modify="publish-only">
 				<name>prot</name>
 				<!-- the name value -->
@@ -26,9 +27,10 @@
 					</restriction>
 				</type>
 			</parameter>
+
 			<parameter modify="subscribe">
-				<name>xsl</name>
-				<label>XSL</label>
+				<name>xmlUri</name>
+				<label>XML URI</label>
 				<type base="string" input="text" display="text">
 					<length>80</length>
 					<!-- length and maxlength for text field -->
@@ -39,9 +41,10 @@
 						<max>40</max>
 					</restriction>
 				</type>
-				<defaultValue>webpages/stylehseets....</defaultValue>
+				<defaultValue>webpages/stylesheets....</defaultValue>
 				<!-- default value for text field -->
 			</parameter>
+
 		</step>
 		<step>
 			<ID>2</ID>
@@ -49,6 +52,7 @@
 			<!-- displayed at the top of the step screen -->
 			<description/>
 			<!-- intention is for documentation but could be used for other things -->
+
 			<parameter modify="publish-only">
 				<name>prot</name>
 				<!-- the name value -->
@@ -64,9 +68,10 @@
 					</restriction>
 				</type>
 			</parameter>
+
 			<parameter modify="subscribe">
-				<name>xml</name>
-				<label>XML</label>
+				<name>xslUri</name>
+				<label>XSL URI</label>
 				<type base="string" input="text" display="text">
 					<length>80</length>
 					<!-- length and maxlength for text field -->
@@ -77,9 +82,10 @@
 						<max>40</max>
 					</restriction>
 				</type>
-				<defaultValue>webpages/stylehseets....</defaultValue>
+				<defaultValue>webpages/stylesheets....</defaultValue>
 				<!-- default value for text field -->
 			</parameter>
+
 		</step>
 	</params>
 	<controls/>
