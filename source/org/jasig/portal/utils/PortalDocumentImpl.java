@@ -1,12 +1,13 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
 
 package org.jasig.portal.utils;
 
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -33,6 +34,10 @@ import org.w3c.dom.UserDataHandler;
 /**
  * An implementation of IPortalDocument that wraps a standard
  * <code>Document</code> object.
+ * 
+ * As of uPortal 2.5, DOM 3 core Document objects are available in uPortal.
+ * Please use those directly.  There is no longer any reason to be using
+ * this class.
  *
  * @see org.w3c.dom.Document for decorator method descriptions.
  *
@@ -64,45 +69,86 @@ public class PortalDocumentImpl implements IPortalDocument {
      * @return a Hashtable from Strings to nodes.
      */
     public final Hashtable getIdentifiers() {
-        
-        // TODO implement this
-        // likely implementation is to traverse Document, read all identifiers, and
+       
+        // traverse Document by means of recursive helper method, 
+        // read all identifiers, and
         // generate the Hashtable.
         
         // log a stack trace that will help us figure out who is calling us.
-        log.fatal("Invocation of PortalDocumentImpl.getIdentifiers()", new RuntimeException());
+        log.warn("Invocation of PortalDocumentImpl.getIdentifiers()", new RuntimeException());
         
-        return new Hashtable(); 
-    }
-    
-    public final void setIdentifiers( Hashtable identifiers ) {
-         log.fatal("Invocation of PortalDocumentImpl.setIdentifiers()", new RuntimeException());
-         throw new UnsupportedOperationException("setIdentifiers not supported.");
+       return new Hashtable(getIdentifiers(this.getDocumentElement()));
     }
     
     /**
-     * Registers an identifier name with a specified element.
+     * Internal helper method which recursively traverses an Element tree
+     * extracting a Map from ID attribute strings to Elements they identify.
+     * @param elem
+     * @return a Map from identifier String to identified elements
+     */
+    private Map getIdentifiers(Element elem) {
+        HashMap map = new HashMap();
+        
+        String id = elem.getAttribute("ID");
+        
+        if (id != null && ! id.equals("")) {
+            map.put(id, elem);
+        }
+        
+        NodeList nodes = elem.getChildNodes();
+        
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node childNode = nodes.item(i);
+            if (childNode instanceof Element) {
+                Element childElement = (Element) childNode;
+                map.putAll(getIdentifiers(childElement));
+            }
+        }
+        
+        return map;
+    }
+    
+    /**
+     * Prior to uPortal 2.5, was used to manage mapping from identifier Strings to
+     * identified nodes.  No longer supported in uPortal 2.5.  This method no longer
+     * does anything other than log its having been invoked.
+     * @param identifiers
+     */
+    public final void setIdentifiers( Hashtable identifiers ) {
+         log.fatal("Invocation of PortalDocumentImpl.setIdentifiers() - this method is no longer supported.", 
+                 new RuntimeException());
+    }
+    
+    /**
+     * Prior to uPortal 2.5, registered an identifier name with a specified element.
+     * As of uPortal 2.5, this method no longer has any effect.
      *
      * @param key a key used to store an <code>Element</code> object.
      * @param element an <code>Element</code> object to map.
-     * @exception DOMException if the element does not belong to the
-     * document.
+     * @throws DOMException No longer throws this exception.
      */
     public void putIdentifier(String key, Element element)
-    throws DOMException {
-        throw new UnsupportedOperationException("Attempt to put identifier [" + key + "]");
+        throws DOMException {
+        log.fatal("Invocation of PortalDocumentImpl.putIdentifier() for key [" 
+                + key + " - this method is no longer supported.", 
+                new RuntimeException());
     }
 
     /**
-     * Copies the element cache from the source document. This will
-     * provide equivalent mappings from IDs to elements in this
+     * Prior to uPortal 2.5:
+     * Copied the element cache from the source document. This
+     * provided equivalent mappings from IDs to elements in this
      * document provided the elements exist in the source document.
      * If no element exists, it will be skipped.
+     * 
+     * As of uPortal 2.5, this method no longer has any effect.
      *
      * @param sourceDoc The source doc to copy from.
      */
     public void copyCache(IPortalDocument sourceDoc) {
-        throw new UnsupportedOperationException("copyCache() no longer implemented.");
+        log.fatal("Invocation of PortalDocumentImpl.copyCache() " +
+                "- this method is no longer supported.", 
+                new RuntimeException());
     }
 
   
