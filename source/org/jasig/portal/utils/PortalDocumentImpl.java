@@ -66,6 +66,7 @@ import org.w3c.dom.Text;
 public class PortalDocumentImpl implements IPortalDocument {
 
     private final Hashtable identifiers = new Hashtable(1024);
+    private final Hashtable keys = new Hashtable(1024);
 
     public Document document = null;
 
@@ -77,6 +78,12 @@ public class PortalDocumentImpl implements IPortalDocument {
         document = doc;
     }
 
+    
+    public void putIdentifier(String idName, Element element) {
+        putIdentifier(idName, element, XML.serializeNode(element) );
+    }
+    
+    
     /**
      * Registers an identifier name with a specified element.
      *
@@ -85,7 +92,7 @@ public class PortalDocumentImpl implements IPortalDocument {
      * @exception DOMException if the element does not belong to the
      * document.
      */
-    public void putIdentifier(String key, Element element)
+    public void putIdentifier(String key, Element element, String serializedElement )
     throws DOMException {
         if (element == null) {
             removeElement(key);
@@ -101,6 +108,7 @@ public class PortalDocumentImpl implements IPortalDocument {
         }
 
         identifiers.put(key, element);
+        keys.put(serializedElement,key);
     }
 
     /**
@@ -118,16 +126,21 @@ public class PortalDocumentImpl implements IPortalDocument {
     }
 
     private void removeElement(String key) {
-        identifiers.remove(key);
+        Element elem = getElementById(key);
+        if ( elem != null )
+         keys.remove(XML.serializeNode(elem));
+        identifiers.remove(key); 
     }
 
     private void preserveCache(IPortalDocument sourceDoc, Node node) {
         if (node instanceof Element) {
+            Element element = (Element) node;
+            String serializedNode = XML.serializeNode(element);
             String key = ((PortalDocumentImpl)sourceDoc).
-                getElementKey((Element)node);
+                getElementKey(serializedNode);
 
             if (key != null) {
-                putIdentifier(key, (Element)node);
+                putIdentifier(key, element, serializedNode );
             }
         }
 
@@ -138,17 +151,8 @@ public class PortalDocumentImpl implements IPortalDocument {
         }
     }
 
-    private String getElementKey(Element element) {
-        String key = null;
-        Iterator itr = identifiers.keySet().iterator();
-        while (itr.hasNext()) {
-            key = (String)itr.next();
-            if (XML.serializeNode(element).equals(
-                XML.serializeNode(getElementById(key)))) {
-                return key;
-            }
-        }
-        return null;
+    private String getElementKey(String serializedNode) {
+        return (String) keys.get(serializedNode);
     }
 
     // decorator methods

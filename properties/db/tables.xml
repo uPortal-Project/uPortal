@@ -119,7 +119,7 @@
       <column> <name>CHAN_ID</name>        <type>INTEGER</type>
         <desc>Channel ID if the current Node_ID entry is a channel, then this is set to the channel id subscribed to and located at this position in the layout</desc>
       </column>
-      <column> <name>NAME</name>           <type>VARCHAR</type> <param>35</param>
+      <column> <name>NAME</name>           <type>VARCHAR</type> <param>128</param>
         <desc>Name of this struct entry, name of tab, column, header or footer, etc</desc>
       </column>
       <column> <name>GROUP_KEY</name>           <type>VARCHAR</type> <param>35</param>
@@ -149,7 +149,7 @@
     <name>UP_FRAGMENT_PARAM</name>
     <desc>Holds the parameters of fragments</desc>
     <columns>
-       <column> <name>PARAM_NAME</name>        <type>VARCHAR</type> <param>64</param>
+       <column> <name>PARAM_NAME</name>        <type>VARCHAR</type> <param>128</param>
         <desc>The parameter name</desc>
         <key>CK</key>
       </column>
@@ -231,7 +231,7 @@
       <column> <name>CHAN_ID</name>        <type>INTEGER</type>
         <desc>Channel ID if the current Struct_ID entry is a channel, then this is set to the channel id subscribed to and located at this position in the layout</desc>
       </column>
-      <column> <name>NAME</name>           <type>VARCHAR</type> <param>35</param>
+      <column> <name>NAME</name>           <type>VARCHAR</type> <param>128</param>
         <desc>Name of this struct entry, name of tab, column, header or footer, etc</desc>
       </column>
       <column> <name>GROUP_KEY</name>           <type>VARCHAR</type> <param>35</param>
@@ -275,10 +275,10 @@
       <column> <name>OWNER_ID</name> <type>INTEGER</type>
         <desc>Node ID</desc>
       </column>
-      <column> <name>FRAGMENT_NAME</name> <type>VARCHAR</type> <param>64</param>
+      <column> <name>FRAGMENT_NAME</name> <type>VARCHAR</type> <param>128</param>
         <desc>Fragment name</desc>
       </column>
-      <column> <name>FRAGMENT_DESCRIPTION</name> <type>VARCHAR</type> <param>128</param>
+      <column> <name>FRAGMENT_DESCRIPTION</name> <type>VARCHAR</type> <param>255</param>
         <desc>Fragment description</desc>
       </column>
        <column> <name>PUSHED_FRAGMENT</name> <type>VARCHAR</type> <param>1</param>

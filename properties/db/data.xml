@@ -466,7 +466,7 @@
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>USER_NAME</name><value>guest</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>NULL</value></column>
-        <column><name>USER_DFLT_LAY_ID</name><value>NULL</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>30</value></column>
       </row>
       <row>

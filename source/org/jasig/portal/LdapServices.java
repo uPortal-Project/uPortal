@@ -35,6 +35,7 @@
 
 package org.jasig.portal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -65,9 +66,10 @@ public class LdapServices
    * upon first invocation.
    */
   public LdapServices () {
+      InputStream ins = null;
     try {
       if (!bPropsLoaded) {
-        InputStream ins = this.getClass().getResourceAsStream("/properties/ldap.properties");
+        ins = this.getClass().getResourceAsStream("/properties/ldap.properties");
         Properties ldapProps = new Properties ();
         ldapProps.load (ins);
 
@@ -92,6 +94,13 @@ public class LdapServices
     }
     catch (Exception e) {
       LogService.log(LogService.ERROR, e);
+    } finally {
+        try {
+            if(ins != null)        
+            ins.close();
+        }catch(IOException ioe) {
+            LogService.log(LogService.ERROR,"LdapServices::unalbe to close InputStream "+ioe);
+        }
     }
   }
 

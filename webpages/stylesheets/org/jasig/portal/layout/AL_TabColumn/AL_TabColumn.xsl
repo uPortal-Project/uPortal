@@ -37,6 +37,7 @@ Version $Revision$
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" encoding="UTF-8" indent="no"/>
+        <xsl:param name="authenticated" select=" 'false' "/>
     <!--<xsl:param name="alternateLayouts" select="'no alternateLayouts parameter'"/>-->
     <xsl:param name="lastSessionTabID" select="'no lastSessionTabID parameter'"/>
     <!--modes: view (default), preferences, fragment-->
@@ -89,7 +90,7 @@ Version $Revision$
     <!--Create root element - call child templates-->
     <!-- -->
     <xsl:template match="layout">
-        <layout unremovable="{folder[@ID='userLayoutRootNode']/@unremovable}" immutable="{folder[@ID='userLayoutRootNode']/@immutable}" lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
+        <layout authenticated="{$authenticated}" unremovable="{folder[@ID='userLayoutRootNode']/@unremovable}" immutable="{folder[@ID='userLayoutRootNode']/@immutable}" lastSessionTabID="{$lastSessionTabID}" mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
             <!--             <xsl:if test="$mode='preferences'">
                 <xsl:apply-templates select="fragments"/>
             </xsl:if> -->
@@ -115,7 +116,7 @@ Version $Revision$
                     <xsl:apply-templates select="folder[@type='regular' and @hidden='false']|move_target|add_target"/>
                 </navigation>
                 <xsl:choose>
-                    <xsl:when test="/layout/folder//channel[@name='Login']">
+                    <xsl:when test="/layout/folder//channel[@name='Login'] and $authenticated='false' ">
                         <login>
                             <xsl:copy-of select="/layout/folder//channel[@name='Login']"/>
                         </login>

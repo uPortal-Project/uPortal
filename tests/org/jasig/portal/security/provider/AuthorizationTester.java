@@ -24,8 +24,10 @@ import org.jasig.portal.security.IAuthorizationServiceFactory;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionPolicy;
 import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+
 
 /**
  * Tests the authorization framework.
@@ -259,7 +261,14 @@ private void initializeAuthorizationService() throws AuthorizationException
     catch (IOException e)
     {
         print ("ERROR: " + e.getMessage());
-    }
+    } finally {
+		try {
+			if (secprops != null)
+				secprops.close();
+		} catch (IOException ioe) {
+			print(new PortalSecurityException(ioe.getMessage()));
+		}
+	}
 }
 /**
  * Create the default implementation of IPermissionPolicy.

@@ -156,7 +156,7 @@
       </tr>
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
-          <p class="uportal-channel-error">Resurs-URI
+          <p class="uportal-channel-error">Resurs-URI</p>
         </td>
         <td width="100%" valign="top" align="left" class="uportal-channel-error">
           <xsl:if test="not(resource/uri) or resource/uri = ''">Resurs-URI inte tillgänglig</xsl:if>

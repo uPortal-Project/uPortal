@@ -63,3 +63,5 @@ change language for this column ::: change language for this column
 delete this column ::: delete this column
 shrink this column by 5% ::: shrink this column by 5%
 expand this column by 5% ::: expand this column by 5%
+Welcome <xsl:value-of select="\$userName"\/> ::: Welcome <xsl:value-of select="$userName"/>
+Welcome Guest - Please Login ::: Welcome Guest - Please Login

@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 package org.jasig.portal.security.provider;
@@ -50,11 +48,11 @@ import org.jasig.portal.services.LogService;
  * is passed to the security context.  If it is set then the server has authenticated
  * the user and the username may be used for login.
  *
- * @author     Pete Boysen (pboysen@iastate.edu)
+ * @author Pete Boysen (pboysen@iastate.edu)
  * @version $Revision$
  */
-public class RemoteUserPersonManager
-	 implements IPersonManager {
+public class RemoteUserPersonManager implements IPersonManager {
+
 	/**
 	 *  Description of the Field
 	 */
@@ -63,36 +61,29 @@ public class RemoteUserPersonManager
 	/**
 	 * Retrieve an IPerson object for the incoming request
 	 *
-	 *@param  request
-	 *@return                              IPerson object for the incoming request
-	 *@exception  PortalSecurityException  Description of the Exception
+	 * @param request
+	 * @return IPerson object for the incoming request
+	 * @exception PortalSecurityException Description of the Exception
 	 */
 	public IPerson getPerson(HttpServletRequest request)
 		throws PortalSecurityException {
 		// Return the person object if it exists in the user's session
 		IPerson person = (IPerson) request.getSession(false).getAttribute(PERSON_SESSION_KEY);
-		if (person != null) {
+		if (person != null)
 			return person;
-		}
-		// Create a new instance of a person
-		person = PersonFactory.createPerson();
-        String user = PersonFactory.GUEST_USERNAME;
 		try {
+			// Create a new instance of a person
+			person = PersonFactory.createGuestPerson();
 			// If the user has authenticated with the server which has implemented web authentication,
 			// the REMOTEUSER environment variable will be set.
-            String remoteUser = request.getRemoteUser();
+			String remoteUser = request.getRemoteUser();
 			RemoteUserSecurityContext context = new RemoteUserSecurityContext(remoteUser);
 			person.setSecurityContext(context);
-            if (remoteUser != null)
-                user = remoteUser;
 		}
 		catch (Exception e) {
 			// Log the exception
 			LogService.log(LogService.ERROR, e);
 		}
-		// By default new user's have the UID of 1
-		person.setID(1);
-        person.setAttribute(IPerson.USERNAME, user);
 		// Add this person object to the user's session
 		request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
 		// Return the new person object
