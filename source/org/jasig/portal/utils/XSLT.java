@@ -571,7 +571,7 @@ public class XSLT {
         NodeList nl = root.getChildNodes();
         for(int i=0;i<nl.getLength();i++){
             Node n = nl.item(i);
-            if(n.getNodeType() == n.ELEMENT_NODE){
+            if(n.getNodeType() == Node.ELEMENT_NODE){
                 Element e = (Element)n;
                 //System.out.println("Checking Element "+e.getNamespaceURI()+":"+e.getLocalName());
                 if(!foundFT && e.getNamespaceURI().equals("http://www.w3.org/1999/XSL/Transform")

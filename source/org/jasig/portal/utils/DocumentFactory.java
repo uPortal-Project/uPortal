@@ -75,6 +75,7 @@ public class DocumentFactory {
       LogService.log(LogService.ERROR,e);
     }
   }
+  
   /**
    * Returns a new copy of a Document implementation. This will
    * return an <code>IPortalDocument</code> implementation.
@@ -128,7 +129,7 @@ public class DocumentFactory {
       protected Object initialValue(){
           Object r = null;
           try{
-            r = instance().dbFactory.newDocumentBuilder();
+            r = dbFactory.newDocumentBuilder();
           }
           catch(Exception e){
               LogService.log(LogService.ERROR,e);
