@@ -81,10 +81,14 @@ public class DeleteGroup extends GroupsManagerCommand {
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Start");
       //Document xmlDoc = (Document)staticData.get("xmlDoc");
       Document xmlDoc = (Document)sessionData.model;
-      String userID = runtimeData.getParameter("username");
+      String userID = getUserID(sessionData);
       String theCommand = runtimeData.getParameter("grpCommand");
-      String delId = getCommandIds(runtimeData);
+      String delId = getCommandArg(runtimeData);
       Element delElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, delId);
+      Element pn = ((Element)delElem.getParentNode());
+      if (pn !=null){
+       sessionData.highlightedGroupID = pn.getAttribute("id");
+      }
       String delKey = delElem.getAttribute("key");
       String elemName = delElem.getAttribute("name");
       String retMsg;
@@ -98,7 +102,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          IEntityGroup delGroup = GroupsManagerXML.retrieveGroup(delKey);
          if (delGroup == null) {
             retMsg = "Unable to retrieve Group!";
-            runtimeData.setParameter("commandResponse", retMsg);
+            sessionData.feedback = retMsg;
             return;
          }
          Utility.logMessage("DEBUG", "DeleteGroup::execute(): About to delete group: "
@@ -150,20 +154,18 @@ public class DeleteGroup extends GroupsManagerCommand {
                principalNode.removeChild(permElem);
             }
          }
-         runtimeData.setParameter("grpMode", "browse");
-         runtimeData.setParameter("grpView", "tree");
-         runtimeData.setParameter("grpViewId", "0");
+         sessionData.mode=BROWSE_MODE;
       } catch (GroupsException ge) {
          retMsg = "Unable to delete group : " + elemName;
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ge);
       } catch (ChainedException ce) {
          retMsg = "Unable to delete group : " + elemName;
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + ce);
       } catch (Exception e) {
          retMsg = "Unable to delete group : " + elemName;
-         runtimeData.setParameter("commandResponse", retMsg);
+         sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + e);
       }
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Finished");
