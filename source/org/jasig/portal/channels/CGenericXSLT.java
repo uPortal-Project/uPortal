@@ -92,69 +92,44 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   protected static String fs = File.separator;
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
   protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
-  
-    // Cache transformed content in this smartcache
-    //  protected SmartCache m_cachedContent = new SmartCache(10000);
-    protected SAXBufferImpl cache=new SAXBufferImpl();
+
+  // Cache transformed content in this smartcache - should be moved out of the channel
+  protected static SmartCache bufferCache = new SmartCache(15 * 60); // 15 mins
 
   public CGenericXSLT ()
   {
-    // The media will soon be passed to the channel I think.
-    // This code can then be replaced with runtimeData.getMedia()
-    mm = new MediaManager();
-    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
-    cache.startBuffering();
   }
 
   // Get channel parameters.
   public void setStaticData (ChannelStaticData sd)
   {
-    try
-    {
-      this.xmlUri = sd.getParameter("xml");
-      this.sslUri = sd.getParameter("ssl");
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
+    this.xmlUri = sd.getParameter("xml");
+    this.sslUri = sd.getParameter("ssl");
   }
 
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     runtimeData = rd;
-    
+
     String xmlUri = runtimeData.getParameter("xmlUri");
 
     if (xmlUri != null)
-    {
       this.xmlUri = xmlUri;
-      cache.clearBuffer();
-    }
 
     String sslUri = runtimeData.getParameter("sslUri");
 
     if (sslUri != null)
-    {
       this.sslUri = sslUri;
-      cache.clearBuffer();
-    }
 
     String xslTitle = runtimeData.getParameter("xslTitle");
 
     if (xslTitle != null)
-    {
       this.xslTitle = xslTitle;
-      cache.clearBuffer();
-    }
 
     String xslUri = runtimeData.getParameter("xslUri");
 
     if (xslUri != null)
-    {
       this.xslUri = xslUri;
-      cache.clearBuffer();
-    }
 
     media = runtimeData.getMedia();
   }
@@ -182,54 +157,78 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     Document xmlDoc;
     sslUri = UtilitiesBean.fixURI(sslUri);
 
-    // If there is cached content then write it out
-    if(cache.isEmpty()) {
-	try {
-	    org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
-	    org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
-	    domParser.setEntityResolver(dtdResolver);
-	    domParser.parse(UtilitiesBean.fixURI(xmlUri));
-	    xmlDoc = domParser.getDocument();
-	}
-	catch (IOException e) {
-	    throw new ResourceMissingException (xmlUri, "", e.getMessage());
-	}
-	catch (SAXException se)
-	    {
-		throw new GeneralRenderingException("Problem parsing " + xmlUri + ": " + se);
-	    }
-	
-	runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
-	
-	try {
-	    if (xslUri != null) {
-		XSLT.transform(xmlDoc, new URL(xslUri), cache, runtimeData);
-	    } else {
-		if (xslTitle != null)  {
-		    XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, xslTitle, media);
-		}
-		else {
-		    XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, media);
-		}
-	    }
+    String key = getKey(); // Generate a key to lookup cache
+    SAXBufferImpl cache = (SAXBufferImpl)bufferCache.get(key);
 
-	} catch (SAXException se)
-	    {
-		throw new GeneralRenderingException("Problem performing the transformation:"+se.toString());
-	    }
-	catch (IOException ioe)
-	    {
-		StringWriter sw = new StringWriter();
-		ioe.printStackTrace(new PrintWriter(sw));
-		sw.flush();
-		throw new GeneralRenderingException(sw.toString());
-	    }
+    // If there is cached content then write it out
+    if (cache == null)
+    {
+      cache = new SAXBufferImpl();
+
+      try
+      {
+        org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
+        org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
+        domParser.setEntityResolver(dtdResolver);
+        domParser.parse(UtilitiesBean.fixURI(xmlUri));
+        xmlDoc = domParser.getDocument();
+      }
+      catch (IOException e)
+      {
+        throw new ResourceMissingException (xmlUri, "", e.getMessage());
+      }
+      catch (SAXException se)
+      {
+        throw new GeneralRenderingException("Problem parsing " + xmlUri + ": " + se);
+      }
+
+      runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
+      cache.startBuffering();
+
+      try
+      {
+        if (xslUri != null)
+          XSLT.transform(xmlDoc, new URL(xslUri), cache, runtimeData);
+        else
+        {
+          if (xslTitle != null)
+            XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, xslTitle, media);
+          else
+            XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, media);
+        }
+        Logger.log(Logger.INFO, "Caching output of CGenericXSLT for: " + key);
+        bufferCache.put(key, cache);
+      }
+      catch (SAXException se)
+      {
+        throw new GeneralRenderingException("Problem performing the transformation:" + se.toString());
+      }
+      catch (IOException ioe)
+      {
+        StringWriter sw = new StringWriter();
+        ioe.printStackTrace(new PrintWriter(sw));
+        sw.flush();
+        throw new GeneralRenderingException(sw.toString());
+      }
     }
-    try {
-	cache.outputBuffer(out);	    
-    } catch (SAXException se)
-	{
-	    throw new GeneralRenderingException("Problem retreiving output from cache:"+se.toString());
-	}
+    try
+    {
+      cache.outputBuffer(out);
+    }
+    catch (SAXException se)
+    {
+      throw new GeneralRenderingException("Problem retreiving output from cache:" + se.toString());
+    }
+  }
+
+  private String getKey()
+  {
+    StringBuffer sbKey = new StringBuffer(1024);
+    sbKey.append("xmluri:").append(xmlUri).append(", ");
+    sbKey.append("sslUri:").append(sslUri).append(", ");
+    sbKey.append("xslUri:").append(xslUri).append(", ");
+    sbKey.append("params:").append(runtimeData.toString()).append(", ");
+    sbKey.append("media:").append(media);
+    return sbKey.toString();
   }
 }
