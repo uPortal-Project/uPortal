@@ -867,7 +867,7 @@ Version $Revision$
 		<a href="#">
 			<img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="change language for this channel" title="change language for this channel" border="0"/>
 		</a>
-		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
+		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this channel?')">
 			<img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="delete this channel" title="delete this channel" border="0"/>
 		</a>
 	</xsl:template>
@@ -1350,7 +1350,7 @@ Version $Revision$
 													<img alt="Change language for this tab" title="Change language for this tab" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
 												</a>
 												<xsl:if test="@unremovable='false'">
-													<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
+													<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
 														<img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
 													</a>
 												</xsl:if>
@@ -2569,7 +2569,7 @@ Version $Revision$
 											</a>
 										</td>
 										<td>
-											<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
+											<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this column?')">
 												<img src="{$mediaPathIcons}/columncan.gif" width="28" height="25" alt="delete this column" title="delete this column" border="0"/>
 											</a>
 										</td>
