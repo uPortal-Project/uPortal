@@ -15,7 +15,7 @@
   <xsl:param name="userLayoutRoot" select="'root'"/>
   <!--<xsl:param name="userLayoutRoot" select="'29'"/>-->
   <xsl:param name="focusedTabID">
-    <!--Check if lastSession-->
+  <!--Check if lastSession-->
     <xsl:choose>
       <xsl:when test="$lastSessionTabID = /layout/folder/folder[@type='regular' and @hidden='false']/@ID">
         <xsl:value-of select="$lastSessionTabID"/>
@@ -177,4 +177,8 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
-</xsl:stylesheet>
+</xsl:stylesheet><!-- Stylus Studio meta-information - (c)1998-2003. Sonic Software Corporation. All rights reserved.
+<metaInformation>
+<scenarios/><MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
+</metaInformation>
+-->
