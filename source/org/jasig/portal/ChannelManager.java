@@ -381,7 +381,7 @@ public class ChannelManager implements LayoutEventListener {
             // Tell the StatsRecorder that this channel has rendered
             StatsRecorder.recordChannelRendered(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
         } else {
-            handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unsuccessful rendering","unsuccessfull rendering",false);
+            handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unsuccessful rendering","unsuccessful rendering",false);
             return;
         }
     }
