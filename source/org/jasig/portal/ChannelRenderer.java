@@ -35,7 +35,13 @@ public class ChannelRenderer
     
     private static final Log log = LogFactory.getLog(ChannelRenderer.class);
     
-    public static final boolean CACHE_CHANNELS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.cache_channels");
+    /**
+     * Default value for CACHE_CHANNELS.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final boolean DEFAULT_CACHE_CHANNELS = false;
+    
+    public static final boolean CACHE_CHANNELS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.cache_channels", DEFAULT_CACHE_CHANNELS);
     public static final int RENDERING_SUCCESSFUL=0;
     public static final int RENDERING_FAILED=1;
     public static final int RENDERING_TIMED_OUT=2;
