@@ -47,38 +47,37 @@ import java.util.*;
  */
 public abstract class GroupMemberImpl implements IGroupMember
 {
-	/*
-	 * The key to the underlying <code>IGroupMember</code>, which is either an <code>IEntity</code> or
-	 * an <code>IEntityGroup</code>.
- 	 */
-	private java.lang.String key;
+/*
+ * The key to the underlying <code>IGroupMember</code>, which is either an <code>IEntity</code> or
+ * an <code>IEntityGroup</code>.
+ */
+    private java.lang.String key;
+/*
+ * If an <code>IEntity</code>, the <code>type</code> of its underlying entity.  If an
+ * <code>IEntityGroup</code>, the <code>entityType</code> of its <code>IEntities</code>.
+ * This is analagous to <code>Class</code>, as applied to <code>Arrays</code> and their elements.
+ */
+    private static java.lang.Class defaultEntityType;
+    private java.lang.Class entityType;
 
-	/*
-	 * If an <code>IEntity</code>, the <code>type</code> of its underlying entity.  If an
-	 * <code>IEntityGroup</code>, the <code>entityType</code> of its <code>IEntities</code>.
-	 * This is analagous to <code>Class</code>, as applied to <code>Arrays</code> and their elements.
-	 */
-	private static java.lang.Class defaultEntityType;
-	private java.lang.Class entityType;
-
-	// Cache for the containing <code>IEntityGroups</code>.
-	private HashMap groups;
-	private boolean groupsInitialized;
+// Cache for the containing <code>IEntityGroups</code>.
+    private HashMap groups;
+    private boolean groupsInitialized;
 /**
  * entityType will be defaulted to Object
  */
-public GroupMemberImpl(String newKey) throws GroupsException
+    public GroupMemberImpl(String newKey) throws GroupsException
 {
-	this(newKey, null);
+    this(newKey, null);
 }
 /**
  * @exception GroupsException is thrown if the <code>entityType</code> is unknown.
  */
 public GroupMemberImpl(String newKey, Class newEntityType) throws GroupsException
 {
-	super();
-	setEntityType(newEntityType);
-	key = newKey;
+    super();
+    setEntityType(newEntityType);
+    key = newKey;
 }
 /**
  * Adds the <code>IEntityGroup</code> to our groups <code>Map</code>.
@@ -87,7 +86,7 @@ public GroupMemberImpl(String newKey, Class newEntityType) throws GroupsExceptio
  */
 public void addGroup(IEntityGroup eg)
 {
-	primGetGroups().put(eg.getName(), eg);
+    primGetGroups().put(eg.getName(), eg);
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -96,7 +95,7 @@ public void addGroup(IEntityGroup eg)
  */
 public boolean contains(IGroupMember gm) throws GroupsException
 {
-	return false;
+    return false;
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -105,7 +104,7 @@ public boolean contains(IGroupMember gm) throws GroupsException
  */
 public boolean deepContains(IGroupMember gm) throws GroupsException
 {
-	return false;
+    return false;
 }
 /**
  * Returns an <code>Iterator</code> over the <code>Set</code> of this
@@ -115,7 +114,7 @@ public boolean deepContains(IGroupMember gm) throws GroupsException
  */
 public java.util.Iterator getAllContainingGroups() throws GroupsException
 {
-	return primGetAllContainingGroups(new HashSet()).iterator();
+    return primGetAllContainingGroups(new HashSet()).iterator();
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -123,7 +122,7 @@ public java.util.Iterator getAllContainingGroups() throws GroupsException
  */
 public java.util.Iterator getAllEntities() throws GroupsException
 {
-	return getEmptyIterator();
+    return getEmptyIterator();
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -131,13 +130,13 @@ public java.util.Iterator getAllEntities() throws GroupsException
  */
 public java.util.Iterator getAllMembers() throws GroupsException
 {
-	return getEmptyIterator();
+    return getEmptyIterator();
 }
 /**
  * @return java.lang.String
  */
 protected String getCacheKey() {
-	return getKey();
+    return getKey();
 }
 /**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
@@ -145,28 +144,28 @@ protected String getCacheKey() {
  */
 public java.util.Iterator getContainingGroups() throws GroupsException
 {
-	if ( ! isGroupsInitialized() )
-		{ initializeGroups(); }
-	return primGetGroups().values().iterator();
+    if ( ! isGroupsInitialized() )
+        { initializeGroups(); }
+    return primGetGroups().values().iterator();
 }
 /**
  * @return java.lang.Class
  */
 private java.lang.Class getDefaultEntityType()
 {
-	if (defaultEntityType == null)
-	{
-		Class cls = (new Object()).getClass();
-		defaultEntityType = cls;
-	}
-	return defaultEntityType;
+    if (defaultEntityType == null)
+    {
+        Class cls = (new Object()).getClass();
+        defaultEntityType = cls;
+    }
+    return defaultEntityType;
 }
 /**
  * @return java.util.Iterator
  */
 private java.util.Iterator getEmptyIterator()
 {
-	return java.util.Collections.EMPTY_LIST.iterator();
+    return java.util.Collections.EMPTY_LIST.iterator();
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -174,31 +173,31 @@ private java.util.Iterator getEmptyIterator()
  */
 public java.util.Iterator getEntities() throws GroupsException
 {
-	return getEmptyIterator();
+    return getEmptyIterator();
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroupStore
  */
 protected IEntityStore getEntityFactory() {
-	return RDBMEntityStore.singleton();
+    return RDBMEntityStore.singleton();
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroupStore
  */
 protected IEntityGroupStore getEntityGroupFactory() throws GroupsException {
-	return RDBMEntityGroupStore.singleton();
+    return RDBMEntityGroupStore.singleton();
 }
 /**
  * @return java.lang.Class
  */
 public java.lang.Class getEntityType() {
-	return entityType;
+    return entityType;
 }
 /**
  * @return java.lang.String
  */
 public java.lang.String getKey() {
-	return key;
+    return key;
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -207,7 +206,7 @@ public java.lang.String getKey() {
  */
 public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
 {
-	return null;
+    return null;
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -215,14 +214,28 @@ public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
  */
 public java.util.Iterator getMembers() throws GroupsException
 {
-	return getEmptyIterator();
+    return getEmptyIterator();
+}
+/**
+ * Returns the type represented by the <code>IGroupMember</code>.  In the
+ * case of an <code>IEntityGroup</code> this is <code>IEntityGroup</code>.  In
+ * the case of an <code>IEntity</code> it is the <code>entityType</code> of
+ * the <code>IEntity</code>.
+ *
+ * @return java.lang.Class
+ */
+public Class getType()
+{
+    return ( isGroup() )
+        ? EntityTypes.GROUP_ENTITY_TYPE
+        : getEntityType();
 }
 /*
  * @return an integer hash code for the receiver
  * @see java.util.Hashtable
  */
 public int hashCode() {
-	return getKey().hashCode();
+    return getKey().hashCode();
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -230,7 +243,7 @@ public int hashCode() {
  */
 public boolean hasMembers() throws GroupsException
 {
-	return false;
+    return false;
 }
 /**
  * Load and cache <code>IEntityGroups</code> that contain this <code>IGroupMember</code>.
@@ -238,21 +251,21 @@ public boolean hasMembers() throws GroupsException
  */
 private void initializeContainingGroups() throws GroupsException
 {
-	Iterator eGroups = getEntityGroupFactory().findContainingGroups(this);
+    Iterator eGroups = getEntityGroupFactory().findContainingGroups(this);
 
-	while (eGroups.hasNext())
-	{
-		IEntityGroup eg = (IEntityGroup) eGroups.next();
-		addGroup(eg);
-	}
+    while (eGroups.hasNext())
+    {
+        IEntityGroup eg = (IEntityGroup) eGroups.next();
+        addGroup(eg);
+    }
 }
 /**
  * Load and cache <code>IEntityGroups</code> that contain this IGroupMember.
  */
 private void initializeGroups() throws GroupsException
 {
-	initializeContainingGroups();
-	setGroupsInitialized(true);
+    initializeContainingGroups();
+    setGroupsInitialized(true);
 }
 /**
  * Answers if this <code>IGroupMember</code> is, recursively, a member of <code>IGroupMember</code> gm.
@@ -260,27 +273,27 @@ private void initializeGroups() throws GroupsException
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException{
-	return gm.deepContains(this);
+    return gm.deepContains(this);
 }
 /**
  * @return boolean
  */
 public boolean isEntity()
 {
-	return false;
+    return false;
 }
 /**
  * @return boolean
  */
 public boolean isGroup()
 {
-	return false;
+    return false;
 }
 /**
  * @return boolean
  */
 private boolean isGroupsInitialized() {
-	return groupsInitialized;
+    return groupsInitialized;
 }
 /**
  * Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm.
@@ -289,7 +302,7 @@ private boolean isGroupsInitialized() {
  */
 public boolean isMemberOf(IGroupMember gm) throws GroupsException
 {
-	return gm.contains(this);
+    return gm.contains(this);
 }
 /**
  * Returns the <code>Set</code> of groups in our member <code>Collection</code> and,
@@ -299,22 +312,22 @@ public boolean isMemberOf(IGroupMember gm) throws GroupsException
  */
 protected java.util.Set primGetAllContainingGroups(Set s) throws GroupsException
 {
-	Iterator i = getContainingGroups();
-	while ( i.hasNext() )
-	{
-		GroupMemberImpl gmi = (GroupMemberImpl) i.next();
-		s.add(gmi);
-		gmi.primGetAllContainingGroups(s);
-	}
-	return s;
+    Iterator i = getContainingGroups();
+    while ( i.hasNext() )
+    {
+        GroupMemberImpl gmi = (GroupMemberImpl) i.next();
+        s.add(gmi);
+        gmi.primGetAllContainingGroups(s);
+    }
+    return s;
 }
 /**
  * @return java.util.HashMap
  */
 private java.util.HashMap primGetGroups() {
-	if ( this.groups == null )
-		this.groups = new HashMap();
-	return groups;
+    if ( this.groups == null )
+        this.groups = new HashMap();
+    return groups;
 }
 /**
  * Remove the <code>IEntityGroup</code> from our groups <code>Map</code>.
@@ -323,27 +336,27 @@ private java.util.HashMap primGetGroups() {
  */
 public void removeGroup(IEntityGroup eg)
 {
-	primGetGroups().remove(eg.getName());
+    primGetGroups().remove(eg.getName());
 }
 /**
  * @exception GroupsException is thrown if the <code>entityType</code> is unknown.
  */
 private void setEntityType(Class newEntityType) throws GroupsException
 {
-	if ( newEntityType == null )
-		entityType = getDefaultEntityType();
-	else
-	{
-		Integer typeID = EntityTypes.getEntityTypeID(newEntityType);
-		if ( typeID == null )
-			throw new GroupsException("Unknown entity type: " + newEntityType);
-		entityType = newEntityType;
-	}
+    if ( newEntityType == null )
+        entityType = getDefaultEntityType();
+    else
+    {
+        Integer typeID = EntityTypes.getEntityTypeID(newEntityType);
+        if ( typeID == null )
+            throw new GroupsException("Unknown entity type: " + newEntityType);
+        entityType = newEntityType;
+    }
 }
 /**
  * @param newGroupsInitialized boolean
  */
 private void setGroupsInitialized(boolean newGroupsInitialized) {
-	groupsInitialized = newGroupsInitialized;
+    groupsInitialized = newGroupsInitialized;
 }
 }
