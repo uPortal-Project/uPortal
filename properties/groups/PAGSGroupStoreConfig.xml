@@ -2,10 +2,24 @@
 
 <!--
     PAGSGroupStoreConfig.xml is used to configure the person attributes group store.  	
-    See PAGSGroupStore.dtd for xml grammar.
+    See PAGSGroupStore.dtd for xml grammar.  
+
+    To control the attributes that are available, see ../PersonDirs.xml.
 
     Author: Dan Ellentuck, de3@columbia.edu
     Version $Revision$
+
+    This sample configuration sets up 4 groups in the following relationship:
+
+    All (0)
+     |- Users (1)
+     |- Short First Names (2)
+         |- Ds and Staff (3)
+    
+    that is, Users (1) and Short First Names (2) are members of All (0), and Ds and Staff 
+    is a member of Short First Names (2).  These declarations can be used to assess group
+    membership for the 6 users delivered in the base code (demo, student, etc.)
+
 -->
 
 
@@ -14,82 +28,92 @@
 <!-- Group declarations: -->
 
 <!-- 
-  Group 1: "students" 
-  classification EQ "student" and status EQ "active"
+  Group 0: "PAGS Root" 
+-->
+  <group>
+    <group-key>0</group-key>
+    <group-name>PAGS Root</group-name>
+    <group-description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</group-description>
+    <members>
+      <member-key>1</member-key>
+      <member-key>2</member-key>
+    </members>
+  </group>
+
+
+<!-- 
+  Group 1: "Users" 
+  sn EQ (ignore case) "User" 
 -->
   <group>
     <group-key>1</group-key>
-    <group-name>students</group-name>
-    <group-description>All active students</group-description>
+    <group-name>Users</group-name>
+    <group-description>Portal users whose last names equal User</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>classification</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>student</test-value>
+          <attribute-name>sn</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
+          <test-value>User</test-value>
         </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+
+<!-- 
+  Group 2: "Short First Names" 
+  givenName has 5 or fewer characters 
+-->
+  <group>
+    <group-key>2</group-key>
+    <group-name>Short First Names</group-name>
+    <group-description>Portal users whose first names are between 1 and 5 characters long</group-description>
+    <selection-test>
+      <test-group>
         <test>
-          <attribute-name>status</attribute-name>
+          <attribute-name>givenName</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
-          <test-value>^active$</test-value>
+          <test-value>^.{1,5}$</test-value>
         </test>
       </test-group>
     </selection-test>
     <members>
-      <member-key>2</member-key>
       <member-key>3</member-key>
     </members>
   </group>
 
+
 <!-- 
-  Group 2: "grad students" 
-  member of students and ((year GT 4 and degree matches M*) or (degree EQ "LLB"))
+  Group 3: "Ds and Students" 
+  givenName starts with D or equals "Student" since the results of the test-group elements are
+  OR-ed together.  HOWEVER, since this group is a member of group 2, members of this group must
+  also qualify as members of group 2, i.e., given name must have 5 or fewer characters.  As a 
+  result, Student User should not show up as a member.
 -->
   <group>
-    <group-key>2</group-key>
-    <group-name>grad students</group-name>
-    <group-description>Graduate students</group-description>
+    <group-key>3</group-key>
+    <group-name>Ds and Students</group-name>
+    <group-description>Portal users whose first names begin with D or equal Student</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>year</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.IntegerGTTester</tester-class>
-          <test-value>4</test-value>
-        </test>
-        <test>
-          <attribute-name>degree</attribute-name>
+          <attribute-name>givenName</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
-          <test-value>M.*</test-value>
+          <test-value>^D.*$</test-value>
         </test>
       </test-group>
       <test-group>
         <test>
-          <attribute-name>degree</attribute-name>
+          <attribute-name>givenName</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>LLB</test-value>
+          <test-value>Student</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
 
-<!-- 
-  Group 3: "undergrad students" 
-  member of students and degree matches B*
--->
-  <group>
-    <group-key>3</group-key>
-    <group-name>undergrad students</group-name>
-    <group-description>Undergraduate students</group-description>
-    <selection-test>
-      <test-group>
-        <test>
-          <attribute-name>degree</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
-          <test-value>B..</test-value>
-        </test>
-      </test-group>
-    </selection-test>
-  </group>
+
 
 <!-- End Group declarations: -->
 
