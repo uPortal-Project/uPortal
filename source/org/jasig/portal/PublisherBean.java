@@ -183,7 +183,7 @@ public class PublisherBean extends GenericPortalBean{
       con = rdbmService.getConnection ();
       Statement stmt = con.createStatement();
 
-      String sQuery = "SELECT max(chan_id)+1  FROM PORTAL_CHANNELS";
+      String sQuery = "SELECT MAX(CHAN_ID)+1  FROM PORTAL_CHANNELS";
       rs = stmt.executeQuery(sQuery);
       rs.next();
       int nextID = rs.getInt(1);
@@ -200,7 +200,7 @@ public class PublisherBean extends GenericPortalBean{
       if (iInserted == 1) status = true;
       Logger.log (Logger.DEBUG, "Saving channel xml for " + sChanName + ". Inserted " + iInserted + " rows.");
       stmt.close ();
-      status = setChannelCats(req, nextID);
+      status = setChannelCats(req, nextID, con);
       return status;
     }
     catch (Exception e)
@@ -218,15 +218,13 @@ public class PublisherBean extends GenericPortalBean{
    * Relates channel to classifications
    * @param the servlet request object
    */
-  public boolean setChannelCats (HttpServletRequest req, int id)
+  public boolean setChannelCats (HttpServletRequest req, int id, Connection con)
   {
     RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
     boolean status = false;
 
     try
     {
-      con = rdbmService.getConnection ();
       Statement stmt = con.createStatement();
 
       String[] cats = req.getParameterValues("class");
@@ -278,7 +276,7 @@ public class PublisherBean extends GenericPortalBean{
         out.println("<td width=\"26%\" height=\"37\">");
         out.println("<input type=\"radio\" name=\"chan_type\" value=\""+rs.getString("TYPE")+"\">"+rs.getString("NAME")+"</td>");
         out.println("<td width=\"3%\" height=\"37\">&nbsp;</td>");
-        out.println("<td width=\"71%\" height=\"37\"><font size=\"2\">"+rs.getString("DESC")+"</font></td>");
+        out.println("<td width=\"71%\" height=\"37\"><font size=\"2\">"+rs.getString("DESCR")+"</font></td>");
         out.println("</tr>");
         out.println("<tr>");
         out.println("<td width=\"26%\" height=\"2\">&nbsp;</td>");
@@ -345,7 +343,7 @@ public class PublisherBean extends GenericPortalBean{
   {
     RdbmServices rdbmService = new RdbmServices ();
     Connection con = null;
-    String sChanId = req.getParameter("chan_id");
+    String sChanId = req.getParameter("CHAN_ID");
     
     try
     {
