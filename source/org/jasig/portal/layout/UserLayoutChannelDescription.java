@@ -6,18 +6,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import java.util.Iterator;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.Collection;
+import java.util.Hashtable;
+
+
 /**
  * A class managing information contained in a user layout channel node.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
  */
-
-import java.util.Map;
-import java.util.Set;
-import java.util.Collection;
-import java.util.Hashtable;
-
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
 
     Map parameters;
