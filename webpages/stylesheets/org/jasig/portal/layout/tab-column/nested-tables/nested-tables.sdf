@@ -3,8 +3,8 @@
 <stylesheetdescription>
   <name>Nested tables</name>
   <description>Renders tabs and columns as nested tables</description>
-  <parentStructureStylesheet>Tabs and columns</parentStructureStylesheet>
-  <mimeType>text/html</mimeType>
+  <parentstylesheet>Tabs and columns</parentstylesheet>
+  <mimetype>text/html</mimetype>
   <serializer>HTML</serializer>
   <deviceType>workstation</deviceType>
   <samplePictureURI></samplePictureURI>
