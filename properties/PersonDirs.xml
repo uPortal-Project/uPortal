@@ -2,7 +2,7 @@
 
 <PersonDirInfo>
 
-  <!-- Set either the LDAP Properties or the JDBC Properties, but not both! -->
+  <!-- Set either the LDAP Properties, the JDBC Properties, or both -->
 
   <!-- LDAP Properties -->
   <!--
