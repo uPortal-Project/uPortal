@@ -81,7 +81,7 @@ final class TabColumnPrefsState extends BaseState
   private String errorMessage = "Nothing is wrong!";
   private static final String errorMessageSetActiveTab = "Problem trying to set the active tab";
   private static final String errorMessageRenameTab = "Problem trying to rename tab";
-  private static final String errorMessageMoveTab = "Problem trying to move the active tab";
+  private static final String errorMessageMoveTab = "Problem trying to move the tab";
   private static final String errorMessageAddTab = "Problem trying to add a new tab";
   private static final String errorMessageDeleteTab = "Problem trying to delete tab";
   private static final String errorMessageChangeColumnWidths = "Problem changing column widths";
@@ -324,17 +324,34 @@ final class TabColumnPrefsState extends BaseState
    * @param destinationChannelId the ID of the channel to insert the new channel before or append after
    * @throws Exception
    */
-  private final void moveChannel(String sourceChannelId, String method, String destinationChannelId) throws Exception
+  private final void moveChannel(String sourceChannelId, String method, String destinationElementId) throws Exception
   {
     Element layout = userLayout.getDocumentElement();
 
     Element sourceChannel = userLayout.getElementById(sourceChannelId);
-    Element destinationChannel = userLayout.getElementById(destinationChannelId);
+    Element destinationElement = userLayout.getElementById(destinationElementId);
 
-    // Move the source channel before the destination channel or at the end
-    Node targetColumn = destinationChannel.getParentNode();
-    Node siblingChannel = method.equals("insertBefore") ? destinationChannel : null;
-    context.getUserLayoutManager().moveNode(sourceChannel, targetColumn, siblingChannel);
+    // The destination element might be an empty tab or a column
+    if (isTab(destinationElement))
+    {
+      // Create a new column in this tab and move the source channel there
+      Element newColumn = createFolder("");
+      Node destinationTab = userLayout.getElementById(destinationElementId);
+      context.getUserLayoutManager().moveNode(newColumn, destinationTab, null);
+      context.getUserLayoutManager().moveNode(sourceChannel, newColumn, null);
+    }
+    else if (isColumn(destinationElement))
+    {
+      // Move the source channel into the destination column
+      context.getUserLayoutManager().moveNode(sourceChannel, destinationElement, null);
+    }
+    else
+    {
+      // Move the source channel before the destination channel or at the end
+      Node targetColumn = destinationElement.getParentNode();
+      Node siblingChannel = method.equals("insertBefore") ? destinationElement : null;
+      context.getUserLayoutManager().moveNode(sourceChannel, targetColumn, siblingChannel);
+    }
 
     saveLayout();
   }
@@ -363,6 +380,16 @@ final class TabColumnPrefsState extends BaseState
   private final boolean isTab (Element folder)
   {
     return folder.getParentNode().getNodeName().equals("layout");
+  }
+
+  /**
+   * A folder is a column if its parent is a tab element
+   * @param folder the folder in question
+   * @return <code>true</code> if the folder is a column, otherwise <code>false</code>
+   */
+  private final boolean isColumn (Element folder)
+  {
+    return isTab((Element)folder.getParentNode());
   }
 
   /**
@@ -442,11 +469,11 @@ final class TabColumnPrefsState extends BaseState
         // Rename tab
         else if (action.equals("renameTab"))
         {
-          String tabId = runtimeData.getParameter("elementID");
-          String tabName = runtimeData.getParameter("tabName");
-
           try
           {
+            String tabId = runtimeData.getParameter("elementID");
+            String tabName = runtimeData.getParameter("tabName");
+
             renameTab(tabId, tabName);
           }
           catch (Exception e)
@@ -459,14 +486,14 @@ final class TabColumnPrefsState extends BaseState
         // Move tab
         else if (action.equals("moveTab"))
         {
-          String methodAndID = runtimeData.getParameter("method_ID");
-          String sourceTabId = runtimeData.getParameter("elementID");
-          int indexOf_ = methodAndID.indexOf("_");
-          String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
-          String destinationTabId = methodAndID.substring(indexOf_ + 1);
-
           try
           {
+            String methodAndID = runtimeData.getParameter("method_ID");
+            String sourceTabId = runtimeData.getParameter("elementID");
+            int indexOf_ = methodAndID.indexOf("_");
+            String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
+            String destinationTabId = methodAndID.substring(indexOf_ + 1);
+
             moveTab(sourceTabId, method, destinationTabId);
           }
           catch (Exception e)
@@ -479,14 +506,14 @@ final class TabColumnPrefsState extends BaseState
         // Add tab
         else if (action.equals("addTab"))
         {
-          String tabName = runtimeData.getParameter("tabName");
-          String methodAndID = runtimeData.getParameter("method_ID");
-          int indexOf_ = methodAndID.indexOf("_");
-          String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
-          String destinationTabId = methodAndID.substring(indexOf_ + 1);
-
           try
           {
+            String tabName = runtimeData.getParameter("tabName");
+            String methodAndID = runtimeData.getParameter("method_ID");
+            int indexOf_ = methodAndID.indexOf("_");
+            String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
+            String destinationTabId = methodAndID.substring(indexOf_ + 1);
+
             addFolder(tabName, method, destinationTabId);
           }
           catch (Exception e)
@@ -499,10 +526,10 @@ final class TabColumnPrefsState extends BaseState
         // Delete tab
         else if (action.equals("deleteTab"))
         {
-          String tabId = runtimeData.getParameter("elementID");
-
           try
           {
+            String tabId = runtimeData.getParameter("elementID");
+
             deleteElement(tabId);
           }
           catch (Exception e)
@@ -518,23 +545,23 @@ final class TabColumnPrefsState extends BaseState
         // Change column width(s)
         else if (action.equals("columnWidth"))
         {
-          HashMap columnWidths = new HashMap();
-          Enumeration eParams = runtimeData.getParameterNames();
-          while (eParams.hasMoreElements())
-          {
-            String param = (String)eParams.nextElement();
-            String prefix = "columnWidth_";
-
-            if (param.startsWith(prefix))
-            {
-              String folderId = param.substring(prefix.length());
-              String newWidth = runtimeData.getParameter(prefix + folderId);
-              columnWidths.put(folderId, newWidth);
-            }
-          }
-
           try
           {
+            HashMap columnWidths = new HashMap();
+            Enumeration eParams = runtimeData.getParameterNames();
+            while (eParams.hasMoreElements())
+            {
+              String param = (String)eParams.nextElement();
+              String prefix = "columnWidth_";
+
+              if (param.startsWith(prefix))
+              {
+                String folderId = param.substring(prefix.length());
+                String newWidth = runtimeData.getParameter(prefix + folderId);
+                columnWidths.put(folderId, newWidth);
+              }
+            }
+
             changeColumnWidths(columnWidths);
           }
           catch (Exception e)
@@ -554,11 +581,11 @@ final class TabColumnPrefsState extends BaseState
         // Move column here
         else if (action.equals("moveColumnHere"))
         {
-          String method = runtimeData.getParameter("method");
-          String destinationId = runtimeData.getParameter("elementID");
-
           try
           {
+            String method = runtimeData.getParameter("method");
+            String destinationId = runtimeData.getParameter("elementID");
+
             moveColumn(elementID, method, destinationId);
           }
           catch (Exception e)
@@ -571,13 +598,13 @@ final class TabColumnPrefsState extends BaseState
         // New column
         else if (action.equals("newColumn"))
         {
-          String columnName = "";
-          String method = runtimeData.getParameter("method");
-          elementID = runtimeData.getParameter("elementID");
-          String destinationColumnId = elementID;
-
           try
           {
+            String columnName = "";
+            String method = runtimeData.getParameter("method");
+            elementID = runtimeData.getParameter("elementID");
+            String destinationColumnId = elementID;
+
             addFolder(columnName, method, destinationColumnId);
           }
           catch (Exception e)
@@ -597,10 +624,10 @@ final class TabColumnPrefsState extends BaseState
         // Delete column
         else if (action.equals("deleteColumn"))
         {
-          String columnId = runtimeData.getParameter("elementID");
-
           try
           {
+            String columnId = runtimeData.getParameter("elementID");
+
             deleteElement(columnId);
           }
           catch (Exception e)
@@ -625,12 +652,15 @@ final class TabColumnPrefsState extends BaseState
         // Move channel here
         else if (action.equals("moveChannelHere"))
         {
-          String method = runtimeData.getParameter("method");
-          String destinationId = runtimeData.getParameter("elementID");
-
           try
           {
+            String method = runtimeData.getParameter("method");
+            String destinationId = runtimeData.getParameter("elementID");
+
             moveChannel(elementID, method, destinationId);
+
+            // Clear out elementId so the channel doesn't stay highlighted
+            elementID = null;
           }
           catch (Exception e)
           {
@@ -642,10 +672,10 @@ final class TabColumnPrefsState extends BaseState
         // Delete channel
         else if (action.equals("deleteChannel"))
         {
-          String channelId = runtimeData.getParameter("elementID");
-
           try
           {
+            String channelId = runtimeData.getParameter("elementID");
+
             deleteElement(channelId);
           }
           catch (Exception e)
