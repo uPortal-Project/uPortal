@@ -66,7 +66,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "(PREF_ID, PORTLET_PREF_VALUE) " +
             "VALUES (?, ?)";
         
-        log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(chanId=" + chanId + ")");
+        if (log.isDebugEnabled())
+            log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(chanId=" + chanId + ")");
 
         try {
             // Set autocommit false for the connection
@@ -89,7 +90,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 insertPrefValuePstmt = con.prepareStatement(insertPrefValue);
                 
                 //Get a list of all the preference names for this portlet
-                log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + selectPrefIds);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + selectPrefIds);
                 selectPrefIdsPstmt.setInt(1, chanId);
                 ResultSet rs = selectPrefIdsPstmt.executeQuery();
 
@@ -101,7 +103,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                         int prefId = rs.getInt("PREF_ID");
                         prefIds.add(new Integer(prefId));
                         
-                        log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(PREF_ID=" + prefId + "): " + deletePrefValues);
+                        if (log.isDebugEnabled())
+                            log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(PREF_ID=" + prefId + "): " + deletePrefValues);
                         deletePrefValuesPstmt.setInt(1, prefId);
                         deletePrefValuesPstmt.executeUpdate();
                     }
@@ -111,7 +114,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 }
                 
                 //Delete all the preference names for this portlet
-                log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + deletePrefNames);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + deletePrefNames);
                 deletePrefNamesPstmt.setInt(1, chanId);
                 deletePrefNamesPstmt.executeUpdate();
                 
@@ -141,14 +145,16 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     insertPrefNamePstmt.setInt(4, prefId);
                     
                     //Insert the name row
-                    log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + insertPrefName);
+                    if (log.isDebugEnabled())
+                        log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + insertPrefName);
                     insertPrefNamePstmt.executeUpdate();
                     
                     //For each value a row will be inserted in the values table
                     for (final Iterator valueItr = pref.getValues(); valueItr.hasNext();) {
                         String value = (String)valueItr.next();
                         
-                        log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + insertPrefValue);
+                        if (log.isDebugEnabled())
+                            log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + insertPrefValue);
                         insertPrefValuePstmt.setInt(1, prefId);
                         insertPrefValuePstmt.setString(2, value);
                         insertPrefValuePstmt.executeUpdate();
@@ -189,7 +195,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "FROM UP_PORTLET_DEFINITION_PREFS UPDP, UP_PORTLET_PREF_VALUES UPPV " +
             "WHERE UPDP.PREF_ID=UPPV.PREF_ID AND CHAN_ID=?";
         
-        log.debug("RDBMPortletPreferencesStore::getDefinitionPreferences(chanId=" + chanId + ")");
+        if (log.isDebugEnabled())
+            log.debug("RDBMPortletPreferencesStore::getDefinitionPreferences(chanId=" + chanId + ")");
                 
         try {
             PreparedStatement selectCurrentPrefsPstmt = null;
@@ -197,7 +204,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             try {
                 selectCurrentPrefsPstmt = con.prepareStatement(selectPrefs);
                 
-                log.debug("RDBMPortletPreferencesStore::getDefinitionPreferences(): " + selectPrefs);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::getDefinitionPreferences(): " + selectPrefs);
                 selectCurrentPrefsPstmt.setInt(1, chanId);
                 final ResultSet rs = selectCurrentPrefsPstmt.executeQuery();
                 
@@ -281,7 +289,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "(PREF_ID, PORTLET_PREF_VALUE) " +
             "VALUES (?, ?)";
         
-        log.debug("RDBMPortletPreferencesStore::setEntityPreferences(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
+        if (log.isDebugEnabled())
+            log.debug("RDBMPortletPreferencesStore::setEntityPreferences(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
 
         try {
             // Set autocommit false for the connection
@@ -304,7 +313,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 insertPrefValuePstmt = con.prepareStatement(insertPrefValue);
                 
                 //Get a list of all the preference names for this instance of this portlet
-                log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + selectPrefIds);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + selectPrefIds);
                 selectPrefIdsPstmt.setInt(1, userId);
                 selectPrefIdsPstmt.setInt(2, layoutId);
                 selectPrefIdsPstmt.setString(3, chanDescId);
@@ -317,7 +327,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                         int prefId = rs.getInt("PREF_ID");
                         prefIds.add(new Integer(prefId));
                         
-                        log.debug("RDBMPortletPreferencesStore::setEntityPreferences(PREF_ID=" + prefId + "): " + deletePrefValues);
+                        if (log.isDebugEnabled())
+                            log.debug("RDBMPortletPreferencesStore::setEntityPreferences(PREF_ID=" + prefId + "): " + deletePrefValues);
                         deletePrefValuesPstmt.setInt(1, prefId);
                         deletePrefValuesPstmt.executeUpdate();
                     }
@@ -327,7 +338,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 }
                 
                 //Delete all the preference names for this instance of this portlet
-                log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + deletePrefNames);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + deletePrefNames);
                 deletePrefNamesPstmt.setInt(1, userId);
                 deletePrefNamesPstmt.setInt(2, layoutId);
                 deletePrefNamesPstmt.setString(3, chanDescId);
@@ -362,14 +374,15 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     insertPrefNamePstmt.setInt(5, prefId);
                     
                     //Insert the name row
-                    log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + insertPrefName);
+                    if (log.isDebugEnabled())
+                        log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + insertPrefName);
                     insertPrefNamePstmt.executeUpdate();
                     
                     //For each value a row will be inserted in the values table
                     for (final Iterator valueItr = pref.getValues(); valueItr.hasNext();) {
                         String value = (String)valueItr.next();
-
-                        log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + insertPrefValue);
+                        if (log.isDebugEnabled())
+                            log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + insertPrefValue);
                         insertPrefValuePstmt.setInt(1, prefId);
                         insertPrefValuePstmt.setString(2, value);
                         insertPrefValuePstmt.executeUpdate();
@@ -410,7 +423,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "FROM UP_PORTLET_ENTITY_PREFS UPEP, UP_PORTLET_PREF_VALUES UPPV " +
             "WHERE UPEP.PREF_ID=UPPV.PREF_ID AND UPEP.USER_ID=? AND UPEP.LAYOUT_ID=? AND UPEP.CHAN_DESC_ID=?";
 
-        log.debug("RDBMPortletPreferencesStore::getEntityPreferences(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
+        if (log.isDebugEnabled())
+            log.debug("RDBMPortletPreferencesStore::getEntityPreferences(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
 
         try {
             PreparedStatement selectCurrentPrefsPstmt = null;
@@ -418,7 +432,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             try {
                 selectCurrentPrefsPstmt = con.prepareStatement(selectPrefs);
                 
-                log.debug("RDBMPortletPreferencesStore::getEntityPreferences(): " + selectPrefs);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::getEntityPreferences(): " + selectPrefs);
                 
                 selectCurrentPrefsPstmt.setInt(1, userId);
                 selectCurrentPrefsPstmt.setInt(2, layoutId);
@@ -484,7 +499,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "DELETE FROM UP_PORTLET_PREF_VALUES " +
             "WHERE PREF_ID=?";
         
-        log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByUser(userId=" + userId + ")");
+        if (log.isDebugEnabled())
+            log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByUser(userId=" + userId + ")");
 
         try {
             // Set autocommit false for the connection
@@ -500,7 +516,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 deletePrefNamesPstmt = con.prepareStatement(deletePrefNames);
                 deletePrefValuesPstmt = con.prepareStatement(deletePrefValues);
 
-                log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByUser(): " + selectPrefIds);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByUser(): " + selectPrefIds);
                 selectPrefIdsPstmt.setInt(1, userId);
                 ResultSet rs = selectPrefIdsPstmt.executeQuery();
                 
@@ -508,7 +525,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     while (rs.next()) {
                         int prefId = rs.getInt("PREF_ID");
                         
-                        log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByUser(): " + deletePrefValues);
+                        if (log.isDebugEnabled())
+                            log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByUser(): " + deletePrefValues);
                         deletePrefValuesPstmt.setInt(1, prefId);
                         deletePrefValuesPstmt.executeUpdate();
                     }
@@ -559,7 +577,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             "DELETE FROM UP_PORTLET_PREF_VALUES " +
             "WHERE PREF_ID=?";
         
-        log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
+        if (log.isDebugEnabled())
+            log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(userId=" + userId + ", layoutId=" + layoutId + ", chanDescId=" + chanDescId + ")");
 
         try {
             // Set autocommit false for the connection
@@ -575,7 +594,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 deletePrefNamesPstmt = con.prepareStatement(deletePrefNames);
                 deletePrefValuesPstmt = con.prepareStatement(deletePrefValues);
 
-                log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(): " + selectPrefIds);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(): " + selectPrefIds);
                 selectPrefIdsPstmt.setInt(1, userId);
                 selectPrefIdsPstmt.setInt(2, layoutId);
                 selectPrefIdsPstmt.setString(3, chanDescId);
@@ -585,7 +605,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     while (rs.next()) {
                         int prefId = rs.getInt("PREF_ID");
                         
-                        log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(): " + deletePrefValues);
+                        if (log.isDebugEnabled())
+                            log.debug("RDBMPortletPreferencesStore::deletePortletPreferencesByInstance(): " + deletePrefValues);
                         deletePrefValuesPstmt.setInt(1, prefId);
                         deletePrefValuesPstmt.executeUpdate();
                     }

@@ -92,7 +92,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT * FROM UP_CHAN_TYPE WHERE TYPE_ID=" + channelTypeId;
-        log.debug("RDBMChannelRegistryStore.getChannelType(): " + query);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.getChannelType(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -132,7 +133,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT TYPE_ID, TYPE, TYPE_NAME, TYPE_DESCR, TYPE_DEF_URI FROM UP_CHAN_TYPE";
-        log.debug("RDBMChannelRegistryStore.getChannelTypes(): " + query);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.getChannelTypes(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           List channelTypesList = new ArrayList();
@@ -234,7 +236,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
            "TYPE_DESCR='" + descr + "', " +
            "TYPE_DEF_URI='" + cpdUri + "' " +
            "WHERE TYPE_ID=" + chanTypeId;
-          log.debug("RDBMChannelRegistryStore.saveChannelType(): " + update);
+          if (log.isDebugEnabled())
+              log.debug("RDBMChannelRegistryStore.saveChannelType(): " + update);
           int rows = stmt.executeUpdate(update);
 
           // Commit the transaction
@@ -274,7 +277,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // First check to see if any channels are still referencing this channel type
         int chanTypeId = chanType.getId();
         String select = "SELECT * FROM UP_CHANNEL WHERE CHAN_TYPE_ID=" + chanTypeId;
-        log.debug("RDBMChannelRegistryStore.deleteChannelType(): " + select);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.deleteChannelType(): " + select);
         ResultSet rs = stmt.executeQuery(select);
 
         // If there are channels referencing this channel type, throw an exception
@@ -288,7 +292,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // Otherwise delete the channel type
         } else {
           String delete = "DELETE FROM UP_CHAN_TYPE WHERE TYPE_ID=" + chanTypeId;
-          log.debug("RDBMChannelRegistryStore.deleteChannelType(): " + delete);
+          if (log.isDebugEnabled())
+              log.debug("RDBMChannelRegistryStore.deleteChannelType(): " + delete);
           int rows = stmt.executeUpdate(delete);
         }
 
@@ -351,7 +356,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         pstmtChannelMdata = getChannelMdataPstmt(con);
         pstmtChannel.clearParameters();
         pstmtChannel.setInt(1, channelPublishId);
-        log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannel);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + 
+                    pstmtChannel);
         rs = pstmtChannel.executeQuery();
 
         if (rs.next()) {
@@ -398,7 +405,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             rs.close();
             pstmtChannelParam.clearParameters();
             pstmtChannelParam.setInt(1, channelPublishId);
-            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelParam);
+            if (log.isDebugEnabled())
+                log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + 
+                        pstmtChannelParam);
             rs = pstmtChannelParam.executeQuery();
           }
 
@@ -450,7 +459,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               rs.close();
               pstmtChannelMdata.clearParameters();
               pstmtChannelMdata.setInt(1, channelPublishId);
-              log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelMdata);
+              if (log.isDebugEnabled())
+                  log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + 
+                          pstmtChannelMdata);
               try {
                   rs = pstmtChannelMdata.executeQuery();
 
@@ -474,7 +485,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           }
         }
 
-        log.debug("RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + channelPublishId + " from the store");
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + 
+                    channelPublishId + " from the store");
 
         // Add the channel definition to the cache
         try {
@@ -511,7 +524,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_FNAME='" + channelFunctionalName + "' ORDER BY CHAN_APVL_DT DESC";
-        log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + query);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -542,7 +556,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT CHAN_ID FROM UP_CHANNEL";
-        log.debug("RDBMChannelRegistryStore.getChannelDefinitions(): " + query);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.getChannelDefinitions(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           List channelDefsList = new ArrayList();
@@ -594,7 +609,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sqlIsSecure = RDBMServices.dbFlag(channelDef.isSecure());
 
         String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
-        log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + query);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + query);
         ResultSet rs = stmt.executeQuery(query);
 
         // If channel is already there, do an update, otherwise do an insert
@@ -616,7 +632,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           "CHAN_FNAME='" + sqlFName + "', " +
           "CHAN_SECURE='" + sqlIsSecure + "' " +
           "WHERE CHAN_ID=" + channelPublishId;
-          log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + update);
+          if (log.isDebugEnabled())
+              log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + update);
           stmt.executeUpdate(update);
         } else {
           String insert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT, "
@@ -625,13 +642,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               + chanPublisherId + ", " + chanPublishDate + ", " + chanApproverId + ", " + chanApprovalDate + ", " + sqlTimeout
               + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
               + "', '" + sqlName + "', '" + sqlFName + "', '" + sqlIsSecure + "')";
-          log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + insert);
+          if (log.isDebugEnabled())
+              log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + insert);
           stmt.executeUpdate(insert);
         }
 
         // First delete existing parameters for this channel
         String delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
-        log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + delete);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + delete);
         int recordsDeleted = stmt.executeUpdate(delete);
 
         ChannelParameter[] parameters = channelDef.getParameters();
@@ -663,7 +682,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                 // We have a normal channel parameter
                 String insert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + channelPublishId +
                                 ",'" + paramName + "','" + paramValue + "', '" + (paramOverride ? "Y" : "N") + "')";
-                log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + insert);
+                if (log.isDebugEnabled())
+                    log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + insert);
                 stmt.executeUpdate(insert);
             }
           }
@@ -710,23 +730,27 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
         // Delete from UP_CHANNEL
         String delete = "DELETE FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
-        log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Delete from UP_CHANNEL_PARAM
         delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
-        log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Delete from UP_PERMISSION
         // This needs to be updated to work with permission interfaces!!!
         delete = "DELETE FROM UP_PERMISSION WHERE OWNER='CHAN_ID." + channelPublishId + "' OR TARGET='CHAN_ID." + channelPublishId + "'";
-        log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Delete from UPC_KEYWORD
         delete = "DELETE FROM UPC_KEYWORD WHERE CHAN_ID=" + channelPublishId;
-        log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
+        if (log.isDebugEnabled())
+            log.debug("RDBMChannelRegistryStore.deleteChannelDefinition(): " + delete);
         stmt.executeUpdate(delete);
 
         // Disassociate from parent categories (delete from UP_GROUP_MEMBERSHIP)

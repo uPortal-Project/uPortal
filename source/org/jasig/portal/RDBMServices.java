@@ -129,7 +129,8 @@ public class RDBMServices {
                         try {
                             final DataSource ds = pdsf.createPooledDataSource(driverClass, username, password, url);
 
-                            LOG.info("Creating IDatabaseServer instance for pooled JDBC");
+                            if (LOG.isInfoEnabled())
+                                LOG.info("Creating IDatabaseServer instance for pooled JDBC");
                             jdbcDbServer = new DatabaseServerImpl(ds);
                         }
                         catch (Exception e) {
@@ -143,7 +144,8 @@ public class RDBMServices {
                             final Driver d = (Driver)Class.forName(driverClass).newInstance();
                             final DataSource ds = new GenericDataSource(d, url, username, password);
 
-                            LOG.info("Creating IDatabaseServer instance for JDBC");
+                            if (LOG.isInfoEnabled())
+                                LOG.info("Creating IDatabaseServer instance for JDBC");
                             jdbcDbServer = new DatabaseServerImpl(ds);
                         }
                         catch (Exception e) {
@@ -219,7 +221,8 @@ public class RDBMServices {
                     final DataSource ds = (DataSource)envCtx.lookup("jdbc/" + name);
     
                     if (ds != null) {
-                        LOG.info("Creating IDatabaseServer instance for " + name);
+                        if (LOG.isInfoEnabled())
+                            LOG.info("Creating IDatabaseServer instance for " + name);
                         dbs = new DatabaseServerImpl(ds);
                         namedDbServers.put(name, dbs);
                     }
@@ -227,12 +230,16 @@ public class RDBMServices {
                 catch (Throwable t) {
                     //Cache the failure to decrease lookup attempts and reduce log spam.
                     namedDbServerFailures.put(name, new Long(System.currentTimeMillis()));
-                    LOG.warn("Error getting DataSource named (" + name + ") from JNDI.", t);
+                    if (LOG.isWarnEnabled())
+                        LOG.warn("Error getting DataSource named (" + name + ") from JNDI.", t);
                 }
             }
             else {
-                final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
-                LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximately " + waitTime + " more milliseconds.");
+                if (LOG.isDebugEnabled()) {
+                    final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
+                    LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximately " + waitTime + " more milliseconds.");
+
+                }
             }
         }
 
@@ -289,7 +296,8 @@ public class RDBMServices {
             con.close();
         }
         catch (Exception e) {
-            LOG.warn("Error closing Connection: " + con, e);
+            if (LOG.isWarnEnabled())
+                LOG.warn("Error closing Connection: " + con, e);
         }
     }
 
@@ -308,7 +316,8 @@ public class RDBMServices {
             rs.close();
         }
         catch (Exception e) {
-            LOG.warn("Error closing ResultSet: " + rs, e);
+            if (LOG.isWarnEnabled())
+                LOG.warn("Error closing ResultSet: " + rs, e);
         }
     }
 
@@ -321,7 +330,8 @@ public class RDBMServices {
             st.close();
         }
         catch (Exception e) {
-            LOG.warn("Error closing Statement: " + st, e);
+            if (LOG.isWarnEnabled())
+                LOG.warn("Error closing Statement: " + st, e);
         }
     }
     
@@ -344,7 +354,8 @@ public class RDBMServices {
             connection.commit();
         }
         catch (Exception e) {
-            LOG.warn("Error committing Connection: " + connection, e);
+            if (LOG.isWarnEnabled())
+                LOG.warn("Error committing Connection: " + connection, e);
         }
     }
 
@@ -358,7 +369,8 @@ public class RDBMServices {
             connection.setAutoCommit(autocommit);
         }
         catch (Exception e) {
-            LOG.warn("Error committing Connection: " + connection + " to: " + autocommit, e);
+            if (LOG.isWarnEnabled())
+                LOG.warn("Error committing Connection: " + connection + " to: " + autocommit, e);
         }
     }
 
@@ -371,7 +383,8 @@ public class RDBMServices {
             connection.rollback();
         }
         catch (Exception e) {
-            LOG.warn("Error rolling back Connection: " + connection, e);
+            if (LOG.isWarnEnabled())
+                LOG.warn("Error rolling back Connection: " + connection, e);
         }
     }
     
