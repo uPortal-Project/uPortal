@@ -446,6 +446,9 @@
       <column> <name>UNREMOVABLE</name>      <type>VARCHAR</type> <param>1</param>
         <desc>Set to Y if folder or channel cannot be unsubscribed to or removed by user</desc>
       </column>
+      <column> <name>LOCALE</name>      <type>VARCHAR</type> <param>7</param>
+        <desc>Locale of this struct entry. Required for I18n. Ask Shoji.</desc>
+      </column>
     </columns>
     <primary-key>LAYOUT_ID</primary-key>
     <primary-key>USER_ID</primary-key>
