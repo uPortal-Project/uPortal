@@ -39,8 +39,9 @@ import java.util.Map;
 
 /**
  * Interface for configuration providers for the Person Attributes Group Store.
- * Portal implementors may choose to override this class in order to provide
- * a list of group definitions for the PAGS to use.
+ * Portal implementors may choose to override the default implementation of 
+ * this type, <code>XMLPersonAttributesConfiguration</code>, in order to 
+ * provide a list of group definitions for the PAGS to use.
  * 
  * @author Al wold
  * @version $Revision$
