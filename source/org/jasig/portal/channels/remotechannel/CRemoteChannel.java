@@ -112,8 +112,6 @@ public class CRemoteChannel extends BaseChannel implements ICacheable {
     BrowserInfo bi = runtimeData.getBrowserInfo();
     Map headers = bi.getHeaders();
     Cookie[] cookies = bi.getCookies();
-    cookies = null; // need to figure out how to add serializers for Cookie
-                    // and then remove this line
     Map params = runtimeData.getParameters();
     String baseActionURL = runtimeData.getBaseActionURL();
 
