@@ -854,7 +854,7 @@ Version $Revision$
 				</a>
 			</xsl:when>
 			<xsl:otherwise>
-				<a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel&amp;uP_sparam=targetAction&amp;targetAction=Channel Move">
+				<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=channel&amp;uP_sparam=targetAction&amp;targetAction=Channel Move">
 					<img src="{$mediaPathIcons}/contentmove.gif" width="26" height="23" alt="move this channel" title="move this channel" border="0"/>
 				</a>
 			</xsl:otherwise>
@@ -2552,7 +2552,7 @@ Version $Revision$
 													</a>
 												</xsl:when>
 												<xsl:otherwise>
-													<a href="{$baseActionURL}?uP_request_move_targets={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=Column Move">
+													<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={@ID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=Column Move">
 														<img src="{$mediaPathIcons}/columnmove.gif" width="28" height="25" alt="move this column" title="move this column" border="0"/>
 													</a>
 												</xsl:otherwise>
