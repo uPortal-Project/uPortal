@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,18 +42,23 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import javax.servlet.http.Cookie;
+import javax.xml.parsers.*;
 import org.w3c.tidy.*;
 import org.w3c.dom.Document;
 import org.jasig.portal.*;
 import org.jasig.portal.utils.*;
 import org.jasig.portal.services.LogService;
-import javax.xml.parsers.*;
+import org.jasig.portal.security.IPerson;
 
 /**
- * <p>A channel which transforms and interacts with dynamic XML or HTML.</p>
- * <p>See http://www.mun.ca/cc/portal/cw/ for full documentation.</p>
+ * <p>A channel which transforms and interacts with dynamic XML or HTML.
+ *    See http://www.mun.ca/cc/portal/cw/ for full documentation.
+ *    This version introduces experimental features, which may or may
+ *    not survive to the next release.  Default values are backwards
+ *    compatible with uPortal version 2.0.1.  Only defaults have been
+ *    fully tested.</p>
  *
- * <p>Channel parameters to be supplied:</p>
+ * <p>Static Channel Parameters:</p>
  * <ol>
  *  <li>"cw_xml" - a URI for the source XML document
  *  <li>"cw_ssl" - a URI for the corresponding .ssl (stylesheet list) file
@@ -78,16 +83,44 @@ import javax.xml.parsers.*;
  *  <li>"cw_info" - a URI to be called for the <code>info</code> event.
  *  <li>"cw_help" - a URI to be called for the <code>help</code> event.
  *  <li>"cw_edit" - a URI to be called for the <code>edit</code> event.
+ *  <li>"cw_cacheDefaultTimeout" - Default timeout in seconds.
+ *  <li>"cw_cacheDefaultScope" - Default cache scope.  <i>May be
+ *		    <code>system</code> (one copy for all users), or
+ *		    <code>user</code> (one copy per user), or
+ *		    <code>instance</code> (cache for this channel instance
+ *		    only).</i>
+ *  <li>"cw_cacheDefaultMode" - Default caching mode.
+ *		    <i>May be <code>none</code> (normally don't cache),
+ *		    <code>http</code> (follow http caching directives), or
+ *		    <code>all</code> (cache everything).  Http is not
+ *		    currently implemented.</i>
+ *  <li>"cw_cacheTimeout" - override default for this request only.
+ *		    <i>Primarily intended as a runtime parameter, but can
+ *	            user statically to override the first instance.</i>
+ *  <li>"cw_cacheScope" - override default for this request only.
+ *		    <i>Primarily intended as a runtime parameter, but can
+ *	            user statically to override the first instance.</i>
+ *  <li>"cw_cacheMode" - override default for this request only.
+ *		    <i>Primarily intended as a runtime parameter, but can
+ *	            user statically to override the first instance.</i>
+ *  <li>"cw_person" - IPerson attributes to pass.
+ *		    <i>A comma-separated list of IPerson attributes to
+ *		    pass to the back end application.</i>
+ * </ol>
+ * <p>Runtime Channel Parameters:</p>
+ *    The static parameters above can be updated by equivalent Runtime
+ *    parameters.  Caching parameters can also be changed temporarily.
+ *    Cache scope and mode can only be made more restrictive, not less.
+ *    The following parameter is runtime-only.
+ * </p>
+ * <ol>
  *  <li>"cw_reset" - an instruction to return to reset internal variables.
  *		   The value <code>return</code> resets <code>cw_xml</code>
  *		   to its last value before changed by button events.  The
  *		   value "reset" returns all variables to the static data
  *		   values.  Runtime data parameter only.
  * </ol>
- * <p>The static parameters above can be updated by including
- *    parameters of the same name in the HttpRequest string.
- * </p>
- * <p>This channel can be used for all XML formats including RSS.
+ * <p>This channel can be used for all XML formats with appropriate stylesheets.
  *    All static data parameters as well as additional runtime data parameters
  *    passed to this channel via HttpRequest will in turn be passed on to the
  *    XSLT stylesheet as stylesheet parameters.  They can be read in the
@@ -99,28 +132,59 @@ import javax.xml.parsers.*;
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
  */
-public class CWebProxy implements org.jasig.portal.IChannel
+public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
+
 {
-  protected String fullxmlUri;
-  protected String buttonxmlUri;
-  protected String xmlUri;
-  protected String passThrough;
-  protected String tidy;
-  protected String sslUri;
-  protected String xslTitle;
-  protected String xslUri;
-  protected String infoUri;
-  protected String helpUri;
-  protected String editUri;
-  protected ChannelRuntimeData runtimeData;
-  protected Vector cookies;
-  protected boolean supportSetCookie2;
+  Map stateTable;
+  // to prepend to the system-wide cache key
+  static final String systemCacheId="org.jasig.portal.channels.CWebProxy";
+
+  // All state variables now stored here
+  private class ChannelState
+  {
+    private int id;
+    private IPerson iperson;
+    private String person;
+    private String fullxmlUri;
+    private String buttonxmlUri;
+    private String xmlUri;
+    private String passThrough;
+    private String tidy;
+    private String sslUri;
+    private String xslTitle;
+    private String xslUri;
+    private String infoUri;
+    private String helpUri;
+    private String editUri;
+    private String cacheDefaultScope;
+    private String cacheScope;
+    private String cacheDefaultMode;
+    private String cacheMode;
+    private long cacheDefaultTimeout;
+    private long cacheTimeout;
+    private ChannelRuntimeData runtimeData;
+    private Vector cookies;
+    private boolean supportSetCookie2;
+
+    public ChannelState ()
+    {
+      fullxmlUri = buttonxmlUri = xmlUri = passThrough = sslUri = null;
+      xslTitle = xslUri = infoUri = helpUri = editUri = tidy = null;
+      id = 0;
+      cacheMode = cacheScope = null;
+      iperson = null;
+      cacheTimeout = cacheDefaultTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CWebProxy.cache_default_timeout");
+      cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.CWebProxy.cache_default_mode");
+      cacheDefaultScope = PropertiesManager.getProperty("org.jasig.portal.channels.CWebProxy.cache_default_scope");
+      runtimeData = null;
+      cookies = new Vector();
+      supportSetCookie2 = false;
+    }
+  }
 
   public CWebProxy ()
   {
-    this.cookies = new Vector();
-    this.supportSetCookie2 = false;
-    this.buttonxmlUri = null;
+    stateTable = Collections.synchronizedMap(new HashMap());
   }
 
   /**
@@ -130,24 +194,41 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param sd channel static data
    * @see ChannelStaticData
    */
-  public void setStaticData (ChannelStaticData sd)
+  public void setStaticData (ChannelStaticData sd, String uid) throws ResourceMissingException
   {
-    try
-    {
-      // to add: if not already set, make a copy of sd for the "reset" command
-      this.xmlUri = sd.getParameter ("cw_xml");
-      this.sslUri = sd.getParameter ("cw_ssl");
-      this.fullxmlUri = sd.getParameter ("cw_xml");
-      this.passThrough = sd.getParameter ("cw_passThrough");
-      this.tidy = sd.getParameter ("cw_tidy");
-      this.infoUri = sd.getParameter ("cw_info");
-      this.helpUri = sd.getParameter ("cw_help");
-      this.editUri = sd.getParameter ("cw_edit");
-    }
-    catch (Exception e)
-    {
-      LogService.instance().log(LogService.ERROR, e);
-    }
+    ChannelState state = new ChannelState();
+
+    state.id = sd.getPerson().getID();
+    state.iperson = sd.getPerson();
+    state.person = sd.getParameter("cw_person");
+    state.xmlUri = sd.getParameter ("cw_xml");
+    state.sslUri = sd.getParameter ("cw_ssl");
+    state.fullxmlUri = sd.getParameter ("cw_xml");
+    state.passThrough = sd.getParameter ("cw_passThrough");
+    state.tidy = sd.getParameter ("cw_tidy");
+    state.infoUri = sd.getParameter ("cw_info");
+    state.helpUri = sd.getParameter ("cw_help");
+    state.editUri = sd.getParameter ("cw_edit");
+    String cacheScope = sd.getParameter ("cw_cacheDefaultScope");
+    if (cacheScope != null)
+      state.cacheDefaultScope = cacheScope;
+    cacheScope = sd.getParameter ("cw_cacheScope");
+    if (cacheScope != null)
+      state.cacheScope = cacheScope;
+    String cacheMode = sd.getParameter ("cw_cacheDefaultMode");
+    if (cacheMode != null)
+      state.cacheDefaultMode = cacheMode;
+    cacheMode = sd.getParameter ("cw_cacheMode");
+    if (cacheMode != null)
+      state.cacheMode = cacheMode;
+    String cacheTimeout = sd.getParameter("cw_cacheDefaultTimeout");
+    if (cacheTimeout != null)
+      state.cacheDefaultTimeout = Long.parseLong(cacheTimeout);
+    cacheTimeout = sd.getParameter("cw_cacheTimeout");
+    if (cacheTimeout != null)
+      state.cacheTimeout = Long.parseLong(cacheTimeout);
+
+    stateTable.put(uid,state);
   }
 
   /**
@@ -156,203 +237,319 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param rd channel runtime data
    * @see ChannelRuntimeData
    */
-  public void setRuntimeData (ChannelRuntimeData rd)
+  public void setRuntimeData (ChannelRuntimeData rd, String uid)
   {
-    runtimeData = rd;
+     ChannelState state = (ChannelState)stateTable.get(uid);
+     if (state == null)
+       LogService.instance().log(LogService.ERROR,"CWebProxy:setRuntimeData() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+     else
+     {
+       state.runtimeData = rd;
 
-    String xmlUri = runtimeData.getParameter("cw_xml");
-    if (xmlUri != null) {
-       this.xmlUri = xmlUri;
-       // don't need an explicit reset if a new URI is provided.
-       buttonxmlUri = null;
-    }
-
-    String sslUri = runtimeData.getParameter("cw_ssl");
-    if (sslUri != null)
-       this.sslUri = sslUri;
-
-    String xslTitle = runtimeData.getParameter("cw_xslTitle");
-    if (xslTitle != null)
-       this.xslTitle = xslTitle;
-
-    String xslUri = runtimeData.getParameter("cw_xsl");
-    if (xslUri != null)
-       this.xslUri = xslUri;
-
-    String passThrough = runtimeData.getParameter("cw_passThrough");
-    if (passThrough != null)
-       this.passThrough = passThrough;
-
-    String tidy = runtimeData.getParameter("cw_tidy");
-    if (tidy != null)
-       this.tidy = tidy;
-
-    String infoUri = runtimeData.getParameter("cw_info");
-    if (infoUri != null)
-       this.infoUri = infoUri;
-
-    String editUri = runtimeData.getParameter("cw_edit");
-    if (editUri != null)
-       this.editUri = editUri;
-
-    String helpUri = runtimeData.getParameter("cw_help");
-    if (helpUri != null)
-       this.helpUri = helpUri;
-
-    // reset is a one-time thing.
-    String reset = runtimeData.getParameter("cw_reset");
-    if (reset != null) {
-       if (reset.equalsIgnoreCase("return")) {
-          buttonxmlUri = null;
+       String xmlUri = state.runtimeData.getParameter("cw_xml");
+       if (xmlUri != null) {
+         state.xmlUri = xmlUri;
+         // don't need an explicit reset if a new URI is provided.
+         state.buttonxmlUri = null;
        }
-       // else if (reset.equalsIgnoreCase("reset")) {
-       //  call setStaticData with our cached copy.
-       // }
-    }
 
-    if ( buttonxmlUri != null )
-        fullxmlUri = buttonxmlUri;
-    else {
-    //if (this.passThrough != null )
-    //  LogService.instance().log(LogService.DEBUG, "CWebProxy: passThrough: "+this.passThrough);
+       String sslUri = state.runtimeData.getParameter("cw_ssl");
+       if (sslUri != null)
+          state.sslUri = sslUri;
 
-    // Is this a case where we need to pass request parameters to the xmlURI?
-    if ( this.passThrough != null &&
-       !this.passThrough.equalsIgnoreCase("none") &&
-         ( this.passThrough.equalsIgnoreCase("all") ||
-           this.passThrough.equalsIgnoreCase("application") ||
-           runtimeData.getParameter("cw_inChannelLink") != null ) )
-    {
-      LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + this.xmlUri);
+       String xslTitle = state.runtimeData.getParameter("cw_xslTitle");
+       if (xslTitle != null)
+          state.xslTitle = xslTitle;
 
-      StringBuffer newXML = new StringBuffer().append(this.xmlUri);
-      String appendchar = (this.xmlUri.indexOf('?') == -1) ? "?" : "&";
-      // BUG 772 - this doesn't seem to catch all cases.
+       String xslUri = state.runtimeData.getParameter("cw_xsl");
+       if (xslUri != null)
+          state.xslUri = xslUri;
 
-      // want all runtime parameters not specific to WebProxy
-      Enumeration e=runtimeData.getParameterNames ();
-      if (e!=null)
-        {
-          while (e.hasMoreElements ())
-            {
-              String pName = (String) e.nextElement ();
-              if ( !pName.startsWith("cw_") ) {
-        	String[] value_array = runtimeData.getParameterValues(pName);
-		if ( value_array == null || value_array.length == 0 ) {
-		    // keyword-style parameter
-		    newXML.append(appendchar);
-		    appendchar = "&";
-		    newXML.append(pName);
-	        } else {
-		  int i = 0;
-		  while ( i < value_array.length ) {
-		    newXML.append(appendchar);
-		    appendchar = "&";
-		    newXML.append(pName);
-		    newXML.append("=");
-		    newXML.append(URLEncoder.encode(value_array[i++]));
-	          }
-	      }
-            }
+       String passThrough = state.runtimeData.getParameter("cw_passThrough");
+       if (passThrough != null)
+          state.passThrough = passThrough;
+   
+       String tidy = state.runtimeData.getParameter("cw_tidy");
+       if (tidy != null)
+          state.tidy = tidy;
+
+       String infoUri = state.runtimeData.getParameter("cw_info");
+       if (infoUri != null)
+          state.infoUri = infoUri;
+
+       String editUri = state.runtimeData.getParameter("cw_edit");
+       if (editUri != null)
+          state.editUri = editUri;
+
+       String helpUri = state.runtimeData.getParameter("cw_help");
+       if (helpUri != null)
+          state.helpUri = helpUri;
+
+       // need a way to see if cacheScope, cacheMode, cacheTimeout were
+       // set in static data if this is the first time.
+
+       String cacheTimeout = state.runtimeData.getParameter("cw_cacheDefaultTimeout");
+       if (cacheTimeout != null)
+          state.cacheDefaultTimeout = Long.parseLong(cacheTimeout);
+
+       cacheTimeout = state.runtimeData.getParameter("cw_cacheTimeout");
+       if (cacheTimeout != null)
+          state.cacheTimeout = Long.parseLong(cacheTimeout);
+       else
+          state.cacheTimeout = state.cacheDefaultTimeout;
+
+       String cacheDefaultScope = state.runtimeData.getParameter("cw_cacheDefaultScope");
+       if (cacheDefaultScope != null) {
+          // PSEUDO see if it's a reduction fine, otherwise log error 
+          state.cacheDefaultScope = cacheDefaultScope;
+       }
+
+       String cacheScope = state.runtimeData.getParameter("cw_cacheScope");
+       if (cacheScope != null) {
+          // PSEUDO see if it's a reduction fine, otherwise a problem
+	  // for now all instance -> user
+          if ( state.cacheDefaultScope.equalsIgnoreCase("system") )
+             state.cacheScope = cacheScope;
+	  else {
+             state.cacheScope = state.cacheDefaultScope;
+             LogService.instance().log(LogService.INFO,
+	       "CWebProxy:setRuntimeData() : ignoring illegal scope reduction from "
+	       + state.cacheDefaultScope + " to " + cacheScope);
+	  }
+       } else
+          state.cacheScope = state.cacheDefaultScope;
+
+       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode was " + state.cacheDefaultMode);
+       String cacheDefaultMode = state.runtimeData.getParameter("cw_cacheDefaultMode");
+       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheDefaultMode is " + cacheDefaultMode);
+       if (cacheDefaultMode != null) {
+          // maybe don't allow if scope is system?
+          state.cacheDefaultMode = cacheDefaultMode;
+       }
+       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode is now " + state.cacheDefaultMode);
+
+       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode was " + state.cacheMode);
+       String cacheMode = state.runtimeData.getParameter("cw_cacheMode");
+       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheMode is " + cacheMode);
+       if (cacheMode != null) {
+          // maybe don't allow if scope is system?
+          state.cacheMode = cacheMode;
+       } else
+          state.cacheMode = state.cacheDefaultMode;
+       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode is now " + state.cacheMode);
+
+       // reset is a one-time thing.
+       String reset = state.runtimeData.getParameter("cw_reset");
+       if (reset != null) {
+          if (reset.equalsIgnoreCase("return")) {
+             state.buttonxmlUri = null;
           }
-        }
-      fullxmlUri = newXML.toString();
-      LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + fullxmlUri);
-    }
-    }
+          // else if (reset.equalsIgnoreCase("reset")) {
+          //  call setStaticData with our cached copy.
+          // }
+       }
+
+       if ( state.buttonxmlUri != null )
+           state.fullxmlUri = state.buttonxmlUri;
+       else {
+         //if (this.passThrough != null )
+         //  LogService.instance().log(LogService.DEBUG, "CWebProxy: passThrough: "+this.passThrough);
+
+         // Is this a case where we need to pass request parameters to the xmlURI?
+         if ( state.passThrough != null &&
+            !state.passThrough.equalsIgnoreCase("none") &&
+              ( state.passThrough.equalsIgnoreCase("all") ||
+                state.passThrough.equalsIgnoreCase("application") ||
+                rd.getParameter("cw_inChannelLink") != null ) )
+           {
+             LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
+
+             StringBuffer newXML = new StringBuffer().append(state.xmlUri);
+	     String appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
+	     // BUG 772 - this doesn't seem to catch all cases.
+
+             // want all runtime parameters not specific to WebProxy
+             Enumeration e=rd.getParameterNames ();
+             if (e!=null)
+               {
+                 while (e.hasMoreElements ())
+                   {
+                     String pName = (String) e.nextElement ();
+                     if ( !pName.startsWith("cw_") ) {
+		       String[] value_array = rd.getParameterValues(pName);
+		       if ( value_array == null || value_array.length == 0 ) {
+			   // keyword-style parameter
+			   newXML.append(appendchar);
+			   appendchar = "&";
+			   newXML.append(pName);
+			} else {
+			  int i = 0;
+			  while ( i < value_array.length ) {
+LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime parameter: " + pName);
+                            newXML.append(appendchar);
+                            appendchar = "&";
+                            newXML.append(pName);
+                            newXML.append("=");
+		            newXML.append(URLEncoder.encode(value_array[i++]));
+		          }
+			}
+
+                     }
+                   }
+               }
+	     // here add in attributes according to cw_person
+	     if (state.person != null) {
+               StringTokenizer st = new StringTokenizer(state.person,",");
+               if (st != null)
+                 {
+                   while (st.hasMoreElements ())
+                     {
+                       String pName = st.nextToken();
+LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person attribute: " + pName);
+                       newXML.append(appendchar);
+                       appendchar = "&";
+                       newXML.append(pName);
+                       newXML.append("=");
+		       // note, this only gets the first one if it's a
+		       // java.util.Vector.  Should check
+		       String pVal = (String)state.iperson.getAttribute(pName);
+		       if (pVal != null)
+                         newXML.append(URLEncoder.encode(pVal));
+                     }
+                 }
+	       }
+	     // end new cw_person code
+
+             // to add: if not already set, make a copy of sd for
+	     // the "reset" command
+             state.fullxmlUri = newXML.toString();
+             LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
+          }
+       }
+     }
   }
 
   /**
    * Process portal events.  Currently supported events are
-   * EDIT_BUTTON_EVENT, HELP_BUTTON_EVENT, and ABOUT_BUTTON_EVENT.
-   * These three work by changing the xmlUri.  The new Uri should
-   * contain a link that will refer back to the old one at the end
-   * of its task.
+   * EDIT_BUTTON_EVENT, HELP_BUTTON_EVENT, ABOUT_BUTTON_EVENT,
+   * and SESSION_DONE.  The button events work by changing the xmlUri.
+   * The new Uri's content should contain a link that will refer back
+   * to the old one at the end of its task.
    * @param ev the event
    */
-  public void receiveEvent (PortalEvent ev)
+  public void receiveEvent (PortalEvent ev, String uid)
   {
-    int evnum;
+    ChannelState state = (ChannelState)stateTable.get(uid);
+    if (state == null)
+       LogService.instance().log(LogService.ERROR,"CWebProxy:receiveEvent() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+    else {
+      int evnum = ev.getEventNumber();
 
-    evnum = ev.getEventNumber();
-    if (evnum == ev.EDIT_BUTTON_EVENT && this.editUri != null)
-          this.buttonxmlUri = this.editUri;
-    else if (evnum == ev.HELP_BUTTON_EVENT && this.helpUri != null)
-          this.buttonxmlUri = this.helpUri;
-    else if (evnum == ev.ABOUT_BUTTON_EVENT && this.infoUri != null)
-          this.buttonxmlUri = this.infoUri;
-
-      // case ev.UNSUBSCRIBE:
-      //   // remove db entry for channel
-      //   break;
+      switch (evnum)
+      {
+        case PortalEvent.EDIT_BUTTON_EVENT:
+          if (state.editUri != null)
+            state.buttonxmlUri = state.editUri;
+          break;
+        case PortalEvent.HELP_BUTTON_EVENT:
+          if (state.helpUri != null)
+            state.buttonxmlUri = state.helpUri;
+          break;
+        case PortalEvent.ABOUT_BUTTON_EVENT:
+          if (state.infoUri != null)
+            state.buttonxmlUri = state.infoUri;
+          break;
+        case PortalEvent.SESSION_DONE:
+	  stateTable.remove(uid);
+          break;
+        // case PortalEvent.UNSUBSCRIBE: // remove db entry for channel
+        default:
+          break;
+      }
+    }
   }
 
   /**
    * Acquires ChannelRuntimeProperites from the channel.
-   * This function may be called by the portal framework throughout the session.   * @see ChannelRuntimeProperties
+   * This function may be called by the portal framework throughout the session.
+   * @see ChannelRuntimeProperties
    */
-  public ChannelRuntimeProperties getRuntimeProperties ()
+  public ChannelRuntimeProperties getRuntimeProperties (String uid)
   {
-    return new ChannelRuntimeProperties ();
+    ChannelRuntimeProperties rp=new ChannelRuntimeProperties();
+
+    // determine if such channel is registered
+    if (stateTable.get(uid) == null)
+    {
+      rp.setWillRender(false);
+      LogService.instance().log(LogService.ERROR,"CWebProxy:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+    }
+    return rp;
   }
 
   /**
    * Ask channel to render its content.
    * @param out the SAX ContentHandler to output content to
    */
-  public void renderXML (ContentHandler out) throws PortalException
+  public void renderXML (ContentHandler out, String uid) throws PortalException
   {
-    String xml = null;
-    Document xmlDoc = null;
+    ChannelState state=(ChannelState)stateTable.get(uid);
+    if (state == null)
+      LogService.instance().log(LogService.ERROR,"CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+    else
+      {
+      String xml = null;
+      Document xmlDoc = null;
 
-    try
-    {
-      if (tidy != null && tidy.equals("on"))
-        xml = getXmlString (fullxmlUri);
+      try
+      {
+        if (state.tidy != null && state.tidy.equals("on"))
+          xml = getXmlString (state.fullxmlUri, state);
+	else
+	  xmlDoc = getXmlDocument (state.fullxmlUri, state);
+      }
+      catch (Exception e)
+      {
+        throw new ResourceMissingException (state.fullxmlUri, "", e.getMessage());
+      }
+
+      state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
+
+      // Runtime data parameters are handed to the stylesheet.
+      // Add any static data parameters so it gets a full set of variables.
+      // Possibly this should be a copy.
+      if (state.xmlUri != null)
+        state.runtimeData.put("cw_xml", state.xmlUri);
+      if (state.sslUri != null)
+        state.runtimeData.put("cs_ssl", state.sslUri);
+      if (state.xslTitle != null)
+        state.runtimeData.put("cw_xslTitle", state.xslTitle);
+      if (state.xslUri != null)
+        state.runtimeData.put("cw_xsl", state.xslUri);
+      if (state.passThrough != null)
+        state.runtimeData.put("cw_passThrough", state.passThrough);
+      if (state.tidy != null)
+        state.runtimeData.put("cw_tidy", state.tidy);
+      if (state.infoUri != null)
+        state.runtimeData.put("cw_info", state.infoUri);
+      if (state.helpUri != null)
+        state.runtimeData.put("cw_help", state.helpUri);
+      if (state.editUri != null)
+        state.runtimeData.put("cw_edit", state.editUri);
+
+      XSLT xslt = new XSLT(this);
+      if (xmlDoc != null)
+        xslt.setXML(xmlDoc);
       else
-        xmlDoc = getXmlDocument (fullxmlUri);
+        xslt.setXML(xml);
+      if (state.xslUri != null)
+        xslt.setXSL(state.xslUri);
+      else
+        xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.setStylesheetParameters(state.runtimeData);
+      xslt.transform();
     }
-    catch (Exception e)
-    {
-      throw new ResourceMissingException (fullxmlUri, "", e.getMessage());
-    }
-
-    runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
-
-    // Runtime data parameters gets handed to the stylesheet.
-    // Add any static data parameters so it gets a full set of variables.
-    // Possibly this should be a copy.
-    if (xmlUri != null)
-      runtimeData.put("cw_xml", xmlUri);
-    if (sslUri != null)
-      runtimeData.put("cs_ssl", sslUri);
-    if (xslTitle != null)
-      runtimeData.put("cw_xslTitle", xslTitle);
-    if (xslUri != null)
-      runtimeData.put("cw_xsl", xslUri);
-    if (passThrough != null)
-      runtimeData.put("cw_passThrough", passThrough);
-    if (tidy != null)
-      runtimeData.put("cw_tidy", tidy);
-    if (infoUri != null)
-      runtimeData.put("cw_info", infoUri);
-    if (helpUri != null)
-      runtimeData.put("cw_help", helpUri);
-    if (editUri != null)
-      runtimeData.put("cw_edit", editUri);
-
-    XSLT xslt = new XSLT(this);
-    if (xmlDoc != null)
-      xslt.setXML(xmlDoc);
-    else
-      xslt.setXML(xml);
-    if (xslUri != null)
-      xslt.setXSL(xslUri);
-    else
-      xslt.setXSL(sslUri, xslTitle, runtimeData.getBrowserInfo());
-    xslt.setTarget(out);
-    xslt.setStylesheetParameters(runtimeData);
-    xslt.transform();
   }
 
   /**
@@ -362,7 +559,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param uri the URI
    * @return the data pointed to by a URI as a Document object
    */
-  private Document getXmlDocument(String uri) throws Exception
+  private Document getXmlDocument(String uri, ChannelState state) throws Exception
   {
     URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
     String domain = url.getHost().trim();
@@ -382,7 +579,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
       HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
       httpUrlConnect.setInstanceFollowRedirects(true);
       if (domain != null && path != null)
-        sendAndStoreCookies(httpUrlConnect, domain, path, port);
+        sendAndStoreCookies(httpUrlConnect, domain, path, port, state);
     }
 
     DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -400,7 +597,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param uri the URI
    * @return the data pointed to by a URI as a String
    */
-  private String getXmlString (String uri) throws Exception
+  private String getXmlString (String uri, ChannelState state) throws Exception
   {
     URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
     String domain = url.getHost().trim();
@@ -420,11 +617,11 @@ public class CWebProxy implements org.jasig.portal.IChannel
       HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
       httpUrlConnect.setInstanceFollowRedirects(true);
       if (domain != null && path != null)
-        sendAndStoreCookies(httpUrlConnect, domain, path, port);
+        sendAndStoreCookies(httpUrlConnect, domain, path, port, state);
     }
 
     String xml;
-    if ( (tidy != null) && (tidy.equalsIgnoreCase("on")) )
+    if ( (state.tidy != null) && (state.tidy.equalsIgnoreCase("on")) )
     {
       Tidy tidy = new Tidy ();
       tidy.setXHTML (true);
@@ -457,24 +654,23 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
 
     return xml;
-
   }
 
-  /**
-   * Sends any cookies in the cookie vector as a request header and stores
-   * any incoming cookies in the cookie vector (according to rfc 2109,
-   * 2965 &amp; netscape)
-   *
-   * @param httpUrlConnect The HttpURLConnection handling the URL connection
-   * @param domain The domain value for the Cookie to be sent
-   * @param path The path value for the Cookie to be sent
-   * @param port The port value for the Cookie to be sent
-   */
-  private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port) throws Exception
+   /**
+    * Sends any cookies in the cookie vector as a request header and stores
+    * any incoming cookies in the cookie vector (according to rfc 2109,
+    * 2965 &amp; netscape)
+    *
+    * @param httpUrlConnect The HttpURLConnection handling the URL connection
+    * @param domain The domain value for the Cookie to be sent
+    * @param path The path value for the Cookie to be sent
+    * @param port The port value for the Cookie to be sent
+    */
+  private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port, ChannelState state) throws Exception
   {
     // send appropriate cookies to origin server from cookie vector
-    if (cookies.size() > 0)
-      sendCookieHeader(httpUrlConnect, domain, path, port);
+    if (state.cookies.size() > 0)
+      sendCookieHeader(httpUrlConnect, domain, path, port, state.cookies);
 
     int status = httpUrlConnect.getResponseCode();
 
@@ -505,21 +701,21 @@ public class CWebProxy implements org.jasig.portal.IChannel
     String header;
     while ( (header=httpUrlConnect.getHeaderFieldKey(index)) != null )
     {
-       if (supportSetCookie2)
+       if (state.supportSetCookie2)
        {
          if (header.equalsIgnoreCase("set-cookie2"))
-            processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port);
+            processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port, state.cookies);
        }
        else
        {
          if (header.equalsIgnoreCase("set-cookie2"))
          {
-           supportSetCookie2 = true;
-           processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port);
+           state.supportSetCookie2 = true;
+           processSetCookie2Header(httpUrlConnect.getHeaderField(index), domain, path, port, state.cookies);
          }
          else if (header.equalsIgnoreCase("set-cookie"))
          {
-           processSetCookieHeader(httpUrlConnect.getHeaderField(index), domain, path, port);
+           processSetCookieHeader(httpUrlConnect.getHeaderField(index), domain, path, port, state.cookies);
          }
        }
        index++;
@@ -535,7 +731,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param path The path value of the cookie
    * @param port The port value of the cookie
    */
-  private void sendCookieHeader(HttpURLConnection httpUrlConnect, String domain, String path, String port)
+  private void sendCookieHeader(HttpURLConnection httpUrlConnect, String domain, String path, String port, Vector cookies)
   {
      Vector cookiesToSend = new Vector();
      WebProxyCookie cookie;
@@ -624,7 +820,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param path The path value of the cookie
    * @param port The port value of the cookie
    */
-  private void processSetCookie2Header (String headerVal, String domain, String path, String port)
+  private void processSetCookie2Header (String headerVal, String domain, String path, String port, Vector cookies)
   {
      StringTokenizer headerValue = new StringTokenizer(headerVal, ",");
      StringTokenizer cookieValue;
@@ -738,7 +934,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
    * @param path The path value of the cookie
    * @param port The port value of the cookie
    */
-  private void processSetCookieHeader (String headerVal, String domain, String path, String port)
+  private void processSetCookieHeader (String headerVal, String domain, String path, String port, Vector cookies)
   throws ParseException
   {
      StringTokenizer cookieValue;
@@ -850,12 +1046,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
      else
      {
        // can treat according to RCF 2965
-       processSetCookie2Header(headerVal, domain, path, port);
+       processSetCookie2Header(headerVal, domain, path, port, cookies);
      }
   }
 
   /**
-   * This class is used by CWebProxy to store cookie information.  
+   * This class is used by CWebProxy to store cookie information.
    * WebProxyCookie extends javax.servlet.http.Cookie
    * and contains methods to query the cookie's attribute status.
    *
@@ -939,7 +1135,113 @@ public class CWebProxy implements org.jasig.portal.IChannel
      {
        return portSet;
      }
-
   }
 
+  public ChannelCacheKey generateKey(String uid)
+  {
+    ChannelState state = (ChannelState)stateTable.get(uid);
+
+    if (state == null)
+    {
+      LogService.instance().log(LogService.ERROR,"CWebProxy:generateKey() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      return null;
+    }
+
+    if ( state.cacheMode.equalsIgnoreCase("none") )
+      return null;
+    // else if http see first if caching is on or off.  if it's on,
+    // store the validity time in the state, cache it, and further
+    // resolve later with isValid.
+    // check cache-control, no-cache, must-revalidate, max-age,
+    // Date & Expires, expiry in past
+    // for 1.0 check pragma for no-cache
+    // add a warning to docs about not a full http 1.1 impl.
+
+    ChannelCacheKey k = new ChannelCacheKey();
+    StringBuffer sbKey = new StringBuffer(1024);
+
+    if ( state.cacheScope.equalsIgnoreCase("instance") ) {
+      k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+    } else {
+      k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+      sbKey.append(systemCacheId).append(": ");
+      if ( state.cacheScope.equalsIgnoreCase("user") ) {
+        sbKey.append("userId:").append(state.id).append(", ");
+      }
+    }
+    // Later:
+    // if scope==guest, do same as user, but use GUEST instead if isGuest()
+    // Scope descending order: system, guest, user, instance.
+
+    sbKey.append("sslUri:").append(state.sslUri).append(", ");
+
+    // xslUri may either be specified as a parameter to this channel
+    // or we will get it by looking in the stylesheet list file
+    String xslUriForKey = state.xslUri;
+    try {
+      if (xslUriForKey == null) {
+        String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), state.sslUri);
+        xslUriForKey = XSLT.getStylesheetURI(sslUri, state.runtimeData.getBrowserInfo());
+      }
+    } catch (Exception e) {
+      xslUriForKey = "Not attainable: " + e;
+    }
+
+    sbKey.append("xslUri:").append(xslUriForKey).append(", ");
+    sbKey.append("fullxmlUri:").append(state.fullxmlUri).append(", ");
+    sbKey.append("passThrough:").append(state.passThrough).append(", ");
+    sbKey.append("tidy:").append(state.tidy);
+    k.setKey(sbKey.toString());
+    k.setKeyValidity(new Long(System.currentTimeMillis()));
+    return k;
+  }
+
+  public boolean isCacheValid(Object validity,String uid)
+  {
+    if (!(validity instanceof Long))
+      return false;
+
+    ChannelState state = (ChannelState)stateTable.get(uid);
+
+    if (state == null)
+    {
+      LogService.instance().log(LogService.ERROR,"CWebProxy:isCacheValid() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      return false;
+    }
+    else
+    return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
+  }
 }
+
+/*
+ * Developer's notes for convenience.  Will be deleted later.
+ * Cache control parameters:
+ *  Static params
+ *    cw_cacheDefaultTimeout	timeout in seconds.
+ *    cw_cacheDefaultScope	"system" - one copy for all users
+ *				"guest" - one copy for guest, others by user
+ *				"user" - one copy per user
+ *    				"instance" - cache for this instance only
+ *    cw_cacheDefaultMode		"none" - normally don't cache
+ *    				"init" - only cache initial view
+ *    				"http" - follow http caching directives
+ *				"all" - why not?  cache everything.
+ *  Runtime only params:
+ *    cw_cacheTimeout		override default for this request only
+ *    cw_cacheScope		override default for this request only
+ *    cw_cacheMode		override default for this request only
+ *
+ * Note: all static parameters can be replaced via equivalent runtime.
+ *
+ * The Scope can only be reduced, never increased.
+ */
+/*
+ * NOTE could cw_person be multi-valued instead of comma-sep?
+ *      cw_restrict should work the same way.
+ * NOTE Does IPerson contain multiple instances of attributes?
+ * cw_restrict - a list of runtime parameters that cannot be changed.
+ *               possibly allow multi-values, with params. indicating
+ *               the param can only be changed to that?
+ *	       - can we encode the scope restrictions with this
+ *	         as a default?
+ */
