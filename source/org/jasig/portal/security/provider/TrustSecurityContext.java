@@ -38,6 +38,7 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.*;
 import org.jasig.portal.Logger;
 import org.jasig.portal.RdbmServices;
+import org.jasig.portal.GenericPortalBean;
 import java.util.*;
 
 /**
@@ -68,8 +69,7 @@ class TrustSecurityContext extends ChainingSecurityContext implements ISecurityC
     if (this.myPrincipal.UID != null) {
       try {
         String first_name, last_name;
-        org.jasig.portal.IDBImpl dbImpl = new org.jasig.portal.DBImpl();
-        String acct[] = dbImpl.getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = GenericPortalBean.getDbImplObject().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
           first_name = acct[2];
           last_name  = acct[3];

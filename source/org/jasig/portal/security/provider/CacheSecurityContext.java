@@ -38,6 +38,7 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.*;
 import org.jasig.portal.Logger;
 import org.jasig.portal.RdbmServices;
+import org.jasig.portal.GenericPortalBean;
 import java.util.*;
 import java.security.MessageDigest;
 
@@ -78,8 +79,7 @@ class CacheSecurityContext extends ChainingSecurityContext implements ISecurityC
         this.myOpaqueCredentials.credentialstring != null) {
       String first_name = null, last_name = null;
       try {
-        org.jasig.portal.IDBImpl dbImpl = new org.jasig.portal.DBImpl();
-        String acct[] = dbImpl.getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = GenericPortalBean.getDbImplObject().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
           first_name = acct[2];
           last_name  = acct[3];

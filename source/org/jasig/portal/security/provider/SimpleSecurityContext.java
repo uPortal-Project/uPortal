@@ -38,6 +38,7 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.*;
 import org.jasig.portal.Logger;
 import org.jasig.portal.RdbmServices;
+import org.jasig.portal.GenericPortalBean;
 import java.util.*;
 import java.security.MessageDigest;
 
@@ -67,8 +68,7 @@ class SimpleSecurityContext extends ChainingSecurityContext implements ISecurity
       String first_name = null, last_name = null, md5_passwd = null;
       int globalUID;
       try {
-        org.jasig.portal.IDBImpl dbImpl = new org.jasig.portal.DBImpl();
-        String acct[] = dbImpl.getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = GenericPortalBean.getDbImplObject().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
           globalUID  = Integer.parseInt(acct[0]);
           first_name = acct[2];
