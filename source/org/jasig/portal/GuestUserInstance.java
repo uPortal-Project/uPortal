@@ -86,7 +86,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * Create and populate new state entry.
      * @param req a <code>HttpServletRequest</code> value
      */
-    public void registerSession(HttpServletRequest req) {
+    public void registerSession(HttpServletRequest req) throws PortalException {
 	IState newState=new IState();
         newState.channelManager=new ChannelManager(new GuestUserLayoutManagerWrapper(uLayoutManager,req.getSession(false).getId()));
         newState.p_rendering_lock=new Object();
