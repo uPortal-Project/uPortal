@@ -35,6 +35,7 @@
 
 package org.jasig.portal;
 
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -345,13 +346,11 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     }
 
     /**
-       Creates the CAR media base URL.
+     * Creates the CAR media base URL.
      */
-    private String createBaseCarMediaURL()
-    throws PortalException
-    {
+    private String createBaseCarMediaURL() throws PortalException {
         String url = getBaseWorkerURL( CarResources.CAR_WORKER_ID, true );
-        return java.net.URLEncoder.encode(url.concat( "?"+ CarResources.CAR_RESOURCE_PARM + "=" ));
+        return URLEncoder.encode(url).concat( "?" + CarResources.CAR_RESOURCE_PARM + "=" );
     }
 
 
