@@ -279,7 +279,7 @@ public class CSubscriber implements IPrivilegedChannel
                 else {
 
                     //Node channel = channelRegistry.getElementById (subIDs[i]);
-                      System.err.println(userLayoutXML + ", " + channel + ", " + destination);
+                      //System.out.println(userLayoutXML + ", " + channel + ", " + destination);
                     destination.insertBefore (userLayoutXML.importNode(channel, false), null);
                 }
             }
