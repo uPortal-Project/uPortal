@@ -63,7 +63,7 @@ public class RegisterChannelType {
         args[2].trim().length() > 0 && // the description
         args[3].trim().length() > 0) { // the CPD URI
 
-      ChannelType chanType = new ChannelType(args[0], args[1], args[2], args[3]);
+      ChannelType chanType = new ChannelType(-1, args[0], args[1], args[2], args[3]);
 
       try {
         chanRegStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
