@@ -1800,8 +1800,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             rs.close();
         }
 
-       System.out.println ( "layoutID="+layoutId);
-
        if (layoutId < 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
           LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
