@@ -9,10 +9,6 @@
   		<defaultvalue>1</defaultvalue>
   		<description>The number of the tab that is initially active</description>
   	</parameter>
-  	<parameter name="userPreferencesClass">
-  		<defaultvalue>org.jasig.portal.channels.UserPreferences.GPreferencesState</defaultvalue>
-  		<description>The structure-dependent user preferences class</description>
-  	</parameter>
 </parameters>
 
 <folderattributes>
