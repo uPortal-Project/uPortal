@@ -55,7 +55,6 @@ import  java.util.ArrayList;
  * @deprecated As of uPortal 2.0, replaced by {@link PermissionManagerImpl}
  */
 public class ReferencePermissionManager extends PermissionManager {
-  private static boolean DEBUG = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ReferencePermissionManager.DEBUG");
 
   /**
    * This constructor ensures that the PermissionManager will be created with an owner specified
