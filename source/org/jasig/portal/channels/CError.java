@@ -6,8 +6,9 @@
 package org.jasig.portal.channels;
 
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelManager;
@@ -16,22 +17,20 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
-import org.jasig.portal.MediaManager;
-import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.serialize.BaseMarkupSerializer;
-import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ICharacterChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.AuthorizationService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
