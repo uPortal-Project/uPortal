@@ -109,8 +109,9 @@ throws AuthorizationException
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID) 
 throws AuthorizationException
 {
-    String owner = "CHAN_ID" + "." + channelID;
-    return doesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, null);
+    String owner = "*";
+    String target = "CHAN_ID" + "." + channelID;
+    return doesPrincipalHavePermission(principal, owner, CHANNEL_SUBSCRIBER_ACTIVITY, target);
 }
 /**
  * @param group - org.jasig.portal.groups.IEntityGroup - the Permission principal
