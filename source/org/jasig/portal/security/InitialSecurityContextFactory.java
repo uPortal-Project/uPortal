@@ -66,6 +66,7 @@ import org.jasig.portal.services.LogService;
  * @author Andrew Newman, newman@yale.edu
  * @author Susan Bramhall (susan.bramhall@yale.edu)
  * @author Shawn Bayern (shawn.bayern@yale.edu)
+ * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
  */
 
@@ -269,6 +270,7 @@ public class InitialSecurityContextFactory {
                 }
                 
                 contextConfig.subConfigs = (ContextConfiguration[])subContextConfigs.values().toArray(new ContextConfiguration[subContextConfigs.size()]);
+                contextConfig.initialized = true;
             }
         }
         
