@@ -92,7 +92,7 @@ public class Authentication {
       // This is created by the SecurityContext and should be an
       // IPerson object if present.  This is a likely scenario if the
       // security provider also supplies directory information.
-      IAdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
+      IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
       // If the IPerson object was not provided by the security context then
       // creating an IPerson object at this point and populating it from
       // directory information is the recommended scenario.
@@ -119,30 +119,30 @@ public class Authentication {
         }
         // If still no FullName use an unrecognized string
         if (person.getFullName() == null) {
-          person.setFullName("Unrecognized person: " + m_Person.getAttribute("username"));
+          person.setFullName("Unrecognized person: " + person.getAttribute("username"));
         }
       } 
       else {
         // Set the IPerson to be the AdditionalDescriptor object
         person = (IPerson)addInfo;
       }
-    }
-    // Find the uPortal userid for this user or flunk authentication if not found
-    // The template username should actually be derived from directory information.
-    // The reference implemenatation sets the uPortalTemplateUserName to the default in
-    // the portal.properties file.
-    // A more likely template would be staff or faculty or undergraduate.
-    PropertiesManager pm = new PropertiesManager();
-    boolean autocreate = pm.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
-    if (autocreate && m_Person.getAttribute("uPortalTemplateUserName") == null) {
-      m_Person.setAttribute("uPortalTemplateUserName", pm.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName"));
-    }
-    IUserIdentityStore UIDStore = RdbmServices.getUserIdentityStoreImpl();
-    try {
-      int newUID = UIDStore.getPortalUID(m_Person, autocreate);
-      m_Person.setID(newUID);
-    } catch (AuthorizationException ae) {
-      LogService.instance().log(LogService.ERROR, ae);
+      // Find the uPortal userid for this user or flunk authentication if not found
+      // The template username should actually be derived from directory information.
+      // The reference implemenatation sets the uPortalTemplateUserName to the default in
+      // the portal.properties file.
+      // A more likely template would be staff or faculty or undergraduate.
+      PropertiesManager pm = new PropertiesManager();
+      boolean autocreate = pm.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
+      if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
+        person.setAttribute("uPortalTemplateUserName", pm.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName"));
+      }
+      IUserIdentityStore UIDStore = RdbmServices.getUserIdentityStoreImpl();
+      try {
+        int newUID = UIDStore.getPortalUID(person, autocreate);
+        person.setID(newUID);
+      } catch (AuthorizationException ae) {
+        LogService.instance().log(LogService.ERROR, ae);
+      }
     }
   }
 
