@@ -13,8 +13,8 @@
   </servlet>
 
   <servlet>
-    <servlet-name>Login</servlet-name>
-    <servlet-class>org.jasig.portal.LoginServlet</servlet-class>
+    <servlet-name>Authentication</servlet-name>
+    <servlet-class>org.jasig.portal.AuthenticationServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
 
@@ -43,8 +43,8 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>Login</servlet-name>
-    <url-pattern>/Login</url-pattern>
+    <servlet-name>Authentication</servlet-name>
+    <url-pattern>/Authentication</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
