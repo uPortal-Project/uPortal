@@ -436,7 +436,6 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     DirContext context = (DirContext) contexts.get("context");
     if (context==null){
       Hashtable jndienv = new Hashtable();
-
       jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
       jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
       jndienv.put(Context.PROVIDER_URL,url);
@@ -463,8 +462,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
   }
 
   protected GroupShadow getShadow(IEntityGroup group){
-    /**@todo: change to getStoreKey() when available*/
-    return (GroupShadow) groups.get(group.getKey());
+    return (GroupShadow) groups.get(group.getLocalKey());
   }
 
   public void delete(IEntityGroup group) throws GroupsException {
@@ -491,8 +489,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
      }
 
      if (gm.isGroup()){
-        /**@todo: change to getStoreKey() when available*/
-        key = gm.getKey();
+        key = ((IEntityGroup)gm).getLocalKey();
         for (int i=0; i < shadows.length; i++){
           for (int j=0; j< shadows[i].subgroups.length; j++){
             if (shadows[i].subgroups[j].key.equals(key)){

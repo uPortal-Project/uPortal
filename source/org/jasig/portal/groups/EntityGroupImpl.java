@@ -437,7 +437,7 @@ protected java.util.Iterator getMemberGroups() throws GroupsException
     for ( Iterator i = getMemberGroupKeys().iterator(); i.hasNext(); )
     {
         String key = (String) i.next();
-        members.add(getLocalGroupService().findGroup(key));
+        members.add(GroupService.findGroup(key));
     }
     return members.iterator();
 }

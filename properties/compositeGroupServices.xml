@@ -8,33 +8,23 @@ This list of component group services is processed by the composite, or "root" s
   <service>
     <name>local</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store>org.jasig.portal.groups.RDBMEntityStore</entity_store>
-    <group_store>org.jasig.portal.groups.RDBMEntityGroupStore</group_store>
+    <entity_store_factory>org.jasig.portal.groups.ReferenceEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.ReferenceEntityGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.ReferenceEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>true</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
 
-<!-- 
+<!--
   <service>
     <name>ldap</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.ldap.LDAPEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.ldap.LDAPGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>false</caching_enabled>
   </service>
 -->
 
-<!-- 
-This is an example of an externally-managed group service.    
--->
-<!--
-  <service>
-    <name>buddies</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store>org.jasig.portal.groups.RDBMEntityStore</entity_store>
-    <group_store>org.jasig.portal.groups.buddies.RDBMGroupStore</group_store>
-    <internally_managed>false</internally_managed>
-    <caching_enabled>false</caching_enabled>
-    <some_other_element>12345</some_other_element>
-  </service>
--->
 </servicelist>

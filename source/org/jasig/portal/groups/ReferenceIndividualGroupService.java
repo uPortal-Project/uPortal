@@ -405,14 +405,14 @@ protected ComponentGroupServiceDescriptor getServiceDescriptor()
 private void initialize() throws GroupsException
 {
     String eMsg = null;
-    entityFactory = new RDBMEntityStore();
 
-    String groupStoreName = getServiceDescriptor().getGroupStoreName();
-    String entityStoreName = getServiceDescriptor().getEntityStoreName();
+    String groupStoreFactoryName = getServiceDescriptor().getGroupStoreFactoryName();
+    String entityStoreFactoryName = getServiceDescriptor().getEntityStoreFactoryName();
+    String entitySearcherFactoryName = getServiceDescriptor().getEntitySearcherFactoryName();
 
-    if ( groupStoreName == null )
+    if ( groupStoreFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): No Group Store specified in service descriptor.";
+        eMsg = "ReferenceGroupService.initialize(): No Group Store factory specified in service descriptor.";
         LogService.log(LogService.INFO, eMsg);
     }
 
@@ -420,20 +420,20 @@ private void initialize() throws GroupsException
     {
         try
         {
-            groupFactory = (IEntityGroupStore)Class.forName(groupStoreName).newInstance();
-//            groupFactory.setGroupService(this);
+            IEntityGroupStoreFactory groupStoreFactory = (IEntityGroupStoreFactory)Class.forName(groupStoreFactoryName).newInstance();
+            groupFactory = groupStoreFactory.newGroupStore();
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate " + groupStoreName + " " + e;
+            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate group store " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
     }
 
-    if ( entityStoreName == null )
+    if ( entityStoreFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): No Entity Store specified in service descriptor.";
+        eMsg = "ReferenceGroupService.initialize(): No Entity Store Factory specified in service descriptor.";
         LogService.log(LogService.INFO, eMsg);
     }
 
@@ -441,20 +441,38 @@ private void initialize() throws GroupsException
     {
         try
         {
-            entityFactory = (IEntityStore)Class.forName(entityStoreName).newInstance();
+            IEntityStoreFactory entityStoreFactory = (IEntityStoreFactory)Class.forName(entityStoreFactoryName).newInstance();
+            entityFactory = entityStoreFactory.newEntityStore();
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate " + entityStoreName + " " + e;
+            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate entity store " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
     }
 
-    ITypedEntitySearcher[] tes = new ITypedEntitySearcher[2];
-    tes[0]=new RDBMChannelDefSearcher();
-    tes[1]=new RDBMPersonSearcher();
-    entitySearcher = new EntitySearcherImpl(tes);
+    if ( entitySearcherFactoryName == null )
+    {
+        eMsg = "ReferenceGroupService.initialize(): No Entity Searcher Factory specified in service descriptor.";
+        LogService.log(LogService.INFO, eMsg);
+    }
+
+    else
+    {
+        try
+        {
+            IEntitySearcherFactory entitySearcherFactory = (IEntitySearcherFactory)Class.forName(entitySearcherFactoryName).newInstance();
+            entitySearcher = entitySearcherFactory.newEntitySearcher();
+        }
+        catch (Exception e)
+        {
+            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate entity searcher " + e;
+            LogService.log(LogService.ERROR, eMsg);
+            throw new GroupsException(eMsg);
+        }
+    }
+ 
 }
 /**
  * Answers if the group can be updated or deleted in the store.

@@ -48,8 +48,9 @@ public class ComponentGroupServiceDescriptor extends HashMap
     // Known service attributes (there may optionally be others.)
     public static final String NAME="name";
     public static final String FACTORY="service_factory";
-    public static final String ENTITY_STORE="entity_store";
-    public static final String GROUP_STORE="group_store";
+    public static final String ENTITY_STORE_FACTORY="entity_store_factory";
+    public static final String GROUP_STORE_FACTORY="group_store_factory";
+    public static final String ENTITY_SEARCHER_FACTORY="entity_searcher_factory";
     public static final String INTERNALLY_MANAGED="internally_managed";
     public static final String CACHE_ENABLED="cache_enabled";
 /**
@@ -62,13 +63,17 @@ public Object getAttribute(String attName)
 { 
     return get(attName); 
 }
-public String getEntityStoreName() 
+public String getEntitySearcherFactoryName() 
 { 
-    return (String)get(ENTITY_STORE); 
+    return (String)get(ENTITY_SEARCHER_FACTORY); 
 }
-public String getGroupStoreName() 
+public String getEntityStoreFactoryName() 
 { 
-    return (String)get(GROUP_STORE); 
+    return (String)get(ENTITY_STORE_FACTORY); 
+}
+public String getGroupStoreFactoryName() 
+{ 
+    return (String)get(GROUP_STORE_FACTORY); 
 }
 public String getName() 
 {
@@ -96,13 +101,17 @@ public void setCachingEnabled(boolean caching)
 { 
     put(CACHE_ENABLED, new Boolean(caching)); 
 }
-public void setEntityStoreName(String efName) 
+public void setEntitySearcherFactoryName(String esfName) 
 { 
-    put(ENTITY_STORE, efName); 
+    put(ENTITY_SEARCHER_FACTORY, esfName); 
 }
-public void setGroupStoreName(String gsName) 
+public void setEntityStoreFactoryName(String esfName) 
 { 
-    put(GROUP_STORE, gsName); 
+    put(ENTITY_STORE_FACTORY, esfName); 
+}
+public void setGroupStoreFactoryName(String gsfName) 
+{ 
+    put(GROUP_STORE_FACTORY, gsfName); 
 }
 public void setInternallyManaged(boolean internal) 
 { 
