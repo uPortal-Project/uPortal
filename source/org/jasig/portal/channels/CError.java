@@ -122,7 +122,7 @@ public class CError extends BaseChannel implements ISpecialChannel
     {
         this.runtimeData=rd;
         if(str_channelID!=null) {
-            String chFate=runtimeData.getParameter("channel_fate");
+            String chFate=runtimeData.getParameter("action");
             if(chFate!=null) {
                 // a fate has been chosen
                 if(chFate.equals("retry")) {
@@ -141,7 +141,7 @@ public class CError extends BaseChannel implements ISpecialChannel
                         // if any of the above didn't work, fall back to the error channel
                         resetCError(this.SET_RUNTIME_DATA_EXCEPTION,e,this.str_channelID,this.the_channel,"Channel failed a refresh attempt.");
                     }
-                } else if(chFate.equals("restart channel") || errorID!=SET_STATIC_DATA_EXCEPTION) {
+                } else if(chFate.equals("restart")) {
                     Logger.log(Logger.DEBUG,"CError:setRuntimeData() : going for reinstantiation");
 
                     ChannelManager cm=portcs.getChannelManager();
@@ -168,14 +168,12 @@ public class CError extends BaseChannel implements ISpecialChannel
                         resetCError(this.GENERAL_ERROR,e,this.str_channelID,null,"Channel failed to reinstantiate!");
                         Logger.log(Logger.ERROR,"CError::setRuntimeData() : an error occurred during channel reinstantiation. "+e);
                     }
-                }
+                } else if(chFate.equals("toggle_stack_trace")) {
+          showStackTrace=!showStackTrace;
+		}
             }
         }
 
-        String action = runtimeData.getParameter("action");
-
-        if(action != null && action.equals("toggle_stack_trace"))
-          showStackTrace=!showStackTrace;
     }
 
 
