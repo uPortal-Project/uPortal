@@ -56,7 +56,15 @@ import  org.xml.sax.*;
 import  org.apache.xalan.xslt.*;
 import  org.apache.xml.serialize.*;
 
-abstract public class StandaloneChannelRenderer extends BaseChannel {
+/**
+ * StandaloneChannelRenderer is meant to be used as a base class for channels
+ * that might be rendered outside of the standard user-layout driven scheme.
+ * (for example CSelectSystemProfile).
+ * @author Peter Kharchenko
+ * @version $Revision$
+ */
+
+public class StandaloneChannelRenderer extends BaseChannel {
     private StylesheetSet set;
     private MediaManager mediaM;
     private String channelName;
@@ -73,6 +81,16 @@ abstract public class StandaloneChannelRenderer extends BaseChannel {
 	+ fs + "tools" + fs + "ChannelServlet" + fs + "ChannelServlet.ssl";
 
 
+    /**
+     * Initializes the channel and calls setStaticData() on the channel.
+     * @param params a hastable of channel publish/subscribe parameters (<parameter> elements
+     * @param channelName channel name
+     * @param hasHelp determines if the channel supports "help" layout event
+     * @param hasAbout determines if the channel supports "about" layout event
+     * @param hasEdit determines if the channel supports "edit" layout event
+     * @param timeOut channel timeout value in milliseconds
+     * @param person a user IPerson object
+     */
     public void initialize(Hashtable params,String channelName,boolean hasHelp, boolean hasAbout, boolean hasEdit, long timeOut,IPerson person) throws PortalException {
 	this.set = new StylesheetSet(GenericPortalBean.getPortalBaseDir() + fs + relativeSSLLocation);
 	String propertiesDir = GenericPortalBean.getPortalBaseDir() + fs + "properties" + fs;
@@ -109,6 +127,13 @@ abstract public class StandaloneChannelRenderer extends BaseChannel {
     }
 
 
+    /**
+     * This method will output channel content into the HttpServletResponse's
+     * out stream. Note that setRuntimeData() method is called only if there was
+     * no prior call to prepare() method.
+     * @param req http request
+     * @param res http response
+     */
     public void render(HttpServletRequest req,HttpServletResponse res) throws Exception {
 	ChannelRuntimeData rd=null;
 	if(!dataIsSet) {
@@ -152,7 +177,6 @@ abstract public class StandaloneChannelRenderer extends BaseChannel {
 	    throw ipe.getException();
 	}
     }
-
 
     private ChannelRuntimeData getRuntimeData(HttpServletRequest req) {
 	// construct runtime data
