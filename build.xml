@@ -201,8 +201,8 @@
 
   axis.jar             Web services support. Axis is the next generation of the
                        Apache SOAP project which itself followed IBM's SOAP4J.
-                       Version: 1.0
-                       URL: http://xml.apache.org/axis/
+                       Version: 1.1
+                       URL: http://ws.apache.org/axis/
 
   jaxrpc.jar           Java API for XML-Based RPC - needed for Axis.
                        Use the version that comes with Axis.
