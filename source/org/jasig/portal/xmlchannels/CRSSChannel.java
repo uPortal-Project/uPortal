@@ -75,22 +75,22 @@ public class CRSSChannel extends GenericPortalBean implements IXMLChannel
     String stylesheetDir=getPortalBaseDir()+"webpages"+fs+"stylesheets"+fs;
 
     public CRSSChannel() {
-	// initialize a stylesheet set from a file
-	set=new StylesheetSet(stylesheetDir+"CRSSChannel"+fs+"CRSSChannel.ssl");
-	set.setMediaProps(getPortalBaseDir()+"properties"+fs+"media.properties");
+        // initialize a stylesheet set from a file
+        set=new StylesheetSet(stylesheetDir+"org"+fs+"jasig"+fs+"portal"+fs+"channels"+fs+"CRSSChannel"+fs+"CRSSChannel.ssl");
+        set.setMediaProps(getPortalBaseDir()+"properties"+fs+"media.properties");
     }
 
-	/* Save the ChannelStaticData object and also
+        /* Save the ChannelStaticData object and also
     get the title of the rss document for the channel name
     save it in the static data.    */
     public void setStaticData(ChannelStaticData sd) {
-	this.uri= sd.getParameter("uri");
-	Logger.log(Logger.DEBUG,"CRSSChannel::setStaticData uri=\""+uri+"\"");
+        this.uri= sd.getParameter("uri");
+        Logger.log(Logger.DEBUG,"CRSSChannel::setStaticData uri=\""+uri+"\"");
   sd.setParameter("Name",uri);
     try {
     int i=0;
     StringBuffer titleString = new StringBuffer("");
-	  Document root=getDoc();
+          Document root=getDoc();
     if (root==null) return;
     NodeList elements=root.getElementsByTagName("title");
     if (elements==null) return;
@@ -118,55 +118,55 @@ public class CRSSChannel extends GenericPortalBean implements IXMLChannel
     };
 
     public void setRuntimeData(ChannelRuntimeData rd) {
-	// need to save runtimedata so we can determine media from the
-	// request object contained in it
-	runtimeData=rd;
+        // need to save runtimedata so we can determine media from the
+        // request object contained in it
+        runtimeData=rd;
   }
 
     public void receiveEvent(LayoutEvent ev) {
-	// we have no events to process here
+        // we have no events to process here
     }
 
     // report static channel properties to the portal
     public ChannelSubscriptionProperties getSubscriptionProperties() {
-	  csb=new ChannelSubscriptionProperties();
-	  // leave most properties at their default values, except a couple.
-  	csb.setName("CRSSChannel");
-	return csb;
+          csb=new ChannelSubscriptionProperties();
+          // leave most properties at their default values, except a couple.
+        csb.setName("CRSSChannel");
+        return csb;
     }
 
     // report runtime channel properties to the portal
     public ChannelRuntimeProperties getRuntimeProperties() {
-	// channel will always render, so the default values are ok
-	return new ChannelRuntimeProperties();
+        // channel will always render, so the default values are ok
+        return new ChannelRuntimeProperties();
     }
 
     public void renderXML(DocumentHandler out)
     {
-	try {
-	    if (set!=null) {
+        try {
+            if (set!=null) {
         XSLTInputSource stylesheet=set.getStylesheet(runtimeData.getHttpRequest());
         // This allows relative paths in the stylesheet set
         String sPortalBaseDir = GenericPortalBean.getPortalBaseDir ();
         stylesheet.setSystemId (sPortalBaseDir + stylesheet.getSystemId ());
-		if(stylesheet!=null) {
-		    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-		    processor.process(new XSLTInputSource(RssDom),stylesheet,new XSLTResultTarget(out));
-		}
-	    }
-	} catch (Exception e) {};
+                if(stylesheet!=null) {
+                    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+                    processor.process(new XSLTInputSource(RssDom),stylesheet,new XSLTResultTarget(out));
+                }
+            }
+        } catch (Exception e) {};
     }
     /* parse the rss document into a DOM
     which will be around for getting the name and for eventually rendering. */
     private Document getDoc() {
-  	try{
-	    if(RssDom==null) {
-  		org.apache.xerces.parsers.DOMParser parser=new org.apache.xerces.parsers.DOMParser();
-  		parser.parse(new org.xml.sax.InputSource(uri));
-  		RssDom=parser.getDocument();
-  	    }
-  	} catch (Exception e) { Logger.log(Logger.ERROR,"RSSChannel::getDoc() : unable to get input from \""+uri+"\"\n"+e); }
-	return RssDom;
+        try{
+            if(RssDom==null) {
+                org.apache.xerces.parsers.DOMParser parser=new org.apache.xerces.parsers.DOMParser();
+                parser.parse(new org.xml.sax.InputSource(uri));
+                RssDom=parser.getDocument();
+            }
+        } catch (Exception e) { Logger.log(Logger.ERROR,"RSSChannel::getDoc() : unable to get input from \""+uri+"\"\n"+e); }
+        return RssDom;
     }
 
 }
