@@ -165,7 +165,7 @@
                        in certain web containers including Tomcat 4.0.1.
                        For information, see http://port.mun.ca/port/cw/#depend or
                        download tidy.jar directly from http://port.mun.ca/port/cw/tidy.jar
-                       Used by the CWebProxy channel.
+                       Used by the CWebProxy and the CIMAPMail channels.
                        Version: 04aug2000r6 or fixed version     (see above)
                        URL: http://lempinen.net/sami/jtidy/
                             http://port.mun.ca/port/cw/#depend   (see above)
