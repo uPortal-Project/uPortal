@@ -91,7 +91,9 @@ public class WebApplicationDefinitionImpl implements WebApplicationDefinition, S
         displayNames = new DisplayNameSetImpl();
         descriptions = new DescriptionSetImpl();
         parameters = new ParameterSetImpl();
+        servletMappings = new ServletMappingListImpl();
         servletDefinitions = new ServletDefinitionListImpl();
+        tagLibs = new TagLibListImpl();
     }
     
     // WebApplicationDefinition methods
