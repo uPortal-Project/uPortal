@@ -236,7 +236,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
 
   protected class ChainingOpaqueCredentials implements IOpaqueCredentials {
 
-    protected byte[] credentialstring;
+    public byte[] credentialstring;
 
     // Since we want to explicitly zero our credentials after authenticate,
     // copy the credentials here in case a sub-authenticator doesn't want
