@@ -2310,8 +2310,7 @@
     <rows>
       <row>
         <column><name>OWNER</name><value>CHAN_ID.10</value></column>
-        <column><name>PRINCIPAL_TYPE</name><value>0</value></column>
-        <column><name>PRINCIPAL_KEY</name><value>*</value></column>
+        <column><name>PRINCIPAL</name><value>0.*</value></column>
         <column><name>ACTIVITY</name><value>PUBLISH</value></column>
         <column><name>TARGET</name><value>*</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
