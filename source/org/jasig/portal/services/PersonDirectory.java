@@ -318,14 +318,17 @@ public class PersonDirectory {
 
     // If one object matched, extract properties from the attribute list
     try {
-      SearchResult result = (SearchResult) userlist.next();
-      Attributes ldapattribs = result.getAttributes();
-      Attribute tattrib;
-      for (int i=0;i<pdi.attributenames.length;i++) {
-        tattrib = ldapattribs.get(pdi.attributenames[i]);
-        if (tattrib!=null) {
-          String value = tattrib.get().toString();
-          attribs.put(pdi.attributealiases[i],value);
+      if (userlist.hasMoreElements()) {
+        SearchResult result = (SearchResult) userlist.next();
+        Attributes ldapattribs = result.getAttributes();
+        for (int i=0;i<pdi.attributenames.length;i++) {
+          Attribute tattrib = null;
+          if (pdi.attributenames[i] != null)
+            tattrib = ldapattribs.get(pdi.attributenames[i]);
+          if (tattrib!=null) {
+            String value = tattrib.get().toString();
+            attribs.put(pdi.attributealiases[i],value);
+          }
         }
       }
     } catch (NamingException nex) {
