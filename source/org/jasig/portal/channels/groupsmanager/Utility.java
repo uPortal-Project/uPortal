@@ -44,8 +44,9 @@ package  org.jasig.portal.channels.groupsmanager;
  * @version 2.0
  */
 import  org.apache.log4j.Priority;
-import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.services.*;
 import  org.jasig.portal.groups.IGroupMember;
+import  org.jasig.portal.security.*;
 import  java.lang.*;
 import  java.io.*;
 import  java.util.*;
@@ -121,7 +122,7 @@ public class Utility
       Collection nodes = new java.util.ArrayList();
       Element elem = null;
       org.w3c.dom.NodeList nList = aDoc.getElementsByTagName(tagname);
-      ;
+
       for (i = 0; i < nList.getLength(); i++) {
          elem = (Element)nList.item(i);
          if (elem.getAttribute("key").equals(key)) {
@@ -161,7 +162,7 @@ public class Utility
       Collection nodes = new java.util.ArrayList();
       Element elem = null;
       org.w3c.dom.NodeList nList = anElem.getElementsByTagName(tagname);
-      ;
+
       for (i = 0; i < nList.getLength(); i++) {
          elem = (Element)nList.item(i);
          if (elem.getAttribute("key").equals(key)) {
@@ -200,7 +201,7 @@ public class Utility
     * Returns an Element with the expanded attribute set to true from a
     * DocumentImpl for a tagname and IGroupMember key. This could be used for
     * cloning elements that have already be expanded thereby avoiding the extra
-    * time required to retrieve and create an element. see @todo xmlCache:
+    * time required to retrieve and create an element.
     * @param aDoc
     * @param tagname
     * @param key
@@ -351,7 +352,6 @@ public class Utility
     */
    public static IGroupMember retrieveGroupMemberForElementId (DocumentImpl aDoc, String id) {
 
-      /** @todo come up with a grpMgr exception, this should be used to return the err msg */
       Element gmElem = Utility.getElementById(aDoc, id);
       IGroupMember gm;
       if (gmElem == null) {
@@ -385,7 +385,6 @@ public class Utility
    public static IGroupMember retrieveGroupMemberForKeyAndType (String key, String type) {
       IGroupMember gm = null;
 
-      /** @todo come up with a grpMgr exception, this should be used to return the err msg */
       if (type.equals(GROUP_CLASSNAME)) {
          gm = GroupsManagerXML.retrieveGroup(key);
          Utility.logMessage("DEBUG", "Utility::retrieveGroupMemberForKeyAndType(): Retrieved group for Type: = "
