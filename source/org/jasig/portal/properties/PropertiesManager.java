@@ -162,11 +162,17 @@ public class PropertiesManager {
         || value.equalsIgnoreCase("off")){
             retValue = false; 
         } else {
-            // this method's historical behavior, maintained here, is to return false for all values that did not match on of the true values above.
-            log.error("property [" + name + "] is being accessed as a boolean but had non-canonical value [" + value + "].  Returning it as false, but this may be a property misconfiguration.");
+            // this method's historical behavior, maintained here, is to return false 
+            // for all values that did not match on of the true values above.
+            log.error("property [" + name + "] is being accessed as a boolean " +
+                    "but had non-canonical value [" + value + "].  Returning it as false, " +
+                            "but this may be a property misconfiguration.");
         }
       } else {
-        log.fatal("property [" + name + "] is being accessed as a boolean but was null.  Returning false.  However, it should not have been possible to get here because getProperty() throws a runtime exception or returns a non-null value.");
+        log.fatal("property [" + name + "] is being accessed as a boolean " +
+                "but was null.  Returning false.  However, it should not have been " +
+                "possible to get here because getProperty() throws a runtime " +
+                "exception or returns a non-null value.");
       }
       return retValue;
     }
@@ -286,7 +292,7 @@ public class PropertiesManager {
    private static boolean registerMissingProperty(String name) {
        final boolean previouslyReported = !PropertiesManager.missingProperties.add(name);
        
-       if (!previouslyReported){
+       if (!previouslyReported && log.isInfoEnabled()){
          log.info("Property [" + name + "] was requested but not found.");
        }
        return previouslyReported;
@@ -383,7 +389,8 @@ public class PropertiesManager {
         try {
             returnValue = getPropertyAsByte(name);
         } catch (Throwable t){
-            log.error("Could not retrieve or parse as byte property [" + name + "], defaulting to [" + defaultValue + "]", t);
+            log.error("Could not retrieve or parse as byte property [" + name + 
+                    "], defaulting to [" + defaultValue + "]", t);
         }
         return returnValue;
     }
@@ -404,7 +411,8 @@ public class PropertiesManager {
         try {
             returnValue = getPropertyAsShort(name);
         } catch (Throwable t) {
-            log.error("Could not retrieve or parse as short property [" + name + "], defaulting to given value [" + defaultValue + "]", t);
+            log.error("Could not retrieve or parse as short property [" + name + 
+                    "], defaulting to given value [" + defaultValue + "]", t);
         }
         return returnValue;
     }
@@ -425,7 +433,8 @@ public class PropertiesManager {
         try {
             returnValue = getPropertyAsInt(name);
         } catch (Throwable t) {
-            log.error("Could not retrieve or parse as int the property [" + name + "], defaulting to " + defaultValue, t);
+            log.error("Could not retrieve or parse as int the property [" + name + 
+                    "], defaulting to " + defaultValue, t);
         }
         return returnValue;
     }
@@ -446,7 +455,8 @@ public class PropertiesManager {
         try {
             returnValue = getPropertyAsLong(name);
         } catch (Throwable t) {
-            log.error("Could not retrieve or parse as long property [" + name + "], defaulting to " + defaultValue, t);
+            log.error("Could not retrieve or parse as long property [" + name + 
+                    "], defaulting to " + defaultValue, t);
         }
         return returnValue;
     }
@@ -467,7 +477,8 @@ public class PropertiesManager {
         try {
             returnValue = getPropertyAsFloat(name);
         } catch (Throwable t) {
-            log.error("Could not retrieve or parse as float property [" + name + "], defaulting to " + defaultValue, t);
+            log.error("Could not retrieve or parse as float property [" + name + 
+                    "], defaulting to " + defaultValue, t);
         }
         return returnValue;
     }
@@ -488,7 +499,8 @@ public class PropertiesManager {
         try {
             returnValue = getPropertyAsDouble(name);
         } catch (Throwable t) {
-            log.error("Could not retrieve or parse as double property [" + name + "], defaulting to " + defaultValue, t);
+            log.error("Could not retrieve or parse as double property [" + name + 
+                    "], defaulting to " + defaultValue, t);
         }
         return returnValue;
     }
