@@ -45,6 +45,7 @@ import org.jasig.portal.services.LogService;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Hashtable;
 import java.util.HashMap;
@@ -122,8 +123,9 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
      * Register arrival of a new session.
      * Create and populate new state entry.
      * @param req a <code>HttpServletRequest</code> value
+     * @exception PortalException if an error occurs
      */
-    public void registerSession(HttpServletRequest req) {
+    public void registerSession(HttpServletRequest req) throws PortalException {
         MState newState=new MState();
         try {
             // load user preferences
@@ -181,19 +183,38 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 }
                 if(newState.uLayoutXML==null) {
                     // read uLayoutXML
-                    newState.uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
-                    if(newState.uLayoutXML!=null) {
-                        if(upl.isSystemProfile()) {
-                            sp_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);
-                        } else {
-                            up_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);
+                    try {
+                        newState.uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
+                        if(newState.uLayoutXML!=null) {
+                            if(upl.isSystemProfile()) {
+                                sp_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);
+                            } else {
+                                up_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);
+                            }
                         }
+                    } catch (Exception e) {
+                        throw new PortalException("GuestUserLayoutManager::registerSession() : caught an exception while trying to retreive a userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".",e);
                     }
                 }
 
                 if (newState.uLayoutXML == null) {
-                    LogService.instance().log(LogService.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
-                               m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
+                    throw new PortalException("UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".");
+                } else {
+                    // modify the entire profile to be unremovable and immutable
+                    // mark all of the folders
+                    NodeList folderList=newState.uLayoutXML.getElementsByTagName("folder");
+                    for(int i=0;i<folderList.getLength();i++) {
+                        Element e=(Element)folderList.item(i);
+                        e.setAttribute("immutable","true");
+                        e.setAttribute("unremovable","true");                        
+                    }
+                    // mark all of the channels
+                    NodeList channelList=newState.uLayoutXML.getElementsByTagName("channel");
+                    for(int i=0;i<channelList.getLength();i++) {
+                        Element e=(Element)channelList.item(i);
+                        e.setAttribute("immutable","true");
+                        e.setAttribute("unremovable","true");                        
+                    }
                 }
 
                 // see if the user preferences for this profile are cached
@@ -204,13 +225,18 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     cleanUP=(UserPreferences)up_cleanUPs.get(new Integer(upl.getProfileId()));
                 }
                 if(cleanUP==null) {
-                    cleanUP=ulsdb.getUserPreferences(m_person, upl);
-                    if(cleanUP!=null) {
-                        if(upl.isSystemProfile()) {
-                            sp_cleanUPs.put(new Integer(upl.getProfileId()),cleanUP);
-                        } else {
-                            up_cleanUPs.put(new Integer(upl.getProfileId()),cleanUP);
+                    try {
+                        cleanUP=ulsdb.getUserPreferences(m_person, upl);
+                        if(cleanUP!=null) {
+                            if(upl.isSystemProfile()) {
+                                sp_cleanUPs.put(new Integer(upl.getProfileId()),cleanUP);
+                            } else {
+                                up_cleanUPs.put(new Integer(upl.getProfileId()),cleanUP);
+                            }
                         }
+                    } catch (Exception e) {
+                        LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
+                        cleanUP=new UserPreferences(upl);
                     }
                 }
 
@@ -218,6 +244,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     newState.complete_up=new UserPreferences(cleanUP);
                 } else {
                     LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
+                    newState.complete_up=new UserPreferences(upl);
                 }
 
                 // Initialize the JNDI context for this user
@@ -226,9 +253,10 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 newState.unmapped_user_agent = true;
-                LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID()
-                           + "\" and userAgent=\"" + userAgent + "\".");
+                throw new PortalException("GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID() + "\" and userAgent=\"" + userAgent + "\".");
             }
+        } catch (PortalException pe) {
+            throw pe;
         } catch (Throwable t) {
             LogService.instance().log(LogService.ERROR, t);
         }
@@ -393,32 +421,9 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     }
 
     /*
-     * Resets both user layout and user preferences.
-     * Note that if any of the two are "null", old values will be used.
+     * Guest users can not (by definition) save any preferences. Method does nothing.
      */
     public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences,String sessionId, boolean channelsAdded) throws PortalException {
-        MState state=(MState)stateTable.get(sessionId);
-        if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::setCurrentUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return;
-        }
-        try {
-          if (newPreferences != null) {
-            state.complete_up=newPreferences;
-            ulsdb.putUserPreferences(m_person, newPreferences);
-          }
-          if (newLayout != null) {
-            synchronized(layout_write_lock) {
-                state.uLayoutXML = newLayout;
-                // one lock for all - not very efficient, but ok for the Guest layout - it should rarely change
-                layout_write_lock.setValue(true);
-                    ulsdb.setUserLayout(m_person, state.complete_up.getProfile().getProfileId(),newLayout, channelsAdded);
-            }
-          }
-        } catch (Exception e) {
-          LogService.instance().log(LogService.ERROR, e);
-          throw  new GeneralRenderingException(e.getMessage());
-        }
     }
 
     public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
@@ -573,45 +578,12 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     }
 
     /**
-     * Removes a specified channel
+     * Guest users can not remove channels. 
      * @param channelId channel id
+     * @return false
      */
     public boolean removeChannel (String channelId,String sessionId) throws PortalException {
-        MState state=(MState)stateTable.get(sessionId);
-        if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::removeChannel() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return false;
-        }
-        Element channel = state.uLayoutXML.getElementById(channelId);
-        if (channel != null) {
-            boolean rval=true;
-            synchronized(layout_write_lock) {
-                if(!this.deleteNode(channel)) {
-                    // unable to remove channel due to unremovable/immutable restrictionsn
-                    LogService.instance().log(LogService.INFO,"GuestUserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
-                    rval=false;
-                } else {
-                    layout_write_lock.setValue(true);
-                    // channel has been removed from the userLayoutXML .. persist the layout ?
-                    // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
-                    // (or, alternatively, an incremental update should be done on the UserLayoutStore())
-                    try {
-                        /*
-                          The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
-                        */
-                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(), state.uLayoutXML, false);
-                        /* end of patch */
-                    } catch (Exception e) {
-                        LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
-                        throw new GeneralRenderingException("Unable to save layout changes.");
-                    }
-                }
-            }
-            return rval;
-        } else {
-            LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
-            return false;
-        }
+        return false;
     }
 
     public boolean removeChannel (String channelId) throws PortalException {
