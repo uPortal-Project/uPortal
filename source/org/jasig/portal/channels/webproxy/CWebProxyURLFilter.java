@@ -115,7 +115,7 @@ public abstract class CWebProxyURLFilter extends SAX2FilterImpl
                                   || passThrough.equals("marked")) )
       {
         String attValue = atts.getValue(attName);
-        if (attValue != null && attValue.startsWith("http://"))
+        if (attValue != null && (attValue.startsWith("http://") || attValue.startsWith("https://")))
         {
           String query = getQueryString(attValue); 
           String base = getBase(attValue);
