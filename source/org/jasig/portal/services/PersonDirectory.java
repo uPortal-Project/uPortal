@@ -66,8 +66,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.w3c.dom.Entity;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 
 /**
  * Extract eduPerson-like attributes from whatever LDAP directory or JDBC
@@ -148,9 +146,7 @@ public class PersonDirectory {
     try  {
 
       // Build a DOM tree out of uPortal/properties/PersonDirs.xml
-      DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      java.io.InputStream personDirs = ResourceLoader.getResourceAsStream(this.getClass(), "/properties/PersonDirs.xml");
-      Document doc = docBuilder.parse(personDirs); // DOM Parse the XML
+      Document doc = ResourceLoader.getResourceAsDocument(this.getClass(), "/properties/PersonDirs.xml");
 
       // Each directory source is a <PersonDirInfo> (and its contents)
       NodeList list = doc.getElementsByTagName("PersonDirInfo");
@@ -228,7 +224,7 @@ public class PersonDirectory {
               }
             }
           } else {
-      	    LogService.instance().log(LogService.ERROR,"Unrecognized tag "+tagname+" in PersonDirs.xml");
+            LogService.instance().log(LogService.ERROR,"Unrecognized tag "+tagname+" in PersonDirs.xml");
           }
         }
         sources.addElement(pdi); // Add one LDAP or JDBC source to the list
