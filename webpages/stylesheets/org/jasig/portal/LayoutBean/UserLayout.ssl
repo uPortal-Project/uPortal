@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet href="webpages/stylesheets/LayoutBean/uLayout2sLayout.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.xsl"  type="text/xsl" media="netscape"?>
 
 <document>
 </document>
