@@ -70,28 +70,33 @@ public class Authentication {
   public void authenticate (HashMap principals, HashMap credentials, IPerson person) throws PortalSecurityException {
     // Retrieve the security context for the user
     ISecurityContext securityContext = person.getSecurityContext();
+
     // NOTE: At this point the service should be looking in a properties file
     //       to determine what tokens to look for that represent the principals
     //       and credentials.
     // Retrieve the username and principal
     String username = (String)principals.get("username");
     String password = (String)credentials.get("password");
-    // Make sure the principals and credentials are valid
-    if (username == null || password == null) {
-      return;
-    }
+
     // Retrieve and populate an instance of the principal object
     IPrincipal principalInstance = securityContext.getPrincipalInstance();
     principalInstance.setUID(username);
+
     // Retrieve and populate an instance of the credentials object
     IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
     credentialsInstance.setCredentials(password);
+
     // Attempt to authenticate the user
     securityContext.authenticate();
+
+    // Add the person's login username to the person object
+    // the login name may have been provided or reset by the security provider
+    // so this needs to be done after authentication is attempted but it
+    // ends up as either what was typed in or supplied by the security provider
+     person.setAttribute("username",principalInstance.getUID());
+
     // Check to see if the user was authenticated
     if (securityContext.isAuthenticated()) {
-      // Add the person's login username
-      person.setAttribute("username",principalInstance.getUID());
       // Retrieve the additional descriptor from the security context
       IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
       // Process the additional descriptor if one was created
@@ -127,9 +132,6 @@ public class Authentication {
       }
       // Populate the person object using the PersonDirectory if applicable
       if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
-        // Username attribute comes from principal
-        // It is either what was typed in or supplied by the security provider
-        person.setAttribute("username", username);
         // Retrieve all of the attributes associated with the person logging in
         Hashtable attribs = (new PersonDirectory()).getUserDirectoryInformation(username);
         // Add each of the attributes to the IPerson
