@@ -50,7 +50,6 @@ import org.xml.sax.DocumentHandler;
 import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.net.URL;
 
 /**
  * <p>A channel which displays HTTP request and HTML header info.
@@ -172,13 +171,10 @@ public class CSnoop implements IPrivilegedChannel
     sb.append("  </headers>");
     sb.append("</request-info>");
 
-    try
-    {
-      XSLT.transform(sb.toString(), new URL(sslLocation), out, runtimeData.getBrowserInfo());
-    }
-    catch (Exception e)
-    {
-      throw new GeneralRenderingException(e.getMessage());
-    }
+    XSLT xslt = new XSLT();
+    xslt.setXML(sb.toString());
+    xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.transform();
   }
 }
