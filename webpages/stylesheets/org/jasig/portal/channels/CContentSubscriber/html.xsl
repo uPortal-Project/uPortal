@@ -162,7 +162,7 @@ Version $Revision$
                   </td>
                   <td class="uportal-background-med" nowrap="nowrap">
                     <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-                    <a href="{$baseActionURL}?channelState='browse'">
+                    <a href="{$baseActionURL}?channelState=browse">
                       <span class="uportal-text-small">Browse</span>
                     </a>
                     <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
@@ -643,7 +643,7 @@ Version $Revision$
                   <td class="uportal-background-med" nowrap="nowrap">
                     <a href="#">
                       <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-                      <a href="{$baseActionURL}?channelState='search'">
+                      <a href="{$baseActionURL}?channelState=search">
                         <span class="uportal-text-small">Search</span>
                       </a>
                       <img border="0" height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
@@ -1092,7 +1092,7 @@ Version $Revision$
                     </td>
                     <td width="100%" align="right" valign="bottom" nowrap="nowrap" class="uportal-text-small">
                       <strong>
-                        <a href="{$baseActionURL}?uPcCS_action='expand'&amp;uPcCS_categoryID='all'">Expand</a>/<a href="{$baseActionURL}?uPcCS_action='condense'&amp;uPcCS_categoryID='all'">Condense</a> All Categories</strong>
+                        <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID=all">Expand</a>/<a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_categoryID=all">Condense</a> All Categories</strong>
                     </td>
                   </tr>
                   <tr>
@@ -1237,7 +1237,7 @@ Version $Revision$
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
               <strong>
-                <a href="{$baseActionURL}?uPcCS_action='condense'&amp;uPcCS_categoryID='{@ID}'">
+                <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_categoryID={@ID}">
                   <img src="{$mediaPath}/expanded.gif" width="16" height="16" border="0" alt="" title=""/>
                 </a>
               </strong>
@@ -1250,7 +1250,7 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <strong>
-                <a href="{$baseActionURL}?uPcCS_action='condense'&amp;uPcCS_categoryID='{@ID}'">
+                <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_categoryID={@ID}">
                   <xsl:value-of select="@name"/>
                 </a>
               </strong>
@@ -1276,7 +1276,7 @@ Version $Revision$
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
               <strong>
-                <a href="{$baseActionURL}?uPcCS_action='expand'&amp;uPcCS_categoryID='{@ID}'">
+                <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID={@ID}">
                   <img src="{$mediaPath}/collapsed.gif" width="16" height="16" border="0" alt="" title=""/>
                 </a>
               </strong>
@@ -1288,7 +1288,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
-              <a href="{$baseActionURL}?uPcCS_action='expand'&amp;uPcCS_categoryID='{@ID}'">
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID={@ID}">
                 <strong>
                   <xsl:value-of select="@name"/>
                 </strong>
@@ -1331,7 +1331,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
-              <a href="{$baseActionURL}?uPcCS_action='condense'&amp;uPcCS_channelID='{@ID}'">
+              <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_channelID={@ID}">
                 <xsl:value-of select="@title"/>
               </a>
             </td>
@@ -1403,12 +1403,12 @@ Version $Revision$
                       </tr>  Preview of Channel Held until Later Release -->
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
-                          <a href="{$baseActionURL}?uP_sparam=channelPublishID&amp;channelPublishID='{@chanID}'&amp;uP_request_add_targets=channel">
+                          <a href="{$baseActionURL}?uP_sparam=channelPublishID&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel">
                             <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
                         <td>
-                          <a href="{$baseActionURL}?uP_sparam=channelPublishID&amp;channelPublishID='{@chanID}'&amp;uP_request_add_targets=channel"> Subscribe to this channel</a>
+                          <a href="{$baseActionURL}?uP_sparam=channelPublishID&amp;channelPublishID={@chanID}&amp;uP_request_add_targets=channel"> Subscribe to this channel</a>
                         </td>
                       </tr>
                     </table>
@@ -1445,7 +1445,7 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
-              <a href="{$baseActionURL}?uPcCS_action='expand'&amp;uPcCS_channelID='{@ID}'">
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_channelID={@ID}">
                 <xsl:value-of select="@title"/>
               </a>
             </td>
@@ -1517,7 +1517,7 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
               <xsl:variable name="myID"><xsl:value-of select="./ID"/></xsl:variable>
-              <a href="{$baseActionURL}?uPcCS_action='condense'&amp;uPcCS_fragmentID='{$myID}'">
+              <a href="{$baseActionURL}?uPcCS_action=condense&amp;uPcCS_fragmentID={$myID}">
                 <xsl:value-of select="@title"/>
               </a>
             </td>
@@ -1589,12 +1589,12 @@ Version $Revision$
                       </tr>  Preview of Channel Held until Later Release -->
                       <tr align="left" valign="top" class="uportal-channel-text">
                         <td>
-                          <a href="{$baseActionURL}?uP_sparam=fragmentPublishID&amp;fragmentPublishID='{@ID}'&amp;uP_request_add_targets=folder">
+                          <a href="{$baseActionURL}?uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder">
                             <img src="{$mediaPath}/addContent.gif" width="16" height="16" border="0" alt="" title=""/>
                           </a>
                         </td>
                         <td>
-                          <a href="{$baseActionURL}?uP_sparam=fragmentPublishID&amp;fragmentPublishID='{@ID}'&amp;uP_request_add_targets=folder"> Subscribe to this fragment</a>
+                          <a href="{$baseActionURL}?uP_sparam=fragmentPublishID&amp;fragmentPublishID={@ID}&amp;uP_request_add_targets=folder"> Subscribe to this fragment</a>
                         </td>
                       </tr>
                     </table>
@@ -1629,7 +1629,7 @@ Version $Revision$
             </td>
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <xsl:variable name="myID"><xsl:value-of select="./ID"/></xsl:variable>
-              <a href="{$baseActionURL}?uPcCS_action='expand'&amp;uPcCS_fragmentID='{$myID}'">
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_fragmentID={$myID}">
                 <xsl:value-of select="./name"/>
               </a>
             </td>
