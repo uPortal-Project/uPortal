@@ -48,6 +48,7 @@ import  org.xml.sax.*;
 import  org.apache.xalan.xslt.*;
 import  java.net.*;
 import  org.xml.sax.helpers.*;
+import  org.jasig.portal.services.LogService;
 
 
 /**
@@ -94,7 +95,7 @@ public class StylesheetSet extends SAXFilterImpl {
       is.close();
       this.title_table = dummy.getTitleTable();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, "SytlesheetSet::StylesheetSet(uri) : Exception occurred while opening stylesheet list uri : "
+      LogService.instance().log(LogService.ERROR, "StylesheetSet::StylesheetSet(uri) : Exception occurred while opening stylesheet list uri : "
           + uri + ". " + e);
     }
   }
@@ -264,7 +265,7 @@ public class StylesheetSet extends SAXFilterImpl {
       if (media_table == null) {
         return  null;
       }
-      Logger.log(Logger.DEBUG, "media=\"" + media + "\"");
+      LogService.instance().log(LogService.DEBUG, "media=\"" + media + "\"");
       StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
       if (sd == null) {
         Enumeration sls = media_table.elements();
@@ -288,7 +289,7 @@ public class StylesheetSet extends SAXFilterImpl {
    */
   protected StylesheetDescription getStylesheetDescription (String media) throws GeneralRenderingException {
     if (media == null) {
-      Logger.log(Logger.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
+      LogService.instance().log(LogService.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
       throw  (new GeneralRenderingException("StylesheetSet.getStylesheetDescription(): Null media argument passed in"));
     }
     // search for a non-alternate stylesheet for a particular media
@@ -322,7 +323,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @return 
    */
   public XSLTInputSource getStylesheet (String title, HttpServletRequest req) {
-    //	Logger.log(Logger.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     return  getStylesheet(title, getMedia(req));
   }
 
@@ -347,7 +348,7 @@ public class StylesheetSet extends SAXFilterImpl {
    * @return 
    */
   public XSLTInputSource getStylesheetByMedia (String media) throws GeneralRenderingException {
-    //	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	LogService.instance().log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd = getStylesheetDescription(media);
     if (sd != null) {
       return  new XSLTInputSource(sd.getURI());
@@ -407,12 +408,12 @@ public class StylesheetSet extends SAXFilterImpl {
         props = new OrderedProps(url.openStream());
       } 
       else {
-        Logger.log(Logger.ERROR, "StylesheetSet::setMediaProps() : unable to read the following URL \"" + url.toString()
-            + "\"");
+        LogService.instance().log(LogService.ERROR, "StylesheetSet.setMediaProps() : unable to read the following URL \""
+            + url.toString() + "\"");
       }
     } catch (IOException ioe1) {
-      Logger.log(Logger.ERROR, "SytlesheetSet::setMediaProps() : Exception occurred while media properties file: " + uri
-          + ". " + ioe1);
+      LogService.instance().log(LogService.ERROR, "StylesheetSet.setMediaProps() : Exception occurred while reading media properties file: "
+          + uri + ". ", ioe1);
     }
   }
 
