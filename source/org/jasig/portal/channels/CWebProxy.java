@@ -45,6 +45,7 @@ import javax.servlet.http.Cookie;
 import org.w3c.tidy.*;
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.services.LogService;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.</p>
@@ -110,10 +111,8 @@ public class CWebProxy implements org.jasig.portal.IChannel
   protected String helpUri;
   protected String editUri;
   protected ChannelRuntimeData runtimeData;
-  protected String media;
   protected Vector cookies;
   protected boolean supportSetCookie2;
-    protected MediaManager mm;
 
   protected static String fs = File.separator;
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CWebProxy" + fs;
@@ -123,7 +122,6 @@ public class CWebProxy implements org.jasig.portal.IChannel
     this.cookies = new Vector();
     this.supportSetCookie2 = false;
     this.buttonxmlUri = null;
-    this.mm=new MediaManager();
   }
 
   // Get channel parameters.
@@ -143,7 +141,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -201,13 +199,11 @@ public class CWebProxy implements org.jasig.portal.IChannel
        // }
     }
 
-    media = mm.getMedia(runtimeData.getBrowserInfo());
-
     if ( buttonxmlUri != null )
         fullxmlUri = buttonxmlUri;
     else {
     //if (this.passThrough != null )
-    //  Logger.log (Logger.DEBUG, "CWebProxy: passThrough: "+this.passThrough);
+    //  LogService.instance().log(LogService.DEBUG, "CWebProxy: passThrough: "+this.passThrough);
 
     // Is this a case where we need to pass request parameters to the xmlURI?
     if ( this.passThrough != null &&
@@ -216,7 +212,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
            this.passThrough.equalsIgnoreCase("application") ||
            runtimeData.getParameter("cw_inChannelLink") != null ) )
     {
-      Logger.log (Logger.DEBUG, "CWebProxy: xmlUri is " + this.xmlUri);
+      LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + this.xmlUri);
 
       StringBuffer newXML = new StringBuffer().append(this.xmlUri);
       String appendchar = "?";
@@ -239,7 +235,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
             }
         }
       fullxmlUri = newXML.toString();
-      Logger.log (Logger.DEBUG, "CWebProxy: fullxmlUri now: " + fullxmlUri);
+      LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + fullxmlUri);
     }
     }
   }
@@ -319,9 +315,9 @@ public class CWebProxy implements org.jasig.portal.IChannel
       else
       {
         if (xslTitle != null)
-          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, xslTitle, media);
+          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, xslTitle, runtimeData.getBrowserInfo());
         else
-          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, media);
+          XSLT.transform(xml, new URL(UtilitiesBean.fixURI(sslUri)), out, runtimeData, runtimeData.getBrowserInfo());
       }
     }
     catch (org.xml.sax.SAXException e)
@@ -539,7 +535,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
        }
        else
        {
-          Logger.log(Logger.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
+          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie
@@ -647,7 +643,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
        }
        else
        {
-          Logger.log(Logger.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
+          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie
