@@ -31,8 +31,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -55,18 +53,20 @@ import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.ChannelStaticData;
 import  org.jasig.portal.PortalControlStructures;
 import  org.jasig.portal.BrowserInfo;
-import  org.jasig.portal.SAXBufferImpl;
 import  org.jasig.portal.GenericPortalBean;
-import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.ChannelSAXStreamFilter;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.PortalException;
 import  org.jasig.portal.GeneralRenderingException;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.utils.SAX2BufferImpl;
+import  org.jasig.portal.security.IPerson;
 import  org.xml.sax.*;
-import  org.apache.xalan.xslt.*;
 import  org.apache.xml.serialize.*;
-
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * A servlet that allows one to render an IChannel outside of the portal.
@@ -96,7 +96,7 @@ public class ChannelServlet extends HttpServlet {
    * put your documentation comment here
    * @exception ServletException
    */
-  public void init () throws ServletException {
+  public void init() throws ServletException {
     ServletConfig sc = this.getServletConfig();
     if (sc != null) {
       // determine base directory
@@ -114,7 +114,7 @@ public class ChannelServlet extends HttpServlet {
             this.set.setMediaProps(propertiesDir + "media.properties");
             this.mediaM = new MediaManager(propertiesDir + "media.properties", propertiesDir + "mime.properties", propertiesDir + "serializer.properties");
           } catch (PortalException pe) {
-            throw new ServletException (pe);
+            throw new ServletException(pe);
           }
           // determine the channel with its parameters
           String className = sc.getInitParameter("className");
@@ -197,7 +197,7 @@ public class ChannelServlet extends HttpServlet {
         }
       }
       // start rendering in a separate thread
-      SAXBufferImpl buffer = new SAXBufferImpl();
+      SAX2BufferImpl buffer = new SAX2BufferImpl();
       Worker worker = new Worker(channel, rd, buffer);
       Thread workerThread = new Thread(worker);
       workerThread.start();
@@ -218,63 +218,59 @@ public class ChannelServlet extends HttpServlet {
         throw new ServletException(pe);
       }
       try {
-        XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-        processor.setDocumentHandler(ser);
-        processor.setStylesheet(XSLT.getStylesheetRoot(xslURI));
-        try {
-          long wait = timeOut - System.currentTimeMillis() + startTime;
-          if (wait > 0)
-            workerThread.join(wait);
-        } catch (InterruptedException e) {
-          // thread waiting on the worker has been interrupted
-          System.out.println("thread waiting on the worker has been interrupted.");
-        }
-        // kill the working thread
-        // yes, this is terribly crude and unsafe, but I don't see an alternative
-        workerThread.stop();
-        if (worker.done()) {
-          if (worker.successful()) {
-            // unplug the buffer
-            try {
-              processor.startDocument();
-              org.xml.sax.helpers.AttributeListImpl atl = new org.xml.sax.helpers.AttributeListImpl();
-              atl.addAttribute("name", "CDATA", channelName);
-              // add other attributes: hasHelp, hasAbout, hasEdit
-              processor.startElement("channel", atl);
-              ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(processor);
-              buffer.setDocumentHandler(custodian);
-              buffer.stopBuffering();
-              processor.endElement("channel");
-              processor.endDocument();
-            } catch (SAXException e) {
-              // worst case scenario: partial content output :(
-              System.out.println("error during unbuffering");
-              e.printStackTrace();
-            }
-          } 
-          else {
-            // rendering was not successful
-            Exception e;
-            if ((e = worker.getException()) != null) {
-              // channel generated an exception ... this should be handled
-              StringWriter sw = new StringWriter();
-              e.printStackTrace(new PrintWriter(sw));
-              sw.flush();
-              showErrorMessage("channel generated exception " + e.toString() + ". Stack trace: " + sw.toString(), res);
-            }
-            // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+          TransformerHandler th=XSLT.getTransformerHandler(xslURI);
+          th.setResult(new SAXResult(ser));
+          try {
+              long wait = timeOut - System.currentTimeMillis() + startTime;
+              if (wait > 0)
+                  workerThread.join(wait);
+          } catch (InterruptedException e) {
+              // thread waiting on the worker has been interrupted
+              System.out.println("thread waiting on the worker has been interrupted.");
           }
-        } 
-        else {
-          // rendering has timed out
-          showErrorMessage("channel rendering timed out", res);
-        }
+          // kill the working thread
+          // yes, this is terribly crude and unsafe, but I don't see an alternative
+          workerThread.stop();
+          if (worker.done()) {
+              if (worker.successful()) {
+                  // unplug the buffer
+                  try {
+                      org.xml.sax.helpers.AttributesImpl atl = new org.xml.sax.helpers.AttributesImpl();
+                      atl.addAttribute("","name","name", "CDATA", channelName);
+                      // add other attributes: hasHelp, hasAbout, hasEdit
+                      th.startDocument();
+                      th.startElement("","channel","channel", atl);
+                      ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(th);
+                      custodian.setParent(buffer);
+                      buffer.stopBuffering();
+                      th.endElement("","channel","channel");
+                      th.endDocument();
+                  } catch (SAXException e) {
+                      // worst case scenario: partial content output :(
+                      System.out.println("error during unbuffering");
+                      e.printStackTrace();
+                  }
+              } else {
+                  // rendering was not successful
+                  Exception e;
+                  if ((e = worker.getException()) != null) {
+                      // channel generated an exception ... this should be handled
+                      StringWriter sw = new StringWriter();
+                      e.printStackTrace(new PrintWriter(sw));
+                      sw.flush();
+                      showErrorMessage("channel generated exception " + e.toString() + ". Stack trace: " + sw.toString(), res);
+                  }
+                  // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+              }
+          } else {
+              // rendering has timed out
+              showErrorMessage("channel rendering timed out", res);
+          }
       } catch (Exception e) {
-        // some exception occurred during processor initialization or framing transformation
-        showErrorMessage("Exception occurred during the framing transformation or XSLT processor initialization", res);
+          // some exception occurred during processor initialization or framing transformation
+          showErrorMessage("Exception occurred during the framing transformation or XSLT processor initialization", res);
       }
-    } 
-    else 
+    } else 
       showErrorMessage("failed to initialize", res);
   }
 
@@ -308,18 +304,18 @@ public class ChannelServlet extends HttpServlet {
 	private boolean done;
 	private IChannel channel;
 	private ChannelRuntimeData rd;
-	private DocumentHandler documentHandler;
+	private ContentHandler contentHandler;
 	private Exception exc = null;
 	
     /**
      * put your documentation comment here
      * @param     IChannel ch
      * @param     ChannelRuntimeData runtimeData
-     * @param     DocumentHandler dh
+     * @param     ContentHandler dh
      */
-    public Worker (IChannel ch, ChannelRuntimeData runtimeData, DocumentHandler dh) {
+    public Worker (IChannel ch, ChannelRuntimeData runtimeData, ContentHandler dh) {
       this.channel = ch;
-      this.documentHandler = dh;
+      this.contentHandler = dh;
       this.rd = runtimeData;
     }
 
@@ -332,7 +328,7 @@ public class ChannelServlet extends HttpServlet {
       try {
         if (rd != null)
           channel.setRuntimeData(rd);
-        channel.renderXML(documentHandler);
+        channel.renderXML(contentHandler);
         successful = true;
       } catch (Exception e) {
         this.exc = e;

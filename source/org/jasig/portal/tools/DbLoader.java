@@ -66,7 +66,7 @@ import org.xml.sax.AttributeList;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.dom.DocumentImpl;
 
@@ -757,7 +757,7 @@ public class DbLoader
     }
   }
 
-  static class TableHandler implements DocumentHandler
+  static class TableHandler implements ContentHandler
   {
     private static final int UNSET = -1;
     private static final int DROP = 0;
@@ -774,9 +774,9 @@ public class DbLoader
       System.out.println();
     }
 
-    public void startElement (String name, AttributeList atts)
+    public void startElement (String url, String localName, String qName, Attributes atts)
     {
-      if (name.equals("statement"))
+      if (qName.equals("statement"))
       {
         stmtBuffer = new StringBuffer(1024);
         String statementType = atts.getValue("type");
@@ -802,9 +802,9 @@ public class DbLoader
       }
     }
 
-    public void endElement (String name)
+    public void endElement (String url, String localName, String qName)
     {
-      if (name.equals("statement"))
+      if (qName.equals("statement"))
       {
         String statement = stmtBuffer.toString();
 
@@ -840,6 +840,10 @@ public class DbLoader
     public void ignorableWhitespace (char[] ch, int start, int length)
     {
     }
+
+      public void startPrefixMapping (String prefix, String uri) throws SAXException {};
+      public void endPrefixMapping (String prefix) throws SAXException  {};
+      public void skippedEntity(String name) throws SAXException {};
   }
 
   static class DataHandler extends DefaultHandler
