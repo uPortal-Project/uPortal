@@ -19,7 +19,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
-import org.jasig.portal.services.db.RDBMServicesDataSource;
+import org.jasig.portal.rdbm.RDBMServicesDataSource;
 
 import org.jasig.portal.services.persondir.support.PersonAttributeDao;
 import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
@@ -86,8 +86,7 @@ public class PersonDirInfoAdaptor implements PersonAttributeDao {
         String dsRef = info.getResRefName();
         if (dsRef != null && !"".equals(dsRef)){
             // get a DataSource from RDBMServices
-            RDBMServicesDataSource ds = new RDBMServicesDataSource();
-            ds.setDbName(dsRef);
+            RDBMServicesDataSource ds = new RDBMServicesDataSource(dsRef);
             source = ds;
         } else {
             // construct a DataSource adhoc
