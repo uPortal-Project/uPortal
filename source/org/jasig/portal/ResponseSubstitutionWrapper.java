@@ -61,18 +61,7 @@ public class ResponseSubstitutionWrapper extends HttpServletResponseWrapper {
     }
 
     public ServletOutputStream getOutputStream() throws IOException {
-        String encoding = this.getCharacterEncoding();
-        byte[] target, substitute;
-        if (encoding != null) {
-            // use specified encoding
-            target = sessionTag.getBytes(encoding);
-            substitute = newTag.getBytes(encoding);
-        } else {
-            // use default system encoding
-            target = sessionTag.getBytes();
-            substitute = newTag.getBytes();
-        }
-        return new SubstitutionServletOutputStream(getResponse().getOutputStream(), target, substitute, this.getBufferSize());
+        return getResponse().getOutputStream();
     }
 
     public PrintWriter getWriter() throws IOException {
