@@ -276,7 +276,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    *  @param approveDate When should the channel appear
    */
   public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception {
-    crs.approveChannelDefinition(chanId, approver, approveDate);
+    crs.approveChannelDefinition(crs.getChannelDefinition(chanId), approver, approveDate);
   }
 
   /** A method for getting the next available channel ID.
@@ -301,9 +301,10 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    * @exception java.sql.SQLException
    */
   public void removeChannel (String chanID) throws Exception {
-    String channelPublishId = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
-    crs.disapproveChannelDefinition(channelPublishId);
-    flushChannelEntry(Integer.parseInt(channelPublishId));
+    String sChannelPublishId = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
+    int channelPublishId = Integer.parseInt(sChannelPublishId);
+    crs.disapproveChannelDefinition(crs.getChannelDefinition(channelPublishId));
+    flushChannelEntry(channelPublishId);
   }
 
   /**
