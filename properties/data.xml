@@ -52,6 +52,8 @@
             <folder ID="t02" priority="0" name="uPortal Tools">
               <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe">
                 </channel>
+              <channel ID="chan92" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish">
+                </channel>
               <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences">
                 </channel>
             </folder>
