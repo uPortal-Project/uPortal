@@ -63,20 +63,20 @@ public class BoundedThreadPool extends AbstractPool{
 			Worker worker = new Worker(this,workQueue);
 			worker.setDaemon(true);
 			worker.setPriority(priority);
-                        return worker;
+            return worker;
 	}
 
 
         /**
 	 * Destroyed a pooled thread
 	 */
-	public void destroyThread( Thread thread ) {
+	public synchronized void destroyThread( Thread thread ) {
 		if (isDestroyed) {
 			return;
 		}
 
 		Worker worker = (Worker) thread;
-                worker.stopWorker();
+        worker.stopWorker();
 		worker = null;
 	}
 
@@ -99,8 +99,8 @@ public class BoundedThreadPool extends AbstractPool{
 
                 adjustThreadPool();
 
-		WorkTracker tracker = new WorkTracker(task);
-		task.setWorkTracker(tracker);
+		        WorkTracker tracker = new WorkTracker(task);
+		        task.setWorkTracker(tracker);
 
                 workQueue.put(task);
 

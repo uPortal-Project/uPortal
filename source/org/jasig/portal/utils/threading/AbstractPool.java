@@ -50,9 +50,9 @@ import org.jasig.portal.services.LogService;
  */
 
 public abstract class AbstractPool implements ThreadPool {
-	protected int priority;
-	protected boolean isDestroyed = false;
-	private Vector busyThreads;
+	    protected int priority;
+	    protected boolean isDestroyed = false;
+	    private Vector busyThreads;
         private Vector idleThreads;
         protected int minThreads, maxThreads;
         private long DELAY = 200L;
@@ -71,9 +71,9 @@ public abstract class AbstractPool implements ThreadPool {
                 idleThreads = new Vector();
                 busyThreads = new Vector();
                 workQueue = new UnboundedQueue();
-		this.maxThreads = maxThreads;
+		        this.maxThreads = maxThreads;
                 this.minThreads = minThreads;
-		priority = threadPriority;
+		        priority = threadPriority;
                 try {
                  initThreadPool();
                 } catch ( Exception e ) {
@@ -99,7 +99,7 @@ public abstract class AbstractPool implements ThreadPool {
         /**
          * If necessary creates a new thread and adds it into the pool
          */
-        protected void adjustThreadPool() throws Exception {
+        protected synchronized void adjustThreadPool() throws Exception {
           if ( idleThreads() == 0 && busyThreads() < maxThreads ) {
                   Thread thread = createNewThread();
                   idleThreads.add(thread);
@@ -117,12 +117,10 @@ public abstract class AbstractPool implements ThreadPool {
 	*
 	* @exception IllegalStateException - thrown if the pool has been destroyed
 	*/
-	public abstract WorkTracker execute(WorkerTask task)
-		throws IllegalStateException;
+	public abstract WorkTracker execute(WorkerTask task) throws IllegalStateException;
 
-         // Creates a new thread
-        protected abstract Thread createNewThread()
-                throws Exception;
+    // Creates a new thread
+    protected abstract Thread createNewThread() throws Exception;
 
          /**
 	 * Destroys the pooled thread
@@ -143,7 +141,7 @@ public abstract class AbstractPool implements ThreadPool {
             destroyThread((Thread)busyThreads.get(i));
 
           isDestroyed = true;
-        }
+    }
 
 
 	/**
@@ -151,7 +149,7 @@ public abstract class AbstractPool implements ThreadPool {
 	 *
 	 * @return the total number of worker threads (busy and idle) in the pool
 	 */
-	public int totalThreads() throws IllegalStateException {
+	public synchronized int totalThreads() throws IllegalStateException {
 		if (isDestroyed) {
 			throw new IllegalStateException("This pool has been destroyed!");
 		}
@@ -164,7 +162,7 @@ public abstract class AbstractPool implements ThreadPool {
 	 *
 	 * @return the number of idle worker threads in the pool
 	 */
-	public int idleThreads() throws IllegalStateException {
+	public synchronized int idleThreads() throws IllegalStateException {
 		if (isDestroyed) {
 			throw new IllegalStateException("This pool has been destroyed!");
 		}
@@ -177,7 +175,7 @@ public abstract class AbstractPool implements ThreadPool {
 	 *
 	 * @return the number of busy workers in the pool
 	 */
-	public int busyThreads() throws IllegalStateException{
+	public synchronized int busyThreads() throws IllegalStateException{
 		if (isDestroyed) {
 			throw new IllegalStateException("This pool has been destroyed!");
 		}
