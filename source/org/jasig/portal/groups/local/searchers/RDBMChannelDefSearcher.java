@@ -77,19 +77,19 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
             conn = RDBMServices.getConnection();
             switch(method){
               case IS:
-                ps = new RDBMServices.PreparedStatement(conn,this.is_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.is_search);
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.partial_search);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,this.partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.partial_search);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.partial_search);
                 break;
               default:
                 throw new GroupsException("Unknown search type");

@@ -1362,19 +1362,19 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
             conn = RDBMServices.getConnection();
             switch(method){
               case IS:
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroups);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMEntityGroupStore.searchGroups);
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMEntityGroupStore.searchGroupsPartial);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMEntityGroupStore.searchGroupsPartial);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.searchGroupsPartial);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMEntityGroupStore.searchGroupsPartial);
                 break;
               default:
                 throw new GroupsException("Unknown search type");

@@ -80,26 +80,26 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
 
         try {
             conn = RDBMServices.getConnection();
-            uis = new RDBMServices.PreparedStatement(conn,this.user_is_search);
+            uis = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_is_search);
             switch(method){
               case IS:
-                ps = new RDBMServices.PreparedStatement(conn,this.person_is_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_is_search);
                 ups = uis;
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,this.user_partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_partial_search);
+                ups = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_partial_search);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,this.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,this.user_partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_partial_search);
+                ups = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_partial_search);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,this.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,this.user_partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_partial_search);
+                ups = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_partial_search);
                 break;
               default:
                 throw new GroupsException("Unknown search type");
