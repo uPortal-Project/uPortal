@@ -115,10 +115,10 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
         out.println ("  </tr>");
       }
       out.println ("</table>");
-      out.println ("<table border=0><tr>");
+      out.println ("<table border=0><tr><form>");
       out.println ("<td><br><input type=button name=add value=\"Add Bookmark\" onClick=\"location=\'dispatch.jsp?method=edit&action=add\'\"></td>");
       out.println ("<td><br><input type=button name=finished value=\"Finished\" onClick=\"location=\'dispatch.jsp?method=edit&action=done\'\"></td>");
-      out.println ("</tr></table>");
+      out.println ("</form></tr></table>");
     }
     catch (Exception e)
     {
