@@ -188,6 +188,7 @@
 
   <xsl:template match="title">
     <h1 align="right">Welcome <xsl:value-of select="$userName"/> :)</h1>
+    <xsl:if test="$userName != 'Guest'"><div align="right"><a href="logout.jsp">Logout</a></div></xsl:if>
   </xsl:template>
 
   <xsl:template match="image">
