@@ -161,6 +161,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 DocumentImpl uli=(DocumentImpl)this.getLayoutStore().getUserLayout(this.owner,this.profile);
                 if(uli!=null) {
                     this.setUserLayoutDOM(uli);
+                    clearDirtyFlag();
                     // inform listeners
                     for(Iterator i=listeners.iterator();i.hasNext();) {
                         LayoutEventListener lel=(LayoutEventListener)i.next();
@@ -175,7 +176,6 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 throw new PortalException("Exception encountered while reading a layout for userId="+this.owner.getID()+", profileId="+this.profile.getProfileId(),e);
             }
         }
-        clearDirtyFlag();
     }
 
     public void saveUserLayout() throws PortalException{
