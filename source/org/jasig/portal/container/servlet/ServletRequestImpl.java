@@ -60,7 +60,12 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     }
     
     public String getParameter(String name) {
-        return (String)parameters.get(name);
+        String[] values = (String[])parameters.get(name);
+
+        if (values == null || values.length <= 0)
+            return null;
+        else
+            return values[0];
     }
 
     public Map getParameterMap() {
@@ -71,8 +76,8 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
         return parameters.keys();
     }
 
-    public String[] getParameterValues(String arg0) {
-        return (String[])parameters.values().toArray(new String[0]);
+    public String[] getParameterValues(String name) {
+        return (String[])parameters.get(name);
     }
 
     /**
