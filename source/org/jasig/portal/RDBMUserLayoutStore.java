@@ -1,5 +1,5 @@
 /**
- * Copyright ? 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -556,9 +557,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       profile.setProfileId(id);
       Statement stmt = con.createStatement();
       try {
-        String sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION) VALUES ("
+        String sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
             + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
-            + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "')";
+            + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::addUserProfile(): " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
@@ -993,23 +994,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       Statement stmt = con.createStatement();
       try {
+        ResultSet rs = null;
+        
         // get stylesheet description
         StructureStylesheetDescription ssd = getStructureStylesheetDescription(stylesheetId);
+        
         // get user defined defaults
-        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
-            profileId;
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + subSelectString);
-        int layoutId;
-        ResultSet rs = stmt.executeQuery(subSelectString);
-        try {
-          rs.next();
-          layoutId = rs.getInt(1);
-          if (rs.wasNull()) {
-            layoutId = 0;
-          }
-        } finally {
-          rs.close();
-        }
+        int layoutId = this.getLayoutID(userId, profileId);
 
         if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
@@ -1291,10 +1282,26 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // get stylesheet description
         ThemeStylesheetDescription tsd = getThemeStylesheetDescription(stylesheetId);
         // get user defined defaults
+        
+        int layoutId = this.getLayoutID(userId, profileId);
+        ResultSet rs;
+
+        if (layoutId == 0) { // First time, grab the default layout for this user
+          String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+          rs = stmt.executeQuery(sQuery);
+          try {
+            rs.next();
+            userId = rs.getInt(1);
+          } finally {
+            rs.close();
+          }
+        }                
+        
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
+        rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
             // stylesheet param
@@ -1632,20 +1639,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // eventually, we need to fix template layout implementations so you can just do this:
         //        int layoutId=profile.getLayoutId();
         // but for now:
-        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId = 0;
-        rs = stmt.executeQuery(subSelectString);
-        try {
-            if (rs.next()) {
-              layoutId = rs.getInt(1);
-              if (rs.wasNull()) {
-                  layoutId = 0;
-              }
-            }
-        } finally {
-            rs.close();
-        }
+        int layoutId = this.getLayoutID(userId, profile.getProfileId());
 
        if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
@@ -1692,33 +1686,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
-
-          /* insert row(s) into up_ss_user_atts */
-          sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-          // modifed INSERT INTO SELECT statement for MySQL support
-          sQuery = " SELECT "+realUserId+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
-            " FROM UP_SS_USER_ATTS WHERE USER_ID="+userId;
-          rs = stmt.executeQuery(sQuery);
-
-          while (rs.next()) {
-             String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) " +
-             "VALUES("+realUserId+","+
-              rs.getInt("PROFILE_ID")+","+
-              rs.getInt("SS_ID")+"," +
-              rs.getInt("SS_TYPE")+"," +
-              rs.getInt("STRUCT_ID")+"," +
-              "'"+rs.getString("PARAM_NAME")+"'," +
-              rs.getInt("PARAM_TYPE")+"," +
-              "'"+rs.getString("PARAM_VAL")+"')";
-
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + Insert);
-          insertStmt.executeUpdate(Insert);
-         }
-
-          // Close Result Set
-          if ( rs != null ) rs.close();
 
           RDBMServices.commit(con); // Make sure it appears in the store
         }
@@ -2301,6 +2268,11 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
+        
+        String sSql = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId;
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sSql);
+        stmt.executeUpdate(sSql);
+        
         // write out folder attributes
         for (Enumeration e = ssup.getFolders(); e.hasMoreElements();) {
           String folderId = (String)e.nextElement();
@@ -2384,6 +2356,67 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       RDBMServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
+          int layoutId = this.getLayoutID(userId, profileId);
+
+          boolean firstLayout = false;
+          if (layoutId == 0) { // First personal layout for this user/profile
+            layoutId = 1;
+            firstLayout = true;
+          }
+          
+          //Check to see if the user has a matching layout
+          String sSql = "SELECT * FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
+          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
+          ResultSet rs = stmt.executeQuery(sSql);
+
+          try {
+              //If not the default user is found and the layout rows from the
+              //default user are copied for the current user.
+              if (!rs.next()) {
+                  int defaultUserId;
+
+                  String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+                  LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+
+                  ResultSet rs2 = stmt.executeQuery(sQuery);
+                  try {
+                      rs2.next();
+                      defaultUserId = rs2.getInt(1);
+                  }
+                  finally {
+                      rs2.close();
+                  }
+
+                  // Add to UP_USER_LAYOUT
+                  sQuery =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + defaultUserId;
+                  LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+
+                  rs2 = stmt.executeQuery(sQuery);
+
+                  try {
+                      while (rs2.next()) {
+                          sQuery =
+                              "INSERT INTO UP_USER_LAYOUT " +
+                              "(USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID) " +
+                              "VALUES(" +
+                                  userId + "," +
+                                  rs2.getInt("LAYOUT_ID") + "," +
+                                  "'" + rs2.getString("LAYOUT_TITLE") + "'," +
+                                  rs2.getInt("INIT_STRUCT_ID") + ")";
+
+                          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+                          stmt.executeUpdate(sQuery);
+                      }
+                  }
+                  finally {
+                      rs2.close();
+                  }
+              }
+          }
+          finally {
+              rs.close();
+          }          
+          
         // write out params
         for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
           String pName = (String)e.nextElement();
@@ -2391,7 +2424,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
-          ResultSet rs = stmt.executeQuery(sQuery);
+          rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
             sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + tsup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
@@ -2418,7 +2451,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
-              ResultSet rs = stmt.executeQuery(sQuery);
+              rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
                 sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
@@ -2436,6 +2469,28 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             }
           }
         }
+        
+        if (firstLayout) {
+
+            int defaultUserId;
+            int defaultLayoutId;
+            // Have to copy some of data over from the default user
+            String sQuery = "SELECT USER_DFLT_USR_ID,USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
+            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+            rs = stmt.executeQuery(sQuery);
+            try {
+              rs.next();
+              defaultUserId = rs.getInt(1);
+              defaultLayoutId = rs.getInt(2);
+            } finally {
+              rs.close();
+            }
+
+            sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+            stmt.executeUpdate(sQuery);
+          }
+
         // Commit the transaction
         RDBMServices.commit(con);
       } catch (Exception e) {
@@ -2502,18 +2557,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
         // eventually we want to be able to just get layoutId from the profile, but because of the
         // template user layouts we have to do this for now ...
-        String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
-        rs = stmt.executeQuery(query);
-        try {
-            rs.next();
-            layoutId = rs.getInt(1);
-            if (rs.wasNull()) {
-                layoutId = 0;
-            }
-        } finally {
-            rs.close();
-        }
+        layoutId = this.getLayoutID(userId, profileId);
 
         boolean firstLayout = false;
         if (layoutId == 0) { // First personal layout for this user/profile
@@ -2545,6 +2589,61 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             "VALUES ("+ userId + "," + layoutId + ",?,?,?)");
           try {
             int firstStructId = saveStructure(layoutXML.getFirstChild().getFirstChild(), structStmt, parmStmt);
+            
+            //Check to see if the user has a matching layout
+            sSql = "SELECT * FROM UP_USER_LAYOUT WHERE " + selectString;
+            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
+            rs = stmt.executeQuery(sSql);
+
+            try {
+                //If not the default user is found and the layout rows from the
+                //default user are copied for the current user.
+                if (!rs.next()) {
+                    int defaultUserId;
+
+                    String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+                    LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+
+                    ResultSet rs2 = stmt.executeQuery(sQuery);
+                    try {
+                        rs2.next();
+                        defaultUserId = rs2.getInt(1);
+                    }
+                    finally {
+                        rs2.close();
+                    }
+
+                    // Add to UP_USER_LAYOUT
+                    sQuery =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + defaultUserId;
+                    LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+
+                    rs2 = stmt.executeQuery(sQuery);
+
+                    try {
+                        while (rs2.next()) {
+                            sQuery =
+                                "INSERT INTO UP_USER_LAYOUT " +
+                                "(USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID) " +
+                                "VALUES(" +
+                                    userId + "," +
+                                    rs2.getInt("LAYOUT_ID") + "," +
+                                    "'" + rs2.getString("LAYOUT_TITLE") + "'," +
+                                    rs2.getInt("INIT_STRUCT_ID") + ")";
+
+                            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+                            stmt.executeUpdate(sQuery);
+                        }
+                    }
+                    finally {
+                        rs2.close();
+                    }
+                }
+            }
+            finally {
+                rs.close();
+            }
+
+            //Update the users layout with the correct inital structure ID
             sSql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID=" + firstStructId + " WHERE " + selectString;
             LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
             stmt.executeUpdate(sSql);
@@ -2576,6 +2675,34 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
               stmt.executeUpdate(sQuery);
+              
+              /* insert row(s) into up_ss_user_parm */
+              sQuery = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
+                " FROM UP_SS_USER_PARM WHERE USER_ID="+defaultUserId;
+              LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + sQuery);
+              if (DEBUG>0) System.err.println(sQuery);
+              rs.close();
+              rs = stmt.executeQuery(sQuery);
+              Statement insertStmt = con.createStatement();
+              try {
+                  while (rs.next()) {
+                     String insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+                     "VALUES("+
+                     userId+","+
+                     rs.getInt("PROFILE_ID")+","+
+                     rs.getInt("SS_ID")+","+
+                     rs.getInt("SS_TYPE")+","+
+                     "'"+rs.getString("PARAM_NAME")+"',"+
+                     "'"+rs.getString("PARAM_VAL")+"')";
+    
+                     LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + insert);
+                     if (DEBUG>0) System.err.println(insert);
+                     insertStmt.executeUpdate(insert);
+                  }
+              }
+              finally {
+                  insertStmt.close();
+              }
             }
             long stopTime = System.currentTimeMillis();
             LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " +
@@ -2968,4 +3095,47 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     this.setStructureStylesheetUserPreferences(person, profile.getProfileId(), up.getStructureStylesheetUserPreferences());
     this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), up.getThemeStylesheetUserPreferences());
   }
+  
+  /**
+   * Returns the current layout ID for the user and profile. If the profile doesn't exist or the
+   * layout_id field is null 0 is returned.
+   *
+   * @param userId The userId for the profile
+   * @param profileId The profileId for the profile
+   * @return The layout_id field or 0 if it does not exist or is null
+   * @throws SQLException
+   */
+  private int getLayoutID(int userId, int profileId) throws SQLException {
+      String query =
+          "SELECT LAYOUT_ID " +
+          "FROM UP_USER_PROFILE " +
+          "WHERE USER_ID=? AND PROFILE_ID=?";
+
+      Connection con = RDBMServices.getConnection();
+
+      PreparedStatement pstmt = con.prepareStatement(query);
+
+      LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getLayoutID(userId=" + userId + ", profileId=" + profileId + " ): " + query);
+
+      pstmt.setInt(1, userId);
+      pstmt.setInt(2, profileId);
+      ResultSet rs = pstmt.executeQuery();
+
+      int layoutId = 0;
+
+      try {
+          if (rs.next()) {
+              layoutId = rs.getInt(1);
+
+              if (rs.wasNull()) {
+                  layoutId = 0;
+              }
+          }
+      }
+      finally {
+          rs.close();
+      }
+
+      return layoutId;
+  }  
 }
