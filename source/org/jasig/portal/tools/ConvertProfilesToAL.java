@@ -73,7 +73,7 @@ public class ConvertProfilesToAL {
       uls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
       BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
       
-      System.out.println("Please enter the max ID for a template user => ");
+      System.out.print("Please enter the max ID for a template user => ");
       int lastTemplateUser = Integer.parseInt(br.readLine());
       
       Hashtable structSsList = uls.getStructureStylesheetList();
