@@ -21,7 +21,6 @@ import org.apache.pluto.services.information.PortletURLProvider;
 public class PortletURLProviderImpl implements PortletURLProvider {
 
     private PortletWindow portletWindow;
-    private boolean secure;
     private PortletStateManager portletStateManager;
 
     public PortletURLProviderImpl(PortletWindow portletWindow ) {
@@ -47,9 +46,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 		portletStateManager.setAction();
     }
 
-    public void setSecure() {
-        secure = true;
-    }
+    public void setSecure() {  }
 
     public void clearParameters() {
 		portletStateManager.clearParameters();
