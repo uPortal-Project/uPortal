@@ -739,7 +739,7 @@ public class RDBMUserLayoutStore
     setAutoCommit(con, false);
     Statement stmt = con.createStatement();
     try {
-      String sysdate = "{ts'" + (new java.sql.Timestamp(System.currentTimeMillis())).toString() + "'}";
+      String sysdate = "{ts '" + (new java.sql.Timestamp(System.currentTimeMillis())).toString() + "'}";
       String sqlTitle = sqlEscape(title);
       String sqlName = sqlEscape(channel.getAttribute("name"));
       String sqlFName = sqlEscape(channel.getAttribute("fname"));
