@@ -46,8 +46,18 @@ import org.jasig.portal.utils.SqlTransaction;
  * @author: Dan Ellentuck
  * @version $Revision$
  */
-public class ReferenceSequenceGenerator implements ISequenceGenerator {
+public class ReferenceSequenceGenerator implements ISequenceGenerator
+{
+    /*
+     * Private exception identifies problem incrementing counter likely
+     * because of concurrent access.
+     */
+    private class DataIntegrityException extends SQLException {
+        DataIntegrityException(String msg) {
+            super(msg);
+        }
 
+    }
     // Constant strings for SEQUENCE table:
     private static String SEQUENCE_TABLE = "UP_SEQUENCE";
     private static String NAME_COLUMN = "SEQUENCE_NAME";
@@ -100,7 +110,10 @@ private void createCounter (String tableName, Connection conn) throws SQLExcepti
         LogService.instance().log
             (LogService.DEBUG, "ReferenceSequenceGenerator.createCounter: " + sql);
 
-        stmt.executeUpdate(getCreateCounterSql(tableName));
+        int rc = stmt.executeUpdate(getCreateCounterSql(tableName));
+        if (rc != 1)
+            { throw new DataIntegrityException("Data integrity error; could not update counter."); }
+
     }
     catch ( SQLException sqle )
     {
@@ -152,7 +165,7 @@ throws SQLException
         {
             ps.setString(1, tableName);
             LogService.instance().log(LogService.DEBUG,
-                "ReferenceSequenceGenerator.getNextInt(): " + ps + "(" + tableName + ")");
+                "ReferenceSequenceGenerator.getNextInt(): " + ps + " (" + tableName + ")");
             rs = ps.executeQuery();
             int currentInt = ( rs.next() ) ? rs.getInt(VALUE_COLUMN) : NO_COUNTER_VALUE;
             return currentInt;
@@ -214,14 +227,13 @@ public synchronized int getNextInt(String tableName) throws Exception
             current = INITIAL_COUNTER_VALUE;
         }
 
-        incrementCounter(tableName, current, conn);
-        return ++current;
+        return incrementCounter(tableName, current, conn);
     }
 
     catch ( SQLException sqle )
     {
         LogService.instance().log
-            (LogService.ERROR, "ReferenceSequenceGenerator::incrementCounter(): " + sqle.getMessage());
+            (LogService.ERROR, "ReferenceSequenceGenerator.getNextInt(): " + sqle.getMessage());
         throw sqle;
     }
 
@@ -267,12 +279,45 @@ private String getUpdateCounterSql()
     return updateCounterSql;
 }
 /**
+ * Try to increment the counter for <code>tableName</code>.  If we catch a
+ * <code>DataIntegrityException</code> -- which probably means some other
+ * process is trying to increment the counter at the same time -- try again,
+ * up to 5 times.  That should do it.
+ *
  * @param tableName java.lang.String
  * @param current int
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
-private void incrementCounter(String tableName, int currentCounterValue, Connection conn)
+private int incrementCounter(String tableName, int currentCounterValue, Connection conn)
+throws SQLException
+{
+    int current = currentCounterValue;
+    boolean incremented=false;
+    for (int i=0; i<5 && ! incremented; i++)
+    {
+        try
+        {
+            primIncrementCounter(tableName, current, conn);
+            incremented = true;
+        }
+        catch ( DataIntegrityException die )
+        {
+            current = getCurrentCounterValue(tableName, conn);
+        }
+    }
+    if ( incremented )
+        { return ++current; }
+    else
+        { throw new DataIntegrityException("Could not increment counter."); }
+}
+/**
+ * @param tableName java.lang.String
+ * @param current int
+ * @param conn java.sql.Connection
+ * @exception java.sql.SQLException
+ */
+private void primIncrementCounter(String tableName, int currentCounterValue, Connection conn)
 throws SQLException
 {
     RDBMServices.PreparedStatement ps = null;
@@ -286,15 +331,16 @@ throws SQLException
             ps.setString(2, tableName);
             ps.setInt(3, currentCounterValue);
             LogService.instance().log(LogService.DEBUG,
-                "ReferenceSequenceGenerator.incrementCounter(): " + ps +
+                "ReferenceSequenceGenerator.primIncrementCounter(): " + ps +
                   "(" + nextCounterValue + ", " + tableName + ", " + currentCounterValue + ")");
             int rc = ps.executeUpdate();
             if (rc != 1)
-                { throw new SQLException("Data integrity error; could not update counter."); }
+                { throw new DataIntegrityException("Data integrity error; could not update counter."); }
         }
         catch (SQLException sqle)
         {
-            LogService.instance().log(LogService.ERROR, sqle.getMessage());
+            LogService.instance().log(LogService.ERROR,
+                "ReferenceSequenceGenerator.primIncrementCounter(): " + sqle.getMessage());
             throw sqle;
         }
     }
