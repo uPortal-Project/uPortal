@@ -62,7 +62,7 @@ import org.xml.sax.SAXException;
  * if the requested URL isn't already specified as a fully-qualified
  * URL string.</p>
  * <p>The methods of this class sort of replace the old UtiltiesBean.fixURI() method.</p>
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  * @since uPortal 2.0
  */
@@ -196,16 +196,15 @@ public class ResourceLoader {
    */
   public static Document getResourceAsDocument (Class requestingClass, String resource) throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
     Document document = null;
-  	InputStream inputStream = null;
-  	try {
-  	inputStream = getResourceAsStream(requestingClass, resource);
-  	document = f.newDocumentBuilder().parse(inputStream);  	
-  	} finally {
-  		if (inputStream != null)
-  			inputStream.close();  		
-  	}
-    
-  	return document;
+    InputStream inputStream = null;
+    try {
+      inputStream = getResourceAsStream(requestingClass, resource);
+      document = f.newDocumentBuilder().parse(inputStream);  	
+    } finally {
+      if (inputStream != null)
+        inputStream.close();  		
+    }
+    return document;
   }
 
   /**
@@ -217,17 +216,16 @@ public class ResourceLoader {
    * @throws java.io.IOException
    */
   public static Properties getResourceAsProperties (Class requestingClass, String resource) throws ResourceMissingException, IOException {
-  	InputStream inputStream = null;
-  	Properties props = null;
-  	try {
-    inputStream = getResourceAsStream(requestingClass, resource);
-    props = new Properties();
-    props.load(inputStream);
-  	} finally {
-  		if(inputStream != null)
-  			inputStream.close(); 	
-  	}
-  	
+    InputStream inputStream = null;
+    Properties props = null;
+    try {
+      inputStream = getResourceAsStream(requestingClass, resource);
+      props = new Properties();
+      props.load(inputStream);
+    } finally {
+      if(inputStream != null)
+        inputStream.close(); 		
+    }	
     return props;
   }  
   
@@ -244,15 +242,14 @@ public class ResourceLoader {
     BufferedReader in = null;
     StringBuffer sbText = null;
     try {
-    in = new BufferedReader (new InputStreamReader(getResourceAsStream(requestingClass, resource)));
-    sbText = new StringBuffer (1024);
-    while ((line = in.readLine()) != null)
-      sbText.append (line).append ("\n");
+      in = new BufferedReader (new InputStreamReader(getResourceAsStream(requestingClass, resource)));
+      sbText = new StringBuffer (1024);
+      while ((line = in.readLine()) != null)
+        sbText.append (line).append ("\n");
     } finally {
-    	if(in != null )
-    		in.close();    	
+      if(in != null )
+        in.close();    	
     }
-    
     return sbText.toString ();
   }
 }
