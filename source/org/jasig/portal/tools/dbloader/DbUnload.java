@@ -153,10 +153,9 @@ public class DbUnload {
       xmlOut.close();
     } catch (Exception e) {
       e.printStackTrace();
-      if (con != null) {
-        RDBMServices.releaseConnection(con);
-      }
       System.exit(1);
+    } finally {
+      try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
     }
   }
 }

@@ -159,7 +159,6 @@ public class DeleteUser {
   {
       DatabaseMetaData metadata = null;
       Connection con = null;
-      Statement stmt = null;
       try
       {
           con = RDBMServices.getConnection ();
@@ -168,25 +167,38 @@ public class DeleteUser {
               throw new SQLException("DeleteUser.deleteBookmarks(): " +
                 "Unable to get a database connection.");
           }
-          metadata = con.getMetaData();
-          String[] names = {"TABLE"};
-          ResultSet tableNames = metadata.getTables(null,"%", "UPC_BOOKMARKS", names);
-
-          if (tableNames.next())
+          Statement stmt = null;
+          try 
           {
-              stmt = con.createStatement();
-              System.out.println("Deleting bookmarks from UPC_BOOKMARKS");
-              String bookmarksSql =
-                "DELETE FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + uid;
-              boolean b= stmt.execute(bookmarksSql);
+              metadata = con.getMetaData();
+              String[] names = {"TABLE"};
+              ResultSet tableNames = null;
+              try
+              {
+                  tableNames = metadata.getTables(null,"%", "UPC_BOOKMARKS", names);
+        
+                  if (tableNames.next())
+                  {
+                      stmt = con.createStatement();
+                      System.out.println("Deleting bookmarks from UPC_BOOKMARKS");
+                      String bookmarksSql =
+                        "DELETE FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + uid;
+                      boolean b= stmt.execute(bookmarksSql);
+                  }
+              }
+              finally
+              {
+                  try { tableNames.close(); } catch (Exception e) {}
+              }
+          }
+          finally 
+          {
+              try { stmt.close(); } catch (Exception e) {}
           }
       }
       finally
       {
-          if (stmt != null)
-              { stmt.close(); }
-          if (con != null)
-              { RDBMServices.releaseConnection(con); }
+          try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
       return;
   }
