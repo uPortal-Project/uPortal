@@ -44,6 +44,7 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
@@ -435,7 +436,10 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         Attributes ldapattribs = result.getAttributes();
         //long get2 = System.currentTimeMillis();
         //long set1 = System.currentTimeMillis();
-        keys.add(String.valueOf(ldapattribs.get(keyfield).get()));
+        Attribute attrib = ldapattribs.get(keyfield);
+        if (attrib != null) {
+            keys.add(String.valueOf(attrib.get()));
+        }
         //long set2 = System.currentTimeMillis();
         //loop1=System.currentTimeMillis();
         //casting=casting+cast2-cast1;
