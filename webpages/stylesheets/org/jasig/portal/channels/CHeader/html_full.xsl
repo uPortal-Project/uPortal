@@ -14,7 +14,7 @@
           Welcome to uPortal 2.0 Please sign in...
         </xsl:when>
         <xsl:otherwise>
-          <a href="{$baseActionURL}?uP_root=root">Home</a> |
+          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=1">Home</a> |
           <xsl:if test="publish-chanid">
             <a href="{$baseActionURL}?uP_root={publish-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Publish</a> |
           </xsl:if>
