@@ -1498,7 +1498,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         rootNode.setFirstChildNodeId(firstStructId+"");
 
         //Assigning the root folder!!
-        ALFolderDescription rootDescription=new ALFolderDescription(); rootDescription.setId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID); rootDescription.setName("root");
+        ALFolderDescription rootDescription=new ALFolderDescription();
+        rootDescription.setId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
+        rootDescription.setName("root");
         rootNode.setNodeDescription(rootDescription);
         // Putting the root node
         layout.put(AggregatedUserLayoutImpl.ROOT_FOLDER_ID,rootNode);
@@ -1600,11 +1602,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               //ALNode node = (ALNode) layout.get(structId+"");
               ALNode node;
               String childIdStr = null;
-              if ( childId != 0 || fragmentNodeId > 0 ) {
+              if ( ( chanId <= 0 && fragmentId <= 0 ) || ( fragmentId > 0 && ( childId > 0 || fragmentNodeId > 0 ) ) ) {
                 //if ( node == null )
                 node = new ALFolder();
                 IALFolderDescription folderDesc = new ALFolderDescription();
-                childIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+":"+childId):(childId+"");
+                // If children exist in the folder
+                if ( childId > 0 )
+                 childIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+":"+childId):(childId+"");
                 ((ALFolder)node).setFirstChildNodeId(childIdStr);
                 String type = rs.getString(8);
                 int intType;
@@ -1807,18 +1811,16 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               // Pre-prime the channel pump
               for (int i = 0; i < chanIds.size(); i++) {
 
-
                 String key = (String) chanIds.get(i);
+
                 ALNode node = (ALNode) layout.get(key);
 
                 //IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
                 //ChannelDefinition channelDef = crs.getChannel(Integer.parseInt(channelDesc.getChannelPublishId()), true, pstmtChannel, pstmtChannelParm);
 
-                IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
-
-
+               IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
                String publishId =  channelDesc.getChannelPublishId();
-               System.out.println ( "channelPubId: " + publishId );
+
                if ( publishId != null ) {
                 ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(publishId));
                 if ( channelDef != null ) {
