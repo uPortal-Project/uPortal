@@ -39,6 +39,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 
 import org.jasig.portal.services.LogService;
 /**
@@ -55,8 +56,9 @@ public class ReferenceSequenceGenerator implements ISequenceGenerator
         DataIntegrityException(String msg) {
             super(msg);
         }
-
     }
+	private Random rand = new Random();
+    
     // Constant strings for SEQUENCE table:
     private static String SEQUENCE_TABLE = "UP_SEQUENCE";
     private static String NAME_COLUMN = "SEQUENCE_NAME";
@@ -280,8 +282,8 @@ private String getUpdateCounterSql()
 /**
  * Try to increment the counter for <code>tableName</code>.  If we catch a
  * <code>DataIntegrityException</code> -- which probably means some other
- * process is trying to increment the counter at the same time -- try again,
- * up to 5 times.  That should do it.
+ * process is trying to increment the counter at the same time -- sleep
+ * for a while and then try again, up to 20 times.
  *
  * @param tableName java.lang.String
  * @param current int
@@ -289,11 +291,11 @@ private String getUpdateCounterSql()
  * @exception java.sql.SQLException
  */
 private int incrementCounter(String tableName, int currentCounterValue, Connection conn)
-throws SQLException
+throws Exception
 {
     int current = currentCounterValue;
     boolean incremented=false;
-    for (int i=0; i<5 && ! incremented; i++)
+    for (int i=0; i<20 && ! incremented; i++)
     {
         try
         {
@@ -302,6 +304,7 @@ throws SQLException
         }
         catch ( DataIntegrityException die )
         {
+        	Thread.sleep(rand.nextInt(2000));
             current = getCurrentCounterValue(tableName, conn);
         }
     }
