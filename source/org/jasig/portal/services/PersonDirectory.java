@@ -231,7 +231,7 @@ public class PersonDirectory {
               }
             }
           } else {
-      	    LogService.instance().log(LogService.ERROR,"Unrecognized tag "+tagname+" in PersonDirs.xml");
+      	    LogService.instance().log(LogService.ERROR,"PersonDirectory::getParameters(): Unrecognized tag "+tagname+" in PersonDirs.xml");
           }
         }
         for (int ii=0;ii<pdi.attributealiases.length;ii++) {
@@ -243,7 +243,7 @@ public class PersonDirectory {
      }
     catch(Exception e)
     {
-      LogService.instance().log(LogService.WARN,"properties/PersonDirs.xml is not available, directory searching disabled.");
+      LogService.instance().log(LogService.WARN,"PersonDirectory::getParameters(): properties/PersonDirs.xml is not available, directory searching disabled.");
       return false;
     }
     return true;
@@ -381,7 +381,7 @@ public class PersonDirectory {
           } catch (Exception driverproblem) {
             pdi.disabled=true;
             pdi.logged=true;
-            LogService.instance().log(LogService.ERROR,"Cannot register driver class "+pdi.driver);
+            LogService.instance().log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Cannot register driver class "+pdi.driver);
             return;
           }
         }
@@ -400,14 +400,14 @@ public class PersonDirectory {
         try {
           String value = null;
           String attName = pdi.attributenames[i];
-          if (attName != null)
+          if (attName != null && attName.length() != 0)
             value = rs.getString(attName);
           if (value!=null) {
             attribs.put(pdi.attributealiases[i],value);
           }
         } catch (SQLException sqle) {
           ; // Don't let error in a field prevent processing of others.
-          LogService.log(LogService.DEBUG,"Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
+          LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
         }
       }
 
@@ -415,7 +415,7 @@ public class PersonDirectory {
       ; // If database down or can't logon, ignore this data source
       // It is not clear that we want to disable the source, since the
       // database may be temporarily down.
-      LogService.log(LogService.DEBUG,"Error "+e);
+      LogService.log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Error "+e);
     }
     if (rs!=null) try {rs.close();} catch (Exception e) {;}
     if (stmt!=null) try {stmt.close();} catch (Exception e) {;}
