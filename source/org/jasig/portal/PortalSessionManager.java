@@ -59,6 +59,7 @@ import com.oreilly.servlet.multipart.ParamPart;
 /**
  * This is an entry point into the uPortal.
  * @author Peter Kharchenko <pkharchenko@interactivebusiness.com>
+ * @version: $Revision$
  */
 public class PortalSessionManager extends HttpServlet
 {
