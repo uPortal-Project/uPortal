@@ -29,7 +29,6 @@ package  org.jasig.portal.services;
 
 import  java.io.*;
 import  org.apache.log4j.*;
-import  org.jasig.portal.GenericPortalBean;
 
 
 /**
