@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Author:   Bill Brooks   wbrooks@lug.ee.calpoly.edu               -->
+<!-- Date:     Wed Jan  2 10:34:51 PST 2002                           -->
+<!-- Filename: docs.xml                                               -->
+<!-- Version:  $Revision$                                             -->
+<!-- Language: XML 1.0                                                -->
+<!-- Copyright: (c)2000, JA-SIG Collaborative                         -->
+<!-- Purpose:  Build file for Ant 1.2, makes the uPortal              -->
+<!--           documentation in .pdf and .xhtml formats               -->
+<!-- $Id$                                                             -->
+
+<project name="uPortaldocs" default="xhtml" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property name="stylesheet" value="docbook-xsl-1.46-experimental" />
+  <property name="xslt_trans" value="xalan" />
+  <property name="destination" value="website" />
+
+  <target name="xhtml">
+    <style destdir="${destination}" extension=".xhtml" 
+           style="${stylesheet}/xhtml/docbook.xsl"
+           processor="${xslt_trans}"
+           includes="*.xml"
+           excludes="docs.xml" />
+  </target>
+
+  <target name="fo">
+    <style destdir="${destination}" extension=".fo" 
+           style="${stylesheet}/fo/docbook.xsl"
+           processor="${xslt_trans}"
+           includes="*.xml"
+           excludes="docs.xml" />
+  </target>
+
+  <!-- insert task to call FOP here -->
+
+  <target name="clean" >
+    <!-- Delete the generated files. -->
+    <delete>
+       <fileset dir="${destination}" includes="*.xhtml" />
+    </delete>
+  </target>
+
+</project>
