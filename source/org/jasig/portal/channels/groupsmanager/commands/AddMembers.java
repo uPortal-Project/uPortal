@@ -77,17 +77,16 @@ public class AddMembers extends org.jasig.portal.channels.groupsmanager.commands
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "AddMembers::execute(): Start");
-      String parentAddElemId = getCommandIds(runtimeData);
-      // if not IPerson group, then set view root to root for requested type
+      String parentAddElemId = getCommandArg(runtimeData);
       try{
         IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(this.getXmlDoc(sessionData),parentAddElemId);
-        if (!(pg.getLeafType().getName().equals(GroupService.EVERYONE))){
-          runtimeData.setParameter("grpViewKey",GroupService.getRootGroup(pg.getLeafType()).getKey());
-        }
+        sessionData.rootViewGroupID = Utility.translateKeytoID(GroupService.getRootGroup(pg.getLeafType()).getKey(),sessionData.model);
       }
       catch(Exception e){
         LogService.instance().log(LogService.ERROR,e);
       }
+      sessionData.mode=SELECT_MODE;
+      sessionData.highlightedGroupID = sessionData.rootViewGroupID;
       Utility.logMessage("DEBUG", "AddMembers::execute(): Uid of parent element = " +
             parentAddElemId);
       staticData.setParameter("groupParentId", parentAddElemId);
