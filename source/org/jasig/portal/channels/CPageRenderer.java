@@ -32,8 +32,8 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   public CPageRenderer()
   {
     params = new Vector();
-    params.addElement(new String[] {"URL", "url", "50", "70", "You have chosen to publish a channel that requires you to provide a URL. Please enter the URL for the channel you wish to publish below."} );
-    params.addElement(new String[] {"Name", "name", "30", "40", "This channel also requires a name parameter. Please enter the name below."} );
+    params.addElement(new ParameterField("URL", "url", "50", "70", "You have chosen to publish a channel that requires you to provide a URL. Please enter the URL for the channel you wish to publish below.") );
+    params.addElement(new ParameterField("Name", "name", "30", "40", "This channel also requires a name parameter. Please enter the name below.") );
   }
 
   public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}

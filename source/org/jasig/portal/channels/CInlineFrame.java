@@ -29,10 +29,10 @@ public class CInlineFrame implements org.jasig.portal.IChannel
   public CInlineFrame()
   {
     params = new Vector();
-    params.addElement(new String[] {"URL", "url", "50", "70", "You have chosen to publish a channel that requires you to provide a URL. Please enter the URL for the channel you wish to publish below."} );
-    params.addElement(new String[] {"Height", "height", "3", "4", "The channel width will be determined by its layout but you must specify the height in pixels. " +
-                                    "Please enter the height below."} );
-    params.addElement(new String[] {"Name", "name", "30", "40", "Please enter a decriptive name below."} );
+    params.addElement(new ParameterField("URL", "url", "50", "70", "You have chosen to publish a channel that requires you to provide a URL. Please enter the URL for the channel you wish to publish below.") );
+    params.addElement(new ParameterField("Height", "height", "3", "4", "The channel width will be determined by its layout but you must specify the height in pixels. " +
+                                    "Please enter the height below.") );
+    params.addElement(new ParameterField("Name", "name", "30", "40", "Please enter a decriptive name below.") );
   }
 
   public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
