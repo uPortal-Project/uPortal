@@ -79,7 +79,7 @@
 </xsl:template>
 
 <xsl:template name="folderRoot">
-  <xsl:apply-templates select="folder|channel"/>
+  <xsl:apply-templates select="folder[not(@type='header' or @type='footer') and @hidden='false']|channel"/>
 </xsl:template>
 
 <xsl:template name="crumbTrail">Folder: 

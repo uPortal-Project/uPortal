@@ -23,7 +23,7 @@
   </table>
 </xsl:template>
 
-<xsl:template match="folder">
+<xsl:template match="folder[not(@type = 'header' or @type = 'footer') and @hidden='false']">
   <!-- Indent according to position in hierarchy-->
   <xsl:for-each select="ancestor::*">
     <img src="{$imageDir}/transparent.gif" width="20" height="1"/>
