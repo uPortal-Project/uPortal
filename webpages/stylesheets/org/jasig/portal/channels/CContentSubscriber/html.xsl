@@ -1168,53 +1168,6 @@ Version $Revision$
               </td>
             </tr>
             <tr>
-              <td class="uportal-background-med">
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <input class="uportal-button" value="Cancel" name="submit2" type="button"/>
-                <input value="managePreferences" name="userPreferencesAction2" type="hidden"/>
-              </td>
-              <td>
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td class="uportal-background-shadow">
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-            </tr>
-            <tr>
-              <td class="uportal-background-med">
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td>
-                <img height="10" width="10" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-              <td class="uportal-background-shadow">
-                <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
-              </td>
-            </tr>
-            <tr>
               <td colspan="7" class="uportal-background-shadow">
                 <img height="1" width="1" src="{$mediaPath}/transparent.gif" alt="" title=""/>
               </td>
@@ -1351,7 +1304,9 @@ Version $Revision$
           </tr>
         </table>
         <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
+          <!-- Form not needed until language selector is reintroduced
           <form name="subscribe_channel_form" action="{$baseActionURL}" method="post">
+          -->
           <tr>
             <td>
               <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
@@ -1365,6 +1320,7 @@ Version $Revision$
                     <xsl:value-of select="@description"/>
                   </td>
                 </tr>
+                <!-- Language Selector temporarily removed until i18n is more inclusive
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Settings:</td>
                   <td width="100%">
@@ -1391,6 +1347,7 @@ Version $Revision$
                     </table>
                   </td>
                 </tr>
+                Language Selector temporarily removed until i18n is more inclusive  -->
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Actions:</td>
                   <td width="100%">
@@ -1422,7 +1379,9 @@ Version $Revision$
               </table>
             </td>
           </tr>
+          <!-- Form not needed until language selector is reintroduced
           </form>
+          -->
         </table>
         <table class="uportal-background-content" cellpadding="3" cellspacing="0" border="0" width="100%">
           <tr>
@@ -1586,6 +1545,7 @@ Version $Revision$
                     <xsl:value-of select="./description"/>
                   </td>
                 </tr>
+                <!-- Language Selector temporarily removed until i18n is more inclusive 
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Settings:</td>
                   <td width="100%">
@@ -1612,6 +1572,7 @@ Version $Revision$
                     </table>
                   </td>
                 </tr>
+                Language Selector temporarily removed until i18n is more inclusive -->
                 <tr class="uportal-channel-text" valign="top" align="left">
                   <td>Actions:</td>
                   <td width="100%">
