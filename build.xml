@@ -142,7 +142,7 @@
                        version of Xalan is being used in your environment:
                        JDK 1.3: http://xml.apache.org/xalan-j/faq.html#faq-N100AF
                        JDK 1.4: http://xml.apache.org/xalan-j/faq.html#faq-N100C3
-                       Version: 2.5.0
+                       Version: 2.5.2
                        URL: http://xml.apache.org/xalan-j/
 
   xercesImpl.jar       Xerces2 is the next generation of high performance,
@@ -170,7 +170,7 @@
                             http://www.mun.ca/cc/portal/cw/#depend   (see above)
 
   tyrex.jar            An in-memory JNDI implementation.
-                       Version: 1.0
+                       Version: 1.0.1
                        URL: http://tyrex.sourceforge.net/
 
   activation.jar       JavaBeans Activation Framework. Used by MultiPartDataSource.
