@@ -90,7 +90,8 @@ public class CPermissionsManagerServant extends CPermissionsManager
 
     /**
      * put your documentation comment here
-     * @return
+     * 
+     * @return <code>true</code> if finished; <code>false</code> otherwise
      */
     public boolean isFinished () {
         return  session.isFinished;
@@ -99,7 +100,7 @@ public class CPermissionsManagerServant extends CPermissionsManager
     /**
      * put your documentation comment here
      * Currently returns and empy array
-     * @return
+     * @return the results
      */
     public Object[] getResults () {
         return  results;

@@ -274,7 +274,7 @@ public class CPermissionsManager
 
     /**
      * put your documentation comment here
-     * @return
+     * @return a new <code>ChannelRuntimeProperties</code>
      */
     public org.jasig.portal.ChannelRuntimeProperties getRuntimeProperties () {
         return  new ChannelRuntimeProperties();
@@ -380,8 +380,9 @@ public class CPermissionsManager
 
     /**
      * put your documentation comment here
+     * 
      * @param validity
-     * @return
+     * @return <code>true</code> if cache is valid; <code>false</code> otherwise
      */
     public boolean isCacheValid (Object validity) {
         boolean valid = false;

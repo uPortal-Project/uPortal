@@ -91,7 +91,7 @@ public class CPermissionsManagerServantFactory {
      * @param activities
      * @param targets
      * @param staticData
-     * @return
+     * @return the permissions servant
      * @exception org.jasig.portal.PortalException
      */
     public static IServant getPermissionsServant (IPermissible owner, ChannelStaticData staticData, IAuthorizationPrincipal[] principals,

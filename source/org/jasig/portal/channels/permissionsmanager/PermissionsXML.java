@@ -64,8 +64,9 @@ public class PermissionsXML {
 
     /**
      * put your documentation comment here
+     * 
      * @param session
-     * @return
+     * @return a <code>Document</code>
      */
     public static Document getViewDoc (PermissionsSessionData session){
         return getViewDoc(session, false);
@@ -73,9 +74,10 @@ public class PermissionsXML {
 
     /**
      * put your documentation comment here
+     * 
      * @param rd
      * @param sd
-     * @return
+     * @return a <code>Document</code>
      */
     public static Document getViewDoc (PermissionsSessionData session, boolean forceRefresh){
         synchronized (session) {

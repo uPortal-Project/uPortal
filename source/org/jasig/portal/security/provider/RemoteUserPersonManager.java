@@ -50,7 +50,7 @@ import org.jasig.portal.services.LogService;
  * the user and the username may be used for login.
  *
  * @author     Pete Boysen (pboysen@iastate.edu)
- * @version
+ * @version $Revision$
  */
 public class RemoteUserPersonManager
 	 implements IPersonManager {

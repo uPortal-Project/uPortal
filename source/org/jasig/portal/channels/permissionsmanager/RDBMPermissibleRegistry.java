@@ -101,7 +101,8 @@ public class RDBMPermissibleRegistry {
 
     /**
      * put your documentation comment here
-     * @return
+     * 
+     * @return a <code>RDBMPermissibleRegistry</code> singleton
      */
     public static synchronized RDBMPermissibleRegistry instance () {
         if (_instance == null) {
