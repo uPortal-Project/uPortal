@@ -406,8 +406,29 @@ public class CWebProxy implements org.jasig.portal.IChannel
     if (cookies.size() > 0)
       sendCookieHeader(httpUrlConnect, domain, path, port);
 
-    if (httpUrlConnect.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND)
-        throw new ResourceMissingException(httpUrlConnect.getURL().toExternalForm(), "", "HTTP Status-Code 404: Not Found");
+    int status = httpUrlConnect.getResponseCode();
+
+    switch (status)
+    {
+       case HttpURLConnection.HTTP_NOT_FOUND:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(), 
+              "", "HTTP Status-Code 404: Not Found");
+       case HttpURLConnection.HTTP_FORBIDDEN:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(), 
+              "", "HTTP Status-Code 403: Forbidden");
+       case HttpURLConnection.HTTP_INTERNAL_ERROR:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(),
+              "", "HTTP Status-Code 500: Internal Server Error");
+       case HttpURLConnection.HTTP_NO_CONTENT:
+         throw new ResourceMissingException
+             (httpUrlConnect.getURL().toExternalForm(),
+              "", "HTTP Status-Code 204: No Content");
+       default:
+         break;
+    }
 
     // store any cookies sent by the channel in the cookie vector
     int index = 1;
