@@ -899,6 +899,7 @@ final class TabColumnPrefsState extends BaseState
                   LogService.instance().log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
               }
           } catch (Exception e) {
+              LogService.instance().log(LogService.ERROR, e);
               throw new GeneralRenderingException(e.getMessage());
           }
       }
