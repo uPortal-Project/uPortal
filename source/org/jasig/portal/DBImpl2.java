@@ -243,7 +243,8 @@ public class DBImpl2
       String removable;
       String immutable;
       try {
-        String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + profileId + " AND STRUCT_ID=" + structId;
+        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+        String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
         Logger.log (Logger.DEBUG, sQuery);
         rs = stmt.executeQuery (sQuery);
 
@@ -262,7 +263,8 @@ public class DBImpl2
         stmt.close();
       }
 
-      String sQuery = "SELECT CHAN_ID FROM UP_USER_CHAN WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + profileId + " AND STRUCT_ID="+structId;
+      String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+      String sQuery = "SELECT CHAN_ID FROM UP_USER_CHAN WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID="+structId;
       Logger.log (Logger.DEBUG, sQuery);
       stmt = con.createStatement ();
       ResultSet rs2 = stmt.executeQuery (sQuery);
@@ -288,7 +290,7 @@ public class DBImpl2
           Element system = (Element) channel.getElementsByTagName("system").item(0);
           Element parameter = (Element) channel.getElementsByTagName("parameter").item(0);
 
-          sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + profileId + " AND STRUCT_ID=" + structId;
+          sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
           Logger.log (Logger.DEBUG, sQuery);
           rs2 = stmt.executeQuery (sQuery);
           while (rs2.next ()) {
@@ -327,7 +329,7 @@ public class DBImpl2
             addChannelHeaderAttribute("hidden", (hidden != null && hidden.equals("Y") ? "true" : "false"), folder, system);
             addChannelHeaderAttribute("immutable", (immutable == null || immutable.equals("Y") ? "true" : "false"), folder, system);
             addChannelHeaderAttribute("removable", (removable == null || removable.equals("Y") ? "true" : "false"), folder, system);
-            sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + profileId + " AND STRUCT_ID=" + structId;
+            sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ") AND STRUCT_ID=" + structId;
             Logger.log (Logger.DEBUG, sQuery);
             rs2 = stmt.executeQuery (sQuery);
             while (rs2.next ()) {
@@ -362,7 +364,8 @@ public class DBImpl2
 
       Statement stmt = con.createStatement ();
       try {
-        String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + profileId;
+        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+        String selectString = "USER_ID=" + userId + " AND LAYOUT_ID IN (" + subSelectString + ")";
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE " + selectString;
         Logger.log (Logger.DEBUG, sQuery);
         ResultSet rs = stmt.executeQuery (sQuery);
@@ -399,13 +402,29 @@ public class DBImpl2
    * @exception Exception
    */
   public void setUserLayout (int userId, int profileId, Document layoutXML) throws Exception {
+    int layoutId = 0;
     Connection con = rdbmService.getConnection();
     try {
           setAutoCommit(con, false); // Need an atomic update here
 
-          String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + profileId;
+          String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+          Logger.log (Logger.DEBUG, query);
 
+          ResultSet rs = null;
           Statement stmt = con.createStatement ();
+          try {
+            rs = stmt.executeQuery (query);
+            if (rs.next())
+              layoutId = rs.getInt("LAYOUT_ID");
+          } finally {
+            if (rs != null)
+              rs.close();
+            stmt.close();
+          }
+
+          String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
+
+          stmt = con.createStatement ();
           try {
             String sQuery = "DELETE UP_USER_CHAN WHERE " + selectString;
             Logger.log (Logger.DEBUG, sQuery);
@@ -992,7 +1011,7 @@ public class DBImpl2
     };
     String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD FROM UP_USER, UP_SHADOW WHERE UP_USER.USER_ID = UP_SHADOW.USER_ID AND "
         + "UP_USER.USER_NAME = '" + username + "'";
-    Logger.log(Logger.ERROR, query);
+    Logger.log(Logger.DEBUG, query);
     Connection con = rdbmService.getConnection();
     Statement stmt = null;
     ResultSet rset = null;
