@@ -59,8 +59,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         this.hasHelp=d.hasHelp();
         this.hasAbout=d.hasAbout();
 
-        for(Enumeration enum = d.getParameterNames(); enum.hasMoreElements();) {
-            String pName=(String)enum.nextElement();
+        for(Enumeration enum1 = d.getParameterNames(); enum1.hasMoreElements();) {
+            String pName=(String)enum1.nextElement();
             this.setParameterValue(pName,d.getParameterValue(pName));
             this.setParameterOverride(pName,d.getParameterOverrideValue(pName));
         }
@@ -490,9 +490,9 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     }
 
     public void addParameterChildren(Element node, Document root) {
-        for(Enumeration enum = this.getParameterNames(); enum.hasMoreElements();) {
+        for(Enumeration enum1 = this.getParameterNames(); enum1.hasMoreElements();) {
             Element pElement=root.createElement("parameter");
-            String pName=(String)enum.nextElement();
+            String pName=(String)enum1.nextElement();
             pElement.setAttribute("name",pName);
             pElement.setAttribute("value",getParameterValue(pName));
             pElement.setAttribute("override",getParameterOverrideValue(pName) ? "yes" : "no");

@@ -235,8 +235,8 @@ public class ChannelManager implements LayoutEventListener {
 
         // send SESSION_DONE event to all the channels
         PortalEvent ev = PortalEvent.SESSION_DONE_EVENT;
-        for(Enumeration enum=channelTable.elements();enum.hasMoreElements();) {
-            IChannel ch = (IChannel)enum.nextElement();
+        for(Enumeration enum1=channelTable.elements();enum1.hasMoreElements();) {
+            IChannel ch = (IChannel)enum1.nextElement();
             if (ch != null) {
                 try {
                     ch.receiveEvent(ev);

@@ -138,8 +138,8 @@ public class ALNodeProperties {
      public Vector getRestrictionsByPath( String restrictionPath ) {
        Vector list = new Vector();
        if ( restrictions != null ) {
-        for ( Enumeration enum = restrictions.elements(); enum.hasMoreElements(); ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction) enum.nextElement();
+        for ( Enumeration enum1 = restrictions.elements(); enum1.hasMoreElements(); ) {
+          IUserLayoutRestriction restriction = (IUserLayoutRestriction) enum1.nextElement();
           if ( CommonUtils.nvl(restrictionPath).equals(CommonUtils.nvl(restriction.getRestrictionPath())) )
                list.add(restriction);
         }
@@ -149,9 +149,9 @@ public class ALNodeProperties {
 
     protected void addRestrictionChildren(Element node, Document root) {
        if ( restrictions != null )
-        for ( Enumeration enum = restrictions.elements(); enum.hasMoreElements(); ) {
+        for ( Enumeration enum1 = restrictions.elements(); enum1.hasMoreElements(); ) {
             Element pElement=root.createElement("restriction");
-            IUserLayoutRestriction restriction = (IUserLayoutRestriction) enum.nextElement();
+            IUserLayoutRestriction restriction = (IUserLayoutRestriction) enum1.nextElement();
             pElement.setAttribute("path",restriction.getRestrictionPath());
             pElement.setAttribute("value",restriction.getRestrictionExpression());
             pElement.setAttribute("type",restriction.getName());

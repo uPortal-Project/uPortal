@@ -186,9 +186,9 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         state.xslUri = xslUri;
 
       // grab the parameters and stuff them all into the state object        
-      Enumeration enum = rd.getParameterNames();
-      while (enum.hasMoreElements()) {
-         String n = (String)enum.nextElement();
+      Enumeration enum1 = rd.getParameterNames();
+      while (enum1.hasMoreElements()) {
+         String n = (String)enum1.nextElement();
          if (rd.getParameter(n) != null) {
             state.params.put(n,rd.getParameter(n));
          }

@@ -347,8 +347,8 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
         // Checking restrictions for the node
         if ( rhash != null ) {
-           for ( Enumeration enum = rhash.elements(); enum.hasMoreElements(); )
-             if ( !((IUserLayoutRestriction)enum.nextElement()).checkRestriction(node) ) {
+           for ( Enumeration enum1 = rhash.elements(); enum1.hasMoreElements(); )
+             if ( !((IUserLayoutRestriction)enum1.nextElement()).checkRestriction(node) ) {
                   node.setNodeDescription(currentNodeDesc);
                   return false;
              }
