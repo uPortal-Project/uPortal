@@ -855,4 +855,51 @@ throws GroupsException
 {
     throw new UnsupportedOperationException(DEBUG_CLASS_NAME + ".updateMembers() not supported");
 }
+/**
+ * Answers if <code>group</code> contains <code>member</code>.
+ * @return boolean
+ * @param group org.jasig.portal.groups.IEntityGroup
+ * @param member org.jasig.portal.groups.IGroupMember
+ */
+public boolean contains(IEntityGroup group, IGroupMember member) 
+throws GroupsException 
+{
+    Collection ids = Collections.EMPTY_LIST;
+    File f = getFile(group);
+    if ( f.exists() )
+    {
+        try 
+        {
+            ids = ( member.isEntity() )
+              ? getEntityIdsFromFile(f)
+              : getGroupIdsFromFile(f);
+        }
+        catch (Exception ex)
+        {
+            throw new GroupsException("Error retrieving ids from file: " 
+              + ex.getMessage());
+        }
+    }
+    return ids.contains(member.getKey());
+}
+/**
+ * Answers if <code>group</code> contains a member group named 
+ * <code>name</code>.
+ * @return boolean
+ * @param group org.jasig.portal.groups.IEntityGroup
+ * @param name java.lang.String
+ */
+public boolean containsGroupNamed(IEntityGroup group, String name) 
+throws GroupsException 
+{
+    boolean found = false;
+    Iterator itr = findMemberGroups(group);
+    while ( itr.hasNext() && ! found )
+    {
+        String otherName = ((IEntityGroup)itr.next()).getName();
+        found = otherName != null && otherName.equals(name);
+    }
+	return found;
+}
+
 }

@@ -660,4 +660,42 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     }
     return (EntityIdentifier[]) ids.toArray(new EntityIdentifier[0]);
   }
+
+/**
+ * Answers if <code>group</code> contains <code>member</code>.
+ * @return boolean
+ * @param group org.jasig.portal.groups.IEntityGroup
+ * @param member org.jasig.portal.groups.IGroupMember
+ */
+public boolean contains(IEntityGroup group, IGroupMember member) 
+throws GroupsException 
+{
+    boolean found = false;
+    Iterator itr = ( member.isGroup() )
+      ? findMemberGroups(group)
+      : findEntitiesForGroup(group);
+    while ( itr.hasNext() && ! found )
+        { found = member.equals(itr.next()); }
+    return found;
+}
+
+/**
+ * Answers if <code>group</code> contains a member group named 
+ * <code>name</code>.
+ * @return boolean
+ * @param group org.jasig.portal.groups.IEntityGroup
+ * @param name java.lang.String
+ */
+public boolean containsGroupNamed(IEntityGroup group, String name) 
+throws GroupsException 
+{
+    boolean found = false;
+    Iterator itr = findMemberGroups(group);
+    while ( itr.hasNext() && ! found )
+    {
+        String otherName = ((IEntityGroup)itr.next()).getName();
+        found = otherName != null && otherName.equals(name);
+    }
+    return found;
+}
 }

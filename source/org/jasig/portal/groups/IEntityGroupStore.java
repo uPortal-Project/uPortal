@@ -46,6 +46,13 @@ import org.jasig.portal.EntityIdentifier;
 public interface IEntityGroupStore extends IGroupConstants
 {
 /**
+ * Answers if <code>group</code> contains <code>member</code>.
+ * @return boolean
+ * @param group org.jasig.portal.groups.IEntityGroup
+ * @param member org.jasig.portal.groups.IGroupMember
+ */
+public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException;
+/**
  * Delete this <code>IEntityGroup</code> from the data store.
  * @param group org.jasig.portal.groups.IEntityGroup
  */

@@ -41,6 +41,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.Name;
+
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityLock;
@@ -842,6 +844,37 @@ throws GroupsException
         gmi.removeGroup(egi);
         if ( cacheInUse() )
            { cacheUpdate(gmi); }
+    }
+}
+
+/**
+ * Answers if <code>group</code> contains <code>member</code>.  
+ * If the group belongs to another service and the present service is 
+ * not editable, simply return false.
+ * @return boolean
+ * @param group org.jasig.portal.groups.IEntityGroup
+ * @param member org.jasig.portal.groups.IGroupMember
+ */
+public boolean contains(IEntityGroup group, IGroupMember member) 
+throws GroupsException 
+{
+    return ( isForeign(member) && ! isEditable() )
+      ? false
+      : getGroupStore().contains(group, member);
+}
+/**
+ * A foreign member is a group from a different service.
+ * @param member IGroupMember
+ * @return boolean
+ */
+protected boolean isForeign(IGroupMember member)
+{
+    if (member.isEntity())
+        { return false; }
+    else
+    {
+        Name memberSvcName = ((IEntityGroup)member).getServiceName();
+        return ( ! getServiceName().equals(memberSvcName) );
     }
 }
 

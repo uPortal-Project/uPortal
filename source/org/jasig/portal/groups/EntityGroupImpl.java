@@ -100,7 +100,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup
  * EntityGroupImpl
  */
 public EntityGroupImpl(String groupKey, Class entityType) 
-throws GroupsException 
+throws GroupsException
 {
     super(new CompositeEntityIdentifier(groupKey, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
     if ( isKnownEntityType(entityType) )
@@ -109,10 +109,10 @@ throws GroupsException
         { throw new GroupsException("Unknown entity type: " + entityType); }
 }
 /**
- * Adds <code>GroupMember</code> gm to our member <code>Map</code> and conversely,
- * adds this to gm's group <code>Map</code>, after checking its <code>entityType</code>
- * and <code>name</code>.  Remember that we have added it so we can update the
- * database if necessary.
+ * Adds <code>IGroupMember</code> gm to our member <code>Map</code> and conversely,
+ * adds <code>this</code> to gm's group <code>Map</code>, after checking that the 
+ * addition does not violate group rules.  Remember that we have added it so we can 
+ * update the database if necessary.
  * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
@@ -123,82 +123,45 @@ public void addMember(IGroupMember gm) throws GroupsException
     catch (GroupsException ge)
         { throw new GroupsException("Could not add IGroupMember: " + ge.getMessage() );}
 
-    Object cacheKey = gm.getEntityIdentifier().getKey();
+    if ( ! this.contains( gm ) )
+    {
+        Object cacheKey = gm.getEntityIdentifier().getKey();
 
-    if ( getRemovedMembers().containsKey(cacheKey) )
-        { getRemovedMembers().remove(cacheKey); }
-    else
-        { getAddedMembers().put(cacheKey, gm); }
+        if ( getRemovedMembers().containsKey(cacheKey) )
+            { getRemovedMembers().remove(cacheKey); }
+        else
+            { getAddedMembers().put(cacheKey, gm); }
 
-    primAddMember(gm);
+        if ( memberKeysInitialized )
+            { primAddMember(gm); } 
+    }
 }
 /**
  * @return boolean
  */
-private boolean areMemberKeysInitialized() {
+protected boolean areMemberKeysInitialized() {
     return memberKeysInitialized;
-}
-/**
- * Checks to see if adding the prospect will create a circular reference.
- * @exception org.jasig.portal.groups.GroupsException
- */
-private void checkForCircularReference(IGroupMember gm) throws GroupsException
-{
-    if ( gm.deepContains(this) )
-        throw new GroupsException("Adding " + gm + " to " + this + " creates a circular reference.");
-}
-/**
- * Checks to see if the prospect already belongs to this.
- * @param gm org.jasig.portal.groups.IGroupMember
- * @exception org.jasig.portal.groups.GroupsException
- */
-private void checkIfAlreadyMember(IGroupMember gm) throws GroupsException
-{
-    if ( this.contains(gm) )
-        throw new GroupsException(gm + " is already a member of " + this);
 }
 /**
  * A member must share the <code>entityType</code> of its containing <code>IEntityGroup</code>.
  * If it is a group, it must have a unique name within each of its containing groups and
  * the resulting group must not contain a circular reference.
+ * Removed the requirement for unique group names.  (03-04-2004, de)
  * @param gm org.jasig.portal.groups.IGroupMember
  * @exception org.jasig.portal.groups.GroupsException
  */
 private void checkProspectiveMember(IGroupMember gm) throws GroupsException
 {
     if ( gm.equals(this) )
-    {
-        throw new GroupsException("Attempt to add " + gm + " to itself.");
-    }
-    checkIfAlreadyMember(gm);
-    checkProspectiveMemberEntityType(gm);
+        { throw new GroupsException("Attempt to add " + gm + " to itself."); }
 
-    if ( gm.isGroup() )
-    {
-        String newName = ((IEntityGroup)gm).getName();
-        checkProspectiveMemberGroupName(newName);
-        checkForCircularReference(gm);
-    }
-}
-/**
- * Checks to see if the prospect has the same <code>entityType</code> as this.
- * @param gm org.jasig.portal.groups.IGroupMember
- * @exception org.jasig.portal.groups.GroupsException
- */
-private void checkProspectiveMemberEntityType(IGroupMember gm) throws GroupsException
-{
+    // Type check:
     if ( this.getLeafType() != gm.getLeafType() )
-        throw new GroupsException(this + " and " + gm + " have different entity types.");
-}
-/**
- * Checks to see if this <code>IEntityGroup</code> already has a member group named newName.
- * @param newName String
- * @exception org.jasig.portal.groups.GroupsException
- */
-protected void checkProspectiveMemberGroupName(String newName) throws GroupsException
-{
-    if ( this.getMemberGroupNamed(newName) != null )
-        throw new GroupsException(this + " already contains a group named " + newName + ".");
+        { throw new GroupsException(this + " and " + gm + " have different entity types."); } 
+
+    // Circular reference check:
+    if ( gm.isGroup() &&  gm.deepContains(this) )
+        { throw new GroupsException("Adding " + gm + " to " + this + " creates a circular reference."); }
 }
 /**
  * Clear out caches for pending adds and deletes of group members.
@@ -231,9 +194,16 @@ private Set copyMemberGroupKeys() throws GroupsException
  */
 public boolean contains(IGroupMember gm) throws GroupsException
 {
+    if ( areMemberKeysInitialized() )
+    {
     Object cacheKey = gm.getKey();
     return getMemberGroupKeys().contains(cacheKey) ||
            getMemberEntityKeys().contains(cacheKey);
+    }
+    else
+    {
+        return getLocalGroupService().contains(this,gm);
+    }
 }
 /**
  * Checks recursively if <code>GroupMember</code> gm is a member of this.
@@ -727,23 +697,11 @@ private synchronized void setMemberGroupKeys(Set newMemberGroupKeys)
     memberGroupKeys = newMemberGroupKeys;
 }
 /**
+ * We used to check duplicate sibling names but no longer do.  
  * @param newName java.lang.String
- * @exception GroupsException is thrown if a sibling group with the same name already exists. 
  */
 public void setName(java.lang.String newName) throws GroupsException
 {
-    if ( (getName() != null) && (! getName().equals(newName)) )
-    {
-        Iterator i = getContainingGroups();
-        while ( i.hasNext() )
-        {
-            EntityGroupImpl eg = (EntityGroupImpl) i.next();
-            try
-                { eg.checkProspectiveMemberGroupName(newName); }
-            catch (GroupsException ge)
-                {throw new GroupsException("Cannot set Group name: " + ge.getMessage());}
-        }
-    }
     primSetName(newName);
 }
 /**
