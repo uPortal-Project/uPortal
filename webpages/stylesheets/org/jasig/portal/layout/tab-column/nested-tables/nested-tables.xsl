@@ -532,11 +532,11 @@
 
     <map id="focused_01_Map" name="focused_01_Map">
 
-      <area shape="circle" alt="Return to portal" coords="36,34,19" href="uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=1" />
+      <area shape="circle" alt="Return to portal" coords="36,34,19" href="{$baseActionURL}?uP_root=root" />
 
     </map> <map id="focused_05_Map" name="focused_05_Map">
 
-      <area shape="circle" alt="Return to portal" coords="36,13,19" href="uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=1" />
+      <area shape="circle" alt="Return to portal" coords="36,13,19" href="{$baseActionURL}?uP_root=root" />
 
     </map>
 
