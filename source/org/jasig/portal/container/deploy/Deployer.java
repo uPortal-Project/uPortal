@@ -94,15 +94,16 @@ import org.jasig.portal.serialize.XMLSerializer;
  */
 public class Deployer {
 
-    public final static String WEB_PORTLET_PUBLIC_ID = "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN";
-    public final static String WEB_PORTLET_DTD = "http://java.sun.com/dtd/web-app_2_3.dtd";
-    public final static String WEB_PORTLET_TAGLIB_URI = "http://java.sun.com/portlet";
-    public final static String WEB_PORTLET_TAGLIB_LOCATION = "/WEB-INF/tld/portlet.tld";
+    public static final String WEB_PORTLET_PUBLIC_ID = "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN";
+    public static final String WEB_PORTLET_DTD = "http://java.sun.com/dtd/web-app_2_3.dtd";
+    public static final String WEB_PORTLET_TAGLIB_URI = "http://java.sun.com/portlet";
+    public static final String WEB_PORTLET_TAGLIB_LOCATION = "/WEB-INF/tld/portlet.tld";
 
     private static boolean debug = false;
     private static String dirDelim = File.separator;
     private static String webInfDir = dirDelim + "WEB-INF" + dirDelim;
     private static String webAppsDir;
+    private static final String portletAppDir = "lib" + dirDelim + "portlets";
 
     public static void deployArchive(String webAppsDir, String warFile) throws IOException {
         String warFileName = warFile;
@@ -390,8 +391,26 @@ public class Deployer {
         }
 
         try {
-            deployArchive(webAppsDir, warFile);
-            prepareWebArchive(webAppsDir, warFile);
+            if (warFile.equals("all")) {
+                // In the case of "all", we loop through all the portlet
+                // application archives and deploy each one
+                File portletDir = new File(portletAppDir);
+                if (portletDir.exists()) {
+                    File[] portletApps = portletDir.listFiles();
+                    for (int i = 0; i < portletApps.length; i++) {
+                        String portletApp = portletApps[i].getPath();
+                        if (portletApp.endsWith(".war")) {
+                            deployArchive(webAppsDir, portletApp);
+                            prepareWebArchive(webAppsDir, portletApp);
+                        }
+                    }
+                }
+                
+            } else {
+                // A specific portlet application was specified, so deploy it
+                deployArchive(webAppsDir, warFile);
+                prepareWebArchive(webAppsDir, warFile);
+            }
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }

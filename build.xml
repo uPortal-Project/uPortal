@@ -608,7 +608,10 @@
     </antcall>   
     <antcall target="pushfragment">
       <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
-    </antcall>   
+    </antcall>
+    <antcall target="deployPortletApp">
+      <param name="portletApp" value="all"/>
+    </antcall>
     <echo message="Finished initializing uPortal"/>
   </target>
   
