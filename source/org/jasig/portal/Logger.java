@@ -61,119 +61,112 @@ import org.apache.log4j.*;
  * @version $Revision$
  */
 
-public class Logger extends GenericPortalBean
-{
-  // Log levels, create fake ones if they don't match the Log4J standard ones
+public class Logger extends GenericPortalBean {
+    // Log levels, create fake ones if they don't match the Log4J standard ones
     public static final Priority NONE   = Priority.DEBUG;
     public static final Priority SEVERE = Priority.FATAL;
     public static final Priority ERROR  = Priority.ERROR;
     public static final Priority WARN   = Priority.WARN;
     public static final Priority INFO   = Priority.INFO;
     public static final Priority DEBUG  = Priority.DEBUG;
-    
+
     private static final String fs = File.separator;
     private static final String sLogRelativePath = "logs" + fs + "portal.log";
-    
+
     private static boolean bInitialized = false;
-    
+
     private static Category     m_category = null;
-    
-
-
-
-  /**
-   * Configures the Log4J system using the properties/Logger.properties file.
-   * Read the Log4J docs on how to setup one of these files to do anything you want.
-   * If this method isn't called before doing some logging, then Log4j will complain.
-   */
-  public static void initialize ()
-  {
-      // don't bother if we are already initialized
-
-      if(bInitialized)
-	  return;
-      String sPortalBaseDir = getPortalBaseDir();
-      
-      try {
-	  
-	  PropertyConfigurator.configureAndWatch(sPortalBaseDir + "/properties/Logger.properties");
-	  
-      } catch(Exception e) {
-	  e.printStackTrace();
-      }
-
-
-      
-      try {
-	  m_category = Category.getRoot();
-	  
-	  bInitialized = true;
-	  
-      } catch(Exception e) {
-	  System.err.println("Problem writing to log.");
-	  e.printStackTrace();
-      } catch(Error er) {
-	  System.err.println("Problem writing to log.");
-	  er.printStackTrace();
-      }
-  }
 
 
 
 
-  public static void log (Priority pLogLevel, String sMessage)
-  {
-      try {
-	  
-	  initialize();
-	  m_category.log(pLogLevel, sMessage);
-	  
-      } catch(Exception e) {
-	  System.err.println("Problem writing to log.");
-	  e.printStackTrace();
-      }  catch(Error er) {
-	  System.err.println("Problem writing to log.");
-	  er.printStackTrace();
-      }
-  }
+    /**
+     * Configures the Log4J system using the properties/Logger.properties file.
+     * Read the Log4J docs on how to setup one of these files to do anything you want.
+     * If this method isn't called before doing some logging, then Log4j will complain.
+     */
+    public static void initialize () {
+        // don't bother if we are already initialized
+
+        if(bInitialized)
+            return;
+        String sPortalBaseDir = getPortalBaseDir();
+
+        try {
+
+            PropertyConfigurator.configureAndWatch(sPortalBaseDir + "/properties/Logger.properties");
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
 
 
-  public static void log (Priority pLogLevel, Throwable ex)
-  {
-    try
-    {
-        initialize();
-	m_category.log(pLogLevel, "EXCEPTION: ", ex);
+        try {
+            m_category = Category.getRoot();
+
+            bInitialized = true;
+
+        } catch(Exception e) {
+            System.err.println("Problem writing to log.");
+            e.printStackTrace();
+        }
+        catch(Error er) {
+            System.err.println("Problem writing to log.");
+            er.printStackTrace();
+        }
     }
-    catch(Exception e)
-    {
-      System.err.println ("Problem writing to log.");
-      e.printStackTrace();
+
+
+
+
+    public static void log (Priority pLogLevel, String sMessage) {
+        try {
+
+            initialize();
+            m_category.log(pLogLevel, sMessage);
+
+        } catch(Exception e) {
+            System.err.println("Problem writing to log.");
+            e.printStackTrace();
+        }
+        catch(Error er) {
+            System.err.println("Problem writing to log.");
+            er.printStackTrace();
+        }
     }
-    catch(Error er)
-    {
-      System.err.println ("Problem writing to log.");
-      er.printStackTrace();
+
+
+
+    public static void log (Priority pLogLevel, Throwable ex) {
+        try {
+            initialize();
+            m_category.log(pLogLevel, "EXCEPTION: " + ex);
+        } catch(Exception e) {
+            System.err.println ("Problem writing to log.");
+            e.printStackTrace();
+        }
+        catch(Error er) {
+            System.err.println ("Problem writing to log.");
+            er.printStackTrace();
+        }
     }
-  }
 
     /** Generic logging method that logs to a default of
-	INFO.  These should be eliminated eventually.
+    INFO.  These should be eliminated eventually.
     */
     public static void log(String sMessage) {
-	try {
-	    initialize();
-	    m_category.log(INFO, sMessage);
-	} catch (Exception e) {
-	    System.err.println ("Problem writing to log.");
-	    e.printStackTrace();
-	}
-	catch(Error er)
-	    {
-		System.err.println ("Problem writing to log.");
-		er.printStackTrace();
-	    }
+        try {
+            initialize();
+            m_category.log(INFO, sMessage);
+        } catch (Exception e) {
+            System.err.println ("Problem writing to log.");
+            e.printStackTrace();
+        }
+        catch(Error er) {
+            System.err.println ("Problem writing to log.");
+            er.printStackTrace();
+        }
     }
 
 }

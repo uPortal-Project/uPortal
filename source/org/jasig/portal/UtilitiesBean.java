@@ -208,7 +208,7 @@ public class UtilitiesBean extends GenericPortalBean
    */
   public static String removeSpecialChars(String source)
   {
-      removeSpecialChars(source, DEFAULT_ALLOWED);
+      return removeSpecialChars(source, DEFAULT_ALLOWED);
   }
 
 
@@ -231,12 +231,16 @@ public class UtilitiesBean extends GenericPortalBean
     StringBuffer sb = new StringBuffer (source);
     char ch;
 
-    for (int i = 0 ;i < sb.length(); i++)
+    int i = 0;
+    while(i < sb.length())
     {
 	ch = sb.charAt(i);
 	if(allowed.indexOf(ch) == -1) {
 	    // looks like we have a rogue character (a -1 means it isn't in allowed)
 	    sb.deleteCharAt(i);
+	} else {
+	    // only increment if this character is good
+	    i++;
 	}
     }
 

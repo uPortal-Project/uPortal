@@ -42,64 +42,66 @@ import org.jasig.portal.layout.*;
 import com.objectspace.xml.*;
 import org.jasig.portal.security.IPerson;
 
-public interface ILayoutBean
-{
-  // Page generation
-  public void writeBodyStyle (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public void writeTabs (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public void writeChannels (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public void writePersonalizeLayoutPage (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+public interface ILayoutBean {
+    // Page generation
+    public void writeBodyStyle (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public void writeTabs (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public void writeChannels (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public void writePersonalizeLayoutPage (HttpServletRequest req, HttpServletResponse res, JspWriter out);
 
-  // Helper methods
-  public IXml getLayoutXml (HttpServletRequest req, String sUserName);
-  public void setLayoutXml (String sUserName, IXml layoutXml);
-  public IXml getDefaultLayoutXml (HttpServletRequest req);
-  public ITab[] getTabs (HttpServletRequest req);
-  public ITab getTab (HttpServletRequest req, int iTab);
-  public IColumn getColumn (HttpServletRequest req, int iTab, int iCol);
-  public org.jasig.portal.layout.IChannel getChannel (HttpServletRequest req, int iTab, int iCol, int iChan);
-  public int getActiveTab (HttpServletRequest req);
-  public void setActiveTab (HttpServletRequest req, int iTab);
-  public org.jasig.portal.IChannel getChannelInstance (org.jasig.portal.layout.IChannel channel);
-  public org.jasig.portal.IChannel getChannelInstance (String sChannelID);
-  public void removeChannelInstance (String sChannelID);
-  public String getChannelID (org.jasig.portal.layout.IChannel channel);
-  public String getGlobalChannelID(org.jasig.portal.layout.IChannel channel);
-  public String getUserName (HttpServletRequest req);
-  public IPerson getPerson (HttpServletRequest req);
-  public boolean canUserPublish (IPerson person);
+    // Helper methods
+    public IXml getLayoutXml (HttpServletRequest req, String sUserName);
+    public void setLayoutXml (String sUserName, IXml layoutXml);
+    public void reloadLayoutXml ();
+    public void protectLayoutXml();
+    public void releaseLayoutXml();
+    public IXml getDefaultLayoutXml (HttpServletRequest req);
+    public ITab[] getTabs (HttpServletRequest req);
+    public ITab getTab (HttpServletRequest req, int iTab);
+    public IColumn getColumn (HttpServletRequest req, int iTab, int iCol);
+    public org.jasig.portal.layout.IChannel getChannel (HttpServletRequest req, int iTab, int iCol, int iChan);
+    public int getActiveTab (HttpServletRequest req);
+    public void setActiveTab (HttpServletRequest req, int iTab);
+    public org.jasig.portal.IChannel getChannelInstance (org.jasig.portal.layout.IChannel channel);
+    public org.jasig.portal.IChannel getChannelInstance (String sChannelID);
+    public void removeChannelInstance (String sChannelID);
+    public String getChannelID (org.jasig.portal.layout.IChannel channel);
+    public String getGlobalChannelID(org.jasig.portal.layout.IChannel channel);
+    public String getUserName (HttpServletRequest req);
+    public IPerson getPerson (HttpServletRequest req);
+    public boolean canUserPublish (IPerson person);
 
-  // Tabs
-  public void addTab (HttpServletRequest req);
-  public void renameTab (HttpServletRequest req);
-  public void setDefaultTab (HttpServletRequest req);
-  public void removeTab (HttpServletRequest req);
-  public void moveTabDown (HttpServletRequest req);
-  public void moveTabUp (HttpServletRequest req);
+    // Tabs
+    public void addTab (HttpServletRequest req);
+    public void renameTab (HttpServletRequest req);
+    public void setDefaultTab (HttpServletRequest req);
+    public void removeTab (HttpServletRequest req);
+    public void moveTabDown (HttpServletRequest req);
+    public void moveTabUp (HttpServletRequest req);
 
-  // Columns
-  public void addColumn (HttpServletRequest req);
-  public void removeColumn (HttpServletRequest req);
-  public void moveColumnRight (HttpServletRequest req);
-  public void moveColumnLeft (HttpServletRequest req);
-  public void setColumnWidth (HttpServletRequest req);
+    // Columns
+    public void addColumn (HttpServletRequest req);
+    public void removeColumn (HttpServletRequest req);
+    public void moveColumnRight (HttpServletRequest req);
+    public void moveColumnLeft (HttpServletRequest req);
+    public void setColumnWidth (HttpServletRequest req);
 
-  // Channels
-  public void minimizeChannel (HttpServletRequest req);
-  public void maximizeChannel (HttpServletRequest req);
-  public void addChannel (HttpServletRequest req);
-  public void removeChannel (HttpServletRequest req);
-  public void moveChannelLeft (HttpServletRequest req);
-  public void moveChannelRight (HttpServletRequest req);
-  public void moveChannelUp (HttpServletRequest req);
-  public void moveChannelDown (HttpServletRequest req);
+    // Channels
+    public void minimizeChannel (HttpServletRequest req);
+    public void maximizeChannel (HttpServletRequest req);
+    public void addChannel (HttpServletRequest req);
+    public void removeChannel (HttpServletRequest req);
+    public void moveChannelLeft (HttpServletRequest req);
+    public void moveChannelRight (HttpServletRequest req);
+    public void moveChannelUp (HttpServletRequest req);
+    public void moveChannelDown (HttpServletRequest req);
 
-  // Colors
-  public String getForegroundColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public String getBackgroundColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public String getTabColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public String getActiveTabColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public String getChannelHeadingColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
-  public void setColors (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    // Colors
+    public String getForegroundColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public String getBackgroundColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public String getTabColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public String getActiveTabColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public String getChannelHeadingColor (HttpServletRequest req, HttpServletResponse res, JspWriter out);
+    public void setColors (HttpServletRequest req, HttpServletResponse res, JspWriter out);
 
 }

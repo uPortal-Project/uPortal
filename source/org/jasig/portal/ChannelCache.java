@@ -87,17 +87,17 @@ public class ChannelCache {
      *
      */
     ChannelCache() {
-	// get the configurations from the SessionManager
-	String constCacheOption = SessionManager.getConfiguration("session.memory.constrained_channel_caching");
-	
-	if("yes".equals(constCacheOption)) {
-	    Logger.log(Logger.DEBUG, "ChannelCache: constrained channel caching is now on");
-	    constrainedCaching = true;
-	    // load the channels and store them for later
-	    loadChannelClasses();
-	} else {
-	    constrainedCaching = false;
-	}
+        // get the configurations from the SessionManager
+        String constCacheOption = SessionManager.getConfiguration("session.memory.constrained_channel_caching");
+
+        if("yes".equals(constCacheOption)) {
+            Logger.log(Logger.DEBUG, "ChannelCache: constrained channel caching is now on");
+            constrainedCaching = true;
+            // load the channels and store them for later
+            loadChannelClasses();
+        } else {
+            constrainedCaching = false;
+        }
     }
 
 
@@ -108,7 +108,7 @@ public class ChannelCache {
      * @author $Author$
      */
     public boolean isCacheConstrained() {
-	return constrainedCaching;
+        return constrainedCaching;
     }
 
     /**
@@ -124,15 +124,15 @@ public class ChannelCache {
      * @author $Author$
      */
     public void setConstrainedCaching(boolean constrain) {
-	constrainedCaching = constrain;
-	
-	// reload the class list
-	if(constrainedCaching == true) {
-	    loadChannelClasses();
-	}
+        constrainedCaching = constrain;
+
+        // reload the class list
+        if(constrainedCaching == true) {
+            loadChannelClasses();
+        }
     }
 
-    
+
     /**
      * Simple method to load the list of channel classes,
      * turn them into Class objects, and store them for later.
@@ -149,24 +149,24 @@ public class ChannelCache {
      * 
      */
     protected void loadChannelClasses() {
-	// get the list of channels from the SessionManager
-	String classSetString = SessionManager.getConfiguration("session.memory.cached_channels");
+        // get the list of channels from the SessionManager
+        String classSetString = SessionManager.getConfiguration("session.memory.cached_channels");
 
-	// parse the list and create the Class objects
-	StringTokenizer stok = new StringTokenizer(classSetString, ",");
+        // parse the list and create the Class objects
+        StringTokenizer stok = new StringTokenizer(classSetString, ",");
 
-	while(stok.hasMoreTokens()) {
-	    // create the class and add it to our list
-	    String currentClassName = stok.nextToken().trim();
-	    try {
-		Class currentClass = Class.forName(currentClassName);
-		classSet.add(currentClass);
-		Logger.log(Logger.DEBUG, "ChannelCache:  caching channels of class type " + currentClass);
-	    } catch (ClassNotFoundException e) {
-		Logger.log(Logger.ERROR, "ChannelCache:  Class specified in session.properties does not exist: " + currentClassName);
+        while(stok.hasMoreTokens()) {
+            // create the class and add it to our list
+            String currentClassName = stok.nextToken().trim();
+            try {
+                Class currentClass = Class.forName(currentClassName);
+                classSet.add(currentClass);
+                Logger.log(Logger.DEBUG, "ChannelCache:  caching channels of class type " + currentClass);
+            } catch (ClassNotFoundException e) {
+                Logger.log(Logger.ERROR, "ChannelCache:  Class specified in session.properties does not exist: " + currentClassName);
 
-	    }
-	}
+            }
+        }
     }
 
 
@@ -178,19 +178,18 @@ public class ChannelCache {
      * @param channel object from layout XML
      * @return a unique identifier for the channel instance
      */
-    public String getChannelID (org.jasig.portal.layout.IChannel channel)
-    {
-	try  {
-	    String sChannelInstanceID = channel.getInstanceIDAttribute ();
-	    
-	    if (sChannelInstanceID == null)
-		throw new Exception ("Channel instance ID not found in layout xml.");
-	    
-	    return sChannelInstanceID;
-	} catch (Exception e)  {
-	    Logger.log (Logger.ERROR, e);
-	}
-	return null;
+    public String getChannelID (org.jasig.portal.layout.IChannel channel) {
+        try  {
+            String sChannelInstanceID = channel.getInstanceIDAttribute ();
+
+            if (sChannelInstanceID == null)
+                throw new Exception ("Channel instance ID not found in layout xml.");
+
+            return sChannelInstanceID;
+        } catch (Exception e)  {
+            Logger.log (Logger.ERROR, e);
+        }
+        return null;
     }
 
 
@@ -202,26 +201,26 @@ public class ChannelCache {
      * @author $Author$
      */
     public IChannel getChannel(org.jasig.portal.layout.IChannel channel) {
-	org.jasig.portal.IChannel ch = null;
+        org.jasig.portal.IChannel ch = null;
 
-	try {
-		String sClass = channel.getAttribute ("class");
-		
-		String sKey = getChannelID (channel);
-		ch = getChannel(sKey);
-		
-		if (ch == null) {
-		    ch = instantiateChannel(channel, sKey, sClass);
-		    cacheChannel(sKey, ch);
-		}
-		
-	} catch (Exception e)   {
-	    Logger.log (Logger.ERROR, e);
+        try {
+            String sClass = channel.getAttribute ("class");
 
-	    return null;
-	}
+            String sKey = getChannelID (channel);
+            ch = getChannel(sKey);
 
-	return ch;
+            if (ch == null) {
+                ch = instantiateChannel(channel, sKey, sClass);
+                cacheChannel(sKey, ch);
+            }
+
+        } catch (Exception e)   {
+            Logger.log (Logger.ERROR, e);
+
+            return null;
+        }
+
+        return ch;
     }
 
 
@@ -232,38 +231,36 @@ public class ChannelCache {
      * @author $Author$
      */
     protected org.jasig.portal.IChannel instantiateChannel(org.jasig.portal.layout.IChannel channel, String sKey, String sClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-	// Load this channel's parameters into the channel config object
-	ChannelConfig chConfig = new ChannelConfig ();
-	org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
+        // Load this channel's parameters into the channel config object
+        ChannelConfig chConfig = new ChannelConfig ();
+        org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
 
-	org.jasig.portal.IChannel ch = null;
+        org.jasig.portal.IChannel ch = null;
 
-	if (parameters != null)
-	    {
-		for (int iParam = 0; iParam < parameters.length; iParam++)
-		    {
-			String sParamName = parameters[iParam].getAttribute ("name");
-			String sParamValue = parameters[iParam].getAttribute ("value");
-			chConfig.setParameter (sParamName, sParamValue);
-		    }
-		
-		chConfig.setChannelID (sKey);
-	    }
-	
-	// Get new instance of channel
-	Object channelObject = Class.forName (sClass).newInstance ();
-	
-	// If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
-	if (channelObject instanceof org.jasig.portal.IChannel)   {
-		ch = (org.jasig.portal.IChannel) channelObject;
-	} else if(channelObject instanceof org.jasig.portal.IXMLChannel) {
-	    ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
-	}
-	
-	// Send the channel its parameters
-	ch.init (chConfig);
+        if (parameters != null) {
+            for (int iParam = 0; iParam < parameters.length; iParam++) {
+                String sParamName = parameters[iParam].getAttribute ("name");
+                String sParamValue = parameters[iParam].getAttribute ("value");
+                chConfig.setParameter (sParamName, sParamValue);
+            }
 
-	return ch;
+            chConfig.setChannelID (sKey);
+        }
+
+        // Get new instance of channel
+        Object channelObject = Class.forName (sClass).newInstance ();
+
+        // If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
+        if (channelObject instanceof org.jasig.portal.IChannel)   {
+            ch = (org.jasig.portal.IChannel) channelObject;
+        } else if(channelObject instanceof org.jasig.portal.IXMLChannel) {
+            ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
+        }
+
+        // Send the channel its parameters
+        ch.init (chConfig);
+
+        return ch;
     }
 
 
@@ -278,23 +275,20 @@ public class ChannelCache {
      * @author $Author$
      */
     public org.jasig.portal.IChannel getChannel(String sChannelID) {
-	org.jasig.portal.IChannel ch = null;
-	
-	try
-	    {
-		// Uncomment this line to enable channel instance caching
-		//  Caching channels may cause memory problems
-		ch = (org.jasig.portal.IChannel) channelCache.get (sChannelID);
-		
-		return ch;
-	    }
-	catch (Exception e)
-	    {
-		Logger.log (Logger.ERROR, e);
-	    }
-	return null;
+        org.jasig.portal.IChannel ch = null;
+
+        try {
+            // Uncomment this line to enable channel instance caching
+            //  Caching channels may cause memory problems
+            ch = (org.jasig.portal.IChannel) channelCache.get (sChannelID);
+
+            return ch;
+        } catch (Exception e) {
+            Logger.log (Logger.ERROR, e);
+        }
+        return null;
     }
-    
+
 
 
     /**
@@ -304,9 +298,9 @@ public class ChannelCache {
      * @author $Author$
      */
     public void removeChannel(String sChannelID) {
-	channelCache.remove(sChannelID);
+        channelCache.remove(sChannelID);
     }
-    
+
 
     /**
      * Puts the channel in the cache (if necessary).  This method
@@ -327,31 +321,31 @@ public class ChannelCache {
      */
     protected void cacheChannel(String sChannelID, IChannel channel) {
 
-	if(constrainedCaching) {
+        if(constrainedCaching) {
 
-	    // we have to do two different kinds of processing, depending on whether
-	    // we are dealing with an XMLChannelWrapper or not
+            // we have to do two different kinds of processing, depending on whether
+            // we are dealing with an XMLChannelWrapper or not
 
-	    if(channel instanceof XMLChannelWrapper) {
-		XMLChannelWrapper wrapper = (XMLChannelWrapper)channel;
-		IXMLChannel xmlchannel = wrapper.getXMLChannel();
+            if(channel instanceof XMLChannelWrapper) {
+                XMLChannelWrapper wrapper = (XMLChannelWrapper)channel;
+                IXMLChannel xmlchannel = wrapper.getXMLChannel();
 
-		
-		if(classSet.contains(xmlchannel.getClass())) {
-		    channelCache.put(sChannelID, channel);
-		}
 
-	    } else {
-		if(classSet.contains(channel.getClass())) {
-		    channelCache.put(sChannelID, channel);
-		}
-	    }
-	} else {
-	    // we are caching everything, so just cache it
-	    channelCache.put(sChannelID, channel);
-	}
+                if(classSet.contains(xmlchannel.getClass())) {
+                    channelCache.put(sChannelID, channel);
+                }
+
+            } else {
+                if(classSet.contains(channel.getClass())) {
+                    channelCache.put(sChannelID, channel);
+                }
+            }
+        } else {
+            // we are caching everything, so just cache it
+            channelCache.put(sChannelID, channel);
+        }
     }
-    
+
 
 }
 
