@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.pluto.om.window.PortletWindow;
+import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.UPFileSpec;
@@ -525,6 +526,11 @@ public class PortletStateManager {
 				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+java.net.URLEncoder.encode(encodedURLParams)+
 				  UPFileSpec.PORTLET_PARAMS_DELIM_END+
 				  UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
+        
+        if (ChannelManager.useAnchors) {
+            url.append("#").append(windowOfAction.getId());
+        }
+        
 		return url.toString();
 	}
 }
