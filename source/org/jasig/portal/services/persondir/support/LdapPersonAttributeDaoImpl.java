@@ -58,12 +58,14 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     private Map attributeMappings = Collections.EMPTY_MAP;
     
     /**
-     * {@link Set} of attributes that may be provided for a user.
+     * {@link Set} of attributes this DAO may provide when queried.
      */
     private Set userAttributes = Collections.EMPTY_SET;
     
     /**
-     * List of attributes to use in the query.
+     * List of names of uPortal attributes the values of which
+     * will be used, in order, to populate the parameters of the
+     * LDAP query.
      */
     private List queryAttributes = Collections.EMPTY_LIST;
 
@@ -199,6 +201,8 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     }
     
     /**
+     * Get the mapping from LDAP attribute names to uPortal attribute names.
+     * Mapping type is from String to [String | Set of String].
      * @return Returns the ldapAttributesToPortalAttributes.
      */
     public Map getLdapAttributesToPortalAttributes() {
@@ -268,16 +272,28 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     public void setLdapServer(ILdapServer ldapServer) {
         this.ldapServer = ldapServer;
     }
+    
     /**
      * @return Returns the queryAttributes.
      */
     public List getQueryAttributes() {
         return this.queryAttributes;
     }
+    
     /**
      * @param queryAttributes The queryAttributes to set.
      */
     public void setQueryAttributes(List queryAttributes) {
         this.queryAttributes = Collections.unmodifiableList(new LinkedList(queryAttributes));;
+    }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append(getClass().getName());
+    	sb.append(" query=[").append(this.query).append("]");
+    	sb.append(" attributeMappings=").append(this.attributeMappings);
+    	sb.append(" ldapServer=").append(this.ldapServer);
+    	
+    	return sb.toString();
     }
 }
