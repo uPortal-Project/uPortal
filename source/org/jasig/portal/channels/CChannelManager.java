@@ -347,7 +347,7 @@ public class CChannelManager extends BaseChannel {
         WorkflowSection catSection = new WorkflowSection("selectCategories");
         workflow.setCategoriesSection(catSection);
         WorkflowStep step = new WorkflowStep("1", "Categories");
-        step.addDataElement(ChannelRegistryManager.getChannelRegistry(person).getDocumentElement());
+        step.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
         // Add user settings with previously chosen categories
         step.addDataElement(categorySettings.toXML());
         catSection.addStep(step);
@@ -385,7 +385,7 @@ public class CChannelManager extends BaseChannel {
         // Selected categories
         WorkflowSection regSection = new WorkflowSection("selectCategories");
         WorkflowStep regStep = new WorkflowStep("1", "Categories");
-        regStep.addDataElement(ChannelRegistryManager.getChannelRegistry(person).getDocumentElement());
+        regStep.addDataElement(ChannelRegistryManager.getChannelRegistry().getDocumentElement());
         regStep.addDataElement(categorySettings.toXML());
         regSection.addStep(regStep);
         workflow.setCategoriesSection(regSection);
@@ -496,7 +496,7 @@ public class CChannelManager extends BaseChannel {
     channelManagerDoc.appendChild(channelManager);
 
     // Get the channel registry
-    Document channelRegistryDoc = ChannelRegistryManager.getChannelRegistry(person);
+    Document channelRegistryDoc = ChannelRegistryManager.getChannelRegistry();
 
     // Set the registry ID attribute to "-1"
     Element registry = channelRegistryDoc.getDocumentElement();
