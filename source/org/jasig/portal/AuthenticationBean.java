@@ -85,6 +85,7 @@ public class AuthenticationBean extends GenericPortalBean implements IAuthentica
         m_Person = new PersonImpl ();
         m_Person.setID(sUserName);
         m_Person.setFullName(me.getFullName());
+        m_Person.setAttribute("globalUID", me.getGlobalUID());
       }
       else
       {
