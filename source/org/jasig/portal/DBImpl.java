@@ -62,13 +62,18 @@ import  org.jasig.portal.security.provider.RoleImpl;
 public class DBImpl
     implements IDBImpl {
 
+  private RdbmServices rdbmService = null;
+
+  public void DBImpl() {
+    rdbmService = new RdbmServices();
+  }
+
   /**
    *
    * UserLayout
    *
    */
   public Document getUserLayout (int userId, int profileId) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     String str_uLayoutXML = null;
     try {
@@ -108,7 +113,6 @@ public class DBImpl
    * @exception Exception
    */
   public void setUserLayout (int userId, int profileId, Document layoutXML) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     String sQuery = "";
     try {
@@ -148,7 +152,6 @@ public class DBImpl
    *
    */
   public int getUserBrowserMapping (int userId, String userAgent) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     int profileId = 0;
     try {
@@ -177,7 +180,6 @@ public class DBImpl
    * @exception Exception
    */
   public void setUserBrowserMapping (int userId, String userAgent, int profileId) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -215,7 +217,6 @@ public class DBImpl
    */
   public UserProfile getUserProfileById (int userId, int profileId) throws Exception {
     UserProfile upl = null;
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -244,7 +245,6 @@ public class DBImpl
    */
   public Hashtable getUserProfileList (int userId) throws Exception {
     Hashtable pv = new Hashtable();
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -270,7 +270,6 @@ public class DBImpl
    * @exception Exception
    */
   public void setUserProfile (int userId, UserProfile profile) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -306,7 +305,6 @@ public class DBImpl
    * @exception Exception
    */
   public Document getStructureStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     Document upXML = null;
     try {
@@ -340,7 +338,6 @@ public class DBImpl
    * @exception Exception
    */
   public Document getThemeStylesheetUserPreferences (int userId, int profileId, String stylesheetName) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     Document upXML = null;
     try {
@@ -373,7 +370,6 @@ public class DBImpl
    * @exception Exception
    */
   public void setStructureStylesheetUserPreferences (int userId, int profileId, String stylesheetName, Document upXML) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       // update the database
@@ -414,7 +410,6 @@ public class DBImpl
    * @exception Exception
    */
   public void setThemeStylesheetUserPreferences (int userId, int profileId, String stylesheetName, Document upXML) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       // update the database
@@ -453,7 +448,6 @@ public class DBImpl
    * @exception Exception
    */
   public void updateUserProfile (int userId, UserProfile profile) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -476,7 +470,6 @@ public class DBImpl
    */
   public UserProfile addUserProfile (int userId, UserProfile profile) throws Exception {
     // generate an id for this profile
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       DBCounterImpl dbc = new DBCounterImpl();
@@ -503,7 +496,6 @@ public class DBImpl
    * @exception Exception
    */
   public void deleteUserProfile (int userId, int profileId) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -522,11 +514,10 @@ public class DBImpl
    */
   public void addChannel (int id, String title, Document doc, String catID[]) throws Exception {
     Statement stmt = null;
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
         addChannel(id, title, doc);
-        
+
       stmt = con.createStatement();
 
       // Set autocommit false for the connection
@@ -568,7 +559,6 @@ public class DBImpl
   public void addChannel (int id, String title, Document doc) throws Exception {
     //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
     Statement stmt = null;
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       stmt = con.createStatement();
@@ -619,7 +609,6 @@ public class DBImpl
   public Element getRegistryXML (org.apache.xerces.dom.DocumentImpl chanDoc, Element root, String catID, String role) throws Exception {
     String catid = "";
     Element cat = null;
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -667,7 +656,6 @@ public class DBImpl
   public void getTypesXML (Document types, Element root, String role) throws Exception {
     String chanXML = null;
     String catid = "";
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -696,7 +684,6 @@ public class DBImpl
    * @param role role of the current user
    */
   public void getCategoryXML (Document catsDoc, Element root, String role) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -729,7 +716,6 @@ public class DBImpl
   public void getMimeTypeList (Hashtable list) throws Exception {
     String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPES A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
     Logger.log(Logger.DEBUG, "DBImpl::getMimeTypeList() : " + sQuery);
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     Statement stmt = con.createStatement();
     try {
@@ -752,7 +738,6 @@ public class DBImpl
     String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_STRUCT_SS A, UP_SS_MAP B WHERE B.MIME_TYPE='"
         + mimeType + "' AND B.STRUCT_SS_NAME=A.STYLESHEET_NAME";
     Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -775,7 +760,6 @@ public class DBImpl
     String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_THEME_SS A, UP_SS_MAP B WHERE B.STRUCT_SS_NAME='"
         + structureStylesheetName + "' AND A.STYLESHEET_NAME=B.THEME_SS_NAME";
     Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -797,7 +781,6 @@ public class DBImpl
   public String[] getStructureStylesheetDescription (String stylesheetName) throws Exception {
     String sQuery = "SELECT * FROM UP_STRUCT_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
     Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetDescription() : " + sQuery);
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery(sQuery);
@@ -822,7 +805,6 @@ public class DBImpl
   public String[] getThemeStylesheetDescription (String stylesheetName) throws Exception {
     String sQuery = "SELECT * FROM UP_THEME_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
     Logger.log(Logger.DEBUG, "DBImpl::getThemeStylesheetDescription() : " + sQuery);
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery(sQuery);
@@ -844,7 +826,6 @@ public class DBImpl
    * @exception Exception
    */
   public void removeStructureStylesheetDescription (String stylesheetName) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -867,7 +848,6 @@ public class DBImpl
    * @exception Exception
    */
   public void removeThemeStylesheetDescription (String stylesheetName) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -896,7 +876,6 @@ public class DBImpl
         + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
         + "')";
     Logger.log(Logger.DEBUG, "DBImpl::addStructureStylesheetDescription() : " + sQuery);
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     Statement stmt = con.createStatement();
     try {
@@ -922,7 +901,6 @@ public class DBImpl
         + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText
         + "')";
     Logger.log(Logger.DEBUG, "DBImpl::addThemeStylesheetDescription() : " + sQuery);
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
 
     // Set autocommit false for the connection
@@ -958,7 +936,6 @@ public class DBImpl
    * @exception Exception
    */
   public void saveBookmarkXML (int userId, Document doc) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       StringWriter outString = new StringWriter();
@@ -980,7 +957,6 @@ public class DBImpl
    *
    */
   public boolean isUserInRole (int userId, String role) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       String query = "SELECT * FROM UP_USER_ROLES WHERE ID=" + userId + "') AND " + "UPPER(ROLE)=UPPER('" + role +
@@ -1005,7 +981,6 @@ public class DBImpl
    * @exception Exception
    */
   public Vector getAllRoles () throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     Vector roles = new Vector();
     try {
@@ -1034,7 +1009,6 @@ public class DBImpl
    * @exception Exception
    */
   public int setChannelRoles (int channelID, Vector roles) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -1071,7 +1045,6 @@ public class DBImpl
    * @exception Exception
    */
   public void getChannelRoles (Vector channelRoles, int channelID) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -1093,7 +1066,6 @@ public class DBImpl
    * @exception Exception
    */
   public void getUserRoles (Vector userRoles, int userId) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -1115,7 +1087,6 @@ public class DBImpl
    * @exception Exception
    */
   public void addUserRoles (int userId, Vector roles) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -1150,7 +1121,6 @@ public class DBImpl
    * @exception Exception
    */
   public void removeUserRoles (int userId, Vector roles) throws Exception {
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     try {
       // Set autocommit false for the connection
@@ -1189,7 +1159,6 @@ public class DBImpl
     };
     String query = "SELECT ID, FIRST_NAME, LAST_NAME, UP_SHADOW.PASSWORD " + "FROM UP_USERS, UP_SHADOW WHERE " + "UP_USERS.USER_NAME = UP_SHADOW.USER_NAME AND "
         + "UP_USERS.USER_NAME = ?";
-    RdbmServices rdbmService = new RdbmServices();
     Connection con = rdbmService.getConnection();
     PreparedStatement stmt = null;
     ResultSet rset = null;
@@ -1214,6 +1183,7 @@ public class DBImpl
     }
     return  acct;
   }
+
 
   private void setAutoCommit(Connection connection, boolean autocommit)
   {
