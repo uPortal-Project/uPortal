@@ -1826,7 +1826,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } // end if layoutID == null
 
         // we have to delete all the records from up_layout_struct_aggr table related to the lost nodes
-        stmt.executeQuery("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID="+userId+" AND LAYOUT_ID="+layoutId+" AND PRNT_NODE_ID="+LOST_FOLDER_ID);
+        stmt.executeUpdate("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID="+userId+" AND LAYOUT_ID="+layoutId+" AND PRNT_NODE_ID="+LOST_FOLDER_ID);
 
         // Instantiating the layout and setting the layout ID
         layout = new AggregatedLayout ( layoutId + "" );
