@@ -172,6 +172,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             environment.addContainerService(factorManagerService);
             environment.addContainerService(informationProviderService);
 
+            //Call added in case the context has been re-loaded
+            PortletContainerServices.destroyReference(uniqueContainerName);
+            
             portletContainer = new PortletContainerImpl();
             portletContainer.init(uniqueContainerName, servletConfig, environment, new Properties());
             
