@@ -2,6 +2,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.*" %>
 <%@ page import="com.objectspace.xml.*" %>
+<%@ page import= "java.sql.*" %>
 <%@ page errorPage="error.jsp" %>
 
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
@@ -12,27 +13,14 @@ String sAction = request.getParameter ("action");
 
 if (sAction != null)
 {
-  // Tabs
-  if (sAction.equals ("addChannel"))
-    subscribe.addChannel (request);
-
-
-  // Save the layout xml
-  else if (sAction.equals ("save"))
-  {
-    IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
-    layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
-    session.removeAttribute ("layoutXml");
-    response.sendRedirect ("layout.jsp");
-  }
 
   // Ignore changes and return to the layout
-  else if (sAction.equals ("cancel"))
+  if (sAction.equals ("cancel"))
   {
-    session.removeAttribute ("layoutXml");
     response.sendRedirect ("layout.jsp");
   }
 }
+else {
 %>
 
 <% UtilitiesBean.preventPageCaching (response); %>
@@ -54,16 +42,18 @@ if (sAction != null)
 <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
   <input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'">
 </td></tr></table>
+Click on a channel to add to your tab.
 </form>
 
 <%
+ try {
  ResultSet rs = subscribe.getChannels(request);
-
  while(rs.next()) {
  %>
- <a href="subscribe.jsp?action=addChannel&column=0&chan_id="<%=rs.getString("ID")%>"><%=rs.getString("TITLE")%></a><br>
+ <a href="personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=rs.getString("ID")%>"><%=rs.getString("TITLE")%></a><br>
  <%
  }
+ subscribe.close();
  %>
 
 
@@ -73,6 +63,16 @@ if (sAction != null)
   <input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'">
 </td></tr></table>
 </form>
+
+<%
+ }
+  catch (Exception e) {
+    out.println("Subscriber:ERROR!");
+    out.print(e.getMessage());
+	 e.printStackTrace(System.err);
+ } 
+ }
+%>
 
 <jsp:include page="footer.jsp" flush="true" />
 
