@@ -106,12 +106,11 @@ public interface IChannelRegistryStore {
   public ChannelDefinition[] getChannelDefinitions() throws Exception;
 
   /**
-   * Publishes a channel.
+   * Persists a channel definition.
    * @param channelDef the channel definition
-   * @param categories the categories of which this channel should be a member
-    * @throws java.lang.Exception
+   * @throws java.lang.Exception
    */
-  public void addChannelDefinition(ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception;
+  public void saveChannelDefinition(ChannelDefinition channelDef) throws Exception;
 
   /**
    * Permanently deletes a channel definition from the store.
