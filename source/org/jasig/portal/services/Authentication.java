@@ -41,7 +41,8 @@ package  org.jasig.portal.services;
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.security.provider.PersonImpl;
 import  org.jasig.portal.GenericPortalBean;
-
+import  org.jasig.portal.RDBMUserIdentityStore;
+import  org.jasig.portal.AuthorizationException;
 
 /**
  * @author Ken Weiner, kweiner@interactivebusiness.com
@@ -83,23 +84,20 @@ public class Authentication {
       if (addInfo == null || !(addInfo instanceof PersonImpl)) {
         // Create a new IPerson
         m_Person = new PersonImpl();
-        // Set the user's GlobalUID and Userid (also known as username)
-        // GlobalUID is the integer key to to user data in uPortal reference implementation
-        // username is a string also called uid in the eduPerson 1.0 specification.
-        // These two attributes generally would come from the principal created for
-        // the current security context.
-        m_Person.setID(me.getGlobalUID());
+        // username attribute comes from principal
+        // It is either what was typed in or supplied by the security provider
         m_Person.setAttribute("username", me.getUID());
+
         try {
           // Directory information to be filled in for the user would usually come from a
           // directory service such as LDAP.  In the reference implementation we retrieve these
           // attributes from the database.
           String directoryInfo[] = GenericPortalBean.getUserLayoutStore().getUserDirectoryInformation(me.getUID());
           // Set the user's full name
-          m_Person.setFullName(directoryInfo[0] + " " + directoryInfo[1]);
+          if (directoryInfo[0]!=null || directoryInfo[1]!=null) m_Person.setFullName(directoryInfo[0] + " " + directoryInfo[1]);
           // And set the email address
           if (directoryInfo[2]!=null && directoryInfo[2].length()>0)
-            m_Person.setAttribute("Email", directoryInfo[2]);
+            m_Person.setAttribute("mail", directoryInfo[2]);
         } catch (Exception e) {
         // nothing do do if no directory info
         }
@@ -110,10 +108,27 @@ public class Authentication {
           String value = (String) attribs.get(key);
           m_Person.setAttribute(key,value);
         }
+        if (attribs.get("displayName")!=null) m_Person.setFullName((String)attribs.get("displayName"));
+        if (m_Person.getFullName()==null) m_Person.setFullName("Unrecognized person "+m_Person.getAttribute("username"));
       }
       else {
         // Set the IPerson to be the AdditionalDescriptor object
         m_Person = (IPerson)addInfo;
+      }
+
+      // find the uPortal userid for this user or flunk authentication if not found
+
+      //just for testing.. the template username should actually be derived from directory information.
+      // setting the uPortalTemplateUserName to demo will use demo as the template.
+      // A more likely template would be staff or faculty or undergraduate.
+      m_Person.setAttribute("uPortalTemplateUserName","demo");
+
+      RDBMUserIdentityStore UIDStore = new RDBMUserIdentityStore();
+      try {
+      int newUID = UIDStore.getuPortalUID(m_Person, true);
+      m_Person.setID(newUID);
+      } catch (AuthorizationException  ae) {
+      return (false);
       }
     }
     return  (bAuthenticated);
