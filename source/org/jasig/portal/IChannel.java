@@ -40,8 +40,8 @@ import org.xml.sax.ContentHandler;
 /**
  * An interface presented by a channel to a portal.
  * A channel is a stateful entity. The main part of the channel lifecycle is 
- * the rendering cycle. The rendering cycle starts with an invokation of the {@link setRuntimeData} method
- * for updating channel state, and is eventually followed by a call to the {@link renderXML} method that 
+ * the rendering cycle. The rendering cycle starts with an invokation of the {@link #setRuntimeData} method
+ * for updating channel state, and is eventually followed by a call to the {@link #renderXML} method that 
  * retrieves the current state of the channel. These are the main two methods of the interface.
  * 
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>

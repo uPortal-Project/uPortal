@@ -36,7 +36,7 @@
 package org.jasig.portal.security.provider;
 
 /**
- * A store for basic account information (i.e. username, passwords, etc.)
+ * A store for basic account information; username, passwords, etc.)
  * Note: this interface is particular to the reference security provider
  * and is not part of the core portal interfaces.
  *

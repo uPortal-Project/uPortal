@@ -72,7 +72,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * <p>This utility provides methods for transforming XML documents
+ * This utility provides methods for transforming XML documents
  * via XSLT. It takes advantage of Xalan's ability to pre-compile
  * stylehseets into StylesheetRoot objects.  The first time a transform
  * is requested, a stylesheet is compiled and cached.</p>
@@ -92,6 +92,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * xslt.setStylesheetParameter("param2Name", "param2Value");
  * xslt.transform();
  * </pre></code></p>
+ * 
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */

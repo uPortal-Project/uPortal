@@ -775,7 +775,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
   /**
    * Obtain structure stylesheet description object for a given structure stylesheet id.
-   * @para id the id of the structure stylesheet
+   * @param id the id of the structure stylesheet
    * @return structure stylesheet description
    */
   public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception {

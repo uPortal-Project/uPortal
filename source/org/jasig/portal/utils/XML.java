@@ -67,7 +67,8 @@ import org.xml.sax.ContentHandler;
 
 
 /**
- * <p>This utility provides useful XML helper methods</p>
+ * This utility provides useful XML helper methods.
+ * 
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */

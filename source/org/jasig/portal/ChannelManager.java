@@ -848,7 +848,7 @@ public class ChannelManager implements LayoutEventListener {
     /**
      * Specify <code>UPFileSpec</code> object that will be
      * used to construct file portion of the context path
-     * in the auto-generated URLs (i.e. baseActionURL)
+     * in the auto-generated URLs, also known as the baseActionURL.
      *
      * @param uPElement an <code>UPFileSpec</code> value
      */

@@ -42,7 +42,7 @@ package org.jasig.portal;
  * control over the servlet output stream and, at the same time, requires
  * access to the internal structures.
  *
- * @version: $Revision$
+ * @version $Revision$
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  */
 public interface IWorkerRequestProcessor {

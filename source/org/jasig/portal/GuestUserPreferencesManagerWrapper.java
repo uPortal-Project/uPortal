@@ -43,7 +43,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
 
 /**
- * A class that allows {@link GuestUserpreferencesManager} to be presented as <code>IUserpreferencesManager</code>
+ * A class that allows <code>GuestUserPreferencesManager</code> to be presented as <code>IUserpreferencesManager</code>.
  *
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
