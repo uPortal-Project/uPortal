@@ -966,30 +966,23 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         // Getting parameters and restrictions
         for ( int i = 0; i < childNodes.getLength(); i++ ) {
-          Node childNode = childNodes.item(i);
+          Element childNode = (Element)childNodes.item(i);
           String nodeName = childNode.getNodeName();
-          NamedNodeMap attributes = childNode.getAttributes();
           if ( IAggregatedLayout.PARAMETER.equals(nodeName) && channelDesc != null ) {
-           Node paramNameNode = attributes.getNamedItem("name");
-           String paramName = (paramNameNode!=null)?paramNameNode.getFirstChild().getNodeValue():null;
-           Node paramValueNode = attributes.getNamedItem("value");
-           String paramValue = (paramValueNode!=null && paramValueNode.getFirstChild()!=null)?paramValueNode.getFirstChild().getNodeValue():null;
-           Node overParamNode = attributes.getNamedItem("override");
-           String overParam = (overParamNode!=null)?overParamNode.getFirstChild().getNodeValue():"yes";
+           String paramName = childNode.getAttribute("name");
+           String paramValue = childNode.getAttribute("value");
+           String overParam = childNode.getAttribute("override");
 
            if ( paramName != null && paramValue != null ) {
             channelDesc.setParameterValue(paramName, paramValue);
             channelDesc.setParameterOverride(paramName, "yes".equalsIgnoreCase(overParam)?true:false);
            }
           } else if ( IAggregatedLayout.RESTRICTION.equals(nodeName) ) {
-             Node restrPathNode = attributes.getNamedItem("path");
-             String restrPath = (restrPathNode!=null)?restrPathNode.getFirstChild().getNodeValue():null;
-             Node restrValueNode = attributes.getNamedItem("value");
-             String restrValue = (restrValueNode!=null)?restrValueNode.getFirstChild().getNodeValue():null;
-             Node restrTypeNode = attributes.getNamedItem("type");
-             String restrType = (restrTypeNode!=null)?restrTypeNode.getFirstChild().getNodeValue():"0";
+             String restrPath = childNode.getAttribute("path");
+             String restrValue = childNode.getAttribute("value");
+             String restrType = childNode.getAttribute("type");
 
-             if ( restrValue != null && restrPathNode != null ) {
+             if ( restrValue != null ) {
               IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(CommonUtils.parseInt(restrType),restrValue,restrPath);
               nodeDesc.addRestriction(restriction);
              }
