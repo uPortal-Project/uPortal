@@ -191,8 +191,8 @@ public class WebApplicationMarshaller {
                 }
                 SecurityRoleRefSetImpl securityRoleRefs = (SecurityRoleRefSetImpl)servletDefinition.getSecurityRoleRefs();
                 if (securityRoleRefs != null) {
-                    for (Iterator iter2 = securityRoleRefs.iterator(); iter.hasNext();) {
-                        SecurityRoleRefImpl securityRoleRef = (SecurityRoleRefImpl)iter.next();
+                    for (Iterator iter2 = securityRoleRefs.iterator(); iter2.hasNext();) {
+                        SecurityRoleRefImpl securityRoleRef = (SecurityRoleRefImpl)iter2.next();
                         Element securityRoleRefE = doc.createElement("security-role-ref");
                         addDescriptions(securityRoleRefE, securityRoleRef.getDescriptions());
                         addTextElement(securityRoleRefE, "role-name", securityRoleRef.getRoleName());
