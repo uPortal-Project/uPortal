@@ -961,9 +961,10 @@ public class DbLoader
 
       if (supportsPreparedStatements)
       {
+        String preparedStatement = "";
         try
         {
-          String preparedStatement = prepareInsertStatement(table.getName(), row, true);
+          preparedStatement = prepareInsertStatement(table.getName(), row, true);
           //System.out.println(preparedStatement);
           pstmt = con.prepareStatement(preparedStatement);
           pstmt.clearParameters ();
@@ -1025,8 +1026,15 @@ public class DbLoader
           }
           pstmt.executeUpdate();
         }
+        catch (SQLException sqle)
+        {
+          System.err.println();
+          System.err.println(preparedStatement);
+          sqle.printStackTrace();
+        }
         catch (Exception e)
         {
+          System.err.println();
           e.printStackTrace();
         }
         finally
