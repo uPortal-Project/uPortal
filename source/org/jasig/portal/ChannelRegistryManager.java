@@ -220,7 +220,8 @@ public class ChannelRegistryManager {
         channelE.setAttribute("name", channelDef.getName(locale));
         channelE.setAttribute("title", channelDef.getTitle(locale));
         channelE.setAttribute("locale", locale);
-        log.debug("ChannelRegistryManager::getChannelXML: locale=" + locale);
+        if (log.isDebugEnabled())
+            log.debug("ChannelRegistryManager::getChannelXML: locale=" + locale);
     }  else {
         channelE.setAttribute("name", channelDef.getName());
         channelE.setAttribute("title", channelDef.getTitle());
@@ -432,12 +433,14 @@ public class ChannelRegistryManager {
       newChannel = false;
       ID = Integer.parseInt(channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId);
       channelDef = crs.getChannelDefinition(ID);
-      log.debug("Attempting to modify channel " + ID + "...");
+      if (log.isDebugEnabled())
+          log.debug("Attempting to modify channel " + ID + "...");
     }
     else {
       channelDef = crs.newChannelDefinition();
       ID = channelDef.getId();
-      log.debug("Attempting to publish new channel " + ID + "...");
+      if (log.isDebugEnabled())
+          log.debug("Attempting to publish new channel " + ID + "...");
     }
 
     // Add channel
@@ -487,7 +490,9 @@ public class ChannelRegistryManager {
     }
     upm.addPermissions(permissions);
 
-    log.info( "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
+    if (log.isInfoEnabled())
+        log.info( "Channel " + ID + " has been " + 
+                (newChannel ? "published" : "modified") + ".");
 
     // Record that a channel has been published or modified
     if (newChannel)
@@ -533,7 +538,8 @@ public class ChannelRegistryManager {
       if (channelTypes != null)
       {
         channelTypesCache.put(CHANNEL_TYPES_CACHE_KEY, channelTypes);
-        log.info( "Caching channel types.");
+        if (log.isInfoEnabled())
+            log.info( "Caching channel types.");
       }
     }
 
@@ -595,7 +601,8 @@ public class ChannelRegistryManager {
 
       if (cpd != null) {
         cpdCache.put(CPD_CACHE_KEY + chanTypeID, cpd);
-        log.info( "Caching CPD for channel type " + chanTypeID);
+        if (log.isInfoEnabled())
+            log.info( "Caching CPD for channel type " + chanTypeID);
       }
     }
 
