@@ -1672,7 +1672,12 @@
         <column><name>STYLESHEET_NAME</name><value>Tabs and columns</value></column>
         <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
           <structurestylesheetuserpreferences>
-            <parameters/>
+            <parameters>
+            	<parameter name="activeTab">
+            		<defaultvalue>1</defaultvalue>
+            		<description>The number of the tab that is initially active</description>
+            	</parameter>
+            </parameters>
             <folderattributes>
               <attribute name="width" defaultvalue="100%">
                 <folder folderid="col01" value="30%"/>
@@ -1695,8 +1700,6 @@
         <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
           <themestylesheetuserpreferences>
             <parameters>
-              <parameter name="activeTab">1</parameter>
-              <parameter name="borderWidth">2</parameter>
             </parameters>
             <channelattributes>
               <attribute name="minimizable" defaultvalue="true">
@@ -1716,7 +1719,12 @@
         <column><name>STYLESHEET_NAME</name><value>Tabs and columns</value></column>
         <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
           <structurestylesheetuserpreferences>
-            <parameters/>
+            <parameters>
+            	<parameter name="activeTab">
+            		<defaultvalue>1</defaultvalue>
+            		<description>The number of the tab that is initially active</description>
+            	</parameter>
+            </parameters>
             <folderattributes>
               <attribute name="width" defaultvalue="100%">
                 <folder folderid="col01" value="70%"/>
@@ -1740,8 +1748,6 @@
 
         <themestylesheetuserpreferences>
           <parameters>
-            <parameter name="activeTab">1</parameter>
-            <parameter name="borderWidth">2</parameter>
           </parameters>
           <channelattributes>
             <attribute name="minimizable" defaultvalue="true">
