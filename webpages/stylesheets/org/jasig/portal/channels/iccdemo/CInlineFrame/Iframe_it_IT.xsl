@@ -12,7 +12,7 @@
 </span>
 </p>
 </xsl:for-each>
-  URL corrente: <xsl:value-of select="url"/>
+  URL corrente: <xsl:value-of select="url"/><br/>
   <iframe src="{url}" height="{height}" frameborder="no" width="100%">dummyText</iframe>
 </xsl:template>
 
