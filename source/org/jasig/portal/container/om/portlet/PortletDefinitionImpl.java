@@ -178,7 +178,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
             IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
             portletPrefsStore.setDefinitionPreferences(channelDefinition.getId(), preferences);
         } catch (Exception e) {
-            log.error( e);
+            log.error("Could not store portlet definition preferences.", e);
             throw new IOException("Could not store portlet definition preferences: " + e.getMessage());
         }
     }
@@ -212,7 +212,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
             
             ((PreferenceSetImpl)preferences).addAll(publishPreferences);
         } catch (Exception e) {
-            log.error( e);
+            log.error("Could not load portlet definition preferences", e);
             throw new IOException("Could not load portlet definition preferences: " + e.getMessage());
         }
     }
