@@ -45,6 +45,8 @@ import  javax.naming.InitialContext;
 import  javax.naming.NamingException;
 import  javax.naming.CompositeName;
 import  javax.servlet.http.HttpSession;
+import  javax.servlet.http.HttpSessionBindingListener;
+import  javax.servlet.http.HttpSessionBindingEvent;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.services.LogService;
 import  org.w3c.dom.Document;
@@ -80,6 +82,8 @@ public class JNDIManager {
       context.bind("/services/logger", logger);
       // Create a subcontext for user specific bindings
       context.createSubcontext("users");
+      // Create a subcontext to keep track of active sessions
+      context.createSubcontext("sessions");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -92,8 +96,10 @@ public class JNDIManager {
    * @param person
    * @exception PortalNamingException
    */
-  public static void initializeUserContext (Document userLayout, String sessionID, IPerson person) throws PortalNamingException {
+  public static void initializeUserContext (Document userLayout, HttpSession session, IPerson person) throws PortalNamingException {
     try {
+      // Bind our session listener to the session
+      session.setAttribute("JNDISessionListener", new JNDISessionListener());
       // Throw an exception if the person object is not found
       if (person == null) {
         throw  new PortalNamingException("JNDIManager.initializeUserContext() - Cannot find person object!");
@@ -104,10 +110,17 @@ public class JNDIManager {
       }
       // Get the portal wide context
       Context context = getContext();
+      // Get the context that keeps track of session IDs
+      Context sessionsContext = (Context)context.lookup("sessions");
+      // Bind the Person object to it's session ID in JNDI
+      sessionsContext.bind(session.getId(), person);
       // Get the users subcontext
       Context usersContext = (Context)context.lookup("users");
       // Create a subcontext for this specific useer
       Context thisUsersContext = (Context)usersContext.createSubcontext(person.getID() + "");
+      // Bind the user's sessionID to this context
+      thisUsersContext.bind("sessionID", session.getId());
+      // Create a subcontext for the user's channel instance IDs
       Context thisUsersChannelIDs = (Context)thisUsersContext.createSubcontext("channel-ids");
       // Get the list of channels in the user's layout
       NodeList channelNodes = userLayout.getElementsByTagName("channel");
@@ -157,6 +170,88 @@ public class JNDIManager {
     environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
     Context ctx = new InitialContext(environment);
     return  (ctx);
+  }
+
+  /**
+   * This class will be bound to the user's session when they log in. When the user's session is expired this
+   * object should be unbound and will clean up all user specific objects in JNDI. Note: It's possible that
+   * not all servlet containers properly unbind objects from the session when it expires!
+   */
+  private static class JNDISessionListener
+      implements HttpSessionBindingListener {
+
+    /**
+     * put your documentation comment here
+     * @param     HttpSessionBindingEvent bindingEvent
+     */
+    public void valueBound (HttpSessionBindingEvent bindingEvent) {
+      LogService.instance().log(LogService.INFO, "JNDISessionListener bound for: " + bindingEvent.getSession().getId());
+    }
+
+    /**
+     * This method is called when the JNDISessionListener is unbound from a user's session. This should
+     * only happen when the users session is either destroyed or expires. Note: This method may need synchronization!
+     * If a user logs in and out quickly there may be problems with things not happening in the correct order.
+     * @param     HttpSessionBindingEvent bindingEvent
+     */
+    public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
+      LogService.instance().log(LogService.INFO, "JNDISessionListener unbound for: " + bindingEvent.getSession().getId());
+      Context context = null;
+      try {
+        // Get the portal JNDI context
+        context = getContext();
+      } catch (NamingException ne) {
+        LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Could not get portal context " + 
+            ne.getMessage());
+        return;
+      }
+      Context sessionsContext = null;
+      try {
+        // Get the context that keeps track of user's sessions
+        sessionsContext = (Context)context.lookup("sessions");
+      } catch (NamingException ne) {
+        LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Could not get sessions context "
+            + ne.getMessage());
+        return;
+      }
+      if (sessionsContext == null) {
+        return;
+      }
+      IPerson person = null;
+      try {
+        // Get the person object that is bound to this session ID
+        person = (IPerson)sessionsContext.lookup(bindingEvent.getSession().getId());
+      } catch (NamingException ne) {
+        LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Could not get IPerson object " + 
+            ne.getMessage());
+        return;
+      }
+      try {
+        // Remove the session context from JNDI
+        sessionsContext.unbind(bindingEvent.getSession().getId());
+      } catch (NamingException ne) {
+        LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Problem unbinding user's session "
+            + ne.getMessage());
+        return;
+      }
+      Context usersContext = null;
+      try {
+        // Remove the user's information from the user's context
+        usersContext = (Context)context.lookup("users");
+      } catch (NamingException ne) {
+        LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Could not find /users context "
+            + ne.getMessage());
+        return;
+      }
+      try {
+        // Unbind all of the users JNDI information
+        usersContext.unbind(person.getID() + "");
+      } catch (NamingException ne) {
+        LogService.instance().log(LogService.ERROR, "JNDISessionListener.valueUnbound(): Problem unbinding user's context "
+            + ne.getMessage());
+        return;
+      }
+    }
   }
 }
 
