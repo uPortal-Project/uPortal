@@ -145,13 +145,13 @@ public class CSubscriber
       try {
         if (action.equals("browse")) {
           prepareBrowse();
-        } 
+        }
         else if (action.equals("subscribe")) {
           prepareSubscribe();
-        } 
+        }
         else if (action.equals("subscribeTo")) {
           prepareSubscribeTo();
-        } 
+        }
         else if (action.equals("saveChanges")) {
           prepareSaveChanges();
         }
@@ -204,8 +204,8 @@ public class CSubscriber
         ssParams.put("categoryID", categoryID);
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      } 
-      else 
+      }
+      else
         Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -240,15 +240,15 @@ public class CSubscriber
     Node destination = null;
     if (destinationID == null) {
       Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : received a null destinationID !");
-    } 
+    }
     else {
       if (destinationID.equals(this.regID))
         destination = userLayoutXML.getDocumentElement();       // the layout element
-      else 
+      else
         destination = userLayoutXML.getElementById(destinationID);
       if (destination == null) {
         Logger.log(Logger.ERROR, "CSubscriber::prepareSubscribeTo() : destinationID=\"" + destinationID + "\" results in an empty node !");
-      } 
+      }
       else {
         for (int i = 0; i < subIDs.length; i++) {
           Node channel = channelRegistry.getElementById(subIDs[i]);
@@ -260,7 +260,7 @@ public class CSubscriber
               setNextInstanceID(channel);
               destination.insertBefore(userLayoutXML.importNode(channel, true), null);
             }
-          } 
+          }
           else {
             setNextInstanceID(channel);
             destination.insertBefore(userLayoutXML.importNode(channel, true), null);
@@ -288,7 +288,7 @@ public class CSubscriber
    * @return String
    */
   public void setNextInstanceID (Node channel) throws Exception {
-    String sInstanceID = "n" + GenericPortalBean.getUserLayoutStore().getNextStructId(staticData.getPerson().getID());
+    String sInstanceID = GenericPortalBean.getUserLayoutStore().getNextStructId(staticData.getPerson().getID());
     ((Element)channel).setAttribute("ID", sInstanceID);
   }
 }
