@@ -91,5 +91,9 @@ public class SecurityRoleRefImpl implements SecurityRoleRef, SecurityRoleRefCtrl
     public void setDescriptions(DescriptionSet descriptions) {
         this.descriptions = descriptions;
     }
+    
+    public DescriptionSet getDescriptions() {
+        return this.descriptions;
+    }
 
 }
