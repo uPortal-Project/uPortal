@@ -91,7 +91,7 @@ public class CHeader extends BaseChannel
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-    if (staticData.getPerson().isGuest() && !staticData.getPerson().getSecurityContext().isAuthenticated()) {
+    if (staticData.getPerson().isGuest()) {
       xslt.setStylesheetParameter("guest", "true");
     }
     xslt.transform();
@@ -122,7 +122,7 @@ public class CHeader extends BaseChannel
     timeStampShortEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("M.d.y h:mm a")));
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
-    if (staticData.getPerson().getSecurityContext().isAuthenticated()) {
+    if (!staticData.getPerson().isGuest()) {
       Context globalIDContext = null;
       try {
         // Get the context that holds the global IDs for this user
@@ -235,7 +235,7 @@ public class CHeader extends BaseChannel
   public boolean isCacheValid (Object validity) {
     if (validity instanceof Long) {
       Long oldtime = (Long)validity;
-      if (staticData.getPerson().getID() == org.jasig.portal.UserInstance.guestUserId) {
+      if (staticData.getPerson().isGuest()) {
         return  true;
       }
       if (System.currentTimeMillis() - oldtime.longValue() < 1*60*1000) {

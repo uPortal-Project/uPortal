@@ -76,7 +76,7 @@ public class UserInstanceManager {
       return  (userInstance);
     }
     // Create either a UserInstance or a GuestUserInstance
-    if (person.isGuest() && !person.getSecurityContext().isAuthenticated()) {
+    if (person.isGuest()) {
         GuestUserInstance guestUserInstance = (GuestUserInstance) guestUserInstances.get(new Integer(person.getID()));
         if(guestUserInstance==null) {
             guestUserInstance = new GuestUserInstance(person);

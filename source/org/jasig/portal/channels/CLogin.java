@@ -157,7 +157,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
       xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
       xslt.setTarget(out);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-      if (staticData.getPerson().isGuest() && !staticData.getPerson().getSecurityContext().isAuthenticated()) {
+      if (staticData.getPerson().isGuest()) {
         xslt.setStylesheetParameter("guest", "true");
       }
       xslt.transform();
