@@ -1423,7 +1423,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  this.getTextChildNodeValue(description);
     }
     else {
-      LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getName() : no \"description\" element was found under the \"stylesheetdescription\" node!");
+      LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getDescription() : no \"description\" element was found under the \"stylesheetdescription\" node!");
       return  null;
     }
   }
