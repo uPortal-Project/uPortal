@@ -1645,7 +1645,7 @@
         <column><name>TYPE_NAME</name><value>RSS (Rich Site Summary)</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>TYPE_DESCR</name><value>RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.</value></column>
-        <column><name>TYPE_DEF_URI</name><value>CGenericXSLT/RSS/RSS.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</value></column>
       </row>
 
       <row>
@@ -1653,7 +1653,7 @@
         <column><name>TYPE_NAME</name><value>Simple XML Transformation</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
         <column><name>TYPE_DESCR</name><value>XSL renders XML to a particular style, is a channel which has its content defined through an XML document. Anyone may publish an XSL channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL or Path for the XML and XSL file.</value></column>
-        <column><name>TYPE_DEF_URI</name><value>CGenericXSLT/CGenericXSLT.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</value></column>
       </row>
 
       <row>
@@ -1661,7 +1661,7 @@
         <column><name>TYPE_NAME</name><value>Inline Frame</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CInlineFrame</value></column>
         <column><name>TYPE_DESCR</name><value>The Inline Frame channel can be used to render an HTML page within a frame. This channel does not work correctly in browsers older than Internet Explorer 5 and Netscape 6.</value></column>
-        <column><name>TYPE_DEF_URI</name><value>CInlineFrame/CInlineFrame.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</value></column>
       </row>
 
       <row>
@@ -1669,7 +1669,7 @@
         <column><name>TYPE_NAME</name><value>Image</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CImage</value></column>
         <column><name>TYPE_DESCR</name><value>Simple channel to display an image with optional caption and subcaption</value></column>
-        <column><name>TYPE_DEF_URI</name><value>CImage/CImage.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CImage/CImage.cpd</value></column>
       </row>
 
       <row>
@@ -1677,7 +1677,7 @@
         <column><name>TYPE_NAME</name><value>Web Proxy</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CWebProxy</value></column>
         <column><name>TYPE_DESCR</name><value>Incorporate a dynamic HTML or XML application</value></column>
-        <column><name>TYPE_DEF_URI</name><value>CWebProxy/CWebProxy.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</value></column>
       </row>
 
     </rows>
