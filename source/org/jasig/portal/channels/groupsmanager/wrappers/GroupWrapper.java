@@ -170,7 +170,7 @@ public class GroupWrapper extends GroupMemberWrapper {
             String aKey = gm.getKey();
             while (gmItr.hasNext()) {
                aChildGm = (IGroupMember)gmItr.next();
-               String childKey = aChildGm.getUnderlyingEntity().getKey();
+               String childKey = aChildGm.getKey();
                Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  " + aChildGm);
                boolean isPresent = false;
                if (aChildGm.isGroup()){

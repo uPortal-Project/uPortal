@@ -36,7 +36,7 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.util.Date;
-import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
@@ -305,29 +305,29 @@ throws LockingException
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
  * @return org.jasig.portal.groups.IEntityLock
- * @param entity org.jasig.portal.IBasicEntity
+ * @param entityID org.jasig.portal.EntityIdentifier
  * @param lockType int
  * @param owner String
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
-public IEntityLock newLock(IBasicEntity entity, int lockType, String owner)
+public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner)
 throws LockingException
 {
-    return newLock(entity.getType(), entity.getKey(), lockType, owner, defaultLockPeriod);
+    return newLock(entityID.getType(), entityID.getKey(), lockType, owner, defaultLockPeriod);
 }
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
  * @return org.jasig.portal.groups.IEntityLock
- * @param entity org.jasig.portal.IBasicEntity
+ * @param entityID org.jasig.portal.EntityIdentifier
  * @param lockType int
  * @param owner String
  * @param durationSecs int
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
-public IEntityLock newLock(IBasicEntity entity, int lockType, String owner, int durationSecs)
+public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner, int durationSecs)
 throws LockingException
 {
-    return newLock(entity.getType(), entity.getKey(), lockType, owner, durationSecs);
+    return newLock(entityID.getType(), entityID.getKey(), lockType, owner, durationSecs);
 }
 /**
  * Releases the <code>IEntityLock</code>.

@@ -57,6 +57,10 @@ public class EntityProperties
         this.props = new HashMap();
     }
 
+    public EntityIdentifier getEntityIdentifier() {
+        return new EntityIdentifier(getKey(), getType());
+    }
+
     public String getKey() {
         return  key;
     }

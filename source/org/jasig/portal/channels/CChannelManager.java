@@ -495,7 +495,7 @@ public class CChannelManager extends BaseChannel {
                 IGroupMember[] ctgs = (IGroupMember[])getCategoryServant().getResults();
                 catIDs = new String[ctgs.length];
                 for (int c = 0; c < ctgs.length; c++) {
-                    catIDs[c] = ctgs[c].getUnderlyingEntity().getKey();
+                    catIDs[c] = ctgs[c].getKey();
                 }
                 // collect groups that can subscribe
                 IEntityGroup[] groups;
@@ -626,8 +626,8 @@ public class CChannelManager extends BaseChannel {
             try {
                 for (int c = 0; c < gms.length; c++) {
                     Element selectedGroupE = emptyDoc.createElement("selectedGroup");
-                    selectedGroupE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getUnderlyingEntity().getType()).getName(gms[c].getUnderlyingEntity().getKey()));
-                    selectedGroupE.appendChild(emptyDoc.createTextNode(gms[c].getUnderlyingEntity().getKey()));
+                    selectedGroupE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
+                    selectedGroupE.appendChild(emptyDoc.createTextNode(gms[c].getKey()));
                     selectedGroupsE.appendChild(selectedGroupE);
                 }
             } catch (Exception e) {
@@ -654,8 +654,8 @@ public class CChannelManager extends BaseChannel {
             try {
                 for (int c = 0; c < gms.length; c++) {
                     Element selectedCategoryE = emptyDoc.createElement("selectedCategory");
-                    selectedCategoryE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getUnderlyingEntity().getType()).getName(gms[c].getUnderlyingEntity().getKey()));
-                    selectedCategoryE.appendChild(emptyDoc.createTextNode((gms[c].getUnderlyingEntity().getKey())));
+                    selectedCategoryE.setAttribute("name", EntityNameFinderService.instance().getNameFinder(gms[c].getType()).getName(gms[c].getKey()));
+                    selectedCategoryE.appendChild(emptyDoc.createTextNode((gms[c].getKey())));
                     selectedCategoriesE.appendChild(selectedCategoryE);
                 }
             } catch (Exception e) {

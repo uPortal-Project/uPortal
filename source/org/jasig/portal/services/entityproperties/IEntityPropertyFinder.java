@@ -46,8 +46,8 @@ import  org.jasig.portal.*;
  * @version $Revision$
  */
 public interface IEntityPropertyFinder {
-    String[] getPropertyNames(IBasicEntity entity);
-    String getProperty(IBasicEntity entity, String name);
+    String[] getPropertyNames(EntityIdentifier entityID);
+    String getProperty(EntityIdentifier entityID, String name);
 }
 
 

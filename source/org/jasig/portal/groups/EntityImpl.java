@@ -1,5 +1,4 @@
-/**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +34,7 @@
 
 package org.jasig.portal.groups;
 
-import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * Reference implementation for <code>IEntity</code>.
@@ -43,30 +42,23 @@ import org.jasig.portal.IBasicEntity;
  * @version $Revision$
  */
 public class EntityImpl extends GroupMemberImpl implements IEntity {
-    protected IBasicEntity underlyingEntity;
+    protected EntityIdentifier entityIdentifier;
 /**
- * EntityImpl
+ * EntityImpl constructor
  */
 public EntityImpl(String newEntityKey, Class newEntityType) throws GroupsException
 {
-    super(newEntityKey);
-    if ( isKnownEntityType(newEntityType) )
-        { setUnderlyingEntity( new MinimalEntity(newEntityKey, newEntityType) ); }
-    else
-        { throw new GroupsException("Unknown entity type: " + newEntityType); }
-
+    this(new EntityIdentifier(newEntityKey, newEntityType));
 }
 /**
- * EntityImpl
+ * EntityImpl constructor
  */
-public EntityImpl(IBasicEntity ent) throws GroupsException
+public EntityImpl(EntityIdentifier ei) throws GroupsException
 {
-    super(ent.getKey());
-    if ( isKnownEntityType(ent.getType()) )
-        { setUnderlyingEntity(ent) ; }
-    else
-        { throw new GroupsException("Unknown entity type: " + ent.getType()); }
-
+    super(ei);
+    Integer id = org.jasig.portal.EntityTypes.getEntityTypeID(ei.getType());
+    String key = id + "." + ei.getKey();
+    entityIdentifier = new EntityIdentifier(key, org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE);
 }
 /**
  * @param obj the Object to compare with
@@ -82,15 +74,13 @@ public boolean equals(Object obj)
     if ( ! ( obj instanceof EntityImpl))
         return false;
 
-    return this.getKey().equals(((IGroupMember)obj).getKey());
+    return this.getEntityIdentifier().equals( ((IEntity) obj).getEntityIdentifier() );
 }
 /**
- * Returns the key of the underyling entity.
- * @return java.lang.String
+ * @return org.jasig.portal.EntityIdentifier
  */
-public String getEntityKey()
-{
-    return getUnderlyingEntity().getKey();
+public EntityIdentifier getEntityIdentifier() {
+    return entityIdentifier;
 }
 /**
  * Returns the type of the underyling entity.
@@ -98,16 +88,14 @@ public String getEntityKey()
  */
 public Class getEntityType()
 {
-    return getUnderlyingEntity().getType();
+    return getUnderlyingEntityIdentifier().getType();
 }
 /**
- * Returns this object's key, e.g., for caching purposes, as opposed to
- * the key of the underlying entity.
+ * Returns the key of the underlying entity.
  * @return java.lang.String
  */
 public java.lang.String getKey() {
-    Integer id = org.jasig.portal.EntityTypes.getEntityTypeID(getEntityType());
-    return id + "." + getUnderlyingEntity().getKey();
+    return getUnderlyingEntityIdentifier().getKey();
 }
 /**
  * Returns the type of the underyling entity.
@@ -115,7 +103,7 @@ public java.lang.String getKey() {
  */
 public Class getLeafType()
 {
-    return getUnderlyingEntity().getType();
+    return getEntityType();
 }
 /**
  * Returns this object's type, as opposed to the type of its
@@ -125,13 +113,7 @@ public Class getLeafType()
  */
 public Class getType()
 {
-    return org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE;
-}
-/**
- * @return org.jasig.portal.IBasicEntity
- */
-public IBasicEntity getUnderlyingEntity() {
-    return underlyingEntity;
+    return getEntityType();
 }
 /**
  * @return boolean
@@ -139,12 +121,6 @@ public IBasicEntity getUnderlyingEntity() {
 public boolean isEntity()
 {
     return true;
-}
-/**
- * @param newUnderlyingEntity org.jasig.portal.IBasicEntity
- */
-protected void setUnderlyingEntity(IBasicEntity newUnderlyingEntity) {
-    underlyingEntity = newUnderlyingEntity;
 }
 /**
  * Returns a String that represents the value of this object.

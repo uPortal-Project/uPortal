@@ -1,5 +1,4 @@
-/**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +37,7 @@ package org.jasig.portal.groups;
 import java.util.Iterator;
 
 /**
- * An <code>IEntityGroup</code> is a composite <code>IGroupMember</code>.
+ * An <code>IEntityGroup</code> is a composite, or non-leaf <code>IGroupMember</code>.
  * It contains <code>IEntities</code> and other <code>IEntityGroups</code>.
  * <p>
  * A member is always added to or removed from its group, not vice versa.

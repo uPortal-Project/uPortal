@@ -75,10 +75,10 @@ public class EntityWrapper extends GroupMemberWrapper {
       try {
          IEntity ent = (IEntity) gm;
          rootElem.setAttribute("id", GroupsManagerXML.getNextUid());
-         rootElem.setAttribute("key", gm.getUnderlyingEntity().getKey());
+         rootElem.setAttribute("key", gm.getKey());
          rootElem.setAttribute("type", gm.getLeafType().getName());
          rootElem.setAttribute("displayName", GroupsManagerXML.getEntityName(ent.getLeafType(),
-               ent.getUnderlyingEntity().getKey()));
+               ent.getKey()));
 
          rootElem.setAttribute("selected", "false");
       } catch (Exception e) {

@@ -227,7 +227,7 @@ throws GroupsException
  */
 public java.util.Iterator findContainingGroups(IGroupMember gm) throws GroupsException
 {
-    String memberKey = gm.getUnderlyingEntity().getKey();
+    String memberKey = gm.getKey();
     Integer type = EntityTypes.getEntityTypeID(gm.getLeafType());
     boolean isGroup = gm.isGroup();
     return findContainingGroups(memberKey, type.intValue(), isGroup);
@@ -875,7 +875,7 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                 while ( deletes.hasNext() )
                 {
                     IGroupMember removedGM = (IGroupMember) deletes.next();
-                    memberKey = removedGM.getUnderlyingEntity().getKey();
+                    memberKey = removedGM.getKey();
                     isGroup = removedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
                     psDelete.setString(1, groupKey);
                     psDelete.setString(2, memberKey);
@@ -903,7 +903,7 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                 while ( adds.hasNext() )
                 {
                     IGroupMember addedGM = (IGroupMember) adds.next();
-                    memberKey = addedGM.getUnderlyingEntity().getKey();
+                    memberKey = addedGM.getKey();
                     isGroup = addedGM.isGroup() ? MEMBER_IS_GROUP : MEMBER_IS_ENTITY;
                     psAdd.setString(1, groupKey);
                     psAdd.setString(2, memberKey);

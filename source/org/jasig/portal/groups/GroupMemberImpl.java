@@ -1,5 +1,4 @@
-/**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,11 +48,11 @@ import java.util.*;
 public abstract class GroupMemberImpl implements IGroupMember
 {
 /*
- * The key of the <code>IGroupMember</code>.  If an <code>IEntity</code>,
- * it is the key of the underlying entity, if an <code>IEntityGroup</code>,
- * the key of the group.
+ * The <code>EntityIdentifier</code> that uniquely identifies the entity,
+ * e.g., the <code>IPerson</code>, <code>ChannelDefinition</code>, etc.,
+ * that underlies the <code>IGroupMember</code>.
  */
-    private java.lang.String key;
+    private EntityIdentifier underlyingEntityIdentifier;
 
     private static java.lang.Class defaultEntityType;
 
@@ -66,10 +65,20 @@ public abstract class GroupMemberImpl implements IGroupMember
 /**
  * GroupMemberImpl constructor
  */
-public GroupMemberImpl(String newKey)
+public GroupMemberImpl(String key, Class type) throws GroupsException
+{
+    this(new EntityIdentifier(key, type));
+}
+/**
+ * GroupMemberImpl constructor
+ */
+public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsException
 {
     super();
-    key = newKey;
+    if ( isKnownEntityType(newEntityIdentifier.getType()) )
+        { underlyingEntityIdentifier = newEntityIdentifier; }
+    else
+        { throw new GroupsException("Unknown entity type: " + newEntityIdentifier.getType()); }
 }
 /**
  * Adds the <code>IEntityGroup</code> to our groups <code>Map</code>.
@@ -128,7 +137,7 @@ public java.util.Iterator getAllMembers() throws GroupsException
  * @return java.lang.String
  */
 protected String getCacheKey() {
-    return getUnderlyingEntity().getKey() + new Boolean(isGroup()).hashCode();
+    return getKey() + new Boolean(isGroup()).hashCode();
 }
 /**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
@@ -183,7 +192,7 @@ protected IEntityGroupStore getEntityGroupFactory() throws GroupsException {
  * @return java.lang.String
  */
 public java.lang.String getKey() {
-    return key;
+    return getUnderlyingEntityIdentifier().getKey();
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -201,6 +210,18 @@ public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
 public java.util.Iterator getMembers() throws GroupsException
 {
     return getEmptyIterator();
+}
+/**
+ * @return java.lang.Class
+ */
+public java.lang.Class getType() {
+    return getUnderlyingEntityIdentifier().getType();
+}
+/**
+ * @return EntityIdentifier
+ */
+public EntityIdentifier getUnderlyingEntityIdentifier() {
+    return underlyingEntityIdentifier;
 }
 /*
  * @return an integer hash code for the receiver
@@ -272,10 +293,7 @@ private boolean isGroupsInitialized() {
  */
 protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
 {
-    if ( anEntityType == null )
-        { anEntityType = getDefaultEntityType(); }
-    Integer typeID = org.jasig.portal.EntityTypes.getEntityTypeID(anEntityType);
-    return ( typeID != null );
+    return ( org.jasig.portal.EntityTypes.getEntityTypeID(anEntityType) != null );
 }
 /**
  * Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm.

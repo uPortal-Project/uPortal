@@ -79,13 +79,13 @@ public RDBMCachedEntityInvalidationStore()
 }
 /**
  * Adds/updates the row corresponding to this entity in the underlying store.
- * @param entity org.jasig.portal.concurrency.IBasicEntity
+ * @param entity org.jasig.portal.concurrency.IBasicEntity entity
  */
 public void add(IBasicEntity entity) throws CachingException
 {
     Connection conn = null;
     CachedEntityInvalidation cachedEnt =
-      newInstance(entity.getType(), entity.getKey(), new Date());
+      newInstance(entity.getEntityIdentifier().getType(), entity.getEntityIdentifier().getKey(), new Date());
     try
     {
         conn = RDBMServices.getConnection();
@@ -152,12 +152,12 @@ public void deleteBefore(Date expiration) throws CachingException
 }
 /**
  * Answers if this entity is represented in the store.
- * @param group org.jasig.portal.concurrency.IBasicEntity
+ * @param group org.jasig.portal.concurrency.CachedEntityInvalidation ent
  */
-private boolean existsInStore(IBasicEntity entity, Connection conn)
+private boolean existsInStore(CachedEntityInvalidation ent, Connection conn)
 throws CachingException
 {
-    return ( select(entity.getType(), entity.getKey(), null, conn).length > 0 );
+    return ( select(ent.getType(), ent.getKey(), null, conn).length > 0 );
 }
  /**
  * Retrieve CachedEntityInvalidations from the underlying entity invalidation store.

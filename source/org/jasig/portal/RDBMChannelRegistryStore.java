@@ -726,7 +726,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     categoryGroup.setName(""); // name cannot be null
     categoryGroup.setCreatorID("0"); // creatorId cannot be null
     categoryGroup.update();
-    int id = Integer.parseInt(categoryGroup.getUnderlyingEntity().getKey());
+    int id = Integer.parseInt(categoryGroup.getKey());
     return new ChannelCategory(id);
   }
 
@@ -753,7 +753,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    */
   public ChannelCategory getTopLevelChannelCategory() throws GroupsException {
     IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
-    int categoryId = Integer.parseInt(categoryGroup.getUnderlyingEntity().getKey());
+    int categoryId = Integer.parseInt(categoryGroup.getKey());
     return getChannelCategory(categoryId);
   }
 
@@ -770,7 +770,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     while (iter.hasNext()) {
       IGroupMember gm = (IGroupMember)iter.next();
       if (gm.isGroup()) {
-        int categoryId = Integer.parseInt(gm.getUnderlyingEntity().getKey());
+        int categoryId = Integer.parseInt(gm.getKey());
         categories.add(getChannelCategory(categoryId));
       }
     }
@@ -791,7 +791,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     while (iter.hasNext()) {
       IGroupMember gm = (IGroupMember)iter.next();
       if (gm.isEntity()) {
-        int channelPublishId = Integer.parseInt(gm.getUnderlyingEntity().getKey());
+        int channelPublishId = Integer.parseInt(gm.getKey());
         channelDefs.add(getChannelDefinition(channelPublishId));
       }
     }

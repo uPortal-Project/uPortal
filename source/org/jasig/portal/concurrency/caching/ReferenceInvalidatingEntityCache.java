@@ -36,6 +36,7 @@
 package org.jasig.portal.concurrency.caching;
 
 import java.util.Date;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.services.LogService;
@@ -72,11 +73,14 @@ public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
             super();
             ent = entity;
         }
+        public EntityIdentifier getEntityIdentifier() {
+            return ent.getEntityIdentifier();
+        }
         public Class getType() {
-            return ent.getType();
+            return getEntityIdentifier().getType();
         }
         public String getKey() {
-            return ent.getKey();
+            return getEntityIdentifier().getKey();
         }
         public IBasicEntity getEntity() {
             return ent;

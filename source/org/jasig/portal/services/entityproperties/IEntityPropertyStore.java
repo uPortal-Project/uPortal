@@ -48,10 +48,10 @@ import  org.jasig.portal.*;
 public interface IEntityPropertyStore extends IEntityPropertyFinder{
 
     // will add property to store without affecting finder results
-    void storeProperty(IBasicEntity entity, String name, String value);
+    void storeProperty(EntityIdentifier entityID, String name, String value);
 
     // will remove property from the local store, but not from finders
-    void unStoreProperty(IBasicEntity entity, String name);
+    void unStoreProperty(EntityIdentifier entityID, String name);
 }
 
 

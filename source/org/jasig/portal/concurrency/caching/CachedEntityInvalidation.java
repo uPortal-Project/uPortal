@@ -35,6 +35,7 @@
 
 package org.jasig.portal.concurrency.caching;
 
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import java.util.Date;
 /**
@@ -46,8 +47,7 @@ import java.util.Date;
  * @version $Revision$
  */
 public class CachedEntityInvalidation implements IBasicEntity {
-    private final String entityKey;
-    private final Class entityType;
+    private final EntityIdentifier entityIdentifier;
     private final Date invalidationTime;
 /**
  * CachedEntityInvalidation constructor.
@@ -55,21 +55,23 @@ public class CachedEntityInvalidation implements IBasicEntity {
 public CachedEntityInvalidation(Class eType, String eKey, Date time)
 {
     super();
-    entityType = eType;
-    entityKey = eKey;
+    entityIdentifier = new EntityIdentifier(eKey, eType);
     invalidationTime = time;
 }
 /**
-  * @return java.lang.String
+ * CachedEntityInvalidation constructor.
  */
-public final String getKey() {
-    return entityKey;
+public CachedEntityInvalidation(EntityIdentifier newEntityIdentifier, Date time)
+{
+    super();
+    entityIdentifier = newEntityIdentifier;
+    invalidationTime = time;
 }
 /**
- * @return java.lang.Class
+ * @return EntityIdentifier
  */
-public final Class getType() {
-    return entityType;
+public final EntityIdentifier getEntityIdentifier() {
+    return entityIdentifier;
 }
 /**
  * @return Date
@@ -78,10 +80,22 @@ public Date getInvalidationTime() {
     return invalidationTime;
 }
 /**
+  * @return java.lang.String
+ */
+public final String getKey() {
+    return getEntityIdentifier().getKey();
+}
+/**
+ * @return java.lang.Class
+ */
+public final Class getType() {
+    return getEntityIdentifier().getType();
+}
+/**
  * @return String
  */
 public String toString() {
-    return "CachedEntityInvalidation: " + getType().getName() + "(" +
-      getKey() + ") " + new java.sql.Timestamp(getInvalidationTime().getTime());
+    return "CachedEntityInvalidation: " + getType().getName() +
+      "(" + getKey() + ") " + new java.sql.Timestamp(getInvalidationTime().getTime());
 }
 }

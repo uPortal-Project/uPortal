@@ -42,7 +42,7 @@ import org.jasig.portal.*;
   * This is a bootstrap class and facade for the IEntityLockService implementation.
   * It presents a simple api for acquiring lock objects, <code>IEntityLocks</code>,
   * that can be used to control concurrent access to portal entities in a
-  * multi-server environment.  (See org.jasig.portal.groups.IEntityLockService
+  * multi-server environment.  (See org.jasig.portal.concurrency.IEntityLockService
   * for a fuller description.)
   * <p>
   * Currently supported lock types are IEntityLockService.READ_LOCK and
@@ -53,14 +53,15 @@ import org.jasig.portal.*;
   * <code>
   *       Class type = anEntity.getClass(); // maybe hard-coded(?)<br>
   *       String key = anEntity.getKey();<br>
+  *       EntityIdentifier ei = new EntityIdentifier(key, type);<br>
   *       String owner = getThePortalUserId();<br>
-  *       IEntityLock lock = EntityLockService.instance().newWriteLock(type, key, owner);<br>
+  *       IEntityLock lock = EntityLockService.instance().newWriteLock(ei, owner);<br>
   * </code>
   * <p>
   * Or maybe:
   * <p>
   * <code>
-  *       IEntityLock lock = EntityLockService.instance().newWriteLock(type, key, owner, duration);<br>
+  *       IEntityLock lock = EntityLockService.instance().newWriteLock(ei, owner, duration);<br>
   * </code>
   * <p>
   * If there are no conflicting locks on the entity, the service returns the
@@ -160,27 +161,27 @@ throws LockingException
 /**
  * Returns a read lock for the <code>IBasicEntity</code> and owner.
  * @return org.jasig.portal.concurrency.locking.IEntityLock
- * @param entity IBasicEntity
+ * @param entityID EntityIdentifier
  * @param owner String
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
-public IEntityLock newReadLock(IBasicEntity entity, String owner)
+public IEntityLock newReadLock(EntityIdentifier entityID, String owner)
 throws LockingException
 {
-    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.READ_LOCK, owner);
+    return lockService.newLock(entityID.getType(), entityID.getKey(), IEntityLockService.READ_LOCK, owner);
 }
 /**
  * Returns a read lock for the <code>IBasicEntity</code>, owner and duration.
  * @return org.jasig.portal.concurrency.locking.IEntityLock
- * @param entity IBasicEntity
+ * @param entityID EntityIdentifier
  * @param owner String
  * @param durationSecs int
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
-public IEntityLock newReadLock(IBasicEntity entity, String owner, int durationSecs)
+public IEntityLock newReadLock(EntityIdentifier entityID, String owner, int durationSecs)
 throws LockingException
 {
-    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.READ_LOCK, owner, durationSecs);
+    return lockService.newLock(entityID.getType(), entityID.getKey(), IEntityLockService.READ_LOCK, owner, durationSecs);
 }
 /**
  * Returns a write lock for the entity type, entity key and owner.
@@ -212,26 +213,26 @@ throws LockingException
 /**
  * Returns a write lock for the <code>IBasicEntity</code> and owner.
  * @return org.jasig.portal.concurrency.locking.IEntityLock
- * @param entity IBasicEntity
+ * @param entityID EntityIdentifier
  * @param owner String
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
-public IEntityLock newWriteLock(IBasicEntity entity, String owner)
+public IEntityLock newWriteLock(EntityIdentifier entityID, String owner)
 throws LockingException
 {
-    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.WRITE_LOCK, owner);
+    return lockService.newLock(entityID.getType(), entityID.getKey(), IEntityLockService.WRITE_LOCK, owner);
 }
 /**
  * Returns a write lock for the <code>IBasicEntity</code>, owner and duration.
  * @return org.jasig.portal.concurrency.locking.IEntityLock
- * @param entity IBasicEntity
+ * @param entityID EntityIdentifier
  * @param owner String
  * @param durationSecs int
  * @exception org.jasig.portal.concurrency.locking.LockingException
  */
-public IEntityLock newWriteLock(IBasicEntity entity, String owner, int durationSecs)
+public IEntityLock newWriteLock(EntityIdentifier entityID, String owner, int durationSecs)
 throws LockingException
 {
-    return lockService.newLock(entity.getType(), entity.getKey(), IEntityLockService.WRITE_LOCK, owner, durationSecs);
+    return lockService.newLock(entityID.getType(), entityID.getKey(), IEntityLockService.WRITE_LOCK, owner, durationSecs);
 }
 }

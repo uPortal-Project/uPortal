@@ -173,7 +173,7 @@ public class ChannelRegistryManager {
       IGroupMember member = (IGroupMember)iter.next();
       if (member.isGroup()) {
         IEntityGroup memberGroup = (IEntityGroup)member;
-        String key = memberGroup.getUnderlyingEntity().getKey();
+        String key = memberGroup.getKey();
         String name = memberGroup.getName();
         String description = memberGroup.getDescription();
 
@@ -186,7 +186,7 @@ public class ChannelRegistryManager {
         processGroupsRecursively(memberGroup, categoryE);
       } else {
         IEntity channelDefMember = (IEntity)member;
-        int channelPublishId = Integer.parseInt(channelDefMember.getUnderlyingEntity().getKey());
+        int channelPublishId = Integer.parseInt(channelDefMember.getKey());
         ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
         if (channelDef != null) {
           // Make sure channel is approved
@@ -478,7 +478,7 @@ public class ChannelRegistryManager {
     IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
     IPermission[] permissions = new IPermission[groups.length];
     for (int i = 0; i < groups.length; i++) {
-      String principalKey = groups[i].getUnderlyingEntity().getKey();
+      String principalKey = groups[i].getKey();
       IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, IEntityGroup.class);
       permissions[i] = upm.newPermission(authPrincipal);
       permissions[i].setType(GRANT_PERMISSION_TYPE);

@@ -74,15 +74,15 @@ public class ChannelRegistryPropertyFinder
     public ChannelRegistryPropertyFinder() {
     }
 
-    public String[] getPropertyNames(IBasicEntity entity) {
+    public String[] getPropertyNames(EntityIdentifier entityID) {
         return  names;
     }
 
-    public String getProperty(IBasicEntity entity, String name) {
+    public String getProperty(EntityIdentifier entityID, String name) {
         String r = null;
-        if (entity.getType().equals(chan)) {
+        if (entityID.getType().equals(chan)) {
             try {
-                Element c = ChannelRegistryManager.getChannel(entity.getKey());
+                Element c = ChannelRegistryManager.getChannel(entityID.getKey());
                 r = c.getAttribute(name);
             } catch (Exception e) {
                 LogService.instance().log(LogService.ERROR, "ChannelRegistryPropertyFinder.getProperty() :");

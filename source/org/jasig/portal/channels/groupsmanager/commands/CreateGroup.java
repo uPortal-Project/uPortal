@@ -134,7 +134,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
                + newGrpName);
          if (parentIsInitialGroupContext) {
             IInitialGroupContext igc = Utility.createInitialGroupContext(userID, "p",
-                  childEntGrp.getEntityKey(), 1, false, null);
+                  childEntGrp.getKey(), 1, false, null);
             igc.update();
             Node parentNode = (Node)parentElem;
             Element childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)childEntGrp,
@@ -169,7 +169,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
          for (int a = 0; a < activities.length; a++) {
             prm = upm.newPermission(ap);
             prm.setActivity(activities[a]);
-            prm.setTarget(childEntGrp.getEntityKey());
+            prm.setTarget(childEntGrp.getKey());
             prm.setType("GRANT");
             perms.add(prm);
          }

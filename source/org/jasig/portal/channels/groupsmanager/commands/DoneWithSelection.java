@@ -290,7 +290,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
          catch (Exception e){
             Utility.logMessage("ERROR", "DoneWithSelection::execute: erorr"+e);
          }
-         String groupID = childGm.getEntityKey();
+         String groupID = childGm.getKey();
 
          // can only add groups as initial group contexts
          if (type.equals(GROUP_CLASSNAME)) {

@@ -108,27 +108,27 @@ public class EntityPropertyRegistry {
         return  _instance;
     }
 
-    public static String[] getPropertyNames(IBasicEntity entity) {
-        return  instance().getProperties(entity).getPropertyNames();
+    public static String[] getPropertyNames(EntityIdentifier entityID) {
+        return  instance().getProperties(entityID).getPropertyNames();
     }
 
-    public static String getProperty(IBasicEntity entity, String name) {
-        return  instance().getProperties(entity).getProperty(name);
+    public static String getProperty(EntityIdentifier entityID, String name) {
+        return  instance().getProperties(entityID).getProperty(name);
     }
 
-    public static void storeProperty(IBasicEntity entity, String name, String value) {
-        instance().store.storeProperty(entity, name, value);
-        instance().clearCache(entity);
+    public static void storeProperty(EntityIdentifier entityID, String name, String value) {
+        instance().store.storeProperty(entityID, name, value);
+        instance().clearCache(entityID);
     }
 
-    public static void unStoreProperty (IBasicEntity entity, String name) {
-        instance().store.unStoreProperty(entity, name);
-        instance().clearCache(entity);
+    public static void unStoreProperty (EntityIdentifier entityID, String name) {
+        instance().store.unStoreProperty(entityID, name);
+        instance().clearCache(entityID);
     }
 
-    protected void clearCache(IBasicEntity entity) {
+    protected void clearCache(EntityIdentifier entityID) {
         try {
-            EntityCachingService.instance().remove(propsType, getPropKey(entity));
+            EntityCachingService.instance().remove(propsType, getPropKey(entityID));
         } catch (CachingException e) {
             LogService.instance().log(LogService.ERROR, e);
             Exception ee = e.getRecordedException();
@@ -138,16 +138,16 @@ public class EntityPropertyRegistry {
         }
     }
 
-    protected String getPropKey(IBasicEntity entity) {
-        return  org.jasig.portal.EntityTypes.getEntityTypeID(entity.getType()).toString()
-                + "." + entity.getKey();
+    protected String getPropKey(EntityIdentifier entityID) {
+        return  org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).toString()
+                + "." + entityID.getKey();
     }
 
-    protected EntityProperties getProperties(IBasicEntity entity) {
+    protected EntityProperties getProperties(EntityIdentifier entityID) {
         EntityProperties ep = null;
         try {
             ep = (EntityProperties)EntityCachingService.instance().get(propsType,
-                    getPropKey(entity));
+                    getPropKey(entityID));
         } catch (CachingException e) {
             LogService.instance().log(LogService.ERROR, e);
             Exception ee = e.getRecordedException();
@@ -156,14 +156,14 @@ public class EntityPropertyRegistry {
             }
         }
         if (ep == null) {
-            ep = new EntityProperties(getPropKey(entity));
+            ep = new EntityProperties(getPropKey(entityID));
             for (int i = 0; i < finders.length; i++) {
                 IEntityPropertyFinder finder;
                 if (i == storePrecedence) {
                     finder = store;
                 }
                 else {
-                    if (entity.getType().equals(finderTypes[i])) {
+                    if (entityID.getType().equals(finderTypes[i])) {
                         finder = finders[i];
                     }
                     else {
@@ -171,9 +171,9 @@ public class EntityPropertyRegistry {
                     }
                 }
                 if (finder != null) {
-                    String[] names = finder.getPropertyNames(entity);
+                    String[] names = finder.getPropertyNames(entityID);
                     for (int j = 0; j < names.length; j++) {
-                        ep.setProperty(names[j], finder.getProperty(entity,
+                        ep.setProperty(names[j], finder.getProperty(entityID,
                                 names[j]));
                     }
                 }

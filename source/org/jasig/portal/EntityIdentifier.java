@@ -36,15 +36,58 @@
 package org.jasig.portal;
 
 /**
-  * Minimal interface describes an entity that has only a key and a type.  It
-  * can be cached, locked and grouped.
-  * @author Dan Ellentuck
-  * @version $Revision$
-  */
-public interface IBasicEntity {
-/**
- * @return EntityIdentifier
+ * A key and type that uniquely identify a portal entity.
+ * @author Dan Ellentuck
+ * @version $Revision$
+ * @see IBasicEntity
  */
-public EntityIdentifier getEntityIdentifier();
+public class EntityIdentifier {
+    String key;
+    Class type;
+/**
+ * KeyTypePair constructor.
+ */
+public EntityIdentifier(String entityKey, Class entityType) {
+    super();
+    key = entityKey;
+    type = entityType;
 }
-
+/**
+ * @param obj the Object to compare with
+ * @return true if these Objects are equal; false otherwise.
+ */
+public boolean equals(Object o) {
+    if ( o == null )
+        return false;
+    if ( ! (o instanceof EntityIdentifier) )
+        return false;
+    EntityIdentifier ei = (EntityIdentifier) o;
+    return ei.getType() == getType() &&
+        ei.getKey().equals(key);
+}
+/**
+ * @return java.lang.String
+ */
+public String getKey() {
+    return key;
+}
+/**
+ * @return java.lang.Class
+ */
+public Class getType() {
+    return type;
+}
+/**
+ * @return an integer hash code for the receiver
+ */
+public int hashCode() {
+    return getType().hashCode() + getKey().hashCode();
+}
+/**
+ * Returns a String that represents the value of this object.
+ * @return a string representation of the receiver
+ */
+public String toString() {
+    return "EntityIdentifier (" + type + "(" + key + "))";
+}
+}

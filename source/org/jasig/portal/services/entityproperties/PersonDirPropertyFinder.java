@@ -71,34 +71,34 @@ public class PersonDirPropertyFinder
         }
     }
 
-    public String[] getPropertyNames(IBasicEntity entity) {
+    public String[] getPropertyNames(EntityIdentifier entityID) {
         String[] r = new String[0];
-        if (entity.getType().equals(person)) {
-            r = (String[])getPropertiesHash(entity).keySet().toArray(r);
+        if (entityID.getType().equals(person)) {
+            r = (String[])getPropertiesHash(entityID).keySet().toArray(r);
         }
         return  r;
     }
 
-    public String getProperty(IBasicEntity entity, String name) {
+    public String getProperty(EntityIdentifier entityID, String name) {
         String r = null;
-        if (entity.getType().equals(person)) {
-            r = (String)getPropertiesHash(entity).get(name);
+        if (entityID.getType().equals(person)) {
+            r = (String)getPropertiesHash(entityID).get(name);
         }
         return  r;
     }
 
-    protected Hashtable getPropertiesHash(IBasicEntity entity) {
+    protected Hashtable getPropertiesHash(EntityIdentifier entityID) {
         Hashtable ht;
-        if ((ht = (Hashtable)cache.get(entity.getKey())) == null) {
+        if ((ht = (Hashtable)cache.get(entityID.getKey())) == null) {
             ht = new Hashtable(0);
             try {
-                int key = Integer.parseInt(entity.getKey());
+                int key = Integer.parseInt(entityID.getKey());
                 String uname = this.getUserName(key);
                 ht = pd.getUserDirectoryInformation(uname);
             } catch (Exception e) {
                 LogService.instance().log(LogService.ERROR, e);
             }
-            cache.put(entity.getKey(), ht);
+            cache.put(entityID.getKey(), ht);
         }
         return  ht;
     }

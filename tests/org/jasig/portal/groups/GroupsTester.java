@@ -6,6 +6,7 @@ import java.util.*;
 import junit.framework.*;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.security.IPerson;
 
@@ -25,16 +26,13 @@ public class GroupsTester extends TestCase {
 
     private class TestEntity implements IBasicEntity
     {
-        private String key;
+        private EntityIdentifier entityIdentifier;
         private TestEntity(String entityKey) {
             super();
-            key = entityKey;
+            entityIdentifier = new EntityIdentifier(entityKey, this.getClass());
         }
-        public Class getType() {
-            return this.getClass();
-        }
-        public String getKey() {
-            return key;
+        public EntityIdentifier getEntityIdentifier() {
+            return entityIdentifier;
         }
         public boolean equals(Object o) {
             if ( o == null )
@@ -42,11 +40,10 @@ public class GroupsTester extends TestCase {
             if ( ! (o instanceof IBasicEntity) )
                 return false;
             IBasicEntity ent = (IBasicEntity) o;
-            return ent.getType() == getType() &&
-                   ent.getKey().equals(key);
+            return ent.getEntityIdentifier().equals(getEntityIdentifier());
         }
         public String toString() {
-            return "TestEntity(" + key + ")";
+            return "TestEntity(" + getEntityIdentifier().getKey() + ")";
         }
     }
 /**

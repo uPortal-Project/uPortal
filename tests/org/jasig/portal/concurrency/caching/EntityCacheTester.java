@@ -8,6 +8,7 @@ import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * Tests the entity caching framework.
@@ -34,6 +35,9 @@ public class EntityCacheTester extends TestCase {
             super();
             key = entityKey;
         }
+        public EntityIdentifier getEntityIdentifier() {
+            return new EntityIdentifier(getKey(), getType());
+        }
         public Class getType() {
             return this.getClass();
         }
@@ -46,8 +50,8 @@ public class EntityCacheTester extends TestCase {
             if ( ! (o instanceof IBasicEntity) )
                 return false;
             IBasicEntity ent = (IBasicEntity) o;
-            return ent.getType() == getType() &&
-                   ent.getKey().equals(key);
+            return ent.getEntityIdentifier().getType() == getType() &&
+                   ent.getEntityIdentifier().getKey().equals(getKey());
         }
         public String toString() {
             return "MinimalEntity(" + key + ")";
@@ -600,7 +604,7 @@ public void testStoreUpdates() throws Exception
     print(msg);
     for(idx=0; idx<numUpdates; idx++)
     {
-        String key = testEntities[idx].getKey();
+        String key = testEntities[idx].getEntityIdentifier().getKey();
         invalidations = getStore().findAfter(now, MINIMAL_ENTITY_CLASS, key);
         assertEquals(msg, 1, invalidations.length);
     }

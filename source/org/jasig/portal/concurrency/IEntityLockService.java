@@ -35,7 +35,7 @@
 
 package org.jasig.portal.concurrency;
 
-import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.EntityIdentifier;
 
 /**
   * Defines an api for acquiring lock objects, <code>IEntityLocks</code>, that
@@ -47,7 +47,8 @@ import org.jasig.portal.IBasicEntity;
   * If I want to lock an entity for update, I ask the service for a write lock:
   * <p>
   * <code>int lockType = IEntityLockService.WRITE_LOCK;<br>
-  *       IEntityLock lock = svc.newLock(myEntity, lockType, lockOwner);</code>
+  *       EntityIdentifier eid = myEntity.getEntityIdentifier();<br>
+  *       IEntityLock lock = svc.newLock(eid, lockType, lockOwner);</code>
   * <p>
   * If there is no conflicting lock on the entity, the service responds with
   * the requested lock.  If I acquire the lock, I know that no other client will
@@ -134,23 +135,23 @@ throws LockingException;
 /**
  * Returns a lock for the entity, lock type and owner.
  * @return org.jasig.portal.concurrency.IEntityLock
- * @param entity IBasicEntity
+ * @param entityID EntityIdentifier
  * @param lockType int
  * @param owner String
  * @exception org.jasig.portal.concurrency.LockingException
  */
-public IEntityLock newLock(IBasicEntity entity, int lockType, String owner)
+public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner)
 throws LockingException;
 /**
  * Returns a lock for the entity, lock type and owner.
  * @return org.jasig.portal.concurrency.IEntityLock
- * @param entity IBasicEntity
+ * @param entityID EntityIdentifier
  * @param lockType int
  * @param owner String
  * @param durationSecs int
  * @exception org.jasig.portal.concurrency.LockingException
  */
-public IEntityLock newLock(IBasicEntity entity, int lockType, String owner,
+public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner,
   int durationSecs)
 throws LockingException;
 /**
