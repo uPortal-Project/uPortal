@@ -17,9 +17,13 @@ import java.util.Collections;
  * A class managing information contained in a user layout channel node.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version 1.0
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
+ * @version 1.1
  */
+
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
+
+    public final static String CHANNEL_PREFIX = "n";
 
     Hashtable parameters;
     Hashtable override;
@@ -55,7 +59,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
         // could do some validation here, but this code will probably go away anyhow
 
         // standard Node attributes
-        this.setId(xmlNode.getAttribute("ID"));
+        String nodeId = xmlNode.getAttribute("ID");
+        this.setId(nodeId.substring(CHANNEL_PREFIX.length()));
         this.setName(xmlNode.getAttribute("name"));
         this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
         this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());

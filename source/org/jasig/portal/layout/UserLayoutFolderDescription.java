@@ -8,15 +8,22 @@ import org.jasig.portal.PortalException;
  * A class describing a folder node fo the user layout structure.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version 1.0
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
+ * @version 1.1
  */
+
 public class UserLayoutFolderDescription extends UserLayoutNodeDescription {
+
+
+    public final static String FOLDER_PREFIX = "s";
+
+
     public static final int REGULAR_TYPE=0;
     public static final int HEADER_TYPE=1;
     public static final int FOOTER_TYPE=2;
 
     public static final String[] folderTypeNames= {"regular","header","footer"};
-    
+
     protected int folderType=REGULAR_TYPE;
 
     /**
@@ -29,11 +36,12 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription {
         if(!xmlNode.getNodeName().equals("folder")) {
             throw new PortalException("Given XML Element is not a folder!");
         }
-        
+
         // could do some validation here, but this code will probably go away anyhow
 
         // standard Node attributes
-        this.setId(xmlNode.getAttribute("ID"));
+        String nodeId = xmlNode.getAttribute("ID");
+        this.setId(nodeId.substring(FOLDER_PREFIX.length()));
         this.setName(xmlNode.getAttribute("name"));
         this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
         this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());
@@ -87,7 +95,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription {
         this.addNodeAttributes(node);
         return node;
     }
-    
+
     protected void addNodeAttributes(Element node) {
         super.addNodeAttributes(node);
         node.setAttribute("type",folderTypeNames[this.getFolderType()]);

@@ -4,8 +4,25 @@ import org.jasig.portal.RDBMUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.layout.*;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.CounterStoreFactory;
+import org.jasig.portal.ChannelRegistryStoreFactoryOld;
+import org.jasig.portal.utils.CommonUtils;
 
-import java.util.Hashtable;
+
+import  java.sql.Connection;
+import  java.sql.ResultSet;
+import  java.sql.Statement;
+import  java.sql.SQLException;
+import  java.util.ArrayList;
+import  java.util.Date;
+import  java.util.Enumeration;
+import  java.util.HashMap;
+import  java.util.Hashtable;
 
 
 /**
@@ -19,8 +36,30 @@ import java.util.Hashtable;
 
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
 
+
   public AggregatedUserLayoutStore() throws Exception {
-     super();
+    crsdb = ChannelRegistryStoreFactoryOld.getChannelRegistryStoreOldImpl();
+    csdb = CounterStoreFactory.getCounterStoreImpl();
+    if (RDBMServices.supportsOuterJoins) {
+      if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
+        RDBMServices.joinQuery.addQuery("layout",
+          "{oj UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID} WHERE");
+        RDBMServices.joinQuery.addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
+        RDBMServices.joinQuery.addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
+      } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
+         RDBMServices.joinQuery.addQuery("layout",
+          "UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID WHERE");
+        RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
+        RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
+     } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
+        RDBMServices.joinQuery.addQuery("layout",
+          "UP_LAYOUT_STRUCT_AGGR ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID AND");
+        RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
+        RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
+      } else {
+        throw new Exception("Unknown database driver");
+      }
+    }
   }
 
 
@@ -79,17 +118,24 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @return a <code>Hashtable</code> object containing the internal representation of the user layout
      * @exception PortalException if an error occurs
      */
- public Hashtable getAggregatedUserLayout (IPerson person, UserProfile profile) throws PortalException {
-    /*int userId = person.getID();
+ public Hashtable getAggregatedUserLayout (IPerson person, UserProfile profile) throws Exception {
+    int userId = person.getID();
     int realUserId = userId;
     ResultSet rs;
     Connection con = RDBMServices.getConnection();
+    Hashtable layout = null;
 
     RDBMServices.setAutoCommit(con, false);          // May speed things up, can't hurt
 
     try {
-      DocumentImpl doc = new DocumentImpl();
-      Element root = doc.createElement("layout");
+
+        layout = new Hashtable(20);
+
+        //Assigning the root folder!!
+        UserLayoutNode rootNode = new UserLayoutFolder();
+        rootNode.setNodeDescription(new UserLayoutRootDescription());
+        layout.put(UserLayoutNodeDescription.ROOT_FOLDER_ID,rootNode);
+
       Statement stmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
@@ -161,18 +207,17 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           rs.close();
         }
 
-        String sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+        String sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.PREV_STRUCT_ID,ULS.PRNT_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE";
         if (RDBMServices.supportsOuterJoins) {
           sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout");
         } else {
-          sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
+          sql += " FROM UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
         sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
-        HashMap layoutStructure = new HashMap();
         ArrayList chanIds = new ArrayList();
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
-          StringBuffer structParms = new StringBuffer();
+        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+        StringBuffer structParms = new StringBuffer();
         rs = stmt.executeQuery(sql);
         try {
           int lastStructId = 0;
@@ -180,39 +225,128 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           String sepChar = "";
           if (rs.next()) {
             int structId = rs.getInt(1);
-            if (rs.wasNull()) {
+            /*if (rs.wasNull()) {
               structId = 0;
-            }
+            }*/
+
             readLayout: while (true) {
+
               if (DEBUG > 1) System.err.println("Found layout structureID " + structId);
 
+
               int nextId = rs.getInt(2);
-              if (rs.wasNull()) {
+              /*if (rs.wasNull()) {
                 nextId = 0;
-              }
+              }*/
+
+
               int childId = rs.getInt(3);
-              if (rs.wasNull()) {
+              /*if (rs.wasNull()) {
                 childId = 0;
-              }
-              int chanId = rs.getInt(4);
-              if (rs.wasNull()) {
+              }*/
+
+              int prevId = rs.getInt(4);
+              /*if (rs.wasNull()) {
+                prevId = 0;
+              }*/
+              int prntId = rs.getInt(5);
+              /*if (rs.wasNull()) {
+                prntId = 0;
+              }*/
+              int chanId = rs.getInt(6);
+              /*if (rs.wasNull()) {
                 chanId = 0;
-              }
-              ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9));
-              layoutStructure.put(new Integer(structId), ls);
-              lastStructId = structId;
-              if (!ls.isChannel()) {
-                ls.addFolderData(rs.getString(5), rs.getString(6));
+              }*/
+
+              UserLayoutNodeDescription nodeDesc= null;
+              UserLayoutNode node;
+              if ( childId != 0 ) {
+                node = new UserLayoutFolder();
+                UserLayoutFolderDescription folderDesc = new UserLayoutFolderDescription();
+                //((UserLayoutFolder)node).addChildNode(childId+"");
+                //System.out.println( "3" );
+                String type = rs.getString(8);
+                int intType;
+                if ( "header".equalsIgnoreCase(type))
+                 intType = UserLayoutFolderDescription.HEADER_TYPE;
+                else if ( "footer".equalsIgnoreCase(type))
+                 intType = UserLayoutFolderDescription.FOOTER_TYPE;
+                else
+                 intType = UserLayoutFolderDescription.REGULAR_TYPE;
+
+                folderDesc.setFolderType(intType);
+                nodeDesc = folderDesc;
               } else {
-                chanIds.add(new Integer(chanId)); // For later
-              }
+                 node = new UserLayoutNode();
+                 UserLayoutChannelDescription channelDesc = new UserLayoutChannelDescription();
+                 //System.out.println( "5" );
+                 channelDesc.setChannelPublishId(rs.getString(6));
+                 nodeDesc = channelDesc;
+                }
+
+              //System.out.println( "6" );
+
+              // Setting node description attributes
+              nodeDesc.setId(structId+"");
+              if ("folder".equalsIgnoreCase(node.getNodeType())) nodeDesc.setName(rs.getString(7));
+              nodeDesc.setHidden(("Y".equalsIgnoreCase(rs.getString(9))?true:false));
+              nodeDesc.setImmutable(("Y".equalsIgnoreCase(rs.getString(11))?true:false));
+              nodeDesc.setUnremovable(("Y".equalsIgnoreCase(rs.getString(10))?true:false));
+
+              //System.out.println( "7" );
+
+              // Setting node attributes
+              //node.setDepth();
+              //node.setGroupName();
+
+              if ( nextId != 0 ) node.setNextNodeId(nextId+"");
+                 node.setParentNodeId((prntId<=0)?UserLayoutNodeDescription.ROOT_FOLDER_ID+"":prntId+"");
+                 //Setting the current node to the parent
+                 UserLayoutFolder parentFolder = (UserLayoutFolder) layout.get(node.getParentNodeId());
+                 if ( parentFolder != null )
+                  parentFolder.addChildNode(structId+"");
+
+              if ( prevId != 0 ) node.setPreviousNodeId(prevId+"");
+              //node.setPriority();
+              //node.setRestrictions();
+
+              //System.out.println( "8" );
+
+              /*ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(8),rs.getString(8),rs.getString(9));
+              layoutStructure.put(new Integer(structId), ls);*/
+              lastStructId = structId;
+
+           // If there is a channel we need to get its parameters
+
+           UserLayoutChannelDescription channelDesc = null;
+           if ("channel".equals(node.getNodeType())) {
+                channelDesc = (UserLayoutChannelDescription) nodeDesc;
+                chanIds.add(structId+""); // For later
+           }
+
+              //System.out.println( "9" );
+
+              // Setting the node to the layout
+              node.setNodeDescription(nodeDesc);
+              layout.put(node.getId(),node);
+
+              //System.out.println( "Putting to the layout: node: " + node + " nodeId: " + node.getId()  );
+
+
               if (RDBMServices.supportsOuterJoins) {
                 do {
-                  String name = rs.getString(10);
-                  String value = rs.getString(11); // Oracle JDBC requires us to do this for longs
+                  String name = rs.getString(12);
+                  String value = rs.getString(13); // Oracle JDBC requires us to do this for longs
                   if (name != null) { // may not be there because of the join
-                    ls.addParameter(name, value);
+                    //ls.addParameter(name, value);
+                    if ( channelDesc != null ) {
+                     //System.out.println( "param name: " + name + " param value: " + value + " nodeId: " + node.getId() );
+                     channelDesc.setParameterValue(name,value);
+                    }
                   }
+
+                  //System.out.println( "10" );
+
                   if (!rs.next()) {
                     break readLayout;
                   }
@@ -222,19 +356,29 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                   }
                 } while (structId == lastStructId);
               } else { // Do second SELECT later on for structure parameters
-                if (ls.isChannel()) {
-                  structParms.append(sepChar + ls.chanId);
-                  sepChar = ",";
-                }
-                if (rs.next()) {
+
+                //System.out.println( "11" );
+                  // Adding the channel ID to the String buffer
+                  if ("channel".equals(node.getNodeType())) {
+                   structParms.append(sepChar + chanId);
+                   sepChar = ",";
+                  }
+
+                 if (rs.next()) {
                   structId = rs.getInt(1);
                   if (rs.wasNull()) {
                     structId = 0;
                   }
-                } else {
-                  break readLayout;
-                }
-              }
+                 } else {
+                    break readLayout;
+                   }
+                } //end else
+
+              //System.out.println( "12" );
+
+
+              //System.out.println( "13" );
+
             } // while
           }
         } finally {
@@ -251,11 +395,44 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             try {
               // Pre-prime the channel pump
               for (int i = 0; i < chanIds.size(); i++) {
-                int chanId = ((Integer) chanIds.get(i)).intValue();
-                crsdb.getChannel(chanId, true, pstmtChannel, pstmtChannelParm);
+
+                //System.out.println( "14" );
+
+                String chanId = (String) chanIds.get(i);
+                //System.out.println( "before" );
+                UserLayoutNode node = (UserLayoutNode) layout.get(chanId+"");
+
+                UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription) node.getNodeDescription();
+                ChannelDefinition channelDef = crsdb.getChannel(Integer.parseInt(channelDesc.getChannelPublishId()), true, pstmtChannel, pstmtChannelParm);
+
+                //System.out.println( "after" );
+                //channelDesc.setChannelSubscribeId(channelDef.);
+                channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
+                channelDesc.setClassName(channelDef.getJavaClass());
+                channelDesc.setDescription(channelDef.getDescription());
+                channelDesc.setEditable(channelDef.isEditable());
+                channelDesc.setFunctionalName(CommonUtils.nvl(channelDef.getFName()));
+                channelDesc.setHasAbout(channelDef.hasAbout());
+                channelDesc.setHasHelp(channelDef.hasHelp());
+                channelDesc.setName(channelDef.getName());
+                channelDesc.setTitle(channelDef.getTitle());
+                channelDesc.setChannelPublishId(channelDef.getId()+"");
+                ChannelParameter[] channelParams = channelDef.getParameters();
+
+                //System.out.println( "15" );
+
+                for ( int j = 0; j < channelParams.length; j++ ) {
+                 channelDesc.setParameterOverride(channelParams[j].getName(),channelParams[j].getOverride());
+                 channelDesc.setParameterValue(channelParams[j].getName(),channelParams[j].getValue());
+                }
+                channelDesc.setTimeout(channelDef.getTimeout());
+                channelDesc.setTitle(channelDef.getTitle());
                 if (DEBUG > 1) {
                   System.err.println("Precached " + chanId);
                 }
+
+                //System.out.println( "16" );
+
               }
             } finally {
               if (pstmtChannelParm != null) {
@@ -277,10 +454,15 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             if (rs.next()) {
               int structId = rs.getInt(1);
               readParm: while(true) {
-                LayoutStructure ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
+                //LayoutStructure ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
+                UserLayoutNode node = (UserLayoutNode) layout.get(structId+"");
+                UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription) node.getNodeDescription();
                 int lastStructId = structId;
                 do {
-                  ls.addParameter(rs.getString(2), rs.getString(3));
+                  //ls.addParameter(rs.getString(2), rs.getString(3));
+                  String name = rs.getString(2);
+                  String value = rs.getString(3);
+                  channelDesc.setParameterValue(name,value);
                   if (!rs.next()) {
                     break readParm;
                   }
@@ -292,30 +474,29 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           }
         }
 
-        if (layoutStructure.size() > 0) { // We have a layout to work with
+        /*if (layoutStructure.size() > 0) { // We have a layout to work with
           createLayout(layoutStructure, doc, root, firstStructId);
           layoutStructure.clear();
+        */
 
           long stopTime = System.currentTimeMillis();
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
-          doc.appendChild(root);
+          //doc.appendChild(root);
 
-          if (DEBUG > 1) {
+          /*if (DEBUG > 1) {
             System.err.println("--> created document");
             dumpDoc(doc, "");
             System.err.println("<--");
-          }
-        }
+          }*/
       } finally {
         stmt.close();
       }
-      return  doc;
     } finally {
       RDBMServices.releaseConnection(con);
     }
 
-       */
-           return (Hashtable) null;
+
+           return layout;
   }
 }

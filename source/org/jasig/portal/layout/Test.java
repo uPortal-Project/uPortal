@@ -182,17 +182,25 @@ public class Test {
 
      IUserLayoutStore layoutStore =  UserLayoutStoreFactory.getUserLayoutStoreImpl();
      Document layoutDOM = layoutStore.getUserLayout(person,layoutStore.getUserProfileById(person,1));
-     System.out.println( "The string representation of the DOM is : \n" + layoutDOM );
+     //System.out.println( "The string representation of the DOM is : \n" + layoutDOM );
+
+     System.out.println( "Getting the internal layout representation from the UserLayout manager....");
+     Hashtable layout = ((IAggregatedUserLayoutStore)layoutStore).getAggregatedUserLayout(person,layoutStore.getUserProfileById(person,1));
+     //System.out.println( "The string representation of the AggregatedUserLayout is : \n" + layout );
 
      //Instantiate UserLayoutManager implementation
      AggregatedUserLayoutImpl layoutManager = new AggregatedUserLayoutImpl(person, 1 /*layoutId*/, (IAggregatedUserLayoutStore)layoutStore );
-     System.out.println("Setting DOM layout to the UserLayout manager....");
-     layoutManager.setUserLayoutDOM(layoutDOM);
+     //System.out.println("Setting DOM layout to the UserLayout manager....");
+     //layoutManager.setUserLayoutDOM(layoutDOM);
+     System.out.println("Setting the internal layout representation to the UserLayout manager....");
+     layoutManager.setUserLayout(layout);
+
+
      System.out.println("The DOM layout is set.");
      System.out.println("Getting DOM layout from the UserLayout manager....");
-     Document newLayoutDOM = layoutManager.getUserLayoutDOM();
+     //Document newLayoutDOM = layoutManager.getUserLayoutDOM();
      System.out.println("Getting DOM layout from the UserLayout manager is done");
-     System.out.println( "The string representation of the DOM is : \n" + newLayoutDOM );
+     //System.out.println( "The string representation of the DOM is : \n" + newLayoutDOM );
 
           // Use an instance of ourselves as the SAX event handler
           DefaultHandler handler = new TestHandler();

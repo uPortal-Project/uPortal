@@ -25,6 +25,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import org.jasig.portal.*;
 import org.apache.xerces.dom.DocumentImpl;
+import org.jasig.portal.utils.CommonUtils;
 
 
 
@@ -58,6 +59,17 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
   public AggregatedUserLayoutImpl( IPerson person, int layoutId, IAggregatedUserLayoutStore layoutStore ) {
     this ( person, layoutId );
     this.layoutStore = layoutStore;
+  }
+
+
+  /**
+     * Sets the internal representation of the UserLayout.
+     * The user layout root node always has ID="root"
+     * @param layout a <code>Hashtable</code> object containing the UserLayout data
+     * @exception PortalException if an error occurs
+     */
+  public void setUserLayout(Hashtable layout) throws PortalException {
+    this.layout = layout;
   }
 
 
@@ -125,14 +137,9 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
       return null;
   }
 
-  protected static String boolToStr ( boolean bool ) {
-    return (bool)?"true":"false";
-  }
-
   public void getUserLayout(ContentHandler contentHandler) throws PortalException {
     getUserLayout(rootNodeId,contentHandler);
   }
-
 
   /**
      * Output subtree of a user layout (with appropriate markings) defined by a particular node into
@@ -151,6 +158,8 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
       try {
 
          UserLayoutNode node = getLayoutNode(nodeId);
+         //System.out.println("layout: " + layout );
+         //System.out.println("node: " + node + " node ID: " + nodeId );
          AttributesImpl attributes = new AttributesImpl();
 
          // If we have a folder
@@ -162,12 +171,14 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
              UserLayoutFolder folder = (UserLayoutFolder) node;
              folderDescription = (UserLayoutFolderDescription) folder.getNodeDescription();
-             attributes.addAttribute("","ID","ID","ID",folderDescription.getId());
+             String folderId = folderDescription.getId();
+             attributes.addAttribute("","ID","ID","ID",
+                        rootNodeId.equals(folderId)?folderId:UserLayoutFolderDescription.FOLDER_PREFIX+folderId);
              attributes.addAttribute("","type","type","CDATA",
                         UserLayoutFolderDescription.folderTypeNames[folderDescription.getFolderType()]);
-             attributes.addAttribute("","hidden","hidden","CDATA",boolToStr(folderDescription.isHidden()));
-             attributes.addAttribute("","unremovable","unremovable","CDATA",boolToStr(folderDescription.isUnremovable()));
-             attributes.addAttribute("","immutable","immutable","CDATA",boolToStr(folderDescription.isImmutable()));
+             attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(folderDescription.isHidden()));
+             attributes.addAttribute("","unremovable","unremovable","CDATA",CommonUtils.boolToStr(folderDescription.isUnremovable()));
+             attributes.addAttribute("","immutable","immutable","CDATA",CommonUtils.boolToStr(folderDescription.isImmutable()));
              attributes.addAttribute("","name","name","CDATA",folderDescription.getName());
 
              contentHandler.startElement("",FOLDER,FOLDER,attributes);
@@ -192,11 +203,11 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
               channelDescription = (UserLayoutChannelDescription) node.getNodeDescription();
 
-              attributes.addAttribute("","ID","ID","ID",channelDescription.getId());
+              attributes.addAttribute("","ID","ID","ID",UserLayoutChannelDescription.CHANNEL_PREFIX+channelDescription.getId());
               attributes.addAttribute("","typeID","typeID","CDATA",channelDescription.getChannelTypeId());
-              attributes.addAttribute("","hidden","hidden","CDATA",boolToStr(channelDescription.isHidden()));
-              attributes.addAttribute("","editable","editable","CDATA",boolToStr(channelDescription.isEditable()));
-              attributes.addAttribute("","unremovable","unremovable","CDATA",boolToStr(channelDescription.isUnremovable()));
+              attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(channelDescription.isHidden()));
+              attributes.addAttribute("","editable","editable","CDATA",CommonUtils.boolToStr(channelDescription.isEditable()));
+              attributes.addAttribute("","unremovable","unremovable","CDATA",CommonUtils.boolToStr(channelDescription.isUnremovable()));
               attributes.addAttribute("","name","name","CDATA",channelDescription.getName());
               attributes.addAttribute("","description","description","CDATA",channelDescription.getDescription());
               attributes.addAttribute("","title","title","CDATA",channelDescription.getTitle());
@@ -204,9 +215,8 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
               attributes.addAttribute("","chanID","chanID","CDATA",channelDescription.getChannelPublishId());
               attributes.addAttribute("","fname","fname","CDATA",channelDescription.getFunctionalName());
               attributes.addAttribute("","timeout","timeout","CDATA",String.valueOf(channelDescription.getTimeout()));
-              attributes.addAttribute("","hasHelp","hasHelp","CDATA",boolToStr(channelDescription.hasHelp()));
-              attributes.addAttribute("","hasAbout","hasAbout","CDATA",boolToStr(channelDescription.hasAbout()));
-              attributes.addAttribute("","name","name","CDATA",channelDescription.getName());
+              attributes.addAttribute("","hasHelp","hasHelp","CDATA",CommonUtils.boolToStr(channelDescription.hasHelp()));
+              attributes.addAttribute("","hasAbout","hasAbout","CDATA",CommonUtils.boolToStr(channelDescription.hasAbout()));
 
               contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
 
@@ -306,7 +316,15 @@ public class AggregatedUserLayoutImpl implements IUserLayoutManager {
 
       UserLayoutNodeDescription nodeDesc = UserLayoutNodeDescription.createUserLayoutNodeDescription(node);
 
-      nodeDesc.setId(node.getAttribute("ID"));
+      String nodeId = node.getAttribute("ID");
+
+      if ( nodeDesc instanceof UserLayoutFolderDescription )
+        nodeId = nodeId.substring(UserLayoutFolderDescription.FOLDER_PREFIX.length());
+      else if ( nodeDesc instanceof UserLayoutChannelDescription )
+        nodeId = nodeId.substring(UserLayoutChannelDescription.CHANNEL_PREFIX.length());
+
+
+      nodeDesc.setId(nodeId);
       nodeDesc.setName(node.getAttribute("name"));
       nodeDesc.setHidden((node.getAttribute("hidden").equalsIgnoreCase("true"))?true:false);
       nodeDesc.setImmutable((node.getAttribute("immutable").equalsIgnoreCase("true"))?true:false);

@@ -13,7 +13,13 @@ import org.jasig.portal.PortalException;
  * @version 1.0
  */
 public class UserLayoutRootDescription extends UserLayoutFolderDescription {
+
     public UserLayoutRootDescription(Element xmlNode) {
+       this();
+    }
+
+
+    public UserLayoutRootDescription() {
         this.setImmutable(false);
         this.setUnremovable(false);
         /*

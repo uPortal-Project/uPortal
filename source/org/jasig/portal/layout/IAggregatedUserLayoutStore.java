@@ -68,7 +68,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @exception PortalException if an error occurs
      */
 
-    public Hashtable getAggregatedUserLayout (IPerson person, UserProfile profile) throws PortalException;
+    public Hashtable getAggregatedUserLayout (IPerson person, UserProfile profile) throws Exception;
 
 
 }
