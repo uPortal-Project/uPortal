@@ -1122,9 +1122,7 @@
     <primary-key>ENTITY_TYPE_ID</primary-key>
     <primary-key>ENTITY_KEY</primary-key>
     <not-null>INVALIDATION_TIME</not-null>
-<!--
     <not-null>ENTITY_CACHE_ID</not-null>
--->
   </table>
 
   <!-- Used by the EntityLockService to share locks among multiple servers. -->
