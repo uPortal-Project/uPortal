@@ -35,7 +35,7 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 
 /**

@@ -39,7 +39,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
@@ -47,6 +46,7 @@ import org.jasig.portal.groups.local.EntitySearcherImpl;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
 import org.jasig.portal.groups.local.searchers.RDBMChannelDefSearcher;
 import org.jasig.portal.groups.local.searchers.RDBMPersonSearcher;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
 import org.jasig.portal.services.LogService;

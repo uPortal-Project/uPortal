@@ -39,6 +39,8 @@ import java.net.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 
 /**

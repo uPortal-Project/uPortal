@@ -3,10 +3,10 @@ package org.jasig.portal.concurrency.locking;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
 import org.jasig.portal.concurrency.LockingException;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.EntityLockService;
 
 /**

@@ -12,12 +12,12 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
 import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IAuthorizationServiceFactory;

@@ -37,7 +37,7 @@
 package org.jasig.portal.utils;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 
 /**
  * Produces an implementation of ICounterStore

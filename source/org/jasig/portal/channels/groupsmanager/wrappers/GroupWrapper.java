@@ -35,13 +35,13 @@
 
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerUnrestrictedSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
 import org.jasig.portal.channels.groupsmanager.Utility;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

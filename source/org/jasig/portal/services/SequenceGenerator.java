@@ -3,7 +3,7 @@ package org.jasig.portal.services;
 import org.jasig.portal.ISequenceGenerator;
 import org.jasig.portal.ISequenceGeneratorFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 
 /**
  * @author Dan Ellentuck 

@@ -34,7 +34,7 @@
  */
 package org.jasig.portal.i18n;
 
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 
 /**

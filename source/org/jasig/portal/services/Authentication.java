@@ -42,8 +42,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;

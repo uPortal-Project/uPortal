@@ -35,6 +35,7 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 

@@ -63,8 +63,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.oro.text.perl.Perl5Util;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.XSLT;

@@ -36,11 +36,11 @@
 package org.jasig.portal.services;
 
 import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutFolderDescription;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.stats.DoNothingStatsRecorderFactory;
 import org.jasig.portal.services.stats.IStatsRecorder;

@@ -38,7 +38,6 @@ import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.CompositeEntityIdentifier;
 import org.jasig.portal.groups.CompositeServiceIdentifier;
@@ -53,6 +52,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 
 /**

@@ -92,7 +92,7 @@ import java.util.Vector;
 
 import javax.xml.transform.Result;
 
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;

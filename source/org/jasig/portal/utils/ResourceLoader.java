@@ -48,9 +48,9 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.car.CarResources;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

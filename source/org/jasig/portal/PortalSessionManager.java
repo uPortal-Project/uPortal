@@ -55,6 +55,7 @@ import javax.servlet.http.HttpSession;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 

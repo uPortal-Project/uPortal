@@ -39,9 +39,9 @@ import java.lang.reflect.Constructor;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;

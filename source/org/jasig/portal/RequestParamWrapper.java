@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.jasig.portal.container.services.information.PortletStateManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 
 import com.oreilly.servlet.multipart.FilePart;

@@ -57,7 +57,7 @@ import javax.servlet.ServletContext;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;

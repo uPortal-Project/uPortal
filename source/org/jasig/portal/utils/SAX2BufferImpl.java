@@ -38,7 +38,7 @@ package org.jasig.portal.utils;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;

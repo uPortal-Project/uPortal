@@ -41,7 +41,7 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.AddressTester;
 import org.jasig.portal.utils.CommonUtils;

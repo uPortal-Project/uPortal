@@ -48,6 +48,7 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingHTMLSerializer;
 import org.jasig.portal.serialize.CachingXHTMLSerializer;

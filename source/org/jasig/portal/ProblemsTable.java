@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.jasig.portal.properties.PropertiesManager;
+
 /**
  * A cache of recently reported PortalExceptions.
  * @author Howard Gilbert

@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;

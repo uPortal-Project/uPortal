@@ -54,6 +54,7 @@ import javax.xml.transform.sax.SAXSource;
 
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.services.LogService;

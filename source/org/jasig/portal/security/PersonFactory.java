@@ -34,8 +34,8 @@
  */
 package org.jasig.portal.security;
 
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.provider.PersonImpl;
 
 /**
