@@ -158,7 +158,7 @@ public class ReferencePermissionManager extends PermissionManager {
       queryString.append("SELECT * FROM UP_PERMISSION WHERE OWNER = '");
       queryString.append(m_owner.toUpperCase());
       queryString.append("'");
-      queryString.append(" AND PRINCIPAL_KEY = '");
+      queryString.append(" AND PRINCIPAL = '");
       queryString.append(principal.toUpperCase());
       queryString.append("'");
       queryString.append(" AND ACTIVITY = '");
