@@ -131,6 +131,7 @@ public class UtilitiesBean extends GenericPortalBean
    */
   public static String fixURI (String str)
   {
+      if(str==null) return null;
     boolean bWindows = (System.getProperty ("os.name").indexOf ("Windows") != -1) ? true : false;
     char ch0 = str.charAt (0);
     char ch1 = str.charAt (1);
