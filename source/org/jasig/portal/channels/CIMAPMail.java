@@ -154,7 +154,7 @@ import java.util.zip.*;
 
 import org.w3c.tidy.Tidy;
 
-public final class CIMAPMail implements IChannel, HttpSessionBindingListener
+public final class CIMAPMail implements IChannel
 {
   private static String rcsVersion = "$Revision$"; // from rcs/cvs
   private static String clientVersion = "2.00c";
@@ -198,7 +198,13 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
    */
   public void receiveEvent (PortalEvent ev)
   {
-    // no events for this channel
+    if (ev.getEventNumber() == ev.SESSION_DONE) {
+      cleanup ();
+      if (metrics.showMetrics) {
+        LogService.instance().log(LogService.INFO, "WebMail metric: " + metrics);
+        metrics.showMetrics = false;
+      }
+    }
   }
 
   private class UserPrefs {
@@ -3653,21 +3659,6 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
             attachments.add (part);
           }
       }
-    }
-  }
-
-  /**
-   * Session management, part of HttpSessionBindingListener interface
-   */
-
-  public void valueBound (HttpSessionBindingEvent event) {
-  }
-
-  public void valueUnbound (HttpSessionBindingEvent event) {
-    cleanup ();
-    if (metrics.showMetrics) {
-      LogService.instance().log(LogService.INFO, "WebMail metric: " + metrics);
-      metrics.showMetrics = false;
     }
   }
 
