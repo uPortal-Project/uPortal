@@ -3,8 +3,8 @@
 <xsl:output method="html" indent="no"/>
   
 <xsl:param name="baseActionURL">render.uP</xsl:param>
-<xsl:param name="theme" select="'java'"/>
-<xsl:variable name="mediaPath">media/org/jasig/portal/layout/tabColumn</xsl:variable>  
+<xsl:param name="theme" select="'imm'"/>
+<xsl:variable name="mediaPath">media/org/jasig/portal/layout/tabColumn</xsl:variable>
 
 <xsl:template match="layout"><html>
 <head>
@@ -43,27 +43,27 @@ function openBrWindow(theURL,winName,features) {
 <xsl:choose>
 
 <xsl:when test="following-sibling::tab[1]/@activeTab = 'true'">
-<td nowrap="nowrap" class="uportal-background-light"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/><a href="{$baseActionURL}?uP_tparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
+<td nowrap="nowrap" class="uportal-background-light"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/><a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
 <td class="uportal-background-content"><img alt="interface image" src="{$mediaPath}/theme_{$theme}/before_active_tab.GIF" width="11" height="28" /></td>
 </xsl:when>
 
 <xsl:when test="position()=last() and @activeTab='false'">
-<td nowrap="nowrap" class="uportal-background-light"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_tparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
+<td nowrap="nowrap" class="uportal-background-light"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
 <td width="100%"><img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_last_tab_inactive.GIF" width="11" height="28" /></td>
 </xsl:when>
 
 <xsl:when test="position()=last() and @activeTab='true'">
-<td nowrap="nowrap" class="uportal-background-content"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_tparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
+<td nowrap="nowrap" class="uportal-background-content"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
 <td width="100%"><img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_last_tab_active.GIF" width="11" height="28" /></td>
 </xsl:when>
 
 <xsl:when test="@activeTab='false'">
-<td nowrap="nowrap" class="uportal-background-light"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_tparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
+<td nowrap="nowrap" class="uportal-background-light"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
 <td class="uportal-background-med"><img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_inactive_tab.GIF" width="11" height="28" /></td>
 </xsl:when>
 
 <xsl:when test="@activeTab='true'">
-<td nowrap="nowrap" class="uportal-background-content"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_tparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
+<td nowrap="nowrap" class="uportal-background-content"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" /><a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category"><xsl:value-of select="@name"/></a></td>
 <td class="uportal-background-med"><img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_active_tab.GIF" width="11" height="28" /></td>
 </xsl:when>
 
@@ -165,26 +165,26 @@ function openBrWindow(theURL,winName,features) {
 <td class="uportal-channel-title"><xsl:value-of select="@name"/></td>
 <td align="right" nowrap="nowrap">
 
-<xsl:if test="@hasHelp">
+<xsl:if test="@hasHelp='true'">
 <a href="{$baseActionURL}?uP_help_target={@ID}"><img alt="help" src="{$mediaPath}/help.gif" width="16" height="16" border="0"/></a>
 </xsl:if>
 
-<xsl:if test="@hasAbout">
+<xsl:if test="@hasAbout='true'">
 <a href="{$baseActionURL}?uP_about_target={@ID}"><img alt="about" src="{$mediaPath}/about.gif" width="16" height="16" border="0"/></a>
 </xsl:if>
 
-<xsl:if test="@editable">
+<xsl:if test="@editable='true'">
 <a href="{$baseActionURL}?uP_edit_target={@ID}"><img alt="edit" src="{$mediaPath}/edit.gif" width="16" height="16" border="0"/></a>
 </xsl:if>
 
-<xsl:if test="@printable">
-<a href="{$baseActionURL}?uP_print_target={@ID}"><img alt="print" src="{$mediaPath}/help.gif" width="16" height="16" border="0"/></a>
+<xsl:if test="@printable='true'">
+<a href="{$baseActionURL}?uP_print_target={@ID}"><img alt="print" src="{$mediaPath}/print.gif" width="16" height="16" border="0"/></a>
 </xsl:if>
 
-<xsl:if test="@minimizable">
+<xsl:if test="@minimizable='true'">
 <xsl:choose>
 <xsl:when test="@minimized='true'">
-<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false"><img alt="maximixe" src="{$mediaPath}/max.gif" width="16" height="16" border="0"/></a>
+<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false"><img alt="maximize" src="{$mediaPath}/max.gif" width="16" height="16" border="0"/></a>
 </xsl:when>
 <xsl:otherwise>
 <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true"><img alt="minimize" src="{$mediaPath}/min.gif" width="16" height="16" border="0"/></a>
@@ -192,11 +192,11 @@ function openBrWindow(theURL,winName,features) {
 </xsl:choose>
 </xsl:if>
 
-<xsl:if test="@detachable">
+<xsl:if test="@detachable='true'">
 <a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')"><img alt="detach" src="{$mediaPath}/detach.gif" width="16" height="16" border="0"/></a>
 </xsl:if>
 
-<xsl:if test="@removable">
+<xsl:if test="@removable='true'">
 <a href="{$baseActionURL}?uP_remove_target={@ID}"><img alt="remove" src="{$mediaPath}/remove.gif" width="16" height="16" border="0"/></a>
 </xsl:if>
 
@@ -221,6 +221,6 @@ function openBrWindow(theURL,winName,features) {
 </table></xsl:template></xsl:stylesheet>
 <!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
 <metaInformation>
-<scenarios ><scenario name="theme" url="file://c:\ProudTab\theme.xml" htmlbaseurl="file://C:\portal\webpages\media\org\jasig\portal\layout\proudTab\theme_imm\"/></scenarios>
+<scenarios ><scenario name="theme" url="file://c:\ProudTab\theme.xml" htmlbaseurl=""/></scenarios>
 </metaInformation>
 -->
