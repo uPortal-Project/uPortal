@@ -872,7 +872,7 @@
   <target name="dbtest" depends="compile"
    description="Displays information about the database defined in rdbm.properties">
     <echo message="Invoking DbTest"/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
