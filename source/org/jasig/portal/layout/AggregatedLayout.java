@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,6 @@
  *
  */
 
-
-
 package org.jasig.portal.layout;
 
 import java.util.Enumeration;
@@ -45,14 +43,11 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
 import org.jasig.portal.layout.restrictions.RestrictionTypes;
-import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.GuidGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -61,7 +56,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * The aggregated user layout implementation.
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version $Revision$
  */
 public class AggregatedLayout implements IAggregatedLayout {
 
@@ -698,6 +693,5 @@ public class AggregatedLayout implements IAggregatedLayout {
     public String getRootId() {
       return IALFolderDescription.ROOT_FOLDER_ID;
     }
-
 
 }
