@@ -43,6 +43,10 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.local.*;
+import org.jasig.portal.groups.local.searchers.*;
+import org.jasig.portal.services.*;
 
 /**
  * Reference group service.
@@ -57,6 +61,9 @@ public class ReferenceGroupService implements ILockableGroupService
     // Factories for IGroupMembers:
     protected IEntityStore entityFactory = null;
     protected IEntityGroupStore groupFactory = null;
+    
+    // Entity searcher
+    protected IEntitySearcher entitySearcher = null;
 
     // Are group members cached?  See portal.properties.
     private boolean cacheInUse;
@@ -334,6 +341,10 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
     cacheInUse = PropertiesManager.getPropertyAsBoolean
           ("org.jasig.portal.groups.IEntityGroupService.useCache");
 
+      ITypedEntitySearcher[] tes = new ITypedEntitySearcher[2];
+      tes[0]=new RDBMChannelDefSearcher();
+      tes[1]=new RDBMPersonSearcher();
+      entitySearcher = new EntitySearcherImpl(tes);
     }
 /**
  * Returns a new <code>IEntityGroup</code> for the given Class with an unused
@@ -490,4 +501,38 @@ throws GroupsException
         { throw new GroupsException("Problem updating group " + group.getKey() +
                 " : " + ce.getMessage()); }
 }
+
+  public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
+    return removeDuplicates(groupFactory.searchForGroups(query,method,leaftype));
+  }
+  public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
+    return filterEntities(searchForGroups(query,method,leaftype),ancestor);
+  }
+  public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
+    return removeDuplicates(entitySearcher.searchForEntities(query,method,type));
+  }
+  public EntityIdentifier[] searchForEntities(String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
+    return filterEntities(searchForEntities(query,method,type),ancestor);
+  }
+  
+  private EntityIdentifier[] filterEntities(EntityIdentifier[] entities, IEntityGroup ancestor) throws GroupsException{
+    ArrayList ar = new ArrayList(entities.length);
+    for(int i=0; i< entities.length;i++){
+      IGroupMember gm = GroupService.getGroupMember(entities[i]);
+      if (ancestor.deepContains(gm)){
+        ar.add(entities[i]);
+      }
+    }
+    return (EntityIdentifier[]) ar.toArray(new EntityIdentifier[0]);
+  }
+  
+  private EntityIdentifier[] removeDuplicates(EntityIdentifier[] entities){
+    ArrayList ar = new ArrayList(entities.length);
+    for(int i=0; i< entities.length;i++){
+      if (!ar.contains(entities[i])){
+        ar.add(entities[i]);
+      }
+    }
+    return (EntityIdentifier[]) ar.toArray(new EntityIdentifier[0]);
+  }
 }
