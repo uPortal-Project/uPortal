@@ -24,33 +24,38 @@ Portlet deployment tool will be provided.<br>
   <li>
     <h3>Componentization of framework<br>
     </h3>
-Implementations of uPortal interfaces will be easily configurable.<br>
+uPortal will follow a component-based implementation strategy.&nbsp;
+Component configuration files will provide a transparent view of the
+overall architecture, facilitating further ehancements of the framework
+and long-term maintenance of the codebase.<br>
   </li>
   <li>
     <h3>Modular rendering pipeline<br>
     </h3>
-The rendering pipeline will be organized into customizable
-Contexts.&nbsp; Each context will be able to define a series of
-components used to make up the complete rendering pipeline.&nbsp; A
-default Context will be supplied that will emulate the SAX-based
-rendering pipeline with structure and theme transformations from
-uPortal 2.x.</li>
+uPortal 3.0 will support the concept of multiple concurrent
+presentation Contexts.&nbsp; Each Context will be able to define a
+series of components used to make up the complete rendering
+pipeline.&nbsp; A default Context will be supplied that will emulate
+the SAX-based rendering pipeline with structure and theme
+transformations from uPortal 2.x.</li>
   <li>
     <h3>Clean separation of business logic and persistance layer<br>
     </h3>
 Pure Data Access Objects (DAO) will be definied to meet uPortal 3.0's
 storage requirements.&nbsp; An implementation for each DAO interface
-will be supplied and will make use of the Spring JDBC Abstraction
-library.&nbsp; The DAO implementations will be restricted to direct
-communication with the underlying database and will be free of business
-logic.<br>
+will be supplied and will make use of XXXXX.&nbsp; The DAO
+implementations will be restricted to direct communication with the
+underlying database and will be free of business logic.<br>
   </li>
   <li>
     <h3>Full support for uPortal 2.x Channels<br>
     </h3>
 Channels based on the uPortal 2.x channel interfaces (IChannel,
-IMultithreadedchannel, IPrivilegedChannel, etc) will continue to run in
-uPortal 3.0.&nbsp; A new ChannelAdapter will be provided for this
+IMultithreadedchannel) will continue to run in uPortal 3.0.&nbsp;
+IPrivilegedChannels will be supported in a limited way, continuing to
+make available the HttpServletRequest and HttpServletResponse, but not
+allowing access to the internal portal control structures such as
+ChannelManager.&nbsp; A new Channel Adapter will be provided for this
 purpose. ChannelArchive (CAR) files will also be supported in uPortal
 3.0.<br>
   </li>
