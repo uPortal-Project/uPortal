@@ -643,6 +643,8 @@
                 <channel channelid="chan01" value="false"/>
                 <channel channelid="chan02" value="false"/>
               </attribute>
+              <attribute name="minimized" defaultvalue="false">
+              </attribute>
             </channelattributes>
           </themestylesheetuserpreferences>
 
@@ -710,6 +712,8 @@
               <attribute name="minimizable" defaultvalue="true">
                 <channel channelid="chan01" value="false"/>
                 <channel channelid="chan02" value="false"/>
+              </attribute>
+              <attribute name="minimized" defaultvalue="false">
               </attribute>
             </channelattributes>
           </themestylesheetuserpreferences>
