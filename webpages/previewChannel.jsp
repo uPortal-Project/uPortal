@@ -12,7 +12,7 @@
 <%
 String sAction = request.getParameter ("action");
 String sChan_id = request.getParameter ("chan_id");
-String sChanName = subscribe.getChannelName(request);
+String sChanName = null;
 
 if (sAction != null)
 {
@@ -20,9 +20,14 @@ if (sAction != null)
   // Ignore changes and return to the layout
   if (sAction.equals ("cancel"))
   {
+    session.removeAttribute("subscribe");
     response.sendRedirect ("subscribe.jsp");
   }
 }
+else {
+ subscribe.setChannel(request);
+ sChanName = subscribe.getChannelName();
+ }
 %>
 
 <% UtilitiesBean.preventPageCaching (response); %>
@@ -44,7 +49,7 @@ if (sAction != null)
 <form>
 <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
   <input type=button name=add value="Add" onClick="location='personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=sChan_id%>'">
-  <input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp'">
+  <input type=button name=cancel value="Cancel" onClick="location='previewChannel.jsp?action=cancel'">
 </td></tr></table>
 <FONT FACE="Helvetica, Arial" SIZE=4 COLOR=#003333><B>Preview Channel: <%=sChanName%></B></FONT>
 </form>
@@ -63,7 +68,7 @@ This window shows how the <%=sChanName%> Channel will look on your active tab.
 <form>
 <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
   <input type=button name=add value="Add" onClick="location='personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=sChan_id%>'">
-  <input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp'">
+  <input type=button name=cancel value="Cancel" onClick="location='previewChannel.jsp?action=cancel'">
 </td></tr></table>
 </form>
 
