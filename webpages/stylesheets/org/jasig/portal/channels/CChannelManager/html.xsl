@@ -21,8 +21,7 @@
         <title>Untitled Document</title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
         <link rel="stylesheet" href="C:\LaJolla\uPortal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\imm.css" type="text/css"/>
-        <xsl:comment>
-        </xsl:comment>
+      <xsl:comment></xsl:comment>
       </head>
       <body>
         <xsl:choose>
@@ -96,6 +95,7 @@
       </tr>
     </table>
   </xsl:template>
+
   <xsl:template name="selectChannelType">
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
@@ -176,7 +176,9 @@
     </form>
     <!-- form end -->
   </xsl:template>
+
   <xsl:template name="selectModifyChannel">
+
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr>
         <td>
@@ -209,8 +211,6 @@
     <br/>
     <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-light">
       <tr class="uportal-channel-text" valign="top">
-        <form name="formFilterByCategory" method="post" action="{$baseActionURL}">
-          <input type="hidden" name="uPCM_action" value="filterByCategory"/>
           <td nowrap="nowrap">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
@@ -232,7 +232,6 @@
                   </xsl:attribute>No Filter</option></select>
               <input type="submit" name="uPCM_submit" value="go" class="uportal-input-text"/></xsl:for-each>
           </td>
-        </form>
       </tr>
       <tr>
         <td colspan="2">
@@ -587,10 +586,12 @@
     </form>
     <!-- form end -->
   </xsl:template>
+
   <xsl:template name="beginChannelDef">
     <xsl:call-template name="workflow"/>
     <xsl:apply-templates select="manageChannels/channelDef[1]" mode="dynamicSettings"/>
   </xsl:template>
+
   <xsl:template match="channelDef" mode="dynamicSettings">
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
@@ -656,10 +657,12 @@
     </form>
     <!-- form end -->
   </xsl:template>
+
   <!-- The current step info-->
   <xsl:template match="step">
     <xsl:apply-templates select="parameter"/>
   </xsl:template>
+
   <!-- Display the parameters that are NOT subscribe-only-->
   <xsl:template match="parameter">
     <xsl:if test="@modify != 'subscribe-only'">
@@ -907,10 +910,12 @@
     <span class="uportal-label">
       <xsl:value-of select="."/>:</span>
   </xsl:template>
+
   <xsl:template match="example">
     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small">[example - <xsl:value-of select="."/>]</span>
   </xsl:template>
+
   <xsl:template name="selectControls">
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
@@ -1183,11 +1188,11 @@
 
     <xsl:call-template name="workflow"/>
 
+    <!-- form begin -->
+    <form name="workflow" method="post" action="{$baseActionURL}">
+      <input type="hidden" name="uPCM_action" value="changeMe"/>
+      <input type="hidden" name="uPCM_capture" value="selectCategories"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
-      <!-- form begin -->
-
-
-
       <tr class="uportal-channel-text">
 
         <td>
@@ -1298,8 +1303,6 @@
                           <xsl:choose>
                             <xsl:when test="$catID = 'top' or $catID = 'all'">
                               <table width="100%" border="0">
-                                <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                  <input type="hidden" name="uPCM_action" value="newChannel"/>
                                   <tr>
                                     <td nowrap="nowrap" align="left" valign="top">
                                       <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
@@ -1327,15 +1330,12 @@
                                       <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
                                     </td>
                                   </tr>
-                                </form>
                               </table>
                             </xsl:when>
                             <xsl:otherwise>
                               <xsl:for-each select="//registry//category[@ID=$catID]">
                                 <xsl:for-each select="ancestor-or-self::category">
                                   <table width="100%" border="0">
-                                    <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                      <input type="hidden" name="uPCM_action" value="newChannel"/>
                                       <tr>
                                         <td nowrap="nowrap" align="left" valign="top">
                                           <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16">
@@ -1372,7 +1372,6 @@
                                           <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
                                         </td>
                                       </tr>
-                                    </form>
                                   </table>
                                 </xsl:for-each>
                                 <xsl:if test="child::category">
@@ -1384,8 +1383,6 @@
                                     </tr>
                                   </table>
                                   <table width="100%" border="0">
-                                    <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                      <input type="hidden" name="uPCM_action" value="newChannel"/>
                                       <tr>
                                         <td nowrap="nowrap" align="left" valign="top">
                                           <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
@@ -1405,7 +1402,6 @@
                                           <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
                                         </td>
                                       </tr>
-                                    </form>
                                   </table>
                                 </xsl:if>
                               </xsl:for-each>
@@ -1419,8 +1415,6 @@
                   <td width="100%">
                     <xsl:if test="$catID != 'top'">
                       <table width="100%" border="0" class="uportal-channel-text">
-                        <form name="formSelectChannel" method="post" action="{$baseActionURL}">
-                          <input type="hidden" name="uPCM_action" value="newChannel"/>
                           <tr valign="top">
                             <td>
                               <strong>2.</strong>
@@ -1436,7 +1430,7 @@
                             <td>
                               <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                             </td>
-                            Begin Channel Listing 
+                            Begin Channel Listing
                             <td width="100%">
                               <select name="selectedChannel" size="5" class="uportal-input-text">
                                 <xsl:choose>
@@ -1465,7 +1459,7 @@
                                 </xsl:choose>
                               </select>
                             </td>
-                            End Channel Listing 
+                            End Channel Listing
                           </tr>
                           <tr valign="top">
                             <td>
@@ -1479,7 +1473,6 @@
                             </td>
                             <td>Add the selected channel:<input type="submit" name="uPCM_submit" value="Add" class="uportal-button"/></td>
                           </tr>
-                        </form>
                       </table>
                     </xsl:if>
                   </td>-->
@@ -1632,15 +1625,17 @@
         </td>
       </tr>
 
-
-
       <tr>
-
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" class="uportal-button"/> <input type="submit" name="uPCM_submit" value="Next &gt;" class="uportal-button"/> <input type="submit" name="uPCM_submit" value="Review" class="uportal-button"/> <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button"/> </td>
+          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectRoles'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+        </td>
       </tr>
-      <!-- form end -->
     </table>
+    </form>
+    <!-- form end -->
   </xsl:template>
 
   <xsl:template name="selectRoles">
@@ -1860,7 +1855,7 @@
 
 
 
-              <td>&nbsp;</td>
+              <td></td>
 
 
 
@@ -1896,7 +1891,7 @@
 
 
 
-              <td>&nbsp;</td>
+              <td></td>
 
 
 
@@ -1932,7 +1927,7 @@
 
 
 
-              <td>&nbsp;</td>
+              <td></td>
 
 
 
@@ -1969,7 +1964,7 @@
 
 
 
-              <td>&nbsp;</td>
+              <td></td>
 
 
 
@@ -1981,11 +1976,11 @@
 
             <tr class="uportal-channel-text">
 
-              <td nowrap="nowrap">&nbsp;</td>
+              <td nowrap="nowrap"></td>
 
 
 
-              <td>&nbsp;</td>
+              <td></td>
 
 
 
@@ -1997,11 +1992,11 @@
 
             <tr class="uportal-channel-text">
 
-              <td nowrap="nowrap">&nbsp;</td>
+              <td nowrap="nowrap"></td>
 
 
 
-              <td>&nbsp;</td>
+              <td></td>
 
 
 
@@ -2037,7 +2032,7 @@
 
 
 
-              <td>&nbsp;</td>
+              <td></td>
 
 
 
