@@ -11,7 +11,6 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.serialize.XMLSerializer;
-import org.jasig.portal.channels.CGenericXSLT;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.w3c.dom.Document;
@@ -25,7 +24,7 @@ import org.w3c.dom.Element;
 public class Utility
       implements GroupsManagerConstants {
 
-    private static final Log log = LogFactory.getLog(CGenericXSLT.class);
+    private static final Log log = LogFactory.getLog(Utility.class);
     
    /** Creates new Utility */
    public Utility () {
