@@ -15,7 +15,10 @@
 <!-- analyze error codes, give user-friendly reports (i.e. hexadecimal code value :) -->
 
 
-<table cellpadding="1"><tr><td><b>uPortal message</b></td><td><xsl:value-of select="message"/></td></tr>
+<table cellpadding="1">
+<xsl:if test="message">
+<tr><td><b>uPortal message</b></td><td><xsl:value-of select="message"/></td></tr>
+</xsl:if>
 <tr><td><b>Error type</b></td><td>
 <xsl:choose>
 <xsl:when test="@code='4'">channel timed out (code 4)</xsl:when>
