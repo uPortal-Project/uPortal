@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001-2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,8 @@ import java.util.Date;
  * Base portal exception class.
  * Information contained in this class allows ErrorChannel
  * to handle errors gracefully.
+ * This class also reports itself to the ProblemsTable whenever it is instantiated.
+ * The Problems servlet displays recently reported PortalExceptions.
  * @author Peter Kharchenko
  * @version $Revision$
  */
@@ -66,6 +68,7 @@ public class PortalException extends Exception {
     Exception recordedException;
 
     public PortalException() { 
+        ProblemsTable.store(this);
     }
 
     /**
@@ -76,6 +79,7 @@ public class PortalException extends Exception {
      */
     public PortalException(Exception exc) {
         this.recordedException=exc;
+        ProblemsTable.store(this);
     }
 
     /**
@@ -86,22 +90,26 @@ public class PortalException extends Exception {
      */
     public PortalException(String msg) {
         super(msg);
+        ProblemsTable.store(this);
     }
     
     public PortalException(ErrorID errorid) {
     	super(errorid.getMessage());
     	this.errorID=errorid;
+        ProblemsTable.store(this);
     }
 
     public PortalException(String msg,Exception exc) {
         super(msg);
         this.recordedException=exc;
+        ProblemsTable.store(this);
     }
 
 	public PortalException(ErrorID errorid, Exception exc) {
 		super(errorid.getMessage());
 		this.errorID=errorid;
 		this.recordedException=exc;
+        ProblemsTable.store(this);
 	}
 
 
@@ -228,11 +236,13 @@ public class PortalException extends Exception {
 		super(msg);
 		this.setReinstantiable(reinstantiate);
 		this.setRefreshable(refresh);
+        ProblemsTable.store(this);
 	}
 
 	public PortalException(String msg, Exception exc, boolean refresh, boolean reinstantiate) {
 		this(msg,refresh,reinstantiate);
 		this.setRecordedException(exc);
+        ProblemsTable.store(this);
 	}
 
 	/**
