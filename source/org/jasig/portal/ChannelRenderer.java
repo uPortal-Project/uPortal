@@ -100,9 +100,9 @@ public class ChannelRenderer
    * outputRendering() is a blocking function. It will return only when the channel completes rendering
    * or fails to render by exceeding allowed rendering time.
    * @param out Document Handler that will receive information rendered by the channel.
-   * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut;
+   * @return error code. 0 - successful rendering; 1 - rendering failed; 2 - rendering timedOut; 
    */
-  public int outputRendering (DocumentHandler out)
+  public int outputRendering (DocumentHandler out) throws Exception
   {
     if (!rendering)
       this.startRendering ();
@@ -131,24 +131,23 @@ public class ChannelRenderer
         try
         {
           buffer.outputBuffer (out);
+	  return 0;
         }
-        catch (SAXException e)
-        {
-          Logger.log (Logger.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
-          return 1;
+        catch (SAXException e) {
+	    // worst case scenario: partial content output :(
+	    Logger.log (Logger.ERROR, "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
+	    throw e;
         }
-        return 0;
+      } else {
+	  // rendering was not successful
+	  Exception e;
+	  if((e=worker.getException())!=null) throw new InternalPortalException(e);
+	  // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+	  return 1;
       }
-      else
-      {
-        // rendering was not successful
-        return 1;
-      }
-    }
-    else
-    {
-      // rendering has timed out
-      return 2;
+    } else {
+	// rendering has timed out
+	return 2;
     }
   }
 
@@ -156,50 +155,49 @@ public class ChannelRenderer
    * I am not really sure if this will take care of the runaway rendering threads.
    * The alternative is kill them explicitly in ChannelManager.
    */
-  protected void finalize () throws Throwable
-  {
-    if (workerThread.isAlive ())
-      workerThread.stop ();
-
-    super.finalize ();
-  }
-
-  protected class Worker implements Runnable
-  {
-    private boolean successful;
-    private boolean done;
-    private IChannel channel;
-    private DocumentHandler documentHandler;
-
-    public Worker (IChannel ch, DocumentHandler dh)
+    protected void finalize () throws Throwable
     {
-      this.channel=ch; this.documentHandler=dh;
+	if (workerThread.isAlive ())
+	    workerThread.stop ();
+	
+	super.finalize ();
     }
 
-    public void run ()
-    {
-      successful = false;
-      done = false;
+    protected class Worker implements Runnable {
+	private boolean successful;
+	private boolean done;
+	private IChannel channel;
+	private DocumentHandler documentHandler;
+	private Exception exc=null;
+	
+	public Worker (IChannel ch, DocumentHandler dh) {
+	    this.channel=ch; this.documentHandler=dh;
+	}
+	
+	public void run () {
+	    successful = false;
+	    done = false;
+	    
+	    try {
+		channel.renderXML (documentHandler);
+		successful = true;
+	    } catch (Exception e) {
+		this.exc=e;
+	    }
+	    done = true;
+	}
+	
+	public boolean successful () {
+	    return this.successful;
+	}
+	
+	public boolean done () {
+	    return this.done;
+	}
+	
+	public Exception getException() {
+	    return exc;
+	}
 
-      try {
-        channel.renderXML (documentHandler);
-      }
-      catch (Exception e) {
-        Logger.log(Logger.ERROR, e);
-      }
-
-      successful = true;
-      done = true;
     }
-
-    public boolean successful ()
-    {
-      return this.successful;
-    }
-
-    public boolean done ()
-    {
-      return this.done;
-    }
-  }
 }
