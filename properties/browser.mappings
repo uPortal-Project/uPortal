@@ -13,26 +13,35 @@
 # Suggestions: to optimize the matching process, describe most 
 # popular browsers first
 
-# Internet Explorer 4.x
-Mozilla/4.0 \(compatible; MSIE 4.*=1
+# Internet Explorer 6.x
+Mozilla/4.0 \(compatible; MSIE 6.*=1
 
 # Internet Explorer 5.x
 Mozilla/4.0 \(compatible; MSIE 5.*=1
 
-# Internet Explorer 5.x
-Mozilla/4.0 \(compatible; MSIE 6.*=1
-
-# Netscape 4.x browsers
-Mozilla/4.*=1
+# Internet Explorer 4.x
+Mozilla/4.0 \(compatible; MSIE 4.*=1
 
 # Mozilla browsers and Netscape 6
 Mozilla/5.*=1
 
-# Opera 5.x browsers
-Opera/5.*=1
+# Netscape 4.x browsers
+Mozilla/4.*=1
+
+# Opera 7.x browsers
+Opera/7.*=1
 
 # Opera 6.x browsers
 Opera/6.*=1
+
+# Opera 5.x browsers
+Opera/5.*=1
+
+# W3C HTML Validator
+W3C_Validator/1.*=1
+
+# Bobby
+Bobby/4.*=1
 
 # UP WAP browsers
 UP.Browser.*=2
