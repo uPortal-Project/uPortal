@@ -5,6 +5,9 @@
 
 package org.jasig.portal.layout.al;
 
+import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.al.common.ILayoutManager;
+
 /**
  * An interface defining an objective representation of a 
  * layout operation.
@@ -17,5 +20,5 @@ public interface ILayoutCommand {
      * @param manager
      * @return
      */
-    public boolean execute(ILayoutManager manager);
+    public boolean execute(ILayoutManager manager) throws PortalException;
 }

@@ -5,6 +5,8 @@
 
 package org.jasig.portal.layout.al;
 
+import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.al.common.ILayoutManager;
 import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
@@ -28,7 +30,7 @@ public class DeleteCommand extends AbstractCommand {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.ILayoutManager)
      */
-    public boolean execute(ILayoutManager manager) {
+    public boolean execute(ILayoutManager manager) throws PortalException {
         return manager.deleteNode(getNodeId());
     }
     
