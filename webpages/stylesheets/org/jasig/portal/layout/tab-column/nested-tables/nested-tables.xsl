@@ -53,15 +53,7 @@
         <xsl:apply-templates select="content"/>
         <table width="100%" border="0" cellpadding="1" cellspacing="0">
           <tr>
-            <table width="100%" border="0" cellspacing="5" cellpadding="5">
-              <tr>
-                <td align="right">
-                  <a href="http://www.ja-sig.org">
-                    <img alt="Powered by uPortal logo" title="Powered by uPortal logo" src="{$mediaPath}/{$skin}/institutional/powered_by_logo.gif" border="0"/>
-                  </a>
-                </td>
-              </tr>
-            </table>
+            <xsl:apply-templates select="footer"/>
           </tr>
         </table>
       </body>
@@ -345,9 +337,7 @@
   </xsl:template>
   <xsl:template match="footer">
     <xsl:for-each select="channel">
-      <td align="center">
-        <xsl:copy-of select="."/>
-      </td>
+      <xsl:copy-of select="."/>
     </xsl:for-each>
   </xsl:template>
   <xsl:template name="controls">
