@@ -120,8 +120,9 @@ public class FragmentLoader {
          // Cleaning the database before the DbLoader is called
          DbCleaner.cleanTables(filter.getFragmentIds());
          System.out.println("DEBUG: done");
+         System.exit(0); 
         } 
-        System.exit(0);
+        System.exit(1);
     }
 
 
