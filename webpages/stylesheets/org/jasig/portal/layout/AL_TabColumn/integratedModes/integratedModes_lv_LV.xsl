@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Copyright (c) 2004 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
