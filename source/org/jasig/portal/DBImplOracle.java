@@ -48,29 +48,34 @@ import  org.apache.xerces.dom.DocumentImpl;
 
 public class DBImplOracle extends DBImpl implements IDBImpl {
 
-  protected Element createChannelNode(Statement stmt, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
+  protected Element createChannelNode(Connection con, DocumentImpl doc, int chanId, String idTag) throws java.sql.SQLException
   {
     Element channel = null;
     String sQuery = "SELECT UC.*, CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_H_D_IND,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL UC, UP_CHAN_PARAM UCP WHERE UC.CHAN_ID=" + chanId +
       " AND UC.CHAN_ID = UCP.CHAN_ID(+)";
     Logger.log (Logger.DEBUG, sQuery);
 
-    ResultSet rs = stmt.executeQuery (sQuery);
+    Statement stmt = con.createStatement();
     try {
-      if (rs.next()) {
-        channel = doc.createElement("channel");
-        Element system = doc.createElement("system");
-        createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
+      ResultSet rs = stmt.executeQuery (sQuery);
+      try {
+        if (rs.next()) {
+          channel = doc.createElement("channel");
+          Element system = doc.createElement("system");
+          createChannelNodeHeaders(doc, chanId, idTag, rs, channel, system);
 
-        do {
-          createChannelNodeParameters(doc, rs, channel, system);
-        } while (rs.next());
+          do {
+            createChannelNodeParameters(doc, rs, channel, system);
+          } while (rs.next());
+          rs.close();
+          channel.appendChild(system);
+        }
+      } finally {
         rs.close();
-        channel.appendChild(system);
       }
     } finally {
-      rs.close();
-   }
+      stmt.close();
+    }
     return channel;
   }
 
