@@ -203,7 +203,7 @@ final class TabColumnPrefsState extends BaseState
     if (modifyingCurrentProfile())
       userLayout = ulm.getUserLayoutCopy();
     else
-      userLayout = ulStore.getUserLayout(ulm.getPerson(), context.getCurrentUserPreferences().getProfile().getProfileId());
+      userLayout = ulStore.getUserLayout(ulm.getPerson(), context.getCurrentUserPreferences().getProfile());
 
     return userLayout;
   }
@@ -457,7 +457,7 @@ final class TabColumnPrefsState extends BaseState
   {
     Element layout = userLayout.getDocumentElement();
     newChannel = (Element)(userLayout.importNode(newChannel, true));
-    String instanceId = ulStore.getNextStructChannelId(staticData.getPerson());
+    String instanceId = ulStore.generateNewChannelInstanceId(staticData.getPerson());
     newChannel.setAttribute("ID", instanceId);
     // The following line is Xerces-specific
     ((org.apache.xerces.dom.DocumentImpl)userLayout).putIdentifier(instanceId, newChannel);
@@ -563,7 +563,7 @@ final class TabColumnPrefsState extends BaseState
    */
   private final Element createFolder (String name) throws Exception
   {
-    String ID = String.valueOf(ulStore.getNextStructFolderId(staticData.getPerson()));
+    String ID = String.valueOf(ulStore.generateNewFolderId(staticData.getPerson()));
     Element layout = userLayout.getDocumentElement();
     Document doc = layout.getOwnerDocument();
     Element folder = doc.createElement("folder");
