@@ -56,6 +56,7 @@ public abstract class ChainingSecurityContext implements SecurityContext {
   protected ChainingPrincipal myPrincipal;
   protected ChainingOpaqueCredentials myOpaqueCredentials;
   protected ChainingAdditionalDescriptor myAdditionalDescriptor;
+  protected String authenticationFailure = "";
 
   public ChainingSecurityContext() {
     myPrincipal = new ChainingPrincipal();
@@ -144,15 +145,22 @@ public abstract class ChainingSecurityContext implements SecurityContext {
     return e;
   }
 
-  public synchronized void addSubContext(String name, SecurityContext ctx) {
-    if (mySubContexts.get(name) != null)
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("Subcontext already exists: " + name));
-    else
-      mySubContexts.put(name, ctx);
-    return;
-  }
+    public synchronized void addSubContext(String name, SecurityContext ctx) {
+	if (mySubContexts.get(name) != null)
+	    Logger.log(Logger.ERROR,
+		       new PortalSecurityException("Subcontext already exists: " + name));
+	else
+	    mySubContexts.put(name, ctx);
+	return;
+    }
 
+   /**
+    * This returns the reason for Authentication Failure
+    *
+    */
+    public String getAuthenticationFailure() {
+	return this.authenticationFailure;
+    }
 
   // I 'spose the public class could just implement all of these interfaces
   // but I prefer member classes. -ADN
@@ -181,6 +189,7 @@ public abstract class ChainingSecurityContext implements SecurityContext {
       if (this.UID == null)
         this.UID = UID;
     }
+
   }
 
   protected class ChainingOpaqueCredentials implements OpaqueCredentials {
@@ -211,3 +220,12 @@ public abstract class ChainingSecurityContext implements SecurityContext {
   }
 
 }
+
+
+
+
+
+
+
+
+
