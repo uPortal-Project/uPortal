@@ -32,19 +32,20 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 package org.jasig.portal.groups.local.searchers;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Searches the portal DB for people.  Used by EntitySearcherImpl
@@ -61,13 +62,13 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
   private static final String person_partial_search="select USER_NAME from UP_PERSON_DIR where (FIRST_NAME like ? or LAST_NAME like ?)";
   private static final String person_is_search = "select USER_NAME from UP_PERSON_DIR where (FIRST_NAME = ? or LAST_NAME = ?)";
   private Class personDef;
-  
+
   public RDBMPersonSearcher() {
     try{
       personDef = Class.forName("org.jasig.portal.security.IPerson");
     }
     catch(Exception e){
-      log.error(e, e); 
+      log.error(e, e);
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -75,35 +76,35 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
     EntityIdentifier[] r = new EntityIdentifier[0];
     ArrayList ar = new ArrayList();
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
-    RDBMServices.PreparedStatement ups = null;
-    RDBMServices.PreparedStatement uis = null;
-    ResultSet rs = null; 
-    ResultSet urs = null; 
-    ResultSet uprs = null; 
+    PreparedStatement ps = null;
+    PreparedStatement ups = null;
+    PreparedStatement uis = null;
+    ResultSet rs = null;
+    ResultSet urs = null;
+    ResultSet uprs = null;
 
         try {
             conn = RDBMServices.getConnection();
-            uis = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_is_search);
+            uis = conn.prepareStatement(RDBMPersonSearcher.user_is_search);
             switch(method){
               case IS:
-                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_is_search);
+                ps = conn.prepareStatement(RDBMPersonSearcher.person_is_search);
                 ups = uis;
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_partial_search);
+                ps = conn.prepareStatement(RDBMPersonSearcher.person_partial_search);
+                ups = conn.prepareStatement(RDBMPersonSearcher.user_partial_search);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_partial_search);
+                ps = conn.prepareStatement(RDBMPersonSearcher.person_partial_search);
+                ups = conn.prepareStatement(RDBMPersonSearcher.user_partial_search);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.person_partial_search);
-                ups = new RDBMServices.PreparedStatement(conn,RDBMPersonSearcher.user_partial_search);
+                ps = conn.prepareStatement(RDBMPersonSearcher.person_partial_search);
+                ups = conn.prepareStatement(RDBMPersonSearcher.user_partial_search);
                 break;
               default:
                 throw new GroupsException("Unknown search type");
@@ -122,7 +123,7 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
                 ar.add(new EntityIdentifier(urs.getString(1),personDef));
               }
             }
-            
+
             ups.clearParameters();
             ups.setString(1,query);
             uprs = ups.executeQuery();
@@ -132,12 +133,12 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
         } catch (Exception e) {
             log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
         } finally {
-            RDBMServices.closeResultSet(rs); 
-            RDBMServices.closeResultSet(urs); 
-            RDBMServices.closeResultSet(uprs); 
-            RDBMServices.closePreparedStatement(ps); 
-            RDBMServices.closePreparedStatement(uis); 
-            RDBMServices.closePreparedStatement(ups); 
+            RDBMServices.closeResultSet(rs);
+            RDBMServices.closeResultSet(urs);
+            RDBMServices.closeResultSet(uprs);
+            RDBMServices.closeStatement(ps);
+            RDBMServices.closeStatement(uis);
+            RDBMServices.closeStatement(ups);
             RDBMServices.releaseConnection(conn);
         }
       return (EntityIdentifier[]) ar.toArray(r);

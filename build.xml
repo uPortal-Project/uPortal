@@ -614,7 +614,12 @@
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
     -->
-    <copy todir="${server.home}/conf/Catalina/localhost" file="properties/uPortal.xml"/>
+    <delete file="${server.home}/conf/Catalina/localhost/uPortal.xml"/>
+    <copy todir="${server.home}/conf/Catalina/localhost" file="properties/uPortal.xml">
+        <filterset>
+            <filtersfile file="properties/rdbm.properties" />
+        </filterset>
+    </copy>
     <copy todir="${server.home}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
 
         <!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.

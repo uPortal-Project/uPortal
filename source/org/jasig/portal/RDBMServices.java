@@ -35,750 +35,841 @@
 
 package org.jasig.portal;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import javax.sql.DataSource;
-import org.jasig.portal.properties.PropertiesManager;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.rdbm.DatabaseServerImpl;
+import org.jasig.portal.rdbm.IDatabaseServer;
+import org.jasig.portal.rdbm.IJoinQueryString;
+import org.jasig.portal.rdbm.JoinQueryString;
+import org.jasig.portal.rdbm.pool.IPooledDataSourceFactory;
+import org.jasig.portal.rdbm.pool.PooledDataSourceFactoryFactory;
 
-import org.apache.commons.dbcp.BasicDataSource;
+
+
 /**
  * Provides relational database access and helper methods.
  * A static routine determins if the database/driver supports
  * prepared statements and/or outer joins.
+ *
  * @author Ken Weiner, kweiner@unicon.net
  * @author George Lindholm, george.lindholm@ubc.ca
- * @version $Revision$
+ * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
+ * @version $Revision $
  */
 public class RDBMServices {
+    public static final String PORTAL_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PortalDatasourceJndiName", "PortalDb"); // JNDI name for portal database
+    public static final String PERSON_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PersonDatasourceJndiName", "PersonDb"); // JNDI name for person database
+    public static final String DEFAULT_DATABASE = "DEFAULT_DATABASE";
 
-    private static final Log log = LogFactory.getLog(RDBMServices.class);
+    private static final boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi", true);
+    private static final Log LOG = LogFactory.getLog(RDBMServices.class);
 
-  private static boolean bPropsLoaded = false;
-  private static String sJdbcDriver = null;
-  private static String sJdbcUrl = null;
-  private static String sJdbcUser = null;
-  private static final Properties jdbcDriverProps = new Properties();
-  private static Driver jdbcDriver;
-  public static int RETRY_COUNT = 5;
-  private static String prevErrorMsg = "";      // reduce noise in log file
+    //DBFlag constants
+    private static final String FLAG_TRUE = "Y";
+    private static final String FLAG_TRUE_OTHER = "T";
+    private static final String FLAG_FALSE = "N";
+    
+    /** Specifies how long to wait before trying to look a JNDI data source that previously failed */ 
+    private static final int JNDI_RETRY_TIME = PropertiesManager.getPropertyAsInt("org.jasig.portal.RDBMServices.jndiRetryDelay", 30000); // JNDI retry delay;
 
-  protected static final boolean usePreparedStatements = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.usePreparedStatements");
-  protected static boolean supportsPreparedStatements = false;
-  public static boolean supportsOuterJoins = false;
-  public static boolean supportsTransactions = false;
-  private static String tsStart = "";
-  private static String tsEnd = "";
-  private static final JdbcDb jdbcDb= new JdbcDb("{oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE");
-  private static final PostgreSQLDb postgreSQLDb = new PostgreSQLDb("UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE");
-  private static final OracleDb oracleDb = new OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
-  private static final JoinQueryString[] joinTests = {jdbcDb, postgreSQLDb, oracleDb};
-  public static IJoinQueryString joinQuery = null;
-  public static final String PORTAL_DB = "PortalDb"; // JNDI name for portal database
-  public static final String PERSON_DB = "PersonDb"; // JNDI name for person database
-  private static boolean useToDate = false; // Use TO_DATE() function
 
-  private static DataSource ds;
-  static {
-    try {
-      loadProps();
-      if (!bPropsLoaded)
-        {
-        System.err.println("Unable to connect to database");
-        throw new PortalException("Unable to connect to database");
-      }
+    public static IJoinQueryString joinQuery = null;
+    public static boolean supportsOuterJoins = false;
+    public static boolean supportsTransactions = false;
+    public static int RETRY_COUNT = 5;
+    
+    protected static boolean supportsPreparedStatements = false;
+    protected static final boolean usePreparedStatements = true;
+    
+    private static boolean rdbmPropsLoaded = false;
+    private static Map namedDbServers =  Collections.synchronizedMap(new HashMap());
+    private static Map namedDbServerFailures = Collections.synchronizedMap(new HashMap());
+    private static IDatabaseServer jdbcDbServer = null;
 
-      /**
-       * See what the database allows us to do
-       */
-      Connection con = getConnection();
-      if (con == null) {
-        System.err.println("Unable to connect to database");
-        throw new SQLException("Unable to connect to database");
-      }
-      try {
-        String sql;
+    /**
+     * Perform one time initialization of the data source
+     */
+    static {
+        loadRDBMServer();
 
-        /**
-         * Prepared statements
-         */
-        if (usePreparedStatements) {
-          try {
-            sql = "SELECT USER_ID FROM UP_USER WHERE USER_ID=?";
-            java.sql.PreparedStatement pstmt = con.prepareStatement(sql);
-            try {
-              pstmt.clearParameters ();
-              int userId = 0;
-              pstmt.setInt(1, userId);
-              ResultSet rs = pstmt.executeQuery();
-              try {
-                if (rs.next() && userId == rs.getInt(1)) {
-                  supportsPreparedStatements = true;
-                }
-              } catch (SQLException sqle) {
-              } finally {
-                rs.close();
-              }
-            } finally {
-              pstmt.close();
-            }
-          } catch (SQLException sqle) {}
+        //Cache lookups to the two JNDI data sources we "know" about
+        getDatabaseServer(PORTAL_DB);
+        getDatabaseServer(PERSON_DB);
+
+        //Legacy suppord for the public fields
+        final IDatabaseServer dbs = getDatabaseServer();
+        if(dbs != null) {
+            joinQuery = dbs.getJoinQuery();
+            supportsOuterJoins = dbs.supportsOuterJoins();
+            supportsTransactions = dbs.supportsTransactions();
+            supportsPreparedStatements = dbs.supportsPreparedStatements();
         }
+        else {
+            final RuntimeException re = new IllegalStateException("No default database could be found after static initialization.");
+            LOG.fatal("Error initializing RDBMServices", re);
+            throw re;
+        }
+    }
 
-        /**
-         * Do we support outer joins?
-         */
-        try {
-          if (con.getMetaData().supportsOuterJoins()) {
-            Statement stmt = con.createStatement();
+    /**
+     * Loads a JDBC data source from rdbm.properties. Attempts to uses
+     * a connection pooling data source wrapper for added performance.
+     */
+    private synchronized static void loadRDBMServer() {
+        final String PROP_FILE = "/properties/rdbm.properties";
+
+        if (!rdbmPropsLoaded) {
+            final InputStream jdbcPropStream = RDBMServices.class.getResourceAsStream(PROP_FILE);
+
             try {
-              for (int i = 0; i < joinTests.length; i++) {
-                sql = "SELECT COUNT(UP_USER.USER_ID) FROM " + joinTests[i].getTestJoin() + " UP_USER.USER_ID=0";
                 try {
-                  ResultSet rs = stmt.executeQuery(sql);
-                  try {
-                    rs.close();
-                  } catch (SQLException sqle) {}
-                  joinQuery = joinTests[i];
-                  supportsOuterJoins = true;
-                  break;
-                } catch (SQLException sqle) {}
-              }
-            } finally {
-              stmt.close();
+                    final Properties jdbpProperties = new Properties();
+                    jdbpProperties.load(jdbcPropStream);
+
+                    final IPooledDataSourceFactory pdsf = PooledDataSourceFactoryFactory.getPooledDataSourceFactory();
+
+                    final String driverClass = jdbpProperties.getProperty("jdbcDriver");
+                    final String username = jdbpProperties.getProperty("jdbcUser");
+                    final String password = jdbpProperties.getProperty("jdbcPassword");
+                    final String url = jdbpProperties.getProperty("jdbcUrl");
+                    final boolean usePool = Boolean.valueOf(jdbpProperties.getProperty("jdbcUsePool")).booleanValue();
+
+                    if (usePool) {
+                        //Try using a pooled DataSource
+                        try {
+                            final DataSource ds = pdsf.createPooledDataSource(driverClass, username, password, url);
+
+                            LOG.info("Creating IDatabaseServer instance for pooled JDBC");
+                            jdbcDbServer = new DatabaseServerImpl(ds);
+                        }
+                        catch (Exception e) {
+                            LOG.error("Error using pooled JDBC data source.", e);
+                        }
+                    }
+
+                    if (jdbcDbServer == null) {
+                        //Pooled DataSource isn't being used or failed during creation
+                        try {
+                            final Driver d = (Driver)Class.forName(driverClass).newInstance();
+                            final DataSource ds = new GenericDataSource(d, url, username, password);
+
+                            LOG.info("Creating IDatabaseServer instance for JDBC");
+                            jdbcDbServer = new DatabaseServerImpl(ds);
+                        }
+                        catch (Exception e) {
+                            LOG.error("JDBC Driver Creation Failed. (" + driverClass + ")", e);
+                        }
+                    }
+                }
+                finally {
+                    jdbcPropStream.close();
+                }
             }
-          }
-        } catch (SQLException sqle) {
+            catch (IOException ioe) {
+                LOG.error("An error occured while reading " + PROP_FILE, ioe);
+            }
+
+            if (!getDatasourceFromJndi && jdbcDbServer == null) {
+                throw new RuntimeException("No JDBC DataSource or JNDI DataSource avalable.");
+            }
+
+            rdbmPropsLoaded = true;
+        }
+    }
+
+    /**
+     * Gets the default {@link IDatabaseServer}. If getDatasourceFromJndi
+     * is true {@link #getDatabaseServer(String)} is called with 
+     * {@link RDBMServices#PORTAL_DB} as the argument. If no server is found
+     * the jdbc based server loaded from rdbm.properties is used.
+     * 
+     * @return The default {@link IDatabaseServer}.
+     */
+    public static IDatabaseServer getDatabaseServer() {
+        IDatabaseServer dbs = null;
+
+        if (getDatasourceFromJndi) {
+            dbs = getDatabaseServer(PORTAL_DB);
         }
 
-        /**
-         * Does the JDBC driver support the '{ts' (TimeStamp) metasyntax
-         */
+        if (dbs == null) {
+            dbs = jdbcDbServer;
+        }
+
+        return dbs;
+    }
+
+    /**
+     * Gets a named {@link IDatabaseServer} from JNDI. Successfull lookups
+     * are cached and not done again. Failed lookups are cached for the
+     * number of milliseconds specified by {@link #JNDI_RETRY_TIME} to reduce
+     * JNDI overhead and log spam.
+     *
+     * @param name The name of the {@link IDatabaseServer} to get.
+     * @return A named {@link IDatabaseServer} or <code>null</code> if one cannot be found.
+     */
+    public static IDatabaseServer getDatabaseServer(final String name) {
+        if (DEFAULT_DATABASE.equals(name)) {
+            return getDatabaseServer();
+        }
+        
+        IDatabaseServer dbs = (IDatabaseServer)namedDbServers.get(name);
+
+        if (dbs == null) {
+            final Long failTime = (Long)namedDbServerFailures.get(name);
+            
+            if (failTime == null || (failTime.longValue() + JNDI_RETRY_TIME) <= System.currentTimeMillis()) {
+                if (failTime != null) {
+                    namedDbServerFailures.remove(name);
+                }
+                
+                try {
+                    final Context initCtx = new InitialContext();
+                    final Context envCtx = (Context)initCtx.lookup("java:comp/env");
+                    final DataSource ds = (DataSource)envCtx.lookup("jdbc/" + name);
+    
+                    if (ds != null) {
+                        LOG.info("Creating IDatabaseServer instance for " + name);
+                        dbs = new DatabaseServerImpl(ds);
+                        namedDbServers.put(name, dbs);
+                    }
+                }
+                catch (Throwable t) {
+                    //Cache the failure to decrease lookup attempts and reduce log spam.
+                    namedDbServerFailures.put(name, new Long(System.currentTimeMillis()));
+                    LOG.warn("Error getting DataSource named (" + name + ") from JNDI.", t);
+                }
+            }
+            else {
+                final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
+                LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximatly " + waitTime + " more milliseconds.");
+            }
+        }
+
+        return dbs;
+    }
+
+
+    /**
+     * Gets a database connection to the portal database.
+     * This method will first try to get the connection by looking in the
+     * JNDI context for the name defined by the portal property
+     * org.jasig.portal.RDBMServices.PortalDatasourceJndiName
+     * if the org.jasig.portal.RDBMServices.getDatasourceFromJndi
+     * property is enabled.
+     *
+     * If not enabled, the Connection will be produced by
+     * {@link java.sql.Driver#connect(java.lang.String, java.util.Properties)}
+     *
+     * @return a database Connection object
+     */
+    public static Connection getConnection() {
+        final IDatabaseServer dbs = getDatabaseServer();
+
+        if (dbs != null)
+            return dbs.getConnection();
+        else
+            return null;
+    }
+
+
+    /**
+     * Returns a connection produced by a DataSource found in the
+     * JNDI context.  The DataSource should be configured and
+     * loaded into JNDI by the J2EE container.
+     * @param dbName the database name which will be retrieved from
+     *   the JNDI context relative to "jdbc/"
+     * @return a database Connection object or <code>null</code> if no Connection
+     */
+    public static Connection getConnection(final String dbName) {
+        final IDatabaseServer dbs = getDatabaseServer(dbName);
+
+        if (dbs != null)
+            return dbs.getConnection();
+        else
+            return null;
+    }
+
+    /**
+     * Releases database connection
+     * @param con a database Connection object
+     */
+    public static void releaseConnection(final Connection con) {
         try {
-          sql = "SELECT USER_ID FROM UP_USER WHERE LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} AND USER_ID=0";
-          Statement stmt = con.createStatement();
-          try {
-            ResultSet rs = stmt.executeQuery(sql);
-            try {
-              rs.close();
-            } catch (SQLException sqle) {}
-            tsStart = "{ts ";
-            tsEnd = "}";
-          } finally {
-            stmt.close();
-          }
-        } catch (SQLException sqle) {
-          // I guess not
-          // Try TO_DATE()
-          try {
-            SimpleDateFormat oracleTime = new SimpleDateFormat(
-                "yyyy MM dd HH:mm:ss");
-            sql = "SELECT USER_ID FROM UP_USER WHERE LST_CHAN_UPDT_DT = TO_DATE('2001 01 01 00:00', 'YYYY MM DD HH24:MI:SS') AND USER_ID=0";
-            Statement stmt = con.createStatement();
-            try {
-              ResultSet rs = stmt.executeQuery(sql);
-              try {
-                rs.close();
-              } catch (SQLException sqle2) {
-              }
-            } finally {
-              stmt.close();
+            con.close();
+        }
+        catch (Exception e) {
+            LOG.warn("Error closing Connection: " + con, e);
+        }
+    }
+
+
+
+    //******************************************
+    // Utility Methods
+    //******************************************
+
+    /**
+     * Close a ResultSet
+     * @param rs a database ResultSet object
+     */
+    public static void closeResultSet(final ResultSet rs) {
+        try {
+            rs.close();
+        }
+        catch (Exception e) {
+            LOG.warn("Error closing ResultSet: " + rs, e);
+        }
+    }
+
+    /**
+     * Close a Statement
+     * @param st a database Statement object
+     */
+    public static void closeStatement(final Statement st) {
+        try {
+            st.close();
+        }
+        catch (Exception e) {
+            LOG.warn("Error closing Statement: " + st, e);
+        }
+    }
+    
+    /**
+     * Close a PreparedStatement. Simply delegates the call to
+     * {@link #closeStatement(Statement)}
+     * @param st a database PreparedStatement object
+     * @deprecated Use {@link #closeStatement(Statement)}.
+     */
+    public static void closePreparedStatement(final java.sql.PreparedStatement pst) {
+        closeStatement(pst);
+    }
+    
+    /**
+     * Commit pending transactions
+     * @param connection
+     */
+    static final public void commit(final Connection connection) throws SQLException {
+        try {
+            connection.commit();
+        }
+        catch (Exception e) {
+            LOG.warn("Error committing Connection: " + connection, e);
+        }
+    }
+
+    /**
+     * Set auto commit state for the connection
+     * @param connection
+     * @param autocommit
+     */
+    public static final void setAutoCommit(final Connection connection, boolean autocommit) throws SQLException {
+        try {
+            connection.setAutoCommit(autocommit);
+        }
+        catch (Exception e) {
+            LOG.warn("Error committing Connection: " + connection + " to: " + autocommit, e);
+        }
+    }
+
+    /**
+     * rollback unwanted changes to the database
+     * @param connection
+     */
+    public static final void rollback(final Connection connection) throws SQLException {
+        try {
+            connection.rollback();
+        }
+        catch (Exception e) {
+            LOG.warn("Error rolling back Connection: " + connection, e);
+        }
+    }
+    
+    
+    
+    /**
+     * Calls {@link #getDatabaseServer()} then calls
+     * {@link IDatabaseServer#getJdbcDriver()} on the returned instance.
+     * 
+     * @see IDatabaseServer#getJdbcDriver()
+     */
+    public static String getJdbcDriver () {
+        final IDatabaseServer dbs = getDatabaseServer();
+        
+        if (dbs != null)
+            return dbs.getJdbcDriver();
+        else
+            return null;
+    }
+
+    /**
+     * Calls {@link #getDatabaseServer()} then calls
+     * {@link IDatabaseServer#getJdbcUrl()} on the returned instance.
+     * 
+     * @see IDatabaseServer#getJdbcUrl()
+     */
+    public static String getJdbcUrl () {
+        final IDatabaseServer dbs = getDatabaseServer();
+
+        if (dbs != null)
+            return dbs.getJdbcUrl();
+        else
+            return null;
+    }
+
+    /**
+     * Calls {@link #getDatabaseServer()} then calls
+     * {@link IDatabaseServer#getJdbcUser()} on the returned instance.
+     * 
+     * @see IDatabaseServer#getJdbcUser()
+     */
+    public static String getJdbcUser () {
+        final IDatabaseServer dbs = getDatabaseServer();
+
+        if (dbs != null)
+            return dbs.getJdbcUser();
+        else
+            return null;
+    }    
+
+
+    //******************************************
+    // Data Type / Formatting Methods
+    //******************************************
+
+    /**
+     * Return DB format of a boolean. "Y" for true and "N" for false.
+     * @param flag true or false
+     * @return either "Y" or "N"
+     */
+    public static final String dbFlag(final boolean flag) {
+        if (flag)
+            return FLAG_TRUE;
+        else
+            return FLAG_FALSE;
+    }
+
+    /**
+     * Return boolean value of DB flag, "Y" or "N".
+     * @param flag either "Y" or "N"
+     * @return boolean true or false
+     */
+    public static final boolean dbFlag(final String flag) {
+        return flag != null && (FLAG_TRUE.equalsIgnoreCase(flag) || FLAG_TRUE_OTHER.equalsIgnoreCase(flag));
+    }
+    
+    /**
+     * Calls {@link #getDatabaseServer()} then calls
+     * {@link IDatabaseServer#sqlTimeStamp()} on the returned instance.
+     * 
+     * @see IDatabaseServer#sqlTimeStamp()
+     */
+    public static final String sqlTimeStamp() {
+        final IDatabaseServer dbs = getDatabaseServer();
+
+        if (dbs != null) {
+            return dbs.sqlTimeStamp();
+        }
+        else {
+            return localSqlTimeStamp(System.currentTimeMillis());
+        }
+    }
+
+    /**
+     * Calls {@link #getDatabaseServer()} then calls
+     * {@link IDatabaseServer#sqlTimeStamp(long)} on the returned instance.
+     * 
+     * @see IDatabaseServer#sqlTimeStamp(long)
+     */
+    public static final String sqlTimeStamp(final long date) {
+        final IDatabaseServer dbs = getDatabaseServer();
+        
+        if (dbs != null) {
+            return dbs.sqlTimeStamp(date);
+        }
+        else {
+            return localSqlTimeStamp(date);
+        }
+    }
+
+    /**
+     * Calls {@link #getDatabaseServer()} then calls
+     * {@link IDatabaseServer#sqlTimeStamp(Date)} on the returned instance.
+     * 
+     * @see IDatabaseServer#sqlTimeStamp(Date)
+     */
+    public static final String sqlTimeStamp(final Date date) {
+        final IDatabaseServer dbs = getDatabaseServer();
+
+        if (dbs != null) {
+            return dbs.sqlTimeStamp(date);
+        }
+        else {
+            if (date == null)
+                return "NULL";
+            else
+                return localSqlTimeStamp(date.getTime());
+        }
+    }
+    
+    /**
+     * Utility method if there is no default {@link IDatabaseServer}
+     * instance.
+     * 
+     * @param date The date in milliseconds to convert into a SQL TimeStamp.
+     * @return A SQL TimeStamp representing the date.
+     */
+    private static final String localSqlTimeStamp(final long date) {
+        final StringBuffer sqlTS = new StringBuffer();
+        
+        sqlTS.append("'");
+        sqlTS.append(new Timestamp(date).toString());
+        sqlTS.append("'");
+        
+        return sqlTS.toString();
+    }
+
+    /**
+     * Make a string SQL safe
+     * @param sql
+     * @return SQL safe string
+     */
+    public static final String sqlEscape(final String sql) {
+        if (sql == null) {
+            return  "";
+        }
+        else {
+            int primePos = sql.indexOf("'");
+
+            if (primePos == -1) {
+                return  sql;
+            }
+            else {
+                final StringBuffer sb = new StringBuffer(sql.length() + 4);
+                int startPos = 0;
+
+                do {
+                    sb.append(sql.substring(startPos, primePos + 1));
+                    sb.append("'");
+                    startPos = primePos + 1;
+                    primePos = sql.indexOf("'", startPos);
+                } while (primePos != -1);
+
+                sb.append(sql.substring(startPos));
+                return sb.toString();
+            }
+        }
+    }
+
+
+
+    /**
+     * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
+     * @version $Revision $
+     */
+    public static class GenericDataSource implements DataSource {
+
+        final private Driver driverRef;
+        final private String userName;
+        final private String password;
+        final private String jdbcUrl;
+        final private Properties jdbcProperties = new Properties();
+        private PrintWriter log = null;
+
+        /**
+         * Create a new {@link GenericDataSource} with the wraps the specified
+         * {@link Driver}.
+         *
+         * @param d The {@link Driver} to wrap.
+         */
+        public GenericDataSource(final Driver d, final String url, final String user, final String pass) {
+            String argErr = "";
+            if (d == null) {
+                argErr += "Driver cannot be null. ";
+            }
+            if (url == null) {
+                argErr += "url cannot be null. ";
+            }
+            if (user == null) {
+                argErr += "user cannot be null. ";
+            }
+            if (pass == null) {
+                argErr += "pass cannot be null. ";
+            }
+            if (!argErr.equals("")) {
+                throw new IllegalArgumentException(argErr);
             }
 
-            useToDate = true;
-          } catch (SQLException sqle3) {
-          }
+            this.driverRef = d;
+            this.jdbcUrl = url;
+            this.userName = user;
+            this.password = pass;
 
+            this.jdbcProperties.put("user", this.userName);
+            this.jdbcProperties.put("password", this.password);
         }
 
         /**
-         * Transaction support
+         * @see javax.sql.DataSource#getLoginTimeout()
          */
-        String tranMsg = "";
-        DatabaseMetaData md = con.getMetaData();
-        if (md.supportsTransactions()) {
-          try {
-            con.setAutoCommit(false);
-            Statement stmt = con.createStatement();
-            try {
-              sql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT=" + sqlTimeStamp() + " WHERE USER_ID=0";
-              stmt.executeUpdate(sql);
-              con.rollback();
-              supportsTransactions = true;  // Can't trust metadata
-            } finally {
-              stmt.close();
+        public int getLoginTimeout() throws SQLException {
+            return 0;
+        }
+
+        /**
+         * @see javax.sql.DataSource#setLoginTimeout(int)
+         */
+        public void setLoginTimeout(final int timeout) throws SQLException {
+            //NOOP our timeout is always 0
+        }
+
+        /**
+         * @see javax.sql.DataSource#getLogWriter()
+         */
+        public PrintWriter getLogWriter() throws SQLException {
+            return this.log;
+        }
+
+        /**
+         * @see javax.sql.DataSource#setLogWriter(java.io.PrintWriter)
+         */
+        public void setLogWriter(final PrintWriter out) throws SQLException {
+            this.log = out;
+        }
+
+        /**
+         * @see javax.sql.DataSource#getConnection()
+         */
+        public Connection getConnection() throws SQLException {
+            return this.getConnection(this.userName, this.password);
+        }
+
+        /**
+         * @see javax.sql.DataSource#getConnection(java.lang.String, java.lang.String)
+         */
+        public Connection getConnection(final String user, final String pass) throws SQLException {
+            final Properties tempProperties = new Properties();
+            tempProperties.putAll(this.jdbcProperties);
+            tempProperties.put("user", user);
+            tempProperties.put("password", pass);
+            
+            return this.driverRef.connect(this.jdbcUrl, tempProperties);
+        }
+
+    }
+
+    /**
+     * Wrapper for/Emulator of PreparedStatement class
+     * @deprecated Instead of this class a wrapper around the DataSource, Connection and Prepared statement should be done in {@link DatabaseServerImpl}
+     */
+    public static final class PreparedStatement {
+        private Connection con;
+        private String query;
+        private String activeQuery;
+        private java.sql.PreparedStatement pstmt;
+        private Statement stmt;
+        private int lastIndex;
+        
+
+        public PreparedStatement(Connection con, String query) throws SQLException {
+            this.con = con;
+            this.query = query;
+            activeQuery = this.query;
+            if (supportsPreparedStatements) {
+                pstmt = con.prepareStatement(query);
             }
-          } catch (SQLException sqle) {
-            tranMsg = " (driver lies)";
-          }
-        }
-
-        log.info( md.getDatabaseProductName() +
-          "/" + getJdbcDriver() + " (" + md.getDriverVersion() +
-          ") database/driver supports:\n     Prepared statements=" + supportsPreparedStatements +
-          ", Outer joins=" + supportsOuterJoins + ", Transactions=" + supportsTransactions + tranMsg +
-          ", '{ts' metasyntax=" + tsEnd.equals("}") + ", TO_DATE()=" +
-          useToDate);
-      } finally {
-        releaseConnection(con);
-      }
-    } catch (Exception e) {
-      log.error("Exception in static initialization of RDBMServices", e);
-    }
-  }
-
-  /**
-   * Loads the JDBC properties from rdbm.properties file.
-   */
-  protected synchronized static void loadProps() throws Exception {
-    String errorMsg = "";
-
-    /* Try for JNDI connection first */
-    try {
-      Context initCtx = new InitialContext();
-      Context envCtx = (Context) initCtx.lookup("java:comp/env");
-      ds = (DataSource) envCtx.lookup("jdbc/" + PORTAL_DB);
-      if (ds != null) {
-        sJdbcDriver = "JNDI";
-        bPropsLoaded = true;
-      }
-    } catch (Throwable t) {
-      /* ClassNotFound, etc */
-      errorMsg = t.getMessage();
-    }
-
-    if (ds == null) {
-      /* Try basic JDBC connection */
-      try {
-        if (!bPropsLoaded) {
-          InputStream inStream = RDBMServices.class.getResourceAsStream(
-            "/properties/rdbm.properties");
-          try {
-            Properties jdbcProps = new Properties();
-            jdbcProps.load(inStream);
-            sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
-            sJdbcUrl = jdbcProps.getProperty("jdbcUrl");
-            sJdbcUser = jdbcProps.getProperty("jdbcUser");
-            jdbcDriverProps.put("user", sJdbcUser);
-            jdbcDriverProps.put("password",
-                                jdbcProps.getProperty("jdbcPassword"));
-            Class.forName(sJdbcDriver);
-
-            ds = new BasicDataSource();
-            ((BasicDataSource) ds).setDriverClassName(sJdbcDriver);
-            ((BasicDataSource) ds).setUsername(sJdbcUser);
-            ((BasicDataSource) ds).setPassword(jdbcProps.getProperty(
-              "jdbcPassword"));
-            ((BasicDataSource) ds).setUrl(sJdbcUrl);
-
-            bPropsLoaded = true;
-          } finally {
-            inStream.close();
-          }
-        }
-      } catch (Exception e) {
-        // let caller handle situation where no proerties file is found.
-        // When getting datasource from jndi properties file is optional
-        // and would be used as a fallback only
-        errorMsg = e.getMessage();
-      }
-    }
-
-    if (ds == null) {
-      throw new RuntimeException(errorMsg);
-    }
-  }
-
-  /**
-   * Returns a connection produced by a DataSource found in the
-   * JNDI context.  The DataSource should be configured and
-   * loaded into JNDI by the J2EE container.
-   * @param dbName the database name which will be retrieved from
-   *   the JNDI context relative to "jdbc/"
-   * @return a database Connection object or <code>null</code> if no Connection
-   */
-  public static Connection getConnection(String dbName) {
-    Connection conn = null;
-    try {
-      Context initCtx = new InitialContext();
-      Context envCtx = (Context) initCtx.lookup("java:comp/env");
-      DataSource ds = (DataSource)envCtx.lookup("jdbc/" + dbName);
-      if (ds != null) {
-        conn = ds.getConnection();
-        // Make sure autocommit is set to true
-        if (conn != null && !conn.getAutoCommit()) {
-          conn.rollback();
-          conn.setAutoCommit(true);
-        }
-      } else {
-        log.error( "The database '" + dbName + "' could not be found.");
-      }
-    } catch (javax.naming.NamingException ne) {
-      log.error("Exception looking up database [" + dbName + "] in JDNI", ne);
-    } catch (SQLException sqle) {
-      log.error("Exception getting and configuring connection to [" + dbName + "]", sqle);
-    }
-    return conn;
-  }
-
-  /**
-   * Gets a database connection to the portal database.
-   * This method will first try
-   * to get the connection by looking in the JNDI context if
-   * org.jasig.portal.RDBMServices.get_datasource_from_jndi property
-   * is enabled.  If not enabled,
-   * the Connection will be produced by DriverManager.getConnection().
-   * This method should probably be deprecated since obtaining connections
-   * from JNDI is the preferred way to do it according to J2EE.
-   * @return a database Connection object
-   */
-  public static Connection getConnection () {
-    Connection conn = null;
-
-    for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
-      try {
-        conn = ds.getConnection();
-        // Make sure autocommit is set to true
-        if (conn != null && !conn.getAutoCommit()) {
-          conn.rollback();
-          conn.setAutoCommit(true);
-        }
-        prevErrorMsg = "";
-      } catch (SQLException SQLe) {
-        String errMsg = SQLe.getMessage();
-        if (!errMsg.equals(prevErrorMsg)) {                     // Only need to see one instance of this error
-          log.warn("Driver " + sJdbcDriver + " produced error: " + SQLe.getMessage() + ". Trying to get connection again.");
-          log.info("Exception getting and configuring connection.", SQLe);
-          prevErrorMsg = errMsg;
-        }
-      }
-    }
-    return  conn;
-  }
-
-  /**
-   * Releases database connection
-   * @param con a database Connection object
-   */
-  public static void releaseConnection (Connection con) {
-    try {
-      if (con != null)
-        con.close();
-    } catch (Exception e) {
-      log.error("Exception releasing connection", e);
-    }
-  }
-
-  /**
-   * Close a PreparedStatement
-   * @param ps a database PreparedStatement object
-   */
-  public static void closePreparedStatement (java.sql.PreparedStatement ps) {
-    try {
-      if (ps != null)
-        ps.close();
-    } catch (Exception e) {
-      log.error("Exception closing prepared statement [" + ps +"]", e);
-    }
-  }
-
-  /**
-   * Close a PreparedStatement
-   * @param ps a database PreparedStatement object
-   */
-  public static void closePreparedStatement (PreparedStatement ps) {
-    try {
-      if (ps != null)
-        ps.close();
-    } catch (Exception e) {
-      log.error("Exception closing PreparedStatement [" + ps + "]", e);
-    }
-  }
-
-  /**
-   * Close a ResultSet
-   * @param rs a database ResultSet object
-   */
-  public static void closeResultSet (ResultSet rs) {
-    try {
-      if (rs != null)
-        rs.close();
-    } catch (Exception e) {
-      log.error("Exception closing result set [" + rs + "]", e);
-    }
-  }
-
-  /**
-   * Close a Statement
-   * @param st a database Statement object
-   */
-  public static void closeStatement (Statement st) {
-    try {
-      if (st != null)
-        st.close();
-    } catch (Exception e) {
-      log.error("Exception closing statement [" + st + "]", e);
-    }
-  }
-
-  /**
-   * Get the JDBC driver
-   * @return the JDBC driver
-   */
-  public static String getJdbcDriver () {
-    return  sJdbcDriver;
-  }
-
-  /**
-   * Get the JDBC connection URL
-   * @return the JDBC connection URL
-   */
-  public static String getJdbcUrl () {
-    return  sJdbcUrl;
-  }
-
-  /**
-   * Get the JDBC user
-   * @return the JDBC connection URL
-   */
-  public static String getJdbcUser () {
-    return  sJdbcUser;
-  }
-
-  /**
-   * Service routines
-   */
-
-  /**
-   * Commit pending transactions
-   * @param connection
-   */
-  static final public void commit (Connection connection) throws SQLException {
-    if (supportsTransactions) {
-      connection.commit();
-    }
-  }
-
-  /**
-   * Set auto commit state for the connection
-   * @param connection
-   * @param autocommit
-   */
-  public static final void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
-    if (supportsTransactions) {
-      connection.setAutoCommit(autocommit);
-    }
-  }
-
-  /**
-   * rollback unwanted changes to the database
-   * @param connection
-   */
-  public static final void rollback (Connection connection) throws SQLException {
-    if (supportsTransactions) {
-        connection.rollback();
-    } else {
-      log.fatal("RDBMUserLayout::rollback() called, but JDBC/DB does not support transactions. User data most likely corrupted");
-      throw new SQLException("Unable to rollback user data");
-    }
-  }
-
-  /**
-   * Return DB format of a boolean. "Y" for true and "N" for false.
-   * @param flag true or false
-   * @return either "Y" or "N"
-   */
-  public static final String dbFlag(boolean flag) {
-    return (flag ? "Y" : "N");
-  }
-
-  /**
-   * Return boolean value of DB flag, "Y" or "N".
-   * @param flag either "Y" or "N"
-   * @return boolean true or false
-   */
-  public static final boolean dbFlag(String flag) {
-    return (flag != null && (flag.equalsIgnoreCase("Y") || flag.equalsIgnoreCase("T")) ? true : false);
-  }
-
-  /**
-   * SQL format of current time
-   * @return SQL TimeStamp
-   */
-  public static final String sqlTimeStamp() {
-    return sqlTimeStamp(System.currentTimeMillis());
-  }
-
-  /**
-   * SQL format a long timestamp
-   * @param date
-   * @return SQL TimeStamp
-   */
-  public static final String sqlTimeStamp(long date) {
-    if (useToDate) {
-      SimpleDateFormat toDateTime = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-
-      return "TO_DATE('" + toDateTime.format(new Date(date)) +
-        "', 'YYYY MM DD HH24:MI:SS')";
-    } else {
-      return tsStart + "'" + new java.sql.Timestamp(date).toString() + "'" +
-        tsEnd;
-    }
-  }
-
-  /**
-   * SQL format a Date
-   * @param date
-   * @return SQL TimeStamp or "NULL" if date is null
-   */
-  public static final String sqlTimeStamp(Date date) {
-    if (date == null)
-      return "NULL";
-    else
-      return sqlTimeStamp(date.getTime());
-  }
-
-  /**
-   * Make a string SQL safe
-   * @param sql
-   * @return SQL safe string
-   */
-  public static final String sqlEscape (String sql) {
-    if (sql == null) {
-      return  "";
-    }
-    else {
-      int primePos = sql.indexOf("'");
-      if (primePos == -1) {
-        return  sql;
-      }
-      else {
-        StringBuffer sb = new StringBuffer(sql.length() + 4);
-        int startPos = 0;
-        do {
-          sb.append(sql.substring(startPos, primePos + 1));
-          sb.append("'");
-          startPos = primePos + 1;
-          primePos = sql.indexOf("'", startPos);
-        } while (primePos != -1);
-        sb.append(sql.substring(startPos));
-        return  sb.toString();
-      }
-    }
-  }
-
-  /**
-   * Wrapper for/Emulator of PreparedStatement class
-   */
-  public final static class PreparedStatement {
-    private Connection con;
-    private String query;
-    private String activeQuery;
-    private java.sql.PreparedStatement pstmt;
-    private Statement stmt;
-    private int lastIndex;
-
-    public PreparedStatement(Connection con, String query) throws SQLException {
-      this.con = con;
-      this.query = query;
-      activeQuery = this.query;
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt = con.prepareStatement(query);
-      } else {
-        stmt = con.createStatement();
-      }
-    }
-
-    public void clearParameters() throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt.clearParameters();
-      } else {
-        lastIndex = 0;
-        activeQuery = query;
-      }
-    }
-
-    public void setDate(int index, java.sql.Date value) throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt.setDate(index, value);
-      } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
-        } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
-          }
-          activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value) + activeQuery.substring(pos+1);
-          lastIndex = index;
-        }
-      }
-    }
-
-    public void setInt(int index, int value) throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt.setInt(index, value);
-      } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
-        } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
-          }
-          activeQuery = activeQuery.substring(0, pos) + value + activeQuery.substring(pos+1);
-          lastIndex = index;
-        }
-      }
-    }
-
-    public void setNull(int index, int sqlType) throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt.setNull(index, sqlType);
-      } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
-        } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
-          }
-          activeQuery = activeQuery.substring(0, pos) + "NULL" + activeQuery.substring(pos+1);
-          lastIndex = index;
-        }
-      }
-    }
-
-    public void setString(int index, String value) throws SQLException {
-      if (value == null || value.length() == 0 ) {
-        setNull(index, java.sql.Types.VARCHAR);
-      } else {
-        if (RDBMServices.supportsPreparedStatements) {
-            pstmt.setString(index, value);
-        } else {
-          if (index != lastIndex+1) {
-            throw new SQLException("Out of order index");
-          } else {
-            int pos = activeQuery.indexOf("?");
-            if (pos == -1) {
-              throw new SQLException("Missing '?'");
+            else {
+                stmt = con.createStatement();
             }
-            activeQuery = activeQuery.substring(0, pos) + "'" + sqlEscape(value) + "'" + activeQuery.substring(pos+1);
-            lastIndex = index;
-          }
         }
-      }
-    }
 
-    public void setTimestamp(int index, java.sql.Timestamp value) throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt.setTimestamp(index, value);
-      } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
-        } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
-          }
-          activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value) + activeQuery.substring(pos+1);
-          lastIndex = index;
+        public void clearParameters() throws SQLException {
+            if (supportsPreparedStatements) {
+                pstmt.clearParameters();
+            }
+            else {
+                lastIndex = 0;
+                activeQuery = query;
+            }
         }
-      }
+
+        public void setDate(int index, java.sql.Date value) throws SQLException {
+            if (supportsPreparedStatements) {
+                pstmt.setDate(index, value);
+            }
+            else {
+                if (index != lastIndex + 1) {
+                    throw new SQLException("Out of order index");
+                }
+                else {
+                    int pos = activeQuery.indexOf("?");
+                    if (pos == -1) {
+                        throw new SQLException("Missing '?'");
+                    }
+                    activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value)
+                            + activeQuery.substring(pos + 1);
+                    lastIndex = index;
+                }
+            }
+        }
+
+        public void setInt(int index, int value) throws SQLException {
+            if (supportsPreparedStatements) {
+                pstmt.setInt(index, value);
+            }
+            else {
+                if (index != lastIndex + 1) {
+                    throw new SQLException("Out of order index");
+                }
+                else {
+                    int pos = activeQuery.indexOf("?");
+                    if (pos == -1) {
+                        throw new SQLException("Missing '?'");
+                    }
+                    activeQuery = activeQuery.substring(0, pos) + value
+                            + activeQuery.substring(pos + 1);
+                    lastIndex = index;
+                }
+            }
+        }
+
+        public void setNull(int index, int sqlType) throws SQLException {
+            if (supportsPreparedStatements) {
+                pstmt.setNull(index, sqlType);
+            }
+            else {
+                if (index != lastIndex + 1) {
+                    throw new SQLException("Out of order index");
+                }
+                else {
+                    int pos = activeQuery.indexOf("?");
+                    if (pos == -1) {
+                        throw new SQLException("Missing '?'");
+                    }
+                    activeQuery = activeQuery.substring(0, pos) + "NULL"
+                            + activeQuery.substring(pos + 1);
+                    lastIndex = index;
+                }
+            }
+        }
+
+        public void setString(int index, String value) throws SQLException {
+            if (value == null || value.length() == 0) {
+                setNull(index, java.sql.Types.VARCHAR);
+            }
+            else {
+                if (supportsPreparedStatements) {
+                    pstmt.setString(index, value);
+                }
+                else {
+                    if (index != lastIndex + 1) {
+                        throw new SQLException("Out of order index");
+                    }
+                    else {
+                        int pos = activeQuery.indexOf("?");
+                        if (pos == -1) {
+                            throw new SQLException("Missing '?'");
+                        }
+                        activeQuery = activeQuery.substring(0, pos) + "'" + sqlEscape(value) + "'"
+                                + activeQuery.substring(pos + 1);
+                        lastIndex = index;
+                    }
+                }
+            }
+        }
+
+        public void setTimestamp(int index, java.sql.Timestamp value) throws SQLException {
+            if (supportsPreparedStatements) {
+                pstmt.setTimestamp(index, value);
+            }
+            else {
+                if (index != lastIndex + 1) {
+                    throw new SQLException("Out of order index");
+                }
+                else {
+                    int pos = activeQuery.indexOf("?");
+                    if (pos == -1) {
+                        throw new SQLException("Missing '?'");
+                    }
+                    activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value)
+                            + activeQuery.substring(pos + 1);
+                    lastIndex = index;
+                }
+            }
+        }
+
+        public ResultSet executeQuery() throws SQLException {
+            if (supportsPreparedStatements) {
+                return pstmt.executeQuery();
+            }
+            else {
+                return stmt.executeQuery(activeQuery);
+            }
+        }
+
+        public int executeUpdate() throws SQLException {
+            if (supportsPreparedStatements) {
+                return pstmt.executeUpdate();
+            }
+            else {
+                return stmt.executeUpdate(activeQuery);
+            }
+        }
+
+        public String toString() {
+            if (supportsPreparedStatements) {
+                return query;
+            }
+            else {
+                return activeQuery;
+            }
+        }
+
+        public void close() throws SQLException {
+            if (supportsPreparedStatements) {
+                pstmt.close();
+            }
+            else {
+                stmt.close();
+            }
+        }
     }
 
-    public ResultSet executeQuery() throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        return pstmt.executeQuery();
-      } else {
-        return stmt.executeQuery(activeQuery);
-      }
+    public static final class JdbcDb extends JoinQueryString {
+        public JdbcDb(final String testString) {
+          super(testString);
+        }
     }
 
-    public int executeUpdate() throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        return pstmt.executeUpdate();
-      } else {
-        return stmt.executeUpdate(activeQuery);
-      }
+    public static final class OracleDb extends JoinQueryString {
+        public OracleDb(final String testString) {
+            super(testString);
+        }
     }
 
-    public String toString() {
-      if (RDBMServices.supportsPreparedStatements) {
-        return query;
-      } else {
-        return activeQuery;
-      }
+    public static final class PostgreSQLDb extends JoinQueryString {
+        public PostgreSQLDb(final String testString) {
+            super(testString);
+        }
     }
-
-    public void close() throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt.close();
-      } else {
-        stmt.close();
-      }
-    }
-  }
-
-  public interface IJoinQueryString {
-    public String getQuery(String key) throws SQLException;
-    public void addQuery(String key, String value) throws SQLException;
-  }
-
-  public abstract static class JoinQueryString implements IJoinQueryString {
-    private HashMap queryStrings = new HashMap();
-    private String testJoin;
-
-    protected void setTestJoin(String query) {
-      testJoin = query;
-    }
-
-    protected String getTestJoin() {return testJoin;}
-
-    public String getQuery(String key) throws SQLException {
-      String query = (String) queryStrings.get(key);
-      if (query == null) {
-        throw new SQLException("Missing query");
-      }
-      return query;
-    }
-
-    public void addQuery(String key, String value) throws SQLException {
-       queryStrings.put(key, value);
-    }
-
-  }
-
-  public static final class JdbcDb extends JoinQueryString {
-    public JdbcDb(String testString) {
-      setTestJoin(testString);
-    }
-  }
-
-  public static final class OracleDb extends JoinQueryString {
-    public OracleDb(String testString) {
-      setTestJoin(testString);
-    }
-  }
-
-  public static final class PostgreSQLDb extends JoinQueryString {
-    public PostgreSQLDb(String testString) {
-      setTestJoin(testString);
-    }
-  }
-
 }

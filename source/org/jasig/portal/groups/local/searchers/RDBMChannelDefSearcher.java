@@ -36,15 +36,16 @@
 package org.jasig.portal.groups.local.searchers;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Searches the portal DB for channels.  Used by EntitySearcherImpl
@@ -59,13 +60,13 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
   private static final String is_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME=? or CHAN_TITLE=?)";
   private static final String partial_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME like ? or CHAN_TITLE like ?)";
   private Class chanDef;
-  
+
   public RDBMChannelDefSearcher() {
     try{
       chanDef = Class.forName("org.jasig.portal.ChannelDefinition");
     }
     catch(Exception e){
-      log.error(e, e); 
+      log.error(e, e);
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -73,25 +74,25 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
     EntityIdentifier[] r = new EntityIdentifier[0];
     ArrayList ar = new ArrayList();
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    PreparedStatement ps = null;
 
         try {
             conn = RDBMServices.getConnection();
             switch(method){
               case IS:
-                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.is_search);
+                ps = conn.prepareStatement(RDBMChannelDefSearcher.is_search);
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.partial_search);
+                ps = conn.prepareStatement(RDBMChannelDefSearcher.partial_search);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.partial_search);
+                ps = conn.prepareStatement(RDBMChannelDefSearcher.partial_search);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMServices.PreparedStatement(conn,RDBMChannelDefSearcher.partial_search);
+                ps = conn.prepareStatement(RDBMChannelDefSearcher.partial_search);
                 break;
               default:
                 throw new GroupsException("Unknown search type");

@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -49,9 +50,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ReferenceSequenceGenerator implements ISequenceGenerator
 {
-    
+
     private static final Log log = LogFactory.getLog(ReferenceSequenceGenerator.class);
-    
+
     /*
      * Private exception identifies problem incrementing counter likely
      * because of concurrent access.
@@ -62,7 +63,7 @@ public class ReferenceSequenceGenerator implements ISequenceGenerator
         }
     }
 	private Random rand = new Random();
-    
+
     // Constant strings for SEQUENCE table:
     private static String SEQUENCE_TABLE = "UP_SEQUENCE";
     private static String NAME_COLUMN = "SEQUENCE_NAME";
@@ -160,10 +161,10 @@ private int getCurrentCounterValue(String tableName, Connection conn)
 throws SQLException
 {
     ResultSet rs = null;
-    RDBMServices.PreparedStatement ps = null;
+    PreparedStatement ps = null;
     try
     {
-        ps = new RDBMServices.PreparedStatement( conn, getSelectCounterSql() );
+        ps = conn.prepareStatement(getSelectCounterSql() );
         try
         {
             ps.setString(1, tableName);
@@ -323,11 +324,11 @@ throws Exception
 private void primIncrementCounter(String tableName, int currentCounterValue, Connection conn)
 throws SQLException
 {
-    RDBMServices.PreparedStatement ps = null;
+    PreparedStatement ps = null;
     int nextCounterValue = currentCounterValue + 1;
     try
     {
-        ps = new RDBMServices.PreparedStatement( conn, getUpdateCounterForIncrementSql() );
+        ps = conn.prepareStatement(getUpdateCounterForIncrementSql() );
         try
         {
             ps.setInt(1, nextCounterValue);
@@ -389,10 +390,10 @@ public synchronized void setCounter (String tableName, int newCounterValue) thro
 private void setCounter(String tableName, int newCounterValue, Connection conn)
 throws SQLException
 {
-    RDBMServices.PreparedStatement ps = null;
+    PreparedStatement ps = null;
     try
     {
-        ps = new RDBMServices.PreparedStatement( conn, getUpdateCounterSql() );
+        ps = conn.prepareStatement(getUpdateCounterSql() );
         try
         {
             ps.setInt(1, newCounterValue);

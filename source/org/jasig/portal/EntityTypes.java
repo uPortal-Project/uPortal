@@ -35,6 +35,7 @@
 package org.jasig.portal;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -195,13 +196,13 @@ public void deleteEntityType(Class type) throws SQLException
 private void deleteEntityType(EntityType et) throws SQLException
 {
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    PreparedStatement ps = null;
     try
     {
         conn = RDBMServices.getConnection();
         try
         {
-            ps = new RDBMServices.PreparedStatement(conn, getDeleteEntityTypeSql());
+            ps = conn.prepareStatement(getDeleteEntityTypeSql());
 
             ps.setInt(1, et.getTypeId().intValue());
             ps.setString(2, et.getType().getName());
@@ -445,13 +446,13 @@ private void initializeCaches()
 private void insertEntityType(EntityType et) throws SQLException
 {
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    PreparedStatement ps = null;
     try
     {
         conn = RDBMServices.getConnection();
         try
         {
-            ps = new RDBMServices.PreparedStatement(conn, getInsertEntityTypeSql());
+            ps = conn.prepareStatement(getInsertEntityTypeSql());
 
             ps.setInt(1, et.getTypeId().intValue());
             ps.setString(2, et.getType().getName());
@@ -568,13 +569,13 @@ public void updateEntityType(Class type, String newDescription) throws Exception
 private void updateEntityType(EntityType et) throws SQLException
 {
     Connection conn = null;
-    RDBMServices.PreparedStatement ps = null;
+    PreparedStatement ps = null;
     try
     {
         conn = RDBMServices.getConnection();
         try
         {
-            ps = new RDBMServices.PreparedStatement(conn, getUpdateEntityTypeSql());
+            ps = conn.prepareStatement(getUpdateEntityTypeSql());
 
             ps.setString(1, et.getDescriptiveName());
             ps.setInt(2, et.getTypeId().intValue());

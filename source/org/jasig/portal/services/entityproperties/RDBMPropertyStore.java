@@ -37,14 +37,15 @@
 package org.jasig.portal.services.entityproperties;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.EntityPropertyRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -55,9 +56,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RDBMPropertyStore
       implements IEntityPropertyStore {
-    
+
     private static final Log log = LogFactory.getLog(RDBMPropertyStore.class);
-    
+
    protected static Class propsType = null;
    protected final static String TABLE_NAME = "UP_ENTITY_PROP";
    protected final static String TYPE_COL = "ENTITY_TYPE_ID";
@@ -81,7 +82,7 @@ public class RDBMPropertyStore
          }
       } catch (Exception e) {
          log.error( "RDBMPropertyStore.Constructor Unable to create propstype", e);
-      }   
+      }
    }
 
    public String[] getPropertyNames(EntityIdentifier entityID) {
@@ -105,10 +106,10 @@ public class RDBMPropertyStore
    public void storeProperty(EntityIdentifier entityID, String name, String value) {
       this.unStoreProperty(entityID, name);
       Connection conn = null;
-      RDBMServices.PreparedStatement ps = null;
+      PreparedStatement ps = null;
       try {
          conn = this.getConnection();
-         ps = new RDBMServices.PreparedStatement(conn, insertProperty);
+         ps = conn.prepareStatement(insertProperty);
          ps.clearParameters();
          ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
          ps.setString(2, entityID.getKey());
@@ -129,10 +130,10 @@ public class RDBMPropertyStore
 
    public void unStoreProperty(EntityIdentifier entityID, String name) {
       Connection conn = null;
-      RDBMServices.PreparedStatement ps = null;
+      PreparedStatement ps = null;
       try {
          conn = this.getConnection();
-         ps = new RDBMServices.PreparedStatement(conn, deleteProperty);
+         ps = conn.prepareStatement(deleteProperty);
          ps.clearParameters();
          ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
          ps.setString(2, entityID.getKey());
@@ -162,10 +163,10 @@ public class RDBMPropertyStore
       if (ep == null) {
          ep = new EntityProperties(entityID.getKey());
          Connection conn = null;
-         RDBMServices.PreparedStatement ps = null;
+         PreparedStatement ps = null;
          try {
             conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, selectProperties);
+            ps = conn.prepareStatement(selectProperties);
             ps.clearParameters();
             ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
             ps.setString(2, entityID.getKey());

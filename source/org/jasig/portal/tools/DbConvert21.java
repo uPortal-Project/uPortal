@@ -35,13 +35,14 @@
 
 package org.jasig.portal.tools;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jasig.portal.RDBMServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.RDBMServices;
 
 /**
  * Adjusts stored layouts in 2.1 database to work in 2.2+.
@@ -51,47 +52,47 @@ import org.apache.commons.logging.LogFactory;
 public class DbConvert21 {
 
     private static final Log log = LogFactory.getLog(DbConvert21.class);
-    
+
    public static void main(String[] args) {
 
 	Statement stmt = null;
-	RDBMServices.PreparedStatement  stmtTest = null;
-	RDBMServices.PreparedStatement testStructStmt = null;
+	PreparedStatement  stmtTest = null;
+	PreparedStatement testStructStmt = null;
 	Statement modifyStmt = null;
 	ResultSet rset = null;
 	ResultSet rsetTest = null;
     Connection con = null;
     int updateCount = 0;
-    
-    // the query to select all the layouts that need to be adjusted 
+
+    // the query to select all the layouts that need to be adjusted
 	String query =
     "select uul.USER_ID, uul.LAYOUT_ID, max(uls.struct_id)+100 as new_struct_id, " +
     "init_struct_id as new_child_id from up_layout_struct uls, up_user_layout uul " +
 	"where uls.user_id=uul.user_id and uls.layout_id=uul.layout_id " +
 	"group by uul.user_id, uul.layout_id, init_struct_id";
-	
+
 	String testQuery = "select count(*) as ct from up_layout_struct where type='root' and user_id= ? and layout_id=?";
 	String testNextStructId = "SELECT NEXT_STRUCT_ID FROM UP_USER where user_id=? ";
-	
+
       try {
          con = RDBMServices.getConnection ();
 	     if (con == null) {
             System.err.println("Unable to get a database connection");
             return;
          }
-                 
+
 		if (RDBMServices.supportsTransactions)
 		  con.setAutoCommit(false);
 
 		// Create the JDBC statement
 		stmt = con.createStatement();
-		
+
 		// change stylesheet URIs to classpath reference for resource manager
 		try {
-			Statement ssModifyStmt = con.createStatement();  
+			Statement ssModifyStmt = con.createStatement();
 			rset = stmt.executeQuery("SELECT SS_ID, SS_URI, SS_DESCRIPTION_URI FROM UP_SS_STRUCT ");
 			String newSsUri, ssUri, ssDescUri, updateSsUri;
-			
+
 			while (rset.next()) {
 				int ssId = rset.getInt(1);
 				ssUri = rset.getString(2);
@@ -117,7 +118,7 @@ public class DbConvert21 {
 				ssUri = rset.getString(2);
 				if (ssUri.startsWith("stylesheets/")) {
 					newSsUri = ssUri.substring("stylesheets/".length());
-					updateSsUri = "UPDATE UP_SS_THEME set SS_URI = '"+newSsUri+"' "+ 
+					updateSsUri = "UPDATE UP_SS_THEME set SS_URI = '"+newSsUri+"' "+
 						"where SS_ID = "+ssId;
 					ssModifyStmt.execute(updateSsUri);
 					log.debug("DbConvert21 update: "+updateSsUri);
@@ -130,7 +131,7 @@ public class DbConvert21 {
 					ssModifyStmt.execute(updateSsUri);
 					log.debug("DbConvert21 update: "+updateSsUri);
 				}
-				
+
 			}
 		}
 		catch (SQLException se) {
@@ -148,26 +149,26 @@ public class DbConvert21 {
 			try {
 				// Create statements for modifications
 				// for updating the layout
-				modifyStmt = con.createStatement();  
-				// to test if already modfied 
-				stmtTest = new RDBMServices.PreparedStatement(con, testQuery); 
+				modifyStmt = con.createStatement();
+				// to test if already modfied
+				stmtTest = con.prepareStatement(testQuery);
 				// to test if need to increment next struct id for user
-				testStructStmt = new RDBMServices.PreparedStatement(con, testNextStructId);
-				
-				// loop through returned results 
+				testStructStmt = con.prepareStatement(testNextStructId);
+
+				// loop through returned results
 				while (rset.next())
 				{
 					int user_id = rset.getInt("USER_ID");
 					int layout_id = rset.getInt("LAYOUT_ID");
 					int new_struct_id = rset.getInt("new_struct_id");
 					int new_child_id = rset.getInt("new_child_id");
-					
+
 					stmtTest.clearParameters();
 					stmtTest.setInt(1,user_id);
 					stmtTest.setInt(2,layout_id);
 					rsetTest = stmtTest.executeQuery();
 					if (rsetTest.next() && rsetTest.getInt("ct")>0) {
-						System.err.println("DbConvert: root folder already exists.  USER_ID " + 
+						System.err.println("DbConvert: root folder already exists.  USER_ID " +
 						user_id + ", LAYOUT_ID " + layout_id + " ignored");
 					}
 					else {
@@ -178,15 +179,15 @@ public class DbConvert21 {
 					modifyStmt.execute(insertString);
 					// DEBUG
 					log.debug("DbConvert inserted: " + insertString);
-					
+
 					String updateString = "UPDATE UP_USER_LAYOUT set INIT_STRUCT_ID="+new_struct_id+
 					" where user_id="+user_id + " and layout_id=" + layout_id;
 					modifyStmt.execute(updateString);
 					log.debug("DbConvert updated layout: " + updateString);
-					
+
 					testStructStmt.clearParameters();
 					testStructStmt.setInt(1,user_id);
-					ResultSet testNext = testStructStmt.executeQuery();	
+					ResultSet testNext = testStructStmt.executeQuery();
 					int newNext = new_struct_id+1;
 					if (testNext.next() && testNext.getInt(1)<=newNext){
 						updateString = "UPDATE UP_USER set NEXT_STRUCT_ID = " + newNext +
@@ -194,20 +195,20 @@ public class DbConvert21 {
 						modifyStmt.execute(updateString);
 						log.debug("DbConvert updated next struct id : " + updateString);
 					}
-					
+
 					log.debug("DbConvert updated: " + updateString);
 					updateCount++;
-					}				
+					}
 				}
-	
+
 				if (RDBMServices.supportsTransactions)
 				  con.commit();
-	
+
 				} finally {
 				stmt.close();
 				modifyStmt.close();
 				if (stmtTest != null) stmtTest.close();
-			} 
+			}
 		} catch (Exception e) {
 			System.err.println("Error attempting to update layouts.");
 			e.printStackTrace();		}
@@ -221,15 +222,15 @@ public class DbConvert21 {
         e.printStackTrace();
       }
       finally {
-         try { 
+         try {
          	con.commit();
-         	RDBMServices.releaseConnection(con); } 
+         	RDBMServices.releaseConnection(con); }
          catch (Exception e) {}
       }
-      
+
       	System.out.println("DbConvert21 updated " + updateCount +" user layouts");
     	return;
-		
+
    }//end main
 
 }

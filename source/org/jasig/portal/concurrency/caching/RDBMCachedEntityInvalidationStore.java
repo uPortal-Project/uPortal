@@ -36,6 +36,7 @@
 package org.jasig.portal.concurrency.caching;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,12 +45,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.concurrency.CachingException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * RDBMS-based store for <code>CachedEntityInvalidations</code>.
@@ -333,8 +334,8 @@ throws SQLException, CachingException
 
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getAddSql());
+        PreparedStatement ps =
+            conn.prepareStatement(getAddSql());
         try
         {
             ps.setInt(1, typeID.intValue()); // entity type
@@ -377,8 +378,8 @@ throws CachingException, SQLException
 
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getDeleteInvalidationsSql());
+        PreparedStatement ps =
+            conn.prepareStatement(getDeleteInvalidationsSql());
         try
         {
             ps.setTimestamp(1, ts);
@@ -453,8 +454,8 @@ throws SQLException, CachingException
 
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getUpdateSql());
+        PreparedStatement ps =
+            conn.prepareStatement(getUpdateSql());
         try
         {
             ps.setTimestamp(1, ts);           // updated invalidation

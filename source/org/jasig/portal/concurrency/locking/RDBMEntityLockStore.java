@@ -36,6 +36,7 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,12 +45,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * RDBMS-based store for <code>IEntityLocks</code>.
@@ -166,7 +167,7 @@ public void deleteAll() throws LockingException
 
 /**
  * Delete all expired IEntityLocks from the underlying store.
- * @param expiration 
+ * @param expiration
  */
 public void deleteExpired(Date expiration) throws LockingException
 {
@@ -386,8 +387,8 @@ throws SQLException, LockingException
 
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getAddSql());
+        PreparedStatement ps =
+            conn.prepareStatement(getAddSql());
         try
         {
             ps.setInt(1, typeID.intValue()); // entity type
@@ -432,8 +433,8 @@ private void primDelete(IEntityLock lock, Connection conn) throws LockingExcepti
 
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getDeleteLockSql());
+        PreparedStatement ps =
+            conn.prepareStatement(getDeleteLockSql());
         try
         {
             ps.setInt(1, typeID.intValue());  // entity type
@@ -570,8 +571,8 @@ throws SQLException, LockingException
 
     try
     {
-        RDBMServices.PreparedStatement ps =
-            new RDBMServices.PreparedStatement(conn, getUpdateSql());
+        PreparedStatement ps =
+            conn.prepareStatement(getUpdateSql());
         try
         {
             ps.setTimestamp(1, newTs);  // new expiration

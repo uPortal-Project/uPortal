@@ -36,11 +36,12 @@
 package org.jasig.portal.security.provider;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.jasig.portal.RDBMServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.RDBMServices;
 
 /**
  * A reference implementation of {@link IAccountStore}.
@@ -51,18 +52,18 @@ import org.apache.commons.logging.LogFactory;
 public class RDBMAccountStore implements IAccountStore {
 
     private static final Log log = LogFactory.getLog(RDBMAccountStore.class);
-    
+
     public String[] getUserAccountInformation(String username) throws Exception {
         String[] acct = new String[] {
             null, null, null, null
         };
         Connection con = RDBMServices.getConnection();
         try {
-            RDBMServices.PreparedStatement pstmt = null;
+            PreparedStatement pstmt = null;
             try {
                 String query = "SELECT  ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME = ?";
                 log.debug("RDBMUserLayoutStore::getUserAccountInformation(): " + query);
-                pstmt = new RDBMServices.PreparedStatement(con, query);
+                pstmt = con.prepareStatement(query);
                 pstmt.setString(1, username);
                 ResultSet rset = pstmt.executeQuery();
                 try {

@@ -37,6 +37,7 @@ package org.jasig.portal.tools;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -61,21 +62,21 @@ import org.jasig.portal.security.PersonFactory;
  * converts the existing template user profiles to use the AL/IM structure and
  * theme, and deletes profiles for non-template users.  This results in the
  * resetting of layouts for normal users.
- * 
+ *
  * @author Al Wold (alwold@asu.edu)
  *
  * @version $Revision$
  */
 public class ConvertProfilesToAL {
    private static IUserLayoutStore uls;
-   
+
    public static void main(String[] args) throws Exception {
       uls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
       BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-      
+
       System.out.print("Please enter the max ID for a template user => ");
       int lastTemplateUser = Integer.parseInt(br.readLine());
-      
+
       Hashtable structSsList = uls.getStructureStylesheetList();
       for (Enumeration e = structSsList.keys(); e.hasMoreElements(); ) {
          Integer id = (Integer)e.nextElement();
@@ -87,7 +88,7 @@ public class ConvertProfilesToAL {
       int simpleSsId = Integer.parseInt(br.readLine());
       System.out.print("Please enter the new structure stylesheet => ");
       int alSsId = Integer.parseInt(br.readLine());
-      
+
       Hashtable themeSsList = uls.getThemeStylesheetList();
       for (Enumeration e = themeSsList.keys(); e.hasMoreElements(); ) {
          Integer id = (Integer)e.nextElement();
@@ -97,7 +98,7 @@ public class ConvertProfilesToAL {
       System.out.println("==================================================");
       System.out.print("Please enter the new theme stylesheet => ");
       int imSsId = Integer.parseInt(br.readLine());
-      
+
       List ids = getUserIds(lastTemplateUser);
       // convert template users
       for (Iterator i = ids.iterator(); i.hasNext(); ) {
@@ -107,14 +108,14 @@ public class ConvertProfilesToAL {
       // delete the rest
       deleteUserProfiles(true, lastTemplateUser);
       createTemplateProfiles(lastTemplateUser);
-   }  
-   
+   }
+
    public static List getUserIds(int lastTemplateUser) throws PortalException {
       List userIds = new ArrayList();
       Connection con = RDBMServices.getConnection();
       try {
          String query = "SELECT USER_ID FROM UP_USER WHERE USER_ID <= ?";
-         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(con, query);
+         PreparedStatement ps = con.prepareStatement(query);
          ps.setInt(1, lastTemplateUser);
          try {
             ResultSet rs = ps.executeQuery();
@@ -139,7 +140,7 @@ public class ConvertProfilesToAL {
          RDBMServices.releaseConnection(con);
       }
    }
-   
+
    public static void deleteUserProfiles(boolean deleteLayouts, int lastTemplateUser) throws Exception {
       System.out.print("deleting user profiles...");
       Connection con = RDBMServices.getConnection();
@@ -151,13 +152,13 @@ public class ConvertProfilesToAL {
          String query5 = "DELETE FROM UP_USER_LAYOUT WHERE USER_ID > ?";
          String query6 = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID > ?";
          String query7 = "DELETE FROM UP_LAYOUT_STRUCT WHERE USER_ID > ?";
-         RDBMServices.PreparedStatement ps1 = new RDBMServices.PreparedStatement(con, query1);
-         RDBMServices.PreparedStatement ps2 = new RDBMServices.PreparedStatement(con, query2);
-         RDBMServices.PreparedStatement ps3 = new RDBMServices.PreparedStatement(con, query3);
-         RDBMServices.PreparedStatement ps4 = new RDBMServices.PreparedStatement(con, query4);
-         RDBMServices.PreparedStatement ps5 = new RDBMServices.PreparedStatement(con, query5);
-         RDBMServices.PreparedStatement ps6 = new RDBMServices.PreparedStatement(con, query6);
-         RDBMServices.PreparedStatement ps7 = new RDBMServices.PreparedStatement(con, query7);
+         PreparedStatement ps1 = con.prepareStatement(query1);
+         PreparedStatement ps2 = con.prepareStatement(query2);
+         PreparedStatement ps3 = con.prepareStatement(query3);
+         PreparedStatement ps4 = con.prepareStatement(query4);
+         PreparedStatement ps5 = con.prepareStatement(query5);
+         PreparedStatement ps6 = con.prepareStatement(query6);
+         PreparedStatement ps7 = con.prepareStatement(query7);
          ps1.setInt(1, lastTemplateUser);
          ps2.setInt(1, lastTemplateUser);
          ps3.setInt(1, lastTemplateUser);
@@ -204,7 +205,7 @@ public class ConvertProfilesToAL {
       }
       System.out.println("done");
    }
-   
+
    public static void convertProfiles(int id, int simpleSsId, int alSsId, int imSsId) throws Exception {
       System.out.print("converting profiles for ID "+id+"...");
       IPerson person = PersonFactory.createPerson();
@@ -220,7 +221,7 @@ public class ConvertProfilesToAL {
       }
       System.out.println("done");
    }
-   
+
    public static void createTemplateProfiles(int lastTemplateUser) throws PortalException {
       System.out.println("creating template profiles...");
       Connection con = RDBMServices.getConnection();
@@ -230,9 +231,9 @@ public class ConvertProfilesToAL {
                                 "FROM UP_USER_PROFILE WHERE USER_ID = ?";
          String insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION) "+
                          "VALUES (?, ?, ?, ?)";
-         RDBMServices.PreparedStatement selectPs = new RDBMServices.PreparedStatement(con, query);
-         RDBMServices.PreparedStatement templatePs = new RDBMServices.PreparedStatement(con, templateQuery);
-         RDBMServices.PreparedStatement insertPs = new RDBMServices.PreparedStatement(con, insert);
+         PreparedStatement selectPs = con.prepareStatement(query);
+         PreparedStatement templatePs = con.prepareStatement(templateQuery);
+         PreparedStatement insertPs = con.prepareStatement(insert);
          selectPs.setInt(1, lastTemplateUser);
          int templateId;
          try {
@@ -262,6 +263,6 @@ public class ConvertProfilesToAL {
          throw new PortalException(sqle);
       } finally {
          RDBMServices.releaseConnection(con);
-      }      
+      }
    }
 }

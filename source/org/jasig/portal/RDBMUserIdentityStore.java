@@ -243,7 +243,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     finally {
       RDBMServices.closeResultSet(rs); 
       RDBMServices.closeStatement(stmt); 
-      RDBMServices.closePreparedStatement(ps); 
+      RDBMServices.closeStatement(ps); 
       RDBMServices.releaseConnection(con);
     }
     }

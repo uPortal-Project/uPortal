@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,6 +45,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.common.Preference;
 import org.apache.pluto.om.common.PreferenceSet;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
@@ -57,8 +60,6 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
@@ -69,7 +70,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
     private static final Log log = LogFactory.getLog(RDBMChannelRegistryStore.class);
-    
+
   /**
    * Add join queries for databases that are known to support them
    */
@@ -96,7 +97,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   // I18n propertiy
   protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
-
+  
   /**
    * Create a new ChannelType object.
    * @return channelType, the new channel type
@@ -356,23 +357,23 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    */
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws SQLException {
     ChannelDefinition channelDef = null;
-    
+
     // Check the cache
     try {
       channelDef = (ChannelDefinition)EntityCachingService.instance().get(ChannelDefinition.class, String.valueOf(channelPublishId));
     } catch (Exception e) {
-      log.error("Error checking cache for definition of channel with publish id " 
+      log.error("Error checking cache for definition of channel with publish id "
               + channelPublishId, e);
     }
-    
+
     // If not found in cache, get it from the store and cache it, otherwise return it
     if (channelDef == null) {
       Connection con = null;
-      RDBMServices.PreparedStatement pstmtChannel = null;
-      RDBMServices.PreparedStatement pstmtChannelParam = null;
-      RDBMServices.PreparedStatement pstmtChannelMdata = null;
+      PreparedStatement pstmtChannel = null;
+      PreparedStatement pstmtChannelParam = null;
+      PreparedStatement pstmtChannelMdata = null;
       ResultSet rs = null;
-  
+
       try {
         con = RDBMServices.getConnection();
         pstmtChannel = getChannelPstmt(con);
@@ -382,7 +383,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         pstmtChannel.setInt(1, channelPublishId);
         log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannel);
         rs = pstmtChannel.executeQuery();
-  
+
         if (rs.next()) {
           int chanType = rs.getInt(4);
           if (rs.wasNull()) {
@@ -416,10 +417,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           channelDef.setName(rs.getString(13));
           channelDef.setFName(rs.getString(14));
           channelDef.setIsSecure(RDBMServices.dbFlag(rs.getString(15)));
-        
+
           // Don't use the following line to attain DB compatibility
           // channelDef.setLocale("en_US");
-  
+
           int dbOffset = 0;
           if (pstmtChannelParam == null) { // we are using a join statement so no need for a new query
             dbOffset = 15;
@@ -430,7 +431,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelParam);
             rs = pstmtChannelParam.executeQuery();
           }
-  
+
           while (true) {
             if (pstmtChannelParam != null && !rs.next()) {
               break;
@@ -445,30 +446,30 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               break;
             }
           }
-          
+
           try {
               IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
               PreferenceSet preferences = portletPrefStore.getDefinitionPreferences(channelPublishId);
-              
+
               for (Iterator prefItr = preferences.iterator(); prefItr.hasNext();) {
                   Preference pref = (Preference)prefItr.next();
-                  
+
                   String name = pref.getName();
                   String value = "";
                   String override;
-                  
+
                   if (pref.isReadOnly()) {
                       override = "N";
                   }
                   else {
                       override = "Y";
                   }
-                  
+
                   //Since publish params only support single valued params just look for the first value.
                   Iterator valuesItr = pref.getValues();
                   if (valuesItr.hasNext())
                       value = (String)valuesItr.next();
-                  
+
                   channelDef.addParameter(CPortletAdapter.portletPreferenceNamePrefix + name, value, override);
               }
           }
@@ -482,7 +483,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + pstmtChannelMdata);
               try {
                   rs = pstmtChannelMdata.executeQuery();
-          
+
                   String locale;
                   while (true) {
                       if (pstmtChannelMdata != null && !rs.next()) {
@@ -492,7 +493,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                       channelDef.putChanTitles(locale, rs.getString(2));
                       channelDef.putChanDescs(locale, rs.getString(3));
                       channelDef.putChanNames(locale, rs.getString(4));
-                  
+
                       if (pstmtChannelMdata == null && !rs.next()) {
                           break;
                       }
@@ -518,7 +519,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           try { pstmtChannelParam.close(); } catch (Exception e) {}
           try { pstmtChannelMdata.close(); } catch (Exception e) {}
           try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
-      }  
+      }
     }
     return channelDef;
   }
@@ -621,7 +622,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sqlName = RDBMServices.sqlEscape(channelDef.getName());
         String sqlFName = RDBMServices.sqlEscape(channelDef.getFName());
         String sqlIsSecure = RDBMServices.dbFlag(channelDef.isSecure());
-        
+
         String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
         log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + query);
         ResultSet rs = stmt.executeQuery(query);
@@ -643,7 +644,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
           "CHAN_NAME='" + sqlName + "', " +
           "CHAN_FNAME='" + sqlFName + "', " +
-          "CHAN_SECURE='" + sqlIsSecure + "' " +                  
+          "CHAN_SECURE='" + sqlIsSecure + "' " +
           "WHERE CHAN_ID=" + channelPublishId;
           log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + update);
           stmt.executeUpdate(update);
@@ -664,11 +665,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         int recordsDeleted = stmt.executeUpdate(delete);
 
         ChannelParameter[] parameters = channelDef.getParameters();
-        
+
         if (parameters != null) {
           // Keep track of any portlet preferences
           PreferenceSetImpl preferences = new PreferenceSetImpl();
-          
+
           for (int i = 0; i < parameters.length; i++) {
             String paramName = parameters[i].getName();
             String paramValue = parameters[i].getValue();
@@ -703,7 +704,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
         // Commit the transaction
         RDBMServices.commit(con);
-        
+
         // Notify the cache
         try {
           EntityCachingService.instance().update(channelDef);
@@ -766,12 +767,12 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           parentGroup.removeMember(channelDefEntity);
           parentGroup.updateMembers();
         }
-        
+
         // Notify the cache
         try {
           EntityCachingService.instance().remove(channelDef);
         } catch (Exception e) {
-          log.error("Error removing channel definition " 
+          log.error("Error removing channel definition "
                   + channelDef + " from cache.", e);
         }
 
@@ -787,9 +788,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * Sets a channel definition as "approved".  This effectively makes a
    * channel definition available in the channel registry, making the channel
    * available for subscription to those authorized to subscribe to it.
-   * This method is a convenience method. As an alternative to calling 
+   * This method is a convenience method. As an alternative to calling
    * this method, one could simply set the approver ID and approval date
-   * and then call saveChannelDefinition(ChannelDefinition chanDef).   
+   * and then call saveChannelDefinition(ChannelDefinition chanDef).
    * @param channelDef the channel definition to approve
    * @param approver the user that approves this channel definition
    * @param approveDate the date when the channel definition should be approved (can be future dated)
@@ -805,13 +806,13 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * Removes a channel from the channel registry by changing
    * its status from "approved" to "unapproved".  Afterwards, no one
    * will be able to subscribe to or render the channel.
-   * This method is a convenience method. As an alternative to calling 
+   * This method is a convenience method. As an alternative to calling
    * this method, one could simply set the approver ID and approval date
    * to NULL and then call saveChannelDefinition(ChannelDefinition chanDef).
    * @param channelDef the channel definition to disapprove
    * @throws Exception
    */
-  public void disapproveChannelDefinition(ChannelDefinition channelDef) throws Exception {   
+  public void disapproveChannelDefinition(ChannelDefinition channelDef) throws Exception {
     channelDef.setApproverId(-1);
     channelDef.setApprovalDate(null);
     saveChannelDefinition(channelDef);
@@ -833,9 +834,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Creates a new channel category with the specified values.
-   * @param name the name of the category 
-   * @param description the name of the description 
-   * @param creatorId the id of the creator or system 
+   * @param name the name of the category
+   * @param description the name of the description
+   * @param creatorId the id of the creator or system
    * @return channelCategory the new channel category
    * @throws GroupsException
    */
@@ -856,7 +857,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         cat.setCreatorId( creatorId );
         return cat;
   }
-    
+
   /**
    * Gets an existing channel category.
    * @param channelCategoryId the id of the category to get
@@ -1047,7 +1048,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
 
-  protected static final RDBMServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
+  protected static final PreparedStatement getChannelPstmt(Connection con) throws SQLException {
     String sql = "SELECT UC.CHAN_TITLE, UC.CHAN_DESC, UC.CHAN_CLASS, UC.CHAN_TYPE_ID, " +
                  "UC.CHAN_PUBL_ID, UC.CHAN_APVL_ID, UC.CHAN_PUBL_DT, UC.CHAN_APVL_DT, " +
                  "UC.CHAN_TIMEOUT, UC.CHAN_EDITABLE, UC.CHAN_HAS_HELP, UC.CHAN_HAS_ABOUT, " +
@@ -1061,19 +1062,19 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
     sql += " UC.CHAN_ID=?";
 
-    return new RDBMServices.PreparedStatement(con, sql);
+    return con.prepareStatement(sql);
   }
 
-  protected static final RDBMServices.PreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
+  protected static final PreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
     if (RDBMServices.supportsOuterJoins) {
       return null;
     } else {
-      return new RDBMServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
+      return con.prepareStatement("SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
     }
   }
 
-  protected static final RDBMServices.PreparedStatement getChannelMdataPstmt(Connection con) throws SQLException {
-      return new RDBMServices.PreparedStatement(con, "SELECT LOCALE, CHAN_TITLE, CHAN_DESC, CHAN_NAME FROM UP_CHANNEL_MDATA WHERE CHAN_ID=?");
+  protected static final PreparedStatement getChannelMdataPstmt(Connection con) throws SQLException {
+      return con.prepareStatement("SELECT LOCALE, CHAN_TITLE, CHAN_DESC, CHAN_NAME FROM UP_CHANNEL_MDATA WHERE CHAN_ID=?");
   }
-    
+
 }

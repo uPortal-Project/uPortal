@@ -1,0 +1,494 @@
+/**
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+package org.jasig.portal.rdbm;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.RDBMServices.JdbcDb;
+import org.jasig.portal.RDBMServices.OracleDb;
+import org.jasig.portal.RDBMServices.PostgreSQLDb;
+
+
+/**
+ * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
+ * @version $Revision $
+ */
+public class DatabaseServerImpl implements IDatabaseServer {
+    private static final Log LOG = LogFactory.getLog(DatabaseServerImpl.class);
+    
+    /** Define the oracle TO_DATE format */
+    private static final SimpleDateFormat TO_DATE_FORMAT = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+    
+    //Define the different join queries we know about with the
+    //appropriately typed JoinQueryString implementation. 
+    private static final JoinQueryString jdbcDb = new JdbcDb("{oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE");
+    private static final JoinQueryString postgreSQLDb = new PostgreSQLDb("UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE");
+    private static final JoinQueryString oracleDb = new OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
+    
+    /** Array of join tests to perform. */
+    private static final JoinQueryString[] joinTests = {jdbcDb, postgreSQLDb, oracleDb};
+    
+    /** The {@link DataSource} that represents the server */
+    final private DataSource dataSource;
+    
+    /** The {@link IJoinQueryString} to use for performing outer joins */
+    private IJoinQueryString joinTest = null;
+    
+    //Database meta information
+    private boolean useTSWrapper = false;
+    private boolean useToDate = false;
+    private boolean supportsTransactions = false;
+    private boolean supportsPreparedStatements = false;
+    private String transactionTestMsg = "";
+    private String databaseProductName = null;
+    private String databaseProductVersion = null;
+    private String driverName = null;
+    private String driverVersion = null;
+    private String userName = null;
+    private String dbUrl = null;
+    
+    
+    /**
+     * Creates a new {@link DatabaseServerImpl} with the specified
+     * {@link DataSource}.
+     * 
+     * @param ds The {@link DataSource} to use as the base for this server interface.
+     */
+    public DatabaseServerImpl(final DataSource ds) {
+        if (ds == null)
+            throw new IllegalArgumentException("DataSource cannot be null");
+        
+        this.dataSource = ds;
+        
+        this.runDatabaseTests();
+        
+        LOG.info(this.toString());
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#getDataSource()
+     */
+    public DataSource getDataSource() {
+        return this.dataSource;
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#getConnection()
+     */
+    public Connection getConnection() {
+        Connection conn = null;
+        
+        for (int tryCount = 0; conn == null && tryCount < RDBMServices.RETRY_COUNT; tryCount++) {
+            try {
+                conn = this.dataSource.getConnection();
+                
+                //Normalize the connection
+                if (conn != null && !conn.getAutoCommit()) {
+                    RDBMServices.rollback(conn);
+                    RDBMServices.setAutoCommit(conn, true);
+                }
+            }
+            catch (SQLException sqle) {
+                final String errMsg = "An error occured while getting a connection to (try " + tryCount + "):\n" + this.toString();
+                
+                if (tryCount == 0)
+                    LOG.error(errMsg, sqle);
+                else
+                    LOG.warn(errMsg, sqle);
+            }            
+        }
+
+        return conn;
+    }
+    
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#releaseConnection(java.sql.Connection)
+     */
+    public void releaseConnection(final Connection conn) {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        catch (Exception e) {
+            LOG.warn("An error occured while closing a connection.", e);
+        }
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#getJdbcDriver()
+     */
+    public String getJdbcDriver() {
+        return this.driverName;
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#getJdbcUrl()
+     */
+    public String getJdbcUrl() {
+        return this.dbUrl;
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#getJdbcUser()
+     */
+    public String getJdbcUser() {
+        return this.userName;
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#getJoinQuery()
+     */
+    public final IJoinQueryString getJoinQuery() {
+        return this.joinTest;
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#supportsOuterJoins()
+     */
+    public final boolean supportsOuterJoins() {
+        return (this.joinTest != null);
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#supportsTransactions()
+     */
+    public final boolean supportsTransactions() {
+        return this.supportsTransactions;
+    }
+    
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#supportsPreparedStatements()
+     */
+    public final boolean supportsPreparedStatements() {
+        return this.supportsPreparedStatements;
+    }    
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#sqlTimeStamp()
+     */
+    public String sqlTimeStamp() {
+        return this.sqlTimeStamp(System.currentTimeMillis());
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#sqlTimeStamp(long)
+     */
+    public String sqlTimeStamp(final long date) {
+        final StringBuffer sqlTS = new StringBuffer();
+        
+        if (useToDate) {
+            sqlTS.append("TO_DATE('");
+            sqlTS.append(TO_DATE_FORMAT.format(new Date(date)));
+            sqlTS.append("', 'YYYY MM DD HH24:MI:SS')");
+        }
+        else if (useTSWrapper) {
+            sqlTS.append("{ts '");
+            sqlTS.append(new Timestamp(date).toString());
+            sqlTS.append("'}");
+        }
+        else {
+            sqlTS.append("'");
+            sqlTS.append(new Timestamp(date).toString());
+            sqlTS.append("'");
+        }
+        
+        return sqlTS.toString();
+    }
+
+    /**
+     * @see org.jasig.portal.rdbm.IDatabaseServer#sqlTimeStamp(java.util.Date)
+     */
+    public String sqlTimeStamp(final Date date) {
+        if (date == null)
+            return "NULL";
+        else
+            return this.sqlTimeStamp(date.getTime());
+    }
+    
+    
+    public String toString() {
+        final StringBuffer dbInfo = new StringBuffer();
+        
+        dbInfo.append(this.databaseProductName);
+        dbInfo.append(" (");
+        dbInfo.append(this.databaseProductVersion);
+        dbInfo.append(") / ");
+        dbInfo.append(this.driverName);
+        dbInfo.append(" (");
+        dbInfo.append(this.driverVersion);
+        dbInfo.append(") database/driver");
+        dbInfo.append("\n");
+        dbInfo.append("    Connected To: ");
+        dbInfo.append(this.getJdbcUrl());
+        dbInfo.append("\n");
+        dbInfo.append("    Supports:");        
+        dbInfo.append("\n");
+        dbInfo.append("        Prepared Statements:  ");
+        dbInfo.append(this.supportsPreparedStatements());        
+        dbInfo.append("\n");
+        dbInfo.append("        Outer Joins:          ");
+        dbInfo.append(this.supportsOuterJoins());
+        dbInfo.append("\n");
+        dbInfo.append("        Transactions:         ");
+        dbInfo.append(this.supportsTransactions());
+        dbInfo.append(this.transactionTestMsg);
+        dbInfo.append("\n");
+        dbInfo.append("        {ts metasyntax:       ");
+        dbInfo.append(this.useTSWrapper);
+        dbInfo.append("\n");
+        dbInfo.append("        TO_DATE():            ");
+        dbInfo.append(this.useToDate);              
+        
+        return dbInfo.toString();
+    }
+
+
+
+    
+    /**
+     * Run a set of tests on the database to provide better meta data.
+     */
+    private void runDatabaseTests() {
+        final Connection conn = getConnection();
+        
+        //The order of these tests is IMPORTANT, each may depend on the
+        //results of the previous tests.
+        this.getMetaData(conn);
+        this.testPreparedStatements(conn);
+        this.testOuterJoins(conn);
+        this.testTimeStamp(conn);
+        this.testTransactions(conn);
+        
+        this.releaseConnection(conn);
+    }
+    
+    /**
+     * Gets meta data about the connection.
+     * 
+     * @param conn The connection to use.
+     */
+    private void getMetaData(final Connection conn) {
+        try {
+            final DatabaseMetaData dmd = conn.getMetaData();
+            
+            this.databaseProductName = dmd.getDatabaseProductName();
+            this.databaseProductVersion = dmd.getDatabaseProductVersion();
+            this.driverName = dmd.getDriverName();
+            this.driverVersion = dmd.getDriverVersion();
+            this.userName = dmd.getUserName();
+            this.dbUrl = dmd.getURL();
+        }
+        catch (SQLException sqle) {
+            LOG.error("Error getting database meta data.", sqle);
+        }
+    }
+    
+    /**
+     * Tests the database for prepared statement support.
+     * 
+     * @param conn The connection to use. 
+     */
+    private void testPreparedStatements(final Connection conn) {
+        try {
+            final String pStmtTestQuery =
+                "SELECT USER_ID " +
+                "FROM UP_USER " +
+                "WHERE USER_ID=?";
+            
+            final PreparedStatement pStmt = conn.prepareStatement(pStmtTestQuery);
+            
+            try {
+                pStmt.clearParameters();
+                final int userId = 0;
+                pStmt.setInt(1, userId); //Set USER_ID=0
+                final ResultSet rs = pStmt.executeQuery();
+                
+                try {
+                    if (rs.next() && userId == rs.getInt(1)) {
+                        this.supportsPreparedStatements = true;
+                    }
+                }
+                finally {
+                    RDBMServices.closeResultSet(rs);
+                }
+            }
+            finally {
+                RDBMServices.closeStatement(pStmt);
+            }
+        }
+        catch (SQLException sqle) {
+            LOG.error("PreparedStatements are not supported!", sqle);
+        }
+    }
+    
+    /**
+     * Test the database to see if it really supports outer joins.
+     * @param conn The connection to use.
+     */
+    private void testOuterJoins(final Connection conn) {
+        try {
+            if (conn.getMetaData().supportsOuterJoins()) {
+                final Statement joinTestStmt = conn.createStatement();
+                
+                try {
+                    for (int index = 0; index < joinTests.length; index++) {
+                        final String joinTestQuery =
+                            "SELECT COUNT(UP_USER.USER_ID) " +
+                            "FROM " + joinTests[index].getTestJoin() + " UP_USER.USER_ID=0";
+                        
+                        try {
+                            final ResultSet rs = joinTestStmt.executeQuery(joinTestQuery);
+                            
+                            RDBMServices.closeResultSet(rs);
+                            
+                            this.joinTest = joinTests[index];
+                            LOG.info("Using join test: " + this.joinTest.getClass().getName());
+                            break;
+                        }
+                        catch (SQLException sqle) {
+                            LOG.info("Join test failed: " + joinTests[index], sqle);
+                        }
+                    }
+                }
+                finally {
+                    RDBMServices.closeStatement(joinTestStmt);
+                }
+            }
+        }
+        catch (SQLException sqle) {
+            LOG.warn("Error running join tests.", sqle);
+        }
+    }
+    
+    /**
+     * Test the database to find the supported timestamp format
+     * @param conn The connection to use.
+     */
+    private void testTimeStamp(final Connection conn) {
+        try {
+            //Try using {ts }
+            final String timeStampTestQuery = 
+                "SELECT USER_ID " +
+                "FROM UP_USER " +
+                "WHERE LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} AND USER_ID = 0";
+            
+            final PreparedStatement timeStampTestPStmt = conn.prepareStatement(timeStampTestQuery);
+            
+            try {
+                final ResultSet rs = timeStampTestPStmt.executeQuery();
+                
+                RDBMServices.closeResultSet(rs);
+                
+                this.useTSWrapper = true;
+            }
+            finally {
+                RDBMServices.closeStatement(timeStampTestPStmt);
+            }
+        }
+        catch (SQLException sqle1) {
+            LOG.info("Error running {ts } test.", sqle1);
+            
+            //Try using TO_DATE()
+            try {
+                final String toDateTestQuery = 
+                    "SELECT USER_ID " +
+                    "FROM UP_USER " +
+                    "WHERE LST_CHAN_UPDT_DT=TO_DATE('2001 01 01 00:00', 'YYYY MM DD HH24:MI:SS') AND USER_ID=0";
+                
+                final PreparedStatement toDateTestPStmt = conn.prepareStatement(toDateTestQuery);
+                
+                try {
+                    final ResultSet rs = toDateTestPStmt.executeQuery();
+                    
+                    RDBMServices.closeResultSet(rs);
+                    
+                    this.useToDate = true;
+                }
+                finally {
+                    RDBMServices.closeStatement(toDateTestPStmt);
+                }
+            }
+            catch (SQLException sqle2) {
+                LOG.info("Error running TO_DATE() test.", sqle2);
+            }
+        }
+    }
+    
+    /**
+     * Test the database to see if it really supports transactions
+     * @param conn The connection to use.
+     */
+    private void testTransactions(final Connection conn) {
+        try {
+            if (conn.getMetaData().supportsTransactions()) {
+                conn.setAutoCommit(false); //Not using RDBMServices here, we want to see the exception if it happens
+                
+                final Statement transTestStmt = conn.createStatement();
+                    
+                try {
+                    final String transTestUpdate = 
+                        "UPDATE UP_USER " +
+                        "SET LST_CHAN_UPDT_DT=" + this.sqlTimeStamp() + " " +
+                        "WHERE USER_ID=0";
+                    
+                    transTestStmt.executeUpdate(transTestUpdate);
+                    conn.rollback();
+                    this.supportsTransactions = true;
+                }
+                finally {
+                    RDBMServices.closeStatement(transTestStmt);
+                }                
+            }
+        }
+        catch (SQLException sqle) {
+            LOG.warn("Error running transaction test (Transactions are not supported).", sqle);
+            this.transactionTestMsg = " (driver lies)";
+        }
+    }
+}
