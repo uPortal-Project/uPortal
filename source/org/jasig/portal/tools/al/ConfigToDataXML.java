@@ -160,12 +160,12 @@ public class ConfigToDataXML {
 
          con.setAutoCommit(false);
 
-         PreparedStatement deleteLayoutStruct = con.prepareStatement("DELETE FROM up_layout_struct_aggr WHERE fragment_id = ?");
-         PreparedStatement deleteFragments = con.prepareStatement("DELETE FROM up_fragments WHERE fragment_id = ?");
-         PreparedStatement deleteFragmentRestrictions = con.prepareStatement("DELETE FROM up_fragment_restrictions WHERE fragment_id = ?");
-         PreparedStatement deleteFragmentParams = con.prepareStatement("DELETE FROM up_fragment_param WHERE fragment_id = ?");
-         PreparedStatement deleteOwnerFragment = con.prepareStatement("DELETE FROM up_owner_fragment WHERE fragment_id = ?");
-         PreparedStatement deleteGroupFragment = con.prepareStatement("DELETE FROM up_group_fragment WHERE fragment_id = ?");
+         PreparedStatement deleteLayoutStruct = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE fragment_id = ?");
+         PreparedStatement deleteFragments = con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE fragment_id = ?");
+         PreparedStatement deleteFragmentRestrictions = con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE fragment_id = ?");
+         PreparedStatement deleteFragmentParams = con.prepareStatement("DELETE FROM UP_FRAGMENT_PARAM WHERE fragment_id = ?");
+         PreparedStatement deleteOwnerFragment = con.prepareStatement("DELETE FROM UP_OWNER_FRAGMENT WHERE fragment_id = ?");
+         PreparedStatement deleteGroupFragment = con.prepareStatement("DELETE FROM UP_GROUP_FRAGMENT WHERE fragment_id = ?");
 
          for ( int i = 0; i < fragmentIds.size(); i++ ) {
           int fragmentId = Integer.parseInt(fragmentIds.get(i).toString());
