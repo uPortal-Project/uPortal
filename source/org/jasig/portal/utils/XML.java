@@ -44,6 +44,14 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xerces.dom.*;
 
+import org.xml.sax.ContentHandler;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
+
 
 /**
  * <p>This utility provides useful XML helper methods</p>
@@ -256,6 +264,18 @@ public class XML {
 
     return newnode;
   }
+
+    /**
+     * Outputs a dom document into a sax stream.
+     *
+     * @param dom a dom <code>Node</code> value
+     * @param sax a sax <code>ContentHandler</code> value
+     */
+    public static void dom2sax(Node dom,ContentHandler sax) throws TransformerConfigurationException, TransformerException {
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        Transformer emptytr = tFactory.newTransformer();
+        emptytr.transform(new DOMSource(dom), new SAXResult(sax));
+    }
 }
 
 
