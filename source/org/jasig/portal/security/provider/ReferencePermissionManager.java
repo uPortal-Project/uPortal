@@ -164,12 +164,8 @@ public class ReferencePermissionManager extends PermissionManager {
         permission.setExpires(rs.getDate("EXPIRES"));
         permissions.add(permission);
       }
-      if (permissions.size() > 0) {
-        return  ((Permission[])permissions.toArray(new Permission[0]));
-      } 
-      else {
-        return  (null);
-      }
+      // Return the array of permissions
+      return  ((Permission[])permissions.toArray(new Permission[0]));
     } catch (Exception e) {
       throw  new AuthorizationException(e.getMessage());
     }
