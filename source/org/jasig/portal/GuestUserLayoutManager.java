@@ -40,6 +40,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.utils.BooleanLock;
 import org.jasig.portal.utils.XML;
+import org.jasig.portal.utils.PropsMatcher;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
@@ -49,6 +50,9 @@ import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
+
+import java.net.URL;
+import java.io.IOException;
 
 
 /**
@@ -138,6 +142,35 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     }
                     if(upl!=null) {
                         cached_profiles.put(userAgent,upl);
+                    }
+                }
+            }
+
+            if(upl==null) {
+                // try guessing the profile through pattern matching
+
+                if(uaMatcher==null) {
+                    // init user agent matcher
+                    URL url = null;
+                    try {
+                        url = this.getClass().getResource("/properties/browser.mappings");
+                        if (url != null) {
+                            uaMatcher = new PropsMatcher(url.openStream());
+                        }
+                    } catch (IOException ioe) {
+                        LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::GuestUserLayoutManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
+                    }
+                }
+
+                if(uaMatcher!=null) {
+                    // try matching
+                    String profileId=uaMatcher.match(userAgent);
+                    if(profileId!=null) {
+                        // user agent has been matched
+                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
+                        upl=updb.getSystemProfileById(Integer.parseInt(profileId));
+                    } else {
+                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::GuestUserLayoutManager() : userAgent \"" + userAgent + "\" has matched not matched any profile.");
                     }
                 }
             }

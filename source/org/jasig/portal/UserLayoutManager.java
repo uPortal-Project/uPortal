@@ -42,11 +42,15 @@ import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.jndi.PortalNamingException;
 import org.jasig.portal.utils.BooleanLock;
 import org.jasig.portal.utils.XML;
+import org.jasig.portal.utils.PropsMatcher;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import javax.servlet.http.HttpServletRequest;
+
+import java.net.URL;
+import java.io.IOException;
 
 /**
  * UserLayoutManager is responsible for keeping: user id, user layout, user preferences
@@ -56,6 +60,9 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Revision$
  */
 public class UserLayoutManager implements IUserLayoutManager {
+
+    // user agent mapper for guessing the profile
+    static PropsMatcher uaMatcher;
 
     private Document uLayoutXML;
     private UserPreferences complete_up;
@@ -90,6 +97,34 @@ public class UserLayoutManager implements IUserLayoutManager {
             if (upl == null) {
                 upl = updb.getSystemProfile(userAgent);
             }
+            if(upl==null) {
+                // try guessing the profile through pattern matching
+
+                if(uaMatcher==null) {
+                    // init user agent matcher
+                    URL url = null;
+                    try {
+                        url = this.getClass().getResource("/properties/browser.mappings");
+                        if (url != null) {
+                            uaMatcher = new PropsMatcher(url.openStream());
+                        }
+                    } catch (IOException ioe) {
+                        LogService.instance().log(LogService.ERROR, "UserLayoutManager::UserLayoutManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
+                    }
+                }
+
+                if(uaMatcher!=null) {
+                    // try matching
+                    String profileId=uaMatcher.match(userAgent);
+                    if(profileId!=null) {
+                        // user agent has been matched
+
+                        upl=updb.getSystemProfileById(Integer.parseInt(profileId));
+                    }
+                }
+                
+            }
+
             if (upl != null) {
                 // read uLayoutXML
                 uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
