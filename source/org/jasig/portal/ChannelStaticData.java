@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import java.util.Map;
+import org.jasig.portal.security.*;
 
 /**
  * Used to store channel configuration items and parameters.
@@ -47,6 +48,8 @@ public class ChannelStaticData extends java.util.Hashtable
 {
   private String sChannelID = null;
   private long l_timeOut=java.lang.Long.MAX_VALUE;
+  private IPerson person = null;
+  private ISecurityContext securityContext= null;
 
   // Parameters are strings!
   /**
@@ -54,7 +57,7 @@ public class ChannelStaticData extends java.util.Hashtable
    * @param key param name
    * @param value param value
    */
-  public synchronized String setParameter (String key, String value) 
+  public synchronized String setParameter (String key, String value)
   {
     return (String) super.put (key, value);
   }
@@ -64,7 +67,7 @@ public class ChannelStaticData extends java.util.Hashtable
    * @param key param name
    * @return param value
    */
-  public synchronized String getParameter (String key) 
+  public synchronized String getParameter (String key)
   {
     return (String) super.get (key);
   }
@@ -73,26 +76,26 @@ public class ChannelStaticData extends java.util.Hashtable
   /**
    * Similar to the {@link #setParameter(String,String)}, but can be used to pass things other then strings.
    */
-  public synchronized Object put (Object key, Object value) 
+  public synchronized Object put (Object key, Object value)
   {
     return super.put (key, value);
   }
-  
+
   /**
    * Similar to the {@link #getParameter(String)}, but can be used to pass things other then strings.
    */
-  public synchronized Object get (Object key) 
+  public synchronized Object get (Object key)
   {
     return super.get (key);
   }
-    
+
   /**
    * Copy parameter list from a Map
    * @param params a map of params
    */
-  public void setParameters (Map params) 
+  public void setParameters (Map params)
   {
-    // copy a Map 
+    // copy a Map
     this.putAll(params);
   }
 
@@ -100,7 +103,7 @@ public class ChannelStaticData extends java.util.Hashtable
    * Sets the channel ID
    * @param sChannelID the unique channelID
    */
-  public void setChannelID (String sChID) 
+  public void setChannelID (String sChID)
   {
     this.sChannelID = sChID;
   }
@@ -109,20 +112,38 @@ public class ChannelStaticData extends java.util.Hashtable
    * Gets the channel ID
    * @return the channel's ID
    */
-  public String getChannelID () 
+  public String getChannelID ()
   {
     return sChannelID;
-  }  
-
-  public void setTimeout (long value) 
-  { 
-    this.l_timeOut=value; 
   }
-  
-  public long getTimeout () 
-  { 
-    return this.l_timeOut; 
+
+  public void setTimeout (long value)
+  {
+    this.l_timeOut=value;
+  }
+
+  public long getTimeout ()
+  {
+    return this.l_timeOut;
+  }
+
+  public IPerson getPerson ()
+  {
+    return this.person;
+  }
+  public void setPerson (IPerson per)
+  {
+    this.person=per;
+  }
+
+  public ISecurityContext getSecurityContext ()
+  {
+    return this.securityContext;
+  }
+  public void setSecurityContext (ISecurityContext sc)
+  {
+    this.securityContext=sc;
   }
 }
-    
-    
+
+

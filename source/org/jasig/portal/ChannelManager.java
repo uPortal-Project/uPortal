@@ -37,6 +37,7 @@ package org.jasig.portal;
 
 
 import org.jasig.portal.channels.CError;
+import org.jasig.portal.security.*;
 import javax.servlet.http.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -156,7 +157,7 @@ public class ChannelManager {
 		    }
 		    if(chObj!=null && (chObj instanceof IPrivilegedChannel)) {
 			IPrivilegedChannel isc=(IPrivilegedChannel) chObj;
-			
+
 			try {
 			    isc.setPortalControlStructures(pcs);
 			} catch (Exception e) {
@@ -175,7 +176,7 @@ public class ChannelManager {
 				Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
 			    }
 			}
-			
+
 			ChannelRuntimeData rd = new ChannelRuntimeData ();
 			rd.setParameters(targetParams);
 			rd.setHttpRequest (req);
@@ -251,6 +252,8 @@ public class ChannelManager {
         sd.setParameters (params);
         ch.setStaticData (sd);
         channelTable.put (chanID,ch);
+        sd.setPerson((IPerson) req.getAttribute("up_person"));
+        sd.setSecurityContext((ISecurityContext) req.getAttribute("up_SecurityContext"));
         return ch;
     }
 
