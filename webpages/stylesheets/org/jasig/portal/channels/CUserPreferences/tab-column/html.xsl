@@ -41,7 +41,7 @@ $Revision$
   <xsl:param name="action">no parameter passed</xsl:param>
   <xsl:param name="position">no parameter passed</xsl:param>
   <xsl:param name="elementID">no parameter passed</xsl:param>
-  <xsl:param name="catID">no parameter passed</xsl:param>
+  <xsl:param name="catID">top</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
@@ -1056,10 +1056,10 @@ $Revision$
                               <td nowrap="nowrap" align="left" valign="top">
                                 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
                                 <img alt="interface image" src="{$mediaPath}/arrow_right.gif" width="16" height="16"/>
-                                <select name="select" class="uportal-input-text">
+                                <select name="selectedCategory" class="uportal-input-text">
                                   <xsl:for-each select="/layout/registry/category">
                                     <xsl:sort select="@name"/>
-                                    <option value="{$catID}">
+                                    <option value="{@ID}">
                                       <xsl:value-of select="@name"/>
                                       <!--[subcategories:<xsl:value-of select="count(descendant::category)"/>, total channels:<xsl:value-of select="count(descendant::channel)"/>-->
                                     </option>
@@ -1075,7 +1075,7 @@ $Revision$
                                     </xsl:otherwise>
                                   </xsl:choose>
                                 </select>
-                                <input type="submit" name="selectedCategory" value="go" class="uportal-button"/>
+                                <input type="submit" name="buttonSelectCategory" value="go" class="uportal-button"/>
                               </td>
                             </tr>
                           </form>
@@ -1101,10 +1101,10 @@ $Revision$
                                         <img alt="interface image" src="{$mediaPath}/arrow_down.gif" width="16" height="16"/>
                                       </xsl:otherwise>
                                     </xsl:choose>
-                                    <select name="select" class="uportal-input-text">
+                                    <select name="selectedCategory" class="uportal-input-text">
                                       <xsl:for-each select="ancestor::*[1]/category">
                                         <xsl:sort select="@name"/>
-                                        <option value="{$catID}">
+                                        <option value="{@ID}">
                                           <xsl:if test="@ID=$catID or descendant::category[@ID=$catID]">
                                             <xsl:attribute name="selected">selected</xsl:attribute>
                                           </xsl:if>
@@ -1117,7 +1117,7 @@ $Revision$
                                         <option value="all">Select All</option>
                                       </xsl:if>
                                     </select>
-                                    <input type="submit" name="selectedCategory" value="go" class="uportal-button"/>
+                                    <input type="submit" name="buttonSelectCategory" value="go" class="uportal-button"/>
                                   </td>
                                 </tr>
                               </form>
@@ -1142,10 +1142,10 @@ $Revision$
                                 <tr>
                                   <td nowrap="nowrap" align="left" valign="top">
                                     <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16" width="16"/>
-                                    <select name="select" class="uportal-input-text">
+                                    <select name="selectedCategory" class="uportal-input-text">
                                       <xsl:for-each select="ancestor::*[1]/category/category">
                                         <xsl:sort select="@name"/>
-                                        <option value="{$catID}">
+                                        <option value="{@ID}">
                                           <xsl:value-of select="@name"/>
                                           <!--[subcategories:<xsl:value-of select="count(descendant::category)"/>, total channels:<xsl:value-of select="count(descendant::channel)"/>-->
                                         </option>
@@ -1153,7 +1153,7 @@ $Revision$
                                       <option value="">____________________</option>
                                       <option value="" selected="selected">Select a subcategory</option>
                                     </select>
-                                    <input type="submit" name="selectedCategory" value="go" class="uportal-button"/>
+                                    <input type="submit" name="buttonSelectCategory" value="go" class="uportal-button"/>
                                   </td>
                                 </tr>
                               </form>
@@ -1339,6 +1339,6 @@ $Revision$
 </xsl:stylesheet>
 <!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
 <metaInformation>
-<scenarios ><scenario default="yes" name="Scenario1" url="file://C:\Uportal Work\updesign\upreferences\ulayoutRegistry.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/><scenario default="no" name="Scenario2" url="file://c:\Uportal Work\updesign\upreferences\ulayout.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/></scenarios><MapperInfo  srcSchemaPath="" srcSchemaRoot="" destSchemaPath="" destSchemaRoot="" />
+<scenarios ><scenario default="no" name="Scenario1" url="file://C:\Uportal Work\updesign\upreferences\ulayoutRegistry.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/><scenario default="no" name="Scenario2" url="file://c:\Uportal Work\updesign\upreferences\ulayout.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/><scenario default="yes" name="Scenario3" url="file://C:\Documents and Settings\immdca13\Desktop\pfefile.xml" htmlbaseurl="" processortype="internal" commandline="" additionalpath="" additionalclasspath=""/></scenarios><MapperInfo  srcSchemaPath="" srcSchemaRoot="" destSchemaPath="" destSchemaRoot="" />
 </metaInformation>
 -->
