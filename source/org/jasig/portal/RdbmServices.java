@@ -219,7 +219,7 @@ public class RdbmServices {
    * Commit pending transactions
    * @param connection
    */
-  static final protected void commit (Connection connection) throws SQLException {
+  static final public void commit (Connection connection) throws SQLException {
     if (supportsTransactions) {
       connection.commit();
     }
@@ -230,7 +230,7 @@ public class RdbmServices {
    * @param connection
    * @param autocommit
    */
-  static final protected void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
+  static final public void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
     if (supportsTransactions) {
       connection.setAutoCommit(autocommit);
     }
@@ -240,7 +240,7 @@ public class RdbmServices {
    * rollback unwanted changes to the database
    * @param connection
    */
-  static final protected void rollback (Connection connection) throws SQLException {
+  static final public void rollback (Connection connection) throws SQLException {
     if (supportsTransactions) {
         connection.rollback();
     } else {
@@ -295,12 +295,12 @@ public class RdbmServices {
    * Wrapper for/Emulator of PreparedStatement class
    */
   public final static class PreparedStatement {
-    Connection con;
-    String query;
-    String activeQuery;
-    java.sql.PreparedStatement pstmt;
-    Statement stmt;
-    int lastIndex;
+    private Connection con;
+    private String query;
+    private String activeQuery;
+    private java.sql.PreparedStatement pstmt;
+    private Statement stmt;
+    private int lastIndex;
 
     public PreparedStatement(Connection con, String query) throws SQLException {
       this.con = con;
@@ -319,6 +319,22 @@ public class RdbmServices {
       } else {
         lastIndex = 0;
         activeQuery = query;
+      }
+    }
+    public void setDate(int index, java.sql.Date value) throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        pstmt.setDate(index, value);
+      } else {
+        if (index != lastIndex+1) {
+          throw new SQLException("Out of order index");
+        } else {
+          int pos = activeQuery.indexOf("?");
+          if (pos == -1) {
+            throw new SQLException("Missing '?'");
+          }
+          activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value) + activeQuery.substring(pos+1);
+          lastIndex = index;
+        }
       }
     }
     public void setInt(int index, int value) throws SQLException {
