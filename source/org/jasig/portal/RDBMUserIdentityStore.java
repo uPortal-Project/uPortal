@@ -171,7 +171,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       try {
         String query = "SELECT UP_USER.USER_ID FROM UP_USER "+
         "WHERE UP_USER.USER_NAME = '" + person.getAttribute("username") + "'";
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + query);
+        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
@@ -193,7 +193,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             If no result use guest userid constant.  */
             query = "SELECT USER_ID FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
             if (DEBUG>0) System.err.println(query);
-            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getuPortalUID(): " + query);
+            LogService.log(LogService.DEBUG, "DBMUserIdentityStore::getPortalUID(): " + query);
             rset = stmt.executeQuery(query);
             if (rset.next()) templateUID = rset.getInt("USER_ID");
             else templateUID = guestUID;
