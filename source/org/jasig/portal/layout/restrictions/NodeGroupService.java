@@ -168,4 +168,12 @@ public class NodeGroupService implements IGroupService {
           groupService = new NodeGroupService();
       return groupService;
     }
+
+   /**
+     * Returns the implementation of <code>IEntityGroupStore</code> in use.
+     */
+  public IEntityGroupStore getGroupStore() throws GroupsException
+    {
+        return groupStore;
+    }
 }

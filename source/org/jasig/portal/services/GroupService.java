@@ -216,4 +216,13 @@ public class GroupService implements IGroupConstants
     public static IEntityGroup newGroup(Class type) throws GroupsException {
         return instance().inewGroup(type);
     }
+
+    /*
+    * Returns the <code>IGroupService</code> implementation in use.
+    * @return org.jasig.portal.groups.IGroupService
+    */
+    public static IGroupService getGroupService() throws GroupsException
+    {
+        return instance().groupService;
+    }
 }

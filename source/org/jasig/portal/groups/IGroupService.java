@@ -85,4 +85,9 @@ public interface IGroupService {
    * key.
    */
   public IEntityGroup newGroup(Class type) throws GroupsException;
+
+  /**
+   * Returns an <code>IEntityGroupStore</code>.
+   */
+  public IEntityGroupStore getGroupStore() throws GroupsException;
 }

@@ -1,5 +1,3 @@
-package org.jasig.portal.groups;
-
 /**
  * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
@@ -35,13 +33,16 @@ package org.jasig.portal.groups;
  *
  */
 
+package org.jasig.portal.groups;
+
 import org.jasig.portal.*;
 import org.jasig.portal.security.*;
+import org.jasig.portal.services.GroupService;
 import java.util.*;
 
 /**
  * @author Dan Ellentuck
- * @version 1.0, 11/29/01
+ * @version $Revision$
  * @see IGroupMember
  * @see IGroupMemberFactory
  */
@@ -176,16 +177,16 @@ public java.util.Iterator getEntities() throws GroupsException
     return getEmptyIterator();
 }
 /**
- * @return org.jasig.portal.groups.IEntityGroupStore
+ * @return org.jasig.portal.groups.IEntityStore
  */
-protected IEntityStore getEntityFactory() {
+protected IEntityStore getEntityFactory() throws GroupsException {
     return RDBMEntityStore.singleton();
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroupStore
  */
 protected IEntityGroupStore getEntityGroupFactory() throws GroupsException {
-    return RDBMEntityGroupStore.singleton();
+    return GroupService.getGroupService().getGroupStore();
 }
 /**
  * @return java.lang.Class

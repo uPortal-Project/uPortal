@@ -60,8 +60,8 @@ public class ReferenceGroupService implements IGroupService
      */
     private ReferenceGroupService() throws GroupsException
     {
-            super();
-            initialize();
+        super();
+        initialize();
     }
 
     /**
@@ -171,5 +171,14 @@ public class ReferenceGroupService implements IGroupService
       if ( singleton == null )
           { singleton = new ReferenceGroupService(); }
       return singleton;
+    }
+
+    /**
+     * Returns the implementation of <code>IEntityGroupStore</code> whose class name
+     * was retrieved by the PropertiesManager (see initialize()).
+     */
+  public IEntityGroupStore getGroupStore() throws GroupsException
+    {
+        return groupFactory;
     }
 }
