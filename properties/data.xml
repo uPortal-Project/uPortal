@@ -544,7 +544,7 @@
         <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
-
+      
       <!-- uPortal Developers Reference -->
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -858,6 +858,13 @@
         <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
         <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/footer/footer.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>CHAN_PARM_NM</name><value>cacheTimeout</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>Overrides the default cache timeout for CGenericXSLT channels</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>3600</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
