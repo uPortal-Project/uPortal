@@ -33,56 +33,38 @@
  *
  */
 
-package org.jasig.portal.channels.UserPreferences;
+package org.jasig.portal;
 
-import org.jasig.portal.*;
-import org.xml.sax.DocumentHandler;
-
-/** <p>A base class for a CUserPreferences state.</p>
- * @author Peter Kharchenko, peterk@interactivebusiness.com
+/**
+ * Channels implementing this interface are considered "privileged" because
+ * they will have access to internal portal control structures such as the
+ * HttpServletRequest, HttpServletReponse, and UserLayoutManager.  IPrivilegedChannel
+ * is intended for channels that are integral to the framework such as those that
+ * manage user preferences, channel publishing, and channel subscription.
+ * IPrivilegedChannel is NOT intended for "normal" channels.  Channels
+ * should normally implement {@link IChannel}.
+ *
+ * Portal administrators should only allow publishing/subscibing of channels
+ * implementing IPrivilegedChannel if the following are true:
+ *
+ * <ul>
+ * <li>The channel is an integral part of the uPortal framework, e.g. {@link org.jasig.portal.channels.CLogin}.</li>
+ * <li>The channel is well-understood and will not cause harm.  An understanding of the
+ * portal architecture is necessary to determine if this is true.</li>
+ * <li>There is no way to implement the channel as an IChannel because access to
+ * internal structures is absolutely necessary.</li>
+ * </ul>
+ * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
+ * @see IChannel
+ * @see PortalControlStructures
  */
-
-
-class BaseState implements IPrivilegedChannel {
-    protected CUserPreferences context;
-    protected IPrivilegedChannel internalState;
-
-    public BaseState() {}
-
-    public BaseState(CUserPreferences context) {
-        this.context=context;
-    }
-
-    public BaseState(IPrivilegedChannel state) {
-        internalState=state;
-    }
-
-    public BaseState(CUserPreferences context,IPrivilegedChannel state) {
-        internalState=state;
-    }
-
-    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException  {
-    }
-
-    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
-        // analyze header parameters, reset states, etc.
-    }
-
-    public void setStaticData(ChannelStaticData sd) throws PortalException  {
-    };
-
-    public void renderXML (DocumentHandler out) throws PortalException {
-        // render header controls
-    }
-
-    public void receiveEvent (LayoutEvent ev){}
-
-    // these two functions are never really called
-    public ChannelSubscriptionProperties getSubscriptionProperties () { return new ChannelSubscriptionProperties(); }
-    public ChannelRuntimeProperties getRuntimeProperties () { return new ChannelRuntimeProperties(); }
-
-    public void setState(IPrivilegedChannel state) {
-        this.internalState=state;
-    }
+public interface IPrivilegedChannel extends IChannel
+{
+    /**
+     * Passes portal control structure to the channel.
+     * @see PortalControlStructures
+     */
+    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException;
 }
+

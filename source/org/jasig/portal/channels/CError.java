@@ -48,18 +48,16 @@ import org.apache.xalan.xslt.*;
  * place of other channels when something goes wrong.<br/>
  * Possible conditions when CError is invoked are:
  * <ul>
- * <li> Channel has thrown a PortalException from one of the IChannel methods (or ISpecialChannel methods) </li>
- * <li> Channel has thrown a Runtime exception from one of the methods. <li>
- * <li> Channel has timed out on rendering and was terminated. </li>
- * <li> uPortal has rejected a channel for some reason. In this case a general message is constructed by the portal. </li>
+ * <li> Channel has thrown a {@link PortalException} from one of the IChannel or IPrivilegedChannel methods.</li>
+ * <li> Channel has thrown a Runtime exception from one of the methods.<li>
+ * <li> Channel has timed out on rendering and was terminated.</li>
+ * <li> uPortal has rejected a channel for some reason.
+ * In this case a general message is constructed by the portal.</li>
  * </ul>
- * @author Peter Kharchenko
+ * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @version $Revision$
  */
-
-
-
-public class CError extends BaseChannel implements ISpecialChannel
+public class CError extends BaseChannel implements IPrivilegedChannel
 {
     public static final int GENERAL_ERROR=0;
     public static final int RENDER_TIME_EXCEPTION=1;
@@ -132,8 +130,8 @@ public class CError extends BaseChannel implements ISpecialChannel
                     crd.setHttpRequest (runtimeData.getHttpRequest());
                     crd.setBaseActionURL (runtimeData.getBaseActionURL());
                     try {
-                        if(the_channel instanceof ISpecialChannel)
-                            ((ISpecialChannel)the_channel).setPortalControlStructures(portcs);
+                        if(the_channel instanceof IPrivilegedChannel)
+                            ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                         the_channel.setRuntimeData (crd);
                         ChannelManager cm=portcs.getChannelManager();
                         cm.addChannelInstance(this.str_channelID,this.the_channel);
@@ -154,8 +152,8 @@ public class CError extends BaseChannel implements ISpecialChannel
                             resetCError(this.GENERAL_ERROR,null,this.str_channelID,null,"Channel failed to reinstantiate!");
                         } else {
                             try {
-                                if(the_channel instanceof ISpecialChannel)
-                                    ((ISpecialChannel)the_channel).setPortalControlStructures(portcs);
+                                if(the_channel instanceof IPrivilegedChannel)
+                                    ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
                                 the_channel.setRuntimeData (crd);
                             } catch (Exception e) {
                                 // if any of the above didn't work, fall back to the error channel
@@ -170,7 +168,7 @@ public class CError extends BaseChannel implements ISpecialChannel
                     }
                 } else if(chFate.equals("toggle_stack_trace")) {
           showStackTrace=!showStackTrace;
-		}
+                }
             }
         }
 
@@ -331,6 +329,5 @@ public class CError extends BaseChannel implements ISpecialChannel
                 processor.process (xmlSource, xslSource, xmlResult);
             }
         } catch (Exception e) { Logger.log(Logger.ERROR,"CError::renderXML() : things are bad. Error channel threw: "+e); }
-
     }
 }

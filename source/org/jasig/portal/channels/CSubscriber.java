@@ -50,7 +50,7 @@ import java.io.*;
  * @author John Laker
  * @version $Revision$
  */
-public class CSubscriber implements ISpecialChannel
+public class CSubscriber implements IPrivilegedChannel
 {
 
   UserLayoutManager ulm;
@@ -62,14 +62,14 @@ public class CSubscriber implements ISpecialChannel
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
   String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CSubscriber";
-  
+
   // channel modes
   private static final int NONE = 0;
   private static final int BROWSE = 1;
   private static final int SUBSCRIBE = 2;
   private static final int SUBTO = 3;
   private static final int PREVIEW = 4;
-  
+
   private int mode = NONE;
   private Document userLayoutXML = null;
   private Document channelRegistry = null;
@@ -79,7 +79,7 @@ public class CSubscriber implements ISpecialChannel
   private String[] subIDs = null; // contains the IDs of channels to be subscribed
   private boolean modified = false; // modification flag
   private static final String regID = "top"; // mark the top level of the categories
-  
+
   /** Construct a CSubscriber.
    */
   public CSubscriber ()
@@ -96,7 +96,7 @@ public class CSubscriber implements ISpecialChannel
    * @param pcs portal control structures
    */
     public void setPortalControlStructures(PortalControlStructures pcs) {
-	ulm=pcs.getUserLayoutManager();
+        ulm=pcs.getUserLayoutManager();
     }
 
 
@@ -131,31 +131,31 @@ public class CSubscriber implements ISpecialChannel
    * @param sd static channel data
    */
   public void setStaticData (ChannelStaticData sd)
-  { 
+  {
     this.staticData = sd;
   }
 
-  /** Receives channel runtime data from the portal and processes actions 
-   * passed to it.  The names of these parameters are entirely up to the channel. 
+  /** Receives channel runtime data from the portal and processes actions
+   * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
   public void setRuntimeData (ChannelRuntimeData rd)
   {
-    this.runtimeData = rd;    
+    this.runtimeData = rd;
     String catID = null;
     //catID = runtimeData.getParameter("catID");
     String role = "student"; //need to get from current user
     //chanReg = new ChannelRegistryImpl();
-    
+
     //get fresh copies of both since we don't really know if changes have been made
-    
+
     if(userLayoutXML==null)userLayoutXML=ulm.getUserLayoutCopy();
-   
+
     if(channelRegistry==null) channelRegistry = chanReg.getRegistryXML(catID, role);
-    
-    
+
+
     action = runtimeData.getParameter ("action");
-    
+
     if (action != null)
     {
       if (action.equals ("browse"))
@@ -167,11 +167,11 @@ public class CSubscriber implements ISpecialChannel
       else if (action.equals ("saveChanges"))
         prepareSaveChanges ();
     }
-        
+
     if (categoryID == null)
       categoryID = this.regID;
   }
-      
+
 
   /** Output channel content to the portal
    * @param out a sax document handler
@@ -195,17 +195,17 @@ public class CSubscriber implements ISpecialChannel
           processXML ("browse", out);
           break;
       }
-    } 
+    }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e); 
+      Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   private void processXML (String stylesheetName, DocumentHandler out) throws org.xml.sax.SAXException
   {
     XSLTInputSource xmlSource = null;
-    
+
     switch (mode)
       {
         case SUBSCRIBE:
@@ -215,22 +215,22 @@ public class CSubscriber implements ISpecialChannel
           xmlSource = new XSLTInputSource (channelRegistry);
           break;
       }
-      
+
     XSLTInputSource xslSource = set.getStylesheet(stylesheetName, runtimeData.getHttpRequest());
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
     if (xslSource != null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-      processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));        
-      processor.setStylesheetParam("categoryID", processor.createXString (categoryID));  
-      processor.setStylesheetParam("modified", processor.createXBoolean (modified));        
+      processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));
+      processor.setStylesheetParam("categoryID", processor.createXString (categoryID));
+      processor.setStylesheetParam("modified", processor.createXBoolean (modified));
       processor.process (xmlSource, xslSource, xmlResult);
     }
-    else 
+    else
       Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
   }
-  
+
   private void prepareBrowse ()
   {
     mode = BROWSE;
@@ -244,51 +244,51 @@ public class CSubscriber implements ISpecialChannel
   {
     mode = SUBSCRIBE;
     HttpServletRequest req = runtimeData.getHttpRequest ();
-    subIDs = req.getParameterValues ("sub");    
+    subIDs = req.getParameterValues ("sub");
   }
-   
+
   private void prepareSubscribeTo ()
   {
     mode = SUBTO;
     String destinationID = runtimeData.getParameter ("destination");
     Node destination = null;
-    
-    if (destinationID == null) {
-	Logger.log(Logger.ERROR,"CSubscriber::prepareSubscribeTo() : received a null destinationID !");
-    } else {
-	if (destinationID.equals (this.regID))
-	    destination = userLayoutXML.getDocumentElement (); // the layout element
-	else
-	    destination = userLayoutXML.getElementById (destinationID);
 
-	if(destination==null) {
-	    Logger.log(Logger.ERROR,"CSubscriber::prepareSubscribeTo() : destinationID=\""+destinationID+"\" results in an empty node !"); 
-	} else {
-	    for (int i = 0; i < subIDs.length; i++) {
-                
-                Node channel = channelRegistry.getElementById (subIDs[i]); 
-              
+    if (destinationID == null) {
+        Logger.log(Logger.ERROR,"CSubscriber::prepareSubscribeTo() : received a null destinationID !");
+    } else {
+        if (destinationID.equals (this.regID))
+            destination = userLayoutXML.getDocumentElement (); // the layout element
+        else
+            destination = userLayoutXML.getElementById (destinationID);
+
+        if(destination==null) {
+            Logger.log(Logger.ERROR,"CSubscriber::prepareSubscribeTo() : destinationID=\""+destinationID+"\" results in an empty node !");
+        } else {
+            for (int i = 0; i < subIDs.length; i++) {
+
+                Node channel = channelRegistry.getElementById (subIDs[i]);
+
                 // user wants to add an entire category to layout
-                if(subIDs[i].startsWith("cat")) {       
+                if(subIDs[i].startsWith("cat")) {
                    // Node channel = channelRegistry.getElementById (subIDs[i]);
                     NodeList channels = channel.getChildNodes();
-                    
+
                     for (int j=0; j<channels.getLength(); j++) {
                         channel = channels.item(j);
                         destination.insertBefore (userLayoutXML.importNode(channel, false), null);
                     }
                 }
                 else {
-                 
+
                     //Node channel = channelRegistry.getElementById (subIDs[i]);
                     destination.insertBefore (userLayoutXML.importNode(channel, false), null);
                 }
-	    }
-	    modified = true;
-	}
+            }
+            modified = true;
+        }
     }
   }
-  
+
   private void prepareSaveChanges ()
   {
     // save layout copy

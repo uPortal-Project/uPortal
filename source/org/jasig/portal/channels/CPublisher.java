@@ -53,7 +53,7 @@ import java.util.*;
  * @author John Laker
  * @version $Revision$
  */
-public class CPublisher implements ISpecialChannel
+public class CPublisher implements IPrivilegedChannel
 {
 
   ChannelStaticData staticData = null;
@@ -64,14 +64,14 @@ public class CPublisher implements ISpecialChannel
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
   String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CPublisher";
-  
+
   // channel modes
   private static final int NONE = 0;
   private static final int CHOOSE = 1;
   private static final int PUBLISH = 2;
   private static final int PUBTO = 3;
   private static final int PREVIEW = 4;
-  
+
   private int mode = NONE;
   private Document channelTypes = null;
   private Document channelDecl = null;
@@ -84,7 +84,7 @@ public class CPublisher implements ISpecialChannel
   private boolean modified = false; // modification flag
   public static Vector vReservedParams = getReservedParams();
   private Hashtable hParams = null;
-  
+
   /** Construct a CPublisher.
    */
   public CPublisher ()
@@ -140,26 +140,26 @@ public class CPublisher implements ISpecialChannel
    * @param sd static channel data
    */
   public void setStaticData(final org.jasig.portal.ChannelStaticData sd) throws org.jasig.portal.PortalException
-  { 
+  {
     this.staticData = sd;
   }
 
-  /** Receives channel runtime data from the portal and processes actions 
-   * passed to it.  The names of these parameters are entirely up to the channel. 
+  /** Receives channel runtime data from the portal and processes actions
+   * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
   public void setRuntimeData(final org.jasig.portal.ChannelRuntimeData rd) throws org.jasig.portal.PortalException
   {
-    this.runtimeData = rd;    
-    
+    this.runtimeData = rd;
+
     //catID = runtimeData.getParameter("catID");
     String role = "student"; //need to get from current user
     chanReg = new ChannelRegistryImpl();
-    
+
     //get fresh copy of both since we don't really know if changes have been made
-   
+
     if (channelTypes==null) channelTypes = chanReg.getTypesXML(role);
-    
+
     action = runtimeData.getParameter ("action");
     System.out.println("action: "+ action);
     if (action != null)
@@ -175,9 +175,9 @@ public class CPublisher implements ISpecialChannel
       else if (action.equals("cancel"))
           mode = NONE;
     }
-        
+
   }
-      
+
 
   /** Output channel content to the portal
    * @param out a sax document handler
@@ -198,17 +198,17 @@ public class CPublisher implements ISpecialChannel
           processXML ("main", out);
           break;
       }
-    } 
+    }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e); 
+      Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   private void processXML (String stylesheetName, DocumentHandler out) throws org.xml.sax.SAXException
   {
     XSLTInputSource xmlSource = null;
-    
+
     switch (mode)
       {
         case CHOOSE:
@@ -220,22 +220,22 @@ public class CPublisher implements ISpecialChannel
           xmlSource = new XSLTInputSource (channelTypes);
           break;
       }
-      
+
     XSLTInputSource xslSource = set.getStylesheet(stylesheetName, runtimeData.getHttpRequest());
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
     if (xslSource != null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-      processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));        
-      processor.setStylesheetParam("currentStep", processor.createXString (currentStep));  
-      processor.setStylesheetParam("modified", processor.createXBoolean (modified));        
+      processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));
+      processor.setStylesheetParam("currentStep", processor.createXString (currentStep));
+      processor.setStylesheetParam("modified", processor.createXBoolean (modified));
       processor.process (xmlSource, xslSource, xmlResult);
     }
-    else 
+    else
       Logger.log(Logger.ERROR, "org.jasig.portal.channels.CPublisher: unable to find a stylesheet for rendering");
   }
-  
+
   private void prepareChoose ()
   {
     mode = CHOOSE;
@@ -243,8 +243,8 @@ public class CPublisher implements ISpecialChannel
 
     if (runtimeURI != null)
       declURI = runtimeURI;
-    
-    try{ 
+
+    try{
         org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
         parser.parse(UtilitiesBean.fixURI(declURI));
         System.out.println("declURI: "+ UtilitiesBean.fixURI(declURI));
@@ -261,36 +261,36 @@ public class CPublisher implements ISpecialChannel
     numSteps = Integer.parseInt(runtimeData.getParameter("numSteps"));
     HttpServletRequest req = runtimeData.getHttpRequest ();
     Enumeration e = req.getParameterNames();
-    
+
     if(!currentStep.equals("end")) {
         int i = Integer.parseInt(currentStep);
-        if(i < numSteps){ 
+        if(i < numSteps){
             currentStep = Integer.toString(i+1);
         }
         else {
             publishChannel();
             currentStep = "end";
     }
-    
+
     System.out.println("numSteps: "+ numSteps);
     System.out.println("currentStep: "+ currentStep);
-    
+
     while(e.hasMoreElements()) {
         String s = (String)e.nextElement();
-        
+
         if(!vReservedParams.contains(s)){
             if (runtimeData.getParameter(s)!=null) {
                 System.out.println("adding param: "+ s);
                 System.out.println("adding param value: "+ runtimeData.getParameter(s));
             hParams.put(s, runtimeData.getParameter(s));
             }
-        }    
+        }
     }
   }
   }
-    
+
     private void publishChannel () {
-        
+
         String nextID = chanReg.getNextId();
         Document doc = new DocumentImpl();
         Element chan = doc.createElement("channel");
@@ -303,7 +303,7 @@ public class CPublisher implements ISpecialChannel
         chan.setAttribute("detachable", "true");
         chan.setAttribute("class", (String)hParams.get("class"));
         if (nextID!=null) chan.setAttribute("ID", "chan"+nextID);
-        
+
         Enumeration e = hParams.keys();
         while (e.hasMoreElements()) {
             String name = (String)e.nextElement();
@@ -313,61 +313,61 @@ public class CPublisher implements ISpecialChannel
             chan.appendChild(el);
         }
         doc.appendChild(chan);
-        
+
         chanReg.addChannel(nextID, "new channel", doc);
     }
-        
-   
+
+
   private void preparePublishTo ()
   {
     mode = PUBTO;
     String destinationID = runtimeData.getParameter ("destination");
     Node destination = null;
-    
-    if (destinationID == null) {
-	Logger.log(Logger.ERROR,"CPublisher::preparePublishTo() : received a null destinationID !");
-    } else {
-	if (destinationID.equals (this.catID))
-	    destination = channelDecl.getDocumentElement (); // the layout element
-	else
-	    destination = channelDecl.getElementById (destinationID);
 
-	if(destination==null) {
-	    Logger.log(Logger.ERROR,"CPublisher::preparePublishTo() : destinationID=\""+destinationID+"\" results in an empty node !"); 
-	} else {
-	    for (int i = 0; i < catIDs.length; i++) {
-                
-                Node channel = channelTypes.getElementById (catIDs[i]); 
-              
+    if (destinationID == null) {
+        Logger.log(Logger.ERROR,"CPublisher::preparePublishTo() : received a null destinationID !");
+    } else {
+        if (destinationID.equals (this.catID))
+            destination = channelDecl.getDocumentElement (); // the layout element
+        else
+            destination = channelDecl.getElementById (destinationID);
+
+        if(destination==null) {
+            Logger.log(Logger.ERROR,"CPublisher::preparePublishTo() : destinationID=\""+destinationID+"\" results in an empty node !");
+        } else {
+            for (int i = 0; i < catIDs.length; i++) {
+
+                Node channel = channelTypes.getElementById (catIDs[i]);
+
                 // user wants to add an entire category to layout
-                if(catIDs[i].startsWith("cat")) {       
+                if(catIDs[i].startsWith("cat")) {
                    // Node channel = channelRegistry.getElementById (subIDs[i]);
                     NodeList channels = channel.getChildNodes();
-                    
+
                     for (int j=0; j<channels.getLength(); j++) {
                         channel = channels.item(j);
                         destination.insertBefore (channelDecl.importNode(channel, false), null);
                     }
                 }
                 else {
-                 
+
                     //Node channel = channelRegistry.getElementById (subIDs[i]);
                     destination.insertBefore (channelDecl.importNode(channel, false), null);
                 }
-	    }
-	    modified = true;
-	}
+            }
+            modified = true;
+        }
     }
   }
-  
+
   private void prepareSaveChanges ()
   {
     // save layout copy
     catID = this.catID;
     modified = false;
   }
-  
+
   public void setPortalControlStructures(final org.jasig.portal.PortalControlStructures p1) throws org.jasig.portal.PortalException {
   }
-  
+
 }
