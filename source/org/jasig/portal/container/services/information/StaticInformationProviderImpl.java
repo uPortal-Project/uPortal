@@ -149,7 +149,7 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
             Collection values12 = new ArrayList();
             values12.add("dummyValue2");
             preferences1.add("dummyName2", values12);
-            //preferences.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
+            preferences1.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
             portletDefinition1.setPreferences(preferences1);
                 
             ContentTypeSetImpl contentTypes = new ContentTypeSetImpl();
@@ -204,7 +204,7 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
             Collection values22 = new ArrayList();
             values22.add("dummyValue2");
             preferences2.add("dummyName2", values22);
-            //preferences.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
+            preferences2.setPreferencesValidator("org.apache.pluto.core.impl.PreferencesValidatorImpl");
             portletDefinition2.setPreferences(preferences2);
                 
             ContentTypeSetImpl contentTypes2 = new ContentTypeSetImpl();
