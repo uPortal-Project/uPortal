@@ -7,19 +7,28 @@
 	<params>
 		<step>
 			<ID>1</ID>
-			<name>Provide RSS URL.</name> <!-- displayed at the top of the step screen -->
-			<description/>	<!-- intention is for documentation but could be used for other things -->
-			<parameter modify="publish-only"> 
-				<name>prot</name>   <!-- the name value -->
-				<label>Protocol</label> <!-- the field label -->
+			<name>Provide RSS URL.</name>
+			<!-- displayed at the top of the step screen -->
+			<description/>
+			<!-- intention is for documentation but could be used for other things -->
+			<parameter modify="publish-only">
+				<name>prot</name>
+				<!-- the name value -->
+				<label>Protocol</label>
+				<!-- the field label -->
 				<type>
-					<data>string</data>  <!-- for data type error checking -->
-					<base>single-choice</base>  <!-- generic display type -->
-					<display>radio</display> <!-- more specific display type - if not specified the default will be displayed -->
-					<restriction type="enumeration"> <!-- list of values used -->
+					<data>string</data>
+					<!-- for data type error checking -->
+					<base>single-choice</base>
+					<!-- generic display type -->
+					<display>drop-down</display>
+					<!-- more specific display type - if not specified the default will be displayed -->
+					<restriction type="enumeration">
+						<!-- list of values used -->
 						<value>http://</value>
 						<value>ftp://</value>
-						<value default="true">file://</value> <!-- value flagged as default -->
+						<value default="true">file://</value>
+						<!-- value flagged as default -->
 					</restriction>
 				</type>
 			</parameter>
@@ -30,21 +39,24 @@
 					<data>string</data>
 					<base>text</base>
 					<display>text</display>
-					<length>30</length>  <!-- length and maxlength for text field -->
+					<length>30</length>
+					<!-- length and maxlength for text field -->
 					<maxlength>40</maxlength>
-					<restriction type="range"> <!-- range could be used for error checking -->
+					<restriction type="range">
+						<!-- range could be used for error checking -->
 						<min>0</min>
 						<max>40</max>
 					</restriction>
 				</type>
-				<defaultValue>webpages/stylehseets....</defaultValue> <!-- default value for text field -->
+				<defaultValue>webpages/stylehseets....</defaultValue>
+				<!-- default value for text field -->
 			</parameter>
 		</step>
 		<step>
 			<ID>2</ID>
 			<name>How many healines do you want displayed?</name>
 			<description>user sets limit on number of displayed headlines</description>
-			<parameter modify="subscribe">
+			<parameter modify="subscribe-only">
 				<name>hlNum</name>
 				<label>Number of headlines:</label>
 				<type>
