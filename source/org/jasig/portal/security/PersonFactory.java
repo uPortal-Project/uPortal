@@ -31,7 +31,8 @@ public class PersonFactory {
     /**
      * The guest user name specified in portal.properties.
      */
-    public static final String GUEST_USERNAME = PropertiesManager.getProperty("org.jasig.portal.security.PersonFactory.guest_user_name");
+    public static final String GUEST_USERNAME = 
+        PropertiesManager.getProperty("org.jasig.portal.security.PersonFactory.guest_user_name", "guest");
 
     /**
      * Creates an empty <code>IPerson</code> implementation. 
