@@ -171,6 +171,7 @@ public class RDBMUserLayoutStore
       System.err.println("channel " + chanName + "@" + chanId + " has tag " + chanId);
     }
     addChannelHeaderAttribute("name", chanName, channel);
+    addChannelHeaderAttribute("description", chanDesc, channel);
     addChannelHeaderAttribute("fname", chanFName, channel);
     addChannelHeaderAttribute("class", chanClass, channel);
     addChannelHeaderAttribute("timeout", chanTimeout, channel);

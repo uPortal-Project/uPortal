@@ -13,6 +13,7 @@
   ID ID #REQUIRED
   priority CDATA #REQUIRED
   name CDATA #REQUIRED 
+  description CDATA #IMPLIED
   timeout CDATA "5000"
   minimized (true|false) "true"
   detachable (true|false) "true"
