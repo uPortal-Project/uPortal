@@ -36,7 +36,6 @@
 package org.jasig.portal.layout.channels;
 
 import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.utils.CommonUtils;
@@ -317,6 +316,7 @@ public class CContentSubscriber extends FragmentManager {
 	}
 
     public void initRegistry() throws PortalException {	
+    	channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
       	registry = DocumentFactory.getNewDocument();
       	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));		
         getFragmentList(registry,registry.getDocumentElement());
@@ -331,11 +331,6 @@ public class CContentSubscriber extends FragmentManager {
 			if ( alm == null )  
 			  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!");  
 	}
-
-    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
-        super.setRuntimeData(rd);
-        channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-    }
 
     public void renderXML (ContentHandler out) throws PortalException {
     	
