@@ -1,21 +1,21 @@
-<!-- 
+<!--
      This is the build.xml for uPortal 2 which can be used in
      conjunction with Ant (http://jakarta.apache.org/ant/) to
      build, deploy, and distribute the uPortal project. Type
      "ant -projecthelp" to see a list of ant targets.  This
      build file is based on a sample build.xml distriuted with
      Jakarta's Tomcat 4.
-     
-     Notes: 
-     
+
+     Notes:
+
      You shouldn't need to modify this file.  Instead, modify
      build.properties which contains configurable paths to jar
      files and other resources.
-     
-     "ant db" will load your database, but you must first 
+
+     "ant db" will load your database, but you must first
      set up the JDBC properties in rdbm.properties and possibly
      PersonDirs.xml, both of which are in the properties directory.
-     
+
      Author: Ken Weiner, kweiner@interactivebusiness.com
      Version $Revision$
 -->
@@ -132,81 +132,81 @@
   exposes to web applications, we will not need to explicitly list any of those
   dependencies.  You only need to worry about external dependencies for JAR
   files that you are going to include inside your "/WEB-INF/lib" directory.
-  
+
   This version of uPortal requires the following jars:
-  
+
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
-                       into HTML, text, or other XML document types. 
+                       into HTML, text, or other XML document types.
                        Version: 2.2 D11
                        URL: http://xml.apache.org/xalan-j/
-                       
-  xerces.jar           Xerces2 is the next generation of high performance, 
-                       fully compliant XML parsers in the Apache Xerces family.   
-                       Be sure to use the version of Xerces that comes with 
+
+  xerces.jar           Xerces2 is the next generation of high performance,
+                       fully compliant XML parsers in the Apache Xerces family.
+                       Be sure to use the version of Xerces that comes with
                        the Xalan you are using.
-                       Version: (depends on Xalan version) 
+                       Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xerces2-j/
 
-  xml-apis.jar         SAX, DOM, and JAVAX interfaces which have been recently 
-                       separated from the xalan and xerces jars.   
-                       Be sure to use the version of xml-apis.jar that comes with 
+  xml-apis.jar         SAX, DOM, and JAVAX interfaces which have been recently
+                       separated from the xalan and xerces jars.
+                       Be sure to use the version of xml-apis.jar that comes with
                        the Xalan you are using.
-                       Version: (depends on Xalan version) 
+                       Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xalan-j/
-                       
+
   bsf.jar              Bean scripting framework (BSF) used by the CWebProxy channel.
-                       Be sure to use the version of BSF that comes with 
+                       Be sure to use the version of BSF that comes with
                        the Xalan you are using.
-                       Version: (depends on Xalan version) 
+                       Version: (depends on Xalan version)
                        URL: http://oss.software.ibm.com/developerworks/projects/bsf/
-                       
+
   tidy.jar             Turns HTML into well formed XHTML.
                        Used by the CWebProxy channel.
                        Version: 04aug2000r6
                        URL: http://lempinen.net/sami/jtidy/
-                       
+
   tyrex.jar            An in-memory JNDI implementation.
                        Version: 0.9.7.0
                        URL: http://tyrex.exolab.org/
-  
+
   mail.jar             JavaMail, a set of abstract classes that model a mail system.
                        The CIMAPMail channel uses this API.
                        Version: 1.2
                        URL: http://java.sun.com/products/javamail/
-  
+
   activation.jar       JavaBeans Activation Framework.  This library is required
                        by JavaMail.
                        Version: 1.0.1
                        URL: http://java.sun.com/products/javabeans/glasgow/jaf.html
-  
+
   log4j.jar            Logging package used by uPortal.
                        Version: 1.1.3
                        URL: http://jakarta.apache.org/log4j/
-  
-  jaas.jar             The Java Authentication and Authorization Service (JAAS) 
-                       is a Java package that enables services to authenticate 
+
+  jaas.jar             The Java Authentication and Authorization Service (JAAS)
+                       is a Java package that enables services to authenticate
                        and enforce access controls upon users.
                        Version: 1.0
                        URL: http://java.sun.com/products/jaas/
-  
-  cos.jar              Servlet support classes including file upload package 
+
+  cos.jar              Servlet support classes including file upload package
                        MultipartRequest and MultipartParser. Used by the portal
                        to make file uploads possible.
                        Version: 19Jun2001
                        URL: http://www.servlets.com/cos/
-                       
+
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
                        Version: 2.2 or 2.3
-                       URL: http://jakarta.apache.org/tomcat/                   
-  
+                       URL: http://jakarta.apache.org/tomcat/
+
   jdbcDriver.jar       This should contain the JDBC driver for whatever relational
                        database you plan to use.  For development, HypersonicSQL is
                        a nice choice.  For production, you probably want something
                        more robust like Oracle or PostgreSQL.
                        Version: (depends on your database)
                        URL: (depends on your database)
-  
+
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
@@ -281,7 +281,7 @@
 
 -->
 
-  <target name="clean" 
+  <target name="clean"
    description="Delete old build and dist directories">
     <delete dir="${build.home}"/>
     <delete dir="${dist.home}"/>
@@ -300,7 +300,7 @@
 
 -->
 
-  <target name="compile" depends="prepare" 
+  <target name="compile" depends="prepare"
    description="Compile Java sources">
 
     <!-- Compile Java classes as necessary -->
@@ -317,21 +317,21 @@
     <copy  todir="${build.home}/WEB-INF/classes/properties">
       <fileset dir="properties" includes="**/*"/>
     </copy>
-    
+
     <!-- Copy serializer resources -->
     <copy  todir="${build.home}/WEB-INF/classes/org/jasig/portal/serialize">
       <fileset dir="source/org/jasig/portal/serialize" includes="**/*.res"/>
     </copy>
-    
+
     <!-- Copy all stylesheets and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl"/>
     </copy>
 
-    <!-- Copy everything in media except for files that are accessible from the web -->    
+    <!-- Copy everything in media except for files that are accessible from the web -->
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="webpages/media" excludes="CVS,**/*.gif,**/*.jpg,**/*.css"/>
-    </copy>        
+    </copy>
 
   </target>
 
@@ -483,6 +483,37 @@
   </target>
 
 
+<!-- ==================== DbUnload Target ================================= -->
+
+<!--
+
+  The "dbunload" target runs uPortal's DbUnload program to dump a database table.
+  to run this target, you must specify the table name and output file parameters
+  on the command line.
+  For example:
+
+  ant dbunload -Dtablename=up_channel -Dxmlfile=-
+-->
+
+
+  <target name="dbunload" depends="compile">
+    <echo message="Invoking DbUnload"/>
+    <property name="tablename" value=" "/>
+    <property name="xmlfile" value=" "/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbUnload">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xalan.jar}"/>
+        <pathelement path="${xerces.jar}"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbcDriver.jar}"/>
+      </classpath>
+      <arg value="${tablename}"/>
+      <arg value="${xmlfile}"/>
+    </java>
+  </target>
+
 
 <!-- ==================== md5passwd Target ================================ -->
 
@@ -490,7 +521,7 @@
 
   The "md5passwd" target runs uPortal's md5passwd program to create an entry for
   a user in the UP_PERSON_DIR table. To run this target, you must specify
-  the username parameter in the command like.  For example:
+  the username parameter in the command line.  For example:
 
   ant md5passwd -Dusername=ken
 
