@@ -57,7 +57,7 @@ import org.w3c.dom.Element;
  */
 public class CHeader extends BaseChannel
 {
-  String sslUri = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
+  private static final String sslUri = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
 
   public void renderXML(DocumentHandler out) throws PortalException
   {
