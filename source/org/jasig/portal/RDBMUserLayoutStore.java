@@ -1566,7 +1566,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     return  profileId;
   }
 
-  public Document getUserLayout (IPerson person, UserProfile profile) throws Exception {
+  public Document getUserLayout (IPerson person, UserProfile profile) throws Exception { 
     int userId = person.getID();
     int realUserId = userId;
     ResultSet rs;
@@ -1580,6 +1580,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       root.setAttribute("ID","root");
       doc.putIdentifier("root",root);
       Statement stmt = con.createStatement();
+      // A separate statement is needed so as not to interfere with ResultSet
+      // of statements used for queries
+      Statement insertStmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
         // eventually, we need to fix template layout implementations so you can just do this:
@@ -1651,7 +1654,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 //            " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+userId;
 
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
-          stmt.executeUpdate(Insert);
+          insertStmt.executeUpdate(Insert);
          }
           RDBMServices.commit(con); // Make sure it appears in the store
         }
@@ -1815,6 +1818,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
       } finally {
         stmt.close();
+        insertStmt.close();
       }
       return  doc;
     } finally {
