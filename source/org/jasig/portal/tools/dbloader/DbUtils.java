@@ -1,36 +1,6 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+ *  See license distributed with this file and
+ *  available online at http://www.uportal.org/license.html
  */
 
 package org.jasig.portal.tools.dbloader;
@@ -42,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Hashtable;
 
 import org.jasig.portal.RDBMServices;
@@ -95,25 +66,33 @@ class DbUtils
         // Check for a mapping in DbLoader.xml
         localDataTypeName = config.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
 
+        // Find the type code for this generic type name
+        int dataTypeCode = DbUtils.getJavaSqlType(genericDataTypeName);
+        
         if (localDataTypeName != null)
               return localDataTypeName;
 
+        if (config.getLocalTypeMap() == null) {
 
-          if (config.getLocalTypeMap() == null) {
-              config.setLocalTypeMap(new Hashtable());
-              
+            Map localTypeMap = new Hashtable();
+            config.setLocalTypeMap(localTypeMap);
+
               try {
-                  // Find the first local type name matching the type code
+                  
                   ResultSet rs = dbmd.getTypeInfo();
                   try {
                       while (rs.next())
                       {
                           Integer dbTypeCode = new Integer(rs.getInt("DATA_TYPE"));
                           String dbTypeName = rs.getString("TYPE_NAME");
-                              
-                          config.getLocalTypeMap().put(dbTypeCode, dbTypeName);
+
+                          // Add only first occurence of each type code
+                          // See Bugzilla for a detailed explanation                              
+                          if (!localTypeMap.containsKey(dbTypeCode)) {                            
+                              localTypeMap.put(dbTypeCode, dbTypeName);
+                          }                          
                       }
-                  } 
+                  }
                   finally {
                       rs.close();
                   }
@@ -125,13 +104,10 @@ class DbUtils
                 e.printStackTrace(config.getLog());
                 DbLoader.exit(config);
               }
-              
-              config.setLocalTypeMap(Collections.unmodifiableMap(config.getLocalTypeMap()));
           }
-        // Find the type code for this generic type name
-        int dataTypeCode = DbUtils.getJavaSqlType(genericDataTypeName);
-          Integer dataTypeCodeObj = new Integer(dataTypeCode);
-          localDataTypeName = (String)config.getLocalTypeMap().get(dataTypeCodeObj);
+
+        Integer dataTypeCodeObj = new Integer(dataTypeCode);
+        localDataTypeName = (String)config.getLocalTypeMap().get(dataTypeCodeObj);
 
         if (localDataTypeName != null)
           {
