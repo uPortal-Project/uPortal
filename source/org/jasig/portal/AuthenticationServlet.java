@@ -42,8 +42,7 @@ import  javax.servlet.http.HttpServletResponse;
 import  javax.servlet.http.HttpSession;
 import  javax.servlet.ServletException;
 import  java.io.IOException;
-import  java.util.Enumeration;
-import  java.util.HashMap;
+import  java.util.*;
 import  org.jasig.portal.services.Authentication;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.PersonManagerFactory;
@@ -63,16 +62,43 @@ import  java.util.Properties;
  */
 public class AuthenticationServlet extends HttpServlet {
   private static final String redirectString;
+  private static HashMap credentialTokens;
+  private static HashMap principalTokens;
   private Authentication m_authenticationService = null;
 
     static {
       String upFile=UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UserInstance.USER_LAYOUT_ROOT_NODE+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
+      HashMap cHash = new HashMap(1);
+      HashMap pHash = new HashMap(1);
       try {
-          upFile = UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,null,null);
+         upFile = UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,null,null);
+         String key;
+         // We retrieve the tokens representing the credential and principal
+         // parameters from the security properties file.
+         Properties props =
+            ResourceLoader.getResourceAsProperties(AuthenticationServlet.class, "/properties/security.properties");
+         Enumeration propNames = props.propertyNames();
+         while (propNames.hasMoreElements()) {
+            String propName = (String)propNames.nextElement();
+            String propValue = props.getProperty(propName);
+            //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::initializer() propValue/propName = " + propValue + "/" + propName);
+            if (propName.startsWith("credentialToken.")) {
+               key = propName.substring(16);
+               cHash.put(key, propValue);
+            }
+            if (propName.startsWith("principalToken.")) {
+               key = propName.substring(15);
+               pHash.put(key, propValue);
+            }
+         }
       } catch(PortalException pe) {
           LogService.log(LogService.ERROR,"AuthenticationServlet::static "+pe);
+      } catch(IOException ioe) {
+          LogService.log(LogService.ERROR,"AuthenticationServlet::static "+ioe);
       }
       redirectString=upFile;
+      credentialTokens=cHash;
+      principalTokens=pHash;
     }
 
   /**
@@ -112,13 +138,10 @@ public class AuthenticationServlet extends HttpServlet {
     try {
       // Get the person object associated with the request
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
-      // We retrieve the tokens representing the credential and userid parameters
-      // from the security properties file and then grab all of the principals and
-      // credentials from the request and load them into their respective HashMaps.
-      Properties props =
-      ResourceLoader.getResourceAsProperties(this.getClass(), "/properties/security.properties");
-      HashMap principals = getPropertyFromRequest (props, "principalToken", request);
-      HashMap credentials = getPropertyFromRequest (props, "credentialToken", request);
+      // WE grab all of the principals and credentials from the request and load
+      // them into their respective HashMaps.
+      HashMap principals = getPropertyFromRequest (principalTokens, request);
+      HashMap credentials = getPropertyFromRequest (credentialTokens, request);
 
       // Attempt to authenticate using the incoming request
       m_authenticationService.authenticate(principals, credentials, person);
@@ -149,35 +172,33 @@ public class AuthenticationServlet extends HttpServlet {
   }
 
   /**
-   * Gather all properties from a properties file matching a name and get their
-   * values from the request and load them into a HashMap that is returned.
-   * @param props
-   * @param propName
+   * Get the values represented by each token from the request and load them into a
+   * HashMap that is returned.
+   * @param propNames
    * @param request
    * @return HashMap of properties
    */
-  private HashMap getPropertyFromRequest (Properties props, String propName, HttpServletRequest request) {
+  private HashMap getPropertyFromRequest (HashMap tokens, HttpServletRequest request) {
    // Iterate through all of the other property keys looking for the first property
    // named like propname that has a value in the request
     HashMap retHash = new HashMap(1);
-    Enumeration propNames = props.propertyNames();
-    while (propNames.hasMoreElements()) {
-      String candidate = (String)propNames.nextElement();
-      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() Candidate = " + candidate);
-      String candidateValue = props.getProperty(candidate);
-      if (candidate.startsWith(propName)) {
-         String propValue = request.getParameter(candidateValue);
-         // null value causes exception in context.authentication
-         // alternately we could just not set parm if value is null
-         propValue = (propValue == null ? "" : propValue);
-         // The relationship between the way the properties are stored and the way
-         // the subcontexts are named has to be closely looked at to make this work.
-         // Do we want to strip off the "root." or even the "root.simple."?
-         String key = candidate.substring(propName.length() + 1);
-         // 2nd part assumes prefix of "root.". This obviously is weak and ready to break.
-         key = (key.equals("root") ? key : key.substring(5));
-         retHash.put(key, propValue);
-      }
+    Iterator tokenItr = tokens.keySet().iterator();
+    while (tokenItr.hasNext()) {
+      String ctxName = (String)tokenItr.next();
+      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() ctxName = " + ctxName);
+      String parmName = (String)tokens.get(ctxName);
+      String parmValue = request.getParameter(parmName);
+      // null value causes exception in context.authentication
+      // alternately we could just not set parm if value is null
+      parmValue = (parmValue == null ? "" : parmValue);
+      // The relationship between the way the properties are stored and the way
+      // the subcontexts are named has to be closely looked at to make this work.
+      // The keys are either "root" or the subcontext name that follows "root.". As
+      // as example, the contexts ["root", "root.simple", "root.cas"] are represented
+      // as ["root", "simple", "cas"].
+      String key = (ctxName.startsWith("root.") ? ctxName.substring(5) : ctxName);
+      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() key = " + key);
+      retHash.put(key, parmValue);
     }
     return (retHash);
   }
