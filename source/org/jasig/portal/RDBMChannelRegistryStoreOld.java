@@ -439,10 +439,10 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
   }
 
   public final RDBMServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
-    return RDBMChannelRegistryStore.getChannelParamPstmt();
+    return RDBMChannelRegistryStore.getChannelParamPstmt(con);
   }
 
   public final RDBMServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
-    return RDBMChannelRegistryStore.getChannelPstmt();
+    return RDBMChannelRegistryStore.getChannelPstmt(con);
   }
 }
