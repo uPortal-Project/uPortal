@@ -117,9 +117,9 @@ public class RDBMChannelRegistryStore
    * @param chanXML XML that describes the channel
    * @param role an array of roles
    */
-  public void addChannel (int id, String title, Document doc, String catID[]) {
+  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) {
     try {
-      GenericPortalBean.getUserLayoutStore().addChannel(id, title, doc, catID);
+      GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, title, doc, catID);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
       //return status;
@@ -130,9 +130,9 @@ public class RDBMChannelRegistryStore
    * This would be called by a publish channel.
    * @param chanXML XML that describes the channel
    */
-  public void addChannel (int id, String title, Document doc) {
+  public void addChannel (int id, int publisherId, String title, Document doc) {
     try {
-      GenericPortalBean.getUserLayoutStore().addChannel(id, title, doc);
+      GenericPortalBean.getUserLayoutStore().addChannel(id, publisherId, title, doc);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
       //return status;

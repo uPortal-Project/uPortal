@@ -65,8 +65,8 @@ public interface IUserLayoutStore {
   public void deleteUserProfile(int userId,int profileId) throws Exception;
 
   /* ChannelRegistry */
-  public void addChannel(int id, String title, Document doc) throws Exception;
-  public void addChannel(int id, String title, Document doc, String catID[]) throws Exception;
+  public void addChannel(int id, int publisherId, String title, Document doc) throws Exception;
+  public void addChannel(int id, int publisherId, String title, Document doc, String catID[]) throws Exception;
   public Element getRegistryXML(org.apache.xerces.dom.DocumentImpl chanDoc, Element root, String catID, String role) throws Exception;
   public void getTypesXML(Document types, Element root, String role) throws Exception;
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;

@@ -180,19 +180,19 @@ public class CPublisher
       currentStep = runtimeData.getParameter("currentStep");
     if (action != null) {
       if (action.equals("choose"))
-        prepareChoose(); 
+        prepareChoose();
       else if (action.equals("publish"))
-        preparePublish(); 
+        preparePublish();
       else if (action.equals("publishCats"))
-        preparePublishCats(); 
+        preparePublishCats();
       else if (action.equals("publishRoles"))
-        preparePublishRoles(); 
+        preparePublishRoles();
       else if (action.equals("publishControls"))
-        preparePublishControls(); 
+        preparePublishControls();
       else if (action.equals("publishName"))
-        preparePublishName(); 
+        preparePublishName();
       else if (action.equals("saveChanges"))
-        prepareSaveChanges(); 
+        prepareSaveChanges();
       else if (action.equals("cancel"))
         mode = NONE;
     }
@@ -248,8 +248,8 @@ public class CPublisher
         ssParams.put("extraSteps", Integer.toString(EXTRA));
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      } 
-      else 
+      }
+      else
         Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -293,11 +293,11 @@ public class CPublisher
       int i = Integer.parseInt(currentStep);
       if (i < numSteps) {
         currentStep = Integer.toString(i + 1);
-      } 
+      }
       else if (i == numSteps) {
         mode = CATS;
         currentStep = Integer.toString(i + 1);
-      } 
+      }
       else {
         publishChannel();
         currentStep = "end";
@@ -342,7 +342,7 @@ public class CPublisher
       }
     }
     doc.appendChild(chan);
-    chanReg.addChannel(nextID, chanName, doc, catID);
+    chanReg.addChannel(nextID, staticData.getPerson().getID(), chanName, doc, catID);
     storeChanRoles(nextID);
   }
 
@@ -435,7 +435,7 @@ public class CPublisher
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private Document getRoles () {
     Document roleDoc = null;
@@ -473,7 +473,7 @@ public class CPublisher
       // Make sure all of the roles have been stored
       if (rolesSet == vRoles.size()) {
         return  (true);
-      } 
+      }
       else {
         return  (false);
       }
@@ -487,7 +487,7 @@ public class CPublisher
    * set up a control document for the stylesheet.
    * grab it from the CPD.  The channelDefinition DTD should ensure
    * that it's there and has all the attributes.
-   * @return 
+   * @return
    */
   private Document getControls () {
     Document controlDoc = new DocumentImpl();
@@ -505,7 +505,7 @@ public class CPublisher
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private Document getNameDoc () {
     Document nameDoc = null;

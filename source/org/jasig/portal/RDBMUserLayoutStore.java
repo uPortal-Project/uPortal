@@ -663,10 +663,10 @@ public class RDBMUserLayoutStore
    *   ChannelRegistry
    *
    */
-  public void addChannel (int id, String title, Document doc, String catID[]) throws Exception {
+  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]) throws Exception {
     Connection con = rdbmService.getConnection();
     try {
-      addChannel(id, title, doc, con);
+      addChannel(id, publisherId, title, doc, con);
       // Set autocommit false for the connection
       setAutoCommit(con, false);
       Statement stmt = con.createStatement();
@@ -697,11 +697,11 @@ public class RDBMUserLayoutStore
    * @param doc
    * @exception Exception
    */
-  public void addChannel (int id, String title, Document doc) throws Exception {
+  public void addChannel (int id, int publisherId, String title, Document doc) throws Exception {
     //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
     Connection con = rdbmService.getConnection();
     try {
-      addChannel(id, title, doc, con);
+      addChannel(id, publisherId, title, doc, con);
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -768,7 +768,7 @@ public class RDBMUserLayoutStore
    * @param con
    * @exception Exception
    */
-  protected void addChannel (int id, String title, Document doc, Connection con) throws Exception {
+  protected void addChannel (int id, int publisherId, String title, Document doc, Connection con) throws Exception {
     Element channel = (Element)doc.getFirstChild();
     // Set autocommit false for the connection
     setAutoCommit(con, false);
@@ -782,7 +782,7 @@ public class RDBMUserLayoutStore
       String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
           + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
       sInsert += "VALUES (" + id + ",'" + sqlTitle + "','" + sqlTitle + " Channel','" + channel.getAttribute("class") +
-          "'," + "0," + sysdate + ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable"))
+          "'," + publisherId + "," + sysdate + ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable"))
           + "'" + ",'" + dbBool(channel.getAttribute("editable")) + "'" + ",'" + dbBool(channel.getAttribute("hasHelp"))
           + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" + ",'" + dbBool(channel.getAttribute("unremovable"))
           + "'," + "'" + dbBool(channel.getAttribute("detachable")) + "'" + ",'" + sqlName + "','" + sqlFName + "')";

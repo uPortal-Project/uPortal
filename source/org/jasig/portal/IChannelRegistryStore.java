@@ -112,7 +112,7 @@ public interface IChannelRegistryStore {
    * @param doc
    * @param catID[]
    */
-  public void addChannel (int id, String title, Document doc, String catID[]);
+  public void addChannel (int id, int publisherId, String title, Document doc, String catID[]);
 
   /**
    * put your documentation comment here
