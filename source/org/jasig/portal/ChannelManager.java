@@ -223,19 +223,49 @@ public class ChannelManager {
 		ch=errorChannel;
 	    }
 	}
+	if(!chanID.equals(channelTarget)) {
+	    // take care of the special channels first
+	    if(ch instanceof ISpecialChannel) {
+		// send the control structures
+		try {
+		    ((ISpecialChannel) ch).setPortalControlStructures(pcs);
+		} catch (Exception e) {
+		    channelTable.remove(ch);
+		    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,chanID,ch);
+		    channelTable.put(chanID,errorChannel);
+		    ch=errorChannel;
+		    // set portal control structures
+		    try {
+			errorChannel.setPortalControlStructures(pcs);
+		    } catch (Exception e2) {
+			// things are looking bad for our hero
+			StringWriter sw=new StringWriter();
+		    e2.printStackTrace(new PrintWriter(sw));
+		    sw.flush();
+		    Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+		    }
+		}
+	    }
 	    
-	// take care of the special channels first
-	if(ch instanceof ISpecialChannel) {
-	    // send the control structures
+	    ChannelRuntimeData rd = new ChannelRuntimeData ();
+	    rd.setHttpRequest (req);
+	    String reqURI = req.getRequestURI ();
+	    reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
+	    rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
 	    try {
-		((ISpecialChannel) ch).setPortalControlStructures(pcs);
-	    } catch (Exception e) {
+		ch.setRuntimeData (rd);
+	    }
+	    catch (Exception e) {
 		channelTable.remove(ch);
-		CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,chanID,ch);
+		CError errorChannel=new CError(CError.SET_RUNTIME_DATA_EXCEPTION,e,chanID,ch);
 		channelTable.put(chanID,errorChannel);
 		ch=errorChannel;
-		// set portal control structures
+		// demand output
 		try {
+		    ChannelRuntimeData erd = new ChannelRuntimeData ();
+		    erd.setHttpRequest (req);
+		    erd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+		    errorChannel.setRuntimeData (erd);
 		    errorChannel.setPortalControlStructures(pcs);
 		} catch (Exception e2) {
 		    // things are looking bad for our hero
@@ -244,35 +274,6 @@ public class ChannelManager {
 		    sw.flush();
 		    Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
 		}
-	    }
-	}
-	
-	ChannelRuntimeData rd = new ChannelRuntimeData ();
-	rd.setHttpRequest (req);
-	String reqURI = req.getRequestURI ();
-	reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
-	rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
-	try {
-	    ch.setRuntimeData (rd);
-	}
-	catch (Exception e) {
-	    channelTable.remove(ch);
-	    CError errorChannel=new CError(CError.SET_RUNTIME_DATA_EXCEPTION,e,chanID,ch);
-	    channelTable.put(chanID,errorChannel);
-	    ch=errorChannel;
-	    // demand output
-	    try {
-		ChannelRuntimeData erd = new ChannelRuntimeData ();
-		erd.setHttpRequest (req);
-		erd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
-		errorChannel.setRuntimeData (erd);
-		errorChannel.setPortalControlStructures(pcs);
-	    } catch (Exception e2) {
-		// things are looking bad for our hero
-		StringWriter sw=new StringWriter();
-		e2.printStackTrace(new PrintWriter(sw));
-		sw.flush();
-		Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
 	    }
 	}
 	ChannelRenderer cr = new ChannelRenderer (ch);
