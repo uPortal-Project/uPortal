@@ -5,14 +5,13 @@
 
 package org.jasig.portal.tools;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
-
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.RDBMServices;
@@ -21,7 +20,6 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.AggregatedLayout;
 import org.jasig.portal.layout.AggregatedLayoutManager;
 import org.jasig.portal.layout.AggregatedUserLayoutStore;
-import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.w3c.dom.Document;
