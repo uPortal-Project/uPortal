@@ -36,9 +36,11 @@
 
 package  org.jasig.portal;
 
+import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.utils.BooleanLock;
+import  org.jasig.portal.jndi.PortalNamingException;
+import  org.jasig.portal.utils.BooleanLock;
 import  java.sql.*;
 import  org.w3c.dom.*;
 import  org.apache.xml.serialize.*;
@@ -98,12 +100,17 @@ public class UserLayoutManager implements IUserLayoutManager {
                 // read uLayoutXML
                 uLayoutXML = RdbmServices.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
                 if (uLayoutXML == null) {
-                    Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
+                    LogService.instance().log(LogService.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
                                m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
                 }
                 complete_up=updb.getUserPreferences(m_person, upl);
-                // Initialize the JNDI context for this user
-                JNDIManager.initializeUserContext(uLayoutXML, req.getSession(), m_person);
+                try {
+                  // Initialize the JNDI context for this user
+                  JNDIManager.initializeUserContext(uLayoutXML, req.getSession(), m_person);
+                }
+                catch(PortalNamingException pne) {
+                  LogService.instance().log(LogService.ERROR, "UserLayoutManager(): Could not properly initialize user context", pne);
+                } 
                 // set dirty flag on the layout
                 layout_write_lock.setValue(true);
             }
@@ -111,11 +118,11 @@ public class UserLayoutManager implements IUserLayoutManager {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 unmapped_user_agent = true;
-                Logger.log(Logger.DEBUG, "UserLayoutManager::UserLayoutManager() : unable to find a profile for user \"" + m_person.getID()
+                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::UserLayoutManager() : unable to find a profile for user \"" + m_person.getID()
                            + "\" and userAgent=\"" + userAgent + "\".");
             }
         } catch (Exception e) {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
         }
     }
 
@@ -158,7 +165,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             for (int i = 0; i < sparams.length; i++) {
                 String pValue = req.getParameter(sparams[i]);
                 complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i], pValue);
-                Logger.log(Logger.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
+                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
                            + "\"=\"" + pValue + "\".");
             }
         }
@@ -167,7 +174,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             for (int i = 0; i < tparams.length; i++) {
                 String pValue = req.getParameter(tparams[i]);
                 complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i], pValue);
-                Logger.log(Logger.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
+                LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
                            + "\"=\"" + pValue + "\".");
             }
         }
@@ -182,7 +189,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        Logger.log(Logger.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sfattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting sfattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -197,7 +204,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        Logger.log(Logger.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting scattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting scattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -213,7 +220,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        Logger.log(Logger.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tcattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "UserLayoutManager::processUserPreferencesParameters() : setting tcattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -275,7 +282,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                 try {
                     GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
                 } catch (Exception e) {
-                    Logger.log(Logger.ERROR, e);
+                    LogService.instance().log(LogService.ERROR, e);
                     throw  new GeneralRenderingException(e.getMessage());
                 }
             }
@@ -349,7 +356,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             synchronized(layout_write_lock) {
                 if(!this.deleteNode(channel)) {
                     // unable to remove channel due to unremovable/immutable restrictionsn
-                    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
+                    LogService.instance().log(LogService.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
                     rval=false;
                 } else {
                     layout_write_lock.setValue(true);
@@ -363,15 +370,15 @@ public class UserLayoutManager implements IUserLayoutManager {
                         GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, complete_up.getProfile().getProfileId(), uLayoutXML);
                         /* end of patch */
                     } catch (Exception e) {
-                        Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
+                        LogService.instance().log(LogService.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
                         throw new GeneralRenderingException("Unable to save layout changes.");
                     }
-                    //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+channelId+"\"");
+                    //	    LogService.instance().log(LogService.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+channelId+"\"");
                 }
             }
             return rval;
         } else {
-            Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
+            LogService.instance().log(LogService.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
             return false;
         }
     }
@@ -517,7 +524,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             (node.getParentNode()).removeChild(node);
             return  true;
         } else {
-            Logger.log(Logger.ERROR,"UserLayoutManager::deleteNode() : trying to remove a root node ?!?");
+            LogService.instance().log(LogService.ERROR,"UserLayoutManager::deleteNode() : trying to remove a root node ?!?");
             return false;
         }
     }
