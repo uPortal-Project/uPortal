@@ -43,7 +43,7 @@ $Revision$
 
 <!ELEMENT group-key (#PCDATA)>
 <!ELEMENT group-name (#PCDATA)>
-<!ELEMENT description (#PCDATA)>
+<!ELEMENT group-description (#PCDATA)>
 
 <!ELEMENT selection-test (test-group+)>
 <!-- 
