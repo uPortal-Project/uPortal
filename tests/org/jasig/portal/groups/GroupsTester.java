@@ -16,6 +16,7 @@ import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
+import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 
 /**
@@ -152,7 +153,7 @@ protected void deleteTestGroups()
         {
             String key = rs.getString(1);
             Statement deleteMemberStmnt = conn.createStatement();
-            int memberRC = deleteMemberStmnt.executeUpdate( deleteMemberSql + key );
+            int memberRC = deleteMemberStmnt.executeUpdate( deleteMemberSql + "'" + key + "'" );
             print("Test member rows deleted: " + memberRC);
         }
 
@@ -342,6 +343,8 @@ public static junit.framework.Test suite() {
   suite.addTest(new GroupsTester("testMixLockableAndNonLockableGroups"));
   suite.addTest(new GroupsTester("testConcurrentAccess"));
   suite.addTest(new GroupsTester("testParseCompoundKeys")); 
+  
+  suite.addTest(new GroupsTester("testAddToALargeGroup"));
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -401,6 +404,101 @@ public void testAddAndDeleteGroups() throws Exception
 }
 /**
  */
+public void testAddToALargeGroup() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testAddToALargeGroup() *****" + CR);
+    
+    int numEntities = 5000;
+    String msg = null;
+    int idx = 0;
+
+    String[] entityKeys = new String[numEntities];
+    IEntity[] entities = new IEntity[numEntities];
+    
+    print("About to create test entities.");
+    for (int i=0; i<numEntities; i++)
+    {
+        entityKeys[i] = (getRandomString(random, 3) + i);
+        entities[i] = getNewEntity(entityKeys[i]);
+    }
+    print("Created " + numEntities + " entities.");
+    
+
+    print("Creating new group.");
+    IEntityGroup bigGroup = getNewGroup();
+    bigGroup.setName("Big Group");
+    print("Created" + bigGroup + ".  Will now add members...");    
+    
+    for (idx=0; idx<numEntities; idx++)
+    {
+        bigGroup.addMember(entities[idx]);
+    }
+
+    msg = "Added " + entities.length + "members.  Will now update.";
+    print(msg);
+    bigGroup.update();
+    print("Finished updating.");
+    
+    print ("Will un-cache " + bigGroup);
+    clearGroupCache();
+    
+    
+    msg = "Finding duplicate group.";
+    print(msg);
+    String groupKey = bigGroup.getKey();
+    IEntityGroup dupBigGroup = GroupService.findGroup(groupKey);
+    assertNotNull(msg, dupBigGroup);
+    
+    int numAdditionalEntities = 10;
+    String[] additionalEntityKeys = new String[numAdditionalEntities];
+    IEntity[] additionalEntities = new IEntity[numAdditionalEntities];
+    
+    print("About to create additional entities.");
+    for (int i=0; i<numAdditionalEntities; i++)
+    {
+        additionalEntityKeys[i] = (getRandomString(random, 3) + i);
+        additionalEntities[i] = getNewEntity(additionalEntityKeys[i]);
+    }
+    print("Created " + numAdditionalEntities + " additional entities.");
+    
+    print("Adding additional entities.");
+    for (idx=0; idx<numAdditionalEntities; idx++)
+    {
+        dupBigGroup.addMember(additionalEntities[idx]);
+        print("Added " + additionalEntities[idx]);
+        dupBigGroup.update();
+    }
+    
+    print("Done adding additional entities");
+    
+    print ("Will un-cache " + dupBigGroup);
+    clearGroupCache();    
+    
+    msg = "Retrieving duplicate group a 2nd time.";
+    print(msg);
+    dupBigGroup = GroupService.findGroup(groupKey);
+    assertNotNull(msg, dupBigGroup);
+    msg = "Getting members from duplicate group.";
+    print(msg);
+    Iterator itr = dupBigGroup.getMembers();
+    msg = "Done retrieving members.  Will now count members.";
+    print(msg);
+    int numMembers = 0;
+    while ( itr.hasNext() )
+    {
+        itr.next();
+        numMembers++;
+    }
+    assertEquals(msg, numMembers, (numEntities + numAdditionalEntities));
+    
+
+
+   print(CR + "***** LEAVING GroupsTester.testAddToALargeGroup() *****" + CR);
+
+    }
+
+/**
+ */
 public void testAddAndDeleteMembers() throws Exception
 {
     print(CR + "***** ENTERING GroupsTester.testAddAndDeleteMembers() *****" + CR);
@@ -430,6 +528,8 @@ public void testAddAndDeleteMembers() throws Exception
     print(msg);
     for(idx=1; idx<totNumGroups; idx++)
         { rootGroup.addMember(groups[idx]); }
+        
+    rootGroup.update();   // in case members not cached.
 
     msg = "Retrieving members from root group.";
     print(msg);
@@ -442,6 +542,8 @@ public void testAddAndDeleteMembers() throws Exception
     print(msg);
     for(idx=0; idx<(totNumEntities - 2) ; idx++)
         { rootGroup.addMember(testEntities[idx]); }
+        
+    rootGroup.update();   // in case members not cached.
 
     msg = "Retrieving members from root group.";
     print(msg);
@@ -454,6 +556,8 @@ public void testAddAndDeleteMembers() throws Exception
     print(msg);
     childGroup.addMember(testEntities[totNumEntities - 1]);
     childGroup.addMember(testEntities[totNumEntities]);
+    
+    childGroup.update();   // in case members not cached.
 
     msg = "Retrieving ALL members from root group.";
     print(msg);
@@ -465,6 +569,8 @@ public void testAddAndDeleteMembers() throws Exception
     msg = "Deleting child group from root group.";
     print(msg);
     rootGroup.removeMember(childGroup);
+    
+    rootGroup.update();   // in case members not cached.
 
     msg = "Retrieving ALL members from root group.";
     print(msg);
@@ -496,11 +602,13 @@ public void testContains() throws Exception
     msg = "Creating new parent group.";
     print(msg);
     containingGroup = getNewGroup();
+    containingGroup.getMembers();   // cache members
     assertNotNull(msg, containingGroup);
 
     msg = "Creating new child group.";
     print(msg);
     childGroup = getNewGroup();
+    childGroup.getMembers();  // cache members
     assertNotNull(msg, childGroup);
 
     msg = "Creating " + totNumEntities + " new entities.";
@@ -692,6 +800,10 @@ public void testGroupMemberUpdate() throws Exception
     print("Adding " + numAddedEntities + " members to " + child);
     for(idx=0; idx<numAddedEntities; idx++)
         { child.addMember(testEntities[idx]); }
+                
+    print("Now updating " + parent + " and " + child);
+    child.update();
+    parent.update();
 
     msg = "Retrieving members from " + child;  // child should have numAddedEntities group members.
     print(msg);
@@ -703,9 +815,6 @@ public void testGroupMemberUpdate() throws Exception
     list = getAllGroupMembers(parent);
     assertEquals(msg, (numAddedEntities + 1), list.size());
 
-    print("Now updating " + parent + " and " + child);
-    child.update();
-    parent.update();
 
     msg = "Retrieving " + parent + " and " + child + " from db.";
     print(msg);
@@ -799,6 +908,7 @@ public void testGroupMemberValidation() throws Exception
     msg = "Adding " + child + " to " + parent;
     print(msg);
     parent.addMember(child);
+    parent.update();  // members not cached.
 
     msg = "Retrieving members from " + parent;  // parent should have 1 group member.
     print(msg);
@@ -806,22 +916,14 @@ public void testGroupMemberValidation() throws Exception
     assertEquals(msg, 1, list.size());
 
     // Test adding a group with a duplicate name.
-    msg = "Adding " + child2 + " to " + parent + " (should fail).";
+    msg = "Adding " + child2 + " to " + parent + " (this is allowed).";
     print(msg);
-    try { parent.addMember(child2); }
+    try 
+    { 
+        parent.addMember(child2);
+        parent.update();  // members not cached.
+    }
     catch (GroupsException ge) {e = ge;}
-    assertNotNull(msg, e);
-
-    msg = "Retrieving members from " + parent;  // parent should STILL have 1 group member.
-    print(msg);
-    list = getGroupMembers(parent);
-    assertEquals(msg, 1, list.size());
-
-    msg = "Adding renamed " + child2 + " to " + parent + " (should succeed).";
-    print(msg);
-    child2.setName("child2");
-    try { parent.addMember(child2); e=null;}
-    catch (GroupsException ge) {e=ge;}
     assertNull(msg, e);
 
     msg = "Retrieving members from " + parent;  // parent should now have 2 group members.
@@ -833,6 +935,7 @@ public void testGroupMemberValidation() throws Exception
     msg = "Adding entity w/same name as child group to " + parent;
     print(msg);
     parent.addMember(entity1);
+    parent.update();  // members not cached.
 
     msg = "Retrieving members from " + parent;  // parent should now have 3 group members.
     print(msg);
@@ -840,11 +943,16 @@ public void testGroupMemberValidation() throws Exception
     assertEquals(msg, 3, list.size());
 
     // Test adding a group member with a duplicate key.
-    msg = "Adding another entity w/same name as child group to " + parent + " (should fail).";
+    msg = "Adding another entity w/same key as child group to " + parent + " (noop).";
     print(msg);
-    try { parent.addMember(entity2); e = null;}
+    try 
+    { 
+        parent.addMember(entity2); 
+        parent.update();  // members not cached.
+        e = null;
+    }
     catch (GroupsException ge) {e = ge;}
-    assertNotNull(msg, e);
+    assertNull(msg, e);
 
     msg = "Retrieving members from " + parent;  // parent should still have 3 group members.
     print(msg);
@@ -854,7 +962,12 @@ public void testGroupMemberValidation() throws Exception
     // Test adding a group member with a different type:
     msg = "Adding an entity of different type to " + parent;
     print(msg);
-    try { parent.addMember(ipersonEntity); e = null; }
+    try 
+    { 
+        parent.addMember(ipersonEntity); 
+        parent.update();  // members not cached.
+        e = null; 
+    }
     catch (GroupsException ge) {e = ge;}
     assertNotNull(msg, e);
 
@@ -864,7 +977,12 @@ public void testGroupMemberValidation() throws Exception
     assertEquals(msg, 3, list.size());
 
     // Test adding a circular reference.
-    try { child.addMember(parent); e = null; }
+    try 
+    { 
+        child.addMember(parent); 
+        child.update();  // members not cached.
+        e = null; 
+    }
     catch (GroupsException ge) { e = ge; }
     assertNotNull(msg, e);
 
@@ -1162,6 +1280,7 @@ public void testUpdateMembersVisibility() throws Exception
     for (idx=0; idx<totNumGroups; idx++)
     {
         groups[idx] = getNewGroup();
+        groups[idx].getMembers();  // cache members from now on.
         assertNotNull(msg, groups[idx]);
     }
     IEntityGroup rootGroup = groups[0];
