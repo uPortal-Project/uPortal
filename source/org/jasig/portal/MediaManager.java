@@ -87,18 +87,18 @@ public class MediaManager
   public void setMediaProps (String uri)
   {
     String CURRENTDIR= System.getProperty ("user.dir") + System.getProperty ("file.separator");
-    
-    if (uri == null) 
+
+    if (uri == null)
       uri = "file://" + CURRENTDIR + "media.properties";
-    
+
     try
     {
       URL url = expandSystemId (uri);
       Logger.log (Logger.DEBUG, "MediaManager::setMediaProps() uri=" + uri + " URL=" + url);
-      
-      if (url != null)  
+
+      if (url != null)
         mediaProps=new OrderedProps (url.openStream ());
-    } 
+    }
     catch (IOException ioe1)
     {
       Logger.log (Logger.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " + uri + ". " + ioe1);
@@ -112,17 +112,17 @@ public class MediaManager
   public void setMimeProps (String uri)
   {
     String CURRENTDIR = System.getProperty ("user.dir")+System.getProperty ("file.separator");
-    
-    if (uri == null) 
+
+    if (uri == null)
       uri= "file://" + CURRENTDIR + "mime.properties";
-    
+
     try
     {
       URL url=expandSystemId (uri);
-      
-      if (url!=null)  
+
+      if (url!=null)
         mimeProps=new OrderedProps (url.openStream ());
-    } 
+    }
     catch (IOException ioe1)
     {
       Logger.log (Logger.ERROR,"MediaManager::setMimeProps : Exception occurred while loading mime properties file: " + uri + ". "+ ioe1);
@@ -136,17 +136,17 @@ public class MediaManager
   public void setSerializerProps (String uri)
   {
     String CURRENTDIR = System.getProperty ("user.dir") + System.getProperty ("file.separator");
-    
-    if (uri == null) 
+
+    if (uri == null)
       uri="file://" + CURRENTDIR + "serializer.properties";
-    
+
     try
     {
       URL url=expandSystemId (uri);
-      
-      if (url!=null)  
+
+      if (url!=null)
         serializerProps = new OrderedProps (url.openStream ());
-    } 
+    }
     catch (IOException ioe1)
     {
       Logger.log (Logger.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " + uri + ". "+ ioe1);
@@ -160,29 +160,29 @@ public class MediaManager
    */
   public String getMedia (HttpServletRequest req)
   {
-    if (mediaProps == null) 
+    if (mediaProps == null)
       this.setMediaProps ((String) null);
 
-    if (mediaProps != null) 
+    if (mediaProps != null)
       return mediaProps.getValue (req.getHeader ("user-Agent"));
-    
+
     return (String) null;
   }
 
-    /** 
+    /**
      * Return a default media type.
      * The default media type is the first
      * media listed in the media.properties file
      * @return default media name
      */
     public String getDefaultMedia() {
-	if (mediaProps == null) 
-	    this.setMediaProps ((String) null);
-	
-	if (mediaProps != null) 
-	    return mediaProps.getDefaultValue ();
-	
-	return (String) null;
+        if (mediaProps == null)
+            this.setMediaProps ((String) null);
+
+        if (mediaProps != null)
+            return mediaProps.getDefaultValue ();
+
+        return (String) null;
     }
 
 
@@ -203,12 +203,12 @@ public class MediaManager
    */
   public String getReturnMimeType (String mediaType)
   {
-    if (mimeProps == null) 
+    if (mimeProps == null)
       this.setMimeProps ( (String) null);
 
-    if (mimeProps != null) 
+    if (mimeProps != null)
       return mimeProps.getValue (mediaType);
-    
+
     else return null;
   }
 
@@ -226,7 +226,7 @@ public class MediaManager
    * @return the serializer
    */
 
-  
+
 
   public BaseMarkupSerializer getSerializer (String mediaType, java.io.Writer out)
   {
@@ -252,12 +252,12 @@ public class MediaManager
 
     String serializerName = null;
 
-    if (serializerProps == null) 
+    if (serializerProps == null)
       this.setSerializerProps ((String) null);
 
-    if (serializerProps != null) 
+    if (serializerProps != null)
       serializerName=serializerProps.getValue (mediaType);
-    
+
     if (serializerName != null)
     {
       if (serializerName.equals ("WML"))
@@ -265,12 +265,12 @@ public class MediaManager
         OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
         frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
         return new XMLSerializer (out, frmt);
-      } 
+      }
       else if (serializerName.equals ("PalmHTML"))
       {
         OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
         return new PalmHTMLSerializer (out, frmt);
-      } 
+      }
       else if (serializerName.equals ("XML"))
       {
         OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
@@ -280,14 +280,14 @@ public class MediaManager
       {
         OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
         return new XHTMLSerializer (out, frmt);
-      } 
+      }
       else
       {
         // default case is HTML, such as that for netscape and explorer
         OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
         return new HTMLSerializer (out, frmt);
       }
-    } 
+    }
     else
     {
       Logger.log (Logger.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
@@ -296,23 +296,23 @@ public class MediaManager
   }
 
     public BaseMarkupSerializer getSerializerByName(String serializerName, java.io.OutputStream out) {
-	if (serializerName.equals ("WML")) {
-	    OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
-	    frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
-	    return new XMLSerializer (out, frmt);
-	} 
+        if (serializerName.equals ("WML")) {
+            OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
+            frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
+            return new XMLSerializer (out, frmt);
+        }
       else if (serializerName.equals ("PalmHTML")) {
-	  OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
-	  return new PalmHTMLSerializer (out, frmt);
-      } 
-	else if (serializerName.equals ("XML")) {
-	    OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
-	    return new XMLSerializer (out, frmt);
-	}
+          OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+          return new PalmHTMLSerializer (out, frmt);
+      }
+        else if (serializerName.equals ("XML")) {
+            OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
+            return new XMLSerializer (out, frmt);
+        }
       else if (serializerName.equals ("XHTML")) {
-	  OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
-	  return new XHTMLSerializer (out, frmt);
-      } 
+          OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
+          return new XHTMLSerializer (out, frmt);
+      }
       else
       {
         // default case is HTML, such as that for netscape and explorer
@@ -322,32 +322,36 @@ public class MediaManager
     }
 
     public BaseMarkupSerializer getSerializerByName(String serializerName, java.io.Writer out) {
-	if (serializerName.equals ("WML")) {
-	    OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
-	    frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
-	    return new XMLSerializer (out, frmt);
-	} 
+        if (serializerName.equals ("WML")) {
+            OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
+            frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
+            return new XMLSerializer (out, frmt);
+        }
       else if (serializerName.equals ("PalmHTML")) {
-	  OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
-	  return new PalmHTMLSerializer (out, frmt);
-      } 
-	else if (serializerName.equals ("XML")) {
-	    OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
-	    return new XMLSerializer (out, frmt);
-	}
+          OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+          return new PalmHTMLSerializer (out, frmt);
+      }
+        else if (serializerName.equals ("XML")) {
+            OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
+            return new XMLSerializer (out, frmt);
+        }
       else if (serializerName.equals ("XHTML")) {
-	  OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
-	  return new XHTMLSerializer (out, frmt);
-      } 
+          OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", false);
+          frmt.setPreserveSpace(false);
+          System.out.println("Here1....");
+          return new XHTMLSerializer (out, frmt);
+      }
       else
       {
         // default case is HTML, such as that for netscape and explorer
-        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
+        OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", false);
+        //frmt.setPreserveSpace(false);
+        System.out.println("Here1....");
         return new HTMLSerializer (out, frmt);
       }
     }
-    
-  
+
+
  /**
    * Another version of getSerializer() with OutputStream as one of the parameters.
    * @param mediaType media type string
@@ -358,12 +362,12 @@ public class MediaManager
   {
     String serializerName = null;
 
-    if (serializerProps == null) 
+    if (serializerProps == null)
       this.setSerializerProps ((String) null);
 
-    if (serializerProps != null) 
+    if (serializerProps != null)
       serializerName = serializerProps.getValue (mediaType);
-    
+
     if (serializerName!=null)
     {
       if (serializerName.equals ("WML"))
@@ -371,29 +375,29 @@ public class MediaManager
         OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
         frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
         return new XMLSerializer (out, frmt);
-      } 
+      }
       else if (serializerName.equals ("PalmHTML"))
       {
         OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
         return new PalmHTMLSerializer (out, frmt);
-      } 
+      }
       else if (serializerName.equals ("XML"))
       {
         OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
         return new XMLSerializer (out, frmt);
-      } 
+      }
       else if (serializerName.equals ("XHTML"))
       {
         OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
         return new XHTMLSerializer (out, frmt);
-      } 
+      }
       else
       {
         // default case is HTML, such as that for netscape and explorer
         OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
         return new HTMLSerializer (out, frmt);
       }
-    } 
+    }
     else
     {
       Logger.log (Logger.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
@@ -414,7 +418,7 @@ public class MediaManager
     if (mediaProps != null)
     {
       return getSerializer (mediaProps.getValue (req.getHeader ("user-Agent")), out);
-    } 
+    }
     else
     {
       Logger.log (Logger.ERROR,"MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
@@ -430,13 +434,13 @@ public class MediaManager
    */
   public BaseMarkupSerializer getSerializer (HttpServletRequest req, java.io.OutputStream out)
   {
-    if (mediaProps == null) 
+    if (mediaProps == null)
       this.setMediaProps ((String) null);
 
     if (mediaProps != null)
     {
       return getSerializer (mediaProps.getValue (req.getHeader ("user-Agent")), out);
-    } 
+    }
     else
     {
       Logger.log (Logger.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
@@ -458,7 +462,7 @@ public class MediaManager
     try
     {
       URL url = new URL (id);
-      
+
       if (url != null)
       {
         return url;
@@ -475,11 +479,11 @@ public class MediaManager
     // normalize base
     URL base = null;
     URL url = null;
-    
+
     try
     {
       String dir;
-      
+
       try
       {
         dir = fixURI (System.getProperty ("user.dir"));
@@ -547,7 +551,7 @@ public class MediaManager
        * Stores the Key and Values as an array of Strings
        */
       private Vector attVec = new Vector (15);
-      
+
       /**
        * Constructor.
        * @param inputStream Stream containing the properties file.
@@ -555,23 +559,23 @@ public class MediaManager
        */
       OrderedProps (InputStream inputStream) throws IOException
       {
-	  BufferedReader input  = new BufferedReader (new InputStreamReader (inputStream));
-	  String currentLine, Key = null;
-	  StringTokenizer currentTokens;
-	  
-	  while ((currentLine = input.readLine ()) != null) {
-	      currentTokens = new StringTokenizer (currentLine, "=\t\r\n");
-	      if (currentTokens.hasMoreTokens ()) 
-		  Key = currentTokens.nextToken ().trim ();
-	      
-	      if ((Key != null) && !Key.startsWith ("#") && currentTokens.hasMoreTokens ())  {
-		  String temp[] = new String[2];
-		  temp[0] = Key; temp[1] = currentTokens.nextToken ().trim ();
-		  attVec.addElement (temp);
-	      }
-	  }
+          BufferedReader input  = new BufferedReader (new InputStreamReader (inputStream));
+          String currentLine, Key = null;
+          StringTokenizer currentTokens;
+
+          while ((currentLine = input.readLine ()) != null) {
+              currentTokens = new StringTokenizer (currentLine, "=\t\r\n");
+              if (currentTokens.hasMoreTokens ())
+                  Key = currentTokens.nextToken ().trim ();
+
+              if ((Key != null) && !Key.startsWith ("#") && currentTokens.hasMoreTokens ())  {
+                  String temp[] = new String[2];
+                  temp[0] = Key; temp[1] = currentTokens.nextToken ().trim ();
+                  attVec.addElement (temp);
+              }
+          }
       }
-      
+
       /**
        * Iterates through the Key list and returns the first value for whose
        * key the given string contains.  Returns "unknown" if no key is contained
@@ -581,18 +585,18 @@ public class MediaManager
        */
       String getValue (String s)
       {
-	  int i, j = attVec.size ();
-	  
-	  for (i = 0; i < j; i++) {
-	      String temp[] = (String[]) attVec.elementAt (i);
-	      if (s.indexOf (temp[0]) > -1)
-		  return temp[1];
-	  }
-	  return "unknown";
+          int i, j = attVec.size ();
+
+          for (i = 0; i < j; i++) {
+              String temp[] = (String[]) attVec.elementAt (i);
+              if (s.indexOf (temp[0]) > -1)
+                  return temp[1];
+          }
+          return "unknown";
       }
-      
+
       String getDefaultValue() {
-	  return  ((String[]) attVec.elementAt(0))[1];
+          return  ((String[]) attVec.elementAt(0))[1];
       }
   }
 }
