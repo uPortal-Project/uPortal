@@ -3,19 +3,21 @@
 <!ELEMENT folder (folder|channel)*>
 <!ATTLIST folder
   ID ID #REQUIRED
-  priority CDATA #REQUIRED
+  type (header|footer) #IMPLIED
+  hidden (true|false) "false"
+  removable (true|false) "true"
+  immutable (true|false) "true"
   name CDATA #IMPLIED>
+
 
 <!ELEMENT channel (parameter)*>
 <!ATTLIST channel 
   ID ID #REQUIRED
-  priority CDATA #REQUIRED
   name CDATA #REQUIRED 
   timeout CDATA "5000"
-  minimized (true|false) "true"
-  detachable (true|false) "true"
   editable (true|false) "true"
   hasHelp (true|false) "true"
+  hasAbout (true|false) "true"
   removable (true|false) "true"
   class CDATA #REQUIRED
   fname CDATA #IMPLIED>
