@@ -19,6 +19,8 @@ import java.net.*;
  */
 public class CAuthorization implements org.jasig.portal.IChannel                             
 {  
+  private static Vector params = null;
+
   public void init (ChannelConfig chConfig) {};
   public String getName () {return "Sign in";}
   public boolean isMinimizable () {return false;}
@@ -29,6 +31,11 @@ public class CAuthorization implements org.jasig.portal.IChannel
   
   public int getDefaultDetachWidth () {return 0;}
   public int getDefaultDetachHeight () {return 0;}
+  
+  public Vector getParameters()
+  {
+    return params;
+  }
   
   /**
    * Called when channel should output its contents

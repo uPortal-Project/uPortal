@@ -21,7 +21,8 @@ import java.net.*;
 public class CWeather implements org.jasig.portal.IChannel 
 {  
   private ChannelConfig chConfig = null;
-  
+  private static Vector params = null;
+
   public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
   public String getName () {return "Weather";}
   public boolean isMinimizable () {return true;}
@@ -32,6 +33,11 @@ public class CWeather implements org.jasig.portal.IChannel
   
   public int getDefaultDetachWidth () {return 250;}
   public int getDefaultDetachHeight () {return 250;}
+
+  public Vector getParameters()
+  {
+    return params;
+  }
   
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    

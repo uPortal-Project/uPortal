@@ -21,10 +21,16 @@ import java.sql.*;
 public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IChannel                         
 { 
   ChannelConfig chConfig = null;
+  private static Vector params = null;
   private String xmlFilePackage = "org.jasig.portal.channels.bookmarks";
   private RdbmServices rdbmService = new RdbmServices ();
   private Connection con = null;
   private File dtdFile = new File (getPortalBaseDir () + "webpages" + File.separator + "dtd" + File.separator + "bookmarks.dtd");
+  
+  public Vector getParameters()
+  {
+    return params;
+  }
   
   protected void doAddBookmark (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {

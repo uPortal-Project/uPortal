@@ -20,6 +20,8 @@ import java.net.*;
  */
 public class CSearch implements org.jasig.portal.IChannel                     
 {  
+  private static Vector params = null;
+
   public void init (ChannelConfig chConfig) {};
   public String getName () {return "Search";}
   public boolean isMinimizable () {return true;}
@@ -31,6 +33,11 @@ public class CSearch implements org.jasig.portal.IChannel
   public int getDefaultDetachWidth () {return 175;}
   public int getDefaultDetachHeight () {return 250;}
   
+  public Vector getParameters()
+  {
+    return params;
+  }
+
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
     try 
