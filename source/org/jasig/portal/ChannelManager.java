@@ -727,6 +727,7 @@ public class ChannelManager {
             String value = (String)httpHeaders.get(param);
             res.setHeader(param, value);
           }
+          httpHeaders.clear();
         }
 
         // Set the MIME content type
@@ -742,8 +743,11 @@ public class ChannelManager {
             out.write(contentBytes,0, size);
           }
           ios.close();
-        } else {  // The channel has more complicated processing it needs to do on the
-                  // output stream
+        } else {
+          /**
+           * The channel has more complicated processing it needs to do on the
+           * output stream
+           */
           ds.downloadData(out);
         }
         out.flush();
