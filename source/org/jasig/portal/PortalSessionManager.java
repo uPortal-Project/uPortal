@@ -65,7 +65,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.security.AccessController;
-import org.jasig.portal.services.ExternalServices;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.utils.SubstitutionWriter;
@@ -117,15 +116,25 @@ public class PortalSessionManager extends HttpServlet {
       }
       servletContext = sc.getServletContext();
 
-      JNDIManager.initializePortalContext();
-
-      // Start any portal services configured in services.xml
       try {
-        ExternalServices.startServices();
-      } catch (Exception ex) {
-        LogService.instance().log(LogService.ERROR, ex);
-        throw new ServletException ("Failed to start external portal services.");
+          JNDIManager.initializePortalContext();
+      } catch (PortalException pe) {
+          if(pe.getRecordedException()!=null) {
+              StringWriter sw=new StringWriter();
+              pe.getRecordedException().printStackTrace(new PrintWriter(sw));
+              sw.flush();
+              LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a PortalException has occurred : "+sw.toString());
+              throw new ServletException(pe.getRecordedException());
+          } else {
+              StringWriter sw=new StringWriter();
+              pe.printStackTrace(new PrintWriter(sw));
+              sw.flush();
+              LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
+              throw new ServletException(pe);              
+          }
       }
+
+
 
       // Flag that the portal has been initialized
       initialized = true;
