@@ -59,7 +59,6 @@ import  com.oreilly.servlet.multipart.ParamPart;
  * @version: $Revision$
  */
 public class PortalSessionManager extends HttpServlet {
-  private boolean m_userLayoutStoreSet = false;
   public static String renderBase = "render.uP";
   public static String detachBaseStart = "detach_";
   private static int sizeLimit = 3000000;       // Should be channel specific
@@ -102,6 +101,14 @@ public class PortalSessionManager extends HttpServlet {
       JNDIManager.initializePortalContext();
       // Flag that the portal has been initialized
       initialized = true;
+      
+      // Set the UserLayoutStoreImpl
+      try {
+        // Should obtain implementation in a better way!
+        GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
+      } catch (Exception e) {
+        throw  new ServletException(e);
+      }
     }
   }
 
@@ -122,15 +129,6 @@ public class PortalSessionManager extends HttpServlet {
    * @exception ServletException, IOException
    */
   public void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    if (!m_userLayoutStoreSet) {
-      try {
-        // Should obtain implementation in a better way!
-        GenericPortalBean.setUserLayoutStore(RdbmServices.getUserLayoutStoreImpl());
-      } catch (Exception e) {
-        throw  new ServletException(e);
-      }
-      m_userLayoutStoreSet = true;
-    }
     // forwarding
     ServletContext sc = this.getServletContext();
     HttpSession session = req.getSession();
