@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- the default implementation of PersonDirectory is a legacy implementation which hard-codes in
+		Java the configuration of PersonDirectory using the legacy PersonDirs.xml .
+		
+		Your options for customizing the PersonDirectory implementation for your institution:
+		1) Ignore this XML file.  Ignore the implementing Java code.  Customize PersonDirs.xml to declare your 
+		institutions attribute sources.
+		2) Ignore this XML file.  Decide that the flexibility provided by PersonDirs.xml doesn't meet your needs.
+		Edit the LegacyPersonDirectoryImpl class and/or the classes it uses to customize the Java logic
+		 that implements PersonDirectory.
+		3) Edit this XML file to use Spring to configure PersonDirectory, declaring different configurations of the
+		distributed classes and/or using your own classes.
+		
+		This personDirectory.xml file is likely a temporary solution that will be replaced before uPortal 2.5 is released, in favor of
+		PersonDirectory discovering an ApplicationContext that might be shared with other components.
+		-->
+	<bean id="personDirectory" class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonDirectoryImpl">
+		<!-- the legacy implementation takes no configuration -->
+	</bean>
+</beans>
+
+<!-- CVS metadata: $Revision$ $Date$ -->
