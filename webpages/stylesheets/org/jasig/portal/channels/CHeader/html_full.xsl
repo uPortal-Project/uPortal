@@ -7,7 +7,7 @@
 
 <xsl:template match="header">
   <table border="0">
-    <tr class="uportal-background-light">
+    <tr class="uportal-background-light" align="center">
       <td nowrap="nowrap" class="uportal-channel-text">
         <xsl:choose>
         <xsl:when test="$guest='true'">
@@ -19,12 +19,12 @@
             <a href="{$baseActionURL}?uP_root={publish-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Publish</a> |
           </xsl:if>
           <a href="{$baseActionURL}?uP_root={subscribe-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Subscribe</a> |
-          <a href="{$baseActionURL}?uP_root={preferences-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">User Preferences</a>
+          <a href="{$baseActionURL}?uP_root={preferences-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Preferences</a>
         </xsl:otherwise>        
         </xsl:choose>
       </td>
     </tr>
-    <tr class="uportal-background-med">
+    <tr class="uportal-background-med" align="center">
       <td nowrap="nowrap" class="uportal-channel-code">
         <xsl:value-of select="timestamp-long"/>
       </td>
