@@ -35,7 +35,7 @@
                 <!--End Profiles Table -->
                 <img alt="" src="{$baseMediaURL}/transparent.gif" width="10" height="10" border="0"/>
                 <input type="submit" name="submit" value="Cancel" class="uportal-button"/>
-                <input type="hidden" name="action" value="manageProfiles"/>
+                <input type="hidden" name="userPreferencesAction" value="managePreferences"/>
               </td>
             </tr>
           </form>
@@ -145,13 +145,13 @@
         <xsl:otherwise>
           <tr align="left" valign="top" class="uportal-channel-text">
             <td rowspan="2" class="uportal-background-content">
-              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=system">
+              <a href="{$baseActionURL}?action=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=system">
                 <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
                 <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
               </a>
             </td>
             <td width="100%">
-              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=system">
+              <a href="{$baseActionURL}?action=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=system">
                 <strong>
                   <xsl:value-of select="@name"/>
                 </strong>
@@ -183,7 +183,7 @@
         <td>
           <span class="uportal-channel-table-header">Personal Profiles</span>
           <strong>
-            <a href="{$baseActionURL}?action=expandAll&amp;profileType=system">
+            <a href="{$baseActionURL}?action=expandAll&amp;profileType=user">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
               <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
@@ -191,7 +191,7 @@
             </a>
           </strong>
           <strong>
-            <a href="{$baseActionURL}?action=condenseAll&amp;profileType=system">
+            <a href="{$baseActionURL}?action=condenseAll&amp;profileType=user">
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="16" height="16" border="0"/>
               <img alt="Hide details" src="{$baseMediaURL}/minus001.gif" width="16" height="16" border="0"/>
               <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
@@ -292,13 +292,13 @@
         <xsl:otherwise>
           <tr align="left" valign="top" class="uportal-channel-text">
             <td rowspan="2" class="uportal-background-content">
-              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=user">
+              <a href="{$baseActionURL}?action=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=user">
                 <img alt="Show details" src="{$baseMediaURL}/plus001.gif" width="16" height="16" border="0"/>
                 <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
               </a>
             </td>
             <td width="100%">
-              <a href="{$baseActionURL}?userPreferencesAction=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=user">
+              <a href="{$baseActionURL}?action=changeView&amp;view=expanded&amp;profileId={@id}&amp;profileType=user">
                 <strong>
                   <xsl:value-of select="@name"/>
                 </strong>
