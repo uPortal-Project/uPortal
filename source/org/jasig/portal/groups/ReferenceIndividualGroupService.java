@@ -649,7 +649,7 @@ public void updateGroup(IEntityGroup group) throws GroupsException
     throwExceptionIfNotInternallyManaged();
     getGroupStore().update(group);
     if ( cacheInUse())
-        { cacheRemove(group); }
+        { cacheUpdate(group); }
     synchronizeGroupMembersOnUpdate(group);
 }
 /**
@@ -676,7 +676,11 @@ throws GroupsException
            { throw new GroupsException("Could not update group " + group.getKey() +
                 " has invalid lock."); }
 
-        updateGroup((IEntityGroup)group);
+//      updateGroup((IEntityGroup)group);
+        getGroupStore().update(group);
+        if ( cacheInUse())
+            { cacheRemove(group); }
+        synchronizeGroupMembersOnUpdate(group);
 
         if ( renewLock )
             { group.getLock().renew(); }
@@ -696,7 +700,7 @@ public void updateGroupMembers(IEntityGroup group) throws GroupsException {
     throwExceptionIfNotInternallyManaged();
     getGroupStore().updateMembers(group);
     if ( cacheInUse())
-        { cacheRemove(group); }
+        { cacheUpdate(group); }
     synchronizeGroupMembersOnUpdate(group);
 }
 /**
@@ -723,7 +727,11 @@ throws GroupsException
            { throw new GroupsException("Could not update group " + group.getKey() +
                 " has invalid lock."); }
 
-        updateGroupMembers((IEntityGroup)group);
+//      updateGroupMembers((IEntityGroup)group);
+        getGroupStore().updateMembers(group);
+        if ( cacheInUse())
+            { cacheRemove(group); }
+        synchronizeGroupMembersOnUpdate(group);
 
         if ( renewLock )
             { group.getLock().renew(); }
