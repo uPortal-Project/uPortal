@@ -1570,16 +1570,19 @@ Version $Revision$
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						-->
 						<xsl:if test="fragments">
-							<span> |<xsl:text>&#160;</xsl:text></span>Manage: <select name="select" class="uportal-input-text uportal-background-content">
+							<span> |<xsl:text>&#160;</xsl:text></span>Manage:
+							<form name="selectFragments" method="post" action="{$baseActionURL}">
+							<select name="select" class="uportal-input-text uportal-background-content">
 								<option selected="selected">My layout</option>
 								<xsl:for-each select="fragments/fragment">
-									<option>
+									<option value="{@ID}">
 										<xsl:value-of select="@desc"/>
 									</option>
 								</xsl:for-each></select>
+								
 							<!--<option><xsl:value-of select="New fragment"/></option>--><input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/>
 							<!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> --><span> |<xsl:text>&#160;</xsl:text></span>
-							<a href="javascript:alert('[New fragment] function is under construction')">New fragment</a>
+							<a href="javascript:alert('[New fragment] function is under construction')">New fragment</a></form>
 						</xsl:if>
 					</span>
 				</td>
