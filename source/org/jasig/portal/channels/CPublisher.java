@@ -179,17 +179,17 @@ public class CPublisher
       currentStep = runtimeData.getParameter("currentStep");
     if (action != null) {
       if (action.equals("choose"))
-        prepareChoose(); 
+        prepareChoose();
       else if (action.equals("publish"))
-        preparePublish(); 
+        preparePublish();
       else if (action.equals("publishCats"))
-        preparePublishCats(); 
+        preparePublishCats();
       else if (action.equals("publishRoles"))
-        preparePublishRoles(); 
+        preparePublishRoles();
       else if (action.equals("publishName"))
-        preparePublishName(); 
+        preparePublishName();
       else if (action.equals("saveChanges"))
-        prepareSaveChanges(); 
+        prepareSaveChanges();
       else if (action.equals("cancel"))
         mode = NONE;
     }
@@ -242,8 +242,8 @@ public class CPublisher
         ssParams.put("extraSteps", Integer.toString(EXTRA));
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      } 
-      else 
+      }
+      else
         Logger.log(Logger.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -287,11 +287,11 @@ public class CPublisher
       int i = Integer.parseInt(currentStep);
       if (i < numSteps) {
         currentStep = Integer.toString(i + 1);
-      } 
+      }
       else if (i == numSteps) {
         mode = CATS;
         currentStep = Integer.toString(i + 1);
-      } 
+      }
       else {
         publishChannel();
         currentStep = "end";
@@ -330,7 +330,8 @@ public class CPublisher
       String value = (String)hParams.get(name);
       if (!vReservedParams.contains(name)) {
         Element el = doc.createElement("parameter");
-        el.setAttribute(name, XMLEscaper.escape(value));
+        el.setAttribute("name", XMLEscaper.escape(name));
+        el.setAttribute("value", XMLEscaper.escape(value));
         chan.appendChild(el);
       }
     }
@@ -410,7 +411,7 @@ public class CPublisher
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private Document getRoles () {
     Document roleDoc = null;
@@ -448,7 +449,7 @@ public class CPublisher
       // Make sure all of the roles have been stored
       if (rolesSet == vRoles.size()) {
         return  (true);
-      } 
+      }
       else {
         return  (false);
       }
@@ -460,7 +461,7 @@ public class CPublisher
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   private Document getNameDoc () {
     Document nameDoc = null;
