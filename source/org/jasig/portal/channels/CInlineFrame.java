@@ -31,19 +31,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.channels;
 
-import org.jasig.portal.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Hashtable;
-import java.net.URL;
-import java.net.MalformedURLException;
-import org.xml.sax.DocumentHandler;
-import org.xml.sax.SAXException;
-import org.jasig.portal.utils.XSLT;
+package  org.jasig.portal.channels;
+
+import  org.jasig.portal.*;
+import  java.io.File;
+import  java.io.IOException;
+import  java.util.Hashtable;
+import  java.net.URL;
+import  java.net.MalformedURLException;
+import  org.xml.sax.DocumentHandler;
+import  org.xml.sax.SAXException;
+import  org.jasig.portal.utils.XSLT;
+
 
 /**
  * This channel renders content identified by a URL within an inline browser
@@ -56,89 +60,84 @@ import org.jasig.portal.utils.XSLT;
  * @author Susan Bramhall
  * @version $Revision$
  */
-public class CInlineFrame extends BaseChannel
-{
-  protected String srcUrl; // the url for the IFrame content
-  protected String frameHeight; // the height of the IFrame in pixels
-
+public class CInlineFrame extends BaseChannel {
+  protected String srcUrl;      // the url for the IFrame content
+  protected String frameHeight;                 // the height of the IFrame in pixels
   private static final String fs = File.separator;
-  private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
-  private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CInlineFrame";
-  private static final String sslLocation = stylesheetDir + fs + "CInlineFrame.ssl";
-    private MediaManager mm;
+  private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir();
+  private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig"
+      + fs + "portal" + fs + "channels" + fs + "CInlineFrame";
+  private static final String sslLocation = UtilitiesBean.fixURI(stylesheetDir + fs + "CInlineFrame.ssl");
+  private static URL m_sslURL = null;
+  private static final MediaManager mm = new MediaManager();
   private String media;
-
-  /**
-   * Constructs CInlineFrame
-   * Locate stylesheet set CInlineFrame.ssl
-   */
-  public CInlineFrame()
-  {
-    this.staticData = new ChannelStaticData ();
-    this.runtimeData = new ChannelRuntimeData ();
-    this.mm=new MediaManager();
-  }
 
   /**
    * Discover browser via MediaManager and save for render time
    */
-  public void setRuntimeData (ChannelRuntimeData rd)
-  {
-    this.runtimeData = rd;
-    media = mm.getMedia(runtimeData.getBrowserInfo());
+  public void setRuntimeData (ChannelRuntimeData rd) {
+    runtimeData = rd;
   }
 
   /**
    * Get channel parameters: url, height and name
    */
-  public void setStaticData (ChannelStaticData sd)
-  {
-    try
-    {
-      this.srcUrl = sd.getParameter ("url");
-      this.frameHeight = sd.getParameter ("height");
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
+  public void setStaticData (ChannelStaticData sd) {
+    this.srcUrl = sd.getParameter("url");
+    this.frameHeight = sd.getParameter("height");
   }
 
   /**
    * Build an XML string and transform for display using org.jasig.portal.util.XSLT
    * Creates IFrame or link depending on browser capability.
    */
-  public void renderXML (DocumentHandler out) throws PortalException
-  {
-    String ssTitle = getStylesheetTitle();
-
-    try
-    {
-      StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
-      sbXML.append("<iframe>");
-      sbXML.append("  <url>").append(srcUrl).append("</url>");
-      sbXML.append("  <height>").append(frameHeight).append("</height>");
-      sbXML.append("</iframe>");
-      XSLT.transform(sbXML.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, ssTitle, media);
+  public void renderXML (DocumentHandler out) throws PortalException {
+    if (m_sslURL == null) {
+      try {
+        // Create a URL out of the stylesheet list url
+        m_sslURL = new URL(sslLocation);
+      } catch (MalformedURLException mue) {
+        Logger.log(Logger.ERROR, "CInlineFrame().renderXML(): Stylesheet location not valid - " + sslLocation);
+        throw  new GeneralRenderingException("CInlineFrame().renderXML(): Stylesheet location not valid - " + sslLocation);
+      }
     }
-    catch (Exception e)
-    {
+    // Get the current media type
+    media = mm.getMedia(runtimeData.getBrowserInfo());
+    // Media type cannot be null
+    if (media == null) {
+      Logger.log(Logger.ERROR, "CInlineFrame.renderXML(): MediaManager.getMedia() returned null");
+      throw  new GeneralRenderingException("CInlineFrame.renderXML(): MediaManager.getMedia() returned null");
+    }
+    // Get the title of the stylesheet
+    String ssTitle = getStylesheetTitle();
+    StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
+    sbXML.append("<iframe>");
+    sbXML.append("  <url>").append(srcUrl).append("</url>");
+    sbXML.append("  <height>").append(frameHeight).append("</height>");
+    sbXML.append("</iframe>");
+    try {
+      // Perform the XLST transformation
+      XSLT.transform(sbXML.toString(), m_sslURL, out, ssTitle, media);
+    } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
-      throw new GeneralRenderingException(e.getMessage());
+      throw  new GeneralRenderingException("CInlineFrame.renderXML(): XSLT.transform() threw exception - " + e.getMessage());
     }
   }
 
-  private String getStylesheetTitle()
-  {
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  private String getStylesheetTitle () {
     String ssTitle = "noIFrameSupport";
     String userAgent = runtimeData.getBrowserInfo().getUserAgent();
-
-    if ((userAgent.indexOf("MSIE 3") >= 0)||
-        (userAgent.indexOf("MSIE 4") >= 0) ||
-        (userAgent.indexOf("MSIE 5") >= 0) ||
-        (userAgent.indexOf("Mozilla/5") >= 0))
+    if ((userAgent.indexOf("MSIE 3") >= 0) || (userAgent.indexOf("MSIE 4") >= 0) || (userAgent.indexOf("MSIE 5") >= 0) || 
+        (userAgent.indexOf("Mozilla/5") >= 0)) {
       ssTitle = "IFrameSupport";
-
-    return ssTitle;
+    }
+    return  ssTitle;
   }
 }
+
+
+
