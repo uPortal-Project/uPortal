@@ -3,8 +3,6 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-/* formatted with JxBeauty (c) johann.langhofer@nextra.at */
-
 package  org.jasig.portal.channels.permissionsmanager;
 
 import java.util.HashMap;
