@@ -309,7 +309,7 @@
                   <xsl:value-of select="$group/RDF/Description/title" />
                 </xsl:when>
                 <xsl:otherwise>
-                  <input type="text" size="40" maxsize="255" name="grpName" class="uportal-channel-text">
+                  <input type="text" size="40" maxsize="255" name="grpName" class="uportal-input-text">
                     <xsl:attribute name="value">
                       <xsl:value-of select="$group/RDF/Description/title" />
                     </xsl:attribute>
@@ -336,7 +336,7 @@
                   <xsl:value-of select="$group/RDF/Description/description" />
                 </xsl:when>
                 <xsl:otherwise>
-                  <textarea  cols="60" rows="5" name="grpDescription" class="uportal-channel-text">
+                  <textarea  cols="60" rows="5" name="grpDescription" class="uportal-input-text">
                       <xsl:value-of select="$group/RDF/Description/description" />
                   </textarea>
                 </xsl:otherwise>
@@ -371,7 +371,7 @@
 					  <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Create';" value="Create New Member Group" class="uportal-button" />
 					  <xsl:text>
 					  </xsl:text>
-					  <input type="text" size="25" name="grpNewName" value="(new group name)" class="uportal-channel-text" />
+					  <input type="text" size="25" name="grpNewName" value="(new group name)" class="uportal-input-text" />
 					</td>
 				  </tr>
 			  </xsl:if>

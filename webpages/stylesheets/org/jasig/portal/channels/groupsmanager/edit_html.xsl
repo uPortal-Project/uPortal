@@ -53,7 +53,7 @@
                   <xsl:value-of select="RDF/Description/title" />
                 </xsl:when>
                 <xsl:otherwise>
-                  <input type="text" size="40" maxsize="255" name="grpName" class="uportal-channel-text">
+                  <input type="text" size="40" maxsize="255" name="grpName" class="uportal-input-text">
                     <xsl:attribute name="value">
                       <xsl:value-of select="RDF/Description/title" />
                     </xsl:attribute>
