@@ -121,7 +121,7 @@ public class Search extends GroupsManagerCommand {
          }
       }
       Document model = getXmlDoc(sessionData);
-      IEntityGroup sr = new EntityGroupImpl(null, type);
+      IEntityGroup sr = new SearchResultsGroupImpl(type);
       sr.setName("Search Results");
       sr.setDescription("Search for a " + label + " that" + methods[methodInt] + query);
       for (int sub = 0; sub < results.length; sub++) {
