@@ -60,7 +60,7 @@ public class CUserPreferences implements ISpecialChannel
     
     private static final String fs = File.separator;
     private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
-    String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLayoutManager";
+    String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CUserPreferences";
     
     // Various modes
     private static final int BROWSE = 0;
@@ -86,13 +86,13 @@ public class CUserPreferences implements ISpecialChannel
     
     private static final String layoutID = "top"; // just a way to refer to the layout element since it doesn't have an ID attribute
     
-    /** Constructs a CLayoutManager.
+    /** Constructs a CUserPrefrences.
      */
     public CUserPreferences ()
     {
 	this.staticData = new ChannelStaticData ();
 	this.runtimeData = new ChannelRuntimeData ();
-	this.set = new StylesheetSet (stylesheetDir + fs + "CLayoutManager.ssl");
+	this.set = new StylesheetSet (stylesheetDir + fs + "CUserPreferences.ssl");
 	this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
     }
     
@@ -111,7 +111,7 @@ public class CUserPreferences implements ISpecialChannel
 	
 	// Properties which are not specifically set here will assume default
 	// values as determined by ChannelSubscriptionProperties
-	csb.setName ("Layout Manager");
+	csb.setName ("User Preferences");
 	return csb;
     }
     
@@ -277,7 +277,7 @@ public class CUserPreferences implements ISpecialChannel
 	    processor.process (xmlSource, xslSource, xmlResult);
 	}
 	else 
-      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CLayoutManager: unable to find a stylesheet for rendering");
+      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CUserPreferences: unable to find a stylesheet for rendering");
     }
 
     private void processMoveXML (DocumentHandler out) throws org.xml.sax.SAXException {
@@ -293,7 +293,7 @@ public class CUserPreferences implements ISpecialChannel
 	    processor.process (xmlSource, xslSource, xmlResult);
 	}
 	else 
-      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CLayoutManager: unable to find a stylesheet for rendering");
+      Logger.log(Logger.ERROR, "org.jasig.portal.channels.CUserPreferences: unable to find a stylesheet for rendering");
     }
     
 
@@ -646,7 +646,7 @@ public class CUserPreferences implements ISpecialChannel
 	Node destination = null;
 	
 	if (destinationID == null) {
-	    Logger.log(Logger.ERROR,"CLayoutManager::prepareMove() : received a null destinationID !");
+	    Logger.log(Logger.ERROR,"CUserPreferences::prepareMove() : received a null destinationID !");
 	} else {
 	    if (destinationID.equals (this.layoutID))
 		destination = userLayoutXML.getDocumentElement (); // the layout element
@@ -654,7 +654,7 @@ public class CUserPreferences implements ISpecialChannel
 		destination = userLayoutXML.getElementById (destinationID);
 	    
 	    if(destination==null) {
-		Logger.log(Logger.ERROR,"CLayoutManager::prepareMove() : destinationID=\""+destinationID+"\" results in an empty node !"); 
+		Logger.log(Logger.ERROR,"CUserPreferences::prepareMove() : destinationID=\""+destinationID+"\" results in an empty node !"); 
 	    } else {
 		for (int i = 0; i < moveIDs.length; i++) {
 		    Node relocating = userLayoutXML.getElementById (moveIDs[i]);
