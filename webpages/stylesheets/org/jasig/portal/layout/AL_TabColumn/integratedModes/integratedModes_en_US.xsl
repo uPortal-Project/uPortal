@@ -1121,27 +1121,29 @@ Version $Revision$
             <img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
           </td>
           <td nowrap="nowrap" class="uportal-background-med">
-            <table border="0" cellspacing="0" cellpadding="4">
-              <tr>
-                <td nowrap="nowrap">
-
-                  <!-- Removed by request of Michael Ivanov as there is no "uP_request_move_targets" parameter if we choose to leave
-	
-                  <xsl:choose>
-                    <xsl:when test="$targetRestriction='channel' or $targetRestriction='column'">
-                      <a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_move_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
-                        <xsl:value-of select="@name"/>
-                      </a>
-                    </xsl:when>
-                    <xsl:otherwise>-->
-                  <a class="uportal-navigation-category" href="{$baseActionURL}?uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter">
-                    <xsl:value-of select="@name"/>
-                  </a>
-                  <!--                    </xsl:otherwise>
-                  </xsl:choose>-->
-                </td>
-              </tr>
-            </table>
+						<table border="0" cellspacing="0" cellpadding="4">
+							<tr>
+								<td nowrap="nowrap">
+									<xsl:choose>
+										<xsl:when test="$targetAction='Tab Move' or $targetAction='Channel Move' or $targetAction='Column Move'">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_move_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+												<xsl:value-of select="@name"/>
+											</a>
+										</xsl:when>
+										<xsl:when test="$targetAction='New Tab' or $targetAction='New Channel' or $targetAction='New Column'">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+												<xsl:value-of select="@name"/>
+											</a>
+										</xsl:when>
+										<xsl:otherwise>
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter">
+												<xsl:value-of select="@name"/>
+											</a>
+										</xsl:otherwise>
+									</xsl:choose>
+								</td>
+							</tr>
+						</table>
           </td>
           <td class="uportal-background-med">
             <img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>

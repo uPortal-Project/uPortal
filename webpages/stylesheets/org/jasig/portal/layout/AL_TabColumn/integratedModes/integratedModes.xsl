@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='utf-8' ?>
-
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -35,13 +34,10 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 Author: Justin Tilton, jet@immagic.com
 Version $Revision$
 -->
-
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" indent="no"/>
-
 	<!--These variables and parameters are used in all modes-->
 	<xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
-
 	<!--modes: view (default), preferences, fragment-->
 	<xsl:variable name="mode" select="/layout/@mode"/>
 	<xsl:variable name="mediaPath">media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable>
@@ -55,16 +51,14 @@ Version $Revision$
 	<xsl:param name="errorMessage" select="'no errorMessage passed'"/>
 	<xsl:param name="authenticated" select="'true'"/>
 	<xsl:param name="channelManager" select="'false'"/>
-
 	<!--These variables and parameters are used in fragment mode-->
 	<xsl:variable name="pushedFragmentFoundation">
 		<layout>
 			<folder ID="userLayoutRootNode" type="regular" hidden="false" unremovable="false" immutable="false" name="root">
-				<folder ID="newFragment" type="regular" hidden="false" unremovable="false" immutable="false" name="Please Name" width="100%"></folder>
+				<folder ID="newFragment" type="regular" hidden="false" unremovable="false" immutable="false" name="Please Name" width="100%"/>
 			</folder>
 		</layout>
 	</xsl:variable>
-
 	<!--These variables and parameters are used in preferences mode-->
 	<xsl:variable name="selectedID" select="/layout/@selectedID"/>
 	<xsl:variable name="focusedTabID" select="/layout/@focusedTabID"/>
@@ -72,8 +66,6 @@ Version $Revision$
 	<xsl:variable name="targetAction" select="/layout/@targetAction"/>
 	<xsl:variable name="unauthenticated" select="/layout/@unauthenticated"/>
 	<xsl:variable name="userLayoutRoot" select="/layout/@userLayoutRoot"/>
-
-
 	<!--  Used for detached content  -->
 	<xsl:template match="layout_fragment">
 		<html>
@@ -81,8 +73,8 @@ Version $Revision$
 				<title>
 					<xsl:value-of select="content/channel/@name"/>
 				</title>
-				<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"></META>
-				<META HTTP-EQUIV="pragma" CONTENT="no-cache"></META>
+				<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"/>
+				<META HTTP-EQUIV="pragma" CONTENT="no-cache"/>
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
 				<script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
 			</head>
@@ -101,8 +93,6 @@ Version $Revision$
 			</body>
 		</html>
 	</xsl:template>
-
-
 	<xsl:template match="layout">
 		<html>
 			<head>
@@ -115,17 +105,14 @@ Version $Revision$
 			</body>
 		</html>
 	</xsl:template>
-
 	<xsl:template name="scripts">
 		<script language="JavaScript"><![CDATA[
 
      function openBrWindow(theURL,winName,features)
        {window.open(theURL,winName,features);}
 
-    ]]>
-		</script>
+    ]]></script>
 	</xsl:template>
-
 	<xsl:template match="header">
 		<!-- BEGIN: Masthead and Header Channel -->
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-content">
@@ -136,7 +123,6 @@ Version $Revision$
 				<td width="100%">
 					<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
 				</td>
-
 				<!--BEGIN: Temporary Header Channel: Home,Prefs,Logout -->
 				<xsl:if test="not(/layout/login)">
 					<td align="right" valign="top">
@@ -148,7 +134,13 @@ Version $Revision$
 									</a>
 								</td>
 								<xsl:if test="$userLayoutRoot='root'">
-
+									<xsl:if test="$channelManager='true'">
+										<td>
+											<a href="{$baseActionURL}?uP_fname=portal/channelmanager/general">
+												<img width="24" height="24" alt="Channel Manager" title="Channel Manager" src="{$mediaPathIcons}/channelmanager.gif" border="0"/>
+											</a>
+										</td>
+									</xsl:if>
 									<xsl:choose>
 										<xsl:when test="$mode='view' and $authenticated='true'">
 											<td>
@@ -157,7 +149,6 @@ Version $Revision$
 												</a>
 											</td>
 										</xsl:when>
-
 										<xsl:when test="$mode='preferences'">
 											<td>
 												<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">
@@ -186,7 +177,6 @@ Version $Revision$
 		</table>
 		<!-- END: Masthead and Header Channel -->
 	</xsl:template>
-
 	<xsl:template name="actions">
 		<!-- BEGIN: upActions Table -->
 		<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -687,8 +677,6 @@ Version $Revision$
 		</table>
 		<!-- End: upActions Table -->
 	</xsl:template>
-
-
 	<xsl:template match="content">
 		<xsl:variable name="numCols" select="count(column)"/>
 		<table width="100%" border="0" cols="{$numCols}" cellspacing="9" cellpadding="0">
@@ -699,8 +687,6 @@ Version $Revision$
 			</tr>
 		</table>
 	</xsl:template>
-
-
 	<xsl:template match="channel">
 		<!-- Begin Channel Table -->
 		<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -742,7 +728,6 @@ Version $Revision$
 						</td>
 					</tr>
 				</xsl:when>
-
 				<xsl:otherwise>
 					<tr>
 						<td>
@@ -781,7 +766,6 @@ Version $Revision$
 					</tr>
 				</xsl:otherwise>
 			</xsl:choose>
-
 			<tr>
 				<td style="background-image: url({$mediaPathMainBorder}/iconbarlinesleft.gif); background-repeat:repeat-y;" valign="bottom">
 					<img src="{$mediaPathMainBorder}/channellinesbottom.gif" width="20" height="1"/>
@@ -860,10 +844,8 @@ Version $Revision$
 			<!-- End Channel Spacer Table -->
 		</xsl:if>
 	</xsl:template>
-
 	<xsl:template match="footer">
 	</xsl:template>
-
 	<xsl:template name="preferencesControls">
 		<xsl:choose>
 			<xsl:when test="$selectedID=@ID and $targetAction='Channel Move'">
@@ -880,11 +862,10 @@ Version $Revision$
 		<a href="#">
 			<img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="change language for this channel" title="change language for this channel" border="0"/>
 		</a>
-		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this channel?')">
+		<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
 			<img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="delete this channel" title="delete this channel" border="0"/>
 		</a>
 	</xsl:template>
-
 	<xsl:template name="focusedControls">
 		<a href="{$baseActionURL}?uP_root=root">
 			<img alt="return" title="return" src="{$mediaPathIcons}/return.gif" width="26" height="23" border="0"/>
@@ -910,7 +891,6 @@ Version $Revision$
 			</a>
 		</xsl:if>
 	</xsl:template>
-
 	<xsl:template name="controls">
 		<xsl:if test="not(@hasHelp='false')">
 			<a href="{$baseActionURL}?uP_help_target={@ID}">
@@ -947,17 +927,15 @@ Version $Revision$
 				</a>
 			</xsl:otherwise>
 		</xsl:choose>
-
 		<a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
 			<img alt="detach" title="detach" src="{$mediaPathIcons}/contentdetach.gif" width="26" height="23" border="0"/>
 		</a>
 		<xsl:if test="not(@unremovable='true')">
-			<a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to delete this channel?')">
-				<img alt="delete this channel" title="delete this channel" src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" border="0"/>
+			<a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
+				<img alt="remove" title="remove" src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" border="0"/>
 			</a>
 		</xsl:if>
 	</xsl:template>
-
 	<xsl:template name="detachedChannelControls">
 		<xsl:if test="not(@hasHelp='false')">
 			<a href="{$baseActionURL}?uP_help_target={@ID}">
@@ -980,7 +958,6 @@ Version $Revision$
 			</a>
 		</xsl:if>
 	</xsl:template>
-
 	<xsl:template match="focusedContent">
 		<table width="100%" cols="2" border="0" cellspacing="9" cellpadding="0">
 			<tr>
@@ -990,7 +967,6 @@ Version $Revision$
 			</tr>
 		</table>
 	</xsl:template>
-
 	<xsl:template match="navigation">
 		<!-- Begin Tab Block -->
 		<table width="100%" cols="1" border="0" cellspacing="0" cellpadding="0" class="uportal-background-content">
@@ -1019,8 +995,6 @@ Version $Revision$
 		</table>
 		<!-- End Tab Block -->
 	</xsl:template>
-
-
 	<xsl:template match="inactiveTab">
 		<td valign="bottom">
 			<table border="0" cellspacing="0" cellpadding="0">
@@ -1116,21 +1090,23 @@ Version $Revision$
 						<table border="0" cellspacing="0" cellpadding="4">
 							<tr>
 								<td nowrap="nowrap">
-
-									<!-- Removed by request of Michael Ivanov as there is no "uP_request_move_targets" parameter if we choose to leave
-
-                  <xsl:choose>
-                    <xsl:when test="$targetRestriction='channel' or $targetRestriction='column'">
-                      <a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_move_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
-                        <xsl:value-of select="@name"/>
-                      </a>
-                    </xsl:when>
-                    <xsl:otherwise>-->
-									<a class="uportal-navigation-category" href="{$baseActionURL}?uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter">
-										<xsl:value-of select="@name"/>
-									</a>
-									<!--                    </xsl:otherwise>
-                  </xsl:choose>-->
+									<xsl:choose>
+										<xsl:when test="$targetAction='Tab Move' or $targetAction='Channel Move' or $targetAction='Column Move'">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_move_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+												<xsl:value-of select="@name"/>
+											</a>
+										</xsl:when>
+										<xsl:when test="$targetAction='New Tab' or $targetAction='New Channel' or $targetAction='New Column'">
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_request_add_targets={$selectedID}&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID={$selectedID}&amp;uP_sparam=targetRestriction&amp;targetRestriction={$targetRestriction}">
+												<xsl:value-of select="@name"/>
+											</a>
+										</xsl:when>
+										<xsl:otherwise>
+											<a class="uportal-navigation-category" href="{$baseActionURL}?uP_sparam=focusedTabID&amp;focusedTabID={@ID}&amp;uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter">
+												<xsl:value-of select="@name"/>
+											</a>
+										</xsl:otherwise>
+									</xsl:choose>
 								</td>
 							</tr>
 						</table>
@@ -1239,7 +1215,6 @@ Version $Revision$
 			</table>
 		</td>
 	</xsl:template>
-
 	<xsl:template match="focusedTab">
 		<td valign="bottom">
 			<table border="0" cellspacing="0" cellpadding="0">
@@ -1347,9 +1322,7 @@ Version $Revision$
 												<xsl:choose>
 													<xsl:when test="@immutable='false'">
 														<input name="uP_target_name" type="text" class="uportal-input-text" value="{@name}">
-															<xsl:attribute name="size">
-																<xsl:value-of select="string-length(@name)"/>
-															</xsl:attribute>
+															<xsl:attribute name="size"><xsl:value-of select="string-length(@name)"/></xsl:attribute>
 														</input>
 														<input type="hidden" name="uP_rename_target" value="{@ID}"/>
 														<input type="hidden" name="uP_sparam" value="mode"/>
@@ -1372,8 +1345,8 @@ Version $Revision$
 													<img alt="Change language for this tab" title="Change language for this tab" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
 												</a>
 												<xsl:if test="@unremovable='false'">
-													<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this tab?')">
-														<img alt="delete this tab" title="delete this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
+													<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
+														<img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
 													</a>
 												</xsl:if>
 											</td>
@@ -1488,7 +1461,6 @@ Version $Revision$
 			</table>
 		</td>
 	</xsl:template>
-
 	<xsl:template match="selectedTab">
 		<td valign="bottom">
 			<table border="0" cellspacing="0" cellpadding="0">
@@ -1701,7 +1673,6 @@ Version $Revision$
 			</table>
 		</td>
 	</xsl:template>
-
 	<xsl:template match="move_target">
 		<xsl:param name="type"/>
 		<xsl:choose>
@@ -1768,9 +1739,7 @@ Version $Revision$
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
-
 	<xsl:template match="add_target">
-
 		<!-- Add target Icon in the Tabline -->
 		<xsl:if test="$targetRestriction='tab'">
 			<td align="center" valign="bottom" class="uportal-background-content">
@@ -1814,7 +1783,6 @@ Version $Revision$
 			</td>
 		</xsl:if>
 		<!-- End Add Target Icon in the Tabline -->
-
 		<!-- Add target Icon in the Columns -->
 		<xsl:if test="$targetRestriction='column'">
 			<td align="center" valign="top">
@@ -1830,7 +1798,6 @@ Version $Revision$
 			</td>
 		</xsl:if>
 		<!-- End Add Target Icon in the Columns -->
-
 		<!-- Add target Icon in the Channels -->
 		<xsl:if test="$targetRestriction='channel'">
 			<table width="100%" border="0" cellspacing="0" cellpadding="4">
@@ -1845,16 +1812,11 @@ Version $Revision$
 		</xsl:if>
 		<!-- End Add Target Icon in the Channels -->
 	</xsl:template>
-
-
-
-
 	<xsl:template match="@name" mode="view">
 		<td nowrap="nowrap" class="uportal-navigation-category-selected">
 			<xsl:value-of select="."/>
 		</td>
 	</xsl:template>
-
 	<xsl:template match="@name" mode="preferences">
 		<td nowrap="nowrap">
 			<a class="uportal-navigation-category" href="#">
@@ -1862,7 +1824,6 @@ Version $Revision$
 			</a>
 		</td>
 	</xsl:template>
-
 	<xsl:template match="login">
 		<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
 			<tr>
@@ -1976,7 +1937,6 @@ Version $Revision$
 			</tr>
 		</table>
 	</xsl:template>
-
 	<xsl:template match="actions">
 		<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
 			<tr>
@@ -2058,26 +2018,50 @@ Version $Revision$
 				<td align="left" class="uportal-background-light">
 					<span class="uportal-label">
 						<xsl:if test="not($targetRestriction='no targetRestriction parameter')">
-							<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">Cancel&#160;<xsl:value-of select="$targetAction"/></a>
-							<span>&#160;|<xsl:text> </xsl:text></span>
+							<a href="{$baseActionURL}?uP_sparam=mode&amp;mode={$mode}&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">Cancel&#160;<xsl:value-of select="$targetAction"/>
+							</a>
+							<span>&#160;|<xsl:text> </xsl:text>
+							</span>
 						</xsl:if>
 						<a href="{$baseActionURL}?uP_sparam=mode&amp;mode=view&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=selectedID&amp;selectedID=no selectedID parameter&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter">Turn&#160;Preferneces&#160;Off</a>
-						<span>&#160;|<xsl:text> </xsl:text></span>
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=focusedTabID&amp;focusedTabID={$focusedTabID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=tab&amp;uP_sparam=targetAction&amp;targetAction=New Tab">New&#160;Tab</a>
-						<span>&#160;|<xsl:text> </xsl:text></span>
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
 						<a href="{$baseActionURL}?uP_request_add_targets=folder&amp;uP_sparam=mode&amp;mode=preferences&amp;uP_sparam=targetRestriction&amp;targetRestriction=column&amp;uP_sparam=targetAction&amp;targetAction=New Column">New&#160;Column</a>
-						<span>&#160;|<xsl:text> </xsl:text></span>
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
 						<a href="{$baseActionURL}?uP_fname=contentsubscriber">Add&#160;Content</a>
-						<span>&#160;|<xsl:text> </xsl:text></span>
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
 						<a href="{$baseActionURL}?uP_fname=portal/channelmanager/general">Publish&#160;Content</a>
-						<span>&#160;|<xsl:text> </xsl:text></span>
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
 						<a href="{$baseActionURL}?uP_fname=skinselector">Skins</a>
-						<span>&#160;|<xsl:text> </xsl:text></span>
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
 						<a href="javascript:alert('[Languages] function is under construction')">Layout Languages</a>
-						<span>&#160;|<xsl:text> </xsl:text></span>
+						<span>&#160;|<xsl:text> </xsl:text>
+						</span>
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						<xsl:if test="alternateLayouts">
-							<span>&#160;|<xsl:text> </xsl:text></span>Manage:&#160;<select name="select" class="uportal-input-text uportal-background-content"><option selected="selected">My layout</option><xsl:for-each select="alternateLayouts/alternate"><option><xsl:value-of select="@name"/></option></xsl:for-each></select><!--<option><xsl:value-of select="New fragment"/></option>--><input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/><!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> --><span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[New fragment] function is under construction')">New fragment</a></xsl:if>
+							<span>&#160;|<xsl:text> </xsl:text>
+							</span>Manage:&#160;<select name="select" class="uportal-input-text uportal-background-content">
+								<option selected="selected">My layout</option>
+								<xsl:for-each select="alternateLayouts/alternate">
+									<option>
+										<xsl:value-of select="@name"/>
+									</option>
+								</xsl:for-each>
+							</select>
+							<!--<option><xsl:value-of select="New fragment"/></option>-->
+							<input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Modify this layout" title="Modify this layout"/>
+							<!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> -->
+							<span>&#160;|<xsl:text> </xsl:text>
+							</span>
+							<a href="javascript:alert('[New fragment] function is under construction')">New fragment</a>
+						</xsl:if>
 					</span>
 				</td>
 				<td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/iconbarrightborder.gif); background-repeat:repeat-y;">
@@ -2137,10 +2121,8 @@ Version $Revision$
 			</tr>
 		</table>
 	</xsl:template>
-
 	<xsl:template name="statusCheck">
 	</xsl:template>
-
 	<xsl:template name="messageRow">
 		<!-- Message Row -->
 		<tr>
@@ -2162,7 +2144,6 @@ Version $Revision$
 		</tr>
 		<!-- End Message Row -->
 	</xsl:template>
-
 	<xsl:template name="message">
 		<xsl:param name="messageString" select="$errorMessage"/>
 		<!-- Message Table -->
@@ -2477,11 +2458,9 @@ Version $Revision$
 		</table>
 		<!-- End Message Table -->
 	</xsl:template>
-
 	<xsl:template match="column">
 		<xsl:choose>
 			<xsl:when test="$mode='preferences'">
-
 				<td valign="top" width="{@width}">
 					<!-- Begin Column Table -->
 					<table width="100%" cols="1" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -2502,7 +2481,6 @@ Version $Revision$
 									<td style="background-image: url({$mediaPathColumnBorder}/headerleftborderselectedG.gif); background-repeat:repeat-y;">
 										<img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
 									</td>
-
 									<td nowrap="nowrap" class="uportal-background-selected">
 										<span class="uportal-channel-title">Selected Column</span>
 									</td>
@@ -2579,19 +2557,16 @@ Version $Revision$
 												</xsl:otherwise>
 											</xsl:choose>
 										</td>
-
 										<td>
 											<a href="#">
 												<img src="{$mediaPathIcons}/columnlanguages.gif" width="28" height="25" alt="change language for this column" title="change language for this column" border="0"/>
 											</a>
 										</td>
-
 										<td>
-											<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this column?')">
+											<a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
 												<img src="{$mediaPathIcons}/columncan.gif" width="28" height="25" alt="delete this column" title="delete this column" border="0"/>
 											</a>
 										</td>
-
 										<xsl:if test="count(../column)&gt;1">
 											<xsl:if test="number(substring-before(@width,'%'))&gt;4">
 												<form name="formResizeColumn" method="post" action="{$baseActionURL}">
@@ -2600,7 +2575,6 @@ Version $Revision$
 													</td>
 												</form>
 											</xsl:if>
-
 											<xsl:if test="number(substring-before(@width,'%'))&lt;96">
 												<form name="formResizeColumn" method="post" action="{$baseActionURL}">
 													<td>
@@ -2610,8 +2584,6 @@ Version $Revision$
 											</xsl:if>
 										</xsl:if>
 										<xsl:call-template name="normalizeColumnWidths"/>
-
-
 										<td valign="middle" nowrap="nowrap">
 											<img src="{$mediaPathSkin}/transparent.gif" width="5" height="1"/>
 											<span class="uportal-channel-strong">
@@ -2671,7 +2643,6 @@ Version $Revision$
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-
 	<xsl:template name="calculateShrinkColumn">
 		<xsl:if test="number(substring-before(@width,'%'))&gt;4">
 			<xsl:variable name="thisId" select="@ID"/>
@@ -2717,7 +2688,6 @@ Version $Revision$
 			</xsl:choose>
 		</xsl:if>
 	</xsl:template>
-
 	<xsl:template name="calculateExpandColumn">
 		<xsl:if test="number(substring-before(@width,'%'))&lt;96">
 			<xsl:variable name="thisId" select="@ID"/>
@@ -2763,7 +2733,6 @@ Version $Revision$
 			</xsl:choose>
 		</xsl:if>
 	</xsl:template>
-
 	<xsl:template name="normalizeColumnWidths">
 		<form name="form_normalizeColumnWidths" method="post" action="{$baseActionURL}">
 			<td>
