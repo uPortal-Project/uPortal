@@ -36,18 +36,45 @@
 package org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
-import org.w3c.dom.*;
 import java.util.Date;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
- * Interface defining how the portal discovers it's channels and categories.
- * Methods are also provided to allow for publishing and unpublishing content.
+ * Interface defining how the portal reads and writes its channel types,
+ * definitions, and categories.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public interface IChannelRegistryStore {
+
+  /**
+   * Get the channel type associated with a particular identifier.
+   * @param channelTypeId, the channel type identifier
+   * @return channelType, the channel type
+   * @throws java.sql.SQLException
+   */
+  public ChannelType getChannelType(int channelTypeId) throws Exception;
+
+  /**
+   * Returns an array of ChannelTypes.
+   * @return channelTypes, the list of publishable channel types
+   * @throws java.lang.Exception
+   */
+  public ChannelType[] getChannelTypes() throws Exception;
+
+  /**
+   * Registers a channel type.
+   * @param chanType a channel type
+   * @throws java.lang.Exception
+   */
+  public void addChannelType(ChannelType chanType) throws Exception;
+
+  /**
+   * Deletes a channel type.  The deletion will only succeed if no existing
+   * channels reference the channel type.
+   * @param chanType a channel type
+   * @throws java.sql.SQLException
+   */
+  public void deleteChannelType(ChannelType chanType) throws Exception;
 
   /**
    * Get a channel definition.
@@ -63,50 +90,35 @@ public interface IChannelRegistryStore {
    * @param categories the categories of which this channel should be a member
     * @throws java.lang.Exception
    */
-  public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception;
-
-  /**
-   * Disassociates a channel definition from a category.
-   * @param channelDef, the channel definition
-   * @param category, the channel category from which to disassociate the channel definition
-   * @throws org.jasig.portal.PortalException
-   */
-  public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
+  public void addChannelDefinition(ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception;
 
   /**
    * Permanently deletes a channel definition from the store.
-   * @param channelPublishId a channel publish ID
+   * @param channelDef the channel definition
    * @throws java.lang.Exception
    */
-  public void deleteChannelDefinition(int channelPublishId) throws Exception;
+  public void deleteChannelDefinition(ChannelDefinition channelDef) throws Exception;
 
   /**
    * Sets a channel definition as "approved".  This effectively makes a
    * channel definition available in the channel registry, making the channel
    * available for subscription.
-   * @param channelPublishId a channel publish ID
+   * @param channelDef the channel definition
    * @param approver the user that approves this channel definition
    * @param approveDate the date when the channel definition should be approved (can be future dated)
    * @throws java.lang.Exception
    */
-  public void approveChannelDefinition(int channelPublishId, IPerson approver, Date approveDate) throws Exception;
+  public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws Exception;
 
 
   /**
    * Sets a channel definition as "unapproved".  This effectively removes a
    * channel definition from the channel registry, making the channel
    * unavailable for subscription.
-   * @param channelPublishId a channel publish ID
+   * @param channelDef the channel definition
    * @throws java.lang.Exception
    */
-  public void disapproveChannelDefinition (String channelPublishId) throws Exception;
-
-  /**
-   * Registers a channel type.
-   * @param chanType a channel type
-   * @throws java.lang.Exception
-   */
-  public void addChannelType (ChannelType chanType) throws Exception;
+  public void disapproveChannelDefinition(ChannelDefinition channelDef) throws Exception;
 
   /**
    * Associates a channel definition with a category.
@@ -117,11 +129,12 @@ public interface IChannelRegistryStore {
   public void addChannelToCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
 
   /**
-   * Returns an array of ChannelTypes.
-   * @return channelTypes, the list of publishable channel types
-   * @throws java.lang.Exception
+   * Disassociates a channel definition from a category.
+   * @param channelDef, the channel definition
+   * @param category, the channel category from which to disassociate the channel definition
+   * @throws org.jasig.portal.PortalException
    */
-  public ChannelType[] getChannelTypes() throws Exception;
+  public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
 
 }
 

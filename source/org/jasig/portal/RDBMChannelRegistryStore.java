@@ -58,6 +58,9 @@ import java.util.Iterator;
  */
 public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
+  /**
+   * Add join queries for databases that are known to support them
+   */
   static {
     try {
       if (RDBMServices.supportsOuterJoins) {
@@ -76,6 +79,184 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       }
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, "RDBMChannelRegistryStore: Error in static initializer", e);
+    }
+  }
+
+  /**
+   * Get the channel type associated with a particular identifier.
+   * @param channelTypeId, the channel type identifier
+   * @return channelType, the channel type
+   * @throws java.sql.SQLException
+   */
+  public ChannelType getChannelType(int channelTypeId) throws SQLException {
+    ChannelType channelType = null;
+    Connection con = RDBMServices.getConnection();
+
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String query = "SELECT * FROM UP_CHAN_TYPE WHERE TYPE_ID=" + channelTypeId;
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelType(): " + query);
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          if (rs.next()) {
+            String javaClass = rs.getString("TYPE");
+            String name = rs.getString("TYPE_NAME");
+            String descr = rs.getString("TYPE_DESCR");
+            String cpdUri = rs.getString("TYPE_DEF_URI");
+
+            channelType = new ChannelType(channelTypeId, javaClass, name, descr, cpdUri);
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+    return channelType;
+  }
+
+  /**
+   * Get channel types.
+   * @return types, the channel types as a Document
+   * @throws java.sql.SQLException
+   */
+  public ChannelType[] getChannelTypes() throws SQLException {
+    ChannelType[] channelTypes = null;
+    Connection con = RDBMServices.getConnection();
+
+    try {
+      Statement stmt = con.createStatement();
+      try {
+        String query = "SELECT TYPE_ID, TYPE, TYPE_NAME, TYPE_DESCR, TYPE_DEF_URI FROM UP_CHAN_TYPE";
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelTypes(): " + query);
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          List channelTypesList = new ArrayList();
+          while (rs.next()) {
+            int channelTypeId = rs.getInt(1);
+            String javaClass = rs.getString(2);
+            String name = rs.getString(3);
+            String descr = rs.getString(4);
+            String cpdUri = rs.getString(5);
+
+            ChannelType channelType = new ChannelType(channelTypeId, javaClass, name, descr, cpdUri);
+            channelTypesList.add(channelType);
+          }
+          channelTypes = (ChannelType[])channelTypesList.toArray(new ChannelType[0]);
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
+      }
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+    return channelTypes;
+  }
+
+  /**
+   * Registers a new channel type.
+   * @param chanType a channel type
+   * @throws java.sql.SQLException
+   */
+  public void addChannelType(ChannelType chanType) throws SQLException {
+    Connection con = null;
+
+    try {
+      int nextID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHAN_TYPE");
+      String javaClass = chanType.getJavaClass();
+      String name = chanType.getName();
+      String descr = chanType.getDescription();
+      String cpdUri = chanType.getCpdUri();
+
+      con = RDBMServices.getConnection();
+
+      // Set autocommit false for the connection
+      RDBMServices.setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+      try {
+        // Insert channel type.
+        String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
+         "'" + nextID + "', " +
+         "'" + javaClass + "', " +
+         "'" + name + "', " +
+         "'" + descr + "', " +
+         "'" + cpdUri + "')";
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelType(): " + insert);
+        int rows = stmt.executeUpdate(insert);
+
+        // Commit the transaction
+        RDBMServices.commit(con);
+      } catch (SQLException sqle) {
+        // Roll back the transaction
+        RDBMServices.rollback(con);
+        throw sqle;
+      } finally {
+          stmt.close();
+      }
+    } catch (Exception e) {
+      throw new SQLException(e.getMessage());
+    } finally {
+      RDBMServices.releaseConnection(con);
+    }
+  }
+
+  /**
+   * Deletes a channel type.  The deletion will only succeed if no existing
+   * channels reference the channel type.
+   * @param chanType a channel type
+   * @throws java.sql.SQLException
+   */
+  public void deleteChannelType(ChannelType chanType) throws SQLException {
+    Connection con = null;
+
+    try {
+      con = RDBMServices.getConnection();
+
+      // Set autocommit false for the connection
+      RDBMServices.setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+
+      try {
+        // First check to see if any channels are still referencing this channel type
+        int chanTypeId = chanType.getId();
+        String select = "SELECT * FROM UP_CHANNEL WHERE CHAN_TYPE_ID=" + chanTypeId;
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelType(): " + select);
+        ResultSet rs = stmt.executeQuery(select);
+
+        // If there are channels referencing this channel type, throw an exception
+        if (rs.next()) {
+          String message = "Cannot delete channel type " + chanTypeId + ".  It is still in use by channels ";
+          do {
+            int channelPublishId = rs.getInt("CHAN_ID");
+            message += channelPublishId + " ";
+          } while (rs.next());
+          throw new SQLException(message);
+        // Otherwise delete the channel type
+        } else {
+          String delete = "DELETE FROM UP_CHAN_TYPE WHERE TYPE_ID=" + chanTypeId;
+          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.deleteChannelType(): " + delete);
+          int rows = stmt.executeUpdate(delete);
+        }
+
+        // Commit the transaction
+        RDBMServices.commit(con);
+      } catch (SQLException sqle) {
+        // Roll back the transaction
+        RDBMServices.rollback(con);
+        throw sqle;
+      } finally {
+          stmt.close();
+      }
+    } catch (Exception e) {
+      throw new SQLException(e.getMessage());
+    } finally {
+      RDBMServices.releaseConnection(con);
     }
   }
 
@@ -163,7 +344,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception {
     Connection con = RDBMServices.getConnection();
     try {
-      int channelPublishId = channelDef.getPublishId();
+      int channelPublishId = channelDef.getId();
 
       // Set autocommit false for the connection
       RDBMServices.setAutoCommit(con, false);
@@ -253,7 +434,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       // Save channel categories memberships
 
       // First delete existing category memberships for this channel
-      String channelDefEntityKey = String.valueOf(channelDef.getPublishId());
+      String channelDefEntityKey = String.valueOf(channelDef.getId());
       IEntity channelDefEntity = GroupService.getEntity(channelDefEntityKey, ChannelDefinition.class);
       IEntityGroup topLevelCategory = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
       Iterator iter = topLevelCategory.getAllMembers();
@@ -278,10 +459,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   /**
    * Permanently deletes a channel definition from the store.
-   * @param channelPublishId a channel publish ID
+   * @param channelDef the channel definition
    * @throws java.sql.SQLException
    */
-  public void deleteChannelDefinition(int channelPublishId) throws SQLException {
+  public void deleteChannelDefinition(ChannelDefinition channelDef) throws SQLException {
     throw new SQLException("not implemented yet");
   }
 
@@ -289,16 +470,17 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * Sets a channel definition as "approved".  This effectively makes a
    * channel definition available in the channel registry, making the channel
    * available for subscription.
-   * @param channelPublishId a channel publish ID
+   * @param channelDef the channel definition to approve
    * @param approver the user that approves this channel definition
    * @param approveDate the date when the channel definition should be approved (can be future dated)
    * @throws java.sql.SQLException
    */
-  public void approveChannelDefinition(int channelPublishId, IPerson approver, Date approveDate) throws SQLException {
+  public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws SQLException {
    Connection con = RDBMServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
+        int channelPublishId = channelDef.getId();
         String update = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
         ", CHAN_APVL_DT = " + RDBMServices.sqlTimeStamp(approveDate) +
         " WHERE CHAN_ID = " + channelPublishId;
@@ -317,10 +499,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * Removes a channel from the channel registry by changing
    * its status from "approved" to "unapproved".  Afterwards, no one
    * will be able to subscribe to or render the channel.
-   * @param channelPublishId, the ID of the channel definition to disapprove
+   * @param channelDef the channel definition to disapprove
    * @throws java.sql.SQLException
    */
-  public void disapproveChannelDefinition (String channelPublishId) throws SQLException {
+  public void disapproveChannelDefinition (ChannelDefinition channelDef) throws SQLException {
     Connection con = RDBMServices.getConnection();
     try {
       // Set autocommit false for the connection
@@ -328,6 +510,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         // Delete channel.
+        int channelPublishId = channelDef.getId();
         String update = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + channelPublishId;
         LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.disapproveChannelDefinition(): " + update);
         stmt.executeUpdate(update);
@@ -367,7 +550,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws org.jasig.portal.PortalException
    */
   public void addChannelToCategory(ChannelDefinition channelDef, ChannelCategory category) throws PortalException {
-    String channelDefKey = String.valueOf(channelDef.getPublishId());
+    String channelDefKey = String.valueOf(channelDef.getId());
     IEntity channelDefEntity = GroupService.getEntity(channelDefKey, ChannelDefinition.class);
     String categoryKey = String.valueOf(category.getId());
     IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
@@ -382,7 +565,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws org.jasig.portal.PortalException
    */
   public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws PortalException {
-    String channelDefKey = String.valueOf(channelDef.getPublishId());
+    String channelDefKey = String.valueOf(channelDef.getId());
     IEntity channelDefEntity = GroupService.getEntity(channelDefKey, ChannelDefinition.class);
     String categoryKey = String.valueOf(category.getId());
     IEntityGroup categoryGroup = GroupService.findGroup(categoryKey);
@@ -390,92 +573,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     categoryGroup.updateMembers();
   }
 
-  /**
-   * Get channel types.
-   * @return types, the channel types as a Document
-   * @throws java.sql.SQLException
-   */
-  public ChannelType[] getChannelTypes() throws SQLException {
-    ChannelType[] channelTypes = null;
-    Connection con = RDBMServices.getConnection();
-
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String query = "SELECT TYPE_ID, TYPE, TYPE_NAME, TYPE_DESCR, TYPE_DEF_URI FROM UP_CHAN_TYPE";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelTypes(): " + query);
-        ResultSet rs = stmt.executeQuery(query);
-        try {
-          List channelTypesList = new ArrayList();
-          while (rs.next()) {
-            int channelTypeId = rs.getInt(1);
-            String javaClass = rs.getString(2);
-            String name = rs.getString(3);
-            String descr = rs.getString(4);
-            String cpdUri = rs.getString(5);
-
-            ChannelType channelType = new ChannelType(channelTypeId, javaClass, name, descr, cpdUri);
-            channelTypesList.add(channelType);
-          }
-          channelTypes = (ChannelType[])channelTypesList.toArray(new ChannelType[0]);
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-    return channelTypes;
-  }
-
-  /**
-   * Registers a new channel type.
-   * @param chanType a channel type
-   * @throws java.sql.SQLException
-   */
-  public void addChannelType (ChannelType chanType) throws SQLException {
-    Connection con = null;
-
-    try {
-      int nextID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHAN_TYPE");
-      String javaClass = chanType.getJavaClass();
-      String name = chanType.getName();
-      String descr = chanType.getDescription();
-      String cpdUri = chanType.getCpdUri();
-
-      con = RDBMServices.getConnection();
-
-      // Set autocommit false for the connection
-      RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        // Insert channel type.
-        String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
-         "'" + nextID + "', " +
-         "'" + javaClass + "', " +
-         "'" + name + "', " +
-         "'" + descr + "', " +
-         "'" + cpdUri + "')";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannelType(): " + insert);
-        int rows = stmt.executeUpdate(insert);
-
-        // Commit the transaction
-        RDBMServices.commit(con);
-      } catch (SQLException sqle) {
-        // Roll back the transaction
-        RDBMServices.rollback(con);
-        throw sqle;
-      } finally {
-          stmt.close();
-      }
-    } catch (Exception e) {
-      throw new SQLException(e.getMessage());
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-  }
 
   protected static final RDBMServices.PreparedStatement getChannelPstmt() throws SQLException {
     String sql = "SELECT UC.CHAN_TITLE, UC.CHAN_DESC, UC.CHAN_CLASS, UC.CHAN_TYPE_ID, " +
