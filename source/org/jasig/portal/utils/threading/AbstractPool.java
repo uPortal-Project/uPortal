@@ -85,13 +85,13 @@ public abstract class AbstractPool implements ThreadPool {
          * Initialize the thread pool
          */
         private void initThreadPool() throws Exception {
-          LogService.log(LogService.ERROR,"Init start!" );
+          LogService.log(LogService.DEBUG,"AbstractPool.initThreadPool() starting" );
           for ( int i = 0; i < minThreads; i++ ) {
              Thread thread = createNewThread();
              idleThreads.add(thread);
              thread.start();
           }
-          LogService.log(LogService.ERROR,"Init end!" );
+          LogService.log(LogService.DEBUG,"AbstractPool.initThreadPool() ending" );
         }
 
 
