@@ -35,20 +35,30 @@
 
 package org.jasig.portal;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Enumeration;
 
 /*
  * This class contains basic information about the browser.
  * It stores all of the headers and cookies
  */
 public class BrowserInfo {
-  protected Cookie[] cookies;
-  protected Hashtable headers;
+    protected Cookie[] cookies;
+    protected Map headers;
 
+    /**
+     * Constructs a new empty browser info
+     */
+    public BrowserInfo() {
+      // Note: A default constructor is needed
+      // in order to use Apache Axis's BeanSerializer to 
+      // serialize this object, so please don't remove it
+    }
+        
     /**
      * Constructs a new browser info with supplied cookies and header info
      * @param cookies, an array of cookies
@@ -56,16 +66,15 @@ public class BrowserInfo {
      */
     public BrowserInfo(Cookie[] cookies, Map headers) {
       this.cookies = cookies;
-      this.headers = new Hashtable(headers);
+      this.headers = headers;
     }
 
     /**
      * Construct a new browser info based on HTTP request.
-     *
      * @param req a <code>HttpServletRequest</code> value
      */
     public BrowserInfo (HttpServletRequest req) {
-        headers = new Hashtable();
+        headers = new HashMap();
         for (Enumeration e = req.getHeaderNames(); e.hasMoreElements();) {
             String hName = (String)e.nextElement();
             // Request header names are case insensitive, so BrowserInfo must be too!!
@@ -78,15 +87,17 @@ public class BrowserInfo {
         return  cookies;
     }
 
+    public void setCookies(Cookie[] cookies) {
+        this.cookies = cookies;
+    }
 
     /**
      * Get value of a particular header.
-     *
      * @param hName a <code>String</code> value
      * @return a <code>String</code> value
      */
     public String getHeader(String hName) {
-        return  (String)headers.get(hName.toLowerCase());
+        return (String)headers.get(hName.toLowerCase());
     }
 
     /**
@@ -98,21 +109,19 @@ public class BrowserInfo {
     }
 
     /**
-     * Obtain all header names.
-     *
-     * @return an <code>Enumeration</code> value
+     * Sets the headers.
+     * @param headers, a Map of headers
      */
-    public Enumeration getHeaderNames() {
-        return  headers.keys();
-    }
+    public void setHeaders(Map headers) {
+        this.headers = headers;
+    }    
 
     /**
      * Obtain a "user-agent" header contained in the request.
-     *
      * @return a <code>String</code> value
      */
     public String getUserAgent () {
-        return  (String)headers.get("user-agent");
+        return (String)headers.get("user-agent");
     }
 
     /**
@@ -123,9 +132,9 @@ public class BrowserInfo {
     public String toString() {
         StringBuffer sb = new StringBuffer(1024);
         // Skip cookies for now and just print out headers
-        Enumeration e = headers.keys();
-        while (e.hasMoreElements()) {
-            String header = (String)e.nextElement();
+        Iterator iter = headers.keySet().iterator();
+        while (iter.hasNext()) {
+            String header = (String)iter.next();
             sb.append("[").append(header).append("]");
             sb.append("=");
             sb.append("[").append(headers.get(header)).append("] ");
