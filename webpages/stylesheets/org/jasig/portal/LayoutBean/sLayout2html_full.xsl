@@ -1,28 +1,19 @@
 <?xml version="1.0"?>
 <!--xsl:stylesheet xmlns:xsl="http://www.w3.org/XSL/Transform/1.0"-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-<!--xsl:output method="xml" indent="yes" xml-declaration="yes"/-->
+
 <xsl:output method="html"/>
-<!--xsl:strip-space elements="*"/-->
-<!--xsl:param name="activeTabID" select="/layout/child::*[position()=1]/@ID"/-->
+
 <xsl:param name="activeTab" select="1"/>
 <xsl:param name="userName" select="'Guest'"/>
 
-<!-- The following shouldn't really be here. You should not pass them as
-  params at this level of processing. This should be left to CSS in one way
-  or another. -->
-<!--xsl:variable name="channelHeadingColor" select="/layout/@channelHeadingColor"/-->
-<!--xsl:variable name="activeTabColor" select="/layout/@activeTabColor"/-->
-<!--xsl:variable name="tabColor" select="/layout/@tabColor"/-->
-<!--xsl:variable name="fgcolor" select="/layout/@fgcolor"/-->
-<!--xsl:variable name="bgcolor" select="/layout/@bgcolor"/-->
-
-<!-- for the time being, I just stuck the default values in here -->
 <xsl:variable name="channelHeadingColor">#83a3b8</xsl:variable>
 <xsl:variable name="activeTabColor">#83a3b8</xsl:variable>
 <xsl:variable name="tabColor">#a0c8b4</xsl:variable>
 <xsl:variable name="fgcolor">#000000</xsl:variable>
 <xsl:variable name="bgcolor">#ffffff</xsl:variable>
+
+<xsl:variable name="mediaDir">media/org/jasig/portal/layout/tabColumn</xsl:variable>
 
   <xsl:template match="layout">
     <html>
@@ -114,31 +105,31 @@
            <xsl:if test="@hasHelp='true'">
             <a>
             <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=help</xsl:attribute>
-            <img border="0" width="18" height="15" src="images/help.gif" alt="Help"/>
+            <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/help.gif" alt="Help"/>
             </a>
            </xsl:if>
            <xsl:if test="@editable='true'">
             <a>
             <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=edit</xsl:attribute>
-            <img border="0" width="23" height="15" src="images/edit.gif" alt="Edit"/>
+            <img border="0" width="23" height="15" src="media/org/jasig/portal/layout/tabColumn/edit.gif" alt="Edit"/>
             </a>
            </xsl:if>
            <xsl:if test="@minimizable='true'">
             <a>
             <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=minimize</xsl:attribute>
-            <img border="0" width="18" height="15" src="images/minimize.gif" alt="Minimize"/>
+            <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/minimize.gif" alt="Minimize"/>
             </a>
            </xsl:if>
            <xsl:if test="@detachable='true'">
             <a>
             <xsl:attribute name="href">JavaScript:openWin('detach.jsp?tab=<xsl:number count="tab"/>&amp;column=<xsl:number count="column"/>&amp;channel=<xsl:number count="channel"/>', 'detachedWindow', 550, 450)</xsl:attribute>
-            <img border="0" width="18" height="15" src="images/detach.gif" alt="Detach"/>
+            <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/detach.gif" alt="Detach"/>
             </a>
            </xsl:if>
            <xsl:if test="@removable='true'">
             <a>
             <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=remove</xsl:attribute>
-            <img border="0" width="18" height="15" src="images/remove.gif" alt="Remove"/>
+            <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/remove.gif" alt="Remove"/>
             </a>
            </xsl:if>
           </td>

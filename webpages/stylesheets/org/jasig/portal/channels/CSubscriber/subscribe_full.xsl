@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:param name="baseActionURL">Default</xsl:param>
-<xsl:variable name="imageDir" select="'images/org/jasig/portal/channels/CSubscriber'"/>
+<xsl:variable name="imageDir" select="'media/org/jasig/portal/channels/CSubscriber'"/>
 
 <xsl:template match="/">
   <table border="0" cellspacing="0" cellpadding="5" align="center">

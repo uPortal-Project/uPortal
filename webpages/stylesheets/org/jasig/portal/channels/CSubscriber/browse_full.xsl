@@ -4,7 +4,7 @@
 <xsl:param name="baseActionURL">Default</xsl:param>
 <xsl:param name="categoryID">top</xsl:param>
 <xsl:param name="modified">false</xsl:param>
-<xsl:variable name="imageDir" select="'images/org/jasig/portal/channels/CSubscriber'"/>
+<xsl:variable name="imageDir" select="'media/org/jasig/portal/channels/CSubscriber'"/>
 
 <xsl:template match="/">
   <p align="center">Subscribe to Channels</p>

@@ -13,7 +13,7 @@
    </description>
    <image>
     <link>http://localhost:8080/portal/</link>
-    <url>images/logo_75_teal.gif</url>
+    <url>media/org/jasig/portal/layout/tabColumn/logo_75_teal.gif</url>
     <description>uPortal logo</description>
     <width>132</width>
     <height>74</height>
