@@ -103,6 +103,16 @@ public abstract class GroupsManagerCommand
    public String getCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData) {
       return  (String)runtimeData.getParameter("grpCommandArg");
    }
+   
+   /**
+    * Set the CommandArg value, useful for commands which would like to chain
+    * other commands
+    * @param runtimeData
+    * @return String
+    */
+   public void setCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData, String arg) {
+      runtimeData.setParameter("grpCommandArg",arg);
+   }
 
    /**
     * Returns the groupParentId parameter from staticData
