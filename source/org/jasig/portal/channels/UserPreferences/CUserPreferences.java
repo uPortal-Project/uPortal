@@ -132,8 +132,8 @@ public class CUserPreferences implements IPrivilegedChannel {
     if (!initialized) {
 	instantiateManagePreferencesState(up.getProfile());
 	// Initial state should be manage preferences
-	manageProfiles.setStaticData(staticData);
 	internalState = managePreferences;
+        internalState.setStaticData(staticData);
 	editedProfile=up.getProfile();
 	initialized=true;
     }
@@ -142,7 +142,7 @@ public class CUserPreferences implements IPrivilegedChannel {
     }
   }
 
-    
+
     /**
      * Instantiates appropriate managePreferences object.
      *
