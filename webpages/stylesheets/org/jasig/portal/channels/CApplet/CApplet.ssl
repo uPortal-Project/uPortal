@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-
-<?xml-stylesheet title="main" href="webpages/stylesheets/org/jasig/portal/channels/CApplet/avantgo.xsl" type="text/xsl" media="avantgo"?>
-<?xml-stylesheet title="main" href="webpages/stylesheets/org/jasig/portal/channels/CApplet/webbrowsers.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="main" href="webpages/stylesheets/org/jasig/portal/channels/CApplet/webbrowsers.xsl" type="text/xsl" media="explorer"?>
-
-<document>
-</document>
