@@ -47,17 +47,20 @@ import java.sql.*;
  * causes the user to be created if he/she doesn't exist. The <code>-l</code>
  * flag causes the specified user's account to be locked.</p>
  *
+ * <p>You will need to set the system property "portal.home"  For example,
+ * java -Dportal.home=/usr/local/uPortal</p>
+ *
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
 public class md5passwd {
 
   static private final String SELECTSTMT =
-    "SELECT COUNT(*) FROM UP_SHADOW WHERE USER_NAME = ?";
+    "SELECT COUNT(*) FROM UP_PERSON_DIR WHERE USER_NAME = ?";
   static private final String UPDATESTMT =
-    "UPDATE UP_SHADOW SET PASSWORD = ? WHERE USER_NAME = ?";
+    "UPDATE UP_PERSON_DIR SET PASSWORD = ? WHERE USER_NAME = ?";
   static private final String INSERTSTMT =
-    "INSERT INTO UP_SHADOW (USER_NAME, PASSWORD) " +
+    "INSERT INTO UP_PERSON_DIR (USER_NAME, PASSWORD) " +
     "VALUES (?, ?)";
 
   public md5passwd(String user, boolean create, boolean lock)
@@ -127,7 +130,7 @@ public class md5passwd {
       throws IOException, NoSuchAlgorithmException, SQLException {
     md5passwd me;
 
-    GenericPortalBean.setPortalBaseDir("d:\\projects\\holycross\\myhc\\");
+    setPortalBaseDir();
 
     if (args.length == 1 && args[0].charAt(0) != '-')
       me = new md5passwd(args[0], false, false);
@@ -186,5 +189,23 @@ public class md5passwd {
     if (sixBit == 62) return '+';
     if (sixBit == 63) return '/';
     return '?';
+  }
+
+  private static void setPortalBaseDir()
+  {
+    String portalBaseDirParam = System.getProperty("portal.home");
+
+    if (portalBaseDirParam != null)
+    {
+      if (!portalBaseDirParam.endsWith(File.separator))
+         portalBaseDirParam += File.separator;
+
+      UtilitiesBean.setPortalBaseDir(portalBaseDirParam);
+    }
+    else
+    {
+      System.out.println("Please set the system parameter portal.home.  For example: java -Dportal.home=/usr/local/portal");
+      System.exit(0);
+    }
   }
 }
