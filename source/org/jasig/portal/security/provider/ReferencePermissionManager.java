@@ -31,6 +31,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -39,7 +41,7 @@ package  org.jasig.portal.security.provider;
 import  org.jasig.portal.security.PermissionManager;
 import  org.jasig.portal.security.Permission;
 import  org.jasig.portal.RdbmServices;
-import  org.jasig.portal.Logger;
+import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.AuthorizationException;
 import  java.sql.Connection;
 import  java.sql.Statement;
@@ -68,11 +70,32 @@ public class ReferencePermissionManager extends PermissionManager {
   public void setPermission (Permission newPermission) {
     Connection connection = RdbmServices.getConnection();
     try {
-      String updateStatement = "INSERT INTO UP_PERMISSIONS (OWNER, PRINCIPAL, ACTIVITY, TARGET, EFFECTIVE, EXPIRES) VALUES (";
+      StringBuffer updateStatement = "INSERT INTO UP_PERMISSIONS (OWNER, PRINCIPAL, ACTIVITY, TARGET, PERMISSION_TYPE, EFFECTIVE, EXPIRES) VALUES (";
       updateStatement += "'" + m_owner + "',";
-      updateStatement += "'" + newPermission.getPrincipal() + "',";
-      updateStatement += "'" + newPermission.getActivity() + "',";
-      updateStatement += "'" + newPermission.getTarget() + "',";
+      if (newPermission.getPrincipal() != null) {
+        updateStatement.append("'" + newPermission.getPrincipal() + "',");
+      } 
+      else {
+        updateStatement.append("'*',");
+      }
+      if (newPermission.getActivity() != null) {
+        updateStatement.append("'" + newPermission.getActivity() + "',");
+      } 
+      else {
+        updateStatement.append("'*',");
+      }
+      if (newPermission.getTarget() != null) {
+        updateStatement.append("'" + newPermission.getTarget() + "',");
+      } 
+      else {
+        updateStatement.append("'*',");
+      }
+      if (newPermission.getType() != null) {
+        updateStatement.append("'" + newPermission.getType() + "',");
+      } 
+      else {
+        updateStatement.append("'*',");
+      }
       updateStatement += "null, null";
       updateStatement += ")";
       Statement statement = connection.createStatement();
@@ -97,29 +120,37 @@ public class ReferencePermissionManager extends PermissionManager {
   /**
    * Retrieve an array of Permission objects based on the given parameters. Any null parameters
    * will be ignored. So to retrieve a set of Permission objects for a given principal you would call
-   * this method like pm.getPermissions('principal name', null, null)
+   * this method like pm.getPermissions('principal name', null, null, null)
    * @param principal
    * @param activity
    * @param target
+   * @param type
    * @return 
    * @exception AuthorizationException
    */
-  public Permission[] getPermissions (String principal, String activity, String target) throws AuthorizationException {
+  public Permission[] getPermissions (String principal, String activity, String target, String type) throws AuthorizationException {
+    if (principal == null) {
+      principal = "*";
+    }
+    if (activity == null) {
+      activity = "*";
+    }
+    if (target == null) {
+      target = "*";
+    }
+    if (type == null) {
+      type = "*";
+    }
     Connection connection = RdbmServices.getConnection();
     try {
       StringBuffer queryString = new StringBuffer(255);
       queryString.append("SELECT * FROM UP_PERMISSIONS WHERE OWNER = '" + m_owner.toUpperCase() + "'");
-      if (principal != null) {
-        queryString.append(" AND PRINCIPAL = '" + principal.toUpperCase() + "'");
-      }
-      if (activity != null) {
-        queryString.append(" AND ACTIVITY = '" + activity.toUpperCase() + "'");
-      }
-      if (target != null) {
-        queryString.append(" AND TARGET = '" + target.toUpperCase() + "'");
-      }
+      queryString.append(" AND PRINCIPAL = '" + principal.toUpperCase() + "'");
+      queryString.append(" AND ACTIVITY = '" + activity.toUpperCase() + "'");
+      queryString.append(" AND TARGET = '" + target.toUpperCase() + "'");
+      queryString.append(" AND PERMISSION_TYPE = '" + type.toUpperCase() + "'");
       Statement statement = connection.createStatement();
-      System.out.println(queryString.toString());
+      LogService.log(LogService.DEBUG, queryString.toString());
       ResultSet rs = statement.executeQuery(queryString.toString());
       ArrayList permissions = new ArrayList();
       while (rs.next()) {
@@ -127,12 +158,13 @@ public class ReferencePermissionManager extends PermissionManager {
         permission.setPrincipal(rs.getString("PRINCIPAL"));
         permission.setActivity(rs.getString("ACTIVITY"));
         permission.setTarget(rs.getString("TARGET"));
+        permission.setType(rs.getString("PERMISSION_TYPE"));
         permission.setEffective(rs.getDate("EFFECTIVE"));
         permission.setExpires(rs.getDate("EXPIRES"));
         permissions.add(permission);
       }
       if (permissions.size() > 0) {
-        return((Permission[])permissions.toArray(new Permission[0])); 
+        return  ((Permission[])permissions.toArray(new Permission[0]));
       } 
       else {
         return  (null);
