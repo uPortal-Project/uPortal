@@ -45,7 +45,6 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
 import java.text.*;
-import java.sql.*;
 import java.net.*;
 import org.w3c.dom.*;
 import org.apache.xalan.xpath.*;
@@ -93,7 +92,7 @@ public class LayoutBean
     HttpSession session = req.getSession (false);
     IPerson person = (IPerson) session.getAttribute ("up_person");
     return person;
-    } 
+    }
 
   /**
    * Renders the current state of the portal into the target markup language
@@ -154,7 +153,7 @@ public class LayoutBean
 
       // determine rendering root -start
       // In general transformations will start at the userLayoutRoot node, unless
-      // we are rendering something in a detach mode. 
+      // we are rendering something in a detach mode.
       Node rElement=null;
       boolean detachMode=false;
 
@@ -165,42 +164,42 @@ public class LayoutBean
       String upFile=servletPath.substring(servletPath.lastIndexOf('/'),servletPath.length());
       int upInd=upFile.indexOf(".uP");
       if(upInd!=-1) {
-	  // found a .uP specification at the end of the context path
-	  int detachInd=upFile.indexOf("detach_");
-	  if(detachInd!=-1) {
-	      detachId=upFile.substring(detachInd+7,upInd);
-	      //		  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : found detachId=\""+detachId+"\" in the .uP spec.");
-	  }
+          // found a .uP specification at the end of the context path
+          int detachInd=upFile.indexOf("detach_");
+          if(detachInd!=-1) {
+              detachId=upFile.substring(detachInd+7,upInd);
+              //		  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : found detachId=\""+detachId+"\" in the .uP spec.");
+          }
       }
 
       // see if a new detach target has been specified
       String newDetachId=req.getParameter("uP_detach_target");
       if(newDetachId!=null && (!newDetachId.equals(detachId))) {
-	  // see if the new detach traget is valid
-	  rElement=uLayoutManager.getNode(newDetachId);
-	  if(rElement!=null) {
-	      // valid new detach id was specified. need to redirect
-	      res.sendRedirect(req.getContextPath()+"/detach_"+newDetachId+".uP");
-	      return;
-	  }
+          // see if the new detach traget is valid
+          rElement=uLayoutManager.getNode(newDetachId);
+          if(rElement!=null) {
+              // valid new detach id was specified. need to redirect
+              res.sendRedirect(req.getContextPath()+"/detach_"+newDetachId+".uP");
+              return;
+          }
       }
 
       // else ignore new id, proceed with the old detach target (or the lack of such)
       if(detachId!=null) {
-	  // Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : uP_detach_target=\""+detachId+"\".");
-	  rElement=uLayoutManager.getNode (detachId);
-	  detachMode=true;
+          // Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : uP_detach_target=\""+detachId+"\".");
+          rElement=uLayoutManager.getNode (detachId);
+          detachMode=true;
       }
 
       // if we haven't found root node so far, set it to the userLayoutRoot
       if(rElement==null) {
-	  rElement=uLayoutManager.getRoot ();
-	  detachMode=false;
+          rElement=uLayoutManager.getRoot ();
+          detachMode=false;
       }
       String uPElement="render.uP";
       if(detachMode) {
-	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : entering detach mode for nodeId=\""+detachId+"\".");
-	  uPElement="detach_"+detachId+".uP";
+          Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : entering detach mode for nodeId=\""+detachId+"\".");
+          uPElement="detach_"+detachId+".uP";
       }
 
 
@@ -220,18 +219,18 @@ public class LayoutBean
       StylesheetRoot ss=XSLT.getStylesheetRoot(uLayoutManager.getStructureStylesheet());
       StylesheetRoot ts=XSLT.getStylesheetRoot(uLayoutManager.getThemeStylesheet());
 
-      // obtain an XSLT processor 
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor();      
+      // obtain an XSLT processor
+      XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 
       // prepare .uP element and detach flag to be passed to the stylesheets
       XString xuPElement=processor.createXString (uPElement);
 
       // set up the channelManager
       if (channelManager == null)
-	  channelManager = new ChannelManager (req, res,uLayoutManager,uPElement);
+          channelManager = new ChannelManager (req, res,uLayoutManager,uPElement);
       else
-	  channelManager.setReqNRes (req, res,uPElement);
-      
+          channelManager.setReqNRes (req, res,uPElement);
+
       // set the response mime type
       res.setContentType (uLayoutManager.getMimeType());
 
@@ -269,25 +268,25 @@ public class LayoutBean
       processor.setDocumentHandler(crb);
       // filter to fill in channel/folder attributes for the "structure" transformation.
       StructureAttributesIncorporationFilter saif=new StructureAttributesIncorporationFilter(processor,cup.getStructureStylesheetUserPreferences());
-      
+
       // if operating in the detach mode, need wrap everything
       // in a document node and a <layout_fragment> node
       if(detachMode) {
-	  saif.startDocument();
-	  saif.startElement("layout_fragment",new org.xml.sax.helpers.AttributeListImpl());
-	  UtilitiesBean.node2SAX(rElement,saif);
-	  saif.endElement("layout_fragment");
-	  saif.endDocument();
+          saif.startDocument();
+          saif.startElement("layout_fragment",new org.xml.sax.helpers.AttributeListImpl());
+          UtilitiesBean.node2SAX(rElement,saif);
+          saif.endElement("layout_fragment");
+          saif.endDocument();
       } else if(rElement.getNodeType() == Node.DOCUMENT_NODE) {
-	  UtilitiesBean.node2SAX(rElement,saif);
+          UtilitiesBean.node2SAX(rElement,saif);
       } else {
-	  // as it is, this should never happen
-	  saif.startDocument();
-	  UtilitiesBean.node2SAX(rElement,saif);
-	  saif.endDocument();
+          // as it is, this should never happen
+          saif.startDocument();
+          UtilitiesBean.node2SAX(rElement,saif);
+          saif.endDocument();
       }
-	  
-	  
+
+
       // all channels should be rendering now
       // prepare processor for the theme transformation
       processor.reset();
@@ -308,7 +307,7 @@ public class LayoutBean
 
       ThemeAttributesIncorporationFilter taif=new ThemeAttributesIncorporationFilter(processor,cup.getThemeStylesheetUserPreferences());
       processor.setDocumentHandler (cif);
-      
+
       // fire up theme transformation
       crb.setDocumentHandler(taif);
       crb.stopBuffering();
