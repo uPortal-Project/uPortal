@@ -152,7 +152,6 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
     response.sendRedirect(redirectHost + redirectURL);
   }
 
-
   public synchronized String getParameter (String key)
   {
       String[] value_array=this.getParameterValues(key);
@@ -160,21 +159,17 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
       else return null;
   }
 
-  /**
-   * wrapper for getParameterValues
-   * @parameter parmeter to look for
-   */
   public String[] getParameterValues(String parameter)
   {
-    return request.getParameterValues(parameter);
+    return (String[]) super.get (parameter);
   }
 
   /**
-   * Wrapper for getParameterNames
+   * Return the names of all the runtimeData parameters
    */
   public Enumeration getParameterNames()
   {
-    return request.getParameterNames();
+    return (Enumeration) super.keys();
   }
 
   /**
