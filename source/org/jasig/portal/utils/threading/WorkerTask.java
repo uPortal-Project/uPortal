@@ -102,7 +102,7 @@ public abstract class WorkerTask implements Runnable{
 	 * Kills this task
 	 */
 	public final void kill() {
-           if ( worker != null && !worker.isInterrupted() )
-		worker.interrupt();
+        if ( worker != null )
+          worker.stopWorker();
 	}
 }
