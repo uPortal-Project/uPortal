@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">channelDef</xsl:param>
+  <xsl:param name="action">selectChannelType</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -129,10 +129,51 @@
                   </table>
                 </td>
               </tr>
+
+                              <tr class="uportal-channel-text" valign="top">
+                  <td nowrap="nowrap" align="center">
+                    <input type="radio" name="ID" value="-1" /> </td>
+                  <td nowrap="nowrap">
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  </td>
+                  <td nowrap="nowrap">
+                    <strong>Custom</strong>
+                  </td>
+                  <td nowrap="nowrap">
+                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  </td>
+                  <td width="100%">This channel type allows the publication of channels with no accompanying CPD (Channel Publishing Document). It is typically used to publish channels with only one corresponding channel definition.</td>
+                </tr>
+
+<tr class="uportal-channel-text" valign="top">
+                  <td colspan="5" align="center">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                      <tr>
+                        <td>
+                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+<tr class="uportal-channel-text" valign="top">
+                  <td colspan="5" align="center">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                      <tr>
+                        <td>
+                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
               <xsl:for-each select="//selectChannelType//channelType">
+              <xsl:sort select="name"/>
                 <tr class="uportal-channel-text" valign="top">
                   <td nowrap="nowrap" align="center">
-                    <input type="radio" name="ID" value="{@ID}" checked="checked"/> </td>
+                    <input type="radio" name="ID" value="{@ID}" /> </td>
                   <td nowrap="nowrap">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                   </td>
@@ -160,6 +201,10 @@
                   </td>
                 </tr>
               </xsl:for-each>
+
+
+
+
             </table>
           </td>
         </tr>
@@ -429,7 +474,7 @@
                 <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-med">
                   <tr>
                     <td class="uportal-text-small" align="center">
-                      <a href="#"><xsl:attribute name="onclick">document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
+                      <a ><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                       <xsl:choose>
                       <xsl:when test="name !=''">
                       <xsl:value-of select="name"/>
@@ -464,7 +509,7 @@
               <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
                 <tr>
                   <td class="uportal-text-small" align="center">
-                      <a href="#"><xsl:attribute name="onclick">document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';<xsl:if test="name(.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select=".//step/ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
+                      <a ><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';<xsl:if test="name(.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select=".//step/ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                         <xsl:when test="name != ''">
                         <xsl:value-of select="name"/>
@@ -493,7 +538,7 @@
                 <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-light" width="8">
                   <tr>
                     <td class="uportal-text-small" align="center">
-                      <a href="#"><xsl:attribute name="onclick">document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
+                      <a ><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                         <xsl:when test="name !=''">
                         <xsl:value-of select="name"/>
@@ -2319,6 +2364,7 @@
     </table>
 </xsl:template>
 </xsl:stylesheet>
+
 
 
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
