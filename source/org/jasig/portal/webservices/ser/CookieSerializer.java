@@ -42,7 +42,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Serializer;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.xml.sax.Attributes;
 
