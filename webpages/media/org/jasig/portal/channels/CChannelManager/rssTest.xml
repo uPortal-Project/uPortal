@@ -59,10 +59,10 @@
       <step>
         <ID>1</ID>
         <name>General Settings</name>
-        <categories>
-          <catagory>
-          </catagory>
-        </categories>
+        <settings>
+          <setting>
+          </setting>
+        </settings>
       </step>
     </params>
   </selectGeneralSettings>
