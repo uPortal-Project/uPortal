@@ -6,15 +6,12 @@
 package org.jasig.portal.layout.al.common.restrictions;
 
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.IALFolder;
 import org.jasig.portal.layout.al.IALNode;
-import org.jasig.portal.layout.al.IALNodeDescription;
 import org.jasig.portal.layout.al.IAggregatedLayout;
 import org.jasig.portal.layout.al.common.IUserLayout;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
@@ -123,7 +120,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
     INodeId newNodeId = newNode.getId();
     IALNode parentNode = layout.getLayoutNode(parentId);
 
-    if ( !(parentNode.getNodeType()==NodeType.FOLDER ) )
+    if ( !(parentNode.getType()==NodeType.FOLDER ) )
       throw new PortalException ("The target parent node should be a folder!");
 
     //if ( checkRestriction(parentNode,RestrictionTypes.IMMUTABLE_RESTRICTION,"false") ) {
@@ -260,7 +257,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
     // Checking restrictions for the node
     if ( !checkRestriction(node.getId(),RestrictionTypes.DEPTH_RESTRICTION,depth+"") )
             return false;
-    if ( node.getNodeType() == NodeType.FOLDER ) {
+    if ( node.getType() == NodeType.FOLDER ) {
      IALFolder folder = (IALFolder) node;	
      for ( INode n = folder.getFirstChildNode(); n != null; n = n.getNextSiblingNode() ) {
       if ( !checkDepthRestrictions(((ILayoutNode)n).getId(),depth+1) )

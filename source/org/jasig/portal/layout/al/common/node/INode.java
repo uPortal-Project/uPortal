@@ -20,5 +20,4 @@ public interface INode extends INodeDescription {
     public INode getParentNode();
     public INode getNextSiblingNode();
     public INode getPreviousSiblingNode();
-    public NodeType getNodeType();
 }
