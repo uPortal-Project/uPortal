@@ -6,10 +6,10 @@
 package org.jasig.portal.layout.restrictions;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.ILayoutNode;
 
 /**
- * UserLayoutRelativeRestriction summary sentence goes here.
+ * UserLayoutRestriction summary sentence goes here.
  *
  * @author Michael Ivanov
  * @version $Revision$
@@ -21,18 +21,13 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   private String restrictionExpression;
   protected String nodePath;
 
-  public static String LOCAL_RESTRICTION = "local";
-
   public UserLayoutRestriction() {
-
+     this(LOCAL_RESTRICTION_PATH);
   }
 
   public UserLayoutRestriction( String nodePath ) {
      this.nodePath = nodePath;
   }
-
-
-
 
 
   /**
@@ -48,25 +43,22 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      */
   public abstract boolean checkRestriction(String propertyValue) throws PortalException;
 
-
-  /**  Checks the relative restriction on a given node
-     * @param node a <code>ALNode</code> node
-     * @return a boolean value
-     * @exception PortalException
-     */
-  public boolean checkRestriction ( ALNode node ) throws PortalException {
-     return true;
+  /**
+   * Checks the restriction on a given node
+   * @param node a <code>ILayoutNode</code> node
+   * @return a boolean value
+   * @exception PortalException
+   */
+  public boolean checkRestriction ( ILayoutNode node ) throws PortalException {
+  	return true;
   }
 
-
+  
   /**
    * Returns the type of the current restriction
    * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
    */
-  public int getRestrictionType() {
-     //return (nodePath==null||nodePath.length()==0)?RestrictionTypes.REMOTE_RESTRICTION:0;
-     return 0;
-  }
+  public abstract int getRestrictionType();
 
   /**
      * Gets the restriction name
@@ -84,9 +76,21 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      * @return a <code>String</code> restriction name
      */
   public static String getRestrictionName( int restrictionType, String nodePath ) {
-     return (nodePath!=null && nodePath.length()>0)?restrictionType+":"+nodePath:restrictionType+"";
+  	 if ( nodePath!=null && nodePath.length() > 0  ) 
+  	 	nodePath = LOCAL_RESTRICTION_PATH;
+     return restrictionType+":"+nodePath;
   }
 
+  /**
+   * Gets the local restriction name based on a restriction type
+   * @param restrictionType a restriction type
+   * @return a <code>String</code> restriction name
+   */
+  public static String getRestrictionName( int restrictionType) {
+	 return getRestrictionName(restrictionType,LOCAL_RESTRICTION_PATH);
+  }
+
+  
 
   /**
      * Sets the restriction expression

@@ -37,11 +37,16 @@ public class UserLayoutRestrictionFactory {
       case RestrictionTypes.UNREMOVABLE_RESTRICTION:
         restriction = new UnremovableRestriction(restrictionPath);
         break;
-      default:
-        restriction = new UnremovableRestriction(restrictionPath);
     }
+        if ( restriction == null )
+          throw new PortalException ("Cannot create restriction for the give type = " + restrictionType );
+    
         restriction.setRestrictionExpression(restrictionValue);
         return restriction;
-  }
+ }
+ 
+ public static IUserLayoutRestriction createRestriction( int restrictionType, String restrictionValue ) throws PortalException {
+        return createRestriction(restrictionType,restrictionValue,IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);     
+ }
 
 }

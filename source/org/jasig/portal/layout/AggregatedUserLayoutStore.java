@@ -41,7 +41,6 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
-import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
@@ -351,7 +350,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       int nodeId = 0;
       int layoutId = -1;
       int userId = person.getID();
-      IALNodeDescription nodeDesc = node.getNodeDescription();
+      IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
 
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
@@ -488,7 +487,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     private ALNode addUserLayoutNode ( int userId, int layoutId, ALNode node, PreparedStatement psAddNode, PreparedStatement psAddRestriction,
                                                PreparedStatement psAddChannel, PreparedStatement psAddChannelParam, Statement stmt ) throws PortalException {
 
-      IALNodeDescription nodeDesc = node.getNodeDescription();
+      IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
 
       boolean isFolder = (node.getNodeType() == IUserLayoutNodeDescription.FOLDER);
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
@@ -797,7 +796,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       int userId = person.getID();
       int nodeId = CommonUtils.parseInt(node.getId());
-      IALNodeDescription nodeDesc = node.getNodeDescription();
+      IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
 
       Statement stmt = con.createStatement();
 
@@ -873,7 +872,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       int count = 0;
 
       boolean isFolder = (node.getNodeType() == IUserLayoutNodeDescription.FOLDER);
-      IALNodeDescription nodeDesc = node.getNodeDescription();
+      IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
       int nodeId = CommonUtils.parseInt(nodeDesc.getId());
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
@@ -1167,7 +1166,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       int userId = person.getID();
       int nodeId = CommonUtils.parseInt(node.getId());
-      IALNodeDescription nodeDesc = node.getNodeDescription();
+      IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
       Statement stmt = con.createStatement();
 
         // eventually, we need to fix template layout implementations so you can just do this:
@@ -1590,7 +1589,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          int nodeId = CommonUtils.parseInt(node.getId());
 
          // Setting the fragment ID
-         node.getNodeDescription().setFragmentId(fragmentId);
+         ((IALNodeDescription)node.getNodeDescription()).setFragmentId(fragmentId);
 
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
 
@@ -2100,7 +2099,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                   String restrExp = rsRestr.getString(2);
                   String restrPath = rsRestr.getString(3);
                   if ( restrPath == null || restrPath.trim().length() == 0 )
-                    restrPath = UserLayoutRestriction.LOCAL_RESTRICTION;
+                    restrPath = IUserLayoutRestriction.LOCAL_RESTRICTION_PATH;
                   IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrType,restrExp,restrPath);
                   nodeDesc.addRestriction(restriction);
               }
@@ -2314,7 +2313,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             String key = strFragmentId+NODE_SEPARATOR+strFragmentRootId;
             ALNode node = (ALNode) layoutData.get(key);
             if ( node != null ) {
-                IALNodeDescription nodeDesc = node.getNodeDescription();
+                IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
                 // Setting the new next struct node ID and fragment node id since we have all the pushed fragments attached to the layout
                 String newId = getNextStructId(person,"");
                 nodeDesc.setId(newId);
@@ -2649,7 +2648,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                   String restrExp = rsRestr.getString(2);
                   String restrPath = rsRestr.getString(3);
                   if ( restrPath == null || restrPath.trim().length() == 0 )
-                    restrPath = UserLayoutRestriction.LOCAL_RESTRICTION;
+                    restrPath = IUserLayoutRestriction.LOCAL_RESTRICTION_PATH;
                   IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrType,restrExp,restrPath);
                   nodeDesc.addRestriction(restriction);
               }

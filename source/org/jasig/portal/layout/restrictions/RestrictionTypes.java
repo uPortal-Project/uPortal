@@ -20,7 +20,5 @@ public interface RestrictionTypes {
   public static final int IMMUTABLE_RESTRICTION = 8;
   public static final int UNREMOVABLE_RESTRICTION = 16;
   public static final int HIDDEN_RESTRICTION = 32;
-  //public static final int REMOTE_RESTRICTION = 64;
-
 
 }

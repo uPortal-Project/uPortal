@@ -204,7 +204,7 @@ public class AggregatedLayout implements IAggregatedLayout {
      */
    private void appendDescendants(Document domLayout,Node node, String nodeId) throws PortalException {
           ALNode layoutNode = getLayoutNode(nodeId);
-          IALNodeDescription nodeDesc = layoutNode.getNodeDescription();
+          IALNodeDescription nodeDesc = (IALNodeDescription) layoutNode.getNodeDescription();
           Element markingMoveLeaf = null, markingAddLeaf = null;
 
           Element newNode = domLayout.createElement((layoutNode.getNodeType()==IUserLayoutNodeDescription.FOLDER)?FOLDER:CHANNEL);

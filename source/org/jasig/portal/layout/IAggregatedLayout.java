@@ -54,5 +54,13 @@ public interface IAggregatedLayout extends IUserLayout {
      * @exception PortalException if an error occurs
      */
     public String getFragmentRootId(String fragmentId) throws PortalException;
-
+    
+    /**
+     * Returns the node by a given node ID.
+     *
+     * @param nodeId a <code>String</code> value
+     * @return a <code>ALNode</code> instance
+     */
+    public ALNode getLayoutNode(String nodeId);
+   
 }

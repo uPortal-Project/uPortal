@@ -22,7 +22,7 @@ import org.jasig.portal.utils.CommonUtils;
  * @version $Revision$
  */
 
-public class DepthRestriction extends UserLayoutRestriction {
+public class DepthRestriction extends ALRestriction {
 
 
          private Integer[] minDepthArray, maxDepthArray, depthArray;
@@ -40,7 +40,7 @@ public class DepthRestriction extends UserLayoutRestriction {
            * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
            */
           public int getRestrictionType() {
-           return RestrictionTypes.DEPTH_RESTRICTION|super.getRestrictionType();
+           return RestrictionTypes.DEPTH_RESTRICTION;
           }
 
           /**
@@ -99,24 +99,5 @@ public class DepthRestriction extends UserLayoutRestriction {
            }
               return false;
          }
-
-         /**
-           * Checks the restriction for the specified node
-           * @exception PortalException
-         */
-         /*public boolean checkRestriction( UserLayoutNode node ) throws PortalException {
-           int depth = node.getDepth();
-           for ( int i = 0; i < minDepthArray.length || i < depthArray.length; i++ ) {
-             if ( i < minDepthArray.length )
-               if ( depth <= maxDepthArray[i].intValue() && depth >= minDepthArray[i].intValue() )
-                 return true;
-             if ( i < depthArray.length )
-              if ( depthArray[i].intValue() == depth )
-                 return true;
-           }
-              return false;
-         }*/
-
-
 
 }

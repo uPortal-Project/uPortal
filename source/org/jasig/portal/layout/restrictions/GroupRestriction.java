@@ -15,6 +15,7 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ReferenceGroupServiceFactory;
+import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.IALNodeDescription;
 
@@ -26,7 +27,7 @@ import org.jasig.portal.layout.IALNodeDescription;
  * @version $Revision$
  */
 
-public class GroupRestriction extends UserLayoutRestriction {
+public class GroupRestriction extends ALRestriction {
 
 
          // This group key can be come from different sources, for instance, from IEntityGroup object
@@ -47,7 +48,7 @@ public class GroupRestriction extends UserLayoutRestriction {
          }
 
          public GroupRestriction() throws PortalException {
-          this(LOCAL_RESTRICTION);
+           this(LOCAL_RESTRICTION_PATH);
          }
 
 
@@ -56,7 +57,7 @@ public class GroupRestriction extends UserLayoutRestriction {
            * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
           */
          public int getRestrictionType() {
-           return RestrictionTypes.GROUP_RESTRICTION|super.getRestrictionType();
+           return RestrictionTypes.GROUP_RESTRICTION;
          }
 
 
@@ -98,8 +99,9 @@ public class GroupRestriction extends UserLayoutRestriction {
            * Checks the restriction for the current node
            * @exception PortalException
          */
-         public boolean checkRestriction( ALNode node ) throws PortalException {
-
+         public boolean checkRestriction( ILayoutNode node ) throws PortalException {
+           if ( !(node instanceof ALNode) )	
+               throw new PortalException ( "The node must be ALNode type!");  
            IEntityGroup group = groupService.findGroup(((IALNodeDescription)node.getNodeDescription()).getGroup());
            for ( int i = 0; i < groups.length; i++ )
             if ( groups[i].contains(group) )

@@ -6,7 +6,7 @@
 package org.jasig.portal.layout.restrictions;
 
 
-import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 
 /**
@@ -29,13 +29,13 @@ public class UnremovableRestriction extends BooleanRestriction {
            * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
           */
          public int getRestrictionType() {
-           return RestrictionTypes.UNREMOVABLE_RESTRICTION|super.getRestrictionType();
+           return RestrictionTypes.UNREMOVABLE_RESTRICTION;
          }
 
          /**
            * Gets the boolean property value for the specified node
          */
-         protected boolean getBooleanPropertyValue( ALNode node ) {
+         protected boolean getBooleanPropertyValue( ILayoutNode node ) {
            IUserLayoutNodeDescription nodeDesc = node.getNodeDescription();
            return nodeDesc.isUnremovable();
          }

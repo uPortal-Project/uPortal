@@ -224,7 +224,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected boolean checkRestriction(String nodeId, int restrictionType, String propertyValue ) throws PortalException {
-    return (nodeId!=null)?checkRestriction(nodeId, restrictionType, UserLayoutRestriction.LOCAL_RESTRICTION, propertyValue):true;
+    return (nodeId!=null)?checkRestriction(nodeId, restrictionType, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue):true;
   }
 
   /**
@@ -275,10 +275,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       ALNode node = getLayoutNode(nodeId);
 
       // Checking restrictions on the node
-      Vector restrictions = node.getRestrictionsByPath(UserLayoutRestriction.LOCAL_RESTRICTION);
-      for ( int i = 0; i < restrictions.size(); i++ ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
-
+      Collection restrictions = node.getRestrictionsByPath(IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);
+      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          // check other restrictions except priority and depth
          if ( ( restriction.getRestrictionType() & (RestrictionTypes.DEPTH_RESTRICTION | RestrictionTypes.PRIORITY_RESTRICTION )) == 0
                 && !restriction.checkRestriction(node) ) {
@@ -296,8 +295,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       restrictions = node.getRestrictionsByPath("children");
       boolean isFolder = (node.getNodeType() == IUserLayoutNodeDescription.FOLDER );
       if ( isFolder ) {
-       for ( int i = 0; i < restrictions.size(); i++ ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+      	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; ) {
            ALNode nextNode = getLayoutNode(nextId);
            String tmpNodeId = nextNode.getNextNodeId();
@@ -315,8 +314,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       if ( parentNodeId != null ) {
        restrictions = node.getRestrictionsByPath("parent");
        ALNode parentNode = getLayoutNode(parentNodeId);
-       for ( int i = 0; i < restrictions.size(); i++ ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
                 !restriction.checkRestriction(parentNode) ) {
               moveNodeToLostFolder(nodeId);
@@ -360,7 +359,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   protected boolean checkRestriction(ALNode node, int restrictionType, String propertyValue ) throws PortalException {
-    return checkRestriction(node, restrictionType, UserLayoutRestriction.LOCAL_RESTRICTION, propertyValue);
+    return checkRestriction(node, restrictionType, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue);
   }
 
 
@@ -392,9 +391,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     if ( !parentNode.getNodeDescription().isImmutable() ) {
 
      // Checking children related restrictions
-     Vector restrictions = parentNode.getRestrictionsByPath("children");
-     for ( int i = 0; i < restrictions.size(); i++ ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+     Collection restrictions = parentNode.getRestrictionsByPath("children");
+     for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
                 !restriction.checkRestriction(newNode) )
             return false;
@@ -402,8 +401,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
      // Checking parent related restrictions
      restrictions = newNode.getRestrictionsByPath("parent");
-     for ( int i = 0; i < restrictions.size(); i++ ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+     for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
                 !restriction.checkRestriction(parentNode) )
             return false;
@@ -445,9 +444,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
      if ( !oldParentNode.equals(newParentNode) ) {
       // Checking children related restrictions
-      Vector restrictions = newParentNode.getRestrictionsByPath("children");
-      for ( int i = 0; i < restrictions.size(); i++ ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+      Collection restrictions = newParentNode.getRestrictionsByPath("children");
+      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
                 !restriction.checkRestriction(node) )
             return false;
@@ -455,8 +454,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
       // Checking parent related restrictions
       restrictions = node.getRestrictionsByPath("parent");
-      for ( int i = 0; i < restrictions.size(); i++ ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           if ( (restriction.getRestrictionType() & RestrictionTypes.DEPTH_RESTRICTION) == 0 &&
                 !restriction.checkRestriction(newParentNode) )
             return false;
@@ -583,10 +582,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public static PriorityRestriction getPriorityRestriction( ALNode node ) throws PortalException {
-     PriorityRestriction priorRestriction = getPriorityRestriction(node,UserLayoutRestriction.LOCAL_RESTRICTION);
+     PriorityRestriction priorRestriction = getPriorityRestriction(node,IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);
      if ( priorRestriction == null ) {
        priorRestriction = (PriorityRestriction)
-         UserLayoutRestrictionFactory.createRestriction(RestrictionTypes.PRIORITY_RESTRICTION,"0-"+java.lang.Integer.MAX_VALUE,UserLayoutRestriction.LOCAL_RESTRICTION);
+         UserLayoutRestrictionFactory.createRestriction(RestrictionTypes.PRIORITY_RESTRICTION,"0-"+java.lang.Integer.MAX_VALUE);
      }
      return priorRestriction;
   }
@@ -1479,7 +1478,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         if ( autoCommit ) 
            layoutNode = layoutStore.addUserLayoutNode(person,userProfile,layoutNode);
         else {
-           IALNodeDescription desc = layoutNode.getNodeDescription();
+           IALNodeDescription desc = (IALNodeDescription) layoutNode.getNodeDescription();
            desc.setId(layoutStore.getNextNodeId(person));
            if ( desc.getType() == IUserLayoutNodeDescription.CHANNEL )
                layoutStore.fillChannelDescription((IALChannelDescription)desc);  	  
@@ -1614,7 +1613,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             return false;
 
             ALNode node = getLayoutNode(nodeDesc.getId());
-            IALNodeDescription oldNodeDesc = node.getNodeDescription();
+            IALNodeDescription oldNodeDesc = (IALNodeDescription) node.getNodeDescription();
 
             // We have to change all the boolean properties on descendants
             changeDescendantsBooleanProperties((IALNodeDescription)nodeDesc,oldNodeDesc,nodeDesc.getId());
@@ -1660,7 +1659,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         if ( nodeId == null ) return false;
         ALNode node = getLayoutNode(nodeId);
-        IALNodeDescription currentNodeDesc = node.getNodeDescription();
+        IALNodeDescription currentNodeDesc = (IALNodeDescription) node.getNodeDescription();
         // If the node Ids do no match to each other then return false
         if ( !nodeId.equals(currentNodeDesc.getId()) ) return false;
 
@@ -1702,9 +1701,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 
         // Checking parent related restrictions for the children
-        Vector restrictions = getLayoutNode(node.getParentNodeId()).getRestrictionsByPath("children");
-        for ( int i = 0; i < restrictions.size(); i++ ) {
-         IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+        Collection restrictions = getLayoutNode(node.getParentNodeId()).getRestrictionsByPath("children");
+        for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+         IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( !restriction.checkRestriction(node) ) {
             node.setNodeDescription(currentNodeDesc);
             return false;
@@ -1717,8 +1716,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
          for ( String nextId = ((ALFolder)node).getFirstChildNodeId(); nextId != null; ) {
           ALNode child = getLayoutNode(nextId);
           restrictions = child.getRestrictionsByPath("parent");
-          for ( int i = 0; i < restrictions.size(); i++ ) {
-           IUserLayoutRestriction restriction = (IUserLayoutRestriction)restrictions.get(i);
+          for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
            if ( !restriction.checkRestriction(node) ) {
             node.setNodeDescription(currentNodeDesc);
             return false;
@@ -1765,7 +1764,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     public IALNodeDescription getNodeBeingMoved() throws PortalException {
      if ( moveTargetsNodeId != null ) {
       ALNode node = getLayoutNode(moveTargetsNodeId);
-      return (node != null ) ? node.getNodeDescription() : null;
+      return (node != null ) ? (IALNodeDescription) node.getNodeDescription() : null;
      }
       return null;
     }

@@ -7,6 +7,7 @@ package org.jasig.portal.layout;
 
 
 
+import java.util.Collection;
 import java.util.Vector;
 
 import org.jasig.portal.PortalException;
@@ -23,7 +24,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 
-public abstract class ALNode {
+public abstract class ALNode implements ILayoutNode {
 
      protected String parentNodeId;
      protected String nextNodeId;
@@ -59,7 +60,7 @@ public abstract class ALNode {
        nodeDescription = nd;
      }
 
-     public IALNodeDescription getNodeDescription() {
+     public IUserLayoutNodeDescription getNodeDescription() {
        return nodeDescription;
      }
 
@@ -118,7 +119,7 @@ public abstract class ALNode {
      * @param restrictionPath a <code>String</code> restriction path
      * @return a IUserLayoutRestriction
      */
-     public Vector getRestrictionsByPath( String restrictionPath ) {
+     public Collection getRestrictionsByPath( String restrictionPath ) {
       if ( nodeDescription != null )
         return nodeDescription.getRestrictionsByPath(restrictionPath);
         return new Vector();

@@ -8,11 +8,11 @@ package org.jasig.portal.layout.restrictions;
 
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.ILayoutNode;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
- * BooleanRestriction checks the restriction on the boolean property for a given ALNode object.
+ * BooleanRestriction checks the restriction on the boolean property for a given ILayoutNode object.
  * <p>
  * Company: Instructional Media &amp; Magic
  *
@@ -20,7 +20,7 @@ import org.jasig.portal.utils.CommonUtils;
  * @version $Revision$
  */
 
-public abstract class BooleanRestriction extends UserLayoutRestriction {
+public abstract class BooleanRestriction extends ALRestriction {
 
 
          boolean boolValue1 = false, boolValue2 = false;
@@ -60,18 +60,22 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
          /**
            * Gets the boolean property value for the specified node
          */
-         protected abstract boolean getBooleanPropertyValue( ALNode node );
+         protected abstract boolean getBooleanPropertyValue( ILayoutNode node );
+         
+         protected boolean checkRestriction( boolean boolProperty ) throws PortalException {
+            if ( boolProperty == boolValue1 || boolProperty == boolValue2 )
+              return true;
+              return false;
+         }
 
          /**
            * Checks the restriction for the specified node
-           * @param node a <code>ALNode</code> user layout node to be checked
+           * @param node a <code>ILayoutNode</code> user layout node to be checked
            * @exception PortalException
          */
-         public boolean checkRestriction( ALNode node ) throws PortalException {
+         public boolean checkRestriction( ILayoutNode node ) throws PortalException {
            boolean boolProperty = getBooleanPropertyValue(node);
-           if ( boolProperty == boolValue1 || boolProperty == boolValue2 )
-             return true;
-             return false;
+           return checkRestriction(boolProperty);
          }
 
          /**
@@ -81,9 +85,7 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
          */
          public boolean checkRestriction( String propertyValue ) throws PortalException {
            boolean boolProperty = CommonUtils.strToBool(propertyValue);
-           if ( boolProperty == boolValue1 || boolProperty == boolValue2 )
-             return true;
-             return false;
+           return checkRestriction(boolProperty);
          }
 
 
