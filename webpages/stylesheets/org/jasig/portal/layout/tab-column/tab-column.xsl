@@ -31,9 +31,9 @@
           <xsl:apply-templates select="folder[@type='regular' and @hidden='false']"/>
         </xsl:when>
         <xsl:otherwise>
-          <column>
+          <focused>
             <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
-          </column>
+          </focused>
         </xsl:otherwise>
       </xsl:choose>
     </content>
@@ -57,6 +57,7 @@
       	<xsl:choose>
       	  <xsl:when test="$activeID = @ID">
       	    <xsl:attribute name="activeTab">true</xsl:attribute>
+            <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeID"/></xsl:attribute>
       	  </xsl:when>
       	  <xsl:otherwise>
       	    <xsl:attribute name="activeTab">false</xsl:attribute>
@@ -98,3 +99,5 @@
 </xsl:template>
 
 </xsl:stylesheet>
+
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
