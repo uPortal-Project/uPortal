@@ -26,14 +26,18 @@ import org.apache.commons.logging.LogFactory;
  * 
  * 
  * The current implementation logs successes only via Commons Logging whereas
- * it logs failures both via Commons Logging and via the Servlet API's logging 
+ * it logs failures via Commons Logging and via the Servlet API's logging 
  * mechanism and to System.err.  This overkill of logging is intended to give the 
  * primary intended audience --
  * new uPortal deployers who may not yet be comfortable with configuring uPortal
  * logging -- the maximum chance of encountering the output.
  * 
+ * The intent is that in a healthy happy production uPortal deployment, no
+ * checks will fail and so this overkill of logging won't be a problem.
+ * 
  * Subclassing this class: this class is designed to be subclassed to replace the
  * implementation of the method that logs the results from the SafeDelegatingCheckRunner.
+ * In this way you can implement some other logging strategy.
  * 
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
@@ -51,6 +55,12 @@ public class CheckingContextListener
     protected final Log log = LogFactory.getLog(getClass());
     
     public final void contextInitialized(ServletContextEvent sce) {
+        /*
+         * This method is final because the intended extension strategy for this 
+         * class is to accept this default implementation of check execution but to
+         * override the logResults method to implement alternative logging or other
+         * handling of the results.
+         */
         
         ServletContext servletContext = sce.getServletContext();
         
@@ -78,9 +88,16 @@ public class CheckingContextListener
      * Log the results reported by the check runner.
      * 
      * You can subclass this class and override this method to change the
-     * logging behavior.
+     * logging behavior.  You can also, by overriding this method and throwing
+     * a RuntimeException, veto the loading of the context.
+     * 
+     * The default implementation of this method is safe such that it will not throw.
+     * Since the rest of contextInitialized is also safe, the default implementation
+     * of this ContextListener is safe and will not, no matter how abjectly the
+     * checks fail, itself abort the context initialization.
      * 
      * @param results List of CheckAndResult instances
+     * @param servletContext the context in which we're running
      */
     protected void logResults(List results, ServletContext servletContext) {
         
