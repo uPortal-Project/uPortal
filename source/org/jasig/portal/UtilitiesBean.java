@@ -118,7 +118,7 @@ public class UtilitiesBean extends GenericPortalBean
       // It's a full path without "file://"
       str = (bWindows ? "file:/" : "file://") + str;
     }
-    else if (str.indexOf ("://") == -1 && ch1 != ':')
+    else if (str.indexOf ("://") == -1 && str.indexOf (":/") == -1 && ch1 != ':')
     {
       // Relative path was specified, so prepend portal base dir
       str = (bWindows ? "file:/" : "file://") + GenericPortalBean.getPortalBaseDir () + str;
