@@ -58,6 +58,7 @@
 <%-- Update the allowed and denied roles list --%>
 <% publish.updateRoles(request, response, out); %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
     <title>Publish Channel - Select Roles</title>
@@ -69,7 +70,6 @@
         document.data.submit();
       }
     </script>
-  </head>
 
   <% layoutBean.writeBodyStyle(request, response, out); %>
 
@@ -149,7 +149,8 @@
       </table>
     </form>
 
-    <jsp:include page="footer.jsp" flush="true" />
+    <%-- Footer --%>
+    <%@ include file="footer.jsp" %>
 
   </body>
 </html>

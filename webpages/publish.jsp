@@ -53,6 +53,7 @@
 <%-- Always force this page to reload --%>
 <%-- <% UtilitiesBean.preventPageCaching (response); %> --%>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
     <title>Publish Channel</title>
@@ -64,7 +65,6 @@
         document.data.submit();
       }
     </script>
-  </head>
 
   <% layoutBean.writeBodyStyle (request, response, out); %>
 

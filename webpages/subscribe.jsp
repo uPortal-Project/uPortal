@@ -63,39 +63,40 @@ else {
 
 <% UtilitiesBean.preventPageCaching (response); %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<title>Add Channels</title>
-<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
-</head>
+  <head>
+    <title>Add Channels</title>
+    <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
 
-<% layoutBean.writeBodyStyle (request, response, out); %>
+  <% layoutBean.writeBodyStyle (request, response, out); %>
 
-<%-- Header --%>
-<% session.setAttribute ("headerTitle", "Personalize Content"); %>
-<%@ include file="header.jsp" %>
+    <%-- Header --%>
+    <% session.setAttribute ("headerTitle", "Personalize Content"); %>
+    <%@ include file="header.jsp" %>
 
-<%-- Finished and Cancel Changes buttons --%>
-<form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'">
-</td></tr></table>
-Click on a channel to preview.
-</form>
+    <form action="subscribe.jsp">
+      <table border="0" cellspacing="5" cellpadding="5" width="100%">
+        <tr bgcolor="#dddddd">
+          <td><input type="button" name="cancel" value="Cancel" onClick="location='subscribe.jsp?action=cancel'"></td>
+        </tr>
+        <tr>
+          <td>Click <IMG SRC="images/preview.gif" alt="Preview Channel"> to preview a channel or <IMG SRC="images/add.gif" alt="Add Channel"> to add a channel.</td>
+        </tr>
+        <tr>
+          <td><% subscribe.getAllChannels(request, response, out); %><td>
+        </tr>
+        <tr>
+          <td>Click <IMG SRC="images/preview.gif" alt="Preview Channel"> to preview a channel or <IMG SRC="images/add.gif" alt="Add Channel"> to add a channel.</td>
+        </tr>
+        <tr bgcolor="#dddddd">
+          <td><input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'"></td>
+        </tr>
+      </table>
+    </form>
 
-<% subscribe.getAllChannels(request, response, out); %>
+    <%@ include file="footer.jsp" %>
 
-<%-- Finished and Cancel Changes buttons --%>
-<form>
-  <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd">
-    <tr>
-      <td><input type=button name=cancel value="Cancel" onClick="location='subscribe.jsp?action=cancel'"></td>
-    </tr>
-  </table>
-</form>
-
-<jsp:include page="footer.jsp" flush="true" />
-
-</body>
+  </body>
 </html>
 <% } %>

@@ -68,48 +68,47 @@ else {
 
 <% UtilitiesBean.preventPageCaching (response); %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<title>Preview Channel</title>
-<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
-</head>
+  <head>
+    <title>Preview Channel</title>
+    <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
 
-<% layoutBean.writeBodyStyle (request, response, out); %>
-<body>
+  <% layoutBean.writeBodyStyle (request, response, out); %>
 
-<%-- Header --%>
-<% session.setAttribute ("headerTitle", "Preview Channel"); %>
-<%@ include file="header.jsp" %>
+    <%-- Header --%>
+    <% session.setAttribute ("headerTitle", "Preview Channel"); %>
+    <%@ include file="header.jsp" %>
 
-<%-- Finished and Cancel Changes buttons --%>
-<form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=add value="Add" onClick="location='personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=sChan_id%>'">
-  <input type=button name=cancel value="Cancel" onClick="location='previewChannel.jsp?action=cancel'">
-</td></tr></table>
-<FONT FACE="Helvetica, Arial" SIZE=4 COLOR=#003333><B>Preview Channel: <%=sChanName%></B></FONT>
-</form>
+    <%-- Finished and Cancel Changes buttons --%>
+    <form>
+    <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+      <input type=button name=add value="Add" onClick="location='personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=sChan_id%>'">
+      <input type=button name=cancel value="Cancel" onClick="location='previewChannel.jsp?action=cancel'">
+    </td></tr></table>
+    <FONT FACE="Helvetica, Arial" SIZE=4 COLOR=#003333><B>Preview Channel: <%=sChanName%></B></FONT>
+    </form>
 
-<table border=0 cellpadding=3 cellspacing=3>
-This window shows how the <%=sChanName%> Channel will look on your active tab.
-<tr bgcolor=#ffffff>
-<td>
-<% subscribe.previewChannel(request, response, out); %>
-</td>
-</tr>
-</table>
+    <table border=0 cellpadding=3 cellspacing=3>
+    This window shows how the <%=sChanName%> Channel will look on your active tab.
+    <tr bgcolor=#ffffff>
+    <td>
+    <% subscribe.previewChannel(request, response, out); %>
+    </td>
+    </tr>
+    </table>
 
 
-<%-- Finished and Cancel Changes buttons --%>
-<form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=add value="Add" onClick="location='personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=sChan_id%>'">
-  <input type=button name=cancel value="Cancel" onClick="location='previewChannel.jsp?action=cancel'">
-</td></tr></table>
-</form>
+    <%-- Finished and Cancel Changes buttons --%>
+    <form>
+    <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+      <input type=button name=add value="Add" onClick="location='personalizeLayout.jsp?action=addChannel&column=0&chan_id=<%=sChan_id%>'">
+      <input type=button name=cancel value="Cancel" onClick="location='previewChannel.jsp?action=cancel'">
+    </td></tr></table>
+    </form>
 
 
-<jsp:include page="footer.jsp" flush="true" />
+    <%@ include file="footer.jsp" %>
 
-</body>
+  </body>
 </html>

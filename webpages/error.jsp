@@ -35,6 +35,8 @@
 
 <%@ page isErrorPage="true" %>
 <%@ page import="org.jasig.portal.Logger" %>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>Portal: An error has occured</title>
