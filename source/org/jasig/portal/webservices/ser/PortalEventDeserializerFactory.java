@@ -43,6 +43,7 @@ import org.apache.axis.encoding.ser.BaseDeserializerFactory;
  * DeserializerFactory for PortalEventDeserializer
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 public class PortalEventDeserializerFactory extends BaseDeserializerFactory {
 

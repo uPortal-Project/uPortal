@@ -44,6 +44,7 @@ import org.w3c.dom.Element;
  * 
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 public interface IRemoteChannel {
 

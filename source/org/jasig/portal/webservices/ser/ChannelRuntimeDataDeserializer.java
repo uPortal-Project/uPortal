@@ -57,6 +57,7 @@ import org.xml.sax.SAXException;
  * Much of the work is done in the base class. 
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
 

@@ -43,6 +43,7 @@ import org.apache.axis.encoding.ser.BaseSerializerFactory;
  * SerializerFactory for LocaleSerializer
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */ 
 public class LocaleSerializerFactory extends BaseSerializerFactory {
   

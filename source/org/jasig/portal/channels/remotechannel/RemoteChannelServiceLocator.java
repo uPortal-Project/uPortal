@@ -48,6 +48,7 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
  * WSDL2JAVA from Apache Axis.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 public class RemoteChannelServiceLocator extends Service implements RemoteChannelService {
 

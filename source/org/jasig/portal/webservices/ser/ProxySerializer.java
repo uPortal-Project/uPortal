@@ -43,6 +43,7 @@ import org.w3c.dom.Element;
  * Base class for all serializers.
  * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 
 public abstract class ProxySerializer implements Serializer {

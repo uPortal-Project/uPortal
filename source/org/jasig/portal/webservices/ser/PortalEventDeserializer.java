@@ -44,6 +44,7 @@ import org.jasig.portal.PortalEvent;
  * The PortalEventSerializer deserializes a PortalEvent.                                            
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 public class PortalEventDeserializer extends SimpleDeserializer {
    

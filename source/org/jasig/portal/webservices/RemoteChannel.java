@@ -85,6 +85,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * of IRemoteChannel on which the WSDL for this web service is based.</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 public class RemoteChannel implements IRemoteChannel {
   private static final IChannelRendererFactory cChannelRendererFactory = 

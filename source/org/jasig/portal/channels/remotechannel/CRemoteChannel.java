@@ -68,6 +68,7 @@ import org.xml.sax.ContentHandler;
  * this channel, just select "Remote Channel Proxy" when publishing.</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.2, Remote Channel is replaced by WSRP
  */
 public class CRemoteChannel extends BaseChannel implements IPrivileged, ICacheable {
 
