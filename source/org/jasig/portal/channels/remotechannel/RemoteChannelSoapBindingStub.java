@@ -161,9 +161,9 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
     }
     Call call = getCall();
     QName p0QName = new QName("", "username");
-    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     QName p1QName = new QName("", "password");
-    call.addParameter(p1QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p1QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
     call.setUseSOAPAction(true);
     call.setSOAPActionURI("");
@@ -177,13 +177,13 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
     }
   }
 
-  public String instantiateChannel(String fname) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception{
+  public String instantiateChannel(String fname) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception {
     if (super.cachedEndpoint == null) {
       throw new NoEndPointException();
     }
     Call call = getCall();
     QName p0QName = new QName("", "fname");
-    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     call.setReturnType(new QName("http://www.w3.org/2001/XMLSchema", "string"));
     call.setUseSOAPAction(true);
     call.setSOAPActionURI("");
@@ -206,15 +206,15 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
     }
     Call call = getCall();
     QName p0QName = new QName("", "instanceId");
-    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     QName p1QName = new QName("", "headers");
-    call.addParameter(p1QName, new QName("http://xml.apache.org/xml-soap", "Map"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p1QName, new QName("http://xml.apache.org/xml-soap", "Map"), ParameterMode.IN);
     QName p2QName = new QName("", "cookies");
-    call.addParameter(p2QName, new QName(methodNS, "ArrayOf_tns2_Cookie"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p2QName, new QName(methodNS, "ArrayOf_tns2_Cookie"), ParameterMode.IN);
     QName p3QName = new QName("", "parameters");
-    call.addParameter(p3QName, new QName("http://xml.apache.org/xml-soap", "Map"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p3QName, new QName("http://xml.apache.org/xml-soap", "Map"), ParameterMode.IN);
     QName p4QName = new QName("", "baseActionURL");
-    call.addParameter(p4QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p4QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     call.setReturnType(new QName("http://xml.apache.org/xml-soap", "Element"));
     call.setUseSOAPAction(true);
     call.setSOAPActionURI("");
@@ -237,7 +237,7 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
     }
     Call call = getCall();
     QName p0QName = new javax.xml.rpc.namespace.QName("", "instanceId");
-    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.PARAM_MODE_IN);
+    call.addParameter(p0QName, new QName("http://www.w3.org/2001/XMLSchema", "string"), ParameterMode.IN);
     call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
     call.setUseSOAPAction(true);
     call.setSOAPActionURI("");
