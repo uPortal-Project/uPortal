@@ -39,7 +39,7 @@ public class HttpProxyServlet extends HttpServlet {
 
 	// check referrer property - return 404 if incorrect.
 	final String checkReferer = PropertiesManager.getProperty(HttpProxyServlet.class.getName()
-		+ ".checkReferer");
+		+ ".checkReferer", null);
 
 	String target;
 	

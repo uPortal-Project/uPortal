@@ -22,7 +22,8 @@ public class ChannelRegistryStoreFactory {
 
   static {
     // Retrieve the class name of the concrete IChannelRegistryStore implementation
-    String className = PropertiesManager.getProperty("org.jasig.portal.ChannelRegistryStoreFactory.implementation");
+    String className = PropertiesManager.getProperty("org.jasig.portal.ChannelRegistryStoreFactory.implementation", null);
+    
     // Fail if this is not found
     if (className == null)
       log.error( "ChannelRegistryStoreFactory: org.jasig.portal.ChannelRegistryStoreFactory.implementation must be specified in portal.properties");

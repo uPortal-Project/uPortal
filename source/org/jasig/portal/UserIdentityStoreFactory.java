@@ -22,7 +22,7 @@ public class UserIdentityStoreFactory {
 
   static {
     // Retrieve the class name of the concrete IUserIdentityStore implementation
-    String className = PropertiesManager.getProperty("org.jasig.portal.UserIdentityStoreFactory.implementation");
+    String className = PropertiesManager.getProperty("org.jasig.portal.UserIdentityStoreFactory.implementation", null);
     // Fail if this is not found
     if (className == null)
       log.error( "UserIdentityStoreFactory: org.jasig.portal.UserIdentityStoreFactory.implementation must be specified in portal.properties");
