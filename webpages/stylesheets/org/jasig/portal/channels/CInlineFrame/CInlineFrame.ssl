@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet title="main" href="webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/Iframe.xsl" type="text/xsl" media="explorer"?>
-<?xml-stylesheet title="main" href="webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/noIframe.xsl" type="text/xsl" media="netscape"?>
+<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/Iframe.xsl" type="text/xsl" media="explorer"?>
+<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/noIframe.xsl" type="text/xsl" media="netscape"?>
 
 <document>
 </document>
