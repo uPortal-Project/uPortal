@@ -66,7 +66,7 @@ import org.xml.sax.helpers.AttributesImpl;
 public class AggregatedLayout implements IAggregatedLayout {
 
     // The hashtable with the layout nodes
-    private Hashtable layout;
+    private Hashtable layout = null;
 
     // The layout ID value
     private String layoutId;
@@ -75,7 +75,7 @@ public class AggregatedLayout implements IAggregatedLayout {
     private int restrictionMask = 0;
 
     // The IDs and names of the fragments which a user is owner of
-    private Hashtable fragments;
+    private Hashtable fragments = null;
 
     // The layout manager
     private IAggregatedUserLayoutManager layoutManager = null;
@@ -85,18 +85,29 @@ public class AggregatedLayout implements IAggregatedLayout {
     private String cacheKey = null;
 
 
-  public AggregatedLayout (  String layoutId, IAggregatedUserLayoutManager layoutManager ) throws Exception {
+  public AggregatedLayout (  String layoutId, IAggregatedUserLayoutManager layoutManager ) throws PortalException {
     this ( layoutId );
     this.layoutManager = layoutManager;
     restrictionMask = layoutManager.getRestrictionMask();
   }
 
-  public AggregatedLayout (  String layoutId ) throws Exception {
+  public AggregatedLayout (  String layoutId ) throws PortalException {
     this.layoutId = layoutId;
-    layout = new Hashtable();
-    if ( guid == null )
+    try {
+     if ( guid == null )
       guid = new GuidGenerator();
       updateCacheKey();
+    } catch ( Exception e ) {
+        throw new PortalException(e);
+      }
+  }
+
+  public void setLayoutData ( Hashtable layout ) throws PortalException {
+    this.layout = layout;
+  }
+
+  public Hashtable getLayoutData() throws PortalException {
+    return layout;
   }
 
   private void updateCacheKey() {
@@ -530,6 +541,17 @@ public class AggregatedLayout implements IAggregatedLayout {
       if ( node != null )
        return node.getNodeDescription();
       throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+    }
+
+     /**
+     * Returns a node specified by a node ID.
+     *
+     * @param nodeId a <code>String</code> value
+     * @return a <code>ALNode</code> object
+     * @exception PortalException if an error occurs
+     */
+    public ALNode getNode( String nodeId) throws PortalException {
+       return getLayoutNode(nodeId);
     }
 
     /**

@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1354,16 +1355,19 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
    /**
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @param layoutObject a <code>Document</code> containing an aggregated user layout
+     * @param layoutImpl a <code>IAggregatedLayout</code> containing an aggregated user layout
      * @exception Exception if an error occurs
      */
- public void setAggregatedUserLayout (IPerson person, UserProfile profile, Object layoutObject ) throws Exception {
+ public void setAggregatedLayout (IPerson person, UserProfile profile, IAggregatedLayout layoutImpl ) throws Exception {
+
+    if ( !(layoutImpl instanceof AggregatedLayout) )
+       throw new PortalException("The user layout object should have \"AggregatedLayout\" type");
+
+    AggregatedLayout layout = (AggregatedLayout) layoutImpl;
 
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
-    if ( !(layoutObject instanceof Hashtable) )
-       throw new PortalException("The user layout object should have \"Hashtable\" type");
-    Hashtable layout = (Hashtable) layoutObject;
+
 
     RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
@@ -1424,13 +1428,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       PreparedStatement psLayout = con.prepareStatement("SELECT NODE_ID FROM UP_LAYOUT_STRUCT_AGGR WHERE NODE_ID=? AND USER_ID=? AND LAYOUT_ID=?");
       //PreparedStatement psFragment = con.prepareStatement("SELECT node_id FROM up_layout_struct_aggr WHERE node_id=? AND fragment_id=?");
 
-       // The loop for all the nodes from the hashtable
-       for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
+       // The loop for all the nodes from the layout
+       for ( Enumeration nodeIds = layout.getNodeIds(); nodeIds.hasMoreElements() ;) {
         String strNodeId = nodeIds.nextElement().toString();
 
         if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
 
-         ALNode node = (ALNode) layout.get(strNodeId);
+         ALNode node = layout.getNode(strNodeId);
          int nodeId = CommonUtils.parseInt(node.getId());
 
          int fragmentId = CommonUtils.parseInt(node.getFragmentId());
@@ -1540,14 +1544,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
  /**   Gets the fragment IDs/names for a given user
      * @param person an <code>IPerson</code> object specifying the user
-     * @return a <code>Object</code> object containing the IDs of the fragments the user owns
+     * @return a <code>Map</code> object containing the IDs of the fragments the user owns
      * @exception Exception if an error occurs
      */
- public Object getFragments (IPerson person) throws Exception {
+ public Map getFragments (IPerson person) throws Exception {
 
     Connection con = RDBMServices.getConnection();
 
-    Hashtable fragments = new Hashtable();
+    Map fragments = new Hashtable();
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery("SELECT FRAGMENT_ID, FRAGMENT_NAME FROM UP_OWNER_FRAGMENT WHERE OWNER_ID="+person.getID());
     while ( rs.next() )
@@ -1564,16 +1568,18 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
  /**   Sets the fragment
      * @param person an <code>IPerson</code> object specifying the user
      * @param fragmentId a fragment ID
-     * @param layoutObject a <code>Object</code> containing a fragment
+     * @param layoutImpl a <code>IAggregatedLayout</code> containing a fragment
      * @exception Exception if an error occurs
      */
- public void setFragment (IPerson person, String fragmentId, Object layoutObject ) throws Exception {
+ public void setFragment (IPerson person, String fragmentId, IAggregatedLayout layoutImpl ) throws Exception {
 
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
-    if ( !(layoutObject instanceof Hashtable) )
-       throw new PortalException("The user layout object should have \"Hashtable\" type");
-    Hashtable layout = (Hashtable) layoutObject;
+
+     if ( !(layoutImpl instanceof AggregatedLayout) )
+       throw new PortalException("The user layout object has an incorrect type!");
+
+    AggregatedLayout layout = (AggregatedLayout) layoutImpl;
 
     RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
@@ -1603,13 +1609,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       PreparedStatement  psAddFragmentNode = con.prepareStatement(FRAGMENT_ADD_SQL);
       PreparedStatement  psAddFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
 
-       // The loop for all the nodes from the hashtable
-      for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
+       // The loop for all the nodes from the layout
+      for ( Enumeration nodeIds = layout.getNodeIds(); nodeIds.hasMoreElements() ;) {
         String strNodeId = nodeIds.nextElement().toString();
 
        if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
 
-         ALNode node = (ALNode) layout.get(strNodeId);
+         ALNode node = layout.getNode(strNodeId);
          int nodeId = CommonUtils.parseInt(node.getId());
 
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
@@ -1653,16 +1659,17 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * Returns the user layout internal representation.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @return a <code>Object</code> object containing the internal representation of the user layout
+     * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
      * @exception PortalException if an error occurs
      */
- public Object getAggregatedUserLayout (IPerson person, UserProfile profile) throws PortalException {
+ public IAggregatedLayout getAggregatedLayout (IPerson person, UserProfile profile) throws PortalException {
     int userId = person.getID();
     int realUserId = userId;
     ResultSet rs;
 
     Connection con = null;
-    Hashtable layout = null;
+    AggregatedLayout layout = null;
+    Hashtable layoutData = null;
     ALFolder rootNode = new ALFolder();
     //PreparedStatement psRestrLayout = null, psRestrFragment = null;
     Hashtable pushFragmentRoots = null;
@@ -1677,7 +1684,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         con = RDBMServices.getConnection();
         con.setAutoCommit(false);
 
-        layout = new Hashtable(50);
+        layoutData = new Hashtable(50);
 
 
         //delete from up_layout_struct_aggr where fragment_id in ( select uof.fragment_id from up_owner_fragment uof, up_layout_struct_aggr uls where uls.fragment_id != NULL and uof.fragment_id = uls.fragment_id and uof.pushed_fragment='Y' and uls.fragment_id not in (1) );
@@ -1819,6 +1826,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } // end if layoutID == null
 
 
+        // Instantiating the layout and setting the layout ID
+        layout = new AggregatedLayout ( layoutId + "" );
 
         String restrLayoutSQL = "SELECT RESTRICTION_TYPE, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_LAYOUT_RESTRICTIONS "+
                                       "WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId+" AND NODE_ID=?";
@@ -1842,9 +1851,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         rootNode.setFirstChildNodeId(firstStructId+"");
 
         // Putting the root node
-        layout.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
+        layoutData.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
          // Putting the lost folder
-        layout.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
+        layoutData.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
 
         // layout query
         String sqlLayout = "SELECT ULS.NODE_ID,ULS.NEXT_NODE_ID,ULS.CHLD_NODE_ID,ULS.PREV_NODE_ID,ULS.PRNT_NODE_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
@@ -2033,9 +2042,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     if ( fragNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                      ((ALFolder)fragNode).setFirstChildNodeId(childIdStr);
                     }
-                    layout.put(nodeDesc.getId(),fragNode);
+                    layoutData.put(nodeDesc.getId(),fragNode);
                   } else
-                      layout.put(nodeDesc.getId(),node);
+                      layoutData.put(nodeDesc.getId(),node);
                 }
 
               // If there is a channel we need to get its parameters
@@ -2145,7 +2154,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                 String key = (String) chanIds.get(i);
 
-                ALNode node = (ALNode) layout.get(key);
+                ALNode node = (ALNode) layoutData.get(key);
 
                 fillChannelDescription( (IALChannelDescription) node.getNodeDescription() );
 
@@ -2168,7 +2177,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               int structId = rs.getInt(1);
               readParm: while(true) {
                 //LayoutStructure ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
-                ALNode node = (ALNode) layout.get(structId+"");
+                ALNode node = (ALNode) layoutData.get(structId+"");
                 if ( node != null ) {
                  IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
                  int lastStructId = structId;
@@ -2248,7 +2257,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         ALNode lastNode = null;
         String nextId = rootNode.getFirstChildNodeId();
         while ( nextId != null ) {
-          lastNode = (ALNode)layout.get(nextId);
+          lastNode = (ALNode)layoutData.get(nextId);
           nextId = lastNode.getNextNodeId();
         }
 
@@ -2258,7 +2267,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             String strFragmentId = fragmentIds.nextElement().toString();
             String strFragmentRootId = pushFragmentRoots.get(strFragmentId).toString();
             String key = strFragmentId+":"+strFragmentRootId;
-            ALNode node = (ALNode) layout.get(key);
+            ALNode node = (ALNode) layoutData.get(key);
             if ( node != null ) {
                 IALNodeDescription nodeDesc = node.getNodeDescription();
                 // Setting the new next struct node ID and fragment node id since we have all the pushed fragments attached to the layout
@@ -2266,8 +2275,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 nodeDesc.setId(newId);
                 nodeDesc.setFragmentNodeId(strFragmentRootId);
                 // Remove the old node and put the new one with another ID
-                layout.remove(key);
-                layout.put(newId,node);
+                layoutData.remove(key);
+                layoutData.put(newId,node);
                 if ( lastNode != null ) {
                     lastNode.setNextNodeId(newId);
                     node.setPreviousNodeId(lastNode.getId());
@@ -2277,7 +2286,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                     //Changing the parent Ids for all the children
                     for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
-                        ALNode child = (ALNode) layout.get(nextIdStr);
+                        ALNode child = (ALNode) layoutData.get(nextIdStr);
                         child.setParentNodeId(newId);
                         nextIdStr = child.getNextNodeId();
                     }
@@ -2295,7 +2304,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                    String parentId = node.getId();
                  for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
-                     ALNode child = (ALNode) layout.get(nextIdStr);
+                     ALNode child = (ALNode) layoutData.get(nextIdStr);
                      child.setParentNodeId(parentId);
                      nextIdStr = child.getNextNodeId();
                  }
@@ -2318,6 +2327,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           RDBMServices.releaseConnection(con);
     }
 
+           layout.setLayoutData(layoutData);
            return layout;
   }
 
@@ -2326,17 +2336,19 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * Returns the layout fragment as a user layout
      * @param person an <code>IPerson</code> object specifying the user
      * @param fragmentIdStr a fragment ID
-     * @return a <code>Object</code> object containing the internal representation of the user layout
+     * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
      * @exception PortalException if an error occurs
      */
- public Object getFragment (IPerson person, String fragmentIdStr ) throws PortalException {
+ public IAggregatedLayout getFragment (IPerson person, String fragmentIdStr ) throws PortalException {
     int userId = person.getID();
     int fragmentId = CommonUtils.parseInt(fragmentIdStr);
     int realUserId = userId;
     ResultSet rs;
 
+    AggregatedLayout layout = new AggregatedLayout ( fragmentIdStr );
+
     Connection con = null;
-    Hashtable layout = null;
+    Hashtable layoutData = null;
     ALFolder rootNode = new ALFolder();
 
   try {
@@ -2346,7 +2358,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         Statement stmt = con.createStatement();
 
-        layout = new Hashtable();
+        layoutData = new Hashtable();
 
         long startTime = System.currentTimeMillis();
         // eventually, we need to fix template layout implementations so you can just do this:
@@ -2373,9 +2385,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         rootNode.setFirstChildNodeId(firstStructId+"");
 
         // Putting the root node
-        layout.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
+        layoutData.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
          // Putting the lost folder
-        layout.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
+        layoutData.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
 
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
@@ -2512,7 +2524,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               // Putting the node into the layout hashtable with an appropriate key
               node.setNodeDescription(nodeDesc);
-              layout.put(nodeDesc.getId(),node);
+              layoutData.put(nodeDesc.getId(),node);
 
               // If there is a channel we need to get its parameters
               IALChannelDescription channelDesc = null;
@@ -2612,7 +2624,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                 String key = (String) chanIds.get(i);
 
-                ALNode node = (ALNode) layout.get(key);
+                ALNode node = (ALNode) layoutData.get(key);
 
                 fillChannelDescription( (IALChannelDescription) node.getNodeDescription() );
 
@@ -2635,7 +2647,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               int structId = rs.getInt(1);
               readParm: while(true) {
                 //LayoutStructure ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
-                ALNode node = (ALNode) layout.get(structId+"");
+                ALNode node = (ALNode) layoutData.get(structId+"");
                 if ( node != null && node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
                  IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
                  int lastStructId = structId;
@@ -2674,6 +2686,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
            //System.out.println ( "fragment (hashtable): \n" + layout );
 
+           layout.setLayoutData ( layoutData );
            return layout;
   }
 

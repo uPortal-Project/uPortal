@@ -1377,7 +1377,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      try {
       if ( layoutStore != null ) {
        fragmentId = null;
-       layout = (Hashtable) layoutStore.getAggregatedUserLayout(person,userProfile);
+       layout = ((AggregatedLayout)layoutStore.getAggregatedLayout(person,userProfile)).getLayoutData();
        fragments = (Hashtable) layoutStore.getFragments(person);
        // Checking restrictions and move "wrong" nodes to the lost folder
        moveWrongNodesToLostFolder();
@@ -1390,8 +1390,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
     public void saveUserLayout() throws PortalException {
       try {
-        if ( !isLayoutFragment() )
-         layoutStore.setAggregatedUserLayout(this.person,this.userProfile,this.layout);
+        if ( !isLayoutFragment() ) {
+         AggregatedLayout layoutImpl = new AggregatedLayout(userProfile.getLayoutId()+"");
+         layoutImpl.setLayoutData(layout);
+         layoutStore.setAggregatedLayout(person,userProfile,layoutImpl);
+        }
          updateCacheKey();
       } catch ( Exception e ) {
         throw new PortalException(e.getMessage());
@@ -1407,7 +1410,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
          ALNode rootFolder = ALFolder.createRootFolder();
          layout.put(rootNodeId,rootFolder);
         } else
-           layout = (Hashtable) layoutStore.getFragment(person,fragmentId);
+           layout = ((AggregatedLayout)layoutStore.getFragment(person,fragmentId)).getLayoutData();
 
         fragments = (Hashtable) layoutStore.getFragments(person);
         this.fragmentId = fragmentId;
@@ -1420,8 +1423,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
     public void saveFragment() throws PortalException {
       try {
-       if ( isLayoutFragment() )
-        layoutStore.setFragment(person,fragmentId,layout);
+       if ( isLayoutFragment() ) {
+        AggregatedLayout layoutImpl = new AggregatedLayout(userProfile.getLayoutId()+"");
+        layoutImpl.setLayoutData(layout);
+        layoutStore.setFragment(person,fragmentId,layoutImpl);
+       }
         updateCacheKey();
       } catch ( Exception e ) {
         throw new PortalException(e.getMessage());

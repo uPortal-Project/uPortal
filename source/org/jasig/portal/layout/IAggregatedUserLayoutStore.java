@@ -35,6 +35,7 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Map;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
@@ -94,46 +95,46 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * Returns the user layout internal representation.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @return a <code>Object</code> object containing the internal representation of the user layout
+     * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
      * @exception PortalException if an error occurs
      */
 
-    public Object getAggregatedUserLayout (IPerson person, UserProfile profile) throws Exception;
+    public IAggregatedLayout getAggregatedLayout (IPerson person, UserProfile profile) throws Exception;
 
     /**
      * Persists user layout document.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @param layout a <code>Object</code> containing an aggregated user layout
+     * @param layout a <code>IAggregatedLayout</code> containing an aggregated user layout
      * @exception Exception if an error occurs
      */
-    public void setAggregatedUserLayout (IPerson person, UserProfile  profile, Object layout) throws Exception;
+    public void setAggregatedLayout (IPerson person, UserProfile  profile, IAggregatedLayout layout) throws Exception;
 
 
     /**
      * Persists the fragment.
      * @param person an <code>IPerson</code> object specifying the user
      * @param fragmentId a fragment ID
-     * @param fragment a <code>Object</code> containing a fragment
+     * @param fragment a <code>IAggregatedLayout</code> containing a fragment
      * @exception Exception if an error occurs
      */
-    public void setFragment (IPerson person, String fragmentId, Object fragment) throws Exception;
+    public void setFragment (IPerson person, String fragmentId, IAggregatedLayout fragment) throws Exception;
 
     /**
      * Returns the layout fragment as a user layout.
      * @param person an <code>IPerson</code> object specifying the user
      * @param fragmentId a fragment ID
-     * @return a <code>Object</code> object containing the internal representation of the user fragment
+     * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user fragment
      * @exception PortalException if an error occurs
      */
-    public Object getFragment (IPerson person, String fragmentId) throws Exception;
+    public IAggregatedLayout getFragment (IPerson person, String fragmentId) throws Exception;
 
      /**
      * Returns the fragment IDs/names which the user is an owner of
      * @param person an <code>IPerson</code> object specifying the user
-     * @return a <code>Object</code> object containing the fragment IDs
+     * @return a <code>Map</code> object containing the fragment IDs
      * @exception PortalException if an error occurs
      */
-    public Object getFragments (IPerson person) throws Exception;
+    public Map getFragments (IPerson person) throws Exception;
 
 }
