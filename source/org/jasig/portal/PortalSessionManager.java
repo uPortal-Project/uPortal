@@ -125,15 +125,16 @@ public class PortalSessionManager extends HttpServlet
                     // initial request, requeres forwarding
                     session.setAttribute("forwarded",new Boolean(true));
                     // forward
-                    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+		    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
                     //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
+
                     res.sendRedirect(req.getContextPath()+redirectBase);
                 } else {
                     // delete old request
                     Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
                     if(forwarded!=null) session.removeAttribute("forwarded");
                     // proceed with rendering
-                    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");
+		    //		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");
                     // look if the LayoutBean object is already in the session, otherwise
                     // make a new one
                     LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
@@ -180,29 +181,29 @@ public class PortalSessionManager extends HttpServlet
     // this function determines if a given request needs to be redirected
     private String doRedirect(HttpServletRequest req) {
         HttpSession session = req.getSession ();
+	
+	String redirectBase="/"+renderBase; // default value
 
         if(session!=null) {
             Boolean forwarded = (Boolean)session.getAttribute("forwarded");
-
+	    
             if(forwarded != null && forwarded.booleanValue())
-              return null;
-
-            // Don't forward request with no parameters
-            if(!req.getParameterNames().hasMoreElements())
-              return null;
+		return null;
 
             String servletPath=req.getServletPath();
-
-            // redirect to renderBase
-            if(servletPath.equals("/"+renderBase))
-              return servletPath;
-
-            // redirect to the same base, but no parameters
             String uPFile=servletPath.substring(servletPath.lastIndexOf('/'),servletPath.length());
-            //	    Logger.log(Logger.DEBUG,"PortalSessionManager::doRedirect() : uPFile=\""+uPFile+"\".");
-
-            if(uPFile.startsWith("/"+detachBaseStart) && uPFile.endsWith(".uP"))
-              return uPFile;
+	    
+	    // redirect everything except for render.uP and detach.uP with no parameters
+	    
+	    boolean detach_mode=uPFile.startsWith("/"+detachBaseStart);
+	    
+            if(!req.getParameterNames().hasMoreElements()) {
+		if(servletPath.equals("/"+renderBase) || detach_mode)
+		    return null;
+	    }
+	    
+	    // the only exception to redirect is the detach 
+	    if(detach_mode) redirectBase=uPFile;
         }
         // redirect by default
         return "/"+renderBase;
