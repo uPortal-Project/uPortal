@@ -175,11 +175,6 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                 return;
             }
 	    
-            // if we got to this point, we can proceed with the rendering
-            if (state.channelManager == null) {
-                state.channelManager = new ChannelManager(uLayoutManager); 
-            }
-	    
             // call layout manager to process all user-preferences-related request parameters
             // this will update UserPreference object contained by UserLayoutManager, so that
             // appropriate attribute incorporation filters and parameter tables can be constructed.
