@@ -54,6 +54,7 @@ public interface GroupsManagerConstants {
    String OWNER = "org.jasig.portal.channels.groupsmanager.CGroupsManager";
    String ENTITY_TAGNAME = "entity";
    String GROUP_TAGNAME = "group";
+   String PROPERTIES_TAGNAME = "properties";
 
    // ROOT_GROUP_TITLE is the name of the root element holding the initial group
    // contexts in the groups management channel

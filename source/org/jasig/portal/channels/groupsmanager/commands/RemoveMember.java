@@ -38,7 +38,7 @@ package  org.jasig.portal.channels.groupsmanager.commands;
 import java.util.Iterator;
 
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
+//import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
@@ -71,16 +71,14 @@ public class RemoveMember extends GroupsManagerCommand {
     * @param sessionData
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception {
-      ChannelStaticData staticData = sessionData.staticData;
+      //ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Utility.logMessage("DEBUG", "RemoveMember::execute(): Start");
       Document model = getXmlDoc(sessionData);
-      String theCommand = getCommand(runtimeData);
       String cmdIds = getCommandArg(runtimeData);
       Object parentGroup = null;
       IGroupMember childGm = null;
       String hasMbrs = "duh";
-      String userID = getUserID(sessionData);
       Utility.logMessage("DEBUG", "RemoveMember::execute(): About to get parent and child keys");
       String parentID = Utility.parseStringDelimitedBy("parent.", cmdIds, "|");
       String childID = Utility.parseStringDelimitedBy("child.", cmdIds, "|");
@@ -101,12 +99,18 @@ public class RemoveMember extends GroupsManagerCommand {
       }
       // The child will always be an IGroupMember
       childGm = GroupsManagerXML.retrieveGroupMemberForElementId(model, childID);
-      //parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(model, parentID);
       parentGroup = sessionData.lockedGroup;
       removeChildFromGroup(parentGroup, childGm);
       hasMbrs = String.valueOf(((IEntityGroup)parentGroup).hasMembers());
       Utility.logMessage("DEBUG", "RemoveMember::execute(): Got the parent group ");
       Utility.logMessage("DEBUG", "RemoveMember::execute(): about to remove child elements");
+      // remove property elements for child gm and clear the Entity Properties cache.
+      GroupsManagerXML.removePropertyElements (model, childGm, true);
+
+      // Removes EntityProperites for the child GroupMember from the Entity Property cache.
+      GroupsManagerXML.clearPropertiesCache (childGm);
+      
+      // remove this member from all parent group elements.
       Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
             parentElem.getAttribute("key"));
       Node parentNode;
@@ -116,7 +120,7 @@ public class RemoveMember extends GroupsManagerCommand {
          parentNode = (Node)parentNodes.next();
          childNodes = parentNode.getChildNodes();
          for (int i = 0; i < childNodes.getLength(); i++) {
-            childNode = (org.w3c.dom.Node)childNodes.item(i);
+            childNode = childNodes.item(i);
             if (((Element)childNode).getAttribute("key").equals(childElem.getAttribute("key"))) {
                parentNode.removeChild(childNode);
                ((Element)parentNode).setAttribute("hasMembers", hasMbrs);

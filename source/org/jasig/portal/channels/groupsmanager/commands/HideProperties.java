@@ -40,7 +40,6 @@ import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 /**
  * A Groups Manager command to hide properties for any entity or group
  *
@@ -62,13 +61,6 @@ public class HideProperties extends GroupsManagerCommand {
       Document model = getXmlDoc(sessionData);
       String id = this.getCommandArg(sessionData.runtimeData);
       Element e = GroupsManagerXML.getElementById(model,id);
-      if (e != null){
-         NodeList nl = e.getChildNodes();
-         for(int i=(nl.getLength()-1); i>=0;i--){
-            if (nl.item(i).getNodeName().equals("properties")){
-               e.removeChild(nl.item(i));
-            }
-         }
-      }
+      GroupsManagerXML.removeElementsForTagName(e, PROPERTIES_TAGNAME);
    }
 }

@@ -38,7 +38,7 @@ package  org.jasig.portal.channels.groupsmanager.commands;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.jasig.portal.ChannelRuntimeData;
+//import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
@@ -48,7 +48,6 @@ import org.jasig.portal.groups.ILockableEntityGroup;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /** A select cycle could be started in Servant mode or it could be started by
@@ -78,7 +77,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception{
       ChannelStaticData staticData = sessionData.staticData;
-      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+      //ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Start");
       String parentId = null;
@@ -179,23 +178,20 @@ public class DoneWithSelection extends GroupsManagerCommand {
     */
    private void addChildrenToGroup (Vector gmCollection, CGroupsManagerSessionData sessionData,
       Element parentElem, Document model) throws Exception {
-      ChannelRuntimeData runtimeData = sessionData.runtimeData;
+      //ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Element parent;
       ILockableEntityGroup parentGroup = null;
       IGroupMember childGm = null;
       Element childElem;
-      String parentName = parentElem.getAttribute("key");
-      String childName = "";
-      //parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
       parentGroup = sessionData.lockedGroup;
       Iterator gmItr = gmCollection.iterator();
       while (gmItr.hasNext()) {
          childGm = (IGroupMember) gmItr.next();
-         childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
-         parentName = parentGroup.getName();
          Utility.logMessage("DEBUG", "DoneWithSelection::execute: About to add child");
          // add to parent group
          parentGroup.addMember(childGm);
+         // remove property elements for child gm and clear the Entity Properties cache.
+         GroupsManagerXML.removePropertyElements (model, childGm, true);
          // update parent group
          parentGroup.updateMembersAndRenewLock();
          // get parent element(s) and add element for child group member
@@ -205,7 +201,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
             parent = (Element)parentNodes.next();
 
             childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, sessionData.getUnrestrictedData());
-            parent.appendChild((Node)childElem);
+            parent.appendChild(childElem);
             parent.setAttribute("hasMembers", "true");
          }
       }

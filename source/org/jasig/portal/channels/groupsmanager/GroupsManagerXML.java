@@ -45,21 +45,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.EntityTypes;  /** @todo remove when groups/EntityTypes is removed */
+import org.jasig.portal.EntityTypes;  /* @todo remove when groups/EntityTypes is removed */
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerAdminPermissions;
 import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerDefaultPermissions;
-import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IUpdatingPermissionManager;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.EntityNameFinderService;
-import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -82,10 +78,6 @@ public class GroupsManagerXML
     * @return Document
     */
    public static Document getGroupsManagerXml (CGroupsManagerSessionData sessionData) {
-      ChannelStaticData sd = sessionData.staticData;
-      String rkey = null;
-      IEntityGroup entGrp = null;
-      IGroupMember aGroupMember = null;
       Element rootGroupElement;
       Document viewDoc = getNewDocument();
       sessionData.model = viewDoc;
@@ -180,21 +172,21 @@ public class GroupsManagerXML
          entCreator = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, entGrp.getCreatorID());
       }
       //* Maybe I should have all parms in a java.util.HashMap
-      Element rdfElem = (Element)xmlDoc.createElement("rdf:RDF");
+      Element rdfElem = xmlDoc.createElement("rdf:RDF");
       rdfElem.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
       rdfElem.setAttribute("xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): CREATING ELEMENT RDF DESCRIPTION");
-      Element rdfDesc = (Element)xmlDoc.createElement("rdf:Description");
+      Element rdfDesc = xmlDoc.createElement("rdf:Description");
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): CREATING ELEMENT DCTITLE");
-      Element dcTitle = (Element)xmlDoc.createElement("dc:title");
+      Element dcTitle = xmlDoc.createElement("dc:title");
       dcTitle.appendChild(xmlDoc.createTextNode(entName));
       rdfDesc.appendChild(dcTitle);
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): CREATING ELEMENT dcDESCRIPTION");
-      Element dcDescription = (Element)xmlDoc.createElement("dc:description");
+      Element dcDescription = xmlDoc.createElement("dc:description");
       dcDescription.appendChild(xmlDoc.createTextNode(entDesc));
       rdfDesc.appendChild(dcDescription);
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): CREATING ELEMENT dcCREATOR");
-      Element dcCreator = (Element)xmlDoc.createElement("dc:creator");
+      Element dcCreator = xmlDoc.createElement("dc:creator");
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): APPENDING TO dcCREATOR");
       dcCreator.appendChild(xmlDoc.createTextNode(entCreator));
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): APPENDING TO RDFDESC");
@@ -247,10 +239,6 @@ public class GroupsManagerXML
     */
    public static void expandGroupElementXML(Element expandedElem, CGroupsManagerUnrestrictedSessionData sd){
       //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );
-      boolean hasGroupsXML = !(expandedElem.getElementsByTagName(GROUP_TAGNAME).getLength()
-            == 0);
-      boolean hasEntitiesXML = !(expandedElem.getElementsByTagName(ENTITY_TAGNAME).getLength()
-            == 0);
       boolean hasMembers = (expandedElem.getAttribute("hasMembers").equals("true"));
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Expanded element has Members = "
             + hasMembers);
@@ -441,7 +429,7 @@ public class GroupsManagerXML
     */
    public static HashMap getEntityTypes () {
       HashMap entTypes = new HashMap(5);
-      /** @todo can't determine size due to private methods */
+      /* @todo can't determine size due to private methods */
       //HashMap entTypes = new HashMap(EntityTypes.singleton().getEntityTypesByType().size());
       String entName;
       String entClassName;
@@ -586,9 +574,8 @@ public class GroupsManagerXML
     * @return iterator
     */
    public static java.util.Iterator getNodesById (Document aDoc, String id) {
-      int i;
       Collection nodes = new java.util.ArrayList();
-      Element elem = (Element)getElementById(aDoc, id);
+      Element elem = getElementById(aDoc, id);
       nodes.add(elem);
       return  nodes.iterator();
    }
@@ -670,7 +657,7 @@ public class GroupsManagerXML
    public static IGroupsManagerWrapper getWrapper (String type) {
       String tagname =  (type.equals(ENTITY_TAGNAME) || type.equals(ENTITY_CLASSNAME)) ?
          ENTITY_TAGNAME : GROUP_TAGNAME;
-      IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.get(tagname);
+      IGroupsManagerWrapper rap = GroupsManagerWrapperFactory.get(tagname);
       return rap;
    }
 
@@ -684,7 +671,7 @@ public class GroupsManagerXML
    public static boolean isPersistentGroup(Element anElem){
       boolean rval = true;
       if (anElem == null){
-         /** @todo this should be an error */
+         /* @todo this should be an error */
          Utility.logMessage("INFO", "GroupsManagerXML::isPersistentGroup(): anElem is null");
       }
       // Elements referencing non-groups (i.e. IEntities), search results, and the
@@ -701,10 +688,8 @@ public class GroupsManagerXML
     * Updates all nodes for the same IEntityGroup with information about the IEntityGroup.
     * @param sd CGroupsManagerUnrestrictedSessionData
     * @param entGrp  IEntityGroup
-    * @throws GroupsException
     */
-   public static void refreshAllNodes (CGroupsManagerUnrestrictedSessionData sd, IEntityGroup entGrp)
-         throws GroupsException {
+   public static void refreshAllNodes (CGroupsManagerUnrestrictedSessionData sd, IEntityGroup entGrp) {
       Document model = sd.model;
       String updKey = entGrp.getKey();
       Node updNode;
@@ -759,10 +744,10 @@ public class GroupsManagerXML
     * @param parentElem Element
     */
    public static void refreshAllNodesRecursivelyIfRequired (CGroupsManagerUnrestrictedSessionData sd, Element parentElem){
-      /** @todo not really recursive, we only go one level down, reconcile this
+      /* @todo not really recursive, we only go one level down, reconcile this
        *  in code or by changing name */
       if (parentElem == null){
-         /** @todo this should be an error */
+         /* @todo this should be an error */
          Utility.logMessage("INFO", "GroupsManagerXML::refreshAllNodesRecursivelyIfRequired(): parentElem is null");
          return;
       }
@@ -774,10 +759,10 @@ public class GroupsManagerXML
       refreshAllNodesIfRequired(sd, parentElem);
       if (isParentElementExpanded){
          //String parentType = parentElem.getAttribute("type");
-         Node parentNode = (Node)parentElem;
+         Node parentNode = parentElem;
          childNodes = parentNode.getChildNodes();
          for (int i = 0; i < childNodes.getLength(); i++) {
-            childNode = (org.w3c.dom.Node)childNodes.item(i);
+            childNode = childNodes.item(i);
             childElem = (Element)childNode;
             childType = childElem.getAttribute("type");
             if (Utility.notEmpty(childType)){
@@ -891,7 +876,7 @@ public class GroupsManagerXML
          }
       } catch (Throwable th) {
          Utility.logMessage("ERROR", "GroupsManagerXML::retrieveGroup(): Could not retrieve Group Member ("
-               + aKey + "): \n" + th, (Exception) th);
+               + aKey + "): \n" + th, th);
       }
       return  grp;
    }
@@ -920,6 +905,7 @@ public class GroupsManagerXML
       gm = retrieveGroupMemberForElement (gmElem);
       return  gm;
    }
+    
    /**
     * Returns the IGroupMember represented by an Element
     * @param gmElem
@@ -931,12 +917,75 @@ public class GroupsManagerXML
       Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroupMemberForElement(): About to retrieve group member ("
             + gmElem.getTagName() + " for key: " + gmKey);
       if (gmElem.getTagName().equals(GROUP_TAGNAME)) {
-         gm = (IGroupMember)GroupsManagerXML.retrieveGroup(gmKey);
+         gm = GroupsManagerXML.retrieveGroup(gmKey);
       }
       else {
-         gm = (IGroupMember)GroupsManagerXML.retrieveEntity(gmKey,gmElem.getAttribute("type"));
+         gm = GroupsManagerXML.retrieveEntity(gmKey,gmElem.getAttribute("type"));
       }
       return  gm;
    }
+    
+   /**
+    * Returns the xml tagname for a GroupMember
+    * @param gm IGroupMember
+    * @return String
+    */
+   public static String getTagName (IGroupMember gm) {
+      String tagname = (gm.isGroup() ? GROUP_TAGNAME : ENTITY_TAGNAME);
+      return tagname;
+   }
+    
+   /**
+    * Removes all elements with the tagname from an element
+    * @param anElem Element
+    * @param tagname String
+    */
+   public static void removeElementsForTagName (Element anElem, String tagname) {
+      //Utility.logMessage("DEBUG", "GroupsManagerXML:removeElementForTagNameFromElement(): retrieve element for tagname: " + tagname);
+      Utility.printElement(anElem, "BEFORE properties are removed.");
+      NodeList nList = anElem.getElementsByTagName(tagname);
+      /* getElementsByTagName(tagname) returns all elements in the tree with the specified 
+         tagname. We have to make sure that the one we are removing has anElem as the parent 
+         otherwise besides being wrong we get the following error:
+         org.w3c.dom.DOMException: NOT_FOUND_ERR: 
+         An attempt is made to reference a node in a context where it does not exist.
+      */
+      if (nList.getLength() > 0) {
+         for (int i = 0; i < nList.getLength(); i++) {
+            if (nList.item(i).getParentNode() == anElem){
+               anElem.removeChild(nList.item(i));
+            }
+         }
+      }
+      //Utility.printElement(anElem, "AFTER properties are removed.");
+      return;
+   }
+    
+   /**
+    * Removes all property elements for an IGroupMember and optionally clears the Entity Property cache.
+    * @param model Element
+    * @param gm IGroupMember
+    * @param clearCache boolean
+    */
+   public static void removePropertyElements (Document model, IGroupMember gm, boolean clearCache) {
+      Element curElem;
+      java.util.Iterator nodeItr = getNodesByTagNameAndKey(model, getTagName (gm), gm.getKey());
+      while (nodeItr.hasNext()) {
+         curElem = (Element)nodeItr.next();
+         removeElementsForTagName (curElem, PROPERTIES_TAGNAME);
+      }
+      if (clearCache){
+         clearPropertiesCache (gm);
+      }
+   }
+
+   /**
+    * Removes all EntityProperites for a GroupMember from the Entity Property cache.
+    * @param gm IGroupMember
+    */
+   public static void clearPropertiesCache (IGroupMember gm) {
+      EntityPropertyRegistry.instance().clearCache(gm.getUnderlyingEntityIdentifier());
+   }
+
 }
 

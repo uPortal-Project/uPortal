@@ -105,7 +105,7 @@ public class Utility
       // delay hesitates printing until a new millisecond is reached in order to
       // prevent overlapping messages during debugging
 
-      /** @todo next 4 lines are for running test */
+      /* @todo next 4 lines are for running test */
       //if (msg != null){
       //   if (!msgTypeStr.equals("DEBUG")){
       //      System.out.println(msgTypeStr+"::"+msg);

@@ -38,12 +38,11 @@ package  org.jasig.portal.channels.groupsmanager.commands;
 import java.util.Iterator;
 
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
+//import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,13 +67,11 @@ public class DeleteGroup extends GroupsManagerCommand {
     * @param sessionData
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception{
-      ChannelStaticData staticData = sessionData.staticData;
+      //ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Start");
       Document model = getXmlDoc(sessionData);
-      String userID = getUserID(sessionData);
-      String theCommand = runtimeData.getParameter("grpCommand");
       String delId = getCommandArg(runtimeData);
       Element delElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, delId);
       Element pn = ((Element)delElem.getParentNode());
@@ -92,7 +89,6 @@ public class DeleteGroup extends GroupsManagerCommand {
         delElem.getParentNode().removeChild(delElem);
       }
       else{
-         //IEntityGroup delGroup = GroupsManagerXML.retrieveGroup(delKey);
          IEntityGroup delGroup = sessionData.lockedGroup;
          if (delGroup == null) {
             retMsg = "Unable to retrieve Group!";
@@ -102,7 +98,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          Utility.logMessage("DEBUG", "DeleteGroup::execute(): About to delete group: "
                + elemName);
          // remove permissions associated with group
-         deletePermissions((IGroupMember)delGroup);
+         deletePermissions(delGroup);
          // delete the group
          delGroup.delete();
          Utility.logMessage("DEBUG", "DeleteGroup::execute(): About to delete xml nodes for group: "
@@ -138,7 +134,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          }
 
          /** Remove the permission elements in the xmlDoc */
-         Node principalNode = (Node)model.getDocumentElement().getElementsByTagName("principal").item(0);
+         Node principalNode = model.getDocumentElement().getElementsByTagName("principal").item(0);
          NodeList permElems = model.getElementsByTagName("permission");
          /** If we delete from the bottom up, the NodeList elements shift down
           *  everytime we delete an element. Since the elements that we are looking

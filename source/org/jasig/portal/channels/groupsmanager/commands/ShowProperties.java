@@ -66,7 +66,7 @@ public class ShowProperties extends GroupsManagerCommand {
     String id = this.getCommandArg(sessionData.runtimeData);
     Element e = GroupsManagerXML.getElementById(model,id);
     if (e != null){
-      Element props = model.createElement("properties");
+      Element props = model.createElement(PROPERTIES_TAGNAME);
       EntityIdentifier ei = null;
       try{
         ei = new EntityIdentifier(e.getAttribute("key"),Class.forName(e.getAttribute("type")));
