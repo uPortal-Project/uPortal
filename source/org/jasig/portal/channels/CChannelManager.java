@@ -192,6 +192,7 @@ public class CChannelManager extends BaseChannel {
         if (typeID != null) {
           if (!typeID.equals(channelDef.getTypeID())) {
             channelDef.setTypeID(typeID);
+            channelDef.resetChannelControls();
             channelDef.removeParameters();
           }
         }
@@ -827,11 +828,25 @@ public class CChannelManager extends BaseChannel {
         Document cpdDoc = ChannelRegistryManager.getCPD(typeID);
         if (cpdDoc != null) {
           for (Node n1 = cpdDoc.getDocumentElement().getFirstChild(); n1 != null; n1 = n1.getNextSibling()) {
-            if (n1.getNodeType() == Node.ELEMENT_NODE && n1.getNodeName().equals("defaultControls")) {
-              Element defaultControls = (Element)n1;
-              editable = defaultControls.getAttribute("editable");
-              hasHelp = defaultControls.getAttribute("hasHelp");
-              hasAbout = defaultControls.getAttribute("hasAbout");
+            if (n1.getNodeType() == Node.ELEMENT_NODE && n1.getNodeName().equals("controls")) {
+              for (Node n2 = n1.getFirstChild(); n2 != null; n2 = n2.getNextSibling()) {
+                if (n2.getNodeType() == Node.ELEMENT_NODE && n2.getNodeName().equals("control")) {
+                  Element control = (Element)n2;
+                  String type = control.getAttribute("type");
+                  if (type != null) {
+                    if (type.equals("edit")) {
+                      String editAtt = control.getAttribute("include");
+                      editable = editAtt != null && editAtt.equals("yes") ? "true" : "false";
+                    } else if (type.equals("about")) {
+                      String aboutAtt = control.getAttribute("include");
+                      hasAbout = aboutAtt != null && aboutAtt.equals("yes") ? "true" : "false";
+                    } else if (type.equals("help")) {
+                      String helpAtt = control.getAttribute("include");
+                      hasHelp = helpAtt != null && helpAtt.equals("yes") ? "true" : "false";
+                    }
+                  }
+                }
+              }
             }
           }
         }
