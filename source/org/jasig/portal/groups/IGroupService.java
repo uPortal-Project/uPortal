@@ -44,28 +44,43 @@ package org.jasig.portal.groups;
  * @author Dan Ellentuck
  * @version $Revision$
  */
-
 public interface IGroupService {
-  /*
+
+  /**
    * Returns a pre-existing <code>IEntityGroup</code> or null if the
    * <code>IGroupMember</code> does not exist.
    */
   public IEntityGroup findGroup(String key) throws GroupsException;
 
-  /*
+  /**
    * Returns an <code>IEntity</code> representing a portal entity.  This does
    * not guarantee that the entity actually exists.
    */
   public IEntity getEntity(String key, Class type) throws GroupsException;
 
-  /*
+  /**
    * Refers to the PropertiesManager to get the key for the group
    * Everyone and asks the group store implementation for the corresponding
    * <code>IEntityGroup</code>.
    */
   public IEntityGroup getEveryoneGroup() throws GroupsException;
 
-  /*
+  /**
+   * Refers to the PropertiesManager to get the key for the group of
+   * All channel categories and asks the group store implementation for the corresponding
+   * <code>IEntityGroup</code>.
+   */
+  public IEntityGroup getChannelCategoriesGroup() throws GroupsException;
+
+
+  /**
+   * Refers to the PropertiesManager to get the key for the group of
+   * Portal Administrators and asks the group store implementation for the corresponding
+   * <code>IEntityGroup</code>.
+   */
+  public IEntityGroup getPortalAdministratorsGroup() throws GroupsException;
+
+  /**
    * Returns an <code>IGroupMember</code> representing either a group or a
    * portal entity.  If the parm <code>type</code> is the group type,
    * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
@@ -73,14 +88,7 @@ public interface IGroupService {
    */
   public IGroupMember getGroupMember(String key, Class type) throws GroupsException;
 
-   /*
-   * Refers to the PropertiesManager to get the key for the group of
-   * Portal Administrators and asks the group store implementation for the corresponding
-   * <code>IEntityGroup</code>.
-   */
-  public IEntityGroup getPortalAdministratorsGroup() throws GroupsException;
-
-  /*
+  /**
    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
    * key.
    */

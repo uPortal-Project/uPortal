@@ -40,7 +40,9 @@ import java.util.Properties;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
+
 /**
+ * Reference group service.
  * @author: Dan Ellentuck
  * @version $Revision$
  */
@@ -53,131 +55,161 @@ public class ReferenceGroupService implements IGroupService
     private IEntityStore entityFactory = null;
     private IEntityGroupStore groupFactory = null;
 
-    // Key for everyone group:
+    // Key property names for common root groups:
+    private static final String EVERYONE_KEY = "org.jasig.portal.groups.Everyone.key";
+    private static final String CHANNEL_CATEGORIES_KEY = "org.jasig.portal.groups.ChannelCategories.key";
+    private static final String ADMIN_KEY = "org.jasig.portal.groups.PortalAdministrators.key";
+
+    // Key for common root groups:
     private String everyoneKey = null;
+    private String channelCategoriesKey = null;
     private String adminKey = null;
 
-/**
- * ReferenceGroupsService constructor.
- */
-private ReferenceGroupService() throws GroupsException
-{
-        super();
-        initialize();
-}
- /*
-  * Returns a pre-existing <code>IEntityGroup</code> or null if it
-  * does not exist.
-  */
-public IEntityGroup findGroup(String key) throws GroupsException
-{
-    return groupFactory.find(key);
-}
-  /*
-   * Returns an <code>IEntity</code> representing a portal entity.  This does
-   * not guarantee that the entity actually exists.
-   */
-  public IEntity getEntity(String key, Class type) throws GroupsException
-  {
-    return entityFactory.newInstance(key, type);
-  }
-   /*
-   * Returns an <code>IGroupMember</code> representing either a group or a
-   * portal entity.  If the parm <code>type</code> is the group type,
-   * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
-   * an <code>IEntity</code>.
-   */
-  public IGroupMember getGroupMember(String key, Class type) throws GroupsException
-  {
-    IGroupMember gm = null;
-    if ( type == EntityTypes.GROUP_ENTITY_TYPE )
-      gm = findGroup(key);
-    else
-      gm = getEntity(key, type);
-    return gm;
-  }
-  /*
-   * Returns the group whose key is the everyone key in the portal.properties file.
-   */
-  public IEntityGroup getEveryoneGroup() throws GroupsException
-  {
-    return findGroup(everyoneKey);
-  }
-
-  /*
-   * Returns the group whose key is the PortalAdministrators key in the portal.properties file.
-   */
-  public IEntityGroup getPortalAdministratorsGroup() throws GroupsException
-  {
-    return findGroup(adminKey);
-  }
-
-  /**
-   * @exception org.jasig.portal.groups.GroupsException.
-   */
-  private void initialize() throws GroupsException
-  {
-    String eMsg = null;
-    entityFactory = new RDBMEntityStore();
-
-    String groupFactoryName = PropertiesManager.getProperty
-        ("org.jasig.portal.groups.EntityGroupFactory.implementation");
-
-    if ( groupFactoryName == null )
+    /**
+     * ReferenceGroupsService constructor.
+     */
+    private ReferenceGroupService() throws GroupsException
     {
-        eMsg = "ReferenceGroupService.initialize(): EntityGroupStoreImpl not specified in portal.properties";
-        LogService.log(LogService.ERROR, eMsg);
-        throw new GroupsException(eMsg);
+            super();
+            initialize();
     }
 
-    try
+    /**
+     * Returns a pre-existing <code>IEntityGroup</code> or null if it
+     * does not exist.
+     */
+    public IEntityGroup findGroup(String key) throws GroupsException
     {
-        groupFactory = (IEntityGroupStore)Class.forName(groupFactoryName).newInstance();
-    }
-    catch (Exception e)
-    {
-        eMsg = "ReferenceGroupService.initialize(): Failed to instantiate " + groupFactoryName + " " + e;
-        LogService.log(LogService.ERROR, eMsg);
-        throw new GroupsException(eMsg);
+      return groupFactory.find(key);
     }
 
-    try
+    /**
+     * Returns an <code>IEntity</code> representing a portal entity.  This does
+     * not guarantee that the entity actually exists.
+     */
+    public IEntity getEntity(String key, Class type) throws GroupsException
     {
-        everyoneKey = PropertiesManager.getProperty("org.jasig.portal.groups.Everyone.key");
+      return entityFactory.newInstance(key, type);
     }
-    catch (Exception e)
+
+    /**
+     * Returns an <code>IGroupMember</code> representing either a group or a
+     * portal entity.  If the parm <code>type</code> is the group type,
+     * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
+     * an <code>IEntity</code>.
+     */
+    public IGroupMember getGroupMember(String key, Class type) throws GroupsException
     {
-        eMsg = "ReferenceGroupService.initialize(): Unable to load everyoneKey from portal.properties... " + e;
-        LogService.instance().log(LogService.ERROR, eMsg);
-        throw new GroupsException(eMsg);
+      IGroupMember gm = null;
+      if ( type == EntityTypes.GROUP_ENTITY_TYPE )
+        gm = findGroup(key);
+      else
+        gm = getEntity(key, type);
+      return gm;
     }
-    try
+
+    /**
+     * Returns the group whose key is the everyone key in the portal.properties file.
+     */
+    public IEntityGroup getEveryoneGroup() throws GroupsException
     {
-        adminKey = PropertiesManager.getProperty("org.jasig.portal.groups.PortalAdministrators.key");
+      return findGroup(everyoneKey);
     }
-    catch (Exception e)
+
+    /**
+     * Returns the group whose key is the all channel categories key in the portal.properties file.
+     */
+    public IEntityGroup getChannelCategoriesGroup() throws GroupsException
     {
-        eMsg = "ReferenceGroupService.initialize(): Unable to load adminKey from portal.properties... " + e;
-        LogService.instance().log(LogService.ERROR, eMsg);
-        throw new GroupsException(eMsg);
+      return findGroup(channelCategoriesKey);
     }
-}
-  /*
-   * Returns a new <code>IEntityGroup</code> for the given Class with an unused
-   * key.
-   */
-  public IEntityGroup newGroup(Class type) throws GroupsException
-  {
-    return groupFactory.newInstance(type);
-  }
-  /**
-   * @return org.jasig.portal.groups.IGroupService
-   * @exception org.jasig.portal.groups.GroupsException
-   */
-  public static synchronized IGroupService singleton() throws GroupsException
-  {
-    if ( singleton == null )
-        { singleton = new ReferenceGroupService(); }
-    return singleton;
-  }
+
+    /**
+     * Returns the group whose key is the PortalAdministrators key in the portal.properties file.
+     */
+    public IEntityGroup getPortalAdministratorsGroup() throws GroupsException
+    {
+      return findGroup(adminKey);
+    }
+
+    /**
+     * @exception org.jasig.portal.groups.GroupsException.
+     */
+    private void initialize() throws GroupsException
+    {
+      String eMsg = null;
+      entityFactory = new RDBMEntityStore();
+
+      String groupFactoryName = PropertiesManager.getProperty
+          ("org.jasig.portal.groups.EntityGroupFactory.implementation");
+
+      if ( groupFactoryName == null )
+      {
+          eMsg = "ReferenceGroupService.initialize(): EntityGroupStoreImpl not specified in portal.properties";
+          LogService.log(LogService.ERROR, eMsg);
+          throw new GroupsException(eMsg);
+      }
+
+      try
+      {
+          groupFactory = (IEntityGroupStore)Class.forName(groupFactoryName).newInstance();
+      }
+      catch (Exception e)
+      {
+          eMsg = "ReferenceGroupService.initialize(): Failed to instantiate " + groupFactoryName + " " + e;
+          LogService.log(LogService.ERROR, eMsg);
+          throw new GroupsException(eMsg);
+      }
+
+      try
+      {
+          everyoneKey = PropertiesManager.getProperty(EVERYONE_KEY);
+      }
+      catch (Exception e)
+      {
+          eMsg = "ReferenceGroupService.initialize(): Unable to load " + EVERYONE_KEY + " from portal.properties... " + e;
+          LogService.instance().log(LogService.ERROR, eMsg);
+          throw new GroupsException(eMsg);
+      }
+      try
+      {
+          channelCategoriesKey = PropertiesManager.getProperty(CHANNEL_CATEGORIES_KEY);
+      }
+      catch (Exception e)
+      {
+          eMsg = "ReferenceGroupService.initialize(): Unable to load " + CHANNEL_CATEGORIES_KEY + " from portal.properties... " + e;
+          LogService.instance().log(LogService.ERROR, eMsg);
+          throw new GroupsException(eMsg);
+      }
+      try
+      {
+          adminKey = PropertiesManager.getProperty(ADMIN_KEY);
+      }
+      catch (Exception e)
+      {
+          eMsg = "ReferenceGroupService.initialize(): Unable to load " + ADMIN_KEY + " from portal.properties... " + e;
+          LogService.instance().log(LogService.ERROR, eMsg);
+          throw new GroupsException(eMsg);
+      }
+    }
+
+    /**
+     * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+     * key.
+     */
+    public IEntityGroup newGroup(Class type) throws GroupsException
+    {
+      return groupFactory.newInstance(type);
+    }
+
+    /**
+     * @return org.jasig.portal.groups.IGroupService
+     * @exception org.jasig.portal.groups.GroupsException
+     */
+    public static synchronized IGroupService singleton() throws GroupsException
+    {
+      if ( singleton == null )
+          { singleton = new ReferenceGroupService(); }
+      return singleton;
+    }
 }

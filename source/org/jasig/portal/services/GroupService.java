@@ -57,16 +57,18 @@ public class GroupService
         super();
         initialize();
     }
-  /*
-   * Returns a pre-existing <code>IEntityGroup</code> or null if the
-   * <code>IGroupMember</code> does not exist.
-   * @param key String - the group key.
-   * @return org.jasig.portal.groups.IEntityGroup
-   */
+
+    /*
+     * Returns a pre-existing <code>IEntityGroup</code> or null if the
+     * <code>IGroupMember</code> does not exist.
+     * @param key String - the group key.
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
     public static IEntityGroup findGroup(String key) throws GroupsException
     {
         return instance().ifindGroup(key);
     }
+
    /*
     * Returns an <code>IEntity</code> representing a portal entity.  This does
     * not guarantee that the entity actually exists.
@@ -79,6 +81,7 @@ public class GroupService
     {
         return instance().igetEntity(key, type);
     }
+
     /**
      * Returns the distinguished group called "everyone".
      * @return org.jasig.portal.groups.IEntityGroup
@@ -88,17 +91,16 @@ public class GroupService
         return instance().igetEveryoneGroup();
     }
 
-  /*
-   * Returns an <code>IGroupMember</code> representing either a group or a
-   * portal entity.  If the parm <code>type</code> is the group type,
-   * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
-   * an <code>IEntity</code>.
-   */
-  public static IGroupMember getGroupMember(String key, Class type) throws GroupsException
+    /**
+     * Returns the distinguished group called "All categories".
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
+    public static IEntityGroup getChannelCategoriesGroup() throws GroupsException
     {
-        return instance().igetGroupMember(key, type);
+        return instance().igetChannelCategoriesGroup();
     }
-     /**
+
+    /**
      * Returns the distinguished group called "Portal Administrators".
      * @return org.jasig.portal.groups.IEntityGroup
      */
@@ -106,26 +108,40 @@ public class GroupService
     {
         return instance().igetPortalAdministratorsGroup();
     }
-  /*
-   * Returns a pre-existing <code>IEntityGroup</code> or null if the
-   * <code>IGroupMember</code> does not exist.
-   * @param key String - the group key.
-   * @return org.jasig.portal.groups.IEntityGroup
-   */
+
+    /*
+     * Returns an <code>IGroupMember</code> representing either a group or a
+     * portal entity.  If the parm <code>type</code> is the group type,
+     * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
+     * an <code>IEntity</code>.
+     */
+    public static IGroupMember getGroupMember(String key, Class type) throws GroupsException
+    {
+        return instance().igetGroupMember(key, type);
+    }
+
+    /*
+     * Returns a pre-existing <code>IEntityGroup</code> or null if the
+     * <code>IGroupMember</code> does not exist.
+     * @param key String - the group key.
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
     protected IEntityGroup ifindGroup(String key) throws GroupsException
     {
         return groupService.findGroup(key);
     }
-   /*
-    * Returns an <code>IEntity</code> representing a pre-existing portal entity.
-    * @param key String - the group key.
-    * @param type Class - the Class of the underlying IGroupMember.
-    * @return org.jasig.portal.groups.IEntity
-    */
+
+    /*
+     * Returns an <code>IEntity</code> representing a pre-existing portal entity.
+     * @param key String - the group key.
+     * @param type Class - the Class of the underlying IGroupMember.
+     * @return org.jasig.portal.groups.IEntity
+     */
     protected IEntity igetEntity(String key, Class type) throws GroupsException
     {
         return groupService.getEntity(key, type);
     }
+
     /**
      * Returns the distinguished group called "everyone".
      * @return org.jasig.portal.groups.IEntityGroup
@@ -134,16 +150,16 @@ public class GroupService
     {
         return groupService.getEveryoneGroup();
     }
-  /*
-   * Returns an <code>IGroupMember</code> representing either a group or a
-   * portal entity.  If the parm <code>type</code> is the group type,
-   * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
-   * an <code>IEntity</code>.
-   */
-    protected IGroupMember igetGroupMember(String key, Class type) throws GroupsException
+
+    /**
+     * Returns the distinguished group called "All categories".
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
+    protected IEntityGroup igetChannelCategoriesGroup() throws GroupsException
     {
-        return groupService.getGroupMember(key, type);
+        return groupService.getChannelCategoriesGroup();
     }
+
     /**
      * Returns the distinguished group called "Portal Administrators".
      * @return org.jasig.portal.groups.IEntityGroup
@@ -152,54 +168,69 @@ public class GroupService
     {
         return groupService.getPortalAdministratorsGroup();
     }
+
+    /*
+     * Returns an <code>IGroupMember</code> representing either a group or a
+     * portal entity.  If the parm <code>type</code> is the group type,
+     * the <code>IGroupMember</code> is an <code>IEntityGroup</code> else it is
+     * an <code>IEntity</code>.
+     */
+    protected IGroupMember igetGroupMember(String key, Class type) throws GroupsException
+    {
+        return groupService.getGroupMember(key, type);
+    }
+
     /**
-    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
-    * key.
-    * @return org.jasig.portal.groups.IEntityGroup
-    */
+     * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+     * key.
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
     protected IEntityGroup inewGroup(Class type) throws GroupsException {
         return groupService.newGroup(type);
     }
-/**
- * @exception org.jasig.portal.groups.GroupsException
- */
-private void initialize() throws GroupsException
-{
-        String eMsg = null;
-    String factoryName =
+
+    /**
+     * @exception org.jasig.portal.groups.GroupsException
+     */
+    private void initialize() throws GroupsException
+    {
+      String eMsg = null;
+      String factoryName =
         PropertiesManager.getProperty("org.jasig.portal.groups.GroupServiceFactory");
 
-    if ( factoryName == null )
-    {
-        eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
-        LogService.instance().log(LogService.ERROR, eMsg);
-        throw new GroupsException(eMsg);
+      if ( factoryName == null )
+      {
+          eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
+          LogService.instance().log(LogService.ERROR, eMsg);
+          throw new GroupsException(eMsg);
+      }
+
+      try
+      {
+          IGroupServiceFactory groupServiceFactory =
+              (IGroupServiceFactory)Class.forName(factoryName).newInstance();
+          groupService = groupServiceFactory.newGroupService();
+      }
+      catch (Exception e)
+      {
+          eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
+          LogService.instance().log(LogService.ERROR, eMsg);
+          throw new GroupsException(eMsg);
+      }
     }
 
-    try
-    {
-        IGroupServiceFactory groupServiceFactory =
-            (IGroupServiceFactory)Class.forName(factoryName).newInstance();
-        groupService = groupServiceFactory.newGroupService();
-    }
-    catch (Exception e)
-    {
-        eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
-        throw new GroupsException(eMsg);
-    }
-}
     public static synchronized GroupService instance() throws GroupsException {
         if ( instance==null ) {
             instance = new GroupService();
         }
         return instance;
     }
+
     /**
-    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
-    * key.
-    * @return org.jasig.portal.groups.IEntityGroup
-    */
+     * Returns a new <code>IEntityGroup</code> for the given Class with an unused
+     * key.
+     * @return org.jasig.portal.groups.IEntityGroup
+     */
     public static IEntityGroup newGroup(Class type) throws GroupsException {
         return instance().inewGroup(type);
     }
