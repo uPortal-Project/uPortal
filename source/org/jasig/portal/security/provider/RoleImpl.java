@@ -35,11 +35,8 @@
 
 package org.jasig.portal.security.provider;
 
-import org.jasig.portal.Logger;
-
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.IRole;
-
 import java.util.Hashtable;
 import java.util.Enumeration;
 

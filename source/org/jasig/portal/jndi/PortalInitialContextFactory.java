@@ -35,15 +35,10 @@
 
 package org.jasig.portal.jndi;
 
-import org.jasig.portal.Logger;
-
 import java.util.Hashtable;
-
 import javax.naming.NamingException;
 import javax.naming.Context;
-
 import javax.naming.spi.InitialContextFactory;
-
 import tyrex.naming.MemoryContext;
 
 /**
