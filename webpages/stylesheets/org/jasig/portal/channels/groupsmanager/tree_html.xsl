@@ -7,6 +7,8 @@
   <xsl:param name="grpServantMessage" select="false()"/>
   <xsl:param name="commandResponse">null</xsl:param>
   <xsl:param name="ignorePermissions" select="false()"/>
+  <xsl:param name="blockFinishActions" select="false()"/>
+  <xsl:param name="blockEntitySelect" select="false()"/>
   <xsl:key name="can" match="//principal/permission[@type='GRANT']" use="concat(@activity,'|',@target)" />
   <xsl:key name="selectedGroup" match="group[@selected='true']" use="@key"/>
   <xsl:key name="selectedEntity" match="entity[@selected='true']" use="@key"/>
@@ -44,12 +46,14 @@
             <tr>
               <td colspan="2">
                 <input type="hidden" name="grpMode" value="select" /> <input type="submit" name="grpCommand" value="Select" class="uportal-button" />
-                <xsl:text>
-                </xsl:text>
-                <input type="submit" class="uportal-button" name="grpCommand" value="Done" />
-                <xsl:text>
-                </xsl:text>
-                <input type="submit" class="uportal-button" name="grpCommand" value="Cancel Selection" />
+                <xsl:if test="not($blockFinishActions)">
+                  <xsl:text>
+                  </xsl:text>
+                  <input type="submit" class="uportal-button" name="grpCommand" value="Done" />
+                  <xsl:text>
+                  </xsl:text>
+                  <input type="submit" class="uportal-button" name="grpCommand" value="Cancel Selection" />
+                </xsl:if>
               </td>
             </tr>
           </xsl:if>
@@ -93,7 +97,7 @@
             <xsl:if test="count(descendant::entity[@selected='true'])">
               <tr>
                 <td colspan="3" class="uportal-channel-table-header">
-                  Selected People:
+                  Selected Entities:
                 </td>
               </tr>
               <xsl:for-each select="descendant::entity[@selected='true']">
@@ -201,7 +205,7 @@
     <tr>
       <xsl:if test="$grpMode='select'">
         <td align="center" valign="top">
-          <xsl:if test="$ignorePermissions or key('can',concat('SELECT','|',parent::group/@key))">
+          <xsl:if test="($ignorePermissions or key('can',concat('SELECT','|',parent::group/@key))) and not($blockEntitySelect)">
             <xsl:choose>
               <xsl:when test="(@selected='true') or key('selectedEntity',@key)">
                 <span class="uportal-channel-warning">

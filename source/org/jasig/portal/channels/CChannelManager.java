@@ -104,8 +104,7 @@ public class CChannelManager extends BaseChannel {
     protected GroupSettings groupSettings = new GroupSettings();
     protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
     protected IPerson person;
-    protected IServant servant;
-    protected String cacheAction;
+    protected IServant groupServant;
 
     // Called after publishing so that you won't see any previous settings
     // on the next publish attempt
@@ -135,46 +134,29 @@ public class CChannelManager extends BaseChannel {
         runtimeData = rd;
         action = runtimeData.getParameter("uPCM_action");
         if (action != null && action.equals("selectCategories") && useGroupsManagerServant) {
+          if(groupServant==null){
             try {
               if (channelDef.ID == null){
-                servant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,"Please select channel categories for this channel:",GroupService.CHANNEL_CATEGORIES);
+                groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,"Please select channel categories for this channel:",GroupService.CHANNEL_CATEGORIES,false,false);
               }
               else {
                 IGroupMember thisChan = GroupService.getEntity(channelDef.ID.substring(4),
                                     Class.forName(GroupService.CHANNEL_CATEGORIES));
-                servant = CGroupsManagerServantFactory.getGroupsServantforMemberships(this.staticData,
-                        "Please select channel categories for this channel:", thisChan);
+                groupServant = CGroupsManagerServantFactory.getGroupsServantforGroupMemberships(this.staticData,
+                        "Please select channel categories for this channel:", thisChan,false);
               }
-            cacheAction = action;
             }
             catch(Exception e){
               LogService.instance().log(LogService.ERROR,e);
             }
+          }
         }
-        if (servant != null) {
-            action = cacheAction;
-            ((IChannel)servant).setRuntimeData(rd);
-            if (servant.isFinished()) {
-                if (action.equals("selectCategories")) {
-                    try {
-                        IGroupMember[] groups = (IGroupMember[])servant.getResults();
-                        servant = null;
-                        if (groups!=null && groups.length>0){
-                          HashSet cats = new HashSet();
-                          for (int i = 0; i < groups.length; i++) {
-                              if (groups[i].isGroup()) {
-                                  cats.add(groups[i].getKey());
-                              }
-                          }
-                          categorySettings.setSelectedCategories(cats);
-                        }
-                        action="selectGroups";
-                    } catch (Throwable th) {
-                        LogService.instance().log(LogService.ERROR, th);
-                    }
-                }
-                servant = null;
-                cacheAction = null;
+        if (groupServant != null) {
+            if (action == null){
+              action = "selectCategories";
+            }
+            if (action.equals("selectCategories")){
+              ((IChannel)groupServant).setRuntimeData(rd);
             }
         }
         // Capture information that the user entered on previous screen
@@ -189,10 +171,7 @@ public class CChannelManager extends BaseChannel {
      * @exception PortalException
      */
     public void renderXML (ContentHandler out) throws PortalException {
-        if (servant != null) {
-            ((IChannel)servant).renderXML(out);
-        }
-        else {
+
             XSLT xslt = new XSLT(this);
             xslt.setXML(channelManagerDoc);
             xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
@@ -236,8 +215,13 @@ public class CChannelManager extends BaseChannel {
                     break;
             }
             xslt.setStylesheetParameter("action", action);
+            if (groupServant != null && action.equals("selectCategories")) {
+               xslt.setStylesheetParameter("groupServantInUse", "true");
+            }
             xslt.transform();
-        }
+            if (groupServant != null && action.equals("selectCategories")) {
+              ((IChannel)groupServant).renderXML(out);
+            }
     }
 
     /**
@@ -491,8 +475,19 @@ public class CChannelManager extends BaseChannel {
             }
             else if (action.equals("finished")) {
                 state = DEFAULT_STATE;          // we need to add a confirmation and channel preview screen
-                String[] catIDs = (String[])(categorySettings.getSelectedCategories()).toArray(
+                String[] catIDs;
+                if(this.useGroupsManagerServant && groupServant !=null){
+                  IGroupMember[] gms = (IGroupMember[]) groupServant.getResults();
+                  catIDs = new String[gms.length];
+                  for(int g = 0; g < gms.length; g++){
+                    catIDs[g]=gms[g].getKey();
+                  }
+                  groupServant = null;
+                }
+                else {
+                 catIDs = (String[])(categorySettings.getSelectedCategories()).toArray(
                         new String[0]);
+                }
                 IEntityGroup[] groups = groupSettings.getSelectedGroupsAsIEntityGroups();
                 try {
                     Element channelE = channelDef.toXML();
@@ -573,6 +568,7 @@ public class CChannelManager extends BaseChannel {
             channelDef = new ChannelDefinition();
             categorySettings = new CategorySettings();
             groupSettings = new GroupSettings();
+            groupServant = null;
         }
     }
 

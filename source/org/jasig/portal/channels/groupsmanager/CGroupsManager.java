@@ -255,6 +255,12 @@ public class CGroupsManager
             if (staticData.getParameter("grpServantMode") != null && staticData.getParameter("grpServantMode").equals("true")) {
                xslt.setStylesheetParameter("grpServantMode", "true");
             }
+            if (hasValue(staticData.getParameter("grpAllowFinish"),"false")) {
+              xslt.setStylesheetParameter("blockFinishActions", "true");
+            }
+            if (hasValue(staticData.getParameter("grpBlockEntitySelect"),"true")) {
+              xslt.setStylesheetParameter("blockEntitySelect", "true");
+            }
             try {
                //LogService.instance().log(LogService.DEBUG, this.getClass().getName()
                //        + ".renderXML(): grpView=" + runtimeData.getParameter("grpView"));

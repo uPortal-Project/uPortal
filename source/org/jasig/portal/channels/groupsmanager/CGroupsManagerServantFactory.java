@@ -70,7 +70,7 @@ public class CGroupsManagerServantFactory {
       return getGroupsServantforSelection(staticData,message,null);
     }
 
-    public static IServant getGroupsServantforMemberships(ChannelStaticData staticData, String message, IGroupMember member) throws PortalException{
+    public static IServant getGroupsServantforGroupMemberships(ChannelStaticData staticData, String message, IGroupMember member, boolean allowFinish) throws PortalException{
       IServant servant = null;
       String typeKey = null;
 
@@ -87,9 +87,13 @@ public class CGroupsManagerServantFactory {
         zeroStaticData(slaveSD);
         slaveSD.setParameter("grpView","tree");
         slaveSD.setParameter("grpMode","select");
+        slaveSD.setParameter("grpBlockEntitySelect","true");
         slaveSD.put("grpPreSelectForMember",member);
         if (typeKey!=null){
            slaveSD.setParameter("grpViewKey",typeKey);
+        }
+        if(!allowFinish){
+           slaveSD.setParameter("grpAllowFinish","false");
         }
         if (message != null){
           slaveSD.setParameter("grpServantMessage",message);
@@ -103,6 +107,9 @@ public class CGroupsManagerServantFactory {
     }
 
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type) throws PortalException{
+        return getGroupsServantforSelection(staticData, message, type, true,true);
+    }
+    public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect) throws PortalException{
       long time1 = Calendar.getInstance().getTime().getTime();
       IServant servant;
       String typeKey = null;
@@ -122,6 +129,12 @@ public class CGroupsManagerServantFactory {
         slaveSD.setParameter("grpMode","select");
         if (typeKey!=null){
            slaveSD.setParameter("grpViewKey",typeKey);
+        }
+        if(!allowFinish){
+           slaveSD.setParameter("grpAllowFinish","false");
+        }
+        if(!allowEntitySelect){
+           slaveSD.setParameter("grpBlockEntitySelect","true");
         }
         if (message != null){
           slaveSD.setParameter("grpServantMessage",message);

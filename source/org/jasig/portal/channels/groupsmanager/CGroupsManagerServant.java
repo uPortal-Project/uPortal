@@ -101,9 +101,11 @@ import  org.jasig.portal.utils.*;
     */
    public Object[] getResults () {
       Object[] results = null;
-      if (staticData.containsKey("princResults")) {
-         results = (Object[])staticData.get("princResults");
+      if (!staticData.containsKey("princResults")) {
+         IGroupsManagerCommand cmd = GroupsManagerCommandFactory.get("Done");
+         cmd.execute(runtimeData,staticData);
       }
+      results = (Object[])staticData.get("princResults");
       Utility.logMessage("DEBUG", "CGroupsManagerservant.getResults()");
       return  results;
    }
