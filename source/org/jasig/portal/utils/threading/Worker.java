@@ -49,6 +49,7 @@ public final class Worker extends Thread {
 	private WorkerTask task;
 	private WorkTracker tracker;
 	private boolean continueWorking;
+        private static int iThreadID = 0;
 
 	/**
 	 * Worker Constructor
@@ -60,6 +61,8 @@ public final class Worker extends Thread {
 		this.pool = pool;
                 this.work = work;
                 continueWorking = true;
+                iThreadID++;
+                setName("uPortal thread pool worker #" + iThreadID);
 	}
 
 
