@@ -554,6 +554,7 @@ public class TabColumnPrefsState extends BaseState
 
   private void saveUserPreferences () throws PortalException
   {
+    userPrefs.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", staticData.getChannelSubscribeId());
     IUserPreferencesManager upm = context.getUserPreferencesManager();
     if (modifyingCurrentUserLayout()) {
         upm.setNewUserLayoutAndUserPreferences(null, userPrefs);
@@ -1010,12 +1011,8 @@ public class TabColumnPrefsState extends BaseState
                 // save
                 String skinName = runtimeData.getParameter("skinName");
                 userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
-                // save user preferences ?
+                // save user preferences
                 saveUserPreferences();
-                // reset state
-                BaseState df=new DefaultState(context);
-                df.setStaticData(staticData);
-                context.setState(df);
             } else if (runtimeData.getParameter("submitCancel")!=null) {
                 // return to the default state
                 BaseState df=new DefaultState(context);
