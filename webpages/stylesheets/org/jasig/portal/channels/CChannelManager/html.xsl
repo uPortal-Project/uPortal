@@ -10,8 +10,6 @@
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
   <xsl:variable name="defaultTextRows">10</xsl:variable>
-  <xsl:variable name="filterByID"><xsl:value-of select="//filterByID[1]"/></xsl:variable>
-
 
   <xsl:template match="/">
     <html>
@@ -229,6 +227,11 @@
   </xsl:template>
 
   <xsl:template name="selectModifyChannel">
+  <xsl:variable name="filterByID"><xsl:value-of select="//filterByID[1]"/></xsl:variable>
+  <xsl:variable name="recsPerPage" select="//recordsPerPage"/>
+  <xsl:variable name="currPage" select="//currentPage"/>
+  <xsl:variable name="pageIdNodeSet" select="//*[@ID=$filterByID]//channel"/>
+  <xsl:variable name="maxPages" select="ceiling(count($pageIdNodeSet[not(@ID=preceding::channel/@ID)]) div $recsPerPage)"/>
 
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr>
@@ -265,6 +268,8 @@
           <td nowrap="nowrap">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
+              <xsl:with-param name="currPage" select="$currPage"/>
+              <xsl:with-param name="maxPages" select="$maxPages"/>
             </xsl:call-template>
           </td>
           <form method="post" action="{$baseActionURL}">
@@ -319,9 +324,8 @@
                 </tr>
                 <xsl:for-each select="(//*[@ID = $filterByID]//channel[not(@ID=preceding::channel/@ID)])">
                   <xsl:sort select="@name"/>
-                  <xsl:if test="(position() &gt; (//recordsPerPage * //currentPage)-//recordsPerPage) and (position() &lt;= //recordsPerPage * //currentPage)">
+                  <xsl:if test="(position() &gt; ($recsPerPage * $currPage)-$recsPerPage) and (position() &lt;= $recsPerPage * $currPage)">
                     <tr class="uportal-channel-text" valign="top">
-
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}">
                           <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Edit settings for {@ID}"/>
@@ -378,36 +382,41 @@
           <td nowrap="nowrap" valign="top">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
+              <xsl:with-param name="currPage" select="$currPage"/>
+              <xsl:with-param name="maxPages" select="$maxPages"/>
             </xsl:call-template>
           </td>
-          <td width="100%" class="uportal-background-med" valign="top">Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="//recordsPerPage"/></xsl:attribute></input>records at a time.<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/><input type="submit" name="buttonRecordsDisplayed" value="go" class="uportal-button"/></td>
+          <td width="100%" class="uportal-background-med" valign="top">Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input>records at a time.<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/><input type="submit" name="buttonRecordsDisplayed" value="go" class="uportal-button"/></td>
         </form>
       </tr>
     </table>
   </xsl:template>
   <xsl:template name="pagingWidget">
     <xsl:param name="i"/>
-    <xsl:if test="$i &lt;= ceiling(count(//*[@ID = $filterByID]//channel[not(@ID=preceding::channel/@ID)]) div //recordsPerPage[1])">
+    <xsl:param name="currPage"/>
+    <xsl:param name="maxPages"/>
+
+    <xsl:if test="$i &lt;= $maxPages">
       <xsl:if test="$i = 1">page:</xsl:if>
-      <xsl:if test="$i = 1 and //currentPage[1]=1">
+      <xsl:if test="($i = 1) and ($currPage=1)">
         <img src="{$mediaPath}/arrow_left_off.gif" width="16" height="16" alt="Previous" border="0"/>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
-      <xsl:if test="$i = 1 and //currentPage[1] &gt; 1">
+      <xsl:if test="($i = 1) and ($currPage &gt; 1)">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="(//currentPage)-1"/></xsl:attribute>
-          <img src="{$mediaPath}/arrow_left.gif" width="16" height="16" alt="Go to page [{(//currentPage)-1}]" border="0"/>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)-1"/></xsl:attribute>
+          <img src="{$mediaPath}/arrow_left.gif" width="16" height="16" ID="left" alt="Go to page [{($currPage)-1}]" border="0"/>
         </a>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
-      <xsl:if test="$i = //currentPage[1]">
+      <xsl:if test="$i = $currPage">
         <strong>
           <xsl:value-of select="$i"/>
         </strong>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
-      <xsl:if test="$i != //currentPage[1]">
+      <xsl:if test="$i != $currPage">
         <a>
           <xsl:attribute name="href">
             <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="$i"/></xsl:attribute>
@@ -415,20 +424,23 @@
         </a>
         <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
-      <xsl:if test="$i = ceiling(count(//*[@ID = $filterByID]//channel[not(@ID=preceding::channel/@ID)]) div //recordsPerPage[1]) and //currentPage[1]=ceiling(count(//*[@ID =   $filterByID]//channel[not(@ID=preceding::channel/@ID)]) div //recordsPerPage[1])">
+      <xsl:if test="($i = $maxPages) and ($currPage = $maxPages)">
         <img src="{$mediaPath}/arrow_right_off.gif" width="16" height="16" alt="Next" border="0"/>
       </xsl:if>
-      <xsl:if test="$i = ceiling(count(//*[@ID = $filterByID]//channel[not(@ID=preceding::channel/@ID)]) div //recordsPerPage[1]) and //currentPage[1] &lt;   ceiling(count(//*[@ID = $filterByID]//channel[not(@ID=preceding::channel/@ID)]) div //recordsPerPage[1])">
+      <xsl:if test="($i = $maxPages) and ($currPage &lt; $maxPages)">
         <a>
           <xsl:attribute name="href">
-            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="(//currentPage)+1"/></xsl:attribute>
-          <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" alt="Go to page [{(//currentPage)+1}]" border="0"/>
+            <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)+1"/></xsl:attribute>
+          <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" ID="right" alt="Go to page [{($currPage)+1}]" border="0"/>
         </a>
       </xsl:if>
       <xsl:call-template name="pagingWidget">
         <xsl:with-param name="i" select="$i + 1"/>
+        <xsl:with-param name="currPage" select="$currPage"/>
+        <xsl:with-param name="maxPages" select="$maxPages"/>
       </xsl:call-template>
     </xsl:if>
+
   </xsl:template>
   <xsl:template name="workflow">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
@@ -3063,4 +3075,5 @@
 </xsl:stylesheet>
 
 
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->
