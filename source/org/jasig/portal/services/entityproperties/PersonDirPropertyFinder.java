@@ -52,23 +52,13 @@ import  java.sql.*;
  */
 public class PersonDirPropertyFinder
         implements IEntityPropertyFinder {
-    private static String USER_TABLE = "UP_USER";
-    private static String USER_ID_COLUMN = "USER_ID";
-    private static String USER_NAME_COLUMN = "USER_NAME";
-    private Class person;
+    private Class person = org.jasig.portal.security.IPerson.class;
     private PersonDirectory pd;
     private SmartCache cache;
-    private static String selectUser = "SELECT " + USER_NAME_COLUMN + " FROM "
-            + USER_TABLE + " WHERE " + USER_ID_COLUMN + " = ?";
 
     public PersonDirPropertyFinder() {
         pd = new PersonDirectory();
         cache = new SmartCache(120);
-        try {
-            person = Class.forName("org.jasig.portal.security.IPerson");
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
-        }
     }
 
     public String[] getPropertyNames(EntityIdentifier entityID) {
@@ -92,9 +82,7 @@ public class PersonDirPropertyFinder
         if ((ht = (Hashtable)cache.get(entityID.getKey())) == null) {
             ht = new Hashtable(0);
             try {
-                int key = Integer.parseInt(entityID.getKey());
-                String uname = this.getUserName(key);
-                ht = pd.getUserDirectoryInformation(uname);
+                ht = pd.getUserDirectoryInformation(entityID.getKey());
             } catch (Exception e) {
                 LogService.instance().log(LogService.ERROR, e);
             }
@@ -103,36 +91,6 @@ public class PersonDirPropertyFinder
         return  ht;
     }
 
-    protected String getUserName(int key) {
-        Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
-        String name = null;
-        try {
-            conn = getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, selectUser);
-            ps.clearParameters();
-            ps.setInt(1, key);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                name = rs.getString(USER_NAME_COLUMN);
-            }
-            rs.close();
-            ps.close();
-        } catch (SQLException sqle) {
-            LogService.instance().log(LogService.ERROR, sqle);
-        } finally {
-            releaseConnection(conn);
-        }
-        return  name;
-    }
-
-    protected Connection getConnection() {
-        return  RDBMServices.getConnection();
-    }
-
-    protected void releaseConnection(Connection conn) {
-        RDBMServices.releaseConnection(conn);
-    }
 }
 
 
