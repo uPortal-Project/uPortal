@@ -67,7 +67,10 @@ public class StylesheetUtils
       uri = base.substring(0, last+1).concat(file);
     }
    
-    return uri;
+    if ( uri.indexOf("/../") != -1 )
+      return removeUpDirs(uri);
+    else
+      return uri;
 
   }
 
@@ -78,23 +81,16 @@ public class StylesheetUtils
    */
   private static String removeUpDirs (String uri)
   {
-    if ( uri.indexOf("/../") != -1 )
+    String begin;
+    String end;
+    while (uri.indexOf("/../") != -1)
     {
-      String begin;
-      String end;
-      while (uri.indexOf("/../") != -1)
-      {
-         end = uri.substring(uri.indexOf("/../")+4);
-         begin = uri.substring(0, uri.indexOf("/../"));
-         begin = uri.substring(0, begin.lastIndexOf("/")+1);
-         uri = begin.concat(end); 
-      }
-      return uri;
+       end = uri.substring(uri.indexOf("/../")+4);
+       begin = uri.substring(0, uri.indexOf("/../"));
+       begin = uri.substring(0, begin.lastIndexOf("/")+1);
+       uri = begin.concat(end); 
     }
-    else
-    {
-      return uri;
-    }
+    return uri;
   }
 
 }
