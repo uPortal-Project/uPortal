@@ -35,15 +35,16 @@
 
 package org.jasig.portal.serialize;
 
-
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.HttpURLConnection;
-import java.util.Date;
-import org.jasig.portal.services.LogService;
+
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.AddressTester;
 import org.jasig.portal.utils.CommonUtils;
 
@@ -70,7 +71,7 @@ public class ProxyWriter {
     /**
      * True if allow rewriting certain elements for proxying.
      */
-    protected boolean       _proxying;
+    protected boolean _proxying;
 
     /**
      * The list of elemnets which src attribute is rewritten with proxy.
@@ -106,12 +107,12 @@ public class ProxyWriter {
     /**
      * Examines whther or not the proxying should be done and if so handles differnt situations by delegating
      * the rewrite to other methods n the class.
-     *@param name
-     *@param localName
-     *@param value
-     *@return value
+     * @param name
+     * @param localName
+     * @param value
+     * @return value
      */
-    protected static  String considerProxyRewrite(String name, String localName, String value)
+    protected static String considerProxyRewrite(String name, String localName, String value)
     {
 
         if ((PROXY_ENABLED==true)&&((name.equalsIgnoreCase("src"))||(name.equalsIgnoreCase("archive")))&&(value.indexOf("http://")!=-1))
@@ -145,8 +146,8 @@ public class ProxyWriter {
     * redirected url - note, this in turn may also be redirected.
     * Note - do as little network connecting as possible. So as a start, assume
     * "ubc.ca" domain images will not be redirected so skip these ones.
-    *@param value
-    *@return value
+    * @param value
+    * @return value
     */
     private static String capture3XXCodes(String value){
         try{
@@ -193,8 +194,8 @@ public class ProxyWriter {
     /**
      * This method rewrites include javascript files and replaces the refrences in these files
      * to images' sources to use proxy.
-     *@param scriptUri: The string representing the address of script
-     *@return value: The new address of the script file which image sources have been rewritten
+     * @param scriptUri: The string representing the address of script
+     * @return value: The new address of the script file which image sources have been rewritten
      */
      private static String  reWrite(String scriptUri){
         String filePath = null;
@@ -258,8 +259,8 @@ public class ProxyWriter {
    /**
     * This method uses a URI and creates an html file name by simply ominting some characters from the URI.
     * The purpose of using the address for the file name is that the file names will be unique and map to addresses.
-    *@param addr: is the address of the file
-    *@newName: is the name built form the address
+    * @param addr: is the address of the file
+    * @newName: is the name built form the address
     */
     private static String fileNameGenerator(String addr)
     {
@@ -282,8 +283,8 @@ public class ProxyWriter {
    /**
     * This method parses a line recursivley and replaces all occurances of image references
     * with a proxied reference.
-    *@param line - is the portion of the line or the whole line to be processed.
-    *@return line - is the portion of the line or the line that has been processed.
+    * @param line - is the portion of the line or the whole line to be processed.
+    * @return line - is the portion of the line or the line that has been processed.
     */
     private static String processLine(String line) throws Exception
     {
@@ -304,48 +305,48 @@ public class ProxyWriter {
      }
     }
 
-        /**
-         *
-         * This method takes a String (line) and parses out the value of  src attribute
-         * in that string.
-         * @param line - String
-         * @return srcValue - String
-         */
-        private static String extractURL(String line)
-        {
-                int URLStartIndex = 0;
-                int URLEndIndex = 0;
-                //need this to make sure only image paths are pointed to and not href.
-                int srcIndex = line.indexOf(" src");
-                if(line.indexOf("https://",srcIndex)!= -1)
-                        return "";
-                if(line.indexOf("http://",srcIndex)!= -1)
-                    URLStartIndex = line.indexOf("http",srcIndex);
-                else
-                        return "";
+    /**
+     *
+     * This method takes a String (line) and parses out the value of  src attribute
+     * in that string.
+     * @param line - String
+     * @return srcValue - String
+     */
+    private static String extractURL(String line)
+    {
+            int URLStartIndex = 0;
+            int URLEndIndex = 0;
+            //need this to make sure only image paths are pointed to and not href.
+            int srcIndex = line.indexOf(" src");
+            if(line.indexOf("https://",srcIndex)!= -1)
+                    return "";
+            if(line.indexOf("http://",srcIndex)!= -1)
+                URLStartIndex = line.indexOf("http",srcIndex);
+            else
+                    return "";
 
-                URLEndIndex = line.indexOf(" ", URLStartIndex);
-                String srcValue = line.substring(URLStartIndex,URLEndIndex);
-                return srcValue;
-        }
+            URLEndIndex = line.indexOf(" ", URLStartIndex);
+            String srcValue = line.substring(URLStartIndex,URLEndIndex);
+            return srcValue;
+    }
 
-        /**
-         *
-         * This method receives an image source URL and modified
-         * it to be proxied.
-         * @param srcValue - String
-         * @return srcNewValue - String
-         */
-        private static String createProxyURL(String srcValue)
-        {
+    /**
+     *
+     * This method receives an image source URL and modified
+     * it to be proxied.
+     * @param srcValue - String
+     * @return srcNewValue - String
+     */
+    private static String createProxyURL(String srcValue)
+    {
         String srcNewValue = "";
-                if(srcValue.indexOf("https://")!= -1)
-                   return srcValue;
+        if(srcValue.indexOf("https://")!= -1)
+           return srcValue;
         else if(srcValue.indexOf("http://")!= -1)
            srcNewValue = CommonUtils.replaceText(srcValue, "http://", PROXY_REWRITE_PREFIX);
         else
            srcNewValue = "";
         return srcNewValue;
-        }
+    }
 
 }
