@@ -115,7 +115,7 @@
                 <xsl:when test="following-sibling::tab[1]/@activeTab = 'true'">
                   <td nowrap="nowrap" class="uportal-background-light">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
-                    <a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
+                    <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=&amp;activeTab={@ID}" class="uportal-navigation-category">
                       <xsl:value-of select="@name" />
                     </a>
                   </td>
@@ -129,7 +129,7 @@
                   <td nowrap="nowrap" class="uportal-background-light">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
-                     <a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
+                     <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
                        <xsl:value-of select="@name" />
                      </a>
                    </td>
@@ -143,7 +143,7 @@
                   <td nowrap="nowrap" class="uportal-background-content">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
-                    <a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
+                    <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
                       <xsl:value-of select="@name" />
                     </a>
                   </td>
@@ -157,7 +157,7 @@
                   <td nowrap="nowrap" class="uportal-background-light">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
-                    <a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
+                    <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
                       <xsl:value-of select="@name" />
                     </a>
                   </td>
@@ -171,7 +171,7 @@
                   <td nowrap="nowrap" class="uportal-background-content">
                     <img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10" />
 
-                    <a href="{$baseActionURL}?uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
+                    <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={@ID}" class="uportal-navigation-category">
                       <xsl:value-of select="@name" />
                     </a>
                   </td>
