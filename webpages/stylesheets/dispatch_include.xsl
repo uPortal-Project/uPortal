@@ -7,7 +7,7 @@
      'channelID' and 'method' name. When migrating to uPortal 2.0, the
      include of this section of the stylesheet can be removed. -->
 
-<xsl:variable name="baseActionURL">
+<xsl:variable name="newBaseActionURL">
   <xsl:choose>
     <xsl:when test="not(starts-with($baseActionURL, 'dispatch.jsp'))">
       <xsl:value-of select="concat('dispatch.jsp', '?', substring-after($baseActionURL, '?'), 'method=render&amp;channelID=', substring-before(substring-after($baseActionURL, 'channelTarget='), '&amp;'))"/>
