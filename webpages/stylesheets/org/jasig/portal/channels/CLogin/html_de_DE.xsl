@@ -138,7 +138,7 @@ $Revision$
                         <span class="uportal-label">Name:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="text" name="userName" size="15">
                             <xsl:attribute name="value">
                               <xsl:value-of select="/login-status/failure/@attemptedUserName"/>
-                            </xsl:attribute></input>Passwort:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="password" name="password" size="15"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input type="submit" value=\"Login\" name="Login" class="uportal-button"/></span>
+                            </xsl:attribute></input>Passwort:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input class="uportal-input-text" type="password" name="password" size="15"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/><input type="submit" value="Login" name="Login" class="uportal-button"/></span>
                       </xsl:when>
                       <xsl:otherwise>Sie sind bereits eingeloggt.</xsl:otherwise>
                     </xsl:choose>
