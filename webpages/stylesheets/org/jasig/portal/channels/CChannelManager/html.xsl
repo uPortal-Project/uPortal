@@ -605,7 +605,7 @@
                   <span class="uportal-label">Channel Name:</span> <span class="uportal-text-small">[example - StockCharts]<br/>
                   <input type="text" name="name" size="50" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@name">
-                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@name"/></xsl:attribute></xsl:if></input>              
+                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@name"/></xsl:attribute></xsl:if></input>
                   </span> </td>
               </tr>
               <tr class="uportal-channel-text">
@@ -692,7 +692,7 @@
 <td align="center" nowrap="nowrap">
 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Options
 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
-                
+
 
                 <td align="center" nowrap="nowrap">User can<br/> Modify?</td>
                 <td>
@@ -991,7 +991,7 @@
           </xsl:choose>
           </input>
           <xsl:apply-templates select="units"/>
-                       
+
 
         </td>
       </xsl:when>
@@ -1181,7 +1181,7 @@
                   <input type="checkbox" name="hasHelp" value="true">
                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasHelp='true'">
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input>                   
+                  </input>
                    </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
@@ -1216,8 +1216,8 @@
                   <input type="checkbox" name="hasAbout" value="true">
                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@hasAbout='true'">
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input> 
-                  
+                  </input>
+
                    </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
@@ -1252,8 +1252,8 @@
                   <input type="checkbox" name="printable" value="true">
                    <xsl:if test="/manageChannels/selectControls/params/step/channel/@printable='true'">
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input> 
-                  
+                  </input>
+
                    </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
@@ -1286,11 +1286,11 @@
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
                   <input type="checkbox" name="removable" value="true">
-                  
+
                    <xsl:if test="/manageChannels/selectControls/params/step/channel/@removable='true'">
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input> 
-                  
+                  </input>
+
                    </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
@@ -1325,7 +1325,7 @@
                   <input type="checkbox" name="detachable" value="true">
                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@detachable='true'">
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input> 
+                  </input>
                    </td>
                 <td>
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
@@ -1349,7 +1349,7 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='channelDef'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='channelDef';document.workflow.uPCM_step.value='{count(//channelDef//step)}'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='selectReviewChannel'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
@@ -1845,7 +1845,7 @@
     <!-- form begin -->
     <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="changeMe"/>
-      <input type="hidden" name="uPCM_capture" value="channelDef"/>
+      <input type="hidden" name="uPCM_capture" value="selectRoles"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 
@@ -1920,7 +1920,7 @@
                         <tr class="uportal-channel-text" valign="top">
 
                           <td nowrap="nowrap" align="center">
-                            <input type="checkbox" name="checkbox" value="checkbox">
+                            <input type="checkbox" name="selectedRoles" value="{name}">
                             <xsl:if test="name = /manageChannels/selectRoles/params/step/userSettings/selectedRoles/selectedRole = name">
 <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
 
