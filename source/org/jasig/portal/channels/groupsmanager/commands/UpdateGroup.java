@@ -32,18 +32,14 @@ public class UpdateGroup extends GroupsManagerCommand {
     * @throws Exception
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception {
-      ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Start");
       Document model = getXmlDoc(sessionData);
-      String theCommand = runtimeData.getParameter("grpCommand");
       String newName = runtimeData.getParameter("grpName");
       String newDescription = runtimeData.getParameter("grpDescription");
       String updId = getCommandArg(runtimeData);
-      Node titleNode;
       Element updElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME,
             updId);
-      String updKey = updElem.getAttribute("key");
       String retMsg;
       String curName = GroupsManagerXML.getElementValueForTagName(updElem, "dc:title");
       if (curName == null || curName.equals("")) {
