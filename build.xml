@@ -87,8 +87,8 @@
 
 -->
 
-  <property name="app.name"      value="uPortal"/>
-  <property name="app.version"   value="2.1"/>
+  <property name="app.name"      value="(set this in build.properties!)"/>
+  <property name="app.version"   value="(set this in build.properties!)"/>
   <property name="build.home"    value="build"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
@@ -623,11 +623,7 @@
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
 
       <arg value="${usetable}"/>
@@ -662,11 +658,7 @@
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbUnload">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${tablename}"/>
       <arg value="${xmlfile}"/>
@@ -689,11 +681,7 @@
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
     </java>
   </target>
@@ -717,8 +705,7 @@
     <java dir="${basedir}" classname="org.jasig.portal.security.md5passwd">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="-c"/>
       <arg value="${username}"/>
@@ -740,12 +727,8 @@ Example:
     <property name="user" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true" >
       <classpath>
-        <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${jdbcDriver.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${user}"/>
     </java>
@@ -778,10 +761,7 @@ Example:
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${class}"/>
       <arg value="${name}"/>
@@ -818,12 +798,8 @@ Example:
     <property name="descriptionUri" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
-        <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${stylesheetType}"/>
       <arg value="${stylesheetUri}"/>
@@ -861,12 +837,8 @@ Example:
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
-        <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${stylesheetType}"/>
       <arg value="-u"/>
@@ -900,12 +872,8 @@ Example:
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
-        <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${stylesheetType}"/>
       <arg value="-d"/>
@@ -1005,10 +973,7 @@ Example:
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xalan.jar}"/>
-        <pathelement path="${xerces.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${log4j.jar}"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${build.home}/RunXSLT/${XmlInput}"/>
       <arg value="file:${build.home}/RunXSLT/${Xslfile}"/>
