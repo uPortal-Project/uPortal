@@ -257,7 +257,7 @@ public class PortalSessionManager extends HttpServlet {
         } else {
            try {	
              //throw new ServletException("Session object is null !");
-        	 res.sendRedirect(req.getContextPath() + "/" );
+        	 res.sendRedirect(req.getContextPath() + "/Login" );
            } catch (Exception e) {
         	  ExceptionHelper.genericTopHandler(Errors.bug,e);
 			  ExceptionHelper.generateErrorPage(res,e);

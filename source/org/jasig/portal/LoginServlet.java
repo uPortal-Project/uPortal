@@ -147,15 +147,16 @@ public class LoginServlet extends HttpServlet {
       HashMap credentials = getPropertyFromRequest (credentialTokens, request);
 
       // Attempt to authenticate using the incoming request
-      m_authenticationService.authenticate(principals, credentials, person);
+      if ( person != null )
+       m_authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
       LogService.log(LogService.ERROR, e);
       // Reset everything
-      person = null;
       request.getSession(false).invalidate();
       // Add the authentication failure
-      request.getSession(true).setAttribute("up_authenticationError", "true");
+      if ( person != null )
+        request.getSession(true).setAttribute("up_authenticationError", "true");
     }
     // Check to see if the person has been authenticated
     if (person != null && person.getSecurityContext().isAuthenticated()) {
@@ -163,9 +164,8 @@ public class LoginServlet extends HttpServlet {
       response.sendRedirect(request.getContextPath() + '/' + redirectString);
     }
     else {
-      // Store the fact that this user has attempted authentication in the session
-      if ( person != null )	
-       request.getSession(false).setAttribute("up_authenticationAttempted", "true");
+      if ( person != null )
+         request.getSession(false).setAttribute("up_authenticationAttempted", "true");
       // Preserve the attempted username so it can be redisplayed to the user by CLogin
       String attemptedUserName = request.getParameter("userName");
       if (attemptedUserName != null)
