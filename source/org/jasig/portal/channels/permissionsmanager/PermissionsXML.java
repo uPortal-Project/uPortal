@@ -88,7 +88,7 @@ public class PermissionsXML {
             if (session.XML == null || forceRefresh) {
                 Document rDoc = org.jasig.portal.utils.DocumentFactory.getNewDocument();
                 session.XML = rDoc;
-                IPermissible[] owners = new IPermissible[0];
+                session.owners = new IPermissible[0];
                 IAuthorizationPrincipal[] principals;
                 try {
                     Element root = rDoc.createElement("CPermissionsManager");
@@ -97,35 +97,32 @@ public class PermissionsXML {
                     if (session.staticData.get("prmOwners") != null) {
                         // use specified set of owners
                         LogService.instance().log(LogService.DEBUG,"PermissionsXML.getViewDoc(): using specified owners");
-                        owners = (IPermissible[])session.staticData.get("prmOwners");
+                        session.owners = (IPermissible[])session.staticData.get("prmOwners");
                     }
                     else {
                         // use owners found in DB
                         LogService.instance().log(LogService.DEBUG,"PermissionsXML.getViewDoc(): using DB owners");
-                        owners = RDBMPermissibleRegistry.getAllPermissible();
+                        session.owners = RDBMPermissibleRegistry.getAllPermissible();
                     }
 
-                    for (int i = 0; i < owners.length; i++) {
-                        LogService.instance().log(LogService.DEBUG,"PermissionsXML.getViewDoc(): Configuring element for owner "+owners[i].getOwnerName());
+                    for (int i = 0; i < session.owners.length; i++) {
+                        LogService.instance().log(LogService.DEBUG,"PermissionsXML.getViewDoc(): Configuring element for owner "+session.owners[i].getOwnerName());
                         Element owner = rDoc.createElement("owner");
-                        owner.setAttribute("name", owners[i].getOwnerName());
-                        owner.setAttribute("token", owners[i].getOwnerToken());
-                        owner.setAttribute("ipermissible", owners[i].getClass().getName());
+                        owner.setAttribute("name", session.owners[i].getOwnerName());
+                        owner.setAttribute("token", session.owners[i].getOwnerToken());
+                        owner.setAttribute("ipermissible", session.owners[i].getClass().getName());
 
-                        String[] activities = owners[i].getActivityTokens();
+                        String[] activities = session.owners[i].getActivityTokens();
                         for (int j = 0; j < activities.length; j++) {
                             Element act = rDoc.createElement("activity");
                             act.setAttribute("token", activities[j]);
-                            act.setAttribute("name", owners[i].getActivityName(activities[j]));
+                            act.setAttribute("name", session.owners[i].getActivityName(activities[j]));
                             owner.appendChild(act);
                         }
 
-                        String[] targets = owners[i].getTargetTokens();
+                        String[] targets = session.owners[i].getTargetTokens();
                         for (int k = 0; k < targets.length; k++) {
-                            Element tgt = rDoc.createElement("target");
-                            tgt.setAttribute("token", targets[k]);
-                            tgt.setAttribute("name", owners[i].getTargetName(targets[k]));
-                            owner.appendChild(tgt);
+                            addTargetToOwnerElement(session.owners[i],owner,targets[k]);
                         }
                         root.appendChild(owner);
                     }
@@ -137,18 +134,40 @@ public class PermissionsXML {
         }
         return  session.XML;
     }
+    
+    public static Element addTargetToOwnerElement(IPermissible owner, Element ownerEl, String target){
+       Element tgt = ownerEl.getOwnerDocument().createElement("target");
+        tgt.setAttribute("token", target);
+        tgt.setAttribute("name", owner.getTargetName(target));
+        ownerEl.appendChild(tgt);
+        return tgt;
+    }
+    
     public static void setSelected(PermissionsSessionData session, String ipermissible, String type, String token, boolean selected){
         LogService.instance().log(LogService.DEBUG,"PermissionsXML.setSelected(): processing "+ipermissible+" / "+type+" / "+token+" / "+selected);
         Element owner = getOwner(session,ipermissible);
         Element s = owner;
+        String otoken = owner.getAttribute("token");
         if (!type.equals("owner")){
           NodeList nl = owner.getElementsByTagName(type);
+          boolean found = false;
           for(int i=0; i<nl.getLength(); i++){
             Element x = (Element) nl.item(i);
             if (x.getAttribute("token").equals(token)){
               s= x;
+              found=true;
               break;
             }
+          }
+          if (!found){
+            if (type.equals("target")){
+              for (int i=0; i<session.owners.length; i++){
+                if (session.owners[i].getOwnerToken().equals(otoken)){
+                  s = addTargetToOwnerElement(session.owners[i],owner,token);
+                  break; 
+                }
+              }
+            } 
           }
         }
        String value = "false";
