@@ -43,7 +43,7 @@ import  java.util.Properties;
 import  java.io.File;
 import  java.io.IOException;
 import  java.io.FileInputStream;
-import  org.jasig.portal.SmartCache;
+import  org.jasig.portal.utils.SmartCache;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.security.IRole;
 import  org.jasig.portal.security.provider.RoleImpl;
@@ -52,7 +52,7 @@ import  org.jasig.portal.security.IAuthorization;
 import  org.jasig.portal.security.PortalSecurityException;
 import  org.jasig.portal.GenericPortalBean;
 import  org.jasig.portal.RdbmServices;
-import  org.jasig.portal.Logger;
+import  org.jasig.portal.services.LogService;
 
 
 /**
@@ -75,10 +75,10 @@ public class ReferenceAuthorization
         securityProps.load(new FileInputStream(propFile));
         s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
       } catch (IOException e) {
-        Logger.log(Logger.ERROR, new PortalSecurityException(e.getMessage()));
+        LogService.instance().log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
       }
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -100,20 +100,20 @@ public class ReferenceAuthorization
     try {
       return  GenericPortalBean.getUserLayoutStore().isUserInRole(userId, (String)role.getRoleTitle());
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (false);
     }
   }
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public Vector getAllRoles () {
     try {
       return  GenericPortalBean.getUserLayoutStore().getAllRoles();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -122,7 +122,7 @@ public class ReferenceAuthorization
    * put your documentation comment here
    * @param channelID
    * @param roles
-   * @return 
+   * @return
    */
   public int setChannelRoles (int channelID, Vector roles) {
     // Don't do anything if no roles were passed in
@@ -132,7 +132,7 @@ public class ReferenceAuthorization
     try {
       return  GenericPortalBean.getUserLayoutStore().setChannelRoles(channelID, roles);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (-1);
     }
   }
@@ -140,7 +140,7 @@ public class ReferenceAuthorization
   /**
    * put your documentation comment here
    * @param person
-   * @return 
+   * @return
    */
   public boolean canUserPublish (IPerson person) {
     if (person == null || person.getID() == -1) {
@@ -164,7 +164,7 @@ public class ReferenceAuthorization
    * put your documentation comment here
    * @param person
    * @param channelID
-   * @return 
+   * @return
    */
   public boolean canUserSubscribe (IPerson person, int channelID) {
     // Fail immediatly if the inputs aren't reasonable
@@ -196,7 +196,7 @@ public class ReferenceAuthorization
    * put your documentation comment here
    * @param person
    * @param channelID
-   * @return 
+   * @return
    */
   public boolean canUserRender (IPerson person, int channelID) {
     // If the user can subscribe to a channel, then they can render it!
@@ -206,14 +206,14 @@ public class ReferenceAuthorization
   /**
    * put your documentation comment here
    * @param channelID
-   * @return 
+   * @return
    */
   public Vector getChannelRoles (int channelID) {
     // Check the smart cache for the roles first
     Vector channelRoles = (Vector)chanRolesCache.get("" + channelID);
     if (channelRoles != null) {
       return  (channelRoles);
-    } 
+    }
     else {
       channelRoles = new Vector();
     }
@@ -222,7 +222,7 @@ public class ReferenceAuthorization
       chanRolesCache.put("" + channelID, channelRoles);
       return  (channelRoles);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -237,7 +237,7 @@ public class ReferenceAuthorization
     Vector userRoles = (Vector)userRolesCache.get(new Integer(userId));
     if (userRoles != null) {
       return  (userRoles);
-    } 
+    }
     else {
       userRoles = new Vector();
     }
@@ -246,7 +246,7 @@ public class ReferenceAuthorization
       userRolesCache.put(new Integer(userId), userRoles);
       return  userRoles;
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return  (null);
     }
   }
@@ -259,7 +259,7 @@ public class ReferenceAuthorization
     try {
       GenericPortalBean.getUserLayoutStore().addUserRoles(person.getID(), roles);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -276,7 +276,7 @@ public class ReferenceAuthorization
       GenericPortalBean.getUserLayoutStore().removeUserRoles(person.getID(), roles);
       return;
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
       return;
     }
   }
