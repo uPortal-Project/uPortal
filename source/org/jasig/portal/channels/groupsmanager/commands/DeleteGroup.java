@@ -49,9 +49,11 @@ import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.IEntityGroup;
 import  org.jasig.portal.groups.IGroupMember;
 import  org.jasig.portal.groups.GroupsException;
-import  org.jasig.portal.services.GroupService;
+import  org.jasig.portal.services.*;
+import  org.jasig.portal.security.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
+import  org.w3c.dom.NodeList;
 import  org.apache.xerces.dom.DocumentImpl;
 
 
@@ -90,6 +92,9 @@ public class DeleteGroup extends GroupsManagerCommand {
       Node deletedNode;
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Group: " + elemName + "will be deleted");
       try {
+         // Needed to delete cached element
+         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.instance().get(ENTITY_TAGNAME);
+
          IEntityGroup delGroup = GroupsManagerXML.retrieveGroup(delKey);
          if (delGroup == null) {
             retMsg = "Unable to retrieve Group!";
@@ -98,6 +103,9 @@ public class DeleteGroup extends GroupsManagerCommand {
          }
          Utility.logMessage("DEBUG", "DeleteGroup::execute(): About to delete group: "
                + elemName);
+         // remove permissions associated with group
+         deletePermissions((IGroupMember)delGroup);
+         // delete the group
          delGroup.delete();
          Utility.logMessage("DEBUG", "DeleteGroup::execute(): About to delete xml nodes for group: "
                + elemName);
@@ -122,24 +130,79 @@ public class DeleteGroup extends GroupsManagerCommand {
                   hasMbrs = String.valueOf(parentEntGrp.hasMembers());
                }
             }
-            /** @todo xmlCache: */
             parentNode.removeChild(deletedNode);
             ((Element)parentNode).setAttribute("hasMembers", hasMbrs);
+            // remove element from SmartCache
+            rap.removeCachedElement(delKey);
          }
-         /** @todo have to remove permissions associated with group */
+
+         /** Remove the permission elements in the xmlDoc */
+         Node principalNode = (Node)xmlDoc.getDocumentElement().getElementsByTagName("principal").item(0);
+         NodeList permElems = xmlDoc.getElementsByTagName("permission");
+         /** If we delete from the bottom up, the NodeList elements shift down
+          *  everytime we delete an element. Since the elements that we are looking
+          *  for are sequential and because we increment the counter at the end of
+          *  the loop, the element that we should process next slips down into the
+          *  slot that we just processed. We therefore end up deleting every other
+          *  element. The solution is to delete from the top down.
+          */
+         for (int i = permElems.getLength() - 1; i > -1; i--) {
+            Element permElem = (Element)permElems.item(i);
+            if (permElem.getAttribute("target").equals(delKey)) {
+               principalNode.removeChild(permElem);
+            }
+         }
          runtimeData.setParameter("grpMode", "browse");
          runtimeData.setParameter("grpView", "tree");
          runtimeData.setParameter("grpViewId", "0");
       } catch (GroupsException ge) {
-         retMsg = "Unable to create new group\n" + ge;
+         retMsg = "Unable to delete group : " + elemName;
          runtimeData.setParameter("commandResponse", retMsg);
          Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ge);
+      } catch (ChainedException ce) {
+         retMsg = "Unable to delete group : " + elemName;
+         runtimeData.setParameter("commandResponse", retMsg);
+         Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + ce);
       } catch (Exception e) {
          retMsg = "Unable to delete group : " + elemName;
          runtimeData.setParameter("commandResponse", retMsg);
          Utility.logMessage("ERROR", "DeleteGroup::execute(): " + retMsg + ".\n" + e);
       }
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Finished");
+   }
+
+   /**
+    * Removes all of the permissions for a GroupMember. We need to get permissions
+    * for the group as a principal and as a target. I am merging the 2 arrays into a
+    * single array in order to use the transaction management in the RDBMPermissionsImpl.
+    * If an exception is generated, I do not delete the group or anything else.
+    * Possible Exceptions: AuthorizationException and GroupsException
+    * @param grpMbr
+    * @throws ChainedException
+    */
+   public static void deletePermissions (IGroupMember grpMbr) throws ChainedException{
+      try {
+         String grpKey = grpMbr.getKey();
+         // first we retrieve all permissions for which the group is the principal
+         IAuthorizationPrincipal iap = AuthorizationService.instance().newPrincipal(grpMbr);
+         IPermission[] perms1 = iap.getAllPermissions();
+
+         // next we retrieve all permissions for which the group is the target
+         IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
+         IPermission[] perms2 = upm.getPermissions(null, grpKey);
+
+         // merge the permissions
+         IPermission[] allPerms = new IPermission[perms1.length + perms2.length];
+         System.arraycopy(perms1,0,allPerms,0,perms1.length);
+         System.arraycopy(perms2,0,allPerms,perms1.length,perms2.length);
+
+         upm.removePermissions(allPerms);
+      }
+      catch (Exception e) {
+         String errMsg = "Utility::deletePermissions(): Error removing permissions for " + grpMbr;
+         Utility.logMessage("ERROR", errMsg);
+         throw new ChainedException(errMsg, e);
+      }
    }
 }
 
