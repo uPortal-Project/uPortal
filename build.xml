@@ -738,7 +738,7 @@ Example:
   <target name="deluser" >
     <echo message="Invoking DeleteUser"/>
     <property name="user" value=" "/>
-    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser">
+    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true" >
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
