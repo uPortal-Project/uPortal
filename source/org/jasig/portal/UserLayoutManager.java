@@ -98,7 +98,6 @@ public class UserLayoutManager implements IUserLayoutManager {
             UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
             if (upl == null) {
                 upl = ulsdb.getSystemProfile(userAgent);
-                upl.setLayoutId(0); // LayoutId is set by defaultTemplateUser, not the system account
             }
             if(upl==null) {
                 // try guessing the profile through pattern matching

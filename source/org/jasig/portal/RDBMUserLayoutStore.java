@@ -1621,7 +1621,22 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
-        int layoutId=profile.getLayoutId();
+        // eventually, we need to fix template layout implementations so you can just do this:
+        //        int layoutId=profile.getLayoutId();
+        // but for now:
+        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);   
+        int layoutId;
+        rs = stmt.executeQuery(subSelectString);
+        try {
+            rs.next();
+            layoutId = rs.getInt(1);
+            if (rs.wasNull()) {
+                layoutId = 0;
+            }
+        } finally {
+            rs.close();
+        }
 
        if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
@@ -2481,8 +2496,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    */
   public void setUserLayout (IPerson person, UserProfile profile, Document layoutXML, boolean channelsAdded) throws Exception {
     int userId = person.getID();
-    int layoutId=profile.getLayoutId();
-   int profileId=profile.getProfileId();
+    int profileId=profile.getProfileId();
+    int layoutId=0;
    ResultSet rs;
    Connection con = RDBMServices.getConnection();
     try {
@@ -2490,6 +2505,21 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
+
+        // eventually we want to be able to just get layoutId from the profile, but because of the
+        // template user layouts we have to do this for now ...
+        String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
+        rs = stmt.executeQuery(query);
+        try {
+            rs.next();
+            layoutId = rs.getInt(1);
+            if (rs.wasNull()) {
+                layoutId = 0;
+            }
+        } finally {
+            rs.close();            
+        }
 
         boolean firstLayout = false;
         if (layoutId == 0) { // First personal layout for this user/profile
