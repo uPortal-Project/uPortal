@@ -139,27 +139,23 @@ public class XMLChannelWrapper implements IChannel
 
     public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out) {
 	ch.receiveEvent(new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
-	// IXMLChannels don't conform to dispatch.jsp stuff, hence the redirect
-	try {
-	    res.sendRedirect(getJSP(req));
-	} catch (Exception e) { Logger.log(Logger.ERROR,e); }
-	//	render(req,res,out);
+	render(req,res,out);
     }
     public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out) {
 	ch.receiveEvent(new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
-	try {
-	    res.sendRedirect(getJSP(req));
-	} catch (Exception e) { Logger.log(Logger.ERROR,e); }
-
-	//	render(req,res,out);
+	render(req,res,out);
     }
+
 
     private String getJSP(HttpServletRequest req)
     {
 	String reqURL=req.getRequestURI();
 	String jspfile=reqURL.substring(reqURL.lastIndexOf('/')+1,reqURL.length());
-	if(jspfile.equals("") || jspfile.equals("dispatch.jsp")) jspfile="index.jsp";
-	if(jspfile.equals("detach.jsp")) {
+	// it used to be that XML channels were always rendered through main index.jsp,
+	// now they are allowed to render under other .jsp, such as dispatch.jsp.
+	//	if(jspfile.equals("") || jspfile.equals("dispatch.jsp")) jspfile="index.jsp";
+	if(jspfile.equals("")) jspfile="index.jsp";
+	else if(jspfile.equals("detach.jsp")) {
 	    //reconstruct URL parameters
 	    jspfile=req.getRequestURI()+"?";
 	    for (Enumeration e = req.getParameterNames() ; e.hasMoreElements() ;) {
@@ -168,11 +164,14 @@ public class XMLChannelWrapper implements IChannel
 		jspfile+=pName+"="+pValue+"&";
 	    }
 	}
+	else if(jspfile.equals("dispatch.jsp")) {
+	    //dispatch jsp needs to carry two parameters : method and channelID
+	    jspfile+="?method="+req.getParameter("method")+"&channelID="+req.getParameter("channelID")+"&";
+	}
 	else jspfile+='?';
 	Logger.log(Logger.DEBUG,"XMLChannelWrapper::getJSP() : jspfile=\""+jspfile+"\"");
 	return jspfile;
     }
 }
-
 
 
