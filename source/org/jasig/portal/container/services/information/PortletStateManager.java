@@ -254,22 +254,36 @@ public class PortletStateManager {
         return result;
     }
     
-    //% Encodes a string of characters
+    /**
+     * Provides the URL Encoding algorithm for any string of characters.
+     * The URL Encoding algorthim is defined at http://www.rfc-editor.org/rfc/rfc1738.txt
+     * 
+     * This method is needed to encode the seperator string used by the
+     * UPFileSpec to ensure it is properly encoded if it exists in a parameter
+     * name or value that gets embedded in the uPFile.
+     * 
+     * @param str The string to encode.
+     * @return The encoded string.
+     */
     private static String getPercentEncodedString(String str) {
         StringBuffer stringbuffer = new StringBuffer();
         
         for (int cIndex = 0; cIndex < str.length(); cIndex++) {
             char cIn = str.charAt(cIndex);
             
+            //Append the % as the beginning of the encoding
             stringbuffer.append('%');
+            
+            //Convert the low bits of the character to base 16
             char cOut = Character.forDigit(cIn >> 4 & 0xf, 16);
             if (Character.isLetter(cOut))
-                cOut -= ' ';
+                cOut -= ' '; //ensure it's a valid char
             stringbuffer.append(cOut);
             
+            //Convert the high bits of the character to base 16
             cOut = Character.forDigit(cIn & 0xf, 16);
             if (Character.isLetter(cOut))
-                cOut -= ' ';
+                cOut -= ' '; //ensure it's a valid char
             stringbuffer.append(cOut);
         }
         
