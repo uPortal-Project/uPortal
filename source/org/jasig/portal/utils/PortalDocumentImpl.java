@@ -124,6 +124,7 @@ public class PortalDocumentImpl implements IPortalDocument {
         for (Node n = this.getFirstChild(); n != null; n = n.getNextSibling()) {
             preserveCache(sourceDoc, n);
         }
+        keys.clear();
     }
 
     private void removeElement(String key) {
