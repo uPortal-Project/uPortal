@@ -266,7 +266,7 @@ private void initializeAuthorizationService() throws AuthorizationException
 				if (secprops != null)
 					secprops.close();
 			} catch (IOException ioe) {
-				print(new PortalSecurityException(ioe.getMessage()));
+				print(new PortalSecurityException(ioe.getMessage()).toString());
 			}
 	}
 }
