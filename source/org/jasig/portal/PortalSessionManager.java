@@ -156,26 +156,32 @@ public class PortalSessionManager extends HttpServlet {
         // delete old request
         Boolean forwarded = (Boolean)session.getAttribute("forwarded");
         if (forwarded != null)
+        {
           session.removeAttribute("forwarded");
-        // proceed with rendering
-        //		    LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : processing redirected (clean) request");
-        // look if the UserInstance object is already in the session, otherwise
-        // make a new one
+        }
+        // Retrieve the user's UserInstance object
+        UserInstance userInstance = UserInstanceManager.getUserInstance(req);
+        /** 
         UserInstance layout = (UserInstance)session.getAttribute("UserInstance");
         if (layout == null) {
           layout = UserInstanceFactory.getUserInstance(myReq);
           session.setAttribute("UserInstance", layout);
           // LogService.instance().log(LogService.DEBUG,"PortalSessionManager;:doGet() : instantiating new UserInstance");
         }
+        **/
         RequestParamWrapper oreqp = null;
         if (forwarded != null && forwarded.booleanValue())
+        {
           oreqp = (RequestParamWrapper)sc.getAttribute("oreqp_" + session.getId());
-        if (oreqp != null) {
-          oreqp.setBaseRequest(req);
-          layout.writeContent(oreqp, res, res.getWriter());
         }
-        else {
-          layout.writeContent(myReq, res, res.getWriter());
+        if (oreqp != null)
+        {
+          oreqp.setBaseRequest(req);
+          userInstance.writeContent(oreqp, res, res.getWriter());
+        }
+        else
+        {
+          userInstance.writeContent(myReq, res, res.getWriter());
         }
       }
     }
