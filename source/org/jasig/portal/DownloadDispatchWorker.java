@@ -99,7 +99,8 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 rd.setBrowserInfo(new BrowserInfo(req));
                 rd.setChannelSubscribeId(channelTarget);
                 // just give a default baseActionURL
-                rd.setBaseActionURL(UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.CHANNEL_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+channelTarget+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX);
+                // this value should never really be used
+                rd.setBaseActionURL(UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,channelTarget,null));
                 ch.setRuntimeData(rd);
 
                 if (ch instanceof org.jasig.portal.IMimeResponse) {

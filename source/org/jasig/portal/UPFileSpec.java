@@ -61,7 +61,6 @@ public class UPFileSpec {
     // some URL construction elements
     public static final String TAG_URL_ELEMENT="tag";
     public static final String TARGET_URL_ELEMENT="target";
-    public static final String CHANNEL_URL_ELEMENT="channel";
     public static final String WORKER_URL_ELEMENT="worker";
     public static final String DETACH_URL_ELEMENT="detach";
     public static final String RENDER_URL_ELEMENT="render";
