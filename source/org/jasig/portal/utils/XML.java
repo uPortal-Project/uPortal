@@ -122,7 +122,17 @@ public class XML {
     Hashtable idTable = new Hashtable();
     for (Enumeration e = olddoc.getIdentifiers(); e.hasMoreElements();) {
       String id = (String)e.nextElement();
-      idTable.put(olddoc.getIdentifier(id), id);
+      Element element = (Element)olddoc.getIdentifier(id);
+      // Store the identifier - this is a hack - please fix!!!
+      // Originally:
+      //   idTable.put(element, id);
+      // The line above didn't work because the hash codes of
+      // the elements in the identifiers table didn't match the
+      // hash codes of the elements in the actual document.
+      // Instead, I am using the serialized Element as a key
+      // to store the id.
+      // -Ken      
+      idTable.put(serializeNode(element), id);
     }
 
     for (NodeImpl n = (NodeImpl)olddoc.getFirstChild(); n != null; n = (NodeImpl)n.getNextSibling()) {
@@ -148,8 +158,18 @@ public class XML {
 
       case DocumentImpl.ELEMENT_NODE: {
         Element newelement = doc.createElement(source.getNodeName());
-        // Copy the identifier
-        String id=(String)idTable.get((Element) source);
+        
+        // Copy the identifier - this is a hack - please fix!!!
+        // Originally:
+        //   String id=(String)idTable.get((Element) source);
+        // The line above didn't work because the hash codes of
+        // the elements in the identifiers table didn't match the
+        // hash codes of the elements in the actual document.
+        // Instead, I am using the serialized Element to lookup
+        // the id.
+        // -Ken
+        String id=(String)idTable.get(serializeNode(source));
+        
         if (id != null)
           doc.putIdentifier(id, newelement);
 
@@ -277,6 +297,5 @@ public class XML {
         emptytr.transform(new DOMSource(dom), new SAXResult(sax));
     }
 }
-
 
 
