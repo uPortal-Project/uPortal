@@ -76,24 +76,23 @@ public class AuthorizationService
 		secprops.close();
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
-        log.error( new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
+        log.error("AuthorizationProvider not specified or incorrect in security.properties", new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
       }
       else {
         try {
           m_Factory = (IAuthorizationServiceFactory)Class.forName(s_factoryName).newInstance();
         } catch (Exception e) {
-          log.error( new PortalSecurityException("Failed to instantiate " + s_factoryName));
+          log.error("Failed to instantiate " + s_factoryName,  new PortalSecurityException("Failed to instantiate " + s_factoryName));
         }
       }
     } catch (IOException e) {
-      log.error( new PortalSecurityException(e.getMessage()));
+      log.error("Error loading security properties", e);
     } finally {
 			try {
 				if (secprops != null)
 					secprops.close();
 			} catch (IOException ioe) {
-				log.error( new PortalSecurityException(
-						ioe.getMessage()));
+				log.error("Error closing security properties file.", ioe);
 			}
 		}
   }

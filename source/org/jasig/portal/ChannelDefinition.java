@@ -199,7 +199,7 @@ public class ChannelDefinition implements IBasicEntity {
    * @param parameter the channel parameter to add
    */      
   public void addParameter(ChannelParameter parameter) {
-    addParameter(parameter.getName(), parameter.getValue(), String.valueOf(parameter.getOverride()));
+    parameters.put(parameter.getName(), parameter);
   }
   
   /**

@@ -118,8 +118,7 @@ public class EntityPropertyRegistry {
                 _instance.init();
             } catch (Exception e) {
                 _instance = null;
-                log.error( "Could not initialize EntityPropertyRegistry");
-                log.error( e);
+                log.error( "Could not initialize EntityPropertyRegistry", e);
             }
         }
         return  _instance;
@@ -178,10 +177,10 @@ public class EntityPropertyRegistry {
       try {
          EntityCachingService.instance().remove(propsType, getPropKey(entityID));
       } catch (CachingException e) {
-         log.error( e);
+         log.error("Error clearing cache for entity ID [" + entityID + "]", e);
          Exception ee = e.getRecordedException();
          if (ee != null) {
-            log.error( ee);
+            log.error(ee, ee);
          }
       }
    }
@@ -190,10 +189,10 @@ public class EntityPropertyRegistry {
       try {
          EntityCachingService.instance().add(ep);
       } catch (CachingException e) {
-         log.error( e);
+         log.error("Error adding entity properties [" + ep + "] to the cache", e);
          Exception ee = e.getRecordedException();
          if (ee != null) {
-            log.error( ee);
+            log.error(ee, ee);
          }
       }
    }
@@ -204,10 +203,10 @@ public class EntityPropertyRegistry {
          ep = (EntityProperties) EntityCachingService.instance().get(propsType,
                                                                      entityID.getKey());
       } catch (CachingException e) {
-         log.error( e);
+         log.error("Error getting cached properties for entity [" + entityID + "]", e);
          Exception ee = e.getRecordedException();
          if (ee != null) {
-            log.error( ee);
+            log.error(ee, ee);
          }
       }
       return ep;

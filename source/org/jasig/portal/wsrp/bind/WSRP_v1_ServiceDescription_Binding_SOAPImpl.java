@@ -130,7 +130,7 @@ public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_Serv
             }
             offeredPortlets.value = (PortletDescription[])portletDescriptionList.toArray(new PortletDescription[0]);
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception determining offered portlets.", e);
         }
         
         // User category descriptions
@@ -152,7 +152,7 @@ public class WSRP_v1_ServiceDescription_Binding_SOAPImpl implements WSRP_v1_Serv
             }
             userCategoryDescriptions.value = (ItemDescription[])userCategoryDescriptionList.toArray(new ItemDescription[0]);
         } catch (PortalException pe) {
-            log.error( pe);
+            log.error("Exception determining user category descriptions", pe);
         }
         
         // Custom user profile item descriptions

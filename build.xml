@@ -237,20 +237,20 @@
                        URL: http://jakarta.apache.org/commons/logging.html
                        
   portlet-api.jar      Portlet API based on JSR-168.
-                       Version: (from jakarta-pluto CVS on September 22, 2004)
+                       Version: (from jakarta-pluto CVS on November 2, 2004)
                        URL: http://www.jcp.org/en/jsr/detail?id=168
   
   pluto.jar            Reference Implementation of the Java Portlet Specfication.
                        This Portlet container provides a runtime environment for 
                        portlets implemented according to the Portlet API.
                        The project is still in the Apache Incubator.
-                       Version: (from jakarta-pluto CVS on September 22, 2004)
+                       Version: (from jakarta-pluto CVS on November 2, 2004)
                        URL: http://portals.apache.org/pluto/
 
   wsrp4j-shared.jar    WSRP4J shared classes mostly derived from OASIS WSRP WSDL.
                        Comes with WSRP4J.
                        Use the version that comes with WSRP4J.
-                       Version: (from ws-wsrp4j CVS on July 9, 2004)
+                       Version: (from ws-wsrp4j CVS on November 2, 2004)
                        URL: http://ws.apache.org/wsrp4j/
 
   wsrp4j-consumer.jar  WSRP4J consumer classes.
@@ -264,20 +264,6 @@
                        
                        The following modifications were made to the
                        WSRP4J proxy portlet source:
-                       
-                       - org.apache.wsrp4j.consumer.portlet.impl.ProxyPortlet:
-                       
-                          IS: protected PortletKey getPortletKey(Map preferences)
-                         WAS: private PortletKey getPortletKey(Map preferences)
-                           
-                          IS: protected Producer getProducer(String producerID) throws WSRPException
-                         WAS: private Producer getProducer(String producerID) throws WSRPException
-                       
-                         Added new method
-                             protected ConsumerEnvironment getConsumerEnvironment() 
-                             {
-                                 return consumerEnv;
-                             }
                              
                        - portlet.xml
                        
@@ -286,7 +272,7 @@
 
                           IS: <value>org.jasig.portal.wsrp.consumer.portlet.ConsumerEnvironmentImpl</value>
                          WAS: <value>org.apache.wsrp4j.consumer.portlet.impl.ConsumerEnvironmentImpl</value>
-                                                       
+        
                        - wsrp4j-logger.properties
                        
                           IS: log4j.appender.A1.File=wsrp4j-consumer.log
@@ -908,7 +894,7 @@
      
      The variable fragmentFile points to the XML file of the fragments definition
 
-     ant fragment -DfragmentFile=/properties/al/fragments.xml
+     ant pubfragments -DfragmentFile=/properties/al/fragments.xml
 
 -->
 
@@ -1280,24 +1266,23 @@
 
 -->
 
-  
+
   <target name="pubchan" description="Publishes channels" depends="compile">
     <echo message="Invoking Channel Publisher Tool"/>
-        
+
     <property name="channel" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
-      <classpath refid="compile.classpath"/>
       <classpath>
-        <pathelement path="${build.home}/WEB-INF/classes"/>
+          <pathelement path="${build.home}/WEB-INF/classes"/>
+          <path refid="compile.classpath"/>
       </classpath>
       <arg value="-n"/>
       <arg value="${channel}"/>
     </java>
   </target>
-  
 
 
-<!-- ===================== deployPortlet Target ========================= -->
+<!-- ===================== deployPortletApp Target ========================= -->
 
 <!--
 
@@ -1318,9 +1303,9 @@
         
     <property name="portletApp" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.container.deploy.Deployer">
-      <classpath refid="compile.classpath"/>
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
+        <path refid="compile.classpath"/>
       </classpath>
       <arg value="${deploy.home}/.."/>
       <arg value="${portletApp}"/>

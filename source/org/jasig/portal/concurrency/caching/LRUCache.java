@@ -161,11 +161,10 @@ public LRUCache(int size, int maxUnusedAge)
    * Sweep the cache until it gets back under <code>maxSize</code>.
    */
   public void sweepCache() {
-    long now = System.currentTimeMillis();
     long maxAge = maxUnusedTimeMillis;
     while ( size() > maxSize )
     {
-      long cutOff = now - maxAge;
+      long cutOff = System.currentTimeMillis() - maxAge;
       Object[] keys = getKeySetArray();
       for (int i=0; i<keys.length; i++)
       {

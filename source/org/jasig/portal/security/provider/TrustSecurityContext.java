@@ -87,7 +87,7 @@ class TrustSecurityContext extends ChainingSecurityContext
         }
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        log.error( ep);
+        log.error(e,e);
         throw  (ep);
       }
     }

@@ -172,6 +172,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             environment.addContainerService(factorManagerService);
             environment.addContainerService(informationProviderService);
 
+            //Call added in case the context has been re-loaded
+            PortletContainerServices.destroyReference(uniqueContainerName);
+            
             portletContainer = new PortletContainerImpl();
             portletContainer.init(uniqueContainerName, servletConfig, environment, new Properties());
             
@@ -238,7 +241,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                         String attValue = (String)person.getAttribute(attName);
                         final String PASSWORD_ATTR = "password";
                         if ((attValue == null || attValue.equals("")) && attName.equals(PASSWORD_ATTR)) {
-                            attValue = getPassword(person);
+                            attValue = getPassword(person.getSecurityContext());
                         }
                         userInfo.put(attName, attValue);
                     }
@@ -550,8 +553,12 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             ((PortletWindowImpl)cd.getPortletWindow()).setInternalActionResponse(null);
                         
         } catch (Throwable t) {
-            t.printStackTrace();
-            log.error( t);
+            // TODO: review this
+            // t.printStackTrace();
+            // since the stack trace will be logged, this printStackTrace()
+            // was overkill? -andrew.petro@yale.edu
+            
+            log.error(t, t);
             throw new PortalException(t.getMessage());
         } finally {
             PortletContainerServices.release();
@@ -711,13 +718,13 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
      * Retrieves the users password by iterating over
      * the user's security contexts and returning the first
      * available cached password.
-     * @param person the person whose password is being sought
+     * 
+     * @param baseContext The security context to start looking for a password from.
      * @return the users password
      */
-    private String getPassword(IPerson person) {
+    private String getPassword(ISecurityContext baseContext) {
         String password = null;
-        ISecurityContext ic = (ISecurityContext) person.getSecurityContext();
-        IOpaqueCredentials oc = ic.getOpaqueCredentials();
+        IOpaqueCredentials oc = baseContext.getOpaqueCredentials();
         
         if (oc instanceof NotSoOpaqueCredentials) {
             NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)oc;
@@ -725,16 +732,22 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         }
 
         // If still no password, loop through subcontexts to find cached credentials
-        Enumeration en = ic.getSubContexts();
+        Enumeration en = baseContext.getSubContexts();
         while (password == null && en.hasMoreElements()) {
-            ISecurityContext sctx = (ISecurityContext)en.nextElement();
-            IOpaqueCredentials soc = sctx.getOpaqueCredentials();
+            ISecurityContext subContext = (ISecurityContext)en.nextElement();
+            IOpaqueCredentials soc = subContext.getOpaqueCredentials();
+            
             if (soc instanceof NotSoOpaqueCredentials) {
                 NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)soc;
                 password = nsoc.getCredentials();
             }
+            
+            if (password == null) {
+                password = this.getPassword(subContext);
+            }
         }
         
         return password;
-    }      
+    }
 }
+

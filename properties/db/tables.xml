@@ -60,12 +60,12 @@
       <column>
         <name>PREF_ID</name>
         <type>INTEGER</type>
-        <desc>Preference key forieg key for UP_PORTLET_PREF_VALUES</desc>
+        <desc>Preference key foreign key for UP_PORTLET_PREF_VALUES</desc>
       </column>      
     </columns>
     <primary-key>CHAN_ID</primary-key>
     <primary-key>PREF_ID</primary-key>
-    <not-null>PORTLET_PREFERENCES_NAME</not-null>
+    <not-null>PORTLET_PREF_NAME</not-null>
   </table>
   
   <table sinceMajor="2" sinceMinor="4">
@@ -103,7 +103,7 @@
     <primary-key>LAYOUT_ID</primary-key>
     <primary-key>CHAN_DESC_ID</primary-key>
     <primary-key>PREF_ID</primary-key>
-    <not-null>PORTLET_PREFERENCES_NAME</not-null>
+    <not-null>PORTLET_PREF_NAME</not-null>
   </table>  
   
   <table sinceMajor="2" sinceMinor="4">

@@ -124,7 +124,7 @@ public class StatsRecorderSettings {
       recordChannelTargeted = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelTargeted");
       
 		} catch (Exception e) {
-			log.error( e);
+			log.error("Error instantiating StatsRecorderSettings", e);
 		}
   }  
   
