@@ -35,16 +35,18 @@
 
 package  org.jasig.portal;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletException;
-import java.io.IOException;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.StatsRecorder;
+
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
 
 /**
  * Simple servlet to handle user logout. When a user

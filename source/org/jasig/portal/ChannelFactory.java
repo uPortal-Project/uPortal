@@ -35,11 +35,12 @@
 
 package org.jasig.portal;
 
+import java.util.Map;
+
 import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.services.LogService;
-import java.util.Map;
 
 /**
  * A factory class that produces <code>IChannel</code> instances.
@@ -78,7 +79,7 @@ public class ChannelFactory {
             try {
                 return instantiateChannel(channelSubscribeId,channelPublishId, className,timeOut,channel.getParameterMap(),sessionId);
             } catch (Exception ex) {
-                LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
+                LogService.log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
                 return null;
             }
         } else return null;

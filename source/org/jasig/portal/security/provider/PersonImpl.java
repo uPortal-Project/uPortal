@@ -36,11 +36,12 @@
 
 package  org.jasig.portal.security.provider;
 
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.ISecurityContext;
-import  java.util.Enumeration;
-import  java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.ISecurityContext;
 
 
 /**

@@ -35,16 +35,17 @@
 
 package org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.IAdditionalDescriptor;
-import org.jasig.portal.security.IPrincipal;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.IOpaqueCredentials;
-import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.PropertiesManager;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.security.IAdditionalDescriptor;
+import org.jasig.portal.security.IOpaqueCredentials;
+import org.jasig.portal.security.IPrincipal;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 /**
  * <p>This is the basic abstract class for all security contexts that should
@@ -56,12 +57,10 @@ import java.util.Vector;
  * Added a new method named getSubContextNames() that returns an Enumeration of names
  * for the subcontexts.
  */
-
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
   protected static boolean stopWhenAuthenticated = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated");
   protected boolean isauth = false;
-//  protected Hashtable mySubContexts;
   protected Vector mySubContexts;
   protected ChainingPrincipal myPrincipal;
   protected ChainingOpaqueCredentials myOpaqueCredentials;
@@ -103,11 +102,11 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     while (e.hasMoreElements()) {
       ISecurityContext sctx = ((Entry) e.nextElement()).getCtx();
       // The principal and credential are now set for all subcontexts in Authentication
-      //IPrincipal sp = sctx.getPrincipalInstance();
-      //IOpaqueCredentials op = sctx.getOpaqueCredentialsInstance();
-      //sp.setUID(this.myPrincipal.UID);
-      //op.setCredentials(this.myOpaqueCredentials.credentialstring);
-      sctx.authenticate();
+      try {
+        sctx.authenticate();
+      } catch (Exception ex) {
+        LogService.log(LogService.ERROR, ex);
+      }
       // Stop attempting to authenticate if authenticated and if the property flag is set
       if(stopWhenAuthenticated && sctx.isAuthenticated()) {
         break;

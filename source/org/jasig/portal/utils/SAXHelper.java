@@ -34,14 +34,16 @@
 
 package  org.jasig.portal.utils;
 
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.StringReader;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 /**

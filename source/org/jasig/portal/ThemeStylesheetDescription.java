@@ -35,7 +35,6 @@
 
  package org.jasig.portal;
 
-import java.util.Vector;
 
 /**
  * Stylesheet description for stylesheets performing theme transformation

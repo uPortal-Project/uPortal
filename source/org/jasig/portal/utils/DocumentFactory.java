@@ -35,12 +35,11 @@
 
 package  org.jasig.portal.utils;
 
-import org.jasig.portal.PortalException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Produces an empty Document implementation

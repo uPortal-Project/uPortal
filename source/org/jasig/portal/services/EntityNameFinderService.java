@@ -35,12 +35,15 @@
 
 package org.jasig.portal.services;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jasig.portal.EntityTypes;
-import org.jasig.portal.groups.IEntityNameFinderFactory;
+import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityNameFinder;
-import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.groups.IEntityNameFinderFactory;
 
 /**
  * @author Dan Ellentuck
@@ -102,7 +105,7 @@ private synchronized void initialize()
             {
                 String dMsg = "EntityNameFinderService.initialize(): " +
                     "could not find property for " + type.getName() + " factory.";
-                LogService.instance().log( LogService.DEBUG, dMsg );
+                LogService.log( LogService.DEBUG, dMsg );
             }
             if ( factoryName != null )
             {
@@ -116,7 +119,7 @@ private synchronized void initialize()
                 {
                     String eMsg = "EntityNameFinderService.initialize(): " +
                         "Could not instantiate finder for " + type.getName() + ": ";
-                    LogService.instance().log( LogService.ERROR, eMsg + e.getMessage() );
+                    LogService.log( LogService.ERROR, eMsg + e.getMessage() );
                 }
             }
         }

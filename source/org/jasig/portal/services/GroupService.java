@@ -34,11 +34,26 @@
 
 package org.jasig.portal.services;
 
-import javax.naming.Name;
-import javax.naming.CompositeName;
 import javax.naming.InvalidNameException;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.*;
+import javax.naming.Name;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.groups.CompositeEntityIdentifier;
+import org.jasig.portal.groups.CompositeServiceIdentifier;
+import org.jasig.portal.groups.GroupServiceConfiguration;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.ICompositeGroupService;
+import org.jasig.portal.groups.ICompositeGroupServiceFactory;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.IGroupService;
+import org.jasig.portal.groups.IGroupServiceFactory;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.security.IPerson;
 
 /**
  *  Bootstrap class for the IGroupService implementation.
@@ -89,6 +104,20 @@ public class GroupService implements IGroupConstants
     {
         return instance().ifindLockableGroup(key, lockOwner);
     }
+    /**
+     * Receives notice that the UserInstance has been unbound from
+     * the HttpSession.  In response, we remove the corresponding group member
+     * from the cache.
+     * @param person org.jasig.portal.security.IPerson
+     */
+    public static void finishedSession(IPerson person) 
+    {
+        try 
+            { instance().ifinishedSession(person); }
+        catch (GroupsException ge)
+            { LogService.log(LogService.ERROR, ge); }
+    }
+
     /*
     * Returns the <code>ICompositeGroupService</code> implementation in use.
     * @return org.jasig.portal.groups.ICompositeGroupService
@@ -201,6 +230,28 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
     {
         return compositeGroupService.findGroupWithLock(key, lockOwner);
     }
+    /**
+     * Receives notice that the UserInstance has been unbound from the
+     * HttpSession.  In response, we remove the corresponding group member from
+     * the cache.  We use the roundabout route of creating a group member and 
+     * then getting its EntityIdentifier because we need the EntityIdentifier 
+     * for the group member, which is cached, not the EntityIdentifier for the 
+     * IPerson, which is not.
+     * @param person org.jasig.portal.security.IPerson
+     */
+    protected void ifinishedSession(IPerson person) throws GroupsException
+    {
+        IGroupMember gm = getGroupMember(person.getEntityIdentifier()); 
+        try
+        { 
+            EntityCachingService.instance().remove(gm.getEntityIdentifier()); 
+        }
+        catch (CachingException ce)
+        {
+            throw new GroupsException("Problem removing group member " + gm.getKey() + " from cache: " + ce.getMessage());
+        }
+    }
+
 /**
  * Refers to the PropertiesManager to get the key for the group
  * associated with 'name' and asks the group store implementation for the corresponding
@@ -278,7 +329,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
       if ( factoryName == null )
       {
           eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
-          LogService.instance().log(LogService.ERROR, eMsg);
+          LogService.log(LogService.ERROR, eMsg);
           throw new GroupsException(eMsg);
       }
 
@@ -291,7 +342,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
       catch (Exception e)
       {
           eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-          LogService.instance().log(LogService.ERROR, eMsg);
+          LogService.log(LogService.ERROR, eMsg);
           throw new GroupsException(eMsg);
       }
     }
@@ -309,7 +360,7 @@ private void initializeCompositeService() throws GroupsException
         if ( factoryName == null )
         {
             eMsg = "GroupService.initialize(): No entry for CompositeServiceFactory in configuration";
-            LogService.instance().log(LogService.ERROR, eMsg);
+            LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
 
@@ -320,7 +371,7 @@ private void initializeCompositeService() throws GroupsException
     catch (Exception e)
     {
         eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new GroupsException(eMsg);
     }
 }

@@ -36,6 +36,7 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.util.Date;
+
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
 

@@ -37,14 +37,17 @@ package org.jasig.portal.concurrency.locking;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
-import org.jasig.portal.concurrency.IEntityLock;
-import org.jasig.portal.concurrency.LockingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.concurrency.IEntityLock;
+import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -71,6 +74,14 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     private static String addSql;
     private static String deleteLockSql;
     private static String updateSql;
+
+    // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
+    private static boolean timestampHasMillis;
+    static {
+      Date testDate = new Date();
+      Timestamp testTimestamp = new Timestamp(testDate.getTime());
+      timestampHasMillis = (testDate.getTime() == testTimestamp.getTime());
+    }
 /**
  * RDBMEntityGroupStore constructor.
  */
@@ -128,7 +139,7 @@ public void deleteAll() throws LockingException
     try
     {
         String sql = "DELETE FROM " + LOCK_TABLE;
-        LogService.instance().log(LogService.DEBUG, "RDBMEntityLockStore.deleteAll(): " + sql);
+        LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteAll(): " + sql);
 
         conn = RDBMServices.getConnection();
         try
@@ -136,7 +147,7 @@ public void deleteAll() throws LockingException
             stmnt = conn.createStatement();
             int rc = stmnt.executeUpdate(sql);
             String msg = "Deleted " + rc + " locks.";
-            LogService.instance().log(LogService.DEBUG, "RDBMEntityLockStore.deleteAll(): " + msg);
+            LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteAll(): " + msg);
         }
         finally
             { if ( stmnt != null ) stmnt.close(); }
@@ -366,7 +377,7 @@ throws SQLException, LockingException
             ps.setTimestamp(4, ts);          // lock expiration
             ps.setString(5, owner);          // lock owner
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMEntityLockStore.primAdd(): " + ps);
 
             int rc = ps.executeUpdate();
@@ -410,11 +421,11 @@ private void primDelete(IEntityLock lock, Connection conn) throws LockingExcepti
             ps.setInt(4, lockType)   ;        // lock type
             ps.setString(5, owner);           // lock owner
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMEntityLockStore.primDelete(): " + ps);
 
             int rc = ps.executeUpdate();
-            LogService.instance().log(LogService.DEBUG, "RDBMEntityLockStore.primDelete(): deleted " + rc + " lock(s).");
+            LogService.log(LogService.DEBUG, "RDBMEntityLockStore.primDelete(): deleted " + rc + " lock(s).");
         }
         finally
             { if ( ps != null ) ps.close(); }
@@ -444,7 +455,7 @@ throws LockingException, SQLException
 
     StringBuffer buff = new StringBuffer(100);
     buff.append("DELETE FROM " + LOCK_TABLE + " WHERE " + EXPIRATION_TIME_COLUMN + LT);
-    buff.append(sqlQuote(ts));
+    buff.append(printTimestamp(ts));
     if ( entityType != null )
     {
         Integer typeID = EntityTypes.getEntityTypeID(entityType);
@@ -457,14 +468,14 @@ throws LockingException, SQLException
 
     String sql = buff.toString();
 
-    LogService.instance().log(LogService.DEBUG, "RDBMEntityLockStore.deleteExpired(): " + sql);
+    LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteExpired(): " + sql);
 
     try
     {
         stmnt = conn.createStatement();
         int rc = stmnt.executeUpdate(sql);
         String msg = "Deleted " + rc + " expired locks.";
-        LogService.instance().log(LogService.DEBUG, "RDBMEntityLockStore.deleteExpired(): " + msg);
+        LogService.log(LogService.DEBUG, "RDBMEntityLockStore.deleteExpired(): " + msg);
     }
 
     catch (SQLException sqle)
@@ -485,7 +496,7 @@ private IEntityLock[] primSelect(String sql) throws LockingException
     ResultSet rs = null;
     List locks = new ArrayList();
 
-    LogService.instance().log(LogService.DEBUG, "RDBMEntityLockStore.primSelect(): " + sql);
+    LogService.log(LogService.DEBUG, "RDBMEntityLockStore.primSelect(): " + sql);
 
     try
     {
@@ -549,7 +560,7 @@ throws SQLException, LockingException
             ps.setTimestamp(6, oldTs);  // old expiration
             ps.setInt(7, oldLockType);  // old lock type;
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMEntityLockStore.primUpdate(): " + ps);
 
             int rc = ps.executeUpdate();
@@ -608,7 +619,7 @@ throws LockingException
     if ( expiration != null )
     {
         Timestamp ts = new Timestamp(expiration.getTime());
-        sqlQuery.append(" AND " + EXPIRATION_TIME_COLUMN + EQ + sqlQuote(ts));
+        sqlQuery.append(" AND " + EXPIRATION_TIME_COLUMN + EQ + printTimestamp(ts));
     }
 
     if ( lockOwner != null )
@@ -637,7 +648,7 @@ throws LockingException
 {
     StringBuffer sqlQuery = new StringBuffer(getSelectSql());
 
-    sqlQuery.append(" WHERE " + EXPIRATION_TIME_COLUMN + GT + sqlQuote(ts));
+    sqlQuery.append(" WHERE " + EXPIRATION_TIME_COLUMN + GT + printTimestamp(ts));
 
     if ( entityType != null )
     {
@@ -710,5 +721,23 @@ throws LockingException
         { throw new LockingException("Problem updating " + lock + ": " + sqle.getMessage()); }
     finally
         { RDBMServices.releaseConnection(conn); }
+}
+/**
+ * @return long
+ */
+private static long getTimestampMillis(Timestamp ts)
+{
+    if ( timestampHasMillis )
+        { return ts.getTime(); }
+    else
+        { return (ts.getTime() + ts.getNanos() / 1000000); }
+}
+
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String printTimestamp(Timestamp ts)
+{
+    return RDBMServices.sqlTimeStamp(getTimestampMillis(ts));
 }
 }

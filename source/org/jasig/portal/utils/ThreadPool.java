@@ -37,10 +37,11 @@
 package  org.jasig.portal.utils;
 
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
+import java.util.List;
+
 import org.jasig.portal.services.LogService;
 
 
@@ -208,7 +209,7 @@ public class ThreadPool extends ThreadGroup {
     * Handle the case when some worker crashes
     */
     public void uncaughtException(Thread t, Throwable e) {
-	LogService.instance().log(LogService.ERROR,"Registered an uncaughted exception by thread "+t.getName(), e);
+	LogService.log(LogService.ERROR,"Registered an uncaughted exception by thread "+t.getName(), e);
 	if(t instanceof ThreadPoolWorker && !(e instanceof ThreadDeath)) {
 	    ThreadPoolWorker w=(ThreadPoolWorker) t;
 	    // clean up currentReceipt if the thread didn't do it

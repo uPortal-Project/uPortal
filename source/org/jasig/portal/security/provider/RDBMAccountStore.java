@@ -35,19 +35,18 @@
 
 package org.jasig.portal.security.provider;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.services.LogService;
+
 /**
  * A reference implementation of {@link IAccountStore}.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
-
-import org.jasig.portal.RDBMServices;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import org.jasig.portal.services.LogService;
-
 public class RDBMAccountStore implements IAccountStore {
 
     public String[] getUserAccountInformation(String username) throws Exception {
@@ -56,11 +55,13 @@ public class RDBMAccountStore implements IAccountStore {
         };
         Connection con = RDBMServices.getConnection();
         try {
-            Statement stmt = con.createStatement();
+            RDBMServices.PreparedStatement pstmt = null;
             try {
-                String query = "SELECT  ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE " + "USER_NAME = '" + username + "'";
-                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
-                ResultSet rset = stmt.executeQuery(query);
+                String query = "SELECT  ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME = ?";
+                LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
+                pstmt = new RDBMServices.PreparedStatement(con, query);
+                pstmt.setString(1, username);
+                ResultSet rset = pstmt.executeQuery();
                 try {
                     if (rset.next()) {
                         acct[0] = rset.getString("ENCRPTD_PSWD");
@@ -71,12 +72,12 @@ public class RDBMAccountStore implements IAccountStore {
                     rset.close();
                 }
             } finally {
-                stmt.close();
+                pstmt.close();
             }
         } finally {
             RDBMServices.releaseConnection(con);
         }
-        return  acct;
+        return acct;
     }
 
 }

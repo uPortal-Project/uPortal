@@ -2,7 +2,16 @@
 
 <xsl:param name="activeTab">1</xsl:param>
 <xsl:param name="userLayoutRoot">root</xsl:param>
-<xsl:variable name="activeID" select="/layout/folder[@type='regular' and @hidden='false'][position()=$activeTab]/@ID"/>
+  <xsl:variable name="activeID">
+    <xsl:choose>
+      <xsl:when test="$activeTab &gt; count(/layout/folder[@type='regular' and @hidden='false'])">
+        <xsl:value-of select="/layout/folder[@type='regular' and @hidden='false'][1]/@ID"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="/layout/folder[@type='regular' and @hidden='false'][position()=$activeTab]/@ID"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
 
 <!-- document fragment template. See structure stylesheet for more comments -->
 <xsl:template match="layout_fragment">
@@ -101,3 +110,4 @@
 </xsl:stylesheet>
 
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->

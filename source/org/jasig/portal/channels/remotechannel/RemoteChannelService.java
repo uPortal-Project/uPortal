@@ -36,6 +36,7 @@
 package org.jasig.portal.channels.remotechannel;
 
 import java.net.URL;
+
 import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceException;
 

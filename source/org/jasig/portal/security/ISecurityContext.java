@@ -36,7 +36,6 @@
 package org.jasig.portal.security;
 
 import java.util.Enumeration;
-import org.jasig.portal.security.*;
 
 /**
  * <p>This is the main interface for the JASIG portal effort's security

@@ -36,30 +36,27 @@
 
 package org.jasig.portal.layout;
 
-import org.xml.sax.ContentHandler;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.UserProfile;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Vector;
-
-import  org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.dom.DocumentImpl;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
-import java.util.Random;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.ContentHandler;
 
 /**
  * An implementation of a user layout manager that uses 2.0-release store implementations.
@@ -78,6 +75,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected static Random rnd=new Random();
     protected String cacheKey="initialKey";
 
+    private boolean dirtyState=false;
 
     public SimpleUserLayoutManager(IPerson owner, UserProfile profile, IUserLayoutStore store) throws PortalException {
         if(owner==null) {
@@ -157,6 +155,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 DocumentImpl uli=(DocumentImpl)this.getLayoutStore().getUserLayout(this.owner,this.profile);
                 if(uli!=null) {
                     this.setUserLayoutDOM(uli);
+                    clearDirtyFlag();
                     // inform listeners
                     for(Iterator i=listeners.iterator();i.hasNext();) {
                         LayoutEventListener lel=(LayoutEventListener)i.next();
@@ -175,24 +174,26 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     public void saveUserLayout() throws PortalException{
-        Document ulm=this.getUserLayoutDOM();
-        if(ulm==null) {
-            throw new PortalException("UserLayout has not been initialized.");
-        } else {
-            if(this.getLayoutStore()==null) {
-                throw new PortalException("Store implementation has not been set.");
+        if(isLayoutDirty()) {
+            Document ulm=this.getUserLayoutDOM();
+            if(ulm==null) {
+                throw new PortalException("UserLayout has not been initialized.");
             } else {
-                try {
-                    this.getLayoutStore().setUserLayout(this.owner,this.profile,ulm,true);
-                    // inform listeners
-                    for(Iterator i=listeners.iterator();i.hasNext();) {
-                        LayoutEventListener lel=(LayoutEventListener)i.next();
-                        lel.layoutSaved();
+                if(this.getLayoutStore()==null) {
+                    throw new PortalException("Store implementation has not been set.");
+                } else {
+                    try {
+                        this.getLayoutStore().setUserLayout(this.owner,this.profile,ulm,true);
+                        // inform listeners
+                        for(Iterator i=listeners.iterator();i.hasNext();) {
+                            LayoutEventListener lel=(LayoutEventListener)i.next();
+                            lel.layoutSaved();
+                        }
+                    } catch (PortalException pe) {
+                        throw pe;
+                    } catch (Exception e) {
+                        throw new PortalException("Exception encountered while trying to save a layout for userId="+this.owner.getID()+", profileId="+this.profile.getProfileId(),e);
                     }
-                } catch (PortalException pe) {
-                    throw pe;
-                } catch (Exception e) {
-                    throw new PortalException("Exception encountered while trying to save a layout for userId="+this.owner.getID()+", profileId="+this.profile.getProfileId(),e);
                 }
             }
         }
@@ -245,6 +246,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 Node nextSibling=ulm.getElementById(nextSiblingId);
                 parentElement.insertBefore(childElement,nextSibling);
             }
+            markLayoutDirty();
             // register element id
             ulm.putIdentifier(node.getId(),childElement);
             this.updateCacheKey();
@@ -280,6 +282,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 Node nextSibling=ulm.getElementById(nextSiblingId);
                 parentElement.insertBefore(childElement,nextSibling);
             }
+            markLayoutDirty();
             this.updateCacheKey();
 
             // inform the listeners
@@ -315,6 +318,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             } else {
                 throw new PortalException("Node \""+nodeId+"\" has a NULL parent !");
             }
+            markLayoutDirty();
             this.updateCacheKey();
 
             // inform the listeners
@@ -415,6 +419,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     }
                 }
             }
+            markLayoutDirty();
             this.updateCacheKey();
 
 
@@ -589,4 +594,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     public boolean removeLayoutEventListener(LayoutEventListener l) {
         return listeners.remove(l);
     }
+
+
+    protected boolean isLayoutDirty() { return dirtyState; }
+    private void markLayoutDirty() { dirtyState=true; }
+    private void clearDirtyFlag() { dirtyState=false; }
 }

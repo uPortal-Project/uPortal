@@ -35,9 +35,8 @@
 
  package org.jasig.portal;
 
-import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.Hashtable;
 
 /**
  * Stylesheet description for stylesheets performing structure transformation

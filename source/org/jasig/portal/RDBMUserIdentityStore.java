@@ -39,13 +39,16 @@ COLLABORATIVE "AS IS" AND ANY
 
 package  org.jasig.portal;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.GroupService;
-import  java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CounterStoreFactory;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
@@ -91,7 +94,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
      Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      if (RDBMServices.supportsTransactions)  
+      if (RDBMServices.supportsTransactions)
         con.setAutoCommit(false);
 
       try {
@@ -131,26 +134,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        /* remove from all groups */
-        try{
-          IGroupMember user = GroupService.getEntity(String.valueOf(uPortalUID), Class.forName("org.jasig.portal.security.IPerson"));
-          java.util.Iterator userGroups =  user.getContainingGroups();
-          LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID("+uPortalUID+"): removing group memberships.");
-          while (userGroups.hasNext())
-          {
-                IEntityGroup eg = (IEntityGroup) userGroups.next();
-
-                LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID("+uPortalUID+"): removing user from group "+eg.getName());
-                eg.removeMember(user);
-                eg.updateMembers();
-          }
-        }
-        catch (Exception e) {
-          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error removing user from groups: ", e);
-        }
-
-
-        if (RDBMServices.supportsTransactions)  
+        if (RDBMServices.supportsTransactions)
           con.commit();
 
       } finally {
@@ -159,7 +143,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     catch (SQLException se) {
       try {
-        if (RDBMServices.supportsTransactions)  
+        if (RDBMServices.supportsTransactions)
           con.rollback();
       }
       catch (SQLException e) {
@@ -188,7 +172,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @throws Authorization exception if createPortalData is false and no user is found
    *  or if a sql error is encountered
    */
-   public int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+   public synchronized int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
     int uPortalUID=-1;
     // Get a connection to the database
     Connection con = rdbmService.getConnection();
@@ -213,7 +197,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       catch(Exception e) {}
 
       // Log the exception
-      LogService.instance().log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): Could not create database statement", se);
+      LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): Could not create database statement", se);
       throw new AuthorizationException("RDBMUserIdentityStore: Could not create database statement");
     }
 
@@ -253,7 +237,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + "template name is " + templateName);
 
         // Just use the default template if requested template not populated
-        if (templateName == null || templateName=="")
+        if (templateName == null || templateName.equals(""))
         {
           templateName=defaultTemplateUserName;
         }
@@ -305,22 +289,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
         }
 
-        /* put new user in groups that template is in */
-        try{
+        /* Put the new user in the template user's groups */
+        try {
           IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-
           IGroupMember template = GroupService.getEntity(templateName, Class.forName("org.jasig.portal.security.IPerson"));
           java.util.Iterator templateGroups =  template.getContainingGroups();
           while (templateGroups.hasNext())
           {
-                IEntityGroup eg = (IEntityGroup) templateGroups.next();
-                eg.addMember(me);
-                eg.updateMembers();
-          }
-        }
+              IEntityGroup eg = (IEntityGroup) templateGroups.next();
+              eg.addMember(me);
+              eg.updateMembers();
+
+          }      // end while()
+        }        // end try
         catch (Exception e) {
           LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
         }
+        
         try
         {
           // Turn off autocommit if the database supports it
@@ -332,7 +317,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         catch(SQLException se)
         {
           // Log the exception
-          LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
+          LogService.log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
         }
 
         String Insert = new String();
@@ -390,7 +375,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_profile */
 
-        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
+        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION "+
                 "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
@@ -482,7 +467,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
       catch (SQLException e)
       {
-        LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore.getPortalUID(): Unable to rollback transaction", se);
+        LogService.log(LogService.WARN, "RDBMUserIdentityStore.getPortalUID(): Unable to rollback transaction", se);
       }
       // DEBUG
       if (DEBUG>0)

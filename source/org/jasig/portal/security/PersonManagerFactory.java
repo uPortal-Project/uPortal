@@ -37,8 +37,8 @@
 
 package  org.jasig.portal.security;
 
-import  org.jasig.portal.PropertiesManager;
-import  org.jasig.portal.services.LogService;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -51,13 +51,13 @@ public class PersonManagerFactory {
     String personManagerClass = PropertiesManager.getProperty("org.jasig.portal.security.PersonManagerFactory.implementation");
     // Fail if this is not found
     if (personManagerClass == null) {
-      LogService.instance().log(LogService.ERROR, "PersonManagerFactory: org.jasig.portal.security.PersonManagerFactory.implementation must be specified in portal.properties");
+      LogService.log(LogService.ERROR, "PersonManagerFactory: org.jasig.portal.security.PersonManagerFactory.implementation must be specified in portal.properties");
     }
     try {
       // Create an instance of the IPersonManager as specified in portal.properties
       m_personManager = (IPersonManager)Class.forName(personManagerClass).newInstance();
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "PersonManagerFactory: Could not instantiate " + personManagerClass, e);
+      LogService.log(LogService.ERROR, "PersonManagerFactory: Could not instantiate " + personManagerClass, e);
     }
   }
 

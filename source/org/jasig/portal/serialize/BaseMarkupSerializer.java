@@ -84,24 +84,28 @@
 package org.jasig.portal.serialize;
 
 
-import java.io.Writer;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Vector;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.w3c.dom.*;
-import org.xml.sax.DocumentHandler;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.Entity;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Notation;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
+import org.xml.sax.DocumentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Attributes;
-import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.ext.DeclHandler;
+import org.xml.sax.ext.LexicalHandler;
 
 
 /**

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,14 +37,17 @@ package org.jasig.portal.concurrency.caching;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
-import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.concurrency.CachingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.jasig.portal.EntityTypes;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -70,12 +73,17 @@ public class RDBMCachedEntityInvalidationStore {
     private static String allTableColumns;
     private static String addSql;
     private static String updateSql;
+
+    // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
+    private static boolean timestampHasMillis;
+
 /**
  * RDBMEntityGroupStore constructor.
  */
-public RDBMCachedEntityInvalidationStore()
+public RDBMCachedEntityInvalidationStore() throws CachingException
 {
     super();
+    initialize();
 }
 /**
  * Adds/updates the row corresponding to this entity in the underlying store.
@@ -111,7 +119,7 @@ public void deleteAll() throws CachingException
     try
     {
         String sql = "DELETE FROM " + ENTITY_INVALIDATION_TABLE;
-        LogService.instance().log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
+        LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + sql);
 
         conn = RDBMServices.getConnection();
         try
@@ -119,7 +127,7 @@ public void deleteAll() throws CachingException
             stmnt = conn.createStatement();
             int rc = stmnt.executeUpdate(sql);
             String msg = "Deleted " + rc + " rows.";
-            LogService.instance().log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
+            LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.deleteAll(): " + msg);
         }
         finally
             { if ( stmnt != null ) stmnt.close(); }
@@ -280,8 +288,7 @@ throws  SQLException, CachingException
     Class entityType = EntityTypes.getEntityType(entityTypeID);
     String key = rs.getString(2);
     Timestamp ts = rs.getTimestamp(3);
-    int nanos  = ts.getNanos() / 1000000;
-    Date dt = new Date(ts.getTime()+nanos);
+    Date dt = new Date(getTimestampMillis(ts));
 
     return newInstance(entityType, key, dt);
 }
@@ -314,7 +321,7 @@ throws SQLException, CachingException
             ps.setString(2, key);            // entity key
             ps.setTimestamp(3, ts);          // invalidation time
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primAdd(): " + ps +
                   " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
@@ -322,7 +329,7 @@ throws SQLException, CachingException
             if ( rc != 1 )
             {
                 String errString = "Problem adding " + ent;
-                LogService.instance().log (LogService.ERROR, errString);
+                LogService.log(LogService.ERROR, errString);
                 throw new CachingException(errString);
             }
         }
@@ -331,7 +338,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw sqle;
     }
 }
@@ -355,11 +362,11 @@ throws CachingException, SQLException
         {
             ps.setTimestamp(1, ts);
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primDeleteBefore(): " + ps + " (" + ts + ")");
 
             int rc = ps.executeUpdate();
-            LogService.instance().log(LogService.DEBUG, "Rows deleted: " + rc);
+            LogService.log(LogService.DEBUG, "Rows deleted: " + rc);
         }
         finally
             { if ( ps != null ) ps.close(); }
@@ -367,7 +374,7 @@ throws CachingException, SQLException
 
     catch (java.sql.SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw sqle;
     }
 }
@@ -383,7 +390,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     ResultSet rs = null;
     List entities = new ArrayList();
 
-    LogService.instance().log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
+    LogService.log(LogService.DEBUG, "RDBMInvalidCacheableEntityStore.primSelect(): " + sql);
 
     try
     {
@@ -404,7 +411,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     }
     catch (SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw new CachingException("Problem retrieving Invalid Entities " + sqle.getMessage());
     }
 
@@ -432,7 +439,7 @@ throws SQLException, CachingException
             ps.setInt(2, typeID.intValue());  // entity type
             ps.setString(3, key);             // entity key
 
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "RDBMInvalidCacheableEntityStore.primUpdate(): " + ps +
                                   " ( " + typeID.intValue() + ", " + key + ", " + ts + " )");
 
@@ -440,7 +447,7 @@ throws SQLException, CachingException
             if ( rc != 1 )
             {
                 String errString = "Problem updating " + ent;
-                LogService.instance().log (LogService.ERROR, errString);
+                LogService.log(LogService.ERROR, errString);
                 throw new CachingException(errString);
             }
         }
@@ -449,7 +456,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        LogService.instance().log (LogService.ERROR, sqle);
+        LogService.log(LogService.ERROR, sqle);
         throw sqle;
     }
 }
@@ -485,7 +492,7 @@ throws CachingException
     if ( invalidation != null )
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
-        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + EQ + sqlQuote(ts));
+        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + EQ + printTimestamp(ts));
     }
 
     return primSelect(sqlQuery.toString(), conn);
@@ -522,44 +529,7 @@ throws CachingException
     if ( invalidation != null )
     {
         Timestamp ts = new Timestamp(invalidation.getTime());
-        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + sqlQuote(ts));
-    }
-
-    return primSelect(sqlQuery.toString(), conn);
-}
- /**
- * Retrieve CachedEntityInvalidations from the underlying store.  Params
- * <code>entityType</code> and <code>entityKey</code> may be null.
- * @param invalidation Date
- * @param entityType Class
- * @param entityKey String
- * @param conn Connection
- * @exception CachingException - wraps an Exception specific to the store.
- */
-private CachedEntityInvalidation[] selectAfter
-    (Date invalidation,
-     Class entityType,
-     String entityKey,
-     Connection conn)
-throws CachingException
-{
-    StringBuffer sqlQuery = new StringBuffer( getSelectSql() + " WHERE ");
-
-    if ( entityType != null )
-    {
-        Integer typeID = EntityTypes.getEntityTypeID(entityType);
-        sqlQuery.append(ENTITY_TYPE_COLUMN + EQ + typeID);
-    }
-
-    if ( entityKey != null )
-    {
-        sqlQuery.append(" AND " + ENTITY_KEY_COLUMN + EQ + sqlQuote(entityKey));
-    }
-
-    if ( invalidation != null )
-    {
-        Timestamp ts = new Timestamp(invalidation.getTime());
-        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + sqlQuote(ts));
+        sqlQuery.append(" AND " + INVALIDATION_TIME_COLUMN + GT + printTimestamp(ts));
     }
 
     return primSelect(sqlQuery.toString(), conn);
@@ -568,6 +538,7 @@ throws CachingException
  * @return org.jasig.portal.concurrency.caching.RDBMCachedEntityInvalidationStore
  */
 public static synchronized RDBMCachedEntityInvalidationStore singleton()
+throws CachingException
 {
     if ( singleton == null )
         { singleton = new RDBMCachedEntityInvalidationStore(); }
@@ -579,5 +550,36 @@ public static synchronized RDBMCachedEntityInvalidationStore singleton()
 private static java.lang.String sqlQuote(Object o)
 {
     return QUOTE + o + QUOTE;
+}
+
+/**
+ * @return long
+ */
+private static long getTimestampMillis(Timestamp ts)
+{
+   if ( timestampHasMillis )
+        { return ts.getTime(); }
+    else
+        { return (ts.getTime() + ts.getNanos() / 1000000); }
+}
+
+/**
+ * Clear invalidations more than 1 hour old.
+ */
+private void initialize() throws CachingException
+{
+    Date anHourAgo = new Date( System.currentTimeMillis() - 60 * 60 * 1000 );
+    deleteBefore(anHourAgo);
+    Date testDate = new Date();
+    Timestamp testTimestamp = new Timestamp(testDate.getTime());
+    timestampHasMillis = (testDate.getTime() == testTimestamp.getTime());
+}
+
+/**
+ * @return java.lang.String
+ */
+private static java.lang.String printTimestamp(Timestamp ts)
+{
+    return RDBMServices.sqlTimeStamp(getTimestampMillis(ts));
 }
 }

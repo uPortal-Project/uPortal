@@ -35,11 +35,11 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import org.jasig.portal.PortalException;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.SAX2FilterImpl;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -115,7 +115,7 @@ public abstract class CWebProxyURLFilter extends SAX2FilterImpl
                                   || passThrough.equals("marked")) )
       {
         String attValue = atts.getValue(attName);
-        if (attValue != null)
+        if (attValue != null && (attValue.startsWith("http://") || attValue.startsWith("https://")))
         {
           String query = getQueryString(attValue); 
           String base = getBase(attValue);

@@ -35,12 +35,13 @@
 package org.jasig.portal.security.provider;
 
 
-import javax.security.auth.*;
-import javax.security.auth.callback.*;
-import javax.security.auth.login.*;
-import java.io.*;
-import java.lang.IllegalArgumentException;
-import java.util.Arrays;
+import java.io.IOException;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 /**
  * <p>Used by JAAS security provider

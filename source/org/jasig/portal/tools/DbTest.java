@@ -34,15 +34,13 @@
  */
 
 package org.jasig.portal.tools;
-import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMUserIdentityStore;
-import org.jasig.portal.IUserIdentityStore;
 import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.DatabaseMetaData;
+import java.sql.Statement;
+
+import org.jasig.portal.RDBMServices;
 
 /**
  * Title:        DbTest
@@ -56,7 +54,7 @@ public class DbTest {
 
    public static void main(String[] args) {
 
-      Connection con=null;
+      Connection con = null;
       try {
          con = RDBMServices.getConnection ();
 	 if (con == null) {
@@ -67,9 +65,8 @@ public class DbTest {
       }
       catch (SQLException e) {
          e.printStackTrace();
-         if (con != null) {
-            RDBMServices.releaseConnection(con);
-         }
+      } finally {
+         try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
    }//end main
 

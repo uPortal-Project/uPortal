@@ -33,14 +33,13 @@
  *
  */
 
-
 package org.jasig.portal.security.provider;
+
+import java.security.MessageDigest;
 
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
-import java.security.MessageDigest;
-import java.util.Enumeration;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -49,7 +48,7 @@ import java.util.Enumeration;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-class SimpleSecurityContext extends ChainingSecurityContext
+public class SimpleSecurityContext extends ChainingSecurityContext
     implements ISecurityContext {
   private final int SIMPLESECURITYAUTHTYPE = 0xFF02;
 

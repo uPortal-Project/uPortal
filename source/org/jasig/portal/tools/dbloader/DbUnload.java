@@ -34,23 +34,18 @@
  */
 
 package org.jasig.portal.tools.dbloader;
-import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.RDBMServices;
-
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.sql.Types;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import org.jasig.portal.utils.XMLEscaper;
+import java.sql.Statement;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.utils.XMLEscaper;
 /**
  * Title:        DbUnload
  * Description:  Dump database table(s) into a xml format
@@ -70,7 +65,7 @@ public class DbUnload {
     }
 
     xmlOut.println("  <table>");
-    xmlOut.println("    <name>" + tableName + "</name>");
+    xmlOut.println("    <name>" + tableName.toUpperCase() + "</name>");
     xmlOut.println("    <rows>");
     try {
       ResultSetMetaData rsmd = rs.getMetaData();
@@ -105,9 +100,10 @@ public class DbUnload {
             throw new Exception("Unrecognized column type " + columnType[i] + " for column " + (i + 1) +
             " in table " + tableName);
           }
-          if (rs.wasNull()) xmlOut.println("        <column><name>" + columnName[i] + "</name></column>");
+          if (rs.wasNull()) 
+            xmlOut.println("        <column><name>" + columnName[i].toUpperCase() + "</name></column>");
           else
-          xmlOut.println("        <column><name>" + columnName[i] + "</name><value>" + value + "</value></column>");
+            xmlOut.println("        <column><name>" + columnName[i].toUpperCase() + "</name><value>" + value + "</value></column>");
         }
         xmlOut.println("      </row>");
       }
@@ -157,10 +153,9 @@ public class DbUnload {
       xmlOut.close();
     } catch (Exception e) {
       e.printStackTrace();
-      if (con != null) {
-        RDBMServices.releaseConnection(con);
-      }
       System.exit(1);
+    } finally {
+      try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
     }
   }
 }

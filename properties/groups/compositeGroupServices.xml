@@ -4,7 +4,10 @@
 This list of component group services is processed by the composite, or "root" service as it assembles itself.  Each service element has 2 required elements: name and service_factory.  The values of all service elements are delivered to the service_factory.  
 -->
 
-<servicelist defaultService="local" compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory">
+<servicelist 
+  defaultService="local" 
+  compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
+  nodeSeparator=".">
   <service>
     <name>local</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>

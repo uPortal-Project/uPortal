@@ -35,12 +35,13 @@
 
 package org.jasig.portal;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Enumeration;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 /*
  * This class contains basic information about the browser.
@@ -120,8 +121,12 @@ public class BrowserInfo {
      * Obtain a "user-agent" header contained in the request.
      * @return a <code>String</code> value
      */
-    public String getUserAgent () {
-        return (String)headers.get("user-agent");
+    public String getUserAgent() {
+        String ua=(String)headers.get("user-agent");
+        if(ua==null || ua.equals("")) { 
+            ua=MediaManager.NULL_USER_AGENT; 
+        }
+        return ua;
     }
 
     /**

@@ -38,19 +38,15 @@
 
 package  org.jasig.portal.security.provider;
 
-import  java.util.Vector;
-import  java.util.Properties;
-import  java.io.File;
-import  java.io.IOException;
-import  java.io.FileInputStream;
-import  org.jasig.portal.utils.SmartCache;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.provider.PersonImpl;
-import  org.jasig.portal.security.IAuthorization;
-import  org.jasig.portal.security.PortalSecurityException;
-import  org.jasig.portal.PortalSessionManager;
-import  org.jasig.portal.UserLayoutStoreFactory;
-import  org.jasig.portal.services.LogService;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Vector;
+
+import org.jasig.portal.security.IAuthorization;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SmartCache;
 
 
 /**
@@ -70,12 +66,13 @@ public class ReferenceAuthorization implements IAuthorization {
       Properties securityProps = new Properties();
       try {
         securityProps.load(stream);
+		  stream.close();
         s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
       } catch (IOException e) {
-        LogService.instance().log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
+        LogService.log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
       }
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+      LogService.log(LogService.ERROR, e);
     }
   }
 

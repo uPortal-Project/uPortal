@@ -38,14 +38,16 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.groups.*;
-import  java.sql.*;
-import  java.util.*;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
+import java.util.HashMap;
+
+import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.groups.IEntityNameFinder;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -78,7 +80,7 @@ public class PermissibleSubscribeChannels
                 targets.put("CHAN_ID." + chanID, chanf.getName(chanID));
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 

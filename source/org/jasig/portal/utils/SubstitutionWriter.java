@@ -35,8 +35,8 @@
 
 package org.jasig.portal.utils;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 
 /**

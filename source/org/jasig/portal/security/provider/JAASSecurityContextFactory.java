@@ -42,7 +42,8 @@ package org.jasig.portal.security.provider;
  * @author Nathan Jacobs
  */
 
-import org.jasig.portal.security.*;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.ISecurityContextFactory;
 
 public class JAASSecurityContextFactory implements ISecurityContextFactory {
   public ISecurityContext getSecurityContext() {

@@ -36,20 +36,19 @@
 
 package  org.jasig.portal.services;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.ResourceLoader;
-
 import java.io.InputStream;
-import java.util.List;
-import java.util.ArrayList;
-import java.lang.reflect.Method;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.xml.sax.Attributes;
-import javax.xml.parsers.SAXParserFactory;
+import javax.naming.Context;
 import javax.xml.parsers.SAXParser;
-import  javax.naming.Context;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.jasig.portal.utils.ResourceLoader;
+import org.xml.sax.Attributes;
 
 /**
  * ExternalServices starts up all the runtime services for the uPortal.
@@ -94,7 +93,7 @@ public class ExternalServices {
    */
   protected void outputMessage(String msg) {
     System.out.println("External services: " + msg);
-    LogService.instance().log(LogService.INFO, "External services: " + msg);
+    LogService.log(LogService.INFO, "External services: " + msg);
   }
 
   /**

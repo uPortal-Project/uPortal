@@ -35,7 +35,6 @@
 
 package org.jasig.portal;
 
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -58,7 +57,7 @@ public class UserLayoutStoreFactory {
     } catch (Exception e ) {}
   
     if (className == null || className.length() == 0 )
-      LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: org.jasig.portal.UserLayoutStoreFactory.implementation must be specified in portal.properties");
+      LogService.log(LogService.ERROR, "UserLayoutStoreFactory: org.jasig.portal.UserLayoutStoreFactory.implementation must be specified in portal.properties");
   }
 
   /**
@@ -69,11 +68,11 @@ public class UserLayoutStoreFactory {
     try {
       return getUserLayoutStoreImpl( className );
     } catch ( PortalException pe ) {
-      LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + className, pe);
+      LogService.log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + className, pe);
       try {
         return getUserLayoutStoreImpl( DEFAULT_CLASS_NAME );
       } catch ( PortalException pe1 ) {
-        LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + DEFAULT_CLASS_NAME, pe1);
+        LogService.log(LogService.ERROR, "UserLayoutStoreFactory: Could not load " + DEFAULT_CLASS_NAME, pe1);
         return null;
       }
     }
@@ -86,12 +85,16 @@ public class UserLayoutStoreFactory {
    */
   protected static IUserLayoutStore getUserLayoutStoreImpl( String className ) throws PortalException {
     try {
-      if (userLayoutStoreImpl == null) {
-        userLayoutStoreImpl = (IUserLayoutStore) Class.forName(className).newInstance();
-      }
-      return userLayoutStoreImpl;
+        if (userLayoutStoreImpl == null) {
+            synchronized (UserLayoutStoreFactory.class) {
+                if (userLayoutStoreImpl == null) {
+                    userLayoutStoreImpl = (IUserLayoutStore) Class.forName(className).newInstance();
+                }
+            }
+        }
+        return userLayoutStoreImpl;
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "UserLayoutStoreFactory: Could not instantiate " + className, e);
+      LogService.log(LogService.ERROR, "UserLayoutStoreFactory: Could not instantiate " + className, e);
       throw new PortalException(e.getMessage());
     }
   }

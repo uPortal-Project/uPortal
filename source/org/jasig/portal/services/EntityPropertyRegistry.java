@@ -36,14 +36,15 @@
 
 package  org.jasig.portal.services;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.concurrency.CachingException;
-import  org.jasig.portal.services.entityproperties.*;
-import  org.jasig.portal.utils.*;
-import  org.w3c.dom.*;
-import  java.util.*;
-import  org.jasig.portal.groups.*;
-import  org.apache.xpath.*;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.services.entityproperties.EntityProperties;
+import org.jasig.portal.services.entityproperties.IEntityPropertyFinder;
+import org.jasig.portal.services.entityproperties.IEntityPropertyStore;
+import org.jasig.portal.utils.ResourceLoader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -108,8 +109,8 @@ public class EntityPropertyRegistry {
                 _instance.init();
             } catch (Exception e) {
                 _instance = null;
-                LogService.instance().log(LogService.ERROR, "Could not initialize EntityPropertyRegistry");
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, "Could not initialize EntityPropertyRegistry");
+                LogService.log(LogService.ERROR, e);
             }
         }
         return  _instance;
@@ -137,10 +138,10 @@ public class EntityPropertyRegistry {
         try {
             EntityCachingService.instance().remove(propsType, getPropKey(entityID));
         } catch (CachingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             Exception ee = e.getRecordedException();
             if (ee != null) {
-                LogService.instance().log(LogService.ERROR, ee);
+                LogService.log(LogService.ERROR, ee);
             }
         }
     }
@@ -156,10 +157,10 @@ public class EntityPropertyRegistry {
             ep = (EntityProperties)EntityCachingService.instance().get(propsType,
                     getPropKey(entityID));
         } catch (CachingException e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             Exception ee = e.getRecordedException();
             if (ee != null) {
-                LogService.instance().log(LogService.ERROR, ee);
+                LogService.log(LogService.ERROR, ee);
             }
         }
         if (ep == null) {
@@ -188,10 +189,10 @@ public class EntityPropertyRegistry {
             try {
                 EntityCachingService.instance().add(ep);
             } catch (CachingException e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
                 Exception ee = e.getRecordedException();
                 if (ee != null) {
-                    LogService.instance().log(LogService.ERROR, ee);
+                    LogService.log(LogService.ERROR, ee);
                 }
             }
         }

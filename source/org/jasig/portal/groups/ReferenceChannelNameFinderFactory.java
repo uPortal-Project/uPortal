@@ -35,9 +35,7 @@
 
  package org.jasig.portal.groups;
 
- import java.sql.SQLException;
- import org.jasig.portal.services.LogService;
-
+ 
 /**
  * Factory for creating <code>ReferencePersonNameFinders</code>.
  * @author Alex Vigdor

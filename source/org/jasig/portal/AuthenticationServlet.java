@@ -36,19 +36,22 @@
 
 package  org.jasig.portal;
 
-import  javax.servlet.http.HttpServlet;
-import  javax.servlet.http.HttpServletRequest;
-import  javax.servlet.http.HttpServletResponse;
-import  javax.servlet.http.HttpSession;
-import  javax.servlet.ServletException;
-import  java.io.IOException;
-import  java.util.*;
-import  org.jasig.portal.services.Authentication;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.PersonManagerFactory;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.utils.ResourceLoader;
-import  java.util.Properties;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.services.Authentication;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.ResourceLoader;
 
 /**
  * Receives the username and password and tries to authenticate the user.
@@ -81,7 +84,7 @@ public class AuthenticationServlet extends HttpServlet {
          while (propNames.hasMoreElements()) {
             String propName = (String)propNames.nextElement();
             String propValue = props.getProperty(propName);
-            //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::initializer() propValue/propName = " + propValue + "/" + propName);
+            //LogService.log(LogService.DEBUG, "AuthenticationServlet::initializer() propValue/propName = " + propValue + "/" + propName);
             if (propName.startsWith("credentialToken.")) {
                key = propName.substring(16);
                cHash.put(key, propValue);
@@ -185,19 +188,19 @@ public class AuthenticationServlet extends HttpServlet {
     Iterator tokenItr = tokens.keySet().iterator();
     while (tokenItr.hasNext()) {
       String ctxName = (String)tokenItr.next();
-      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() ctxName = " + ctxName);
+      //LogService.log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() ctxName = " + ctxName);
       String parmName = (String)tokens.get(ctxName);
       String parmValue = request.getParameter(parmName);
       // null value causes exception in context.authentication
       // alternately we could just not set parm if value is null
-      parmValue = (parmValue == null ? "" : parmValue);
+      parmValue = (parmValue == null ? "" : parmValue).trim();
       // The relationship between the way the properties are stored and the way
       // the subcontexts are named has to be closely looked at to make this work.
       // The keys are either "root" or the subcontext name that follows "root.". As
       // as example, the contexts ["root", "root.simple", "root.cas"] are represented
       // as ["root", "simple", "cas"].
       String key = (ctxName.startsWith("root.") ? ctxName.substring(5) : ctxName);
-      //LogService.instance().log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() key = " + key);
+      //LogService.log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() key = " + key);
       retHash.put(key, parmValue);
     }
     return (retHash);
