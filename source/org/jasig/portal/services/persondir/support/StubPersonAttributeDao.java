@@ -12,44 +12,41 @@ import java.util.Set;
 import org.jasig.portal.services.persondir.IPersonAttributeDao;
 
 /**
- * A mock IPersonAttributeDao to be used for testing.
+ * A stub IPersonAttributeDao to be used for testing.
+ * Backed by a single Map which this implementation will always return.
  * 
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class MockPersonAttributeDao implements IPersonAttributeDao {
+public class StubPersonAttributeDao implements IPersonAttributeDao {
     private Map backingMap;
     
-    /**
-     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getPossibleUserAttributeNames()
-     */
     public Set getPossibleUserAttributeNames() {
         if (this.backingMap == null) {
             return null;
         }
-        else {
-            return Collections.unmodifiableSet(this.backingMap.keySet());
-        }
+        
+        return Collections.unmodifiableSet(this.backingMap.keySet());
     }
     
-    /**
-     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.util.Map)
-     */
     public Map getUserAttributes(final Map seed) {
+        if (seed == null) {
+            throw new IllegalArgumentException("Illegal to invoke getUserAttributes(Map) with a null argument.");
+        }
         return this.backingMap;
     }
     
-    /**
-     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.lang.String)
-     */
     public Map getUserAttributes(final String uid) {
+        if (uid == null) {
+            throw new IllegalArgumentException("Illegal to invoke getUserAttributes(String) with a null argument.");
+        }
         return this.backingMap;
     }
     
     
     /**
-     * Get the Map which this mock object will return for all legal invocations of
+     * Get the Map which this stub object will return for all legal invocations of
      * attributesForUser()
      * 
      * @return Returns the backingMap.
@@ -59,7 +56,7 @@ public class MockPersonAttributeDao implements IPersonAttributeDao {
     }
     
     /**
-     * Set the Map which this mock object will return for all legal invocations of
+     * Set the Map which this stub object will return for all legal invocations of
      * attributesForUser().
      * 
      * @param backingMap The backingMap to set.
