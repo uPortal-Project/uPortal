@@ -23,20 +23,20 @@
                 <tr class="uportal-channel-table-header">
                   <td nowrap="nowrap">Option</td>
                   <td>
-                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
+                    <img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
                   <td nowrap="nowrap">Thumbnail</td>
                   <td>
-                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
+                    <img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td width="100%"><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
+                  <td width="100%"><img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
                 </tr>
                 <tr class="uportal-channel-table-header">
                   <td colspan="5">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="2" height="2"/>
+                          <img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -72,11 +72,11 @@
           </xsl:otherwise>
         </xsl:choose>
       </td>
-      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td>
         <img height="90" alt="{skin-name} thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
       </td>
-      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td class="uportal-channel-table-header">
         <table width="100%" border="0" cellspacing="0" cellpadding="2">
           <tr valign="top">
@@ -88,7 +88,7 @@
             </td>
           </tr>
           <tr valign="top">
-            <td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="4" height="4"/></td>
+            <td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="4" height="4"/></td>
             <td class="uportal-channel-text">
               <xsl:value-of select="skin-description"/>
             </td>
@@ -101,7 +101,7 @@
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
           <tr>
             <td>
-              <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/>
+              <img alt="" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/>
             </td>
           </tr>
         </table>

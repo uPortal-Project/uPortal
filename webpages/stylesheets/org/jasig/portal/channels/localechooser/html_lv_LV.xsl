@@ -12,7 +12,7 @@
       <tr class="uportal-background-dark">
         <!--
         <td nowrap="nowrap" class="uportal-background-dark" colspan="1" rowspan="1">
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+          <img alt="" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
           <strong>
    	  <xsl:value-of select="current-locale"/>
           </strong>
@@ -25,9 +25,9 @@
               <option value="sv_SE">Swedish</option>
               <option value="de_DE">German</option>
 	  </select>
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+          <img alt="" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
           <input type="submit" value="Go" name="Go" class="uportal-button"/>
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+          <img alt="" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
         </td>
       </tr>
     </table>

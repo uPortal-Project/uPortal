@@ -26,7 +26,7 @@ Välj en lämplig profil för webbläsaren, tack!</p>
         <p class="uportal-channel-subtitle">Val</p>
       </td>
       <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
+        <img alt="" border="0" width="10" height="10">
           <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
         </img>
       </td>
@@ -34,7 +34,7 @@ Välj en lämplig profil för webbläsaren, tack!</p>
         <p class="uportal-channel-subtitle">Profilnamn</p>
       </td>
       <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
+        <img alt="" border="0" width="10" height="10">
           <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
         </img>
       </td>

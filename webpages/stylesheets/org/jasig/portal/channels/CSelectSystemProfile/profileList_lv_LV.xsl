@@ -26,7 +26,7 @@ Lūdzu, izvēlieties atbilstošu profilu!</p>
         <p class="uportal-channel-subtitle">Darbība</p>
       </td>
       <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
+        <img alt="" border="0" width="10" height="10">
           <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
         </img>
       </td>
@@ -34,7 +34,7 @@ Lūdzu, izvēlieties atbilstošu profilu!</p>
         <p class="uportal-channel-subtitle">Profila nosaukums</p>
       </td>
       <td class="uportal-background-light" valign="bottom">
-        <img alt="interface image" border="0" width="10" height="10">
+        <img alt="" border="0" width="10" height="10">
           <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
         </img>
       </td>

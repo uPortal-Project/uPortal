@@ -36,7 +36,7 @@
                           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                             <tr>
                               <td>
-                                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                                <img alt="" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                               </td>
                             </tr>
                           </table>
@@ -61,7 +61,7 @@
 
                       <tr class="uportal-channel-table-header" valign="bottom">
                         <td align="center" nowrap="nowrap">
-                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+                          <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Help<img alt="" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
 
 
                         <td width="100%">Channel Settings</td>
@@ -71,7 +71,7 @@
                           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                             <tr>
                               <td>
-                                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                                <img alt="" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                               </td>
                             </tr>
                           </table>
@@ -91,7 +91,7 @@
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
                           <td>
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                            <img alt="" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                           </td>
                         </tr>
                       </table>
@@ -142,7 +142,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
               <tr>
                 <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                  <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                 </td>
               </tr>
             </table>
@@ -436,12 +436,12 @@
   </xsl:template>
 
   <xsl:template match="example">
-    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <img alt="" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small">[example - <xsl:value-of select="."/>]</span>
   </xsl:template>
 
   <xsl:template match="units">
-    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <img alt="" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small">
       <xsl:value-of select="."/>
     </span>

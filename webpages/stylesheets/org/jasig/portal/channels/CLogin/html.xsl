@@ -57,11 +57,11 @@ $Revision$
                 <tr class="uportal-background-light">
                     <td width="100%" class="uportal-channel-text" nowrap="nowrap">
                         <input type="hidden" name="action" value="login"/>
-                        <span class="uportal-label">Name:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+                        <span class="uportal-label">Name:<img alt="" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
                             <input class="uportal-input-text" type="text" name="userName" size="15" value="{failure/@attemptedUserName}"/>
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="1"/>Password:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+                            <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1"/>Password:<img alt="" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
                             <input class="uportal-input-text" type="password" name="password" size="15"/>
-                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="1"/>
+                            <img alt="" src="{$mediaPath}/transparent.gif" width="8" height="1"/>
                             <input type="submit" value="Login" name="Login" class="uportal-button"/>
                         </span>
                     </td>

@@ -317,7 +317,7 @@
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
               <td>
-                <img alt="interface image" src="{$baseMediaURL}/transparent.gif" width="1" height="1"/>
+                <img alt="" src="{$baseMediaURL}/transparent.gif" width="1" height="1"/>
               </td>
             </tr>
           </table>
@@ -331,7 +331,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="4">
       <tr class="uportal-background-content">
         <td class="uportal-background-light">
-          <img alt="interface image" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
+          <img alt="" src="{$baseMediaURL}/transparent.gif" width="2" height="2" border="0"/>
         </td>
       </tr>
       <tr class="uportal-background-content">

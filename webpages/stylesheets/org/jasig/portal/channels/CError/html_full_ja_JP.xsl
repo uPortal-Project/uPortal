@@ -62,7 +62,7 @@
                   <xsl:value-of select="string($baseMediaURL)"/>error_refresh.gif</xsl:attribute>
               </img>
             </a>
-            <img alt="interface image" border="0" width="10" height="10">
+            <img alt="" border="0" width="10" height="10">
               <xsl:attribute name="src">
                 <xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
             </img>
@@ -76,7 +76,7 @@
                   <xsl:value-of select="string($baseMediaURL)"/>error_reboot.gif</xsl:attribute>
               </img>
             </a>
-            <img alt="interface image" border="0" width="10" height="10">
+            <img alt="" border="0" width="10" height="10">
               <xsl:attribute name="src">
                 <xsl:value-of select="string($baseMediaURL)"/>transparent.gif</xsl:attribute>
             </img>

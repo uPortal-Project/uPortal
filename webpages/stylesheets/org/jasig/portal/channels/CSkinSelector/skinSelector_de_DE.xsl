@@ -34,14 +34,14 @@
 							<tr class="uportal-channel-table-header">
 								<td>Option</td>
 								<td>
-									<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+									<img alt="" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
 								</td>
 								<td>Thumbnail</td>
 								<td>
-									<img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+									<img alt="" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
 								</td>
 								<td width="100%">
-									<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+									<img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 								</td>
 							</tr>
 							<tr class="uportal-channel-table-header">
@@ -49,7 +49,7 @@
 									<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
 										<tr>
 											<td>
-												<img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+												<img alt="" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
 											</td>
 										</tr>
 									</table>
@@ -87,13 +87,13 @@
 				</xsl:choose>
 			</td>
 			<td>
-				<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+				<img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 			</td>
 			<td>
 				<img height="90" alt="{Skin-Name} Thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
 			</td>
 			<td>
-				<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+				<img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 			</td>
 			<td class="uportal-channel-table-header">
 				<table width="100%" border="0" cellspacing="0" cellpadding="2">
@@ -106,7 +106,7 @@
 						</td>
 					</tr>
 					<tr valign="top">
-						<td nowrap="nowrap" class="uportal-channel-table-header">Beschreibung:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/></td>
+						<td nowrap="nowrap" class="uportal-channel-table-header">Beschreibung:<img alt="" src="{$mediaPath}/transparent.gif" width="4" height="4"/></td>
 						<td class="uportal-channel-text">
 							<xsl:value-of select="skin-description"/>
 						</td>
@@ -119,7 +119,7 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
 					<tr>
 						<td>
-							<img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+							<img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 						</td>
 					</tr>
 				</table>
