@@ -307,7 +307,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr align="left" valign="bottom" class="uportal-background-content">
         <td class="uportal-channel-title">
-          <a name="{@ID}"><xsl:value-of select="@title"/></a>
+          <xsl:value-of select="@title"/>
         </td>
         <td align="right" nowrap="nowrap" class="uportal-background-content">
           <xsl:choose>
@@ -378,12 +378,12 @@
     <xsl:if test="not(//focused)">
       <xsl:choose>
         <xsl:when test="@minimized='true'">
-          <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}">
+          <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false">
             <img alt="maximize" title="maximize" src="{$mediaPath}/{$skin}/controls/max.gif" width="16" height="16" border="0"/>
           </a>
         </xsl:when>
         <xsl:otherwise>
-          <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@ID}">
+          <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true">
             <img alt="minimize" title="minimize" src="{$mediaPath}/{$skin}/controls/min.gif" width="16" height="16" border="0"/>
           </a>
         </xsl:otherwise>
