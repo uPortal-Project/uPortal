@@ -48,6 +48,7 @@ import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import java.util.Vector;
+import java.util.Enumeration;
 import java.util.Collection;
 
   /**
@@ -189,8 +190,11 @@ public class CContentSubscriber extends FragmentManager {
 		     } 
 		     
 		    
-		     xslt.setStylesheetParameter("channelState", channelState );
-		     /*xslt.setStylesheetParameter("uPcCS_action", action );
+		    
+		     passAllParameters(xslt);
+		      
+		     /*xslt.setStylesheetParameter("channelState", channelState );
+		     xslt.setStylesheetParameter("uPcCS_action", action );
 		     xslt.setStylesheetParameter("channelState", channelState );
 		     xslt.setStylesheetParameter("uPcCS_fragmentID", fragmentId );
 		     xslt.setStylesheetParameter("uPcCS_channelID", channelId );
@@ -202,6 +206,12 @@ public class CContentSubscriber extends FragmentManager {
 			 
 	}		 	
 
+    private void passAllParameters ( XSLT xslt ) {
+       for ( Enumeration params = runtimeData.getParameterNames(); params.hasMoreElements(); ) {
+         String paramName = (String) params.nextElement();
+         xslt.setStylesheetParameter(paramName,runtimeData.getParameter(paramName));
+       }  	 
+    }
 
 	protected Collection getFragments() throws PortalException {
 		 return alm.getSubscribableFragments();
