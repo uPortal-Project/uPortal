@@ -20,9 +20,8 @@
   <big><br>
  Contents<br>
   </big>        
-      <blockquote><a href="#Goals">Goals</a><br>
-    <a href="#The_Need_for_a_Concurrency_Framework">The Need for a Concurrency
- Framework</a><br>
+      <blockquote><a href="#Introduction">Introduction</a><br>
+    <a href="#Goals_and_Rationale">Goals and Rationale</a><br>
     <a href="#Package_Structure">Package Structure</a><br>
     <a href="#Caching_API">Caching API</a><br>
     <a href="#Locking_API">Locking API</a><br>
@@ -32,7 +31,8 @@
   </blockquote>
   <br>
   <br>
-   <big><a name="Goals"></a>Goals</big><br>
+
+   <big><a name="Introduction"></a>Introduction</big><br>
    
       <p>   The concurrency packages, org.jasig.portal.concurrency.*, are
 offered as  building blocks for portal developers who want to create persistence
@@ -45,8 +45,8 @@ uniquely  identified by a type and a key.&nbsp; As currently implemented,
 these packages  cache entities in memory for fast access and lock entities
 for either reading  or writing.&nbsp; Perhaps in the future, we will abstract
 the operations of creating, finding and updating them. &nbsp;</p>
-    <big><a name="The_Need_for_a_Concurrency_Framework"></a>The Need for
-a Concurrency Framework</big><br>
+
+    <big><a name="Goals_and_Rationale"></a>Goals and Rationale</big><br>
    
       <p>   The need for these services arose because of performance problems
 in the  groups framework.&nbsp; Groups are relatively expensive to create
