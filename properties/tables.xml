@@ -368,6 +368,15 @@
     <primary-key>MEMBER_IS_GROUP</primary-key>
   </table>
 
+  <!-- A table that is used by CPermissionsManager, distributed from the JA-SIG Clearinghouse -->
+  <table>
+    <name>UPC_PERM_MGR</name>
+    <columns>
+      <column> <name>IPERMISSIBLE_CLASS</name> <type>LONGVARCHAR</type>                    </column>
+    </columns>
+    <not-null>IPERMISSIBLE_CLASS</not-null>
+  </table>
+
 </tables>
 
 

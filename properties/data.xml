@@ -2206,7 +2206,7 @@
         <column><name>ACTIVITY</name><value>VIEW</value></column>
         <column><name>TARGET</name><value>DETAILS</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
-      </row>      
+      </row>
       <row>
         <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
         <column><name>PRINCIPAL</name><value>3.0</value></column>
@@ -2653,6 +2653,16 @@
             </folder>
           </xbel>
           ]]></value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- A table that is used by CPermissionsManager, distributed from the JA-SIG Clearinghouse -->
+  <table>
+    <name>UPC_PERM_MGR</name>
+    <rows>
+      <row>
+        <column><name>IPERMISSIBLE_CLASS</name><value>org.jasig.portal.channels.permissionsmanager.PermissiblePublishSubscribeChannels</value></column>
       </row>
     </rows>
   </table>
