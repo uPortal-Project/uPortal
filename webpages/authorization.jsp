@@ -22,9 +22,7 @@ if (bAuthorized)
 
   while (e.hasMoreElements ())
   {
-    String sAttributeName = (String) e.nextElement ();
-    System.out.println (sAttributeName);
-    session.removeAttribute (sAttributeName);
+    session.removeAttribute ((String) e.nextElement ());
   }
 
   // Put the username in the session
