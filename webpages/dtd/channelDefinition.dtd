@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT channelDef (description, params)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT params (step+)>
+<!ELEMENT step (ID, name, description, parameter+)>
+<!ELEMENT ID (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT parameter (name, label, modify, type, defaultValue?)>
+<!ELEMENT modify (#PCDATA)>
+<!ELEMENT label (#PCDATA)>
+<!ELEMENT defaultValue (#PCDATA)>
+<!ELEMENT type (data, base, display?, length?, maxlength?, restriction?)>
+<!ELEMENT data (#PCDATA)>
+<!ELEMENT base (#PCDATA)>
+<!ELEMENT display (#PCDATA)>
+<!ELEMENT length (#PCDATA)>
+<!ELEMENT maxlength (#PCDATA)>
+<!ELEMENT restriction (value*, min?, max?)>
+<!ATTLIST restriction
+	type (enumeration | range) #REQUIRED
+>
+<!ELEMENT max (#PCDATA)>
+<!ELEMENT min (#PCDATA)>
+<!ELEMENT value (#PCDATA)>
+<!ATTLIST value
+	default (true | false) #IMPLIED
+>
