@@ -1,40 +1,36 @@
 /**
- * University of British Columbia ("UBC") will freely share software
- * registered in the JA-SIG Clearing House with institutions of
- * higher-education for their non-profit use.  The borrowing institution
- * will not share or distribute the software without the consent of
- * UBC.  By its use, the borrowing institution agrees to indemnify
- * and hold harmless UBC against all loss, cost, damage, liability,
- * injury or expense, including reasonable attorneys' fees, arising out
- * of their use of the software.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
- * Those desiring to incorporate this software into commercial products
- * or use for commercial purposes should contact:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- *   Associate Director of Info Sys, ITServices, UBC
- *   6356 Agricultural Road
- *   Vancouver, B.C.,  CANADA
- *   V6T 1Z2
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
  *
- *   Tel: 604-822-6611
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
  *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
  *
- * SOFTWARE IS PROVIDED "AS IS."  TO THE MAXIMUM EXTENT PERMITTED BY LAW,
- * UBC DISCLAIMS ALL WARRANTIES OF ANY KIND, EITHER EXPRESS OR
- * IMPLIED, INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. UBC DOES
- * NOT WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN SOFTWARE
- * WILL MEET ANY REQUIREMENTS OR NEEDS OF THE BORROWING INSTITUTION, OR
- * THAT SOFTWARE WILL OPERATE ERROR FREE, OR IN AN UNINTERRUPTED FASHION,
- * OR THAT ANY DEFECTS OR ERRORS IN SOFTWARE WILL BE CORRECTED, OR THAT
- * SOFTWARE IS COMPATIBLE WITH ANY PARTICULAR PLATFORM.
-
- * IN NO EVENT WILL UBC BE LIABLE TO ANY BORROWING INSTITUTION OR
- * ANY THIRD PARTY FOR ANY INCIDENTAL OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, WITHOUT LIMITATION, INDIRECT, SPECIAL, PUNITIVE, OR
- * EXEMPLARY DAMAGES) ARISING OUT OF THE USE OF OR INABILITY TO USE
- * SOFTWARE, OR FOR ANY CLAIM BY ANY OTHER PARTY, EVEN IF UBC HAS
- * BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
 /**
