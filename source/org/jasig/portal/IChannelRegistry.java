@@ -46,11 +46,11 @@ import org.w3c.dom.*;
  */
 
 public interface IChannelRegistry {
-    public Document getRegistryXML(String category, String role);
+    public Document getRegistryXML(String catID, String role);
     public void setRegistryXML(String registryXML);
-    public Document getChannelTypesXML();
-    public Document getChannelCatsXML();
+    public Document getTypesXML(String role);
+    public Document getCategoryXML(String role);
     public void removeChannel(String catID[], String chanID, String role[]);
-    public void addChannel(String catID[], String chanXML, String role[]);
+    public void addChannel(int id, String title, Document doc, String catID[]);
 }
 
