@@ -43,45 +43,45 @@ $Revision$
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="showLockUnlock">true</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
-  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <!--<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
   <!--remove for CVS-->
   <!--<xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>-->
   <!--end remove-->
 
   <xsl:template match="layout">
     <!--remove for CVS-->
-<!--    <html>
+    <!--    <html>
       <head>
         <title>uPortal 2.0</title>
         <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
       </head>-->
-      <!--end remove-->
+    <!--end remove-->
 
-      <xsl:call-template name="optionMenu"/>
-      <br/>
-      <!--Begin Layout Table -->
-      <table width="100%" border="0" cellspacing="0" cellpadding="20">
-        <tr align="center" valign="top" class="uportal-background-dark">
-          <td class="uportal-background-dark">
-            <!--Begin Layout Sub-Table -->
-            <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td>
-                  <xsl:call-template name="tabRow"/>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <xsl:call-template name="contentRow"/>
-                </td>
-              </tr>
-            </table>
-            <!--End Layout Sub-Table -->
-          </td>
-        </tr>
-      </table>
-      <!--End Layout Table -->
-      <!--remove for CVS-->
+    <xsl:call-template name="optionMenu"/>
+    <br/>
+    <!--Begin Layout Table -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="20">
+      <tr align="center" valign="top" class="uportal-background-dark">
+        <td class="uportal-background-dark">
+          <!--Begin Layout Sub-Table -->
+          <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td>
+                <xsl:call-template name="tabRow"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <xsl:call-template name="contentRow"/>
+              </td>
+            </tr>
+          </table>
+          <!--End Layout Sub-Table -->
+        </td>
+      </tr>
+    </table>
+    <!--End Layout Table -->
+    <!--remove for CVS-->
     <!--</html>-->
     <!--end remove-->
   </xsl:template>
@@ -606,13 +606,22 @@ $Revision$
                             </a>
                           </td>
                           <td class="uportal-background-med">
-                            <img src="{$mediaPath}/transparent.gif" width="12" height="12"/>
+                            <img src="{$mediaPath}/blank.gif" width="16" height="16"/>
                           </td>
                           <td class="uportal-background-med">
-                            <img src="{$mediaPath}/transparent.gif" width="12" height="12"/>
+                            <img src="{$mediaPath}/blank.gif" width="16" height="16"/>
                           </td>
                           <td class="uportal-background-med">
-                            <img src="{$mediaPath}/transparent.gif" width="12" height="12"/>
+                            <xsl:choose>
+                              <xsl:when test="not(@unremovable='true') and not(ancestor-or-self::*[@immutable='true'])">
+                                <a href="{$baseActionURL}?action=deleteChannel&amp;elementID={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')">
+                                  <img alt="Click to remove this channel" src="{$mediaPath}/remove.gif" width="16" height="16" border="0"/>
+                                </a>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <img src="{$mediaPath}/blank.gif" width="16" height="16"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
                           </td>
                         </tr>
                         <tr>
@@ -1371,5 +1380,4 @@ $Revision$
       </tr>
     </table>
   </xsl:template>
-</xsl:stylesheet>
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
