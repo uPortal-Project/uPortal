@@ -48,8 +48,12 @@ import  org.jasig.portal.security.PersonManagerFactory;
 import  org.jasig.portal.services.LogService;
 
 
+
 /**
- * Caches UserInstance objects
+ * Determines which user instance object to use for a given user.
+ *
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @version $Revision 1.1$
  */
 public class UserInstanceManager {
 
@@ -61,7 +65,7 @@ public class UserInstanceManager {
    * @param request Incoming HttpServletRequest
    * @return UserInstance object associated with the given request
    */
-  public static UserInstance getUserInstance (HttpServletRequest request) throws PortalSecurityException {
+  public static UserInstance getUserInstance(HttpServletRequest request) throws PortalSecurityException {
     IPerson person = null;
     try {
       // Retrieve the person object that is associated with the request
@@ -84,9 +88,13 @@ public class UserInstanceManager {
         }
         guestUserInstance.registerSession(request);
         userInstance = guestUserInstance;
-    } 
-    else {
-      userInstance = new UserInstance(person);
+    } else {
+        if(person.getSecurityContext().isAuthenticated()) {
+            userInstance = new UserInstance(person);
+        } else {
+            // we can't allow for unauthenticated, non-guest user to come into the system
+            throw new PortalSecurityException("System does not allow for unauthenticated non-guest users.");
+        }
     }
     // Put the user instance in the user's session
     request.getSession(false).setAttribute("org.jasig.portal.UserInstance", userInstance);
