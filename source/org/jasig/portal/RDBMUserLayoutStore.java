@@ -556,9 +556,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       profile.setProfileId(id);
       Statement stmt = con.createStatement();
       try {
-        String sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION) VALUES ("
+        String sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
             + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
-            + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "')";
+            + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
         LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::addUserProfile(): " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
