@@ -59,7 +59,6 @@
       <column> <name>EXTERNAL_ID</name>    <type>INTEGER</type>                   </column>
       <column> <name>CHAN_ID</name>        <type>INTEGER</type>                   </column>
       <column> <name>ID_TAG</name>         <type>VARCHAR</type> <param>35</param> </column>
-      <column> <name>PRIORITY</name>       <type>INTEGER</type>                   </column>
       <column> <name>NAME</name>           <type>VARCHAR</type> <param>35</param> </column>
       <column> <name>TYPE</name>           <type>VARCHAR</type> <param>35</param> </column>
       <column> <name>HIDDEN</name>         <type>VARCHAR</type> <param>1</param>  </column>
@@ -94,7 +93,6 @@
       <column> <name>CHAN_PUBL_DT</name>     <type>TIMESTAMP</type>                    </column>
       <column> <name>CHAN_APVL_ID</name>     <type>INTEGER</type>                      </column>
       <column> <name>CHAN_APVL_DT</name>     <type>TIMESTAMP</type>                    </column>
-      <column> <name>CHAN_PRIORITY</name>    <type>INTEGER</type>                      </column>
       <column> <name>CHAN_TIMEOUT</name>     <type>INTEGER</type>                      </column>
       <column> <name>CHAN_MINIMIZABLE</name> <type>VARCHAR</type>   <param>1</param>   </column>
       <column> <name>CHAN_EDITABLE</name>    <type>VARCHAR</type>   <param>1</param>   </column>
@@ -278,7 +276,7 @@
       <column> <name>SS_URI</name>              <type>VARCHAR</type>     <param>255</param> </column>
       <column> <name>SS_DESCRIPTION_URI</name>  <type>VARCHAR</type>     <param>255</param> </column>
       <column> <name>SS_DESCRIPTION_TEXT</name> <type>LONGVARCHAR</type>                    </column>
-      <column> <name>STRUCT_SS_ID</name>		<type>INTEGER</type> </column>	
+      <column> <name>STRUCT_SS_ID</name>		<type>INTEGER</type> </column>
       <column> <name>SAMPLE_ICON_URI</name>      <type>VARCHAR</type> <param>255</param> </column>
       <column> <name>SAMPLE_URI</name>      <type>VARCHAR</type> <param>255</param> </column>
       <column> <name>MIME_TYPE</name>      <type>VARCHAR</type> <param>30</param> </column>
