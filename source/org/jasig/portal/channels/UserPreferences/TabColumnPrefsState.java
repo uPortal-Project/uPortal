@@ -46,6 +46,7 @@ import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.ChannelRegistryManager;
@@ -131,7 +132,7 @@ final class TabColumnPrefsState extends BaseState
     this.internalState = new DefaultState(this);
 
     // initialize stylesheet set
-    set = new StylesheetSet(this.getClass().getResource(sslLocation).toString());
+    set = new StylesheetSet(ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation));
   }
 
   public TabColumnPrefsState(CUserPreferences context) throws PortalException
@@ -139,7 +140,7 @@ final class TabColumnPrefsState extends BaseState
     super(context);
     this.internalState = new DefaultState(this);
     // initialize stylesheet set
-    set = new StylesheetSet(this.getClass().getResource(sslLocation).toString());
+    set = new StylesheetSet(ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation));
   }
 
   public void setStaticData (ChannelStaticData sd) throws PortalException
@@ -919,9 +920,7 @@ final class TabColumnPrefsState extends BaseState
 
           // Stylesheet transformer
           String xslURI = set.getStylesheetURI("default", runtimeData.getBrowserInfo());
-          System.out.println("xsltUri is : " + xslURI);
-          System.out.println("this class is : " + this.getClass().toString());
-          TransformerHandler th = saxTFactory.newTransformerHandler(XSLT.getTemplates(this.getClass().getResource(xslURI).toString()));
+          TransformerHandler th = saxTFactory.newTransformerHandler(XSLT.getTemplates(ResourceLoader.getResourceAsURLString(this.getClass(), xslURI)));
           th.setResult(new SAXResult(out));
           Transformer sstr = th.getTransformer();
 
