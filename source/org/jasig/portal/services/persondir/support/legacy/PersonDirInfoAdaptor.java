@@ -22,7 +22,7 @@ import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.rdbm.RDBMServicesDataSource;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;

@@ -15,7 +15,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.jasig.portal.utils.ResourceLoader;

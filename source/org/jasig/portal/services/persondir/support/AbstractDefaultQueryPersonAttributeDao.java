@@ -11,10 +11,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 
 
 /**
- * Several {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao}
+ * Several {@link org.jasig.portal.services.persondir.IPersonAttributeDao}
  * implementations need to provide a default attribute for running queries. The
  * following code is generally common between them.
  * 
@@ -38,7 +39,7 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
      * as the value. {@link IPersonAttributeDao#getUserAttributes(Map)} is 
      * called with the new {@link Map} as the argument.
      * 
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.lang.String)
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.lang.String)
      */
     public final Map getUserAttributes(final String uid) {
         final Map seed = Collections.singletonMap(this.getDefaultAttributeName(), uid);

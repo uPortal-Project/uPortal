@@ -21,7 +21,7 @@ public class EchoPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     /**
      * Returns a duplicate of the seed it is passed.
      * @return a Map equal to but not the same reference as the seed.
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
     public Map getUserAttributes(final Map seed) {
         return new HashMap(seed);
@@ -30,7 +30,7 @@ public class EchoPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     /**
      * Possible attributes are unknown; will always return <code>null</code>.
      * @return null
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getPossibleUserAttributeNames()
      */
     public Set getPossibleUserAttributeNames() {
         return null;

@@ -22,7 +22,7 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
-import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 
 /**
  * Attempts to authenticate a user and retrieve attributes

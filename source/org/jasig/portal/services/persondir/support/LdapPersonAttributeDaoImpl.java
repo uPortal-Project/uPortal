@@ -24,6 +24,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.jasig.portal.ldap.ILdapServer;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -78,7 +79,7 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     /**
      * Returned {@link Map} will have values of String or String[] or byte[]
      * 
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
     public Map getUserAttributes(final Map seed) {
         //Checks to make sure the argument & state is valid

@@ -7,7 +7,7 @@ package org.jasig.portal.services.persondir.support.legacy;
 
 import java.util.Map;
 
-import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 
 import junit.framework.TestCase;
 

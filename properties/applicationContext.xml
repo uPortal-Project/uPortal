@@ -17,7 +17,7 @@
 						<value>personAttributeDao</value>
 					</constructor-arg>
 					<constructor-arg index="1" type="java.lang.String">
-						<value>org.jasig.portal.services.persondir.support.IPersonAttributeDao</value>
+						<value>org.jasig.portal.services.persondir.IPersonAttributeDao</value>
 					</constructor-arg>
 				</bean>
 				<bean class="org.jasig.portal.tools.checks.XalanVersionCheck">

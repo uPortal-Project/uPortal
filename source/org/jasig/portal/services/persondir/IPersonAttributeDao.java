@@ -3,7 +3,7 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.services.persondir.support;
+package org.jasig.portal.services.persondir;
 
 import java.util.Map;
 import java.util.Set;

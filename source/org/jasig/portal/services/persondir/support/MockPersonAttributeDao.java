@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
+
 /**
  * A mock IPersonAttributeDao to be used for testing.
  * 
@@ -19,7 +21,7 @@ public class MockPersonAttributeDao implements IPersonAttributeDao {
     private Map backingMap;
     
     /**
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getPossibleUserAttributeNames()
      */
     public Set getPossibleUserAttributeNames() {
         if (this.backingMap == null) {
@@ -31,14 +33,14 @@ public class MockPersonAttributeDao implements IPersonAttributeDao {
     }
     
     /**
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
     public Map getUserAttributes(final Map seed) {
         return this.backingMap;
     }
     
     /**
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.lang.String)
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.lang.String)
      */
     public Map getUserAttributes(final String uid) {
         return this.backingMap;

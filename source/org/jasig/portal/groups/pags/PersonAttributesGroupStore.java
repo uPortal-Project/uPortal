@@ -36,7 +36,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 
 /**
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine

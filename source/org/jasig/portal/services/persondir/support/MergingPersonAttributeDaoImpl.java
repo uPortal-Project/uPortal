@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.portal.services.persondir.support.merger.MultivaluedAttributeMerger;
 
@@ -49,7 +50,7 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
      * instances. The results from each DAO are merged into the result {@link Map}
      * by the configured {@link IAttributeMerger}. 
      * 
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
     public Map getUserAttributes(final Map seed) {
         //Ensure the arguements and state are valid
@@ -104,7 +105,7 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
      * invoking this IPersonAttributeDao implementation are not the union
      * of the attributes declared by the underlying PersonAttributeDaos.
      * 
-     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
+     * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getPossibleUserAttributeNames()
      */
     public Set getPossibleUserAttributeNames() {
         final Set attrNames = new HashSet();
