@@ -1,42 +1,35 @@
 <%@ page isErrorPage="true" %>
+<%@ page import="org.jasig.portal.Logger" %>
 <html>
 <head>
 <title>Portal: An error has occured</title>
+<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-<table border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" width="100%">
-    <tr> 
-      <td>&nbsp;&nbsp;</td> 
-      <td width="100%">
+<body>
 
-<%if (exception != null){ %>
-<b><font size="4" face="Arial, Helvetica, sans-serif">
-This a general exception handling page for the portal application.<BR>
-</font></b>
-<UL>
-<font size="2" face="Verdana, Arial, Helvetica, sans-serif">
-<LI><%=exception.toString()%>
-</font>
-</UL>
-<pre>
 <%
-  // Change true to false to disable the stack trace
-  
-  if (true)
-  {
-    java.io.ByteArrayOutputStream bo = new java.io.ByteArrayOutputStream ();
-    PrintWriter ps = new PrintWriter (bo);
-    exception.printStackTrace(ps);
-    ps.close ();
-    out.print (bo.toString ());
-  }
+if (exception != null)
+{ 
+  Logger.log (Logger.ERROR, exception);
 %>
-</pre>
-<%}%>
 
-</td>
-    </tr>
-</table>
+<%-- Error message that user will see when an exception is thrown --%>
+<p><strong>An error has occurred.  Check the portal log for details.</strong>
+
+<%
+}
+else
+{
+%>
+
+<%-- Display text when page is loaded without an exception --%>
+<p>You are looking at <code>error.jsp</code>.  If an exception had been thrown 
+in one of the <code>.jsp</code> files, this page will be loaded and the stack trace
+will be logged.
+
+<%
+}
+%>
 </body>
 </html>
