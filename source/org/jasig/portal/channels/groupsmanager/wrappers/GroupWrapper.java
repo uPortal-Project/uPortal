@@ -76,6 +76,7 @@ public class GroupWrapper extends GroupMemberWrapper {
          rootElem.setAttribute("key", gm.getKey());
          rootElem.setAttribute("entityType",gm.getLeafType().getName());
          rootElem.setAttribute("type", gm.getType().getName());
+         rootElem.setAttribute("editable", String.valueOf(entGrp.isEditable()));
          /** @todo uncomment next line when IEntityGroup answers isEditable()
           *  Have to make sure that the root groups are always set to "false".
           *  The default value is true (i.e. if attibute is not set.*/
