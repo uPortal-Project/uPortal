@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -54,6 +55,7 @@ import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.services.LogService;
 
 /**
  * ConvertProfilesToAL prepares and upgraded 2.1 database to work with
@@ -106,6 +108,7 @@ public class ConvertProfilesToAL {
       }
       // delete the rest
       deleteUserProfiles(true, lastTemplateUser);
+      createTemplateProfiles(lastTemplateUser);
    }  
    
    public static List getUserIds(int lastTemplateUser) throws PortalException {
@@ -219,5 +222,48 @@ public class ConvertProfilesToAL {
       }
       System.out.println("done");
    }
-
+   
+   public static void createTemplateProfiles(int lastTemplateUser) throws PortalException {
+      System.out.println("creating template profiles...");
+      Connection con = RDBMServices.getConnection();
+      try {
+         String query = "SELECT USER_ID, USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID > ?";
+         String templateQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION "+
+                                "FROM UP_USER_PROFILE WHERE USER_ID = ?";
+         String insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION) "+
+                         "VALUES (?, ?, ?, ?)";
+         RDBMServices.PreparedStatement selectPs = new RDBMServices.PreparedStatement(con, query);
+         RDBMServices.PreparedStatement templatePs = new RDBMServices.PreparedStatement(con, templateQuery);
+         RDBMServices.PreparedStatement insertPs = new RDBMServices.PreparedStatement(con, insert);
+         selectPs.setInt(1, lastTemplateUser);
+         int templateId;
+         try {
+            ResultSet rs = selectPs.executeQuery();
+            while (rs.next()) {
+               int id = rs.getInt(1);
+               templateId = rs.getInt(2);
+               templatePs.setInt(1, templateId);
+               ResultSet rs2 = templatePs.executeQuery();
+               while(rs2.next()) {
+                  insertPs.setInt(1, id);
+                  insertPs.setInt(2, rs2.getInt(2));
+                  insertPs.setString(3, rs2.getString(3));
+                  insertPs.setString(4, rs2.getString(4));
+                  insertPs.executeUpdate();
+               }
+               rs2.close();
+            }
+         } catch (SQLException sqle) {
+            throw new PortalException(sqle);
+         } finally {
+            selectPs.close();
+            templatePs.close();
+            insertPs.close();
+         }
+      } catch (SQLException sqle) {
+         throw new PortalException(sqle);
+      } finally {
+         RDBMServices.releaseConnection(con);
+      }      
+   }
 }
