@@ -1,6 +1,6 @@
 $Id$
 
-uPortal 2.4.2 Distribution
+uPortal Distribution
 --------------------------
 
 Purpose
@@ -109,47 +109,3 @@ Please report bugs and suggestions:
 uPortal website:
 
  http://www.uportal.org
-
-
-Release Notes - uPortal - Version 2.4.2
----------------------------------------
-************
-* Database *
-************
-
--UP-775 (Bugzilla 1825), Designated UP_ENTITY_LOCK.EXPIRATION_TIME as a primary key.
-
-
-**************
-* Properties *
-**************
-
-(no changes)
-
-
-*******************
-* Issues resolved *
-*******************
-
--UP-338 (Bugzilla 1081), Deprecated RENDERING_DONE portal event.
--UP-476 (Bugzilla 1499), Used lower case user name within Ldap group store.
--UP-744 (Bugzilla 1787), Fixed memory leak by changing IPerson cache from a WeakHashMap to a WeakValueMap.
--UP-745 (Bugzilla 1789), Fixed memory leak by making CError pass events to the channel it's replacing.
--UP-746 (Bugzilla 1790), Fixed memory leak by making CSecureInfo pass events to the channel it's replacing.
--UP-747 (Bugzilla 1791), Fixed download worker URLs for portlets.
--UP-748 (Bugzilla 1793), Fixed potential infinite recursion in RestrictedPerson.
--UP-749 (Bugzilla 1794), Fixed survival of portlet render parameter after browser refresh.
--UP-753 (Bugzilla 1799), Restricted access to ChannelFactory's channel cache, synchronized instantiateChannel method.
--UP-759 (Bugzilla 1805), Changed deployment location of xalan.jar to Tomcat's common/endorsed directory.
--UP-760 (Bugzilla 1806), Changed MemoryEntityLockStore to expire locks correctly.
--UP-761 (Bugzilla 1807), Fixed entity lock service to allow a lock owner to get more than one READ lock.
--UP-770 (Bugzilla 1820), Added note to README file about problems caused by HSQLDB version conflicts.
--UP-772 (Bugzilla 1822), Copied all files from source to build directories except CVS and java files.
--UP-775 (Bugzilla 1825), Fixed entity lock service to allow duplicate read locks for a single owner.
--UP-776 (Bugzilla 1826), Fixed name of resource-ref in WebApplicationMarshaller.
--UP-778 (Bugzilla 1828), Logged stack trace in AggregatedLayoutManager.loadUserLayout().
--UP-779 (Bugzilla 1829), Removed redundant constants from ChannelRenderer.
--UP-780 (Bugzilla 1830), Eliminated "unknown additional descriptor warning" when using ChainingSecurityContext.
--UP-796,    --------   , Fixed container() method for PAGS groups.
--UP-798,    --------   , Fixed implementation of GroupService.isComposite() method.
--UP-800,    --------   , Added message to Logger.properties explaining deployment of properties file.
