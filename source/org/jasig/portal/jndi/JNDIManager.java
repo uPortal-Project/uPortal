@@ -104,27 +104,48 @@ public class JNDIManager {
       }
       // Get the portal wide context
       Context context = getContext();
+      
+      // Get the users subcontext
+      Context usersContext = (Context)context.lookup("users");
+      
+      // Create a subcontext for this specific useer
+      Context thisUsersContext = (Context)usersContext.createSubcontext(person.getID() + "");
+      
+      Context thisUsersChannelIDs = (Context)thisUsersContext.createSubcontext("channel-ids");
+      
       // Get the list of channels in the user's layout
       NodeList channelNodes = userLayout.getElementsByTagName("channel");
       Node fname = null;
       Node instanceid = null;
       // Parse through the channels and populate the JNDI
       for (int i = 0; i < channelNodes.getLength(); i++) {
+        // Attempt to get the fname and instance ID from the channel
         fname = channelNodes.item(i).getAttributes().getNamedItem("fname");
         instanceid = channelNodes.item(i).getAttributes().getNamedItem("ID");
         if (fname != null && instanceid != null) {
+          //System.out.println("fname found -> " + fname);
           // Create a new composite name from the fname
           CompositeName cname = new CompositeName(fname.getNodeValue());
           // Get a list of the name components
           Enumeration e = cname.getAll();
           // Get the root of the context
-          Context nextContext = (Context)context.lookup("");
+          Context nextContext = (Context)thisUsersContext.lookup("channel-ids");
           // Add all of the subcontexts in the fname
+          String subContextName = new String();
           while (e.hasMoreElements()) {
-            nextContext = nextContext.createSubcontext((String)e.nextElement());
+            subContextName = (String)e.nextElement();
+            
+            if(e.hasMoreElements())
+            {
+              // Bind a new sub context if the current name component is not the leaf
+              nextContext = nextContext.createSubcontext(subContextName);
+            }
+            else
+            {
+              //System.out.println("Binding " + instanceid.getNodeValue() + " to " + nextContext.getNameInNamespace() + "/" + subContextName);
+              nextContext.bind(subContextName, instanceid.getNodeValue());
+            }
           }
-          // Bind the instance ID of the channel as a leaf
-          nextContext.rebind(cname.get(cname.size() - 1), instanceid.getNodeValue());
         }
       }
     } catch (Exception ne) {
@@ -133,7 +154,7 @@ public class JNDIManager {
   }
 
   /**
-   * put your documentation comment here
+   * Get the uPortal JNDI context
    * @return 
    * @exception NamingException
    */
