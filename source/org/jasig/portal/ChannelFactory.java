@@ -126,12 +126,18 @@ public class ChannelFactory {
                 if(cobj instanceof IPrivileged) {
                     // both cacheable and privileged
                     ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+                } else if (cobj instanceof IMultithreadedMimeResponse){
+                    // cacheable and download-worker enabled
+                    ch=new MultithreadedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj,uid);
                 } else {
                     // just cacheable
                     ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
                 }
             } else if(cobj instanceof IPrivileged) {
                 ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
+            } else if (cobj instanceof IMultithreadedMimeResponse) {
+                // download-worker enabled
+                ch=new MultithreadedMimeResponseChannelAdapter((IMultithreadedChannel)cobj,uid);
             } else {
                 // plain multithreaded
                 ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
