@@ -5,11 +5,11 @@
 
 package org.jasig.portal.layout.al.common.restrictions;
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.IUserLayout;
-import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.al.common.ILayout;
+import org.jasig.portal.properties.PropertiesManager;
 
 
 /**
@@ -42,7 +42,7 @@ public class RestrictionManagerFactory {
      *
      * @return an <code>IRestrictionManager</code> value
      */
-    public static IRestrictionManager getRestrictionManager(IUserLayout layout) throws PortalException {
+    public static IRestrictionManager getRestrictionManager(ILayout layout) throws PortalException {
         try {
             IRestrictionManager restrictionManager = (IRestrictionManager) restrictionManagerClass.newInstance();
             restrictionManager.setUserLayout(layout);

@@ -6,8 +6,8 @@
 package org.jasig.portal.layout.al.common.restrictions;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.IUserLayout;
-import org.jasig.portal.layout.al.common.node.ILayoutNode;
+import org.jasig.portal.layout.al.common.ILayout;
+import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
 import org.jasig.portal.layout.al.common.node.INodeId;
 
@@ -26,7 +26,7 @@ public interface IRestrictionManager {
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public void setUserLayout(IUserLayout layout) throws PortalException;
+  public void setUserLayout(ILayout layout) throws PortalException;
 
    /**
      * Checks the restriction specified by the parameters below.
@@ -57,7 +57,7 @@ public interface IRestrictionManager {
    * @return a boolean value
    * @exception PortalException if an error occurs
    */
-  public boolean checkAddRestrictions( ILayoutNode node, INodeId parentId, INodeId nextSiblingId ) throws PortalException;
+  public boolean checkAddRestrictions( INode node, INodeId parentId, INodeId nextSiblingId ) throws PortalException;
 
   /**
      * Checks the necessary restrictions while moving a node.

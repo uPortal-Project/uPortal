@@ -41,7 +41,7 @@ public abstract class ALRestriction extends UserLayoutRestriction {
    * @exception PortalException
    */
   public boolean checkRestriction ( IAggregatedLayout layout, INodeId nodeId ) throws PortalException {
-  	IALNode node = (IALNode) layout.getLayoutNode(nodeId);
+  	IALNode node = (IALNode) layout.getNode(nodeId);
   	if ( node == null )
   	  throw new PortalException ( "The aggregated layout does not contain the node specified by ID = "+nodeId);	
   	return checkRestriction(node);
