@@ -23,73 +23,50 @@ UPDATE PORTAL_USERS SET USER_LAYOUT_XML='<?xml version="1.0"?>
 <layout>
   <category ID="t01" priority="1" name="Main">
     <category ID="col01" priority="0" width="40%">
-      <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
-        <parameter value="http://localhost:8080/uPortal2/rss/netscape.rss" name="xml"/>
+      <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
+        <parameter value="http://localhost:8080/portal/rss/netscape.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>      
-      <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
-        <parameter value="http://localhost:8080/uPortal2/rss/stockcharts.rss" name="xml"/>
+      <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
+        <parameter value="http://localhost:8080/portal/rss/stockcharts.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel> 
     </category>
     <category ID="col02" priority="0" width="60%">
-      <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
+      <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
       </channel>
-      <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
-        <parameter value="http://localhost:8080/uPortal2/rss/news.rss" name="xml"/>
+      <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
+        <parameter value="http://localhost:8080/portal/rss/news.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>      
     </category>
   </category>
   <category ID="t02" priority="0" name="Other">
-    <category ID="col03" priority="0" width="50%">
-      <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="true" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
-      </channel>
-    </category>
-    <category ID="col04" priority="0" width="50%">
-      <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CNumberGuess" name="Number Guessing Game">
-        <parameter value="1" name="minNum"/>
-        <parameter value="100" name="maxNum"/>
-      </channel>
-      <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CApplet" name="ESPN Scoreboard">
-        <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
-        <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
-        <parameter value="ScorePost.zip" name="archive"/>
-        <parameter value="128" name="width"/>
-        <parameter value="182" name="height"/>
-        <parameter value="ScorePost.cab" name="APPLET.cabbase"/>
-        <parameter value="#336699" name="APPLET.bgcolor"/>
-        <parameter value="#FFFFFF" name="APPLET.text"/>
-        <parameter value="/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat" name="APPLET.data"/>
-        <parameter value="/ad/scorepost/nhl.txt" name="APPLET.ad data"/>
-        <parameter value="_top" name="APPLET.target"/>
-        <parameter value="3500" name="APPLET.delay"/>
-        <parameter value="30000" name="APPLET.data time"/>
-        <parameter value="300000" name="APPLET.inactive data time"/>
-      </channel> 
-    </category>
+    <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
+    </channel>
   </category>
   <category ID="t03" priority="0" name="More">
-    <category ID="col05" priority="0" width="50%">
-      <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
+    <category ID="col03" priority="0" width="50%">
+      <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
-      <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
+      <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
         <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
     </category>
-    <category ID="col06" priority="0" width="50%">
-      <channel ID="chan10" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
+    <category ID="col04" priority="0" width="50%">
+      <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
         <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
-      <channel ID="chan11" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
+      <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
+    <channel ID="chan15" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CIFXLoan" name="CIFXLoan">
+    </channel>
     </category>
   </category>
-</layout>
-' WHERE USER_NAME='guest';
+</layout>' WHERE USER_NAME='guest';
