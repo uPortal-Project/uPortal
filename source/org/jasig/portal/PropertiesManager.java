@@ -63,16 +63,15 @@ public class PropertiesManager {
   protected static void loadProps () {
     try {
       props.load(PropertiesManager.class.getResourceAsStream(PORTAL_PROPERTIES_FILE_NAME));
-    } catch (IOException ioe) {
-      LogService.log(LogService.ERROR, "Unable to read portal.properties file.");
-      LogService.log(LogService.ERROR, ioe);
+    } catch (Throwable t) {
+      LogService.log(LogService.ERROR, "Unable to read portal.properties file.", t);
     }
   }
 
   /**
    * Returns the value of a property for a given name.
    * Any whitespace is trimmed off the beginning and
-   * end of the property value.    
+   * end of the property value.
    * @param name the name of the requested property
    * @return value the value of the property matching the requested name
    */
