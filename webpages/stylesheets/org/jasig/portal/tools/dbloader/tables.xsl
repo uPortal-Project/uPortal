@@ -32,7 +32,7 @@ CREATE TABLE <xsl:value-of select="name"/>
   <xsl:text> </xsl:text>
   <xsl:value-of select="type"/>
   <xsl:if test="param">(<xsl:value-of select="param"/>)</xsl:if>
-  <xsl:if test="../../primary-key = node()"> NOT NULL</xsl:if>
+  <xsl:if test="../../not-null = node() or ../../primary-key = node()"> NOT NULL</xsl:if>
     <xsl:if test="position() != last() or ../../primary-key"><xsl:text>,
 </xsl:text></xsl:if>
 </xsl:template>
