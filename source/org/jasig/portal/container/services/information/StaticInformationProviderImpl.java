@@ -56,6 +56,11 @@ import org.jasig.portal.services.LogService;
 
 /**
  * Implementation of Apache Pluto StaticInformationProvider.
+ * The current implementation gets its data by parsing the web applciation
+ * deployment descriptor (web.xml) and the portlet application deployment
+ * descriptor (portlet.xml) of all installed portlet contexts.  Contexts which
+ * contain a valid portlet.xml file in the WEB-INF directory are considered
+ * portlet contexts.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
@@ -100,66 +105,60 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
      * This should occur just once as the portlet container starts up.
      */
     private void initPortletDefinitions() {
-        try {
-            String portalDirName = servletConfig.getServletContext().getRealPath("/"); //root
-            File webappsDir = new File(portalDirName).getParentFile();
-            File[] files1 = webappsDir.listFiles(); // portlet app candidates
-            for (int i = 0; i < files1.length; i++) {
-                File webapp = files1[i];
-                if (webapp.isDirectory()) {
-                    File[] files2 = webapp.listFiles(); // WEB-INF candidates
-                    for (int j = 0; j < files2.length; j++) {
-                        File webinf = files2[j];
-                        if (webinf.isDirectory() && webinf.getName().equals("WEB-INF")) {
-                            File webXmlFile = null;
-                            File portletXmlFile = null;
-                            boolean isPortletApp = false;
-                            boolean gotWebXml = false;
-                            boolean gotPortletXml = false;
-                            File[] files3 = webinf.listFiles(); // web.xml and portlet.xml candidates
-                            for (int k = 0; k < files3.length; k++) {
-                                File file = files3[k];
-                                if (file.getName().equals("web.xml")) {
-                                    gotWebXml = true;
-                                    webXmlFile = files3[k];
-                                } else if (file.getName().equals("portlet.xml")) {
-                                    gotPortletXml = true;
-                                    portletXmlFile = files3[k];
-                                }
+        String portalDirName = servletConfig.getServletContext().getRealPath("/"); //root
+        File webappsDir = new File(portalDirName).getParentFile();
+        File[] files1 = webappsDir.listFiles(); // portlet app candidates
+        for (int i = 0; i < files1.length; i++) {
+            File webapp = files1[i];
+            if (webapp.isDirectory()) {
+                File[] files2 = webapp.listFiles(); // WEB-INF candidates
+                for (int j = 0; j < files2.length; j++) {
+                    File webinf = files2[j];
+                    if (webinf.isDirectory() && webinf.getName().equals("WEB-INF")) {
+                        File webXmlFile = null;
+                        File portletXmlFile = null;
+                        boolean isPortletApp = false;
+                        boolean gotWebXml = false;
+                        boolean gotPortletXml = false;
+                        File[] files3 = webinf.listFiles(); // web.xml and portlet.xml candidates
+                        for (int k = 0; k < files3.length; k++) {
+                            File file = files3[k];
+                            if (file.getName().equals("web.xml")) {
+                                gotWebXml = true;
+                                webXmlFile = files3[k];
+                            } else if (file.getName().equals("portlet.xml")) {
+                                gotPortletXml = true;
+                                portletXmlFile = files3[k];
                             }
-                            isPortletApp = gotWebXml && gotPortletXml;
-                            if (isPortletApp) {
-                                String contextName = files1[i].getName();
-                                String xmlFile = null;
-                                LogService.log(LogService.INFO, "Found portlet " + contextName);
+                        }
+                        isPortletApp = gotWebXml && gotPortletXml;
+                        if (isPortletApp) {
+                            String contextName = files1[i].getName();
+                            String xmlFile = null;
+                            LogService.log(LogService.INFO, "Found portlet application " + contextName);
 
-                                try {
-                                    // Parse the web.xml file --> WebApplicationDefinition
-                                    xmlFile = "web.xml";
-                                    WebApplicationUnmarshaller wau = new WebApplicationUnmarshaller();
-                                    wau.init(new FileInputStream(webXmlFile), contextName);
-                                    WebApplicationDefinition webApplicationDefinition = wau.getWebApplicationDefinition();
-                                    
-                                    // Parse the portlet.xml file --> PortletApplicationDefinition
-                                    xmlFile = "portlet.xml";
-                                    PortletApplicationUnmarshaller pau = new PortletApplicationUnmarshaller();
-                                    pau.init(new FileInputStream(portletXmlFile), contextName);
-                                    PortletApplicationDefinition portletApplicationDefinition = pau.getPortletApplicationDefinition(webApplicationDefinition);
+                            try {
+                                // Parse the web.xml file --> WebApplicationDefinition
+                                xmlFile = "web.xml";
+                                WebApplicationUnmarshaller wau = new WebApplicationUnmarshaller();
+                                wau.init(new FileInputStream(webXmlFile), contextName);
+                                WebApplicationDefinition webApplicationDefinition = wau.getWebApplicationDefinition();
                                 
-                                    // Add this PortletApplicationDefinition to the list
-                                    portletApplicationDefinitionList.add(portletApplicationDefinition.getId().toString(), portletApplicationDefinition);
-                                } catch (Exception e) {
-                                    throw new Exception("Unable to parse " + xmlFile + " for context '" + contextName + "'", e); 
-                                }
-                                
+                                // Parse the portlet.xml file --> PortletApplicationDefinition
+                                xmlFile = "portlet.xml";
+                                PortletApplicationUnmarshaller pau = new PortletApplicationUnmarshaller();
+                                pau.init(new FileInputStream(portletXmlFile), contextName);
+                                PortletApplicationDefinition portletApplicationDefinition = pau.getPortletApplicationDefinition(webApplicationDefinition);
+                            
+                                // Add this PortletApplicationDefinition to the list
+                                portletApplicationDefinitionList.add(portletApplicationDefinition.getId().toString(), portletApplicationDefinition);
+                            } catch (Exception e) {
+                                LogService.log(LogService.ERROR, "Unable to parse " + xmlFile + " for context '" + contextName + "'", e);
                             }
                         }
                     }
                 }
             }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }      
+        }     
     }
 }
