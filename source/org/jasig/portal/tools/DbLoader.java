@@ -255,8 +255,10 @@ public class DbLoader
     String url = rdbmService.getJdbcUrl();
     String user = rdbmService.getJdbcUser();
     System.out.println("Starting DbLoader...");
-    System.out.println("Database name: '" + dbName + "', version: '" + dbVersion + "'");
-    System.out.println("Driver name: '" + driverName + "', version: '" + driverVersion + "'");
+    System.out.println("Database name: '" + dbName + "'");
+    System.out.println("Database version: '" + dbVersion + "'");
+    System.out.println("Driver name: '" + driverName + "'");
+    System.out.println("Driver version: '" + driverVersion + "'");
     System.out.println("Driver class: '" + driverClass + "'");
     System.out.println("Connection URL: '" + url + "'");
     System.out.println("User: '" + user + "'");
@@ -957,13 +959,23 @@ public class DbLoader
         else
         {
           String value = column.getValue();
-          if (value != null && value.equals("SYSDATE")) {
-            sb.append(value);
-          } else {
-            sb.append("'");
-            sb.append(value != null ? value.trim() : "");
-            sb.append("'");
+
+          if (value != null)
+          {
+            // Is "SYSDATE" Oracle specific???
+            if (value.equals("SYSDATE"))
+              sb.append(value);
+            else if (value.equals("NULL"))
+              sb.append(value);
+            else
+            {
+              sb.append("'");
+              sb.append(value.trim());
+              sb.append("'");
+            }
           }
+          else
+            sb.append("''");
         }
 
         sb.append(", ");
@@ -1005,7 +1017,11 @@ public class DbLoader
             Column column = (Column)iterator.next();
             String value = column.getValue();
 
-            if (value != null && !value.equals("NULL"))
+            if (value == null)
+              pstmt.setString(i, "");
+            else if (value.equals("NULL"))
+              pstmt.setNull(i, Types.NULL);
+            else
             {
               value = value.trim(); // portal can't read xml properly without this, don't know why yet
               int valueLength = value.length();
@@ -1062,8 +1078,6 @@ public class DbLoader
                 }
               }
             }
-            else
-              pstmt.setString(i, "");
           }
           pstmt.executeUpdate();
         }
