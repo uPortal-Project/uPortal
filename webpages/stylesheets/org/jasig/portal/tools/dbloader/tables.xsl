@@ -37,8 +37,8 @@ CREATE TABLE <xsl:value-of select="name"/>
 </xsl:text></xsl:if>
 </xsl:template>
 
-<xsl:template match="primary-key">  PRIMARY KEY (<xsl:value-of select="."/>)<xsl:if test="position() != last()">,
-</xsl:if>
+<xsl:template match="primary-key">
+<xsl:if test="position() = 1">  PRIMARY KEY (</xsl:if><xsl:value-of select="."/><xsl:if test="position() != last()">, </xsl:if><xsl:if test="position() = last()">)</xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
