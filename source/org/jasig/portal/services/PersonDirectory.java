@@ -331,122 +331,144 @@ public class PersonDirectory {
    */
   void processLdapDir(String username, PersonDirInfo pdi, Hashtable attribs) {
 
-    Hashtable jndienv = new Hashtable();
-    DirContext context = null;
-    ILdapServer srvr = null;
-    boolean fromLdapServices = false;
+        Hashtable jndienv = new Hashtable();
+        DirContext context = null;
+        ILdapServer srvr = null;
+        boolean fromLdapServices = false;
 
-    //Check for a named ldap reference 
-    if (pdi.LdapRefName!=null && pdi.LdapRefName.length()>0) {
-        //Get a ILdapServer info interface from LdapServices
-        srvr = LdapServices.getLdapServer(pdi.LdapRefName);
-        
-        if (srvr != null) {
-            context = srvr.getConnection();
-            fromLdapServices = true;
-        }
-        
-        log.debug("PersonDirectory::processLdapDir(): Looking in "+pdi.LdapRefName+
-          " for person attributes of "+username);
-    }
-    
-    //Either no named ldap reference specified or it wasn't found
-    if (context == null) {
-        //JNDI boilerplate to connect to an initial context
-        jndienv.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory");
-        jndienv.put(Context.SECURITY_AUTHENTICATION,"simple");
-        if (pdi.url.startsWith("ldaps")) { // Handle SSL connections
-          String newurl=pdi.url.substring(0,4) + pdi.url.substring(5);
-          jndienv.put(Context.SECURITY_PROTOCOL,"ssl");
-          jndienv.put(Context.PROVIDER_URL,newurl);
-        }
-        else {
-          jndienv.put(Context.PROVIDER_URL,pdi.url);
-        }
-        if (pdi.logonid!=null)
-          jndienv.put(Context.SECURITY_PRINCIPAL,pdi.logonid);
-        if (pdi.logonpassword!=null)
-          jndienv.put(Context.SECURITY_CREDENTIALS,pdi.logonpassword);
         try {
-          context = new InitialDirContext(jndienv);
-        } catch (NamingException nex) {
-          return;
-        }
-    }
+            //Check for a named ldap reference
+            if (pdi.LdapRefName != null && pdi.LdapRefName.length() > 0) {
+                //Get a ILdapServer info interface from LdapServices
+                srvr = LdapServices.getLdapServer(pdi.LdapRefName);
 
-    // Search for the userid in the usercontext subtree of the directory
-    // Use the uidquery substituting username for {0}
-    NamingEnumeration userlist = null;
-    SearchControls sc = new SearchControls();
-    sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-    sc.setTimeLimit(pdi.ldaptimelimit);
-    Object [] args = new Object[] {username};
-    try {
-        String userCtx = pdi.usercontext;
-        
-        // ILdapServer instances have no DN in the connect string.
-        // Append the baseDN for the server here.
-        if (fromLdapServices && srvr != null) {
-            String baseDN = srvr.getBaseDN();
-            if (baseDN != null && baseDN.trim().length() > 0) {
-                userCtx = userCtx + "," + baseDN;
-            }
-        }
-        
-        userlist = context.search(userCtx,pdi.uidquery,args,sc);
-    } catch (NamingException nex) {
-      return;
-    }
-
-    // If one object matched, extract properties from the attribute list
-    try {
-      if (userlist.hasMoreElements()) {
-        SearchResult result = (SearchResult) userlist.next();
-        Attributes ldapattribs = result.getAttributes();
-        for (int i=0;i<pdi.attributenames.length;i++) {
-          Attribute tattrib = null;
-          if (pdi.attributenames[i] != null)
-            tattrib = ldapattribs.get(pdi.attributenames[i]);
-          if (tattrib!=null) {
-            // determine if this attribute is a String or a binary (byte array)
-            if (tattrib.size() == 1) {
-                Object att = tattrib.get();
-                if (att instanceof byte[]) {
-                    attribs.put(pdi.attributealiases[i],(Object)att);
-                } else {
-                    String value = att.toString();
-                    attribs.put(pdi.attributealiases[i],value);
+                if (srvr != null) {
+                    context = srvr.getConnection();
+                    fromLdapServices = true;
                 }
-            } else {
-                // multivalued
-                Vector values = new Vector();
-                for (NamingEnumeration ne = tattrib.getAll(); ne.hasMoreElements(); ) {
-                    Object value = ne.nextElement();
-                    if (value instanceof byte[]) {
-                        values.add(value);
-                    } else {
-                        values.add(value.toString());
+
+                log.debug("PersonDirectory::processLdapDir(): Looking in " + pdi.LdapRefName + " for person attributes of " + username);
+            } else if (context == null) {
+                //JNDI boilerplate to connect to an initial context
+                jndienv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+                jndienv.put(Context.SECURITY_AUTHENTICATION, "simple");
+                if (pdi.url.startsWith("ldaps")) { // Handle SSL connections
+                    String newurl = pdi.url.substring(0, 4) + pdi.url.substring(5);
+                    jndienv.put(Context.SECURITY_PROTOCOL, "ssl");
+                    jndienv.put(Context.PROVIDER_URL, newurl);
+                } else {
+                    jndienv.put(Context.PROVIDER_URL, pdi.url);
+                }
+                if (pdi.logonid != null)
+                    jndienv.put(Context.SECURITY_PRINCIPAL, pdi.logonid);
+                if (pdi.logonpassword != null)
+                    jndienv.put(Context.SECURITY_CREDENTIALS, pdi.logonpassword);
+                try {
+                    context = new InitialDirContext(jndienv);
+                } catch (NamingException nex) {
+                    return;
+                }
+            }
+
+            // Search for the userid in the usercontext subtree of the directory
+            // Use the uidquery substituting username for {0}
+            NamingEnumeration userlist = null;
+            try {
+                SearchControls sc = new SearchControls();
+                sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                sc.setTimeLimit(pdi.ldaptimelimit);
+                Object[] args = new Object[] { username };
+                try {
+                    String userCtx = pdi.usercontext;
+
+                    // If we're using LdapServices, we will assume
+                    // that the baseDN is already specific enough
+                    // and that no separate user context is needed.
+                    // Note that the LDAP security providers in uPortal
+                    // in conjunction with ldap.properties behave this way too.
+                    if (fromLdapServices && srvr != null) {
+                        String baseDN = srvr.getBaseDN();
+                        if (baseDN != null && baseDN.trim().length() > 0) {
+                            userCtx = baseDN;
+                        }
+                    }
+
+                    if (context != null) {
+                        userlist = context.search(userCtx, pdi.uidquery, args, sc);
+                    }
+                } catch (NamingException nex) {
+                    return;
+                }
+
+                // If one object matched, extract properties from the attribute
+                // list
+                try {
+                    if (userlist != null && userlist.hasMoreElements()) {
+                        SearchResult result = (SearchResult) userlist.next();
+                        Attributes ldapattribs = result.getAttributes();
+                        for (int i = 0; i < pdi.attributenames.length; i++) {
+                            Attribute tattrib = null;
+                            if (pdi.attributenames[i] != null)
+                                tattrib = ldapattribs.get(pdi.attributenames[i]);
+                            if (tattrib != null) {
+                                // determine if this attribute is a String or a
+                                // binary (byte array)
+                                if (tattrib.size() == 1) {
+                                    Object att = tattrib.get();
+                                    if (att instanceof byte[]) {
+                                        attribs.put(pdi.attributealiases[i], (Object) att);
+                                    } else {
+                                        String value = att.toString();
+                                        attribs.put(pdi.attributealiases[i], value);
+                                    }
+                                } else {
+                                    // multivalued
+                                    Vector values = new Vector();
+                                    for (NamingEnumeration ne = tattrib.getAll(); ne.hasMoreElements();) {
+                                        Object value = ne.nextElement();
+                                        if (value instanceof byte[]) {
+                                            values.add(value);
+                                        } else {
+                                            values.add(value.toString());
+                                        }
+                                    }
+                                    attribs.put(pdi.attributealiases[i], values);
+                                }
+                            }
+                        }
+                    }
+                } catch (NamingException ne) {
+                    if (log.isErrorEnabled()) {
+                        log.error("Unable to extract properties from attribute list", ne);
                     }
                 }
-                attribs.put(pdi.attributealiases[i], values);
+            } finally {
+                try {
+                    if (userlist != null) {
+                        userlist.close();
+                    }
+                } catch (NamingException ne) {
+                    if (log.isErrorEnabled()) {
+                        log.error("Unable to close the user list", ne);
+                    }
+                }
             }
-          }
+        } finally {
+            if (fromLdapServices && srvr != null) {
+                srvr.releaseConnection(context);
+            } else {
+                try {
+                    if (context != null) {
+                        context.close();
+                    }
+                } catch (NamingException ne) {
+                    if (log.isErrorEnabled()) {
+                        log.error("Unable to close the context", ne);
+                    }
+                }
+            }
         }
-      }
-    } catch (NamingException nex) {
-      ;
     }
-
-    try {userlist.close();} catch (Exception e) {;}
-    
-    if (srvr != null && fromLdapServices) {
-        srvr.releaseConnection(context);
-    }
-    else {
-        try {context.close();} catch (Exception e) {;}
-    }
-
-  }
 
   /**
    * Extract data from a JDBC database
