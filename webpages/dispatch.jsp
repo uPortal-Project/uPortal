@@ -79,7 +79,7 @@
 %>
 
 <%
-  org.jasig.portal.IChannel ch = dispatchBean.getChannel(request);
+  org.jasig.portal.IChannel ch = dispatchBean.getChannel(application, request);
 %>
 
 <% UtilitiesBean.preventPageCaching(response); %>

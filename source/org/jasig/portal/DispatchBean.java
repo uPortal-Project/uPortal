@@ -51,18 +51,23 @@ import com.objectspace.xml.Xml;
  *@version    $Revision$
  */
 public class DispatchBean extends GenericPortalBean {
+
+
     /**
-     *  Returns an instance of the current channel
+     *  Returns an instance of the current channel. This is only called by the
+     *  dispatch.jsp and dispatch2.jsp files.
      *
-     *@param  req  Description of Parameter
-     *@return      the channel to call
+     *@param  application  Description of Parameter
+     *@param  req          Description of Parameter
+     *@return              the channel to call
+     *@since
      */
-    public org.jasig.portal.IChannel getChannel(HttpServletRequest req) {
+    public org.jasig.portal.IChannel getChannel(ServletContext application, HttpServletRequest req) {
         org.jasig.portal.IChannel ch = null;
 
         try {
-            HttpSession session = req.getSession(false);
-            ILayoutBean layoutBean = (ILayoutBean) session.getAttribute("layoutBean");
+            HttpSession session = req.getSession();
+            ILayoutBean layoutBean = LayoutBean.findLayoutInstance(application, session);
 
             // we have to use getParameterValues becaus some channels write their
             // ID twice in the request, and some servlet servers interpret this by
@@ -103,6 +108,7 @@ public class DispatchBean extends GenericPortalBean {
      *@param  sGlobalChannelID  Description of Parameter
      *@param  request           Description of Parameter
      *@return                   The ChannelInstance value
+     *@since
      */
     private org.jasig.portal.IChannel getChannelInstance(String sGlobalChannelID, HttpServletRequest request) {
         IXml channelXml = null;
@@ -158,6 +164,7 @@ public class DispatchBean extends GenericPortalBean {
      *
      *@param  req  Description of Parameter
      *@param  res  Description of Parameter
+     *@since
      */
     public static void finish(HttpServletRequest req, HttpServletResponse res) {
         try {
@@ -176,6 +183,7 @@ public class DispatchBean extends GenericPortalBean {
      *@param  sMethodName  Description of Parameter
      *@param  chConfig     Description of Parameter
      *@return              a url used to call a method in a channel
+     *@since
      */
     public static String buildURL(String sMethodName, ChannelConfig chConfig) {
         try {
@@ -195,6 +203,7 @@ public class DispatchBean extends GenericPortalBean {
      *@param  sMethodName  Description of Parameter
      *@param  sChannelID   Description of Parameter
      *@return              a url used to call a method in a channel
+     *@since
      */
     public static String buildURL(String sMethodName, String sChannelID) {
         try {
