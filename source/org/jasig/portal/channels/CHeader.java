@@ -44,6 +44,7 @@ import  java.util.HashMap;
 import  javax.naming.InitialContext;
 import  javax.naming.Context;
 import  javax.naming.NamingException;
+import  javax.naming.NotContextException;
 import  org.jasig.portal.security.Permission;
 import  org.jasig.portal.security.PermissionManager;
 import  org.jasig.portal.ChannelRuntimeData;
@@ -132,6 +133,9 @@ public class CHeader extends BaseChannel
           chanMgrChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/channelmanager/general")));
           headerEl.appendChild(chanMgrChanidEl);
         }
+      } catch (NotContextException nce) {
+        LogService.instance().log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/channelmanager/general for UID="
+            + staticData.getPerson().getID() + ". Be sure that the channel is in their layout.");
       } catch (NamingException e) {
         LogService.instance().log(LogService.ERROR, e);
       }
@@ -140,6 +144,9 @@ public class CHeader extends BaseChannel
         Element preferencesChanidEl = doc.createElement("preferences-chanid");
         preferencesChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/userpreferences/general")));
         headerEl.appendChild(preferencesChanidEl);
+      } catch (NotContextException nce) {
+        LogService.instance().log(LogService.ERROR, "CHeader.getUserXML(): Could not find channel ID for fname=/portal/userpreferences/general for UID="
+            + staticData.getPerson().getID() + ". Be sure that the channel is in their layout.");
       } catch (NamingException e) {
         LogService.instance().log(LogService.ERROR, e);
       }
