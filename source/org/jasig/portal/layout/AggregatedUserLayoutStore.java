@@ -1840,13 +1840,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // Setting the first layout node ID to the root folder
         rootNode.setFirstChildNodeId(firstStructId+"");
 
-        //Assigning the root folder!!
-        ALFolderDescription rootDescription=new ALFolderDescription();
-        rootDescription.setId(IALFolderDescription.ROOT_FOLDER_ID);
-        rootDescription.setName("root");
-        rootNode.setNodeDescription(rootDescription);
         // Putting the root node
-        layout.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
+        layout.put(IALFolderDescription.ROOT_FOLDER_ID,ALFolder.createRootFolder());
          // Putting the lost folder
         layout.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
 

@@ -1385,9 +1385,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       try {
 
         if ( fragmentId.equals(NEW_FRAGMENT) ) {
-         // Creating an empty layout with root and lost folders
-         layout.clear();
-         ALNode rootFolder = getLayoutNode(rootNodeId);
+         // Creating an empty layout with a root folder
+         layout = new Hashtable();
+         ALNode rootFolder = ALFolder.createRootFolder();
          layout.put(rootNodeId,rootFolder);
         } else
            layout = (Hashtable) layoutStore.getFragment(person,fragmentId);

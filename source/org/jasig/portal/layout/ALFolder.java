@@ -89,13 +89,26 @@ public class ALFolder extends ALNode {
         ALFolder lostFolder = new ALFolder();
         ALFolderDescription folderDesc = new ALFolderDescription();
         folderDesc.setId(IALFolderDescription.LOST_FOLDER_ID);
-        folderDesc.setHidden(false);
+        folderDesc.setHidden(true);
         folderDesc.setImmutable(false);
         folderDesc.setUnremovable(true);
         folderDesc.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
         lostFolder.setNodeDescription(folderDesc);
         lostFolder.setParentNodeId(IALFolderDescription.ROOT_FOLDER_ID);
         return lostFolder;
+    }
+
+    public static ALFolder createRootFolder() {
+        ALFolder rootFolder = new ALFolder();
+        ALFolderDescription folderDesc = new ALFolderDescription();
+        folderDesc.setId(IALFolderDescription.ROOT_FOLDER_ID);
+        folderDesc.setHidden(false);
+        folderDesc.setImmutable(false);
+        folderDesc.setUnremovable(true);
+        folderDesc.setName("Root folder");
+        folderDesc.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+        rootFolder.setNodeDescription(folderDesc);
+        return rootFolder;
     }
 
 }
