@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,42 +31,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.channels;
 
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.RDBMServices;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.security.IPerson;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.parsers.SAXParser;
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.XMLSerializer;
-import org.apache.xml.serialize.OutputFormat;
-import org.xml.sax.InputSource;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.SAXException;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.net.URL;
+package  org.jasig.portal.channels;
+
+import  org.jasig.portal.channels.BaseChannel;
+import  org.jasig.portal.RDBMServices;
+import  org.jasig.portal.ChannelRuntimeData;
+import  org.jasig.portal.ChannelRuntimeProperties;
+import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.PortalException;
+import  org.jasig.portal.GeneralRenderingException;
+import  org.jasig.portal.ResourceMissingException;
+import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.security.IPerson;
+import  org.w3c.dom.Node;
+import  org.w3c.dom.NodeList;
+import  org.w3c.dom.Element;
+import  org.w3c.dom.Text;
+import  org.apache.xerces.parsers.DOMParser;
+import  org.apache.xerces.parsers.SAXParser;
+import  org.apache.xerces.dom.DocumentImpl;
+import  org.apache.xml.serialize.XMLSerializer;
+import  org.apache.xml.serialize.OutputFormat;
+import  org.xml.sax.InputSource;
+import  org.xml.sax.ContentHandler;
+import  org.xml.sax.EntityResolver;
+import  org.xml.sax.SAXException;
+import  java.sql.Connection;
+import  java.sql.Statement;
+import  java.sql.ResultSet;
+import  java.io.StringReader;
+import  java.io.StringWriter;
+import  java.util.Hashtable;
+import  java.util.Enumeration;
+import  java.net.URL;
 
 /**
  * Bookmarks channel
@@ -148,7 +151,7 @@ public class CBookmarks extends BaseChannel {
     return  (m_bookmarksXML);
   }
 
-
+ 
   private String getDefaultBookmarks () {
     Connection connection = null;
     String inputXML = null;
@@ -156,12 +159,7 @@ public class CBookmarks extends BaseChannel {
       // Get a connection to the database
       connection = getConnection();
       // Get the bookmarks for the 'default' user
-      IPerson person = this.staticData.getPerson();
-      String defaultUser = (String)person.getAttribute("uPortalTemplateUserName");
-      if (defaultUser == null || defaultUser.equals("")) {
-        defaultUser = "system";
-      }
-      String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID = (SELECT USER_ID FROM UP_USER WHERE USER_NAME = '" + defaultUser + "')";
+      String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID = 0";
       Statement stmt = connection.createStatement();
       try {
         // Try to get the 'default' bookmarks from the database
@@ -173,9 +171,17 @@ public class CBookmarks extends BaseChannel {
           }
           else {
             // Generate the XML here as a last resort
-            inputXML = "<?xml version=\"1.0\"?>" + "<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">"
-                + "<xbel>" + "  <title>Default Bookmarks</title>" + "  <info>" + "    <metadata owner=\'" + staticData.getPerson().getID()
-                + "\'/>" + "  </info>" + "</xbel>";
+            StringBuffer strbuf = new StringBuffer();
+            strbuf.append("<?xml version=\"1.0\"?>\n");
+            strbuf.append("<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">\n");
+            strbuf.append("<xbel>\n");
+            strbuf.append("  <title>Default Bookmarks</title>\n");
+            strbuf.append("  <info>\n");
+            strbuf.append("    <metadata owner=\"" + staticData.getPerson().getID() + "\"/>\n");
+            strbuf.append("  </info>\n");
+            strbuf.append("</xbel>");
+            inputXML = strbuf.toString();
+
             LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
           }
         } finally {
@@ -533,7 +539,7 @@ public class CBookmarks extends BaseChannel {
     transformXML(out, "move_node", getBookmarkXML(), parameters);
   }
 
-
+ 
   private void renderDeleteNodeXML (ContentHandler out) throws Exception {
     Hashtable parameters = new Hashtable(1);
     if (m_activeNodeType == null) {
@@ -578,7 +584,7 @@ public class CBookmarks extends BaseChannel {
     xslt.transform();
   }
 
-
+ 
   private String createUniqueID () {
     String uniqueID = "n" + System.currentTimeMillis();
     while (m_bookmarksXML.getElementById(uniqueID) != null) {
@@ -587,7 +593,7 @@ public class CBookmarks extends BaseChannel {
     return  (uniqueID);
   }
 
-
+  
   private static String makeUrlSafe (String url) {
     // Return if the url is correctly formed
     if (url.toLowerCase().startsWith("http://")) {
