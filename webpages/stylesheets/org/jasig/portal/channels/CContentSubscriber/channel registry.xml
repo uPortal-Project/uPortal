@@ -167,7 +167,7 @@
         <parameter name="APPLET.type" value="application/x-java-applet"/>
         <parameter name="APPLET.mines" value="10"/>
       </channel>
-      <channel id="chan14" view="condensed" chanid="14" class="org.jasig.portal.channels.CNumberGuess" description="Number Guessing Game channel" editable="false" fname="number-guessing-game" hasabout="false" hashelp="false" name="Number Guessing Game" secure="false" timeout="10000" title="Number Guessing Game" typeid="-1">
+      <channel id="chan14" view="expanded" chanid="14" class="org.jasig.portal.channels.CNumberGuess" description="Number Guessing Game channel" editable="false" fname="number-guessing-game" hasabout="false" hashelp="false" name="Number Guessing Game" secure="false" timeout="10000" title="Number Guessing Game" typeid="-1">
         <parameter name="minNum" override="yes" value="1"/>
         <parameter name="maxNum" override="yes" value="100"/>
       </channel>
@@ -187,7 +187,7 @@
   <category id="catlocal.51" description="Applications" name="Applications" view="condensed">
     <channel id="chan94" view="condensed" chanid="94" class="org.jasig.portal.channels.groupsmanager.CGroupsManager" description="An administrative tool for creating and managing groups and memberships" editable="false" fname="groupsmanager" hasabout="false" hashelp="false" name="Groups Manager" secure="false" timeout="40000" title="Groups Manager" typeid="-1"/>
   </category>
-<fragments>
+<fragments view="condensed">
     <category name="Fragments" expanded="true">
         <fragment ID="f001">
             <rootNodeID immutable='N'>frnid001</rootNodeID>
