@@ -18,11 +18,14 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  */
 public interface ILayoutManagerCommands {
     /**
-     * Add a new node to a current user layout.
+     * Import and attach a new node structure to the layout.
+     * Note: it's important to understand that the <code>INode</code> supplied will
+     * be imported into the layout. In other words, a copy of the structure will be created,
+     * and assigned appropriate IDs. Existing IDs will be lost.
      *
-     * @param node an <code>INode</code> value of a node to be added.
-     * @param parentId an id of a folder to which the new node (channel or folder) should be added.
-     * @param nextSiblingId an id of a sibling node (channel or folder) prior to which the new node should be inserted.
+     * @param node an <code>INode</code> structure be added.
+     * @param parentId an id of a folder to which the new node structure should be added.
+     * @param nextSiblingId an id of a sibling node prior to which the new node should be inserted.
      * @return an <code>ILayoutNode</code> value with a newly determined Id.
      * @exception PortalException if an error occurs
      */
