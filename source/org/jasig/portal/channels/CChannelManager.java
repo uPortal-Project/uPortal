@@ -47,7 +47,10 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.GroupsException;
@@ -477,11 +480,14 @@ public class CChannelManager extends BaseChannel {
 
         // Set the groups
         int int_channelPublishId = Integer.parseInt(str_channelPublishId.startsWith("chan") ? str_channelPublishId.substring(4) : str_channelPublishId);
-        org.jasig.portal.security.IPermission[] permissions = staticData.getAuthorizationPrincipal().getAllPermissions("UP_FRAMEWORK", "SUBSCRIBE", "CHAN_ID." + int_channelPublishId);
-        for (int i = 0; i < permissions.length; i++) {
-          String principal = permissions[i].getPrincipal();
-          String groupKey = principal.substring(principal.indexOf(".") + 1);
-          groupSettings.addSelectedGroup(GroupService.findGroup(groupKey));
+        IPermissionManager pm = AuthorizationService.instance().newPermissionManager("UP_FRAMEWORK");        
+        IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", "CHAN_ID." + int_channelPublishId);
+
+        for (int i = 0; i < principals.length; i++) {
+          IGroupMember gm = AuthorizationService.instance().getGroupMember(principals[i]);
+          if (gm instanceof IEntityGroup) {
+            groupSettings.addSelectedGroup((IEntityGroup)gm);
+          }
         }
 
         // Set the categories
