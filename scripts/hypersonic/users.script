@@ -23,49 +23,48 @@ UPDATE PORTAL_USERS SET USER_LAYOUT_XML='<?xml version="1.0"?>
 <layout>
   <category ID="t01" priority="1" name="Main">
     <category ID="col01" priority="0" width="40%">
-      <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CGenericXSLT" name="MozillaZine">
+      <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
         <parameter value="http://localhost:8080/uPortal2/rss/netscape.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>      
-      <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CGenericXSLT" name="StockCharts.com">
+      <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
         <parameter value="http://localhost:8080/uPortal2/rss/stockcharts.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel> 
     </category>
     <category ID="col02" priority="0" width="60%">
-      <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CBookmarks" name="Bookmarks">
+      <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
       </channel>
-      <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CGenericXSLT" name="XML.com">
+      <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
         <parameter value="http://localhost:8080/uPortal2/rss/news.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>      
     </category>
   </category>
   <category ID="t02" priority="0" name="Other">
-    <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CBookmarks" name="Bookmarks">
+    <channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="true" minimizable="true" hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
     </channel>
   </category>
   <category ID="t03" priority="0" name="More">
     <category ID="col03" priority="0" width="50%">
-      <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CGenericXSLT" name="uPortal-Powered Sites">
+      <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
-      <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CGenericXSLT" name="IBS News">
+      <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
         <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
     </category>
     <category ID="col04" priority="0" width="50%">
-      <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CGenericXSLT" name="uPortal Developers Reference">
+      <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
         <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
-      <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.xmlchannels.CGenericXSLT" name="Salon.com">
+      <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false" minimizable="true" hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
         <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
         <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
       </channel>
     </category>
   </category>
-</layout>
-' WHERE USER_NAME='guest';
+</layout>' WHERE USER_NAME='guest';
