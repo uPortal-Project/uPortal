@@ -100,11 +100,17 @@ public class RdbmServices extends GenericPortalBean {
     Connection conn = null;
     for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
       try {
-        Class.forName(sJdbcDriver);
+          Class.forName(sJdbcDriver).newInstance();
         conn = DriverManager.getConnection(sJdbcUrl, sJdbcUser, sJdbcPassword);
         prevErrorMsg = "";
       } catch (ClassNotFoundException cnfe) {
         Logger.log(Logger.ERROR, "The driver " + sJdbcDriver + " was not found, please check the logs/rdbm.properties file and your classpath.");
+        return  null;
+      } catch (InstantiationException ie) {
+        Logger.log(Logger.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
+        return  null;
+      } catch (IllegalAccessException iae) {
+        Logger.log(Logger.ERROR, "The driver " + sJdbcDriver + " could not be instantiated, please check the logs/rdbm.properties file.");
         return  null;
       } catch (SQLException SQLe) {
         String errMsg = SQLe.getMessage();
