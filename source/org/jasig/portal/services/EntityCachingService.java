@@ -95,7 +95,7 @@ public void add(IBasicEntity ent) throws CachingException
     cache.add(ent);
 }
 /**
- * Returns the cached entity identified by key.
+ * Returns the cached entity identified by type and key.
  * @param type Class
  * @param key String
  * @return IBasicEntity entity
@@ -104,6 +104,16 @@ public void add(IBasicEntity ent) throws CachingException
 public IBasicEntity get(Class type, String key) throws CachingException
 {
     return cache.get(type, key);
+}
+/**
+ * Returns the cached entity referred to by entityID.
+ * @param key String
+ * @return IBasicEntity entity
+ * @exception org.jasig.portal.concurrency.CachingException
+ */
+public IBasicEntity get(EntityIdentifier entityID) throws CachingException
+{
+    return cache.get(entityID.getType(), entityID.getKey());
 }
 /**
  * @exception org.jasig.portal.concurrency.CachingException
@@ -141,8 +151,8 @@ private void initialize() throws CachingException
         return instance;
     }
 /**
- * Removes the cached entity identified by type and key from the cache
- * and notifies peer caches.
+ * Removes the entity identified by type and key from the cache and notifies
+ * peer caches.
  * @param type Class
  * @param key String
  * @exception org.jasig.portal.concurrency.CachingException
@@ -151,9 +161,20 @@ public void remove(Class type, String key) throws CachingException
 {
     cache.remove(type, key);
 }
-    public static synchronized EntityCachingService start() throws CachingException {
-        return instance();
-    }
+/**
+ * Removes the entity referred to by entityID from the cache and notifies peer
+ * caches.
+ * @param entityID
+ * @exception org.jasig.portal.concurrency.CachingException
+ */
+public void remove(EntityIdentifier entityID) throws CachingException
+{
+    cache.remove(entityID.getType(), entityID.getKey());
+}
+public static synchronized EntityCachingService start() throws CachingException
+{
+    return instance();
+}
 /**
  * Updates the entity in the cache and notifies peer caches.
  * @param ent org.jasig.portal.concurrency.IBasicEntity
