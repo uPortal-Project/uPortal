@@ -231,20 +231,20 @@
           	<xsl:choose>
           		<xsl:when test="$mode='select'"/>
           		<xsl:when test="$group/@searchResults='true'">
-          			<a href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Delete Group"/></a>
+          			<a href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Delete Group" title="Delete Group"/></a>
           		</xsl:when>
           		<xsl:when test="$mode='edit'">
-          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="Unlock Group"/></a>
+          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="Edit Group" title="Edit Group"/></a>
           			<xsl:if test="$ignorePermissions or key('can',concat('DELETE','|',$group/@key))">
-						<a href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Delete Group"/></a>
+						<a href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Delete Group" title="Delete Group"/></a>
 					</xsl:if>
           		</xsl:when>
           		<xsl:when test="$ignorePermissions or key('can',concat('UPDATE','|',$group/@key)) or key('can',concat('ASSIGNPERMISSIONS','|',$group/@key)) or key('can',concat('ADD/REMOVE','|',$group/@key)) or key('can',concat('CREATE','|',$group/@key))">
-          			<a href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/lock.gif" alt="Lock Group"/></a>
+          			<a href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/lock.gif" alt="Finish Editing Group" title="Finish Editing Group"/></a>
           		</xsl:when>
           	</xsl:choose>
           	
-          	<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/close.gif" alt="Close Group"/></a>
+          	<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/close.gif" alt="Close Group" title="Close Group"/></a>
           </td>
   </xsl:template>
   
@@ -510,23 +510,9 @@
 				  	</td>
 				  </tr>
 				  <xsl:if test="properties">
-				  <tr><td></td>
-				  	<td colspan="2" class="uportal-channel-table-row-even">
-				  	<xsl:choose>
-				  		<xsl:when test="properties/property">
-							<table border="1">
-								<xsl:for-each select="properties/property">
-									<tr><td class="uportal-channel-table-row-even"><xsl:value-of select="@name"/></td>
-									<td class="uportal-channel-table-row-even"><xsl:value-of select="@value"/></td></tr>
-								</xsl:for-each>
-							</table>
-						</xsl:when>
-						<xsl:otherwise>
-							<em>No additional information available</em>
-						</xsl:otherwise>
-					</xsl:choose>
-				  	</td>
-				  	</tr>
+                                    <xsl:call-template name="propertiesDisplay">
+                                      <xsl:with-param name="properties" select="properties"/>
+                                    </xsl:call-template> 
 				  </xsl:if>
 				  <xsl:call-template name="hrow"/>
 				</xsl:if>
@@ -577,32 +563,11 @@
 				  	</xsl:choose>
 				  </td>
 				</tr>
-				 <xsl:if test="properties">
-				  <tr><td></td>
-				  	<td colspan="2" class="uportal-channel-table-row-odd">
-				  	<xsl:choose>
-				  		<xsl:when test="properties/property">
-							<table border="0" cellspacing="2" cellpadding="0">
-								<xsl:for-each select="properties/property">
-									<tr>
-									<xsl:if test="position()=1">
-										<td rowspan="{count(parent::properties/property)}">
-											<img src="{$spacerIMG}" height="5" width="14" />
-										</td>
-									</xsl:if>
-									<td class="uportal-channel-table-row-odd" nowrap="nowrap" valign="top"><xsl:value-of select="@name"/></td>
-									<td class="uportal-channel-table-row-odd" valign="top">=</td>
-									<td width="100%" class="uportal-channel-table-row-odd" valign="top"><xsl:value-of select="@value"/></td></tr>
-								</xsl:for-each>
-							</table>
-						</xsl:when>
-						<xsl:otherwise>
-							<em>No additional information available</em>
-						</xsl:otherwise>
-					</xsl:choose>
-				  	</td>
-				  	</tr>
-				  </xsl:if>
+                                <xsl:if test="properties">
+				  <xsl:call-template name="propertiesDisplay">
+                                    <xsl:with-param name="properties" select="properties"/>
+                                  </xsl:call-template>  
+                                </xsl:if>
 				<xsl:call-template name="hrow"/>
 			</xsl:if>
 		</xsl:if>
@@ -633,6 +598,35 @@
 		</form>
 	</xsl:if>
     </table>
+  </xsl:template>
+  
+  <xsl:template name="propertiesDisplay">
+    <xsl:param name="properties"/>
+    <tr><td></td>
+        <td colspan="2" class="uportal-channel-table-row-odd">
+        <xsl:choose>
+                <xsl:when test="$properties/property">
+                        <table border="0" cellspacing="2" cellpadding="0">
+                                <xsl:for-each select="$properties/property">
+                                    <xsl:sort data-type="text" order="ascending" select="@name"/>
+                                        <tr>
+                                        <xsl:if test="position()=1">
+                                                <td rowspan="{count(parent::properties/property)}">
+                                                        <img src="{$spacerIMG}" height="5" width="14" />
+                                                </td>
+                                        </xsl:if>
+                                        <td class="uportal-channel-table-row-odd" nowrap="nowrap" valign="top"><xsl:value-of select="@name"/></td>
+                                        <td class="uportal-channel-table-row-odd" valign="top">=</td>
+                                        <td width="100%" class="uportal-channel-table-row-odd" valign="top"><xsl:value-of select="@value"/></td></tr>
+                                </xsl:for-each>
+                        </table>
+                </xsl:when>
+                <xsl:otherwise>
+                        <em>No additional information available</em>
+                </xsl:otherwise>
+        </xsl:choose>
+        </td>
+    </tr>
   </xsl:template>
   
   <xsl:template name="hrow">
