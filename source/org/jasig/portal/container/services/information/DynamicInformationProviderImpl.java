@@ -124,7 +124,7 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
 		return supportedStates.contains(state);
     }
     
-	private String getRequestedPortalURL() {
+	public String getRequestedPortalURL() {
 	      // TO GET requested portal URL from HttpServletRequest !!!!!
 	      return null;
 	}
