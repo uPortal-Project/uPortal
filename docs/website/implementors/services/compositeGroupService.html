@@ -287,16 +287,15 @@ leaftype,       IEntityGroup  ancestor)</code><br>
                                                                          
      
       <p><i>IIndividualGroupService.</i>&nbsp; The third type, IIndividualGroupService
-        defines the methods that a specific or leaf group service uses to
-read     and   write groups.&nbsp; An IIndividualGroupService inherits<code>
-find()</code>       methods from ICompositeGroupService, but whereas an ICompositeGroupService 
-       would probably delegate these requests, an IIndividualGroupService 
-would      more likely perform them itself.&nbsp; In addition, an IIndividualGroupService 
-       must know if it is updateable, and more specifically, if it can edit 
-  a  particular   group (<code>isEditable()</code>).&nbsp; An attempt to update
-    a group that   is not updateable should throw a GroupsException. &nbsp;</p>
-                                                                        
-   
+    defines the methods that a specific or leaf group service uses to
+    read and write groups.&nbsp; IIndividualGroupService inherits<code>
+    find()</code> methods from ICompositeGroupService, but whereas an ICompositeGroupService 
+    would probably delegate these requests, an IIndividualGroupService 
+    would more likely perform them itself.&nbsp; In addition, an IIndividualGroupService 
+    must answer if it can be updated (<code>isEditable()</code>), and more specifically, if it 
+    is possible to edit a particular group (<code>isEditable(IEntityGroup group)</code>).&nbsp; 
+    An attempt to update a group that is not editable should throw a GroupsException. &nbsp;</p>
+
       <blockquote><code>public interface <b>IIndividualGroupService</b> extends
    ICompositeGroupService     </code><br>
               <code>    {</code><br>
@@ -309,8 +308,9 @@ would      more likely perform them itself.&nbsp; In addition, an IIndividualGro
               <code>    &nbsp; public Iterator findMembers(IEntityGroup group)
            </code><br>
               <code>    &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
+              <code>    &nbsp; public boolean isEditable();</code><br>
               <code>    &nbsp; public boolean isEditable(IEntityGroup group)
-          </code><br>
+           </code><br>
               <code>    &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
               <code>    &nbsp; public IEntityGroup newGroup(Class type) </code><br>
               <code>    &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
@@ -986,7 +986,7 @@ Entity Caching Service or implement your own  caching mechanism. &nbsp;
       <p>Please post your questions, comments, suggestions and ideas to the
       <a href="mailto:jasig-portal@unm.edu">JA-SIG Portal Discussion List</a>. &nbsp;Good luck!     
       </p>
-            <i>de 1/21/03</i><br>
+            <i>de 3/4/03</i><br>
                <br>
       <!-- end cut this section to put into jasig table cell format -->
           <br>
