@@ -62,6 +62,7 @@ import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.ResourceLoader;
@@ -632,6 +633,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
+        GroupService.finishedSession(person);
     }
 
     /**
