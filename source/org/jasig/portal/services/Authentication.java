@@ -21,6 +21,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
 
 /**
@@ -102,6 +103,9 @@ public class Authentication {
                   // Set the attribute
                   person.setAttribute(key, additionalAttributes.get(key));
                }
+            }
+            else if (addInfo instanceof ChainingSecurityContext.ChainingAdditionalDescriptor) {
+                // do nothing
             }
             else {
                 if (log.isWarnEnabled())
