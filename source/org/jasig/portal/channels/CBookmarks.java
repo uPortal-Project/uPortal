@@ -106,7 +106,7 @@ public class CBookmarks extends BaseChannel {
   /**
    * put your documentation comment here
    */
-  public CBookmarks () {
+  public CBookmarks () throws PortalException {
     m_stylesheetSet = new StylesheetSet(stylesheetDir + "CBookmarks.ssl");
     m_stylesheetSet.setMediaProps(GenericPortalBean.getPortalBaseDir() + "properties" + fs + "media.properties");
   }

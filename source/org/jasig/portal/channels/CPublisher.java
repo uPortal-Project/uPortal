@@ -113,7 +113,7 @@ public class CPublisher implements IPrivilegedChannel {
 
   /** Construct a CPublisher.
    */
-  public CPublisher () {
+  public CPublisher () throws PortalException {
     this.staticData = new ChannelStaticData();
     this.runtimeData = new ChannelRuntimeData();
     this.set = new StylesheetSet(stylesheetDir + fs + "CPublisher.ssl");
@@ -235,7 +235,7 @@ public class CPublisher implements IPrivilegedChannel {
    * @exception org.xml.sax.SAXException
    */
   private void processXML (String stylesheetName, Document xmlSource, DocumentHandler out) throws org.xml.sax.SAXException, 
-      GeneralRenderingException {
+      PortalException {
     String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {
       if (xsl != null) {
