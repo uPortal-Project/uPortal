@@ -19,19 +19,19 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 
   private String name;	
   private String restrictionExpression;
-  protected String nodePath;
+  protected RestrictionPath restrictionPath;
   
   public UserLayoutRestriction() {
-     this("",LOCAL_RESTRICTION_PATH);
+     this("",RestrictionPath.LOCAL_RESTRICTION_PATH);
   }
 
   public UserLayoutRestriction( String name ) {
-     this(name,LOCAL_RESTRICTION_PATH);
+     this(name,RestrictionPath.LOCAL_RESTRICTION_PATH);
   }
 
-  public UserLayoutRestriction( String name, String nodePath ) {
+  public UserLayoutRestriction( String name, RestrictionPath restrictionPath ) {
   	 this.name = name;
-     this.nodePath = nodePath;
+     this.restrictionPath = restrictionPath;
   }
 
   /**
@@ -53,10 +53,10 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   
   /**
    * Sets the restriction path
-   * @param restrictionPath a <code>String</code> path
+   * @param restrictionPath a <code>RestrictionPath</code> path
    */
-  public void setRestrictionPath ( String nodePath ) {
-  	this.nodePath = nodePath;
+  public void setRestrictionPath ( RestrictionPath restrictionPath ) {
+  	this.restrictionPath = restrictionPath;
   }
   
 
@@ -89,19 +89,20 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      * @return a <code>String</code> restriction name
      */
   public String getUniqueKey() {
-     return getUniqueKey(getName(),nodePath);
+     return getUniqueKey(getName(),restrictionPath);
   }
 
 
   /**
      * Gets the restriction name based on a restriction name and a node path
      * @param restrictionName a restriction name
-     * @param nodePath a <code>String</code> node path
+     * @param nodePath a <code>RestrictionPath</code> node path
      * @return a <code>String</code> restriction name
      */
-  public static String getUniqueKey( String restrictionName, String nodePath ) {
+  public static String getUniqueKey( String restrictionName, RestrictionPath restrictionPath ) {
+  	 String nodePath = restrictionPath.toString();
   	 if ( nodePath!=null && nodePath.length() > 0  ) 
-  	 	nodePath = LOCAL_RESTRICTION_PATH;
+  	 	nodePath = RestrictionPath.LOCAL_RESTRICTION_PATH.toString();
      return restrictionName+":"+nodePath;
   }
 
@@ -111,7 +112,7 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
    * @return a <code>String</code> restriction name
    */
   public static String getUniqueKey( String restrictionName) {
-	 return getUniqueKey(restrictionName,LOCAL_RESTRICTION_PATH);
+	 return getUniqueKey(restrictionName,RestrictionPath.LOCAL_RESTRICTION_PATH);
   }
 
   
@@ -144,10 +145,10 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 
   /**
      * Gets the tree path for the current restriction
-     * @return a <code>String</code> tree path
+     * @return a <code>RestrictionPath</code> tree path
      */
-  public String getRestrictionPath() {
-     return nodePath;
+  public RestrictionPath getRestrictionPath() {
+     return restrictionPath;
   }
 
 }

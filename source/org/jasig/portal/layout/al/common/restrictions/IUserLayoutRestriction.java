@@ -29,17 +29,7 @@ import org.jasig.portal.layout.al.common.node.ILayoutNode;
 
 
 public interface IUserLayoutRestriction {
-	
-  // The local restriction path defined for every restriction by default 	   
-  public final static String LOCAL_RESTRICTION_PATH = "local";	
-  
-  // The parent restriction path, could be setup to a parent node	   
-  public final static String PARENT_RESTRICTION_PATH = "parent";	
-  
-  // The children restriction path, could be setup to all children 
-  public final static String CHILDREN_RESTRICTION_PATH = "children";
 
-  
   /**
    * Returns the name of the current restriction
    * @return a <code>String</code> name
@@ -93,15 +83,15 @@ public interface IUserLayoutRestriction {
 
   /**
    * Sets the restriction path
-   * @param restrictionPath a <code>String</code> path
+   * @param restrictionPath a <code>RestrictionPath</code> path
    */
-  public void setRestrictionPath ( String restrictionPath );
+  public void setRestrictionPath ( RestrictionPath restrictionPath );
   
    /**
      * Gets the tree path for the current restriction
-     * @return a <code>String</code> tree path
+     * @return a <code>RestrictionPath</code> tree path
      */
-  public String getRestrictionPath();
+  public RestrictionPath getRestrictionPath();
 
 }
 

@@ -26,7 +26,7 @@ public abstract class ALRestriction extends UserLayoutRestriction {
     super(name);
   }
 
-  public ALRestriction( String name, String nodePath ) {
+  public ALRestriction( String name, RestrictionPath nodePath ) {
     super(name,nodePath);
   }
 

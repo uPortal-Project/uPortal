@@ -62,7 +62,7 @@ public class UserLayoutRestrictionFactory {
  	return getRestriction(activeRestrictions.getProperty(restrictionName));
  }
  
- public static IUserLayoutRestriction createRestriction( String restrictionName, String restrictionValue, String restrictionPath ) throws PortalException {
+ public static IUserLayoutRestriction createRestriction( String restrictionName, String restrictionValue, RestrictionPath restrictionPath ) throws PortalException {
  	IUserLayoutRestriction restriction = createRestriction ( restrictionName );
  	restriction.setRestrictionExpression(restrictionValue);
  	restriction.setRestrictionPath(restrictionPath);
@@ -70,7 +70,7 @@ public class UserLayoutRestrictionFactory {
  }
  
  public static IUserLayoutRestriction createRestriction( String restrictionName, String restrictionValue ) throws PortalException {
-        return createRestriction(restrictionName,restrictionValue,IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);     
+        return createRestriction(restrictionName,restrictionValue,RestrictionPath.LOCAL_RESTRICTION_PATH);     
  }
  
 

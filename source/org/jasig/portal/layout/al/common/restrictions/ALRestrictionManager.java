@@ -7,8 +7,6 @@ package org.jasig.portal.layout.al.common.restrictions;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Hashtable;
-import java.util.Enumeration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
@@ -53,12 +51,12 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * Checks the restriction specified by the parameters below
      * @param nodeId a node id
      * @param restrictionName a restriction name
-     * @param restrictionPath a <code>String</code> restriction path
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(INodeId nodeId, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
+  public boolean checkRestriction(INodeId nodeId, String restrictionName, RestrictionPath restrictionPath, String propertyValue) throws PortalException {
     IALNode node = layout.getLayoutNode(nodeId);
     return (node!=null)?checkRestriction(node,restrictionName,restrictionPath,propertyValue):true;
   }
@@ -73,19 +71,19 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkRestriction(INodeId nodeId, String restrictionName, String propertyValue ) throws PortalException {
-    return (nodeId!=null)?checkRestriction(nodeId, restrictionName, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue):true;
+    return (nodeId!=null)?checkRestriction(nodeId, restrictionName, RestrictionPath.LOCAL_RESTRICTION_PATH, propertyValue):true;
   }
 
   /**
      * Checks the restriction specified by the parameters below
      * @param node a <code>ALNode</code> node to be checked
      * @param restrictionName a restriction name
-     * @param restrictionPath a <code>String</code> restriction path
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(IALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException {
+  public boolean checkRestriction(IALNode node, String restrictionName, RestrictionPath restrictionPath, String propertyValue) throws PortalException {
     IUserLayoutRestriction restriction = node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
     if ( restriction != null )
      return restriction.checkRestriction(propertyValue);
@@ -102,7 +100,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkRestriction(IALNode node, String restrictionName, String propertyValue ) throws PortalException {
-    return checkRestriction(node, restrictionName, IUserLayoutRestriction.LOCAL_RESTRICTION_PATH, propertyValue);
+    return checkRestriction(node, restrictionName, RestrictionPath.LOCAL_RESTRICTION_PATH, propertyValue);
   }
 
 
@@ -130,7 +128,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
     if ( !parentNode.isImmutable() ) {
 
      // Checking children related restrictions
-     Collection restrictions = parentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
+     Collection restrictions = parentNode.getRestrictionsByPath(RestrictionPath.CHILDREN_RESTRICTION_PATH);
      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if (   !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
@@ -139,7 +137,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      }
 
      // Checking parent related restrictions
-     restrictions = newNode.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
+     restrictions = newNode.getRestrictionsByPath(RestrictionPath.PARENT_RESTRICTION_PATH);
      for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           if (  !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
@@ -184,7 +182,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
      if ( !oldParentNode.equals(newParentNode) ) {
       // Checking children related restrictions
-      Collection restrictions = newParentNode.getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
+      Collection restrictions = newParentNode.getRestrictionsByPath(RestrictionPath.CHILDREN_RESTRICTION_PATH);
       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if (   !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
@@ -193,7 +191,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
       }
 
       // Checking parent related restrictions
-      restrictions = node.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
+      restrictions = node.getRestrictionsByPath(RestrictionPath.PARENT_RESTRICTION_PATH);
       for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
           IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
           if (  !restriction.getName().equals(RestrictionTypes.DEPTH_RESTRICTION) &&
@@ -275,11 +273,11 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * Gets the restriction specified by the parameters below
      * @param node a <code>ALNode</code> node
      * @param restrictionName a restriction name
-     * @param restrictionPath a <code>String</code> restriction path
+     * @param restrictionPath a <code>restrictionpath</code> restriction path
      * @return a <code>IUserLayoutRestriction</code> instance
      * @exception PortalException if an error occurs
      */
-  public static IUserLayoutRestriction getRestriction( IALNode node, String restrictionName, String restrictionPath ) throws PortalException {
+  public static IUserLayoutRestriction getRestriction( IALNode node, String restrictionName, RestrictionPath restrictionPath ) throws PortalException {
      return node.getRestriction(UserLayoutRestriction.getUniqueKey(restrictionName,restrictionPath));
   }
 
@@ -289,7 +287,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public static PriorityRestriction getPriorityRestriction( IALNode node ) throws PortalException {
-     PriorityRestriction priorRestriction = getPriorityRestriction(node,IUserLayoutRestriction.LOCAL_RESTRICTION_PATH);
+     PriorityRestriction priorRestriction = getPriorityRestriction(node,RestrictionPath.LOCAL_RESTRICTION_PATH);
      if ( priorRestriction == null ) {
        priorRestriction = (PriorityRestriction)
          UserLayoutRestrictionFactory.createRestriction(RestrictionTypes.PRIORITY_RESTRICTION,"0-"+java.lang.Integer.MAX_VALUE);
@@ -303,7 +301,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
      * @return a <code>PriorityRestriction</code> object
      * @exception PortalException if an error occurs
      */
-  public static PriorityRestriction getPriorityRestriction( IALNode node, String restrictionPath ) throws PortalException {
+  public static PriorityRestriction getPriorityRestriction( IALNode node, RestrictionPath restrictionPath ) throws PortalException {
      return (PriorityRestriction) getRestriction(node,RestrictionTypes.PRIORITY_RESTRICTION,restrictionPath);
   }
 
@@ -323,8 +321,8 @@ public class ALRestrictionManager implements IALRestrictionManager {
             return false;
 
         // Checking the immutable parent node related restriction
-        if ( getRestriction((IALNode)node.getParentNode(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH) != null &&
-             checkRestriction(((ILayoutNode)node.getParentNode()).getId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH,"true") )
+        if ( getRestriction((IALNode)node.getParentNode(),RestrictionTypes.IMMUTABLE_RESTRICTION,RestrictionPath.CHILDREN_RESTRICTION_PATH) != null &&
+             checkRestriction(((ILayoutNode)node.getParentNode()).getId(),RestrictionTypes.IMMUTABLE_RESTRICTION,RestrictionPath.CHILDREN_RESTRICTION_PATH,"true") )
             return false;
 
         // Checking the immutable children node related restrictions
@@ -332,8 +330,8 @@ public class ALRestrictionManager implements IALRestrictionManager {
             IALFolder folder = (IALFolder) node;
             //Loop for all children
             for ( node = (IALNode) folder.getFirstChildNode(); node != null; node = (IALNode) node.getNextSiblingNode() )
-             if ( getRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH) != null &&
-                  checkRestriction(node.getId(),RestrictionTypes.IMMUTABLE_RESTRICTION,IUserLayoutRestriction.PARENT_RESTRICTION_PATH,"true") )
+             if ( getRestriction(node,RestrictionTypes.IMMUTABLE_RESTRICTION,RestrictionPath.PARENT_RESTRICTION_PATH) != null &&
+                  checkRestriction(node.getId(),RestrictionTypes.IMMUTABLE_RESTRICTION,RestrictionPath.PARENT_RESTRICTION_PATH,"true") )
                   return false;
         }
 
@@ -341,14 +339,14 @@ public class ALRestrictionManager implements IALRestrictionManager {
         if ( nodeDesc.getRestrictions() == null )
           nodeDesc.setRestrictions(node.getRestrictions());
         
-        Hashtable rhash = nodeDesc.getRestrictions();
+        Collection restrictions = nodeDesc.getRestrictions();
         // Setting the new node description to the node
         node.setNodeDescription(nodeDesc);
 
         // Checking restrictions for the node
-        if ( rhash != null ) {
-           for ( Enumeration enum = rhash.elements(); enum.hasMoreElements(); )
-             if ( !((IUserLayoutRestriction)enum.nextElement()).checkRestriction(node) ) {
+        if ( restrictions != null ) {
+           for ( Iterator i = restrictions.iterator(); i.hasNext(); )
+             if ( !((IUserLayoutRestriction)i.next()).checkRestriction(node) ) {
                   node.setNodeDescription(currentNodeDesc);
                   return false;
              }
@@ -356,7 +354,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
 
 
         // Checking parent related restrictions for the children
-        Collection restrictions = ((IALNode)node.getParentNode()).getRestrictionsByPath(IUserLayoutRestriction.CHILDREN_RESTRICTION_PATH);
+        restrictions = ((IALNode)node.getParentNode()).getRestrictionsByPath(RestrictionPath.CHILDREN_RESTRICTION_PATH);
         for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
          if ( !restriction.checkRestriction(node) ) {
@@ -369,7 +367,7 @@ public class ALRestrictionManager implements IALRestrictionManager {
         // Checking child related restrictions for the parent
         if ( node.getType().equals(NodeType.FOLDER) ) {
          for ( IALNode child = (IALNode) ((IALFolder)node).getFirstChildNode(); child != null; ) {
-          restrictions = child.getRestrictionsByPath(IUserLayoutRestriction.PARENT_RESTRICTION_PATH);
+          restrictions = child.getRestrictionsByPath(RestrictionPath.PARENT_RESTRICTION_PATH);
           for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
            IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
            if ( !restriction.checkRestriction(node) ) {

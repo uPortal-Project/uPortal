@@ -22,12 +22,12 @@ public interface IALRestrictionManager extends IRestrictionManager {
      * Checks the restriction specified by the parameters below.
      * @param node a <code>ALNode</code> node to be checked
      * @param restrictionName a restriction name
-     * @param restrictionPath a <code>String</code> restriction path
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @param propertyValue a <code>String</code> property value to be checked
      * @return a boolean value
      * @exception PortalException if an error occurs
      */
-  public boolean checkRestriction(IALNode node, String restrictionName, String restrictionPath, String propertyValue) throws PortalException;
+  public boolean checkRestriction(IALNode node, String restrictionName, RestrictionPath restrictionPath, String propertyValue) throws PortalException;
 
   /**
      * Checks the local restriction specified by the parameters below.

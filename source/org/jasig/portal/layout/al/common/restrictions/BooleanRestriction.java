@@ -25,7 +25,7 @@ public abstract class BooleanRestriction extends ALRestriction {
 
          private boolean boolValue1 = false, boolValue2 = false;
 
-         public BooleanRestriction(String name, String nodePath) {
+         public BooleanRestriction(String name, RestrictionPath nodePath) {
            super(name,nodePath);
          }
 

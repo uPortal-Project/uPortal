@@ -19,7 +19,7 @@ import org.jasig.portal.layout.al.common.node.ILayoutNode;
 public class UnremovableRestriction extends BooleanRestriction {
 
 
-         public UnremovableRestriction(String name,String nodePath) {
+         public UnremovableRestriction(String name,RestrictionPath nodePath) {
            super(name,nodePath);
          }
          

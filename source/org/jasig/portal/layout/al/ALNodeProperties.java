@@ -5,12 +5,11 @@
 
 package org.jasig.portal.layout.al;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.HashSet;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
-import org.jasig.portal.utils.CommonUtils;
+import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,12 +25,13 @@ public class ALNodeProperties implements IALNodeProperties {
 
     protected IFragmentId fragmentId = null;
     protected IFragmentLocalNodeId fragmentNodeId = null;
-    protected Hashtable restrictions = null;
+    protected Collection restrictions = null;
     protected boolean fragmentRoot;
     protected String group = "";
 
 
     public ALNodeProperties() {
+    	restrictions = new HashSet();
     }
 
     public ALNodeProperties(IALNodeProperties p) {
@@ -97,9 +97,9 @@ public class ALNodeProperties implements IALNodeProperties {
 
     /**
      * Sets the hashtable of restrictions bound to this node
-     * @param restrictions a <code>Hashtable</code> of restriction expressions
+     * @param restrictions a <code>Collection</code> of restriction expressions
      */
-     public void setRestrictions ( Hashtable restrictions ) {
+     public void setRestrictions ( Collection restrictions ) {
        this.restrictions = restrictions;
      }
 
@@ -107,7 +107,7 @@ public class ALNodeProperties implements IALNodeProperties {
      * Gets the hashtable of restrictions bound to this node
      * @return a set of restriction expressions
      */
-     public Hashtable getRestrictions () {
+     public Collection getRestrictions () {
        return restrictions;
      }
 
@@ -117,8 +117,7 @@ public class ALNodeProperties implements IALNodeProperties {
      * @param restriction a <code>IUserLayoutRestriction</code> a restriction
      */
      public void addRestriction( IUserLayoutRestriction restriction ) {
-       if ( restrictions == null ) restrictions = new Hashtable();
-       restrictions.put(restriction.getUniqueKey(), restriction);
+       restrictions.add(restriction);
      }
 
      /**
@@ -127,34 +126,37 @@ public class ALNodeProperties implements IALNodeProperties {
      * @return a IUserLayoutRestriction
      */
      public IUserLayoutRestriction getRestriction( String restrictionName ) {
-      if ( restrictions != null )
-       return (IUserLayoutRestriction) restrictions.get(restrictionName);
-       return null;
+     	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+            IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
+            if ( restrictionName.equals(restriction.getName()) )
+                 return restriction;
+        }
+     	         return null;
      }
 
      /**
      * Gets a restrictions list by a restriction path.
-     * @param restrictionPath a <code>String</code> restriction path
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @return a IUserLayoutRestriction
      */
-     public List getRestrictionsByPath( String restrictionPath ) {
-       Vector list = new Vector();
+     public Collection getRestrictionsByPath( RestrictionPath restrictionPath ) {
+       Collection list = new HashSet();
        if ( restrictions != null ) {
-        for ( Enumeration enum = restrictions.elements(); enum.hasMoreElements(); ) {
-          IUserLayoutRestriction restriction = (IUserLayoutRestriction) enum.nextElement();
-          if ( CommonUtils.nvl(restrictionPath).equals(CommonUtils.nvl(restriction.getRestrictionPath())) )
+        for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
+          IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
+          if ( restrictionPath.equals(restriction.getRestrictionPath()) )
                list.add(restriction);
         }
        }
-         return list;
+       return list;
      }
 
     public void addRestrictionChildren(Element node, Document root) {
        if ( restrictions != null )
-        for ( Enumeration enum = restrictions.elements(); enum.hasMoreElements(); ) {
+       	for ( Iterator i = restrictions.iterator(); i.hasNext(); ) {
             Element pElement=root.createElement("restriction");
-            IUserLayoutRestriction restriction = (IUserLayoutRestriction) enum.nextElement();
-            pElement.setAttribute("path",restriction.getRestrictionPath());
+            IUserLayoutRestriction restriction = (IUserLayoutRestriction) i.next();
+            pElement.setAttribute("path",restriction.getRestrictionPath().toString());
             pElement.setAttribute("value",restriction.getRestrictionExpression());
             pElement.setAttribute("type",restriction.getName());
             node.appendChild(pElement);

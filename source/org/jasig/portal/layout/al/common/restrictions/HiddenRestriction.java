@@ -18,7 +18,7 @@ import org.jasig.portal.layout.al.common.node.ILayoutNode;
 public class HiddenRestriction extends BooleanRestriction {
 
 
-         public HiddenRestriction(String name,String nodePath) {
+         public HiddenRestriction(String name,RestrictionPath nodePath) {
            super(name,nodePath);
          }
 

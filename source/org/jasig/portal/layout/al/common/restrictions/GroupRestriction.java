@@ -46,7 +46,7 @@ public class GroupRestriction extends ALRestriction {
            }
          }  
 
-         public GroupRestriction(String name,String nodePath) throws PortalException {
+         public GroupRestriction(String name,RestrictionPath nodePath) throws PortalException {
            super(name,nodePath);
          }
 

@@ -5,12 +5,12 @@
 
 package org.jasig.portal.layout.al;
 
-import java.util.Hashtable;
-import java.util.List;
+import java.util.Collection;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.node.FolderDescriptionImpl;
 import org.jasig.portal.layout.al.common.node.IFolderDescription;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -20,6 +20,7 @@ import org.w3c.dom.Element;
  * An extension of the FolderDescription for the Aggregated Layout implementation
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Michael Ivanov</a>
  * @version 1.0
  */
 public class ALFolderDescription extends FolderDescriptionImpl implements IALFolderDescription {
@@ -98,18 +99,18 @@ public class ALFolderDescription extends FolderDescriptionImpl implements IALFol
 
 
     /**
-     * Sets the hashtable of restrictions bound to this node
-     * @param restrictions a <code>Hashtable</code> of restriction expressions
+     * Sets the collection of restrictions bound to this node
+     * @param restrictions a <code>Collection</code> of restriction expressions
      */
-    public void setRestrictions ( Hashtable restrictions ) {
+    public void setRestrictions ( Collection restrictions ) {
         this.alproperties.setRestrictions(restrictions);
     }
 
     /**
-     * Gets the hashtable of restrictions bound to this node
+     * Gets the collection of restrictions bound to this node
      * @return a set of restriction expressions
      */
-    public Hashtable getRestrictions () {
+    public Collection getRestrictions () {
         return this.alproperties.getRestrictions();
     }
 
@@ -133,10 +134,10 @@ public class ALFolderDescription extends FolderDescriptionImpl implements IALFol
 
     /**
      * Gets a restrictions list by a restriction path.
-     * @param restrictionPath a <code>String</code> restriction path
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @return a IUserLayoutRestriction
      */
-    public List getRestrictionsByPath( String restrictionPath ) {
+    public Collection getRestrictionsByPath( RestrictionPath restrictionPath ) {
         return this.alproperties.getRestrictionsByPath(restrictionPath);
     }
 

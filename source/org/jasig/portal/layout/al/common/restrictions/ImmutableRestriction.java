@@ -18,7 +18,7 @@ import org.jasig.portal.layout.al.common.node.ILayoutNode;
 public class ImmutableRestriction extends BooleanRestriction {
 
 
-         public ImmutableRestriction(String name,String nodePath) {
+         public ImmutableRestriction(String name,RestrictionPath nodePath) {
            super(name,nodePath);
          }
 

@@ -6,10 +6,6 @@
 package org.jasig.portal.layout.al;
 
 
-
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
@@ -28,7 +24,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 
-public abstract class ALNode implements IALNode {
+public abstract class ALNode extends ALNodeProperties implements IALNode {
     
     
     protected IALNodeDescription nodeDescription;
@@ -128,26 +124,7 @@ public abstract class ALNode implements IALNode {
     public int getPriority() {
         return priority;
     }
-    /**
-     * Gets a restriction by the type.
-     * @param restrictionName a <code>String</code>  name of the restriction
-     * @return a IUserLayoutRestriction
-     */
-    public IUserLayoutRestriction getRestriction(String restrictionName) {
-        if (nodeDescription != null)
-            return nodeDescription.getRestriction(restrictionName);
-        return null;
-    }
-    /**
-     * Gets a restrictions list by a restriction path.
-     * @param restrictionPath a <code>String</code> restriction path
-     * @return a IUserLayoutRestriction
-     */
-    public List getRestrictionsByPath(String restrictionPath) {
-        if (nodeDescription != null)
-            return nodeDescription.getRestrictionsByPath(restrictionPath);
-        return new Vector();
-    }
+    
     /**
      * Add all of common node attributes to the <code>Element</code>.
      * @param node an <code>Element</code> value
@@ -199,24 +176,14 @@ public abstract class ALNode implements IALNode {
     public void addRestrictionChildren(Element node, Document root) {
         nodeDescription.addRestrictionChildren(node, root);
     }
-    /**
-     * @return
-     */
-    public String getGroup() {
-        return nodeDescription.getGroup();
-    }
+   
     /**
      * @return
      */
     public String getName() {
         return nodeDescription.getName();
     }
-    /**
-     * @return
-     */
-    public Hashtable getRestrictions() {
-        return nodeDescription.getRestrictions();
-    }
+    
     /**
      * @return
      */
@@ -302,12 +269,7 @@ public abstract class ALNode implements IALNode {
     public void setName(String name) {
         nodeDescription.setName(name);
     }
-    /**
-     * @param restrictions
-     */
-    public void setRestrictions(Hashtable restrictions) {
-        nodeDescription.setRestrictions(restrictions);
-    }
+   
     /**
      * @param setting
      */

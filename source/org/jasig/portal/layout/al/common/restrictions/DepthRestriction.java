@@ -18,8 +18,10 @@ import org.jasig.portal.utils.CommonUtils;
  * @version $Revision$
  */
 public class DepthRestriction extends ALRestriction {
+	
     private Integer[] minDepthArray, maxDepthArray, depthArray;
-    public DepthRestriction(String name, String nodePath) {
+    
+    public DepthRestriction(String name, RestrictionPath nodePath) {
         super(name, nodePath);
     }
     public DepthRestriction(String name) {

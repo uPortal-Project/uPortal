@@ -5,9 +5,9 @@
 
 package org.jasig.portal.layout.al;
 
-import java.util.Hashtable;
-import java.util.List;
+import java.util.Collection;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -16,6 +16,7 @@ import org.w3c.dom.Element;
  * An interface describing methods common to the Aggregated Layout node descriptions
  *
  * @author Peter Kharchenko: pkharchenko at unicon.net
+ * @author Michael Ivanov: mvi at immagic.com
  * @version 1.0
  */
 public interface IALNodeProperties {
@@ -76,15 +77,15 @@ public interface IALNodeProperties {
 
     /**
      * Sets the hashtable of restrictions bound to this node
-     * @param restrictions a <code>Hashtable</code> of restriction expressions
+     * @param restrictions a <code>Collection</code> of restriction expressions
      */
-    public void setRestrictions ( Hashtable restrictions );
+    public void setRestrictions ( Collection restrictions );
 
     /**
      * Gets the hashtable of restrictions bound to this node
      * @return a set of restriction expressions
      */
-    public Hashtable getRestrictions ();
+    public Collection getRestrictions ();
 
 
     /**
@@ -102,10 +103,10 @@ public interface IALNodeProperties {
 
     /**
      * Gets a restrictions list by a restriction path.
-     * @param restrictionPath a <code>String</code> restriction path
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
      * @return a IUserLayoutRestriction
      */
-    public List getRestrictionsByPath( String restrictionPath );
+    public Collection getRestrictionsByPath( RestrictionPath restrictionPath );
 
     public void addRestrictionChildren(Element node, Document root);
 
