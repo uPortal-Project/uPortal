@@ -52,6 +52,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 //import javax.xml.parsers.SAXParserFactory;
 //import javax.xml.parsers.SAXParser;
@@ -124,6 +125,7 @@ public class DbLoader
         XMLReader parser = getXMLReader();
         doInfo();
         doProperties(parser);
+        //doScriptFile();
         doTables(parser);
         doData(parser);
 
@@ -189,6 +191,11 @@ public class DbLoader
     parser.setContentHandler(propertiesHandler);
     parser.setErrorHandler(propertiesHandler);
     parser.parse(UtilitiesBean.fixURI(propertiesUri));
+  }
+
+  private static void doScriptFile()
+  {
+    // Create or replace file
   }
 
   private static void doTables (XMLReader parser) throws SAXException, IOException
@@ -451,6 +458,7 @@ public class DbLoader
     private static boolean insideParam = false;
     private static boolean insidePrimaryKey = false;
 
+    static HashMap tables;
     static Table table;
     static Column column;
 
@@ -469,6 +477,7 @@ public class DbLoader
         if (name.equals("tables"))
         {
           insideTables = true;
+          tables = new HashMap();
         }
         else if (name.equals("table"))
         {
@@ -498,6 +507,7 @@ public class DbLoader
         {
           insideTable = false;
           replaceTable(table);
+          tables.put(table.getName(), table);
         }
         else if (name.equals("name"))
           insideName = false;
@@ -522,7 +532,10 @@ public class DbLoader
       else if (insideColumn && insideName) // column name
         column.setName(new String(ch, start, length));
       else if (insideColumn && insideType) // column type
-        column.setType(getLocalDataTypeName(new String(ch, start, length)));
+      {
+        column.setGenericType(new String(ch, start, length));
+        column.setLocalType(getLocalDataTypeName(new String(ch, start, length)));
+      }
       else if (insideColumn && insideParam) // column param
         column.setParam(new String(ch, start, length));
       else if (insidePrimaryKey) // a primary key
@@ -530,6 +543,61 @@ public class DbLoader
     }
 
     private String getLocalDataTypeName (String genericDataTypeName)
+    {
+      // Find the type code for this generic type name
+      int dataTypeCode = getJavaSqlType(genericDataTypeName);
+
+      // Find the first local type name matching the type code
+      String localDataTypeName = null;
+
+      try
+      {
+        DatabaseMetaData dbmd = con.getMetaData();
+        ResultSet rs = dbmd.getTypeInfo();
+
+        while (rs.next())
+        {
+          int localDataTypeCode = rs.getInt("DATA_TYPE");
+          //String createParams = rs.getString("CREATE_PARAMS");
+
+          if (dataTypeCode == localDataTypeCode)
+          {
+            try { localDataTypeName = rs.getString("TYPE_NAME"); } catch (SQLException sqle) { }
+            break;
+          }
+        }
+
+        // If a local data type wasn't found, look in properties file
+        // for a mapped data type name
+        if (localDataTypeName == null)
+        {
+          DatabaseMetaData dbMetaData = con.getMetaData();
+          String dbName = dbMetaData.getDatabaseProductName();
+          String dbVersion = dbMetaData.getDatabaseProductVersion();
+          String driverName = dbMetaData.getDriverName();
+          String driverVersion = dbMetaData.getDriverVersion();
+
+          localDataTypeName = PropertiesHandler.properties.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
+
+          if (localDataTypeName == null)
+          {
+            System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
+            System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
+            System.out.println("Exiting...");
+            exit();
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        exit();
+      }
+
+      return localDataTypeName;
+    }
+
+    private int getJavaSqlType (String genericDataTypeName)
     {
       // Find the type code for this generic type name
       int dataTypeCode = 0;
@@ -600,54 +668,7 @@ public class DbLoader
       else if (genericDataTypeName.equalsIgnoreCase("REF"))
         dataTypeCode = Types.REF; // 2006
 
-      // Find the first local type name matching the type code
-      String localDataTypeName = null;
-
-      try
-      {
-        DatabaseMetaData dbmd = con.getMetaData();
-        ResultSet rs = dbmd.getTypeInfo();
-
-        while (rs.next())
-        {
-          int localDataTypeCode = rs.getInt("DATA_TYPE");
-          //String createParams = rs.getString("CREATE_PARAMS");
-
-          if (dataTypeCode == localDataTypeCode)
-          {
-            try { localDataTypeName = rs.getString("TYPE_NAME"); } catch (SQLException sqle) { }
-            break;
-          }
-        }
-
-        // If a local data type wasn't found, look in properties file
-        // for a mapped data type name
-        if (localDataTypeName == null)
-        {
-          DatabaseMetaData dbMetaData = con.getMetaData();
-          String dbName = dbMetaData.getDatabaseProductName();
-          String dbVersion = dbMetaData.getDatabaseProductVersion();
-          String driverName = dbMetaData.getDriverName();
-          String driverVersion = dbMetaData.getDriverVersion();
-
-          localDataTypeName = PropertiesHandler.properties.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
-
-          if (localDataTypeName == null)
-          {
-            System.out.println("Your database driver, '"+ driverName + "', version '" + driverVersion + "', was unable to find a local type name that matches the generic type name, '" + genericDataTypeName + "'.");
-            System.out.println("Please add a mapped type for database '" + dbName + "', version '" + dbVersion + "' inside '" + propertiesUri + "' and run this program again.");
-            System.out.println("Exiting...");
-            exit();
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-        exit();
-      }
-
-      return localDataTypeName;
+      return dataTypeCode;
     }
 
     private String prepareDropTableStatement (Table table)
@@ -669,7 +690,7 @@ public class DbLoader
       {
         Column column = (Column)iterator.next();
         sb.append(indent).append(column.getName());
-        sb.append(space).append(column.getType());
+        sb.append(space).append(column.getLocalType());
 
         String param = column.getParam();
 
@@ -729,19 +750,41 @@ public class DbLoader
       public void setName(String name) { this.name = name; }
       public void setPrimaryKey(String primaryKey) { this.primaryKey = primaryKey; }
       public void addColumn(Column column) { columns.add(column); }
+
+      public int getSqlType (String columnName)
+      {
+        int type = 0;
+        Iterator iterator = columns.iterator();
+
+        while (iterator.hasNext())
+        {
+          Column column = (Column)iterator.next();
+
+          if (column.getName().equalsIgnoreCase(columnName))
+          {
+            String columnType = column.getGenericType();
+            type = getJavaSqlType(columnType);
+            break;
+          }
+        }
+        return type;
+      }
     }
 
     class Column
     {
       private String name;
-      private String type;
+      private String localType;
+      private String genericType;
       private String param;
 
       public String getName() { return name; }
-      public String getType() { return type; }
+      public String getLocalType() { return localType; }
+      public String getGenericType() { return genericType; }
       public String getParam() { return param; }
       public void setName(String name) { this.name = name; }
-      public void setType(String type) { this.type = type; }
+      public void setLocalType(String localType) { this.localType = localType; }
+      public void setGenericType(String genericType) { this.genericType = genericType; }
       public void setParam(String param) { this.param = param; }
     }
   }
@@ -901,18 +944,40 @@ public class DbLoader
             {
               value = value.trim(); // portal can't read xml properly without this, don't know why yet
               int valueLength = value.length();
+              TableHandler.Table aTable = (TableHandler.Table)TableHandler.tables.get(table.getName());
+              int javaSqlDataType = aTable.getSqlType(column.getName());
 
               if (valueLength <= 4000)
-                pstmt.setString(i, value);
+              {
+                try
+                {
+                  // Needed for Sybase and maybe others
+                  pstmt.setObject(i, value, javaSqlDataType);
+                }
+                catch (Exception e)
+                {
+                  // Needed for Oracle and maybe others
+                  pstmt.setObject(i, value);
+                }
+              }
               else
               {
                 try
                 {
-                  pstmt.setString(i, value);
+                  try
+                  {
+                    // Needed for Sybase and maybe others
+                    pstmt.setObject(i, value, javaSqlDataType);
+                  }
+                  catch (Exception e)
+                  {
+                   // Needed for Oracle and maybe others
+                   pstmt.setObject(i, value);
+                  }
                 }
                 catch (SQLException sqle)
                 {
-                  // For Oracle and maybe other databases...
+                  // For Oracle and maybe others
                   pstmt.setCharacterStream(i, new StringReader(value), valueLength);
                 }
               }
