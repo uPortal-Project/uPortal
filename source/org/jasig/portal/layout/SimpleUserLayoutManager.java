@@ -480,7 +480,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
 
     public void markMoveTargets(String nodeId) throws PortalException {
-        IUserLayoutNodeDescription node=getNode(nodeId);
+        //IUserLayoutNodeDescription node=getNode(nodeId);
         this.updateCacheKey();
     }
 
