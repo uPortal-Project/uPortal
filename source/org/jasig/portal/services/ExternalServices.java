@@ -44,10 +44,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.lang.reflect.Method;
 import java.lang.reflect.Array;
+import java.lang.reflect.Modifier;
 
 import org.xml.sax.Attributes;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
+import  javax.naming.Context;
 
 /**
  * ExternalServices starts up all the runtime services for the uPortal.
@@ -55,22 +57,27 @@ import javax.xml.parsers.SAXParser;
  * services.xml file under the properties directory.  For example, the
  * connection pooling is a service that can be provided by different vendor
  * implementations.
+ * Services are bound into the uPortal /services JNDI branch if <jndiname/> element
+ * is specified in the service description.
+ * 
  * @author Sridhar Venkatesh <svenkatesh@interactivebusiness.com>
  * @version: $Revision$
  */
 public class ExternalServices {
   private ServiceHandler svcHandler;
+  private Context servicesContext;
 
-  public ExternalServices() {
+  public ExternalServices(Context servicesContext) {
+    this.servicesContext=servicesContext;
     svcHandler = new ServiceHandler();
   }
 
-  public static void startServices() throws Exception {
+  public static void startServices(Context servicesContext) throws Exception {
 
     InputStream svcDesciptor = ResourceLoader.getResourceAsStream(ExternalServices.class, "/properties/services.xml");
 
     if (svcDesciptor != null) {
-      ExternalServices svcMgr = new ExternalServices();
+      ExternalServices svcMgr = new ExternalServices(servicesContext);
       SAXParser parser = svcMgr.createParser();
       parser.parse(svcDesciptor, svcMgr.svcHandler);
     }
@@ -124,6 +131,7 @@ public class ExternalServices {
   class ServiceItem {
     String name;
     String javaClass;
+    String jndiName;
     String startMethod;
     String methodType;
     List argList;
@@ -136,6 +144,9 @@ public class ExternalServices {
 
     public void setStartMethod (String methodName) { startMethod = methodName; }
     public String getStartMethod () { return startMethod; }
+
+    public void setJndiName (String name) { this.jndiName = name; }
+    public String getJndiName () { return jndiName; }
 
     public void setMethodType(String type) { methodType = type; }
 
@@ -245,6 +256,7 @@ public class ExternalServices {
     String elementName;
     Argument argItem;
     boolean argProcessing = false;
+    boolean jndiNameporcessing=false;
 
     public void startElement (String namespaceURI, String localName, String qName, Attributes atts) {
       elementName = qName;
@@ -285,10 +297,40 @@ public class ExternalServices {
         }
 
         try {
-          Method startMethod = svcClass.getMethod(svcItem.getStartMethod(), classNames);
-          Object obj = svcClass.newInstance();
-          startMethod.invoke(obj, args);
-          outputMessage("The service \"" + svcItem.getName() + "\" service started.");
+            Object obj=null;
+            Object returnObject=null;
+            
+          // check if any method is specified
+          if(svcItem.getStartMethod()!=null) {
+              Method startMethod = svcClass.getMethod(svcItem.getStartMethod(), classNames);
+              if(Modifier.isStatic(startMethod.getModifiers())) {
+                  // no need to instantiate an object
+                  returnObject=startMethod.invoke(null,args);
+              } else {
+                  // instantiate 
+                  obj = svcClass.newInstance();
+                  returnObject=startMethod.invoke(obj,args);
+              }
+              outputMessage("initialized \"" + svcItem.getName() + "\"");
+          }
+ 
+          // check if jndi binding needed
+          if(svcItem.getJndiName()!=null) {
+              if(returnObject!=null) {
+                  // a non-void method was specified
+                  // in the service description, bind 
+                  // returned object
+                  servicesContext.bind(svcItem.getJndiName(), returnObject);
+                  outputMessage("bound intialization result for service \"" + svcItem.getName() + "\"");
+              } else {
+                  if(obj==null) {
+                      // instantiate
+                      obj = svcClass.newInstance();
+                  }
+                  servicesContext.bind(svcItem.getJndiName(), obj);
+                  outputMessage("bound class instance for service \"" + svcItem.getName() + "\"");
+              }
+          }
           return;
         } catch (java.lang.NoSuchMethodException nsme) {
           outputMessage("Method not found - " + nsme.getMessage());
@@ -316,6 +358,8 @@ public class ExternalServices {
         svcItem.setName(chValue);
       } else if (elementName.equals("class")) {
         svcItem.setJavaClass(chValue);
+      } else if (elementName.equals("jndi_name")) {
+        svcItem.setJndiName(chValue);
       } else if (elementName.equals("method")) {
         svcItem.setStartMethod(chValue);
       } else if (elementName.equals("datatype") && argProcessing) {
