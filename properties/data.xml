@@ -428,7 +428,7 @@
             <column><name>PREV_NODE_ID</name><value>NULL</value></column>
             <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
             <column><name>PRNT_NODE_ID</name><value>5</value></column>
-            <column><name>CHAN_ID</name><value>80</value></column>
+            <column><name>CHAN_ID</name><value>11</value></column>
             <column><name>PRIORITY</name><value>0</value></column>
           </row>
           <!-- Number Guessing Game -->
@@ -438,7 +438,7 @@
             <column><name>PREV_NODE_ID</name><value>6</value></column>
             <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
             <column><name>PRNT_NODE_ID</name><value>5</value></column>
-            <column><name>CHAN_ID</name><value>81</value></column>
+            <column><name>CHAN_ID</name><value>14</value></column>
             <column><name>PRIORITY</name><value>0</value></column>
           </row>
         <row>
@@ -496,7 +496,7 @@
             <column><name>PREV_NODE_ID</name><value>12</value></column>
             <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
             <column><name>PRNT_NODE_ID</name><value>11</value></column>
-            <column><name>CHAN_ID</name><value>79</value></column>
+            <column><name>CHAN_ID</name><value>15</value></column>
             <column><name>PRIORITY</name><value>0</value></column>
           </row>
         <row>
@@ -611,7 +611,7 @@
             <column><name>PREV_NODE_ID</name><value>NULL</value></column>
             <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
             <column><name>PRNT_NODE_ID</name><value>22</value></column>
-            <column><name>CHAN_ID</name><value>77</value></column>
+            <column><name>CHAN_ID</name><value>17</value></column>
             <column><name>PRIORITY</name><value>0</value></column>
           </row>
           <!-- Tomcat's NumGuess (another) -->
@@ -621,7 +621,7 @@
             <column><name>PREV_NODE_ID</name><value>23</value></column>
             <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
             <column><name>PRNT_NODE_ID</name><value>22</value></column>
-            <column><name>CHAN_ID</name><value>78</value></column>
+            <column><name>CHAN_ID</name><value>17</value></column>
             <column><name>PRIORITY</name><value>0</value></column>
           </row>
         <row>
@@ -811,7 +811,7 @@
         <column><name>FRAGMENT_ID</name><value>2</value></column>
         <column><name>NAME</name><value>The channel #1</value></column>
         <column><name>TYPE</name><value>channel</value></column>
-        <column><name>CHAN_ID</name><value>77</value></column>
+        <column><name>CHAN_ID</name><value>14</value></column>
         <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
@@ -840,7 +840,7 @@
         <column><name>FRAGMENT_ID</name><value>2</value></column>
         <column><name>NAME</name><value>The channel #2</value></column>
         <column><name>TYPE</name><value>channel</value></column>
-        <column><name>CHAN_ID</name><value>78</value></column>
+        <column><name>CHAN_ID</name><value>14</value></column>
         <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
         <column><name>PREV_NODE_ID</name><value>NULL</value></column>
         <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
