@@ -1910,7 +1910,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlFragment += "(ULS.USER_ID="+realUserId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
 
         LogService.log(LogService.DEBUG, sqlFragment);
 
