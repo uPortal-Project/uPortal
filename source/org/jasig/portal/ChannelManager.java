@@ -592,7 +592,8 @@ public class ChannelManager implements LayoutEventListener {
         String channelPublishId=cd.getChannelPublishId();
         // check if the user has permissions to instantiate this channel
         if(ap==null) {
-            ap = AuthorizationService.instance().newPrincipal(Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()), org.jasig.portal.security.IPerson.class);
+            EntityIdentifier ei = this.pcs.getUserPreferencesManager().getPerson().getEntityIdentifier();
+            ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
         }
 
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
@@ -700,6 +701,7 @@ public class ChannelManager implements LayoutEventListener {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Throwable e) {
                     LogService.instance().log(LogService.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+                    LogService.instance().log(LogService.ERROR,e);
                     chObj=replaceWithErrorChannel(channelTarget,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }

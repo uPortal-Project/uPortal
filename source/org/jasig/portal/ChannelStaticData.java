@@ -40,12 +40,11 @@ public class ChannelStaticData extends Hashtable {
    * @return instance of the IAuthorizationPrincipal for the IPerson
    */
   public IAuthorizationPrincipal getAuthorizationPrincipal() {
-    String key = "" + getPerson().getID();
-    Class type = org.jasig.portal.security.IPerson.class;
+    EntityIdentifier pid = getPerson().getEntityIdentifier();
     IAuthorizationPrincipal ap = null;
     try
     {
-      ap = AuthorizationService.instance().newPrincipal(key, type);
+      ap = AuthorizationService.instance().newPrincipal(pid.getKey(), pid.getType());
     }
     catch (AuthorizationException ae)
     {

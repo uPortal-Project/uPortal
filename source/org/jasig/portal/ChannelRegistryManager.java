@@ -130,9 +130,8 @@ public class ChannelRegistryManager {
     Document channelRegistry = getChannelRegistry();
 
     // Filter the channel registry according to permissions
-    String userKey = String.valueOf(person.getID());
-    Class userType = IPerson.class;
-    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(userKey, userType);
+    EntityIdentifier ei = person.getEntityIdentifier();
+    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
     // Cycle through all the channels, looking for restricted channels
     NodeList nl = channelRegistry.getElementsByTagName("channel");
