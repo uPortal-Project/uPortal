@@ -42,7 +42,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
+import java.util.Iterator;
 
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -146,8 +147,7 @@ public class PushFragmentLoader {
 
         if ( !isException ) {
          // Cleaning the database before the DbLoader is called
-         DbCleaner.fragmentNames = filter.getFragmentNames();
-         DbCleaner.cleanTables();
+         DbCleaner.cleanTables(filter.getFragmentIds());
          System.out.println("DEBUG: done");
         } 
         System.exit(0);
@@ -161,33 +161,34 @@ public class PushFragmentLoader {
      */
   private static class DbCleaner {
 
-   private static Vector fragmentNames;
 
-   public static void cleanTables() {
+   public static void cleanTables( Map fragmentIds ) {
 
     Connection con = RDBMServices.getConnection();
 
-    if ( fragmentNames != null ) {
+    if ( fragmentIds != null && !fragmentIds.isEmpty() ) {
 
      try {
 
       PreparedStatement fragmentIdstmt = con.prepareStatement("SELECT FRAGMENT_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_NAME = ?");
-      Vector fragmentIds = new Vector();
-      for ( int i = 0; i < fragmentNames.size(); i++ ) {
-       fragmentIdstmt.setString(1,((String)fragmentNames.get(i)));
+      Map oldFragmentIds = new HashMap();
+      for ( Iterator i = fragmentIds.keySet().iterator(); i.hasNext(); ) {
+       String name = (String)i.next();
+       fragmentIdstmt.setString(1,name);
        ResultSet rs = fragmentIdstmt.executeQuery();
-       if ( rs.next() ) fragmentIds.add(rs.getString(1));
+       if ( rs.next() ) oldFragmentIds.put(rs.getString(1),name);
        if ( rs != null ) rs.close();
       }
       if ( fragmentIdstmt != null ) fragmentIdstmt.close();
 
-      if ( fragmentIds.size() > 0 ) {
+      if ( oldFragmentIds.size() > 0 ) {
 
         System.out.println("DEBUG: cleaning tables...");
 
          con.setAutoCommit(false);
 
-         PreparedStatement deleteLayoutStruct = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE FRAGMENT_ID = ?");
+         //PreparedStatement deleteLayoutStruct = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE FRAGMENT_ID = ?");
+         PreparedStatement updateLayoutStruct = con.prepareStatement("UPDATE UP_LAYOUT_STRUCT_AGGR SET FRAGMENT_ID = ? WHERE FRAGMENT_ID = ?");
          PreparedStatement deleteFragments = con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID = ?");
          PreparedStatement deleteFragmentRestrictions = con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID = ?");
          PreparedStatement deleteFragmentParams = con.prepareStatement("DELETE FROM UP_FRAGMENT_PARAM WHERE FRAGMENT_ID = ?");
@@ -195,10 +196,13 @@ public class PushFragmentLoader {
          PreparedStatement deleteGroupFragment = con.prepareStatement("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID = ?");
 
          try {
-          for ( int i = 0; i < fragmentIds.size(); i++ ) {
-           int fragmentId = Integer.parseInt(fragmentIds.get(i).toString());
+          for ( Iterator i = oldFragmentIds.keySet().iterator(); i.hasNext(); ) {
+           String oldId = (String) i.next(); 
+           int fragmentId = Integer.parseInt(oldId);
            // Setting the parameter - fragment id
-           deleteLayoutStruct.setInt(1,fragmentId);
+           String newId = (String) fragmentIds.get(oldFragmentIds.get(oldId));
+           updateLayoutStruct.setInt(1,Integer.parseInt(newId));
+           updateLayoutStruct.setInt(2,fragmentId);
            deleteFragments.setInt(1,fragmentId);
            deleteFragmentRestrictions.setInt(1,fragmentId);
            deleteFragmentParams.setInt(1,fragmentId);
@@ -206,7 +210,7 @@ public class PushFragmentLoader {
            deleteGroupFragment.setInt(1,fragmentId);
 
            // Executing statements
-           deleteLayoutStruct.executeUpdate();
+           updateLayoutStruct.executeUpdate();
            deleteFragments.executeUpdate();
            deleteFragmentRestrictions.executeUpdate();
            deleteFragmentParams.executeUpdate();
@@ -221,7 +225,7 @@ public class PushFragmentLoader {
             sqle.printStackTrace();
            }
 
-         if ( deleteLayoutStruct != null ) deleteLayoutStruct.close();
+         if ( updateLayoutStruct != null ) updateLayoutStruct.close();
          if ( deleteFragments != null ) deleteFragments.close();
          if ( deleteFragmentRestrictions != null ) deleteFragmentRestrictions.close();
          if ( deleteFragmentParams != null ) deleteFragmentParams.close();
@@ -297,14 +301,14 @@ public class PushFragmentLoader {
         String groupLocalName;
         String groupUri;
         String groupData=null;
-        private Vector fragmentNames;
+        private Map fragmentIds;
         private static IAggregatedUserLayoutStore layoutStore = null;
         private static IChannelRegistryStore channelStore = null;
 
         public ConfigFilter(ContentHandler ch,Map rMap) throws PortalException {
             super(ch);
             this.rMap=rMap;
-            fragmentNames= new Vector();
+            fragmentIds = new HashMap();
             if ( layoutStore == null ) {
              IUserLayoutStore layoutStoreImpl = UserLayoutStoreFactory.getUserLayoutStoreImpl();
              if ( layoutStoreImpl == null || !(layoutStoreImpl instanceof IAggregatedUserLayoutStore) )
@@ -315,8 +319,12 @@ public class PushFragmentLoader {
              channelStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
         }
 
-        public Vector getFragmentNames() {
-           return fragmentNames;
+        public Set getFragmentNames() {
+           return fragmentIds.keySet();
+        }
+        
+        public Map getFragmentIds() {
+           return fragmentIds;
         }
 
         public void characters (char ch[], int start, int length) throws SAXException   {
@@ -340,10 +348,11 @@ public class PushFragmentLoader {
              // Adding the fragment name to the vector
             if ( qName.equals("fragment") ) {
              String name = atts.getValue("name");
-             if ( !fragmentNames.contains(name) )
-              fragmentNames.add(name);
              try {
-              ai.addAttribute(uri,"id","id","CDATA",layoutStore.getNextFragmentId());
+              String id = layoutStore.getNextFragmentId();
+              if ( !fragmentIds.containsKey(name) )
+                fragmentIds.put(name,id);
+              ai.addAttribute(uri,"id","id","CDATA",id);
              } catch ( PortalException pe ) {
                  throw new SAXException(pe.getMessage());
                }
