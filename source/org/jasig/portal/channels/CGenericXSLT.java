@@ -42,21 +42,35 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.MalformedURLException;
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
 
 /**
- * A channel which transforms XML for rendering in the portal.
- * Two channel parameters must be supplied:
+ * <p>A channel which transforms XML for rendering in the portal.</p>
  *
- *  1) a URI representing the source XML document
- *  2) a URI representing the corresponding .ssl (stylesheet list) file
+ * <p>Static channel parameters to be supplied:
  *
- * This channel can be used for all XML formats including RSS.
- * Any parameters passed to this channel via HttpRequest will get
- * passed in turn to the XSLT stylesheet.
+ *  1) "xmlUri" - a URI representing the source XML document
+ *  2) "sslUri" - a URI representing the corresponding .ssl (stylesheet list) file
+ *  3) "xslTitle" - a title representing the stylesheet (optional)
+ *                  <i>If no title parameter is specified, a default
+ *                  stylesheet will be chosen according to the media</i>
+ *  4) "xslUri" - a URI representing the stylesheet to use
+ *                  <i>If <code>xslUri</code> is supplied, <code>sslUri</code>
+ *                  and <code>xslTitle</code> will be ignored.
+ * </p>
+ * <p>The static parameters above can be overridden by including
+ * parameters of the same name (<code>xmlUri</code>, <code>sslUri</code>,
+ * <code>xslTitle</code> and/or <code>xslUri</code> in the HttpRequest string.</p>
+ * <p>This channel can be used for all XML formats including RSS.
+ * Any other parameters passed to this channel via HttpRequest will get
+ * passed in turn to the XSLT stylesheet as stylesheet parameters. They can be
+ * read in the stylesheet as follows:
+ * <code>&lt;xsl:param name="yourParamName"&gt;aDefaultValue&lt;/xsl:param&gt;</code></p>
  * @author Steve Toth, stoth@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
@@ -65,7 +79,8 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
 {
   protected String xmlUri;
   protected String sslUri;
-  protected StylesheetSet stylesheetSet;
+  protected String xslTitle;
+  protected String xslUri;
   protected ChannelRuntimeData runtimeData;
   protected String media;
 
@@ -82,11 +97,8 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   {
     try
     {
-      this.xmlUri = UtilitiesBean.fixURI (sd.getParameter ("xml"));
-      this.sslUri = UtilitiesBean.fixURI (sd.getParameter ("ssl"));
-
-      stylesheetSet = new StylesheetSet (sslUri);
-      stylesheetSet.setMediaProps (sMediaProps);
+      this.xmlUri = sd.getParameter ("xml");
+      this.sslUri = sd.getParameter ("ssl");
     }
     catch (Exception e)
     {
@@ -97,6 +109,26 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     runtimeData = rd;
+
+    String xmlUri = runtimeData.getParameter("xmlUri");
+
+    if (xmlUri != null)
+       this.xmlUri = xmlUri;
+
+    String sslUri = runtimeData.getParameter("sslUri");
+
+    if (sslUri != null)
+       this.sslUri = sslUri;
+
+    String xslTitle = runtimeData.getParameter("xslTitle");
+
+    if (xslTitle != null)
+       this.xslTitle = xslTitle;
+
+    String xslUri = runtimeData.getParameter("xslUri");
+
+    if (xslUri != null)
+       this.xslUri = xslUri;
 
     // The media will soon be passed to the channel I think.
     // This code can then be replaced with runtimeData.getMedia()
@@ -137,17 +169,26 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     {
       throw new ResourceMissingException (xmlUri, "", e.getMessage());
     }
-   
-    runtimeData.put("baseActionURL",runtimeData.getBaseActionURL());
+
+    runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
+
     try
     {
-      XSLT.transform(out, media, xml, sslUri, runtimeData);
+      if (xslUri != null)
+        XSLT.transform(out, xml, xslUri, runtimeData);
+      else
+      {
+        if (xslTitle != null)
+          XSLT.transform(out, media, xml, sslUri, xslTitle, runtimeData);
+        else
+          XSLT.transform(out, media, xml, sslUri, runtimeData);
+      }
     }
     catch (Exception e)
     {
-	java.io.StringWriter sw=new java.io.StringWriter();
-	e.printStackTrace(new java.io.PrintWriter(sw));
-	sw.flush();
+      StringWriter sw = new StringWriter();
+      e.printStackTrace(new PrintWriter(sw));
+      sw.flush();
       throw new GeneralRenderingException(sw.toString());
     }
   }
