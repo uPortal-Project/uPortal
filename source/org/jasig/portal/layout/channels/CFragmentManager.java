@@ -106,7 +106,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		}
 	}
 
-	private void analyzeParameters( String fragmentId ) throws Exception {
+	private String analyzeParameters() throws Exception {
+		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = runtimeData.getParameter("uPcFM_action");
 		if (action != null) {
 			if (ulm instanceof TransientUserLayoutManagerWrapper)
@@ -132,6 +133,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				themePrefs.putParameterValue("currentFragmentID", CommonUtils.envl(fragmentId, "default_layout"));
 			}
 		}
+		return fragmentId;
 	}
 
 	/**
@@ -218,8 +220,6 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 
 	public void renderXML(ContentHandler out) throws PortalException {
 
-		String fragmentId =
-			CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
 		xslt.setXML(getFragmentList());
