@@ -2146,13 +2146,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                   if ( fragmentIdStr != null && fragmentNodes.containsKey(key) ) {
                     ALNode fragNode = (ALNode) fragmentNodes.get(key);
                     //Keeping some properties of node description from the user layout for "pseudo" nodes
-                    IUserLayoutNodeDescription oldDesc = fragNode.getNodeDescription();
+                    //IUserLayoutNodeDescription oldDesc = fragNode.getNodeDescription();
                     nodeDesc.setId(fragNode.getId());
                     nodeDesc.setFragmentNodeId(fragNode.getFragmentNodeId());
-                    nodeDesc.setName(oldDesc.getName());
-                    nodeDesc.setImmutable(oldDesc.isImmutable());
-                    nodeDesc.setUnremovable(oldDesc.isUnremovable());
-                    nodeDesc.setHidden(oldDesc.isHidden());
+                    //nodeDesc.setName(oldDesc.getName());
+                    nodeDesc.setImmutable(true);
                     fragNode.setNodeDescription(nodeDesc);
                     if ( fragNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
                      ((ALFolder)fragNode).setFirstChildNodeId(childIdStr);
