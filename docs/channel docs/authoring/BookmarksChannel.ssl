@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet title="view" href="http://localhost:8080/my/testportal/stylesheets/BookmarksChannel/view_regular.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet title="edit" href="http://localhost:8080/my/testportal/stylesheets/BookmarksChannel/edit_regular.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet title="editbookmark" href="http://localhost:8080/my/testportal/stylesheets/BookmarksChannel/editBookmark_regular.xsl"  type="text/xsl" media="netscape"?>
+
+<document>
+</document>
