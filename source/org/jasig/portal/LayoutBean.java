@@ -925,11 +925,11 @@ public class LayoutBean extends GenericPortalBean
       IXml layoutXml = getLayoutXml (req, getUserName (req));
       ILayout layout = (ILayout) layoutXml.getRoot ();
       
-      layout.setAttribute ("bgcolor", req.getParameter ("bgColor"));
-      layout.setAttribute ("fgcolor", req.getParameter ("fgColor"));
-      layout.setAttribute ("tabColor", req.getParameter ("tabColor"));
-      layout.setAttribute ("activeTabColor", req.getParameter ("activeTabColor"));
-      layout.setAttribute ("channelHeadingColor", req.getParameter ("channelHeadingColor"));
+      layout.setAttribute ("bgcolor", "#" + req.getParameter ("bgColor"));
+      layout.setAttribute ("fgcolor", "#" + req.getParameter ("fgColor"));
+      layout.setAttribute ("tabColor", "#" + req.getParameter ("tabColor"));
+      layout.setAttribute ("activeTabColor", "#" + req.getParameter ("activeTabColor"));
+      layout.setAttribute ("channelHeadingColor", "#" + req.getParameter ("channelHeadingColor"));
       
       setLayoutXml (getUserName (req), layoutXml);
       HttpSession session = req.getSession (false);
