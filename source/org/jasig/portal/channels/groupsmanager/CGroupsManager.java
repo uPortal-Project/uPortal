@@ -82,13 +82,13 @@ public class CGroupsManager
       if (activities == null) {
          activities = new HashMap();
          try {
-            activities.put("CREATE", "Create a group in this context");
-            activities.put("VIEW", "View this group");
-            activities.put("UPDATE", "Rename this group");
-            activities.put("DELETE", "Delete this group");
-            activities.put("SELECT", "Select this group");
-            activities.put("ADD/REMOVE", "Manage this group's members");
-            activities.put("ASSIGNPERMISSIONS", "Assign Permissions for this group");
+            activities.put(CREATE_PERMISSION, "Create a group in this context");
+            activities.put(VIEW_PERMISSION, "View this group");
+            activities.put(UPDATE_PERMISSION, "Rename this group");
+            activities.put(DELETE_PERMISSION, "Delete this group");
+            activities.put(SELECT_PERMISSION, "Select this group");
+            activities.put(ADD_REMOVE_PERMISSION, "Manage this group's members");
+            activities.put(ASSIGN_PERMISSION, "Assign Permissions for this group");
          } catch (Exception e) {
             Utility.logMessage("ERROR", "CGroupsManager.init():: unable to set activities"
                   + e);
@@ -399,7 +399,16 @@ public class CGroupsManager
     * @return String
     */
    public String getTargetName (String token) {
-      return  (String)targets.get(token);
+      String r = (String) targets.get(token);
+      if (r ==null){
+        try{
+          r= EntityNameFinderService.instance().getNameFinder(IEntityGroup.class).getName(token); 
+        }
+        catch (Exception e){
+          LogService.instance().log(LogService.ERROR,e); 
+        }
+      }
+      return  r;
    }
 
    /**
@@ -514,6 +523,7 @@ public class CGroupsManager
       if (sd == null) {
          sd =  new CGroupsManagerSessionData();
          sd.uid = uid;
+         sd.permissible = this;
          sessionsMap.put(uid, sd);
       }
       Utility.logMessage("DEBUG", this.getClass().getName() + "::getSessionData(): sd = " + sd);
