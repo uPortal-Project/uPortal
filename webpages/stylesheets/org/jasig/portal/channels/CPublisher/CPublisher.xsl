@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+							xmlns:msxsl="urn:schemas-microsoft-com:xslt"
+							xmlns:debug="http://www.ja-sig.org/uPortal" >
+
+<msxsl:script language="JScript" implements-prefix="debug">
+function xml(nodelist){
+        return nodelist.nextNode().xml;
+}
+</msxsl:script>
+
+<xsl:param name="baseActionURL">Default</xsl:param>
+<xsl:param name="currentStep" select="1"/>
+<xsl:param name="numSteps" select="1"/>
+<xsl:param name="modified">false</xsl:param>
+<xsl:param name="mode">publish</xsl:param>
+<xsl:param name="profileName">default profile</xsl:param>
+<xsl:variable name="imageDir" select="'media/org/jasig/portal/channels/CPublisher'"/>
+
+<!-- Display the channel types available for publish-->
+<xsl:template match="channelTypes">
+<p align="center">Pick the channel type you wish to publish.</p>
+	<form action="{$baseActionURL}" method="post">
+			<input type="hidden" name="action" value="choose"/>
+			<select name="channel">
+			<option value="">select one...</option>
+				<xsl:for-each select="channelType">
+					<option value="{definition}"><xsl:value-of select="name"/></option>
+				</xsl:for-each>
+			</select>
+		<input type="submit" name="choose" value="Choose"/>
+	</form>
+</xsl:template>
+
+<xsl:template match="channelDef">
+<xsl:param name="numSteps" select="count(params/step)"/>
+
+	<p align="center"><xsl:value-of select="description"/></p>
+	<p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$numSteps"/> </p>
+
+<xsl:apply-templates select="params/step[ID=$currentStep]"/>
+</xsl:template>
+
+<!-- The current step info-->
+  <xsl:template match="step">
+ <!-- DEBUG <xsl:value-of select="debug:xml(.)"/> DEBUG-->
+   <p align="left"><xsl:value-of select="name"/></p>
+   <table border="0" cellpadding="0" cellspacing="4" width="100%">
+     <tr><td>Label</td><td>Data</td><td>Subscribe?</td>
+       <xsl:apply-templates select="parameter"/>
+     </tr>
+   </table>
+  </xsl:template>
+
+<!-- Display the parameters that are NOT subscribe-only-->
+<xsl:template match="parameter">
+	<xsl:if test="modify != 'subscribe-only'">	<tr>
+		<xsl:choose>
+    			<xsl:when test="type/display='text'">
+				<td><xsl:value-of select="label"/>:</td>
+      				<td><input type="text" name="{name}" value="{defaultValue}" maxlength="{type/maxlength}" length="{type/length}"/></td>
+				<xsl:call-template name="subscribe"/>			
+			</xsl:when>
+			<xsl:when test="type/base='single-choice'">
+				<xsl:call-template name="single-choice"/>			
+			</xsl:when>
+			<xsl:when test="type/base='multi-choice'">
+				<xsl:call-template name="multi-choice"/>			
+			</xsl:when>
+		</xsl:choose>
+	</tr>
+	</xsl:if>
+</xsl:template>
+
+<!-- displays checkbox for publisher to allow subscribe time modification-->
+<xsl:template name="subscribe">
+	<td><xsl:value-of select="modify"/>
+	<xsl:if test="modify!='publish-only'">
+		<input type="checkbox" name="{name}_sub">
+			<xsl:if test="modify='subscribe'"> 
+				<xsl:attribute name="checked">checked</xsl:attribute>
+			</xsl:if>
+		</input>
+	</xsl:if>
+	</td>
+</xsl:template>
+
+<!-- display all the input fields with a base type of 'single-choice'-->
+<xsl:template name="single-choice">
+	<xsl:choose>
+			<xsl:when test="type/display='drop-down'">
+				<td><xsl:value-of select="label"/>:</td>
+      				<td>
+					<select name="{name}">
+						<xsl:for-each select="type/restriction/value">
+							<option value="{.}">
+							<xsl:if test="@default='true'"> 
+								<xsl:attribute name="selected">selected</xsl:attribute>
+							</xsl:if>
+							<xsl:value-of select="."/>
+							</option>
+						</xsl:for-each>
+					</select>
+				</td>
+				<xsl:call-template name="subscribe"/>			
+		</xsl:when>
+		<xsl:when test="type/display='radio'">
+				<td><xsl:value-of select="label"/>:</td>
+      				<td>
+					<xsl:for-each select="type/restriction/value">
+						<input type="radio" name="{name}" value="{.}">
+						<xsl:if test="@default='true'"> 
+								<xsl:attribute name="checked">checked</xsl:attribute>
+						</xsl:if>
+						</input>
+						<xsl:value-of select="."/>
+					</xsl:for-each>
+				</td>
+				<xsl:call-template name="subscribe"/>			
+		</xsl:when>
+		<xsl:otherwise>
+				<td><xsl:value-of select="label"/>:</td>
+      				<td>
+					<select name="{name}">
+						<xsl:for-each select="type/restriction/value">
+							<option value="{.}">
+							<xsl:if test="@default='true'"> 
+								<xsl:attribute name="selected">selected</xsl:attribute>
+							</xsl:if>
+							<xsl:value-of select="."/>
+							</option>
+						</xsl:for-each>
+					</select>
+				</td>
+				<xsl:call-template name="subscribe"/>		
+		</xsl:otherwise>	
+	</xsl:choose>
+</xsl:template>
+
+<!-- display all the input fields with a base type of 'multi-choice'-->
+<xsl:template name="multi-choice">
+	<xsl:choose>
+		<xsl:when test="type/display='select-list'">
+				<td><xsl:value-of select="label"/>:</td>
+      				<td>
+					<select name="{name}" size="6" multiple="multiple">
+						<xsl:for-each select="type/restriction/value">
+							<option value="{.}">							
+							<xsl:if test="@default='true'"> 
+							<xsl:attribute name="selected">selected</xsl:attribute>
+							</xsl:if>
+							<xsl:value-of select="."/>
+							</option>
+						</xsl:for-each>
+					</select>
+				</td>
+				<xsl:call-template name="subscribe"/>			
+		</xsl:when>
+		<xsl:when test="type/display='checkbox'">
+				<td><xsl:value-of select="label"/>:</td>
+      				<td>
+					<xsl:for-each select="type/restriction/value">
+						<input type="checkbox" name="{name}" value="{.}">
+						<xsl:if test="@default='true'"> 
+							<xsl:attribute name="checked">checked</xsl:attribute>
+						</xsl:if>
+						</input>
+						<xsl:value-of select="."/>
+					</xsl:for-each>
+				</td>
+				<xsl:call-template name="subscribe"/>			
+		</xsl:when>
+		<xsl:otherwise>
+				<td><xsl:value-of select="label"/>:</td>
+      				<td>
+					<select name="{name}" size="6" multiple="multiple">
+						<xsl:for-each select="type/restriction/value">
+							<option value="{.}">
+							<xsl:if test="@default='true'"> 
+								<xsl:attribute name="selected">selected</xsl:attribute>
+							</xsl:if>
+							<xsl:value-of select="."/>
+							</option>
+						</xsl:for-each>
+					</select>
+				</td>
+				<xsl:call-template name="subscribe"/>		
+		</xsl:otherwise>	
+	</xsl:choose>
+</xsl:template>
+
+<!-- display all the input fields with a base type of 'text'-->
+<xsl:template name="text">
+	<xsl:choose>
+		<xsl:when test="type/display='text'">
+				<td><xsl:value-of select="label"/>:</td>
+      				<td><input type="text" name="{name}" value="{defaultValue}" maxlength="{type/maxlength}" length="{type/length}"/></td>
+				<xsl:call-template name="subscribe"/>			
+		</xsl:when>
+		<xsl:when test="type/display='textarea'">
+			<td><xsl:value-of select="label"/>:</td>
+			<td>
+				<textarea rows="10" cols="40">
+				<xsl:value-of select="defaultValue"/>
+				</textarea>
+			</td>
+				<xsl:call-template name="subscribe"/>
+		</xsl:when>
+		<xsl:otherwise>
+				<td><xsl:value-of select="label"/>:</td>
+      				<td><input type="text" name="{name}" value="{defaultValue}" maxlength="{type/maxlength}" length="{type/length}"/></td>
+				<xsl:call-template name="subscribe"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+</xsl:stylesheet>
