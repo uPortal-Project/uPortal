@@ -208,11 +208,11 @@
                        Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://java.sun.com/xml/jaxrpc/
-                       
+
   saaj.jar             SOAP with Attachments API for Java (SAAJ) - needed for Axis.
                        Use the version that comes with Axis.
                        Version: (depends on Axis version)
-                       URL: http://java.sun.com/xml/javaxmlpack.html                       
+                       URL: http://java.sun.com/xml/javaxmlpack.html
 
   wsdl4j.jar           Web Services Description Language for Java Toolkit developed
                        by IBM - needed for Axis.
@@ -220,14 +220,14 @@
                        Version: (depends on Axis version)
                        URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
 
-  commons-discovery.jar  
-                       The Discovery component, from the Apache Commons project, 
-                       is about discovering, or finding, implementations for 
-                       pluggable interfaces - needed for Axis. 
+  commons-discovery.jar
+                       The Discovery component, from the Apache Commons project,
+                       is about discovering, or finding, implementations for
+                       pluggable interfaces - needed for Axis.
                        Use the version that comes with Axis.
                        Version: (depends on Axis version)
-                       URL: http://jakarta.apache.org/commons/discovery.html                       
-                       
+                       URL: http://jakarta.apache.org/commons/discovery.html
+
   commons-logging.jar  Logging components from the Apache Commons project - needed
                        for Axis. Use the version that comes with Axis.
                        Version: (depends on Axis version)
@@ -238,8 +238,8 @@
                        Version: 2.2 or 2.3
                        URL: http://jakarta.apache.org/tomcat/
 
-  jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of 
-                       javax.sql.* package. This is only needed for JDK's less than 1.4.  
+  jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of
+                       javax.sql.* package. This is only needed for JDK's less than 1.4.
                        It is included with JDK 1.4.
                        Version: 2.0
                        URL: http://java.sun.com/products/jdbc/
@@ -250,12 +250,12 @@
                        more robust like Oracle or PostgreSQL.
                        Version: (depends on your database)
                        URL: (depends on your database)
-                       
-  junit.jar            JUnit is a regression testing framework.  It is used 
+
+  junit.jar            JUnit is a regression testing framework.  It is used
                        to implement unit tests in Java.
                        Version: 3.8.1
-                       URL: http://www.junit.org/                       
-                       
+                       URL: http://www.junit.org/
+
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
@@ -360,6 +360,11 @@
    description="Delete old build and dist directories">
     <delete dir="${build.home}"/>
     <delete dir="${dist.home}"/>
+    <delete dir="classes"/>
+    <delete dir="work"/>
+    <delete dir="${deploy.home}/WEB-INF/classes/org"/>
+    <delete dir="${deploy.home}/WEB-INF/lib"/>
+    <delete dir="${deploy.home}/WEB-INF/classes/properties"/>
     <!--<delete dir="${deploy.home}"/>-->
   </target>
 
@@ -573,8 +578,8 @@
 
   ant db -Dusedata=-d -Ddatafile=/properties/mydata.xml
 
-  Note: the tables and data files can both be overridden by combining the 
-  arguments.  The usetable and tablefile must be used in tandem and 
+  Note: the tables and data files can both be overridden by combining the
+  arguments.  The usetable and tablefile must be used in tandem and
   sequentially on the command line. Similarly, usedata and datafile must but
   used in tandem.
 
@@ -603,10 +608,10 @@
 
   To set populateTables=false
   ant db -Dpopulatetables=-nP
- 
-  The -c, -nc, -D, -nD, -C, -nC, -P, -nP arguements may all be used 
-  independantly or in any combination although it would not make sense to, 
-  for example, use both -c and -nc. 
+
+  The -c, -nc, -D, -nD, -C, -nC, -P, -nP arguements may all be used
+  independantly or in any combination although it would not make sense to,
+  for example, use both -c and -nc.
 -->
 
 
@@ -727,17 +732,17 @@
 
 <!-- ==================== deluser Target ============================ -->
 <!--
-	The deluser target runs uPortal's DeleteUser program to delete all
-	traces of a uportal user from the uPortal database.
+   The deluser target runs uPortal's DeleteUser program to delete all
+   traces of a uportal user from the uPortal database.
 Example:
-	ant deluser -Duser=username
+   ant deluser -Duser=username
 
-	ant deluser -Duser=ashenoy
+   ant deluser -Duser=ashenoy
 -->
 
   <target name="deluser" >
     <echo message="Invoking DeleteUser"/>
-    <property name="user" value=" "/>   
+    <property name="user" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser">
       <classpath>
         <pathelement path="${build.home}"/>
@@ -749,7 +754,7 @@ Example:
       </classpath>
       <arg value="${user}"/>
     </java>
-  </target> 
+  </target>
 
 <!-- ==================== regchantype Target ============================== -->
 
@@ -984,7 +989,7 @@ Example:
 
  ant RunXSLT -DXmlInput=UP_SEQUENCE_20.XML -DoutputFile=NEW_UP_SEQUENCE.XML -DXslfile=UP_SEQUENCE.xsl
 
- where XmlInput is the file to be transformed, 
+ where XmlInput is the file to be transformed,
  outputFile is where the result should saved and
  Xslfile is the URL(!) of the xsl file to be used in the transform.
 
@@ -994,11 +999,11 @@ Example:
   <target name="RunXSLT" depends="compile">
     <echo message="Invoking RunXSLT"/>
     <mkdir    dir="${build.home}/RunXSLT"/>
-	<copy todir="${build.home}/RunXSLT" >
+   <copy todir="${build.home}/RunXSLT" >
       <fileset dir="${build.home}/stylesheets/org/jasig/portal/tools/RunXSLT"/>
-	</copy>
+   </copy>
 
-    <property name="XmlInput" value=" "/>   
+    <property name="XmlInput" value=" "/>
     <property name="Xslfile" value=" "/>
     <property name="outputFile" value=" "/>
     <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.RunXSLT">
