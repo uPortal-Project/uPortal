@@ -55,8 +55,8 @@
     <name>UP_STRUCT_SS</name>
     <columns>
       <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
-      <column><name>STYLESHEET_URI</name><type>VARCHAR</type><param>2000</param></column>
-      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>VARCHAR</type><param>2000</param></column>
+      <column><name>STYLESHEET_URI</name><type>VARCHAR</type><param>255</param></column>
+      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>VARCHAR</type><param>255</param></column>
       <column><name>STYLESHEET_DESCRIPTION_TEXT</name><type>LONGVARCHAR</type></column>       
     </columns>
     <primary-key>STYLESHEET_NAME</primary-key>    
@@ -66,8 +66,8 @@
     <name>UP_THEME_SS</name>
     <columns>
       <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
-      <column><name>STYLESHEET_URI</name><type>VARCHAR</type><param>2000</param></column>
-      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>VARCHAR</type><param>2000</param></column>
+      <column><name>STYLESHEET_URI</name><type>VARCHAR</type><param>255</param></column>
+      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>VARCHAR</type><param>255</param></column>
       <column><name>STYLESHEET_DESCRIPTION_TEXT</name><type>LONGVARCHAR</type></column>       
     </columns>
     <primary-key>STYLESHEET_NAME</primary-key>    
@@ -77,8 +77,8 @@
     <name>UP_CSS_SS</name>
     <columns>
       <column><name>STYLESHEET_NAME</name><type>VARCHAR</type><param>30</param></column>
-      <column><name>STYLESHEET_URI</name><type>VARCHAR</type><param>2000</param></column>
-      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>VARCHAR</type><param>2000</param></column>
+      <column><name>STYLESHEET_URI</name><type>VARCHAR</type><param>255</param></column>
+      <column><name>STYLESHEET_DESCRIPTION_URI</name><type>VARCHAR</type><param>255</param></column>
       <column><name>STYLESHEET_DESCRIPTION_TEXT</name><type>LONGVARCHAR</type></column>       
     </columns>
     <primary-key>STYLESHEET_NAME</primary-key>    
