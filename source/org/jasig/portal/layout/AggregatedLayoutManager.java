@@ -1279,6 +1279,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
 
     public synchronized boolean moveNode(String nodeId, String parentId,String nextSiblingId) throws PortalException {
+    	
+     // if the node is being moved to itself that operation must be prevented	
+     if ( nodeId.equals(nextSiblingId) )
+            return false; 	
 
      // Checking restrictions if the parent is not the lost folder
      if ( !parentId.equals(IALFolderDescription.LOST_FOLDER_ID) )
