@@ -38,9 +38,11 @@ package org.jasig.portal.services;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.stats.DoNothingStatsRecorderFactory;
 import org.jasig.portal.services.stats.IStatsRecorder;
 import org.jasig.portal.services.stats.IStatsRecorderFactory;
 import org.jasig.portal.services.stats.RecordChannelAddedToLayoutWorkerTask;
@@ -90,24 +92,31 @@ public class StatsRecorder {
    * maintains only one instance of itself.
    */
   private StatsRecorder() {
-		try {
-	    // Get a stats recorder from the stats recorder factory. 
-      String statsRecorderFactoryName = PropertiesManager.getProperty("org.jasig.portal.services.stats.StatsRecorderFactory.implementation");      
-			IStatsRecorderFactory statsRecorderFactory = (IStatsRecorderFactory)Class.forName(statsRecorderFactoryName).newInstance();
-      statsRecorder = statsRecorderFactory.getStatsRecorder();	
+      String statsRecorderFactoryName = null;
+      IStatsRecorderFactory statsRecorderFactory = null;
+      try {
+          // Get a stats recorder from the stats recorder factory. 
+          statsRecorderFactoryName = PropertiesManager.getProperty("org.jasig.portal.services.stats.StatsRecorderFactory.implementation");
+          statsRecorderFactory = (IStatsRecorderFactory)CarResources.getInstance().getClassLoader().loadClass(statsRecorderFactoryName).newInstance();
+      } catch (Exception e) {
+          LogService.log(LogService.ERROR, "Unable to instantiate stats recorder '" + statsRecorderFactoryName  + "'. Continuing with DoNothingStatsRecorder.", e);
+          statsRecorderFactory = new DoNothingStatsRecorderFactory();          
+      }
+      try {
+          statsRecorder = statsRecorderFactory.getStatsRecorder();
       
-      // Get the stats recorder settings instance
-      statsRecorderSettings = StatsRecorderSettings.instance();
+          // Get the stats recorder settings instance
+          statsRecorderSettings = StatsRecorderSettings.instance();
       
-      // Create a thread pool
-      String prefix = this.getClass().getName() + ".threadPool_";
-      int initialThreads = PropertiesManager.getPropertyAsInt(prefix + "initialThreads");
-      int maxThreads = PropertiesManager.getPropertyAsInt(prefix + "maxThreads");
-      int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
-      threadPool = new BoundedThreadPool(initialThreads, maxThreads, threadPriority);
-		} catch (Exception e) {
-			LogService.log(LogService.ERROR, e);
-		}
+          // Create a thread pool
+          String prefix = this.getClass().getName() + ".threadPool_";
+          int initialThreads = PropertiesManager.getPropertyAsInt(prefix + "initialThreads");
+          int maxThreads = PropertiesManager.getPropertyAsInt(prefix + "maxThreads");
+          int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
+          threadPool = new BoundedThreadPool(initialThreads, maxThreads, threadPriority);
+      } catch (Exception e) {
+          LogService.log(LogService.ERROR, e);
+      }
   }  
   
   /**
