@@ -120,8 +120,10 @@ public class PortalDocumentImpl implements IPortalDocument {
     }
 
     private void removeElement(String key) {
-        identifiers.remove(key);
-        keys.remove(XML.serializeNode(getElementById(key)));
+        Element elem = getElementById(key);
+        if ( elem != null )
+         keys.remove(XML.serializeNode(elem));
+        identifiers.remove(key); 
     }
 
     private void preserveCache(IPortalDocument sourceDoc, Node node) {
