@@ -40,26 +40,77 @@
      <title>CWebProxy
      </title>
 
-  <!--
      <revhistory>
         <revision>
-           <revnumber>0.1</revnumber>
-           <date>September 21, 2000</date>
-           <revremark>Baselined</revremark>
+           <revnumber>0.91</revnumber>
+           <date>June 29, 2001</date>
+           <revremark>Documentation update.</revremark>
         </revision>
+
+        <revision>
+           <revnumber>0.90</revnumber>
+           <date>June 28, 2001</date>
+           <revremark>Enhanced "marked" pass-though:  Added ability to distinguish
+             between links equivalent to cw_xml and others, and support for connecting to
+             non-cw_xml links.
+           </revremark>
+        </revision>
+
+        <revision>
+           <revnumber>0.89</revnumber>
+           <date>June 22, 2001</date>
+           <revremark>Improved cookie support.
+           </revremark>
+        </revision>
+
+        <revision>
+           <revnumber>0.88</revnumber>
+           <date>June 22, 2001</date>
+
+           <revremark>Added support for cw_passThrough="application".
+           It's semantics are the same as "all" used to be.
+           cw_passThrough="all" now sends <emphasis>all</emphasis>
+           links through the portal.  This is handled entirely in the
+           XHTML stylesheet.  The CWebProxy java code treats "all" and
+           "application" identically.
+           </revremark>
+        </revision>
+
+        <revision>
+           <revnumber>0.87</revnumber>
+           <date>June 22, 2001</date>
+           <revremark>Added another Tomcat example.
+           </revremark>
+        </revision>
+
+        <revision>
+           <revnumber>0.86</revnumber>
+           <date>June 22, 2001</date>
+           <revremark>Added support for pre-parsing paths containing "../". Tomcat
+              and Internet Explorer were not always handling these correctly, necessitating
+              rewriting, as done by Netscape.
+           </revremark>
+        </revision>
+
+
+
+
+
      </revhistory>
-   -->
+
   </articleinfo>
 
   <sect1>
     <title>Purpose</title>
     
-    <para>CWebProxy allows incorporation of web-based services as channels.  It provides mechanisms
-     for connecting to and rendering HTML and XML services.  Pages are refreshed when they change.
-     For applications under http, GET and POST parameters are passed through the portal to the 
-     application.  This allows communcation between the browser and the back-end application.  
-     Cookies are are kept within CWebProxy, allowing dynamic http applications to maintain
-     state.
+    <para>CWebProxy allows incorporation of web-based services as
+     channels.  It provides mechanisms for connecting to and rendering
+     HTML and XML services.  Pages are refreshed when they change.
+     For applications under http, GET and POST parameters are passed
+     through the portal to the application.  This allows communcation
+     between the browser and the back-end application.  Cookies are
+     are kept within CWebProxy, allowing dynamic http applications to
+     maintain state.
     </para>
 
   </sect1>
@@ -439,51 +490,6 @@
        </para>       
           
     </sect2>
-    <sect2>
-       <title>Recent Changes</title>
-       
-       <para>
-       
-       <itemizedlist>
-          <listitem>   
-             <para>
-              June 29, 2001.  Documentation update.  
-             </para>
-          </listitem>
-          <listitem>   
-             <para>
-             June 28, 2001.  Enhanced "marked" pass-though:  Added ability to distinguish
-             between links equivalent to cw_xml and others, and support for connecting to 
-             non-cw_xml links.
-             </para>
-          </listitem>
-          <listitem>
-             <para>June 22, 2001.  Improved cookie support.
-             </para>
-          </listitem>
-          <listitem>
-             <para>June 22, 2001.  Added support for cw_passThrough="application".  It's semantics
-              are the same as "all" used to be.  cw_passThrough="all" now sends <emphasis>all</emphasis>
-              links through the portal.  This is handled entirely in the XHTML stylesheet.  The CWebProxy java code treats "all"
-	          and "application" identically.
-             </para>
-          </listitem>
-          <listitem>
-             <para>June 22, 2001.  Added another Tomcat example.
-             </para>
-          </listitem>
-          <listitem>
-             <para>June 22, 2001.  Added support for pre-parsing paths containing "../". Tomcat
-              and Internet Explorer were not always handling these correctly, necessitating
-              rewriting, as done by Netscape.
-              </para>
-          </listitem>
-       </itemizedlist>                    
-                           
-       </para>       
-          
-    </sect2>
-
 
     <sect2>
        <title>Examples</title>
