@@ -36,8 +36,7 @@
 package org.jasig.portal;
 
 /**
- * This exception would inform uPortal that an
- * authorization violation has occured within a channel.
+ * A serious internal portal exception.
  * @author Peter Kharchenko
  * @version $Revision$
  */
