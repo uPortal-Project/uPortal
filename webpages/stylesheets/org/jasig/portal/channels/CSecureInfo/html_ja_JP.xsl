@@ -15,7 +15,7 @@
           <img src="{$baseMediaURL}transparent.gif" width="16" height="16"/>
         </td>
         <td class="uportal-channel-subtitle" width="100%">注意:<br/><span class="uportal-channel-error">
-	    This channel must be rendered using a secure protocol (i.e. https).</span>
+	    このチャネルは，セキュアプロトコル(例：https)を用いて表示する必要があります．</span>
           <br/>
           <br/>
         </td>

@@ -14,8 +14,8 @@
         <td>
           <img src="{$baseMediaURL}transparent.gif" width="16" height="16"/>
         </td>
-        <td class="uportal-channel-subtitle" width="100%">Attention:<br/><span class="uportal-channel-error">
-	    This channel must be rendered using a secure protocol (i.e. https).</span>
+        <td class="uportal-channel-subtitle" width="100%">Observera:<br/><span class="uportal-channel-error">
+	    Denna kanal kan bara visas då portalen anropas med ett säkert protokoll (t.ex. https:).</span>
           <br/>
           <br/>
         </td>
