@@ -35,7 +35,7 @@
   <xsl:template name="buttons">
    <table border="0"><tr><form>                                                                                
    <td><input type="button" name="add" value="Add Bookmark">
-   <xsl:attribute name="onClick">location='<xsl:value-of select="$baseActionURL"/>action=new'</xsl:attribute></input>
+   <xsl:attribute name="onClick">location=<xsl:text>'</xsl:text><xsl:value-of select="$baseActionURL"/>action=new<xsl:text>'</xsl:text></xsl:attribute></input>
    </td>
    <td><input type="button" name="finished" value="Finished">
       <xsl:attribute name="onClick">location='<xsl:value-of select="$baseActionURL"/>action=doneEditing'</xsl:attribute></input>

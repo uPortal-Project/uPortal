@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE bookmarks SYSTEM "http://localhost:8080/xmlportal/dtd/bookmarks.dtd">
+<!DOCTYPE bookmarks SYSTEM "http://localhost:8080/portal/dtd/bookmarks.dtd">
 
 <bookmarks>
   <bookmark url="http://yahoo.com" name="Yahoo" comments="Search engine"/>

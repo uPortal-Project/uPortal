@@ -1,39 +1,5 @@
-/**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
 package org.jasig.portal;
+
 
 import javax.servlet.*;
 import javax.servlet.jsp.*;
@@ -44,1521 +10,285 @@ import java.util.*;
 import java.text.*;
 import java.sql.*;
 import java.net.*;
-import com.objectspace.xml.*;
-import org.jasig.portal.layout.*;
+import org.w3c.dom.*;
+import org.apache.xalan.xpath.*;
+import org.apache.xalan.xslt.*;
+import org.apache.xml.serialize.*;
 
 
 /**
- * Provides methods associated with displaying and modifying
- * a user's layout.  This includes changing the colors, size and
- * positions of tabs, columns, and channels.
- * @author Ken Weiner
+ * LayoutBean is the central piece of the portal. It is responsible for presenting 
+ * content to the client given a request. It also handles basic user interactions,
+ * passing appropriate parameters to the stylesheets, channels or userLayoutManager
+ * @author Peter Kharchenko
  * @version $Revision$
  */
 public class LayoutBean extends GenericPortalBean
-                        implements ILayoutBean
-{
-  private static boolean bPropsLoaded = false;
-  private static String sPathToLayoutDtd = null;
-  private static final String sLayoutDtd = "layout.dtd";
-  private Hashtable htChannelInstances = new Hashtable ();
-
-  /**
-   * Default constructor
-   */
-  public LayoutBean ()
-  {
-    try
-    {
-      if (!bPropsLoaded)
-      {
-        File layoutPropsFile = new File (getPortalBaseDir () + "properties" + File.separator + "layout.properties");
-        Properties layoutProps = new Properties ();
-        layoutProps.load (new FileInputStream (layoutPropsFile));
-        sPathToLayoutDtd = layoutProps.getProperty ("pathToLayoutDtd");
-        bPropsLoaded = true;
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Gets the tabs
-   * @param the servlet request object
-   * @param the tab's index
-   */
-  public ITab[] getTabs (HttpServletRequest req)
-  {
-    IXml layoutXml = getLayoutXml (req, getUserName (req));
-    ILayout layout = (ILayout) layoutXml.getRoot ();
-    ITab[] tabs = layout.getTabs ();
-    return tabs;
-  }
-
-  /**
-   * Gets a tab
-   * @param the servlet request object
-   * @param the tab's index
-   */
-  public ITab getTab (HttpServletRequest req, int iTab)
-  {
-    IXml layoutXml = getLayoutXml (req, getUserName (req));
-    ILayout layout = (ILayout) layoutXml.getRoot ();
-    ITab tab = layout.getTabAt (iTab);
-    return tab;
-  }
-
-  /**
-   * Gets a column
-   * @param the servlet request object
-   * @param the tab's index
-   * @param the column's index
-   */
-  public IColumn getColumn (HttpServletRequest req, int iTab, int iCol)
-  {
-    IXml layoutXml = getLayoutXml (req, getUserName (req));
-    ILayout layout = (ILayout) layoutXml.getRoot ();
-    ITab tab = layout.getTabAt (iTab);
-    IColumn column = tab.getColumnAt (iCol);
-    return column;
-  }
-
-  /**
-   * Gets a channel
-   * @param the servlet request object
-   * @param the tab's index
-   * @param the column's index
-   * @param the channels's index
-   */
-  public org.jasig.portal.layout.IChannel getChannel (HttpServletRequest req, int iTab, int iCol, int iChan)
-  {
-    IXml layoutXml = getLayoutXml (req, getUserName (req));
-    ILayout layout = (ILayout) layoutXml.getRoot ();
-    ITab tab = layout.getTabAt (iTab);
-    IColumn column = tab.getColumnAt (iCol);
-    org.jasig.portal.layout.IChannel channel = column.getChannelAt (iChan);
-    return channel;
-  }
-
-  /**
-   * Writes a style tag and an html body tag with colors set according to user preferences
-   * Modified by Princeton University June 2000 (C)  by Debra Rundle
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public void writeBodyStyle (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      String sBgColor = layout.getAttribute ("bgcolor");
-      String sFgColor = layout.getAttribute ("fgcolor");
-      String sATabColor = layout.getAttribute ("activeTabColor");
-      String sTabColor = layout.getAttribute ("tabColor");
-      String sChanColor = layout.getAttribute ("channelHeadingColor");
-      out.println ("<STYLE>");
-      out.println ("<!-- BODY { color: " + sFgColor + "; background: " + sBgColor + "; }");
-      out.println ("td { color: " + sFgColor + "}");
-      out.println ("A:link { color: " + sATabColor + "}");
-      out.println ("A:visited { color: " + sTabColor + "}");
-      out.println ("A:active { color: " + sChanColor + "}");
-      out.println (" --></STYLE>");
-
-      /* <BODY> tag is deprecated.   However Netscape does not properly implement the style tag
-         and ignores the color setting for the body.   When browser versions do handle this, you should remove
-         this redundant body tag code below.  */
-      out.println ("<BODY BGCOLOR=" + sBgColor + " TEXT=" + sFgColor + " LINK=" + sATabColor + " VLINK=" + sTabColor + " ALINK=" + sChanColor + ">");
-
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Retrieves a handle to the layout xml
-   * @param the servlet request object
-   * @param user name
-   * @return handle to the layout xml
-   */
-  public IXml getLayoutXml (HttpServletRequest req, String sUserName)
-  {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
-    IXml layoutXml = null;
-
-    try
-    {
-      HttpSession session = req.getSession (false);
-      layoutXml = (IXml) session.getAttribute ("layoutXml");
-
-      if (layoutXml != null)
-        return layoutXml;
-
-      if (sUserName == null)
-        sUserName = "guest";
-
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-
-      String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
-      Logger.log (Logger.DEBUG, sQuery);
-      ResultSet rs = stmt.executeQuery (sQuery);
-
-      if (rs.next ())
-      {
-        String sLayoutXml = rs.getString ("LAYOUT_XML");
-
-        // If user has no layout xml, get it from the default user
-        if (sLayoutXml == null || sLayoutXml.length () <= 0)
-        {
-          sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
-          Logger.log (Logger.DEBUG, sQuery);
-          rs = stmt.executeQuery (sQuery);
-
-          if (rs.next ())
-          {
-            sLayoutXml = rs.getString ("LAYOUT_XML");
-          }
-        }
-
-        // Tack on the full path to layout.dtd
-        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
-
-        String xmlFilePackage = "org.jasig.portal.layout";
-        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-        session.setAttribute ("layoutXml", layoutXml);
-      }
-      stmt.close ();
-
-      return layoutXml;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    finally
-    {
-      rdbmService.releaseConnection (con);
-    }
-    return null;
-  }
-
-  public void setLayoutXml (String sUserName, IXml layoutXml)
-  {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
-
-    try
-    {
-      if (sUserName == null)
-        sUserName = "guest";
-
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-
-      StringWriter sw = new StringWriter ();
-      layoutXml.saveDocument (sw);
-      String sLayoutXml = sw.toString();
-
-      // Remove path to layout dtd before saving
-      int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
-      int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
-      sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
-
-      try
-      {
-        String sUpdate = "UPDATE PORTAL_USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
-        int iUpdated = stmt.executeUpdate (sUpdate);
-        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
-        stmt.close ();
-      }
-      catch (SQLException e)
-      {
-        // oracle fails if you try to process a string literal of more than 4k (sLayoutXml), so do this:
-        PreparedStatement pstmt = con.prepareStatement ("UPDATE PORTAL_USERS SET LAYOUT_XML=? WHERE USER_NAME=?");
-        pstmt.clearParameters ();
-        pstmt.setCharacterStream (1, new StringReader (sLayoutXml), sLayoutXml.length ());
-        pstmt.setString (2, sUserName);
-        int iUpdated = pstmt.executeUpdate ();
-        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
-        pstmt.close ();
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    finally
-    {
-      rdbmService.releaseConnection (con);
-    }
-  }
-
-  /**
-   * Retrieves a handle to the default layout xml.
-   * @param the servlet request object
-   * @param user name
-   * @return handle to the layout xml
-   */
-  public IXml getDefaultLayoutXml (HttpServletRequest req)
-  {
-    RdbmServices rdbmService = new RdbmServices ();
-    Connection con = null;
-    IXml layoutXml = null;
-
-    try
-    {
-      HttpSession session = req.getSession (false);
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-
-      String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
-      Logger.log (Logger.DEBUG, sQuery);
-
-      ResultSet rs = stmt.executeQuery (sQuery);
-
-      if (rs.next ())
-      {
-        String sLayoutXml = rs.getString ("LAYOUT_XML");
-
-        // Tack on the full path to layout.dtd
-        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
-
-        String xmlFilePackage = "org.jasig.portal.layout";
-        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-        session.setAttribute ("layoutXml", layoutXml);
-      }
-      stmt.close ();
-
-    return layoutXml;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    finally
-    {
-      rdbmService.releaseConnection (con);
-    }
-    return null;
-  }
-
-  /**
-   * Retrieves the active tab
-   * @param the servlet request object
-   * @return the active tab
-   */
-  public int getActiveTab (HttpServletRequest req)
-  {
-    int iActiveTab = 0;
-
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-
-      HttpSession session = req.getSession (false);
-      String sTabParameter = req.getParameter ("tab");
-      String sTabSession = (String) session.getAttribute ("activeTab");
-
-      if (sTabParameter != null)
-        iActiveTab = Integer.parseInt (sTabParameter);
-      else if (sTabSession != null)
-        iActiveTab = Integer.parseInt (sTabSession);
-      else
-      {
-        // Active tab has not yet been set. Read it from layout.xml
-        iActiveTab = Integer.parseInt (layout.getAttribute ("activeTab"));
-      }
-
-      // If tab is not within acceptable range, use the first tab
-      if (iActiveTab >= layout.getTabCount ())
-        iActiveTab = 0;
-
-      setActiveTab (req, iActiveTab);
-      return iActiveTab;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    return iActiveTab;
-  }
-
-  /**
-   * Stores the active tab in the session
-   * @param the servlet request object
-   * @param active tab
-   * @param user name
-   */
-  public void setActiveTab (HttpServletRequest req, int iTab)
-  {
-    try
-    {
-      HttpSession session = req.getSession (false);
-      session.setAttribute ("activeTab", String.valueOf (iTab));
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Displays tabs
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public void writeTabs (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      out.println ("<!-- Tabs -->");
-      out.println ("<table border=0 width=100% cellspacing=0 cellpadding=0>");
-      out.println ("<tr>");
-
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-
-      // Get Tabs
-      ITab[] tabs = layout.getTabs ();
-
-      int iTab = getActiveTab (req);
-      ITab activeTab = getTab (req, iTab);
-
-      String sBgcolor = null;
-      String sTabName = activeTab.getAttribute ("name");
-      String sActiveTab = activeTab.getAttribute ("name");
-      String sTabColor = layout.getAttribute ("tabColor");
-      String sActiveTabColor = layout.getAttribute ("activeTabColor");
-
-      for (int i = 0; i < tabs.length; i++)
-      {
-        sTabName = tabs[i].getAttribute ("name");
-        sBgcolor = sTabName.equals (sActiveTab) ? sActiveTabColor : sTabColor;
-
-        if (sTabName.equals (sActiveTab))
-          activeTab = tabs[i];
-
-        out.println ("<td bgcolor=" + sBgcolor + " align=center width=20%>");
-        out.println ("  <table bgcolor=" + sBgcolor + " border=0 width=100% cellspacing=0 cellpadding=2>");
-        out.println ("    <tr align=center>");
-
-        if (sTabName.equals (sActiveTab))
-          out.println ("      <td><span class=\"PortalTitleText\">&nbsp;" + sTabName + "</span>&nbsp;</td>");
-                  else
-          out.println ("      <td><a href=\"layout.jsp?tab=" + i + "\"><SPAN CLASS=\"PortalTitleText\">" + sTabName + "</SPAN></a>&nbsp;</td>");
-
-        out.println ("    </tr>");
-        out.println ("  </table>");
-        out.println ("</td>");
-        out.println ("<td width=1%>&nbsp;</td>");
-      }
-
-      // Area to the right of the tabs
-      out.println ("<td width=\"98%\">&nbsp;</td>");
-
-      out.println ("</tr>");
-
-      // This is the strip beneath the tabs
-      out.println ("<!-- Strip beneath tabs -->");
-      out.println ("<tr><td width=\"100%\" colspan=\"" + (2 * tabs.length + 1) + "\">");
-      out.println ("  <table border=0 cellspacing=0 width=\"100%\">");
-      out.println ("    <tr><td bgcolor=\"" + sActiveTabColor + "\">");
-      out.println ("      <table border=0 cellspacing=0 cellpadding=0><tr><td height=3></td></tr></table>");
-      out.println ("    </td></tr>");
-      out.println ("  </table>");
-      out.println ("</td></tr>");
-
-      out.println ("</table>");
-      out.println ("<br>");
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Displays channels
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public void writeChannels (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      int iTab = getActiveTab (req);
-      ITab activeTab = getTab (req, iTab);
-
-      HttpSession session = req.getSession (false);
-
-      if (activeTab != null)
-      {
-        out.println ("<!-- Channels -->");
-        out.println ("<table border=0 cellpadding=0 cellspacing=0 width=100%>");
-        out.println ("  <tr>");
-
-        IColumn[] columns = activeTab.getColumns ();
-
-        for (int iCol = 0; iCol < columns.length; iCol++)
-        {
-          out.println ("    <td valign=top width=" + columns[iCol].getAttribute ("width") + ">");
-
-          // Get channels for column iCol
-          org.jasig.portal.layout.IChannel[] channels = columns[iCol].getChannels ();
-
-          for (int iChan = 0; iChan < channels.length; iChan++)
-          {
-            org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);
-
-            // Check for minimized, maximized, added or removed channel
-            String sResize = req.getParameter ("resize");
-            String sTab = req.getParameter ("tab");
-            String sColumn = req.getParameter ("column");
-            String sChannel = req.getParameter ("channel");
-
-            if (sResize != null && iTab == Integer.parseInt (sTab) && iCol == Integer.parseInt (sColumn) && iChan == Integer.parseInt (sChannel))
-            {
-              if (sResize.equals("minimize"))
-                channels[iChan].setAttribute("minimized", "true");
-              else if (sResize.equals("maximize"))
-                channels[iChan].setAttribute("minimized", "false");
-              else if (sResize.equals ("remove"))
-              {
-                columns[iCol].removeChannel (channels[iChan]);
-                continue;
-              }
-            }
-
-            out.println ("<table border=0 cellpadding=1 cellspacing=4 width=100%>");
-            out.println ("  <tr>");
-            out.println ("    <td bgcolor=cccccc>");
-
-            // Channel heading
-            IXml layoutXml = getLayoutXml (req, getUserName (req));
-            ILayout layout = (ILayout) layoutXml.getRoot ();
-
-            out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
-            out.println ("        <tr>");
-            out.println ("          <td>");
-            out.println ("            <SPAN CLASS=\"PortalTitleText\">&nbsp;" + ch.getName() + "</SPAN>");
-            out.println ("          </td>");
-            out.println ("          <td nowrap valign=center align=right>");
-            out.println ("            &nbsp;");
-
-            // Channel control buttons
-            if (channels[iChan].getAttribute ("minimized").equals ("true"))
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
-            else if (ch.isMinimizable ())
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
-
-            if (ch.isDetachable ())
-              out.println ("<a href=\"JavaScript:openWin(\'detach.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "\', \'detachedWindow\', " + ch.getDefaultDetachWidth () + ", " + ch.getDefaultDetachHeight () + ")\"><img border=0 width=\"18\" height=\"15\" src=\"images/detach.gif\" alt=\"Detach\"></a>");
-
-            if (ch.isRemovable ())
-              out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=remove\"><img border=0 width=\"18\" height=\"15\" src=\"images/remove.gif\" alt=\"Remove\"></a>");
-
-            if (ch.isEditable ())
-              out.println ("<a href=\"" + DispatchBean.buildURL ("edit", getChannelID (channels[iChan])) + "\"><img border=0 width=\"28\" height=\"15\" src=\"images/edit.gif\" alt=\"Edit\"></a>");
-
-            if (ch.hasHelp ())
-              out.println ("<a href=\"" + DispatchBean.buildURL ("help", getChannelID (channels[iChan])) + "\"><img border=0 width=\"18\" height=\"15\" src=\"images/help.gif\" alt=\"Help\"></a>");
-
-            out.println ("            &nbsp;");
-            out.println ("          </td>");
-            out.println ("        </tr>");
-            out.println ("      </table>");
-
-            // Channel body
-            out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100%>");
-            out.println ("        <tr>");
-            out.println ("          <td bgcolor=#ffffff>");
-
-            out.println ("            <table border=0 cellpadding=3 cellspacing=0 width=100% bgcolor=#ffffff>");
-            out.println ("              <tr>");
-            out.println ("                <td valign=top>");
-
-            if (channels[iChan].getAttribute ("minimized").equals ("false"))
-            {
-              // Render channel contents
-              ch.render (req, res, out);
-            }
-            else
-            {
-              // Channel is minimized -- don't render it
-            }
-
-            out.println ("                </td>");
-            out.println ("              </tr>");
-            out.println ("            </table>");
-
-            out.println ("          </td>");
-            out.println ("        </tr>");
-            out.println ("      </table>");
-
-            out.println ("    </td>");
-            out.println ("  </tr>");
-            out.println ("</table>");
-          }
-
-          out.println ("    </td>");
-        }
-
-        out.println ("  </tr>");
-        out.println ("</table>");
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Presents a GUI for manipulating the layout of a tab.
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public void writePersonalizeLayoutPage (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-
-      // Get Tabs
-      ITab[] tabs = layout.getTabs ();
-
-      String sTabName = null;
-      int iTab;
-
-      // Get tab to personalize from the request if it's there,
-      // otherwise use the active tab
-      try
-      {
-        iTab = Integer.parseInt (req.getParameter ("tab"));
-      }
-      catch (NumberFormatException nfe)
-      {
-        iTab = getActiveTab (req);
-      }
-
-
-      sTabName = tabs[iTab].getAttribute ("name");
-
-      out.println ("<form name=\"tabControls\" action=\"personalizeLayout.jsp\" method=post>");
-      out.println ("Tab " + (iTab + 1) +": ");
-
-      // Rename tab
-      out.println ("<input type=hidden name=\"action\" value=\"renameTab\">");
-      out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
-      out.println ("<input type=text name=\"tabName\" value=\"" + sTabName + "\" onBlur=\"document.tabControls.submit()\">");
-
-      // Set tab as default
-      int iDefaultTab;
-
-      try
-      {
-        iDefaultTab = Integer.parseInt (layout.getActiveTabAttribute ());
-      }
-      catch (NumberFormatException ne)
-      {
-        iDefaultTab = 0;
-      }
-      out.println ("<input type=radio name=\"defaultTab\" onClick=\"location='personalizeLayout.jsp?action=setDefaultTab&tab=" + iTab + "'\"" + (iDefaultTab == iTab ? " checked" : "") + ">Set as default");
-
-      out.println ("</form>");
-
-      // Get the columns for this tab
-      IColumn[] columns = tabs[iTab].getColumns ();
-
-      // Fill columns with channels
-      out.println ("<table border=0 cellpadding=3 cellspacing=3>");
-      out.println ("<tr bgcolor=#dddddd>");
-
-      for (int iCol = 0; iCol < columns.length; iCol++)
-      {
-        out.println ("<td>");
-        out.println ("Column " + (iCol + 1));
-
-        // Move column left
-        if (iCol > 0)
-        {
-          out.println ("<a href=\"personalizeLayout.jsp?action=moveColumnLeft&tab=" + iTab + "&column=" + iCol + "\">");
-          out.println ("<img src=\"images/left.gif\" border=0 alt=\"Move column left\"></a>");
-        }
-
-        // Remove column
-        out.println ("<a href=\"personalizeLayout.jsp?action=removeColumn&tab=" + iTab + "&column=" + iCol + "\">");
-        out.println ("<img src=\"images/remove.gif\" border=0 alt=\"Remove column\"></a>");
-
-        // Move column right
-        if (iCol < columns.length - 1)
-        {
-          out.println ("<a href=\"personalizeLayout.jsp?action=moveColumnRight&tab=" + iTab + "&column=" + iCol + "\">");
-          out.println ("<img src=\"images/right.gif\" border=0 alt=\"Move column right\"></a>");
-        }
-
-        // Column width
-        String sWidth = columns[iCol].getAttribute ("width");
-        String sDisplayWidth = sWidth;
-
-        if (sWidth.endsWith ("%"))
-          sDisplayWidth = sWidth.substring(0, sWidth.length () - 1);
-
-        out.println ("<form name=\"columnWidth" + iTab + "_" + iCol + "\" action=\"personalizeLayout.jsp\" method=post>");
-        out.println ("<input type=hidden name=action value=\"setColumnWidth\">");
-        out.println ("<input type=hidden name=tab value=\"" + iTab + "\">");
-        out.println ("<input type=hidden name=column value=\"" + iCol + "\">");
-        out.println ("Width ");
-        out.println ("<input type=text name=\"columnWidth\" value=\"" + sDisplayWidth + "\" size=4 onBlur=\"document.columnWidth" + iTab + "_" + iCol + ".submit()\">");
-        out.println ("<select name=\"columnWidthType\" onChange=\"document.columnWidth" + iTab + "_" + iCol + ".submit()\">");
-        out.println ("<option value=\"\"" + (sWidth.endsWith ("%") ? "" : " selected") + ">Pixels</option>");
-        out.println ("<option value=\"%\"" + (sWidth.endsWith ("%") ? " selected" : "") + ">%</option>");
-        out.println ("</select>");
-        out.println ("</form>");
-        out.println ("<hr noshade>");
-
-        out.println ("<table><tr>");
-        out.println ("<td align=center>");
-
-        out.println ("<form name=\"channels" + iTab + "_" + iCol + "\" action=\"personalizeLayout.jsp\" method=post>");
-
-        // Move channel left
-        if (iCol > 0)
-          out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelLeft')\"><img src=\"images/left.gif\" border=0 alt=\"Move channel left\"></a>&nbsp;");
-
-        // Remove channel
-        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'removeChannel')\"><img src=\"images/remove.gif\" border=0 alt=\"Remove channel\"></a>&nbsp;");
-
-        // Move channel right
-        if (iCol < columns.length - 1)
-          out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelRight')\"><img src=\"images/right.gif\" border=0 alt=\"Move channel right\"></a>");
-
-        out.println ("<br>");
-        out.println ("<select name=\"channel\" size=10>");
-
-        // Get the channels for this column
-        org.jasig.portal.layout.IChannel[] channels = columns[iCol].getChannels ();
-
-        // List channels for this column
-        for (int iChan = 0; iChan < channels.length; iChan++)
-        {
-          org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);
-          out.println ("<option value=\"" + iChan + "\">" + ch.getName () + "</option>");
-        }
-
-        out.println ("</select>");
-        out.println ("</td>");
-        out.println ("<td>");
-
-        // Move channel up
-        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelUp')\"><img src=\"images/up.gif\" border=0 alt=\"Move channel up\"></a><br><br>");
-
-        // Remove channel
-        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'removeChannel')\"><img src=\"images/remove.gif\" border=0 alt=\"Remove channel\"></a><br><br>");
-
-        // Move channel down
-        out.println ("<a href=\"javascript:getActionAndSubmit (document.channels"+ iTab +"_" + iCol + ", 'moveChannelDown')\"><img src=\"images/down.gif\" border=0 alt=\"Move channel down\"></a>");
-
-        out.println ("</td>");
-        out.println ("</tr></table>");
-        out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
-        out.println ("<input type=hidden name=\"column\" value=\"" + iCol + "\">");
-        out.println ("<input type=hidden name=\"action\" value=\"none\">");
-        out.println ("</form>");
-
-        out.println ("</td>");
-      }
-
-      out.println ("</tr>");
-      out.println ("</table>");
-
-      // Add a new column for this tab
-      out.println ("<form action=\"personalizeLayout.jsp\" method=post>");
-      out.println ("<input type=hidden name=\"tab\" value=\"" + iTab + "\">");
-      out.println ("<input type=hidden name=\"action\" value=\"addColumn\">");
-      out.println ("<input type=submit name=\"submit\" value=\"Add\">");
-      out.println ("new column");
-      out.println ("<select name=\"column\">");
-
-      for (int iCol = 0; iCol < columns.length; iCol++)
-        out.println ("<option value=" + iCol + ">before column " + (iCol + 1) + "</option>");
-
-      out.println ("<option value=\"" + columns.length + "\" selected>at the end</option>");
-      out.println ("</select>");
-      out.println ("&nbsp;&nbsp;&nbsp;&nbsp;");
-
-      // Revert to default layout xml
-      out.println ("[<a href=\"personalizeLayout.jsp?action=revertToDefaultLayoutXml\">Revert to default layout</a>]");
-
-      out.println ("</form>");
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Gets page background color
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public String getBackgroundColor (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      String sBgColor = layout.getAttribute ("bgcolor");
-
-      if (sBgColor != null)
-        return sBgColor;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-
-    return "";
-  }
-
-  /**
-   * Gets page foreground color
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public String getForegroundColor (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      String sFgColor = layout.getAttribute ("fgcolor");
-
-      if (sFgColor != null)
-        return sFgColor;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-
-    return "";
-  }
-
-  /**
-   * Gets color of non-active tabs
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public String getTabColor (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      String sTabColor = layout.getAttribute ("tabColor");
-
-      if (sTabColor != null)
-        return sTabColor;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-
-    return "";
-  }
-
-  /**
-   * Gets color of active tab
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public String getActiveTabColor (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      String sActiveTabColor = layout.getAttribute ("activeTabColor");
-
-      if (sActiveTabColor != null)
-        return sActiveTabColor;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-
-    return "";
-  }
-
-  /**
-   * Gets color of channel heading background
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public String getChannelHeadingColor (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      String sChannelHeadingColor = layout.getAttribute ("channelHeadingColor");
-
-      if (sChannelHeadingColor != null)
-        return sChannelHeadingColor;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-
-    return "";
-  }
-
-  /**
-   * Saves colors.  Assumes that the session object contains the following variables:
-   * "bgcolor", "fgcolor", "tabColor", "activeTabColor", and "channelHeadingColor"
-   * @param the servlet request object
-   * @param the servlet response object
-   * @param the JspWriter object
-   */
-  public void setColors (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    try
-    {
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-
-      layout.setAttribute ("bgcolor", "#" + req.getParameter ("bgColor"));
-      layout.setAttribute ("fgcolor", "#" + req.getParameter ("fgColor"));
-      layout.setAttribute ("tabColor", "#" + req.getParameter ("tabColor"));
-      layout.setAttribute ("activeTabColor", "#" + req.getParameter ("activeTabColor"));
-      layout.setAttribute ("channelHeadingColor", "#" + req.getParameter ("channelHeadingColor"));
-
-      setLayoutXml (getUserName (req), layoutXml);
-      HttpSession session = req.getSession (false);
-      session.removeAttribute ("layoutXml");
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Initializes and returns an instance of a channel, or gets it from
-   * a member hashtable if the channel has been previously initalized.
-   * @param channel object from layout XML
-   * @return portal channel object
-   */
-  public org.jasig.portal.IChannel getChannelInstance (org.jasig.portal.layout.IChannel channel)
-  {
-    try
-    {
-      String sClass = channel.getAttribute ("class");
-
-      String sKey = getChannelID (channel);
-      org.jasig.portal.IChannel ch = getChannelInstance (sKey);
-
-      if (ch == null)
-      {
-        // Load this channel's parameters into the channel config object
-        ChannelConfig chConfig = new ChannelConfig ();
-        org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
-
-        if (parameters != null)
-        {
-          for (int iParam = 0; iParam < parameters.length; iParam++)
-          {
-            String sParamName = parameters[iParam].getAttribute ("name");
-            String sParamValue = parameters[iParam].getAttribute ("value");
-            chConfig.setParameter (sParamName, sParamValue);
-          }
-          chConfig.setChannelID (sKey);
-        }
-
-        // Get new instance of channel
-	      Object channelObject = Class.forName (sClass).newInstance ();
-
-	      // If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
-	      if (channelObject instanceof org.jasig.portal.IChannel)
-	        ch = (org.jasig.portal.IChannel) channelObject;
-	      else if (channelObject instanceof org.jasig.portal.IXMLChannel)
-	        ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
-
-        // Send the channel its parameters
-        ch.init (chConfig);
-
-        // Store an instance of this channel for later use
-        htChannelInstances.put (sKey, ch);
-      }
-
-      return ch;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    return null;
-  }
-
-  /**
-   * Returns an instance of a channel, which comes from
-   * a member hashtable assuming it has been previously initalized.
-   * @param channel ID
-   * @return portal channel object
-   */
-  public org.jasig.portal.IChannel getChannelInstance (String sChannelID)
-  {
-    org.jasig.portal.IChannel ch = null;
-
-    try
-    {
-      if (htChannelInstances != null)
-        ch = (org.jasig.portal.IChannel) htChannelInstances.get (sChannelID);
-      else
-        Logger.log (Logger.ERROR, "Cannot use channel ID to lookup a channel instance.  Channel instances have not yet been created.");
-
-      return ch;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    return null;
-  }
-
-  /**
-   * Removes a channel instance from
-   * the member hashtable htChannelInstances.
-   * @param channel ID
-   */
-  public void removeChannelInstance (String sChannelID)
-  {
-    try
-    {
-      htChannelInstances.remove (sChannelID);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Get a unique identifier for the channel instance.
-   * @param channel object from layout XML
-   * @return a unique identifier for the channel instance
-   */
-  public String getChannelID (org.jasig.portal.layout.IChannel channel)
-  {
-    try
-    {
-      String sChannelInstanceID = channel.getInstanceIDAttribute ();
-
-      if (sChannelInstanceID == null)
-        throw new Exception ("Channel instance ID not found in layout xml.");
-
-      return sChannelInstanceID;
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-    return null;
-  }
-
-  /**
-   * Gets the username from the session
-   * @param the servlet request object
-   * @return the username
-   */
-  public String getUserName (HttpServletRequest req)
-  {
-    HttpSession session = req.getSession (false);
-    return (String) session.getAttribute ("userName");
-  }
-
-  /**
-   * Adds a tab at the desired location
-   * @param the servlet request object
-   */
-  public void addTab (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      String sNewTabName = "New Tab";
-
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-
-      // Get a new tab and set its name
-      ITab tab = Factory.newTab ();
-      tab.setNameAttribute (sNewTabName);
-
-      // Get a new column and set its width
-      IColumn column = Factory.newColumn ();
-      column.setWidthAttribute ("100%");
-      tab.addColumn(column);
-      layout.insertTabAt (tab, iTab);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Renames a tab at the desired location
-   * @param the servlet request object
-   */
-  public void renameTab (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      String sTabName = req.getParameter ("tabName");
-
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-
-      ITab tabToRename = layout.getTabAt (iTab);
-      tabToRename.setNameAttribute (sTabName);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Sets the default tab
-   * @param the servlet request object
-   */
-  public void setDefaultTab (HttpServletRequest req)
-  {
-    try
-    {
-      String sDefaultTab = req.getParameter ("tab");
-
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      layout.setActiveTabAttribute (sDefaultTab);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Removes a tab at the desired location
-   * @param the servlet request object
-   */
-  public void removeTab (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-
-      layout.removeTabAt (iTab);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Move the tab at the desired location down
-   * @param the servlet request object
-   */
-  public void moveTabDown (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      ITab tabToMoveDown = layout.getTabAt (iTab);
-
-      // Only move tab if it isn't already at the bottom (right)
-      if (iTab < layout.getTabCount () - 1)
-      {
-        layout.removeTabAt (iTab);
-        layout.insertTabAt(tabToMoveDown, iTab + 1);
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Move the tab at the desired location up
-   * @param the servlet request object
-   */
-  public void moveTabUp (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-
-      IXml layoutXml = getLayoutXml (req, getUserName (req));
-      ILayout layout = (ILayout) layoutXml.getRoot ();
-      ITab tabToMoveUp = layout.getTabAt (iTab);
-
-      // Only move tab if it isn't already at the top (left)
-      if (iTab > 0)
-      {
-        layout.removeTabAt (iTab);
-        layout.insertTabAt (tabToMoveUp, iTab - 1);
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Adds a column at the desired location
-   * @param the servlet request object
-   */
-  public void addColumn (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-
-      ITab tab = getTab (req, iTab);
-
-      // Get a new column and set its width
-      IColumn column = Factory.newColumn ();
-      column.setWidthAttribute ("100%");
-      tab.insertColumnAt(column, iCol);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Removes a column at the desired location
-   * @param the servlet request object
-   */
-  public void removeColumn (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-
-      ITab tab = getTab (req, iTab);
-      tab.removeColumnAt (iCol);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Move the column at the desired location right
-   * @param the servlet request object
-   */
-  public void moveColumnRight (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-
-      ITab tab = getTab (req, iTab);
-      IColumn colToMoveRight = getColumn (req, iTab, iCol);
-      tab.removeColumnAt (iCol);
-      tab.insertColumnAt(colToMoveRight, iCol + 1);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Move the column at the desired location left
-   * @param the servlet request object
-   */
-  public void moveColumnLeft (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-
-      ITab tab = getTab (req, iTab);
-      IColumn colToMoveLeft = getColumn (req, iTab, iCol);
-      tab.removeColumnAt (iCol);
-      tab.insertColumnAt(colToMoveLeft, iCol - 1);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Changes the width of a column at the desired location
-   * @param the servlet request object
-   */
-  public void setColumnWidth (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      String sColumnWidth = req.getParameter ("columnWidth");
-      String sColumnWidthType = req.getParameter ("columnWidthType");
-
-      IColumn column = getColumn (req, iTab, iCol);
-      column.setWidthAttribute (sColumnWidth + sColumnWidthType);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Minimize a channel
-   * @param the servlet request object
-   */
-  public void minimizeChannel (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      int iChan = Integer.parseInt (req.getParameter ("channel"));
-
-      org.jasig.portal.layout.IChannel channel = getChannel (req, iTab, iCol, iChan);
-      channel.setMinimizedAttribute ("true");
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Maximize a channel
-   * @param the servlet request object
-   */
-  public void maximizeChannel (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      int iChan = Integer.parseInt (req.getParameter ("channel"));
-
-      org.jasig.portal.layout.IChannel channel = getChannel (req, iTab, iCol, iChan);
-      channel.setMinimizedAttribute ("false");
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Removes a channel
-   * @param the servlet request object
-   */
-  public void removeChannel (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      int iChan = Integer.parseInt (req.getParameter ("channel"));
-
-      IColumn column = getColumn (req, iTab, iCol);
-      column.removeChannelAt (iChan);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Adds a channel to layout.xml
-   * @param the servlet request object
-   */
-  public void addChannel (HttpServletRequest req)
-  {
-    HttpSession ses = req.getSession(false);
-    SubscriberBean subscribe = (SubscriberBean)ses.getAttribute("subscribe");
-    try
-    {
-      int iTab = getActiveTab(req);
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-
-      IColumn column = getColumn (req, iTab, iCol);
-      if(subscribe==null){
-       subscribe = new SubscriberBean();
-       subscribe.setChannel(req);
-       column.addChannel(subscribe.channel);
-       //column.addChannel(subscribe.getChannel(req));
-      }
-      else {
-       column.addChannel(subscribe.channel);
-       ses.removeAttribute("subscribe");
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Moves a channel to the bottom of the list of the column to the left
-   * @param the servlet request object
-   */
-  public void moveChannelLeft (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      int iChan = Integer.parseInt (req.getParameter ("channel"));
-
-      IColumn column = getColumn (req, iTab, iCol);
-      IColumn columnToTheLeft = getColumn (req, iTab, iCol - 1);
-      org.jasig.portal.layout.IChannel channelToMoveLeft = column.getChannelAt (iChan);
-
-      column.removeChannelAt (iChan);
-      columnToTheLeft.addChannel(channelToMoveLeft);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Moves a channel to the bottom of the list of the column to the right
-   * @param the servlet request object
-   */
-  public void moveChannelRight (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      int iChan = Integer.parseInt (req.getParameter ("channel"));
-
-      IColumn column = getColumn (req, iTab, iCol);
-      IColumn columnToTheRight = getColumn (req, iTab, iCol + 1);
-      org.jasig.portal.layout.IChannel channelToMoveRight = column.getChannelAt (iChan);
-
-      column.removeChannelAt (iChan);
-      columnToTheRight.addChannel(channelToMoveRight);
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Moves a channel up a position
-   * @param the servlet request object
-   */
-  public void moveChannelUp (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      int iChan = Integer.parseInt (req.getParameter ("channel"));
-
-      IColumn column = getColumn (req, iTab, iCol);
-      org.jasig.portal.layout.IChannel channelToMoveUp = column.getChannelAt (iChan);
-
-      // Only move channel if it isn't already at the top
-      if (iChan > 0)
-      {
-        column.removeChannelAt (iChan);
-        column.insertChannelAt (channelToMoveUp, iChan - 1);
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
-    }
-  }
-
-  /**
-   * Moves a channel down a position
-   * @param the servlet request object
-   */
-  public void moveChannelDown (HttpServletRequest req)
-  {
-    try
-    {
-      int iTab = Integer.parseInt (req.getParameter ("tab"));
-      int iCol = Integer.parseInt (req.getParameter ("column"));
-      int iChan = Integer.parseInt (req.getParameter ("channel"));
-
-      IColumn column = getColumn (req, iTab, iCol);
-      org.jasig.portal.layout.IChannel channelToMoveDown = column.getChannelAt (iChan);
-
-      // Only move channel if it isn't already at the bottom
-      if (iChan < column.getChannelCount () - 1)
-      {
-        column.removeChannelAt (iChan);
-        column.insertChannelAt (channelToMoveDown, iChan + 1);
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.log (Logger.ERROR, e);
+{       
+
+    // all channel content/parameters/caches/etc are managed here
+    ChannelManager channelManager;
+    
+    // stylesheet sets for the first two major XSL transformations
+    // userLayout -> structuredLayout -> target markup language
+    private StylesheetSet structuredLayoutSS;
+    private StylesheetSet userLayoutSS;
+    
+    // contains information relating client names to media and mime types
+    private MediaManager mediaM;
+    
+    XSLTProcessor sLayoutProcessor;
+    XSLTProcessor uLayoutProcessor;
+
+
+    /**
+     * Constructor initializes media manager and stylesheet sets.
+     */
+    public LayoutBean ()
+    {
+	// init the media manager
+	String fs=System.getProperty("file.separator");
+	String propertiesDir=getPortalBaseDir()+"properties"+fs;
+	mediaM=new MediaManager(propertiesDir+"media.properties",propertiesDir+"mime.properties",propertiesDir+"serializer.properties");
+	
+	
+	// create a stylesheet set for userLayout transformations
+	userLayoutSS=new StylesheetSet();
+	userLayoutSS.setMediaProps(propertiesDir+"media.properties ");
+
+	// manual initialization of the StylesheetSet.
+	// This is just for an example. I would recommend initializing the stylesheet set from an xml file instead
+	userLayoutSS.addStyleSheet(new StylesheetDescription(getPortalBaseDir()+"webpages"+fs+"stylesheets"+fs+"LayoutBean"+fs+"uLayout2sLayout.xsl","text/xsl","","netscape","",false));
+
+	
+	
+	// create a stylesheet set for structuredLayout transformations
+	structuredLayoutSS=new StylesheetSet(getPortalBaseDir()+"webpages"+fs+"stylesheets"+fs+"LayoutBean"+fs+"StructuredLayout.ssl");
+	structuredLayoutSS.setMediaProps(propertiesDir+"media.properties ");
+
+	// instantiate the processors
+	try {
+	    sLayoutProcessor = XSLTProcessorFactory.getProcessor();
+	    uLayoutProcessor = XSLTProcessorFactory.getProcessor();
+	} catch (Exception e) {
+	    Logger.log (Logger.ERROR, "LayoutBean::LayoutBean() : caught an exception while trying initialize XLST processors. "+e);
+	}
+    }
+    
+    /**
+     * Gets the username from the session
+     * @param the servlet request object
+     * @return the username
+     */
+    public String getUserName (HttpServletRequest req)
+    {
+	HttpSession session = req.getSession (false);
+	return (String) session.getAttribute ("userName");
+    }
+    
+    /**
+     * Renders the current state of the portal into the target markup language
+     * (basically, this is the main method that does all the work)
+     * @param the servlet request object
+     * @param the servlet response object
+     * @param the JspWriter object
+     */
+    public void writeContent (HttpServletRequest req, HttpServletResponse res, JspWriter out)
+    {    
+	// This function does ALL the content gathering/presentation work.
+	// The following filter sequence is processed:
+	//        userLayoutXML (in UserLayoutManager)
+	//              |
+	//        uLayout2sLayout filter
+	//              |
+	//        HeaderAndFooterIncorporation filter
+	//              |
+	//        ChannelIncorporation filter
+	//              |
+	//        Serializer (XHTML/WML/HTML/etc.)
+	//              | 
+	//        JspWriter
+	//
+
+	try  {           
+
+	    // A userLayout node that transformations will be applied to. 
+	    // see "userLayoutRoot" parameter
+	    Node rElement;
+
+	    // get the layout
+	    UserLayoutManager uLayoutManager=new UserLayoutManager(req,getUserName(req));	    
+
+	    // process events that have to be handed directly to the userLayoutManager.
+	    // (examples of such events are "remove channel", "minimize channel", etc.
+	    //  basically things that directly affect the userLayout structure)
+	    processUserLayoutParameters(req,uLayoutManager);
+
+
+	    // set the response mime type 
+	    res.setContentType(mediaM.getReturnMimeType(req));
+	    //	    Logger.log(Logger.DEBUG,"(media,mime)=(\""+mediaM.getMedia(req)+"\",\""+mediaM.getReturnMimeType(req)+"\")");
+	    
+	    // set up the transformation pipeline
+
+	    // get a serializer appropriate for the target media
+	    BaseMarkupSerializer markupSerializer=mediaM.getSerializer(req,out);
+
+	    // set up the serializer
+	    markupSerializer.asContentHandler();
+
+
+	    // set up the channelManager
+	    if(channelManager==null) channelManager=new ChannelManager(req,res);
+	    else channelManager.setReqNRes(req,res);
+
+	    // initialize ChannelIncorporationFilter
+	    ChannelIncorporationFilter cf = new ChannelIncorporationFilter(markupSerializer,channelManager);
+
+	    sLayoutProcessor.processStylesheet(structuredLayoutSS.getStylesheet(req));
+	    sLayoutProcessor.setDocumentHandler(cf);
+
+	    // deal with parameters that are meant for the LayoutBean
+	    HttpSession session = req.getSession (false);
+
+	    // "layoutRoot" signifies a node of the userLayout structure
+	    // that will serve as a root for constructing structuredLayout
+	    String req_layoutRoot=req.getParameter("userLayoutRoot");
+	    String ses_layoutRoot=(String) session.getAttribute("userLayoutRoot");
+	    if(req_layoutRoot!=null) {
+		session.setAttribute("userLayoutRoot",req_layoutRoot);
+		rElement=uLayoutManager.getNode(req_layoutRoot);
+		if(rElement==null) { rElement=uLayoutManager.getRoot();
+		Logger.log(Logger.DEBUG,"LayoutBean::writeChanels() : attempted to set layoutRoot to nonexistent node \""+req_layoutRoot+"\", setting to the main root node instead.");
+		} else {
+		    //		    Logger.log(Logger.DEBUG,"LayoutBean::writeChanels() : set layoutRoot to "+req_layoutRoot);
+		}
+	    } else if(ses_layoutRoot!=null) { rElement=uLayoutManager.getNode(ses_layoutRoot);
+	    //	    Logger.log(Logger.DEBUG,"LayoutBean::writeChannels() : retrieved the session value for layoutRoot=\""+ses_layoutRoot+"\"");
+	    }
+	    else  rElement=uLayoutManager.getRoot();
+	    
+	    // "stylesheetTarget" allows to specify one of two stylesheet sets "u" or "s" to
+	    // a selected member of which the stylesheet parameters will be passed
+	    // "u" stands for the stylesheet set used for userLayout->structuredLayout transform.,
+	    // and "s" is a set used for structuedLayout->pageContent transformation.
+	    
+	    String stylesheetTarget=null;
+	    Hashtable upTable=new Hashtable();
+	    Hashtable spTable=new Hashtable();
+	    if((stylesheetTarget=(req.getParameter("stylesheetTarget")))!=null) {
+		if(stylesheetTarget.equals("u")) {
+		    Enumeration e=req.getParameterNames();
+		    if(e!=null) {
+			while(e.hasMoreElements()) {
+			    String pName=(String) e.nextElement();
+			    if(!pName.equals("stylesheetTarget"))
+				upTable.put(pName,req.getParameter(pName));
+			}
+		    }
+		    
+		} else if(stylesheetTarget.equals("s")) {
+		    Enumeration e=req.getParameterNames();
+		    if(e!=null) {
+			while(e.hasMoreElements()) {
+			    String pName=(String) e.nextElement();
+			    if(!pName.equals("stylesheetTarget"))
+			       spTable.put(pName,req.getParameter(pName));
+			}
+		    }
+		}
+	    }
+		
+	    // process old stylesheet params and add new ones.
+	    // Because session can store only strings, I have two strings
+	    // (one for userLayoutStylesheet, one for structuredLayoutStylesheet)
+	    // listing the names of the parameters. The values of the parameters
+	    // are stored in the sesion.
+	    
+	    // merge the old parameter values with the new ones
+	    String upNames=(String) session.getAttribute("userLayoutParameterNames");
+	    if(upNames!=null){
+		StringTokenizer st = new StringTokenizer(upNames,"&");
+		while (st.hasMoreTokens()) {
+		    String pName=st.nextToken();
+		    if(!upTable.containsKey(pName))
+			upTable.put(pName,session.getAttribute(pName));
+		}
+	    }
+	    // set stylesheet params, save parameters in a session, generate a new userLayoutParameterNames string
+	    upNames="";
+	    for (Enumeration e = upTable.keys() ; e.hasMoreElements() ;) {
+		String pName=(String) e.nextElement();
+		upNames+=pName+"&";
+		String pValue=(String) upTable.get(pName);
+		session.setAttribute(pName,pValue);
+		uLayoutProcessor.setStylesheetParam(pName,uLayoutProcessor.createXString(pValue));
+	    } 
+	    session.setAttribute("userLayoutParameterNames",upNames);
+	    
+
+	    // merge the old parameter values with the new ones
+	    String spNames=(String) session.getAttribute("structuredLayoutParameterNames");
+	    if(spNames!=null){
+		StringTokenizer st = new StringTokenizer(spNames,"&");
+		while (st.hasMoreTokens()) {
+		    String pName=st.nextToken();
+		    if(!spTable.containsKey(pName))
+			spTable.put(pName,session.getAttribute(pName));
+		}
+	    }
+	    // set stylesheet params, save parameters in a session, generate a new userLayoutParameterNames string
+	    spNames="";
+	    for (Enumeration e = spTable.keys() ; e.hasMoreElements() ;) {
+		String pName=(String) e.nextElement();
+		spNames+=pName+"&";
+		String pValue=(String) spTable.get(pName);
+		session.setAttribute(pName,pValue);
+		sLayoutProcessor.setStylesheetParam(pName,sLayoutProcessor.createXString(pValue));
+	    } 
+	    session.setAttribute("structuredLayoutParameterNames",spNames);
+	    
+
+	    
+	    // all the parameters are set up, fire up the filter transforms
+	    uLayoutProcessor.process(new XSLTInputSource(rElement),userLayoutSS.getStylesheet(),new XSLTResultTarget(sLayoutProcessor));
+	    
+	    
+	}
+	catch (Exception e) {
+	    Logger.log (Logger.ERROR, e);
+	}
+    }
+
+    
+    /**
+     * Processes "userLayoutTarget" and a corresponding(?) "action".
+     * Function basically calls UserLayoutManager functions that correspond
+     * to the requested action.
+     * @param the servlet request object
+     * @param the userLayout manager object
+     */
+    private void processUserLayoutParameters(HttpServletRequest req,UserLayoutManager man)
+    {
+	String layoutTarget;
+	//	HttpSession session = req.getSession (false);
+	if((layoutTarget=req.getParameter("userLayoutTarget"))!=null) {
+	    String action=req.getParameter("action");
+	    // determine what action is
+	    if(action.equals("minimize")) {
+		man.minimizeChannel(layoutTarget);
+		channelManager.passLayoutEvent(layoutTarget,new LayoutEvent(LayoutEvent.MINIMIZE_BUTTON_EVENT));
+	    } else if(action.equals("remove")) {
+		man.removeChannel(layoutTarget);
+	    } else if(action.equals("edit")) {
+		channelManager.passLayoutEvent(layoutTarget,new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
+	    } else if(action.equals("help")) {
+		channelManager.passLayoutEvent(layoutTarget,new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
+	    } else if(action.equals("detach")) {
+		channelManager.passLayoutEvent(layoutTarget,new LayoutEvent(LayoutEvent.DETACH_BUTTON_EVENT));
+	    }
+	}
     }
-  }
 }
 
 

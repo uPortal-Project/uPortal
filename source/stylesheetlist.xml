@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet alternate="yes" title="compact" href="a_cav.xsl"  type="text/css" media="avantgo"?>
+<?xml-stylesheet title="compact" href="cnet.xsl"  type="text/css" media="netscape"?>
+<?xml-stylesheet alternate="yes" title="compact" href="a_cex.xsl"  type="text/css" media="explorer"?>
+
+<?xml-stylesheet href="nex.xsl.xsl" title="normal" type="text/xsl" media="explorer"?>
+<?xml-stylesheet alternate="yes" href="a_nav.xsl" title="normal" type="text/xsl" media="avantgo"?>
+<?xml-stylesheet alternate="yes" href="a_nly.xsl" title="normal" type="text/xsl" media="lynx"?>
+
+<document>
+<title>
+something
+</title>
+another
+</document>

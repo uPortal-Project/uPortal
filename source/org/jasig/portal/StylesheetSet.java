@@ -1,38 +1,3 @@
-/**
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
 package org.jasig.portal;
 
 
@@ -56,13 +21,14 @@ import org.xml.sax.helpers.*;
  * @version $Revision$
  */
 
-public class StylesheetSet extends SAXFilterImpl
+public class StylesheetSet extends SAXFilterImpl 
 {
     protected Hashtable title_table;
     protected OrderedProps props=null;
 
-
-    public StylesheetSet(){title_table=new Hashtable();}
+    
+    public StylesheetSet(){title_table=new Hashtable();
+    }
     public StylesheetSet(DocumentHandler dt) { this(); this.setDocumentHandler(dt);}
     public StylesheetSet(String uri) {
 	try{
@@ -73,14 +39,14 @@ public class StylesheetSet extends SAXFilterImpl
 	    if(url!=null)  parser.parse(new org.xml.sax.InputSource(url.openStream()));
 	    this.title_table=dummy.getTitleTable();
 	} catch (Exception e) {
-	    Logger.log(Logger.ERROR,"SytlesheetSet::StylesheetSet(uri) : Exception occurred while opening stylesheet list uri : " + uri + ". "+ e);
+	    Logger.log(Logger.ERROR,"SytlesheetSet::StylesheetSet(uri) : Exception occurred while opening stylesheet list uri : " + uri + ". "+ e);  
 	};
-
+	
     }
 
 
-
-    public XSLTInputSource getStylesheet(String title) {
+    
+    public XSLTInputSource getStylesheet(String title) { 
         Hashtable media_table=(Hashtable) title_table.get(title);
         if(media_table==null) return null;
         StylesheetDescription sd=null;
@@ -91,11 +57,11 @@ public class StylesheetSet extends SAXFilterImpl
             if(!tsd.getAlternate()) sd=tsd;
           }
         }
-        // after all this mess we should have a valid sd
-
-        return (new XSLTInputSource(sd.getURI()));
+        // after all this mess we should have a valid sd        
+        
+        return (new XSLTInputSource(sd.getURI()));  
     }
-
+    
     public XSLTInputSource getStylesheet() {
 	// this is painful ... browse through all possible
 	// browse through all titles to find a non-alternate
@@ -113,10 +79,10 @@ public class StylesheetSet extends SAXFilterImpl
 		}
             }
         }
-
+        
         return (new XSLTInputSource(sd.getURI()));
     }
-
+    
     public XSLTInputSource getStylesheet(String title, String media) {
 	Hashtable media_table=(Hashtable)title_table.get(title);
 	if(media_table==null) return null;
@@ -128,10 +94,10 @@ public class StylesheetSet extends SAXFilterImpl
 	}
 
         if(sd==null) return null;
-
-	return (new XSLTInputSource(sd.getURI()));
+	
+	return (new XSLTInputSource(sd.getURI()));  
     }
-
+    
     protected StylesheetDescription getStylesheetDescription(String media) {
 	// search for a non-alternate stylesheet for a particular media
 	StylesheetDescription sd=null;
@@ -139,7 +105,7 @@ public class StylesheetSet extends SAXFilterImpl
             Hashtable media_table = (Hashtable) e.nextElement();
             StylesheetDescription tsd=(StylesheetDescription) media_table.get(media);
             if(tsd!=null) {
-		if(sd==null) sd=tsd;
+		if(sd==null) sd=tsd;   
 		if(!tsd.getAlternate()) { sd=tsd; break; }
             } else {
 		Enumeration sls=media_table.elements();
@@ -149,12 +115,14 @@ public class StylesheetSet extends SAXFilterImpl
 	}
 	return sd;
     }
-
+    
     public XSLTInputSource getStylesheet(String title, HttpServletRequest req) {
+	//	Logger.log(Logger.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("user-Agent")+" : media=\""+getMedia(req)+"\"");
 	return getStylesheet(title,getMedia(req));
     }
-
+    
     public XSLTInputSource getStylesheet(HttpServletRequest req) {
+	//	Logger.log(Logger.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("user-Agent")+" : media=\""+getMedia(req)+"\"");
 	StylesheetDescription sd=getStylesheetDescription(getMedia(req));
 	if(sd!=null) return new XSLTInputSource(sd.getURI());
 	else return null;
@@ -164,13 +132,13 @@ public class StylesheetSet extends SAXFilterImpl
     public void addStyleSheet(StylesheetDescription sd) {
 	// see if the title is already in the hashtable
 	Hashtable media_table=(Hashtable) title_table.get(sd.getTitle());
-	if(media_table==null){
-	    media_table=new Hashtable();
+	if(media_table==null){ 
+	    media_table=new Hashtable(); 
 	    media_table.put(sd.getMedia(),sd);
 	    title_table.put(sd.getTitle(),media_table);
-	} else media_table.put(sd.getMedia(),sd);
+	} else media_table.put(sd.getMedia(),sd); 
     }
-
+    
     public void processingInstruction(java.lang.String target, java.lang.String data)
 	throws SAXException
     {
@@ -183,37 +151,39 @@ public class StylesheetSet extends SAXFilterImpl
 	    outDocumentHandler.processingInstruction(target,data);
 	}
     }
-
-
+    
+    
     public void setMediaProps(String uri)
-    {
+    {  
 	String CURRENTDIR= System.getProperty("user.dir")+System.getProperty("file.separator");
 	if (uri == null) uri="file://"+ CURRENTDIR + "media.properties";
 	try {
 	    URL url=expandSystemId(uri);
 	    if(url!=null)  props=new OrderedProps(url.openStream());
 	} catch (IOException ioe1) {
-	    Logger.log(Logger.ERROR,"SytlesheetSet::setMediaProps : Exception occurred while media properties file: " + uri + ". "+ ioe1);
+	    Logger.log(Logger.ERROR,"SytlesheetSet::setMediaProps : Exception occurred while media properties file: " + uri + ". "+ ioe1);  
 	}
-    }
+    }  
 
 
     public Hashtable getTitleTable() { return title_table; }
-
+    
     protected String getMedia(HttpServletRequest req) {
-	if(props==null) this.setMediaProps((String) null);
+
+	if(props==null) this.setMediaProps((String) null); 
+
 	if(props!=null) return props.getValue(req.getHeader("user-Agent"));
 	return (String) null;
     }
-
+    
     private URL expandSystemId(String systemId) {
         String id = systemId;
-
+	
         // check for bad parameters id
         if (id == null || id.length() == 0) {
             return null;
         }
-
+	
         // if id already expanded, return
         try {
             URL url = new URL(id);
@@ -227,7 +197,7 @@ public class StylesheetSet extends SAXFilterImpl
 
         // normalize id
         id = fixURI(id);
-
+        
         // normalize base
         URL base = null;
         URL url = null;
@@ -276,10 +246,7 @@ public class StylesheetSet extends SAXFilterImpl
             }
         }
         return str;
-    }
-
-};
-
+    }  
 
 
 
@@ -296,7 +263,7 @@ class OrderedProps
      * Stores the Key and Values as an array of Strings
      */
     private Vector attVec = new Vector(15);
-
+    
     /**
      * Constructor.
      * @param inputStream Stream containing the properties file.
@@ -318,7 +285,7 @@ class OrderedProps
 	    }
 	}
     }
-
+    
     /**
      * Iterates through the Key list and returns the first value for whose
      * key the given string contains.  Returns "unknown" if no key is contained
@@ -337,3 +304,23 @@ class OrderedProps
 	return "unknown";
     }
 };
+
+
+    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

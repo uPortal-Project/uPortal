@@ -21,18 +21,18 @@
 </xsl:otherwise>
 </xsl:choose>
 
-<table>
+<table width="100%">
   <tr>
     <td><b>Name</b></td>
-    <td><font face="Arial"><input type="text" name="name"><xsl:attribute name="value"><xsl:value-of select="@name"/></xsl:attribute></input></font></td>
+    <td><input type="text" name="name"><xsl:attribute name="value"><xsl:value-of select="@name"/></xsl:attribute></input></td>
   </tr>
   <tr>
     <td><b>URL</b></td>
-    <td><font face="Arial"><input type="text" name="url"><xsl:attribute name="value"><xsl:value-of select="@url"/></xsl:attribute></input></font></td>
+    <td><input type="text" name="url"><xsl:attribute name="value"><xsl:value-of select="@url"/></xsl:attribute></input></td>
   </tr>
   <tr>
     <td><b>Comments</b></td>
-    <td><font face="Arial"><input type="text" name="comments"><xsl:attribute name="value"><xsl:value-of select="@comments"/></xsl:attribute></input></font></td>
+    <td><input type="text" name="comments"><xsl:attribute name="value"><xsl:value-of select="@comments"/></xsl:attribute></input></td>
   </tr>
 </table>
 
