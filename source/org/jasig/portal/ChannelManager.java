@@ -132,7 +132,7 @@ public class ChannelManager implements LayoutEventListener {
     public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
-    public static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors");
+    public static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
     private Set repeatRenderings=new HashSet();
     private boolean ccaching=false;
 
