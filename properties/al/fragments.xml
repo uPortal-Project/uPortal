@@ -73,6 +73,7 @@
 		<folder name="Developers" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="session-locales-selector" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="missing-properties" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="person-attributes" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="css-viewer" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
