@@ -78,11 +78,11 @@ public interface IPortletPreferencesStore {
      * 
      * @param userId The id of the user to store the preferences for.
      * @param layoutId The layout fragment id to store the preferences for.
-     * @param structId The structure id to store the preferences for.
+     * @param chanDescId The structure id to store the preferences for.
      * @param prefs The PreferenceSet which describes the data to store.
      * @throws Exception If any error occurs while storing the data.
      */
-    public abstract void setEntityPreferences(final int userId, final int layoutId, final int structId, final PreferenceSet prefs) throws Exception;
+    public abstract void setEntityPreferences(final int userId, final int layoutId, final String chanDescId, final PreferenceSet prefs) throws Exception;
 
     /**
      * Gets the enitity level preferences for the specified channel into an
@@ -91,9 +91,9 @@ public interface IPortletPreferencesStore {
      *  
      * @param userId The id of the user to get the preferences for.
      * @param layoutId The layout fragment id to get the preferences for.
-     * @param structId The structure id to get the preferences for.
+     * @param chanDescId The structure id to get the preferences for.
      * @return An implementation of the PreferenceSet interface that contains the preferences.
      * @throws Exception If any error occurs while getting the data.
      */
-    public abstract PreferenceSet getEntityPreferences(final int userId, final int layoutId, final int structId) throws Exception;
+    public abstract PreferenceSet getEntityPreferences(final int userId, final int layoutId, final String chanDescId) throws Exception;
 }

@@ -50,9 +50,10 @@
         <key>CK</key>
       </column>
       <column> 
-      	<name>STRUCT_ID</name>       
-      	<type>INTEGER</type>
-        <desc>Foreign key of table UP_LAYOUT_STRUCT and compound key</desc>
+      	<name>CHAN_DESC_ID</name>       
+      	<type>VARCHAR</type>
+      	<param>255</param>
+        <desc>Foreign key of table UP_LAYOUT_STRUCT and compound key or key from aggregated layout</desc>
         <key>CK</key>
       </column>          
       <column>

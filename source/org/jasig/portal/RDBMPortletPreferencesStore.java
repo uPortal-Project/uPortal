@@ -203,16 +203,16 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
      * 
      * @see org.jasig.portal.IPortletPreferencesStore#setEntityPreferences(int, int, int, org.apache.pluto.om.common.PreferenceSet)
      */
-    public void setEntityPreferences(final int userId, final int layoutId, final int structId, final PreferenceSet prefs) throws Exception {
+    public void setEntityPreferences(final int userId, final int layoutId, final String chanDescId, final PreferenceSet prefs) throws Exception {
         final Connection con = RDBMServices.getConnection();
         
         final String deleteCurrentPrefs = 
             "DELETE FROM UP_PORTLET_ENTITY_PREFS " +
-            "WHERE USER_ID=? AND LAYOUT_ID=? AND STRUCT_ID=?";
+            "WHERE USER_ID=? AND LAYOUT_ID=? AND CHAN_DESC_ID=?";
         
         final String insertPref = 
             "INSERT INTO UP_PORTLET_ENTITY_PREFS " +
-            "(USER_ID, LAYOUT_ID, STRUCT_ID, PORTLET_PREF_NAME, PORTLET_PREF_VALUE) " +
+            "(USER_ID, LAYOUT_ID, CHAN_DESC_ID, PORTLET_PREF_NAME, PORTLET_PREF_VALUE) " +
             "VALUES (?, ?, ?, ?, ?)";
         
         try {
@@ -228,7 +228,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 
                 deleteCurrentPrefsPstmt.setInt(1, userId);
                 deleteCurrentPrefsPstmt.setInt(2, layoutId);
-                deleteCurrentPrefsPstmt.setInt(3, structId);
+                deleteCurrentPrefsPstmt.setString(3, chanDescId);
                 deleteCurrentPrefsPstmt.execute();
                 
                 for (final Iterator prefItr = prefs.iterator(); prefItr.hasNext();) {
@@ -236,7 +236,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     
                     insertPrefPstmt.setInt(1, userId);
                     insertPrefPstmt.setInt(2, layoutId);
-                    insertPrefPstmt.setInt(3, structId);
+                    insertPrefPstmt.setString(3, chanDescId);
                     insertPrefPstmt.setString(4, pref.getName());
                     
                     for (final Iterator valueItr = pref.getValues(); valueItr.hasNext();) {
@@ -264,14 +264,14 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
         }
     }
 
-    public PreferenceSet getEntityPreferences(final int userId, final int layoutId, final int structId) throws Exception {
+    public PreferenceSet getEntityPreferences(final int userId, final int layoutId, final String chanDescId) throws Exception {
         final PreferenceSetImpl prefs = new PreferenceSetImpl();
         final Connection con = RDBMServices.getConnection();
 
         final String selectCurrentPrefs = 
-            "SELECT USER_ID, LAYOUT_ID, STRUCT_ID, PORTLET_PREF_NAME, PORTLET_PREF_VALUE " +
+            "SELECT USER_ID, LAYOUT_ID, CHAN_DESC_ID, PORTLET_PREF_NAME, PORTLET_PREF_VALUE " +
             "FROM UP_PORTLET_ENTITY_PREFS " +
-            "WHERE USER_ID=? AND LAYOUT_ID=? AND STRUCT_ID=?";
+            "WHERE USER_ID=? AND LAYOUT_ID=? AND CHAN_DESC_ID=?";
         
         try {
             PreparedStatement selectCurrentPrefsPstmt = null;
@@ -280,8 +280,8 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 selectCurrentPrefsPstmt = con.prepareStatement(selectCurrentPrefs);
                 
                 selectCurrentPrefsPstmt.setInt(1, userId);
-                selectCurrentPrefsPstmt.setInt(1, layoutId);
-                selectCurrentPrefsPstmt.setInt(1, structId);
+                selectCurrentPrefsPstmt.setInt(2, layoutId);
+                selectCurrentPrefsPstmt.setString(3, chanDescId);
                 ResultSet rs = selectCurrentPrefsPstmt.executeQuery();
                 
                 final Map prefsBuilder = new HashMap();
