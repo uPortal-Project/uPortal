@@ -1519,7 +1519,8 @@ Version $Revision$
               <img src="{$mediaPath}/transparent.gif" width="{$indentWidth}" height="1" border="0" alt="" title=""/>
             </td>
             <td width="100%" valign="bottom" class="uportal-text">
-              <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='condense'&amp;uP_sparam=uPcCS_channelID&amp;uPcCS_channelID='{@ID}'">
+              <xsl:variable name="myID"><xsl:value-of select="./ID"/></xsl:variable>
+              <a href="{$baseActionURL}?uP_sparam=uPcCS_action&amp;uPcCS_action='condense'&amp;uP_sparam=uPcCS_fragmentID&amp;uPcCS_fragmentID='{$myID}'">
                 <xsl:value-of select="@title"/>
               </a>
             </td>
