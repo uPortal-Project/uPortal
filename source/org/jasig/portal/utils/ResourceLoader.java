@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
 import org.xml.sax.InputSource;
@@ -71,15 +72,21 @@ public class ResourceLoader {
    * @return a URL identifying the requested resource
    * @throws org.jasig.portal.ResourceMissingException
    */
-  public static URL getResourceAsURL(Class aClass, String resource) throws ResourceMissingException {
+  public static URL getResourceAsURL(Class requestingClass, String resource) throws ResourceMissingException {
     URL resourceURL = null;
     try {
       resourceURL = new URL(resource);
     } catch (MalformedURLException murle) {
       // URL is invalid, now try to load from classpath
-      resourceURL = aClass.getResource(resource);
-      if (resourceURL == null)
-        throw new ResourceMissingException(resource, resource, "Resource not found in classpath");
+      resourceURL = requestingClass.getResource(resource);
+      if (resourceURL == null) {
+        String resourceRelativeToClasspath = null;
+        if (resource.startsWith("/"))
+          resourceRelativeToClasspath = resource;
+        else
+          resourceRelativeToClasspath = '/' + requestingClass.getPackage().getName().replace('.', '/') + '/' + resource;
+        throw new ResourceMissingException(resource, resourceRelativeToClasspath, "Resource not found in classpath: " + resourceRelativeToClasspath);
+      }
     }
     return resourceURL;
   }
@@ -88,7 +95,7 @@ public class ResourceLoader {
    * Returns the requested resource as a URL string.
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource to load
-   * @return the requested URL as a string
+   * @return the requested resource as a URL string
    * @throws org.jasig.portal.ResourceMissingException
    */
   public static String getResourceAsURLString(Class requestingClass, String resource) throws ResourceMissingException {
@@ -96,10 +103,32 @@ public class ResourceLoader {
   }
 
   /**
+   * Returns the requested resource as a File.
+   * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
+   * @param resource a String describing the full or partial URL of the resource to load
+   * @return the requested resource as a File
+   * @throws org.jasig.portal.ResourceMissingException
+   */
+  public static File getResourceAsFile(Class requestingClass, String resource) throws ResourceMissingException {
+    return new File(getResourceAsFileString(requestingClass, resource));
+  }
+
+  /**
+   * Returns the requested resource as a File string.
+   * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
+   * @param resource a String describing the full or partial URL of the resource to load
+   * @return the requested resource as a File string
+   * @throws org.jasig.portal.ResourceMissingException
+   */
+  public static String getResourceAsFileString(Class requestingClass, String resource) throws ResourceMissingException {
+    return getResourceAsURL(requestingClass, resource).getFile();
+  }
+
+  /**
    * Returns the requested resource as a stream.
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource to load
-   * @return the requested URL as a stream
+   * @return the requested resource as a stream
    * @throws org.jasig.portal.ResourceMissingException
    * @throws java.io.IOException
    */
@@ -111,7 +140,7 @@ public class ResourceLoader {
    * Returns the requested resource as a SAX input source.
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource to load
-   * @return the requested URL as a SAX input source
+   * @return the requested resource as a SAX input source
    * @throws org.jasig.portal.ResourceMissingException
    * @throws java.io.IOException
    */
