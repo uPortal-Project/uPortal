@@ -12,9 +12,9 @@ function xml(nodelist){
 	<xsl:param name="currentStep" select="1"/>
 	<xsl:param name="specialStep" select="none"/>
 	<xsl:param name="numSteps" select="count(*/params/step)"/>
-    <xsl:param name="extraSteps" select="0"/>
-    <xsl:param name="calcTotSteps" select="$numSteps + $extraSteps"/>
-    <xsl:param name="totSteps" select="$numSteps + $extraSteps"/>
+	<xsl:param name="extraSteps" select="0"/>
+	<xsl:param name="calcTotSteps" select="$numSteps + $extraSteps"/>
+	<xsl:param name="totSteps" select="$numSteps + $extraSteps"/>
 	<xsl:param name="modified">false</xsl:param>
 	<xsl:param name="mode">publish</xsl:param>
 	<xsl:param name="profileName">default profile</xsl:param>
@@ -89,6 +89,161 @@ function xml(nodelist){
 		</p>
 	</xsl:template>
 
+	<!-- Display the controls available for publish, and timeout -->
+	<xsl:template match="controls">
+                <p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
+		</p>
+		<p align="center">
+		<form action="{$baseActionURL}" method="post">
+			<input type="hidden" name="action" value="publishControls"/>
+			Timeout: <input type="text" name="timeout" size="6"
+				value="{@timeout}" />
+		<br/>
+		Choose which controls will be available
+			for your channel.		
+		<table align="center" border="1" cellpadding="5" cellspacing="0">
+			<tr align="left">
+				<td>Control</td>
+				<td>Value</td>
+			</tr>
+			<tr align="left">
+			  <td>minimized</td>
+			  <td>true
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">minimized</xsl:attribute>
+			      <xsl:attribute name="value">true</xsl:attribute>
+			      <xsl:if test="@minimized = 'true'">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			    false
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">minimized</xsl:attribute>
+			      <xsl:attribute name="value">false</xsl:attribute>
+			      <xsl:if test="not(@minimized = 'true')">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			  </td>
+			</tr>
+			<tr align="left">
+			  <td>editable</td>
+			  <td>true
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">editable</xsl:attribute>
+			      <xsl:attribute name="value">true</xsl:attribute>
+			      <xsl:if test="@editable = 'true'">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			    false
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">editable</xsl:attribute>
+			      <xsl:attribute name="value">false</xsl:attribute>
+			      <xsl:if test="not(@editable = 'true')">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			  </td>
+			</tr>
+			<tr align="left">
+			  <td>hasHelp</td>
+			  <td>true
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">hasHelp</xsl:attribute>
+			      <xsl:attribute name="value">true</xsl:attribute>
+			      <xsl:if test="@hasHelp = 'true'">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			    false
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">hasHelp</xsl:attribute>
+			      <xsl:attribute name="value">false</xsl:attribute>
+			      <xsl:if test="not(@hasHelp = 'true')">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			  </td>
+			</tr>
+			<tr align="left">
+			  <td>hasAbout</td>
+			  <td>true
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">hasAbout</xsl:attribute>
+			      <xsl:attribute name="value">true</xsl:attribute>
+			      <xsl:if test="@hasAbout = 'true'">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			    false
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">hasAbout</xsl:attribute>
+			      <xsl:attribute name="value">false</xsl:attribute>
+			      <xsl:if test="not(@hasAbout = 'true')">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			  </td>
+			</tr>
+			<tr align="left">
+			  <td>removable</td>
+			  <td>true
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">removable</xsl:attribute>
+			      <xsl:attribute name="value">true</xsl:attribute>
+			      <xsl:if test="not(@removable = 'false')">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			    false
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">removable</xsl:attribute>
+			      <xsl:attribute name="value">false</xsl:attribute>
+			      <xsl:if test="@removable = 'false'">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			  </td>
+			</tr>
+			<tr align="left">
+			  <td>detachable</td>
+			  <td>true
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">detachable</xsl:attribute>
+			      <xsl:attribute name="value">true</xsl:attribute>
+			      <xsl:if test="not(@detachable = 'false')">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			    false
+			    <input>
+			      <xsl:attribute name="type">radio</xsl:attribute>
+			      <xsl:attribute name="name">detachable</xsl:attribute>
+			      <xsl:attribute name="value">false</xsl:attribute>
+			      <xsl:if test="@detachable = 'false'">
+				<xsl:attribute name="checked" />
+			      </xsl:if>
+			    </input>
+			  </td>
+			</tr>
+		</table>
+			<input type="submit" name="next" value="Next" />
+		</form>
+		</p>
+	</xsl:template>
+
 	<!-- Name the channel-->
 	<xsl:template match="name">
                 <p align="left">Step <xsl:value-of select="$currentStep"/> of <xsl:value-of select="$totSteps"/>
@@ -100,7 +255,7 @@ function xml(nodelist){
 				<xsl:for-each select="field">
 					<tr>
                                          <td>Channel Name: </td>
-   					 <td align="right"><input type="text" name="chanName" sixe="30"/></td>
+   					 <td align="right"><input type="text" name="chanName" size="30"/></td>
    					 
   					</tr>
 				</xsl:for-each>
