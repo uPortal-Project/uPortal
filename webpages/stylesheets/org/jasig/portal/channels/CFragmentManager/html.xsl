@@ -210,13 +210,13 @@ Version $Revision$
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_selectedID={$uPcFM_selectedID}">
+                                        <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_selectedID={$uPcFM_selectedID}" onClick="return confirm('Are you sure you want to delete this fragment?')">
                                             <img src="{$mediaPath}/delete.gif" alt="delete" title="delete" border="0"/>
                                         </a>
                                     </td>
                                     <td width="100%">
                                         <span class="uportal-label">
-                                            <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_selectedID={$uPcFM_selectedID}" class="uportal-channel-subtitle-reversed">Delete fragment</a>
+                                            <a href="{$baseActionURL}?uPcFM_action=delete&amp;uPcFM_selectedID={$uPcFM_selectedID}" class="uportal-channel-subtitle-reversed"  onClick="return confirm('Are you sure you want to delete this fragment?')">Delete fragment</a>
                                         </span>
                                     </td>
                                 </tr>
