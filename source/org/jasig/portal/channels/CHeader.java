@@ -37,6 +37,8 @@ package org.jasig.portal.channels;
 
 import java.net.URL;
 import java.util.Hashtable;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.Logger;
 import org.jasig.portal.utils.XSLT;
@@ -45,6 +47,7 @@ import org.jasig.portal.GeneralRenderingException;
 import org.xml.sax.DocumentHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 
 /**
  * This channel provides content for a page header.  It is indended
@@ -82,6 +85,34 @@ public class CHeader extends BaseChannel
     timeStampShortEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("M.d.y h:mm a")));
     headerEl.appendChild(timeStampShortEl);
 
+    if(fullName != null && !fullName.equals("Guest"))
+    {
+      Context globalIDContext = null;
+      try
+      {
+        globalIDContext = (Context)getPortalContext().lookup("/users/" + staticData.getPerson().getID() + "/channel-ids");
+      
+        // Create <timestamp-short> element under <header>
+        Element publishChanidEl = doc.createElement("publish-chanid");
+        publishChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/publish/general")));
+        headerEl.appendChild(publishChanidEl);
+        
+        // Create <timestamp-short> element under <header>
+        Element subscribeChanidEl = doc.createElement("subscribe-chanid");
+        subscribeChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/subscribe/general")));
+        headerEl.appendChild(subscribeChanidEl);
+        
+        // Create <timestamp-short> element under <header>
+        Element preferencesChanidEl = doc.createElement("preferences-chanid");
+        preferencesChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/userpreferences/general")));
+        headerEl.appendChild(preferencesChanidEl);
+      }
+      catch(NamingException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    
     doc.appendChild(headerEl);
 
     // Set up stylesheet parameters: "baseActionURL" and "guest"
