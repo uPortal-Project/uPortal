@@ -39,8 +39,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 
-import java.sql.*;
-
 import org.w3c.dom.*;
 import org.apache.xerces.parsers.*;
 
@@ -53,31 +51,17 @@ import org.apache.xml.serialize.*;
  */
 
 public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescriptionDB {
-    RdbmServices rdbmService;
-    Connection con;
     public CoreStylesheetDescriptionDBImpl() {
-        rdbmService = new RdbmServices();
-        con=null;
     };
 
 
     public Hashtable getMimeTypeList() {
-	Hashtable list=new Hashtable();
-	try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-	    
-            String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPES A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
-
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getMimeTypeList() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            while(rs.next()) {
-                list.put(rs.getString("MIME_TYPE"),rs.getString("MIME_TYPE_DESCRIPTION"));
-            }
+        Hashtable list=new Hashtable();
+        try {
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.getMimeTypeList(list);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
         return list;
     }
@@ -87,20 +71,10 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         Hashtable list=new Hashtable();
 
         try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-
-            String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_STRUCT_SS A, UP_SS_MAP B WHERE B.MIME_TYPE='"+mimeType+"' AND B.STRUCT_SS_NAME=A.STYLESHEET_NAME";
-
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetList() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            while(rs.next()) {
-                list.put(rs.getString("STYLESHEET_NAME"),rs.getString("STYLESHEET_DESCRIPTION_TEXT"));
-            }
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.getStructureStylesheetList(mimeType, list);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
         return list;
     }
@@ -109,19 +83,10 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         Hashtable list=new Hashtable();
 
         try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-
-            String sQuery = "SELECT A.STYLESHEET_NAME, A.STYLESHEET_DESCRIPTION_TEXT FROM UP_THEME_SS A, UP_SS_MAP B WHERE B.STRUCT_SS_NAME='" + structureStylesheetName + "' AND A.STYLESHEET_NAME=B.THEME_SS_NAME;";
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetList() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            while(rs.next()) {
-                list.put(rs.getString("STYLESHEET_NAME"),rs.getString("STYLESHEET_DESCRIPTION_TEXT"));
-            }
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.getThemeStylesheetList(structureStylesheetName, list);
         } catch (Exception e) {
-            Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
+          Logger.log(Logger.ERROR,e);
         }
         return list;
     }
@@ -131,19 +96,14 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     public StructureStylesheetDescription getStructureStylesheetDescription(String stylesheetName) {
         StructureStylesheetDescription fssd=null;
         try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
+          IDBImpl dbImpl = new DBImpl();
 
-            String sQuery = "SELECT * FROM UP_STRUCT_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            if(rs.next()) {
+          String[] db = dbImpl.getStructureStylesheetDescription(stylesheetName);
+          String dbStylesheetName=db[0];
+          String dbStylesheetDescriptionText=db[1];
+          String dbURI=db[2];
+          String dbDescriptionURI=db[3];
                 fssd=new StructureStylesheetDescription();
-                // retreive database values
-                String dbStylesheetName=rs.getString("STYLESHEET_NAME");
-                String dbStylesheetDescriptionText=rs.getString("STYLESHEET_DESCRIPTION_TEXT");
-                String dbURI=rs.getString("STYLESHEET_URI");
-                String dbDescriptionURI=rs.getString("STYLESHEET_DESCRIPTION_URI");
 
                 // obtain DOM of the description file
                 DOMParser parser=new DOMParser();
@@ -164,8 +124,8 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                     Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : Structure stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
 
                 fssd.setStylesheetName(xmlStylesheetName);
-		fssd.setStylesheetURI(dbURI);
-		fssd.setStylesheetDescriptionURI(dbDescriptionURI);
+                fssd.setStylesheetURI(dbURI);
+                fssd.setStylesheetDescriptionURI(dbDescriptionURI);
                 fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
 
                 // populate parameter and attriute tables
@@ -173,13 +133,8 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                 this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
                 this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
 
-            } else {
-                Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getStructureStylesheetDescription() : Could not find a structure stage stylesheet with a name \""+stylesheetName+"\"");
-            }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
         return fssd;
     }
@@ -187,19 +142,14 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     public ThemeStylesheetDescription getThemeStylesheetDescription(String stylesheetName) {
         ThemeStylesheetDescription sssd=null;
         try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
 
-            String sQuery = "SELECT * FROM UP_THEME_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'";
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-            if(rs.next()) {
+          IDBImpl dbImpl = new DBImpl();
+          String[] db = dbImpl.getThemeStylesheetDescription(stylesheetName);
+          String dbStylesheetName=db[0];
+          String dbStylesheetDescriptionText=db[1];
+          String dbURI=db[2];
+          String dbDescriptionURI=db[3];
                 sssd=new ThemeStylesheetDescription();
-                // retreive database values
-                String dbStylesheetName=rs.getString("STYLESHEET_NAME");
-                String dbStylesheetDescriptionText=rs.getString("STYLESHEET_DESCRIPTION_TEXT");
-                String dbURI=rs.getString("STYLESHEET_URI");
-                String dbDescriptionURI=rs.getString("STYLESHEET_DESCRIPTION_URI");
 
                 // obtain DOM of the description file
                 DOMParser parser=new DOMParser();
@@ -220,28 +170,23 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                     Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : Theme stage stylesheet word description (stylesheet name=\""+dbStylesheetName+"\") from database (\""+dbStylesheetDescriptionText+"\") differs from the word description in the SDF XML (\""+xmlStylesheetDescriptionText+"\")!!! Please fix.");
 
                 sssd.setStylesheetName(xmlStylesheetName);
-		sssd.setStylesheetURI(dbURI);
-		sssd.setStylesheetDescriptionURI(dbDescriptionURI);
+                sssd.setStylesheetURI(dbURI);
+                sssd.setStylesheetDescriptionURI(dbDescriptionURI);
                 sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-		sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
-		Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
-		sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
-		Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
-		sssd.setCustomUserPreferencesManager(this.getRootElementTextValue(stylesheetDescriptionXML,"upmanager"));
+                sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
+                Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
+                sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
+                Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
+                sssd.setCustomUserPreferencesManager(this.getRootElementTextValue(stylesheetDescriptionXML,"upmanager"));
 
                 // populate parameter and attriute tables
                 this.populateParameterTable(stylesheetDescriptionXML,sssd);
                 this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
                 sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
-		
 
-            } else {
-                Logger.log(Logger.ERROR,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : Could not find a theme stage stylesheet with a name \""+stylesheetName+"\"");
-            }
+
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
         return sssd;
     }
@@ -249,37 +194,19 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 
     public void removeStructureStylesheetDescription(String stylesheetName){
         try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-
-            // note that we don't delete from UP_THEME_SS_MAP table.
-            // Information contained in that table belongs to theme-stage stylesheet. Let them fix it.
-            String sQuery = "DELETE FROM UP_STRUCT_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'; DELETE FROM UP_SS_MAP WHERE STRUC_SS_NAME='" + stylesheetName + "';";
-
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::removeStructureStylesheetDescription() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.removeStructureStylesheetDescription(stylesheetName);
 
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
-
     }
     public void removeThemeStylesheetDescription(String stylesheetName){
         try {
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-
-            String sQuery = "DELETE FROM UP_THEME_SS WHERE STYLESHEET_NAME='" + stylesheetName + "'; DELETE FROM UP_SS_MAP WHERE THEME_SS_NAME='" + stylesheetName + "';";
-
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::removeThemeStylesheetDescription() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.removeThemeStylesheetDescription(stylesheetName);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
     }
 
@@ -301,22 +228,17 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
             fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
 
             // populate parameter and attriute tables
-	    //            this.populateParameterTable(stylesheetDescriptionXML,fssd);
-	    //            this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
-	    //            this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
-	    //            fssd.setStylesheetMediaList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"media"));
+            //            this.populateParameterTable(stylesheetDescriptionXML,fssd);
+            //            this.populateFolderAttributeTable(stylesheetDescriptionXML,fssd);
+            //            this.populateChannelAttributeTable(stylesheetDescriptionXML,fssd);
+            //            fssd.setStylesheetMediaList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"media"));
 
 
             // now write out the database record
 
             // first the basic record
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-
-            String sQuery = "INSERT INTO UP_STRUCT_SS (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) VALUES ('" + xmlStylesheetName + "','" + stylesheetURI + "','" + stylesheetDescriptionURI + "','" + xmlStylesheetDescriptionText + "')";
-
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addStructureStylesheetDescription() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
+            IDBImpl dbImpl = new DBImpl();
+            dbImpl.addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
 
         } catch (Exception e) {
             Logger.log(Logger.DEBUG,e);
@@ -339,31 +261,17 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 
             sssd.setStylesheetName(xmlStylesheetName);
             sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-	    sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
+            sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
 
-            // populate parameter and attriute tables
+            // populate parameter and attribute tables
             //this.populateParameterTable(stylesheetDescriptionXML,sssd);
             //this.populateChannelAttributeTable(stylesheetDescriptionXML,sssd);
             //sssd.setStructureStylesheetList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"parentstylesheet"));
             //sssd.setMimeTypeList(this.getVectorOfSimpleTextElementValues(stylesheetDescriptionXML,"mimetype"));
 
-            con=rdbmService.getConnection();
-            Statement stmt=con.createStatement();
-
-            String sQuery = "INSERT INTO UP_THEME_SS (STYLESHEET_NAME,STYLESHEET_URI,STYLESHEET_DESCRIPTION_URI,STYLESHEET_DESCRIPTION_TEXT) VALUES ('"+xmlStylesheetName+"','"+stylesheetURI+"','"+stylesheetDescriptionURI+"','"+xmlStylesheetDescriptionText+"')";
-
-            Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addThemeStylesheetDescription() : "+sQuery);
-            ResultSet rs=stmt.executeQuery(sQuery);
-
-
-            for (Enumeration e = sssd.getStructureStylesheetList().elements() ; e.hasMoreElements() ;) {
-		String ssName=(String) e.nextElement();
-		String mimeType=sssd.getMimeType();
-		sQuery = "INSERT INTO UP_SS_MAP (THEME_SS_NAME,STRUCT_SS_NAME,MIME_TYPE) VALUES ('"+xmlStylesheetName+"','"+ssName+"','"+mimeType+"');";
-		Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::addThemeStylesheetDescription() : "+sQuery);
-		rs=stmt.executeQuery(sQuery);
-            }
-
+            IDBImpl dbImpl = new DBImpl();
+            dbImpl.addThemeStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI,
+                xmlStylesheetDescriptionText, sssd.getMimeType(), sssd.getStructureStylesheetList().elements());
         } catch (Exception e) {
             Logger.log(Logger.DEBUG,e);
         }

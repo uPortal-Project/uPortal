@@ -36,7 +36,6 @@
 package org.jasig.portal;
 
 import org.jasig.portal.utils.DTDResolver;
-import java.sql.*;
 import java.io.*;
 
 import org.apache.xalan.xpath.*;
@@ -52,14 +51,12 @@ import org.w3c.dom.*;
  * @version $Revision$
  */
 public class ChannelRegistryImpl implements IChannelRegistry {
-    
+
     private DocumentImpl chanDoc = null;
     private Document types = null;
     String sRegDtd = "channelRegistry.dtd";
-    private RdbmServices rdbmService = new RdbmServices ();
-    private Connection con = null;
 
-    
+
     /**
      * Return a Document object based on the XML string returned
      * from the database.
@@ -68,19 +65,19 @@ public class ChannelRegistryImpl implements IChannelRegistry {
      * @return Document DOM object
      */
     public Document getRegistryDoc (String catID, String role) {
-        
+
         Document regXML = getRegistryXML(catID, role);
-        
+
         try{
             if(regXML!=null) {
                 DTDResolver chRegDtdResolver = new DTDResolver(sRegDtd);
-                
+
                 // read in the layout DOM
                 org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
-                
+
                 // set parser features
                 parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-                
+
                 parser.setEntityResolver(chRegDtdResolver);
                 //parser.parse (new org.xml.sax.InputSource (new StringReader (regXML)));
                 chanDoc = (DocumentImpl)parser.getDocument ();
@@ -89,10 +86,10 @@ public class ChannelRegistryImpl implements IChannelRegistry {
         catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         }
-        
+
         return chanDoc;
     }
-    
+
 /** Returns a string of XML which describes the channel registry.
  * Right now this is being stored as a string in a field but could be also implemented to get from multiple tables.
  * @param catID a category ID
@@ -101,63 +98,19 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  */
     public Document getRegistryXML(String catID, String role) {
         //System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
-        
-        String chanXML = null;
-        String catid = "";
-        
+
         try {
-            con = rdbmService.getConnection ();
-            Statement stmt = con.createStatement ();
-            
-            String sQuery = "SELECT CL.CLASS_ID, CL.NAME, CH.CHANNEL_XML "+
-            "FROM UP_CLASS CL, UP_CHANNELS CH, UP_CHAN_CLASS CHCL " +
-            "WHERE CH.CHAN_ID=CHCL.CHAN_ID AND CHCL.CLASS_ID=CL.CLASS_ID";
-            
-            if(catID!=null) sQuery += " AND CL.CLASS_ID=" + catID;
-            
-            sQuery += " ORDER BY CL.NAME, CH.TITLE";
-            
-            Logger.log (Logger.DEBUG, sQuery);
-            
-            ResultSet rs = stmt.executeQuery (sQuery);
-            
-            chanDoc = new org.apache.xerces.dom.DocumentImpl();
-            Element root = chanDoc.createElement("registry");
-            Element cat = null;
-            while (rs.next ())
-            {
-                String catnm = rs.getString(2);
-                String chxml = rs.getString(3);
-                Node chan = null;
-                
-                String s = rs.getString(1);
-                if (!s.equals(catid)) {
-                    if(catid.length() > 0) root.appendChild(cat);
-                    catid = s;
-                    cat = chanDoc.createElement("category");
-                    cat.setAttribute("ID", "cat"+catid);
-                    cat.setAttribute("name", catnm);
-                    chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
-                }
-                org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
-                parser.parse (new org.xml.sax.InputSource (new StringReader (chxml)));
-                Document doc = parser.getDocument();
-                //System.out.println("chan: "+ serializeDOM(doc));
-                chan = doc.getDocumentElement();
-                chanDoc.putIdentifier(((Element)chan).getAttribute("ID"), (Element)chan);
-                cat.appendChild(chanDoc.importNode(chan, true));
-            }
-            root.appendChild(cat);
-            chanDoc.appendChild(root);
-            stmt.close();
+          chanDoc = new org.apache.xerces.dom.DocumentImpl();
+          Element root = chanDoc.createElement("registry");
+          IDBImpl dbImpl = new DBImpl();
+          root.appendChild(dbImpl.getRegistryXML(chanDoc, root, catID, role));
+          chanDoc.appendChild(root);
          } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
         return chanDoc;
     }
-    
+
 /** Returns a string of XML which describes the channel types.
  * Right now this is being stored as a string in a field but could be also implemented to get from multiple tables.
  * @param catID a category ID
@@ -165,112 +118,47 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return a string of XML
  */
     public Document getTypesXML(String role) {
-        
-        String chanXML = null;
-        String catid = "";
-        
         try {
-            con = rdbmService.getConnection ();
-            Statement stmt = con.createStatement ();
-            
-            String sQuery = "SELECT NAME, DEF_URI "+
-            "FROM UP_CHAN_TYPES";
-            
-            Logger.log (Logger.DEBUG, sQuery);
-            
-            ResultSet rs = stmt.executeQuery (sQuery);
-            
-            types = new DocumentImpl();
-            Element root = types.createElement("channelTypes");
-            
-            while (rs.next ())
-            {
-                //String catid = "";
-                String name = rs.getString(1);
-                //System.out.println("name: " + name);
-                String uri = rs.getString(2);
-                //System.out.println("uri: " +  uri);
-                Node chan = null;
-                
-                Element type = types.createElement("channelType");
-                Element elem = types.createElement("name");
-                elem.appendChild(types.createTextNode(name));
-                type.appendChild(elem);
-                elem = types.createElement("definition");
-                elem.appendChild(types.createTextNode(uri));
-                type.appendChild(elem);
-                root.appendChild(type);
-            }
-            types.appendChild(root);
-            stmt.close();
-            
-            
-            //System.out.println( "STRXML = " + serializeDOM(types) );
-            
-            //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
+          types = new DocumentImpl();
+          Element root = types.createElement("channelTypes");
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.getTypesXML(types, root, role);
+          types.appendChild(root);
+          //System.out.println( "STRXML = " + serializeDOM(types) );
+
+          //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
         return types;
     }
-    
+
 /** Returns a string of XML which describes the channel categories.
   * @param role role of the current user
  * @return Document
  */
     public Document getCategoryXML(String role) {
         //System.out.println("Enterering ChannelRegistryImpl::getCategoryXML()");
-        
+
         Document catsDoc = null;
-        Connection con = null;
-        
         try {
-            con = rdbmService.getConnection ();
-            Statement stmt = con.createStatement ();
-            
-            String sQuery = "SELECT CL.CLASS_ID, CL.NAME "+
-            "FROM UP_CLASS CL ";
-            
-            if(role!=null) sQuery += " AND ROLE=" + role;
-            
-            sQuery += " ORDER BY CL.NAME";
-            
-            Logger.log (Logger.DEBUG, sQuery);
-            
-            ResultSet rs = stmt.executeQuery (sQuery);
-            
-            catsDoc = new org.apache.xerces.dom.DocumentImpl();
-            Element root = catsDoc.createElement("channelCats");
-            Element cat = null;
-            while (rs.next ())
-            {
-                //String catid = "";
-                String catnm = rs.getString(2);
-                String id = rs.getString(1);
-                //System.out.println("s: " + s);
-                cat = catsDoc.createElement("category");
-                cat.setAttribute("ID", id);
-                cat.setAttribute("name", catnm);
-                root.appendChild(cat);
-            }
-            
-            catsDoc.appendChild(root);
+          catsDoc = new org.apache.xerces.dom.DocumentImpl();
+          Element root = catsDoc.createElement("channelCats");
+
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.getCategoryXML(catsDoc, root, role);
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
-        } finally {
-            rdbmService.releaseConnection (con);
         }
         //System.out.println("catsDoc: "+ serializeDOM(catsDoc));
         return catsDoc;
-    }        
-    
-            
+    }
+
+
     public void addChannel(String catID[], String chanXML, String role[]) {
     }
-           
-    
+
+
 /** A method for adding a channel to the channel registry.
  * This would be called by a publish channel.
  * @param catID an array of category IDs
@@ -278,123 +166,50 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @param role an array of roles
  */
     public void addChannel(String id, String title, Document doc, String catID[]) {
-        
-        Statement stmt = null;
-        
-         try {
-            con = rdbmService.getConnection ();
-            stmt = con.createStatement ();
-            
-            for(int i=0; i < catID.length; i++) {
-                
-                String sInsert  = "INSERT INTO UP_CHAN_CLASS (CLASS_ID, CHAN_ID) ";
-                sInsert += "VALUES (" + catID[i] + "," + id + ")";
 
-            int iInserted = stmt.executeUpdate (sInsert);
-            
-            Logger.log (Logger.DEBUG, sInsert);
-            }
+         try {
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.addChannel(id, title, doc, catID);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR, e);
             //return status;
-        }
-        finally{
-            try{
-                if (stmt != null)
-                stmt.close ();
-            }
-            catch (SQLException ex){
-                Logger.log(Logger.ERROR, ex);
-            }
-        rdbmService.releaseConnection(con);
-        addChannel(id, title, doc);
-        }
+       }
     }
-    
+
 /** A method for adding a channel to the channel registry.
  * This would be called by a publish channel.
  * @param chanXML XML that describes the channel
  */
     public void addChannel(String id, String title, Document doc) {
         //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
-        
-        Statement stmt = null;
-        String chanXML = null;
-        String catid = "";
-        
+
         try {
-            con = rdbmService.getConnection ();
-            stmt = con.createStatement ();
-            String sInsert  = "INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_ID, APPROVED, CHANNEL_XML) ";
-             sInsert += "VALUES (" + id + ",'" + title + "',0,0," + "'" + serializeDOM(doc) + "')";
-
-            int iInserted = stmt.executeUpdate (sInsert);
-
-            Logger.log (Logger.DEBUG, sInsert);
+          IDBImpl dbImpl = new DBImpl();
+          dbImpl.addChannel(id, title, doc);
         }
         catch (Exception e) {
             Logger.log (Logger.ERROR, e);
             //return status;
         }
-        finally{
-            try{
-                if (stmt != null)
-                stmt.close ();
-            }
-            catch (SQLException ex){
-                Logger.log(Logger.ERROR, ex);
-            }
-      rdbmService.releaseConnection(con);
     }
-    }
-  
-    
+
+
 /** A method for getting the next available channel ID.
  * This would be called by a publish channel.
  */
     public String getNextId() {
         //System.out.println("Enterering ChannelRegistryImpl::getNextId()");
-        RdbmServices rdbmService = new RdbmServices ();
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet rs   = null;
-        String chanXML = null;
-        String catid = "";
-        
         try {
-            con = rdbmService.getConnection ();
-            stmt = con.createStatement ();
-            String sQuery = "SELECT MAX(CHAN_ID)+1 FROM UP_CHANNELS";
-            Logger.log (Logger.DEBUG, sQuery);
-            
-            rs = stmt.executeQuery(sQuery);
-
-            int nextID = 0;
-
-            if(rs.next())
-            {
-                nextID = rs.getInt(1);
-            }
-
-            return String.valueOf(nextID);
+          IDBImpl dbImpl = new DBImpl();
+          return dbImpl.getNextChannelId();
         }
         catch (Exception e){
             Logger.log (Logger.ERROR, e);
             return null;
         }
-        finally{
-            try{
-                if (stmt != null)
-                stmt.close ();
-            }
-            catch (SQLException ex) {
-                Logger.log(Logger.ERROR, ex);
-            }
-        rdbmService.releaseConnection(con);
-        }
-  }  
-    
+  }
+
 /** A method for removing a channel from the registry.
  * This could be used by an admin channel to unpublish a channel from
  * certain categories, roles, or just remove it altogether.
@@ -404,21 +219,21 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  */
     public void removeChannel(String catID[],String chanID,String role[]) {
     }
-    
+
 /** A method for persiting the channel registry to a file or database.
  * @param registryXML an XML description of the channel registry
  */
     public void setRegistryXML(String registryXML) {
     }
-    
+
     public Document getChannelTypesXML () {
         return null;
     }
-    
+
     public Document getChannelCatsXML () {
         return null;
     }
-    
+
     public String serializeDOM(Document chanDoc) {
         StringWriter stringOut = null;
         try{
@@ -426,16 +241,16 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             stringOut = new StringWriter();        //Writer will be a String
             XMLSerializer    serial = new XMLSerializer( stringOut, format );
             serial.asDOMSerializer();                            // As a DOM Serializer
-            
+
             serial.serialize( chanDoc.getDocumentElement() );
         }
         catch (java.io.IOException ioe) {
             Logger.log(Logger.ERROR, ioe);
         }
-        
+
         return stringOut.toString();
-        
+
         //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
     }
-    
+
 }
