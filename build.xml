@@ -205,18 +205,18 @@
                        Version: beta1
                        URL: http://xml.apache.org/axis/
 
-  jaxrpc.jar           Java API for XML-Based RPC - needed for Axis. 
+  jaxrpc.jar           Java API for XML-Based RPC - needed for Axis.
                        Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://java.sun.com/xml/jaxrpc/
 
   wsdl4j.jar           Web Services Description Language for Java Toolkit developed
-                       by IBM - needed for Axis. 
+                       by IBM - needed for Axis.
                        Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
 
-  commons-logging.jar  Logging components from the Apache Commons project - needed 
+  commons-logging.jar  Logging components from the Apache Commons project - needed
                        for Axis. Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://jakarta.apache.org/commons/logging.html
@@ -230,6 +230,12 @@
                        by your servlet container.
                        Version: 2.2 or 2.3
                        URL: http://jakarta.apache.org/tomcat/
+
+  jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of 
+                       javax.sql.* package. This is only needed for JDK's less than 1.4.  
+                       It is included with JDK 1.4.
+                       Version: 2.0
+                       URL: http://java.sun.com/products/jdbc/
 
   jdbcDriver.jar       This should contain the JDBC driver for whatever relational
                        database you plan to use.  For development, HypersonicSQL is
@@ -257,6 +263,7 @@
   <property name="commons-logging.jar" value="(set this in build.properties!)"/>
   <property name="tt-bytecode.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
+  <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
 
 
@@ -293,6 +300,7 @@
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${tt-bytecode.jar}"/>
     <pathelement location="${servlet.jar}"/>
+    <pathelement location="${jdbc2_0-stdext.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
 
   </path>
@@ -429,6 +437,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tt-bytecode.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
 
   </target>
@@ -659,9 +668,9 @@
 
   The "addstylesheet" target runs uPortal's RegisterStylesheet program to
   add core framework stylesheets used to create structures and themes.
-          
+
   Example:
-  
+
   ant regstylesheet
     -DstylesheetType=-t
     -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
@@ -669,7 +678,7 @@
 
   where -s = specify structure stylesheet
         -t = specify theme stylesheet
-        
+
 -->
 
 
@@ -677,7 +686,7 @@
     <echo message="Invoking RegisterStylesheet (add)"/>
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetUri" value=" "/>
-    <property name="descriptionUri" value=" "/>    
+    <property name="descriptionUri" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
         <pathelement path="${build.home}"/>
@@ -700,18 +709,18 @@
 
   The "modstylesheet" target runs uPortal's RegisterStylesheet program to
   update core framework stylesheets used to create structures and themes.
-      
+
   Example:
-  
+
   ant modstylesheet
     -DstylesheetType=-t
     -DstylesheetUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl
     -DdescriptionUri=stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf
     -DstylesheetId=1
-    
+
   where -s = specify structure stylesheet
         -t = specify theme stylesheet
-          
+
 -->
 
 
@@ -719,7 +728,7 @@
     <echo message="Invoking RegisterStylesheet (modify)"/>
     <property name="stylesheetType" value=" "/>
     <property name="stylesheetUri" value=" "/>
-    <property name="descriptionUri" value=" "/>    
+    <property name="descriptionUri" value=" "/>
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
@@ -737,28 +746,28 @@
       <arg value="${stylesheetId}"/>
     </java>
   </target>
-  
-  
+
+
 <!-- ==================== delstylesheet Target ============================ -->
 
 <!--
 
   The "delstylesheet" target runs uPortal's RegisterStylesheet program to
   delete core framework stylesheets used to create structures and themes.
-            
+
   Example:
-  
+
   ant delstylesheet -DstylesheetType=-t -DstylesheetId=1
-    
+
   where -s = specify structure stylesheet
-        -t = specify theme stylesheet 
+        -t = specify theme stylesheet
 
 -->
 
 
   <target name="delstylesheet" depends="compile">
     <echo message="Invoking RegisterStylesheet (delete)"/>
-    <property name="stylesheetType" value=" "/>   
+    <property name="stylesheetType" value=" "/>
     <property name="stylesheetId" value=" "/>
     <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
       <classpath>
@@ -773,7 +782,7 @@
       <arg value="-d"/>
       <arg value="${stylesheetId}"/>
     </java>
-  </target> 
+  </target>
 
 
 <!-- ====================== compiletests Target =========================== -->
@@ -836,5 +845,5 @@
       <arg value="org.jasig.portal.AllTests"/>
     </java>
   </target>
-   
+
 </project>
