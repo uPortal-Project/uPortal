@@ -262,6 +262,12 @@
 	</ant>
 
 	<ant dir="." target="RunXSLT" antfile="build.xml">
+	<property name="XmlInput" value="UP_GROUP_20.XML"/>
+	<property name="outputFile" value="NEW_UP_GROUP.XML"/>
+	<property name="Xslfile" value="UP_GROUP.xsl"/>
+	</ant>
+
+	<ant dir="." target="RunXSLT" antfile="build.xml">
 	<property name="XmlInput" value="data.xml"/>
 	<property name="outputFile" value="data21.xml"/>
 	<property name="Xslfile" value="BuildNewData.xsl"/>

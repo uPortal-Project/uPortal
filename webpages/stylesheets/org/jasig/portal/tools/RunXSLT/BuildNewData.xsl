@@ -76,7 +76,7 @@ Version $Revision$
 			<xsl:when test="name='UP_GROUP'">
 				<xsl:choose>
 					<xsl:when test="$moveGroupsPermissions='yes'">
-						<xsl:copy-of select="document(concat($uripath,'UP_GROUP_20.XML'))//table"/>
+						<xsl:copy-of select="document(concat($uripath,'NEW_UP_GROUP.XML'))//table"/>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:copy-of select="."/>
