@@ -31,20 +31,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import java.util.*;
+package  org.jasig.portal;
 
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
+import  java.util.*;
+import  javax.servlet.jsp.*;
+import  javax.servlet.http.*;
+import  org.apache.xalan.xpath.*;
+import  org.apache.xalan.xslt.*;
+import  org.apache.xml.serialize.*;
+import  org.jasig.portal.security.IPerson;
 
-import org.apache.xalan.xpath.*;
-import org.apache.xalan.xslt.*;
-import org.apache.xml.serialize.*;
-
-import org.jasig.portal.security.IPerson;
 
 /**
  * Wraps an IXMLChannel into an IChannel interface,
@@ -52,216 +53,269 @@ import org.jasig.portal.security.IPerson;
  * @version $Revision$
  * @author Peter Kharchenko
  */
-public class XMLChannelWrapper implements IChannel
-{
-  private IXMLChannel ch;
-  private String chanID;
+public class XMLChannelWrapper
+    implements IChannel {
+  // Cache the channel instance
+  private IXMLChannel m_ch = null;
+  // Cache the PortalControlStructures instance
+  private PortalControlStructures m_pcs = null;
+  // Cache the channel ID
+  private String chanID = null;
+  // Cache a flag to indicate whether this channel is privileged or not
+  private boolean m_privileged = false;
 
-  public XMLChannelWrapper(IXMLChannel xmlChannel)
-  {
-    ch = xmlChannel;
+  /**
+   * put your documentation comment here
+   * @param   IXMLChannel xmlChannel
+   */
+  public XMLChannelWrapper (IXMLChannel xmlChannel) {
+    // Cache the incoming channel
+    m_ch = xmlChannel;
+    // Check to see if it is privileged or not
+    if (m_ch instanceof IPrivilegedChannel) {
+      m_privileged = true;
+    }
   }
 
-  public IXMLChannel getXMLChannel()
-  {
-    return ch;
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public IXMLChannel getXMLChannel () {
+    return  (m_ch);
   }
 
-  public void init (ChannelConfig chConfig)
-  {
+  /**
+   * put your documentation comment here
+   * @param chConfig
+   */
+  public void init (ChannelConfig chConfig) {
+    // Create a new ChannelStaticData object
     ChannelStaticData sd = new ChannelStaticData();
+    // Set the channel ID
     sd.setChannelID(chConfig.getChannelID());
+    // Send all of the incoming parameters
     sd.setParameters(chConfig);
-    ch.setStaticData(sd);
-
+    // Send the StaticData object to the channel
+    m_ch.setStaticData(sd);
+    // Cache the channel ID
     chanID = chConfig.getChannelID();
   }
 
-  public Vector getParameters()
-  {
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public Vector getParameters () {
     ChannelSubscriptionProperties csp;
-
-    if((csp = ch.getSubscriptionProperties())!=null)
-    {
-      return csp.getParameterFields();
-    }
-    else
-    {
-      return null;
+    // Get the ChannelSubscriptionProperties object from the channel
+    if ((csp = m_ch.getSubscriptionProperties()) != null) {
+      return  (csp.getParameterFields());
+    } 
+    else {
+      return  (null);
     }
   }
 
-  public String getName ()
-  {
-    return ch.getSubscriptionProperties().getName();
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public String getName () {
+    return  (m_ch.getSubscriptionProperties().getName());
   }
 
-  public boolean isMinimizable ()
-  {
-    return ch.getSubscriptionProperties().isMinimizable();
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isMinimizable () {
+    return  (m_ch.getSubscriptionProperties().isMinimizable());
   }
 
-  public boolean isDetachable ()
-  {
-    return ch.getSubscriptionProperties().isDetachable();
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isDetachable () {
+    return  (m_ch.getSubscriptionProperties().isDetachable());
   }
 
-  public boolean isRemovable ()
-  {
-    return ch.getSubscriptionProperties().isRemovable();
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isRemovable () {
+    return  (m_ch.getSubscriptionProperties().isRemovable());
   }
 
-  public boolean isEditable ()
-  {
-    return ch.getSubscriptionProperties().isEditable();
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isEditable () {
+    return  (m_ch.getSubscriptionProperties().isEditable());
   }
 
-  public boolean hasHelp ()
-  {
-    return ch.getSubscriptionProperties().hasHelp();
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean hasHelp () {
+    return  (m_ch.getSubscriptionProperties().hasHelp());
   }
 
-  public int getDefaultDetachWidth ()
-  {
-    return Integer.parseInt(ch.getSubscriptionProperties().getDefaultDetachWidth());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public int getDefaultDetachWidth () {
+    return  (Integer.parseInt(m_ch.getSubscriptionProperties().getDefaultDetachWidth()));
   }
 
-  public int getDefaultDetachHeight ()
-  {
-    return Integer.parseInt(ch.getSubscriptionProperties().getDefaultDetachHeight());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public int getDefaultDetachHeight () {
+    return  (Integer.parseInt(m_ch.getSubscriptionProperties().getDefaultDetachHeight()));
   }
 
-  public void render(HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
+  /**
+   * put your documentation comment here
+   * @param req
+   * @param res
+   * @param out
+   */
+  public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out) {
+    if (m_ch instanceof IPrivilegedChannel) {
+      if (m_pcs == null) {
+        // Initialize the PortalControlStructures
+        m_pcs = new PortalControlStructures();
+      }
+      // Set the request and response in the PortalControlStructures
+      m_pcs.setHttpServletRequest(req);
+      m_pcs.setHttpServletResponse(res);
+      try {
+        // Send the PortalControlStructures to the channel
+        ((IPrivilegedChannel)m_ch).setPortalControlStructures(m_pcs);
+      } catch (PortalException pe) {
+        Logger.log(Logger.ERROR, pe);
+      }
+    }
+    // These object should be pooled?
     ChannelRuntimeData rd = new ChannelRuntimeData();
-    HttpSession session   = req.getSession();
-
+    HttpSession session = req.getSession();
     // Add the request object to the runtime data
     rd.setHttpRequest(req);
-    
     // Create the BrowserInfo object for the RuntimeData object
-    BrowserInfo bi = new BrowserInfo(req);
-    
+    BrowserInfo m_browserInfo = new BrowserInfo(req);
     // Add the BrowserInfo object to the RuntimeData object
-    rd.setBrowserInfo(bi);
-
+    rd.setBrowserInfo(m_browserInfo);
     // Create the baseAction URL
     String baseActionURL = new String(getJSP(req) + "&" + "channelTarget=" + chanID + "&");
-
     // method=render must appear in the URL for this to be 1.0 compatable
-    if(baseActionURL.indexOf("&method=") == -1)
-    {
+    if (baseActionURL.indexOf("&method=") == -1) {
       baseActionURL += "method=render&";
     }
-
     // channelID=(channelID) must be in the URL for this to be 1.0 compatable
-    if(baseActionURL.indexOf("&channelID=&") == -1)
-    {
+    if (baseActionURL.indexOf("&channelID=&") == -1) {
       baseActionURL += "channelID=" + chanID + "&";
     }
-
     // Add the baseActionURL to the runtime data
     rd.setBaseActionURL(baseActionURL);
-
     // Add the Person object to the runtime data
     rd.setPerson((IPerson)session.getAttribute("Person"));
-
     // Get the action parameters passed to the channel
     String channelTarget = null;
-
     String parameterName = null;
     String parameterValue = null;
-
     // Only send request parameters to the proper channel
-    if((channelTarget = req.getParameter("channelTarget")) != null && (channelTarget.equals(chanID)))
-    {
+    if ((channelTarget = req.getParameter("channelTarget")) != null && (channelTarget.equals(chanID))) {
       Enumeration e = req.getParameterNames();
-
-      while(e.hasMoreElements() && e != null)
-      {
+      while (e.hasMoreElements() && e != null) {
         parameterName = (String)e.nextElement();
-
-        if(!parameterName.equals("channelTarget"))
-        {
+        if (!parameterName.equals("channelTarget")) {
           parameterValue = req.getParameter(parameterName);
-
           rd.setParameter(parameterName, parameterValue);
         }
       }
     }
-
     // Send the runtime data to the channel
-    ch.setRuntimeData(rd);
-
-    HTMLSerializer htmlSerializer= new HTMLSerializer(out,new OutputFormat("HTML","UTF-8",true));
-
-    // Render the channel into the HTML stream
-    ch.renderXML(htmlSerializer);
+    m_ch.setRuntimeData(rd);
+    HTMLSerializer htmlSerializer = new HTMLSerializer(out, new OutputFormat("HTML", "UTF-8", true));
+    try {
+      // Render the channel into the HTML stream
+      m_ch.renderXML(htmlSerializer);
+    } catch (Exception e) {
+      Logger.log(Logger.ERROR, e);
+    }
   }
 
-  public void edit(HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
+  /**
+   * put your documentation comment here
+   * @param req
+   * @param res
+   * @param out
+   */
+  public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out) {
     // Send and edit event to the channel
-    ch.receiveEvent(new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
-
+    m_ch.receiveEvent(new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
     // Render the channel
     render(req, res, out);
   }
 
-  public void help(HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
+  /**
+   * put your documentation comment here
+   * @param req
+   * @param res
+   * @param out
+   */
+  public void help (HttpServletRequest req, HttpServletResponse res, JspWriter out) {
     // Send a help event to the channel
-    ch.receiveEvent(new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
-
+    m_ch.receiveEvent(new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
     // Render the channel
     render(req, res, out);
   }
 
-  private String getJSP(HttpServletRequest req)
-  {
-    String reqURL  = req.getRequestURI();
+  /**
+   * put your documentation comment here
+   * @param req
+   * @return 
+   */
+  private String getJSP (HttpServletRequest req) {
+    String reqURL = req.getRequestURI();
     String jspfile = reqURL.substring(reqURL.lastIndexOf('/') + 1, reqURL.length());
-
     // It used to be that XML channels were always rendered through main index.jsp,
     // now they are allowed to render under other .jsp, such as dispatch.jsp.
-    if(jspfile.equals(""))
-    {
-      jspfile="index.jsp";
-    }
-    else
-    if(jspfile.equals("detach.jsp"))
-    {
+    if (jspfile.equals("")) {
+      jspfile = "index.jsp";
+    } 
+    else if (jspfile.equals("detach.jsp")) {
       // Reconstruct URL parameters
       jspfile = req.getRequestURI() + "?";
-
-      for(Enumeration e = req.getParameterNames(); e.hasMoreElements();)
-      {
-        String pName  =(String)e.nextElement();
+      for (Enumeration e = req.getParameterNames(); e.hasMoreElements();) {
+        String pName = (String)e.nextElement();
         String pValue = req.getParameter(pName);
         jspfile += pName + "=" + pValue + "&";
       }
-    }
-    else
-    if(jspfile.equals("dispatch.jsp"))
-    {
+    } 
+    else if (jspfile.equals("dispatch.jsp")) {
       // Append the channel ID and method=render to be uPortal 1.0 compatable
-      if(req.getParameter("channelID") != null)
-      {
+      if (req.getParameter("channelID") != null) {
         jspfile += "?channelID=" + chanID + "&method=render";
-      }
-      else
-      if(req.getParameter("globalChannelID") != null)
-      {
+      } 
+      else if (req.getParameter("globalChannelID") != null) {
         jspfile += "?globalChannelID=" + chanID + "&method=render";
       }
-    }
-    else
-    {
+    } 
+    else {
       jspfile += '?';
     }
-
-    Logger.log(Logger.DEBUG,"XMLChannelWrapper::getJSP() : jspfile=\"" + jspfile + "\"");
-
-    return(jspfile);
+    Logger.log(Logger.DEBUG, "XMLChannelWrapper::getJSP() : jspfile=\"" + jspfile + "\"");
+    return  (jspfile);
   }
 }
+
+
+
