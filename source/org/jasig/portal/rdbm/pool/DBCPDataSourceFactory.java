@@ -12,7 +12,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 /**
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public class DBCPDataSourceFactory implements IPooledDataSourceFactory {
 

@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 
 /**
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public interface IPooledDataSourceFactory {
     

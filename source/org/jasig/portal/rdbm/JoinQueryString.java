@@ -15,7 +15,7 @@ import java.util.Map;
  * requires a test query be specified.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public abstract class JoinQueryString implements IJoinQueryString {
 

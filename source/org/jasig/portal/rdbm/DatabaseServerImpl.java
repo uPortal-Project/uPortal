@@ -27,7 +27,7 @@ import org.jasig.portal.RDBMServices.PostgreSQLDb;
 
 /**
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public class DatabaseServerImpl implements IDatabaseServer {
     private static final Log LOG = LogFactory.getLog(DatabaseServerImpl.class);

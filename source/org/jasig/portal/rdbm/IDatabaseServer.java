@@ -16,7 +16,7 @@ import javax.sql.DataSource;
  * server.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public interface IDatabaseServer {
 
