@@ -112,7 +112,7 @@
           </td>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copyUserProfile&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Copy personal profile">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
               </img>
@@ -327,7 +327,7 @@
       <td class="uportal-text" valign="top" align="center"/>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
               <img border="0" width="16" height="16" alt="Map current browser to this profile">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
           </img>
