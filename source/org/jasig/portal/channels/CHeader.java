@@ -67,7 +67,7 @@ import org.w3c.dom.Element;
  * to be included in a layout folder of type "header".  Most stylesheets
  * will render the content of such header channels consistently on every
  * page.
- * @author Peter Kharchenko
+ * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision 1.1$
@@ -101,7 +101,7 @@ public class CHeader extends BaseChannel implements ICacheable {
    */
   private Document getUserXML () {
     // Get the fullname of the current user
-    String fullName = (String)staticData.getPerson().getFullName();
+    String fullName = (String)staticData.getPerson().getAttribute("displayName");
     // Get a new DOM instance
     Document doc = DocumentFactory.getNewDocument();
     // Create <header> element
@@ -143,7 +143,7 @@ public class CHeader extends BaseChannel implements ICacheable {
       }
     }
     doc.appendChild(headerEl);
-    return  (doc);
+    return doc;
   }
 
   /**
