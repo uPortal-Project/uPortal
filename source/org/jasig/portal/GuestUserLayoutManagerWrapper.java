@@ -43,11 +43,31 @@ import  java.util.*;
 
 
 /**
- * Interface to user layout management class.
+ * A class that allows {@link GuestUserLayoutManager} to be presented as {@link IUserlayoutManager}
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
+ * @see IUserLayoutManager
+ * @see GuestUserLayoutManager
  */
-public interface IUserLayoutManager {
+public class GuestUserLayoutManagerWrapper implements IUserLayoutManager {
+    String sessionId;
+    GuestUserLayoutManager gulm;
+
+    public GuestUserLayoutManagerWrapper() {
+        sessionId=null;
+        gulm=null;
+    } 
+
+    /**
+     * Creates a new <code>GuestUserLayoutManagerWrapper</code> instance.
+     *
+     * @param gulm a <code>GuestUserLayoutManager</code> value
+     * @param sessionId a <code>String</code> value
+     */
+    public GuestUserLayoutManagerWrapper(GuestUserLayoutManager gulm, String sessionId) {
+        this.gulm=gulm;
+        this.sessionId=sessionId;
+    }
 
     /* This function processes request parameters related to
      * setting Structure/Theme stylesheet parameters and attributes.
@@ -55,96 +75,126 @@ public interface IUserLayoutManager {
      * It also processes layout root requests (uP_root)
      * @param req current <code>HttpServletRequest</code>
      */
-    public void processUserPreferencesParameters (HttpServletRequest req);
+     public void processUserPreferencesParameters (HttpServletRequest req) {
+         this.gulm.processUserPreferencesParameters(req);
+    }
 
     /**
      * Returns current person object
      * @return current <code>IPerson</code>
      */
-    public IPerson getPerson ();
+    public IPerson getPerson () {
+        return this.gulm.getPerson();
+    }
 
     /**
      * Returns a global channel Id given a channel instance Id
      * @param channelInstanceId instance id of a channel
      * @return channel global id
      */
-    public String getChannelGlobalId (String channelInstanceId);
+    public String getChannelGlobalId (String channelInstanceId) {
+        return this.gulm.getChannelGlobalId(channelInstanceId,this.sessionId);
+    }
 
     /**
      * Determine if the user agent associated with this session has been successfuly mapped to a profile
      * @return <code>true</code> if no mapping was found
      */
-    public boolean isUserAgentUnmapped();
+    public boolean isUserAgentUnmapped() {
+        return this.gulm.isUserAgentUnmapped(this.sessionId);
+    }
 
     /*
      * Resets both user layout and user preferences.
      * Note that if any of the two are "null", old values will be used.
      */
-    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException;
+    public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences) throws PortalException {
+        this.gulm.setNewUserLayoutAndUserPreferences(newLayout,newPreferences,this.sessionId);
+    }
 
 
     /**
      * Create and return a copy of the user layout
      * @return a copy of the user layout <code>Document</code>
      */
-    public Document getUserLayoutCopy ();
+    public Document getUserLayoutCopy () {
+        return this.gulm.getUserLayoutCopy(this.sessionId);
+    }
     
     /**
      * Returns a copy of the user preferences
      * @return a copy of the <code>UserPreferences</code> object
      */
-    public UserPreferences getUserPreferencesCopy ();
+    public UserPreferences getUserPreferencesCopy () {
+        return this.gulm.getUserPreferencesCopy(this.sessionId);
+    }
 
     /**
      * Returns current profile.
      * @return current <code>UserProfile</code>
      */
-    public UserProfile getCurrentProfile ();
+    public UserProfile getCurrentProfile () {
+        return this.gulm.getCurrentProfile(this.sessionId);
+    }
 
     /**
      * Returns current theme stylesheet description
      * @return current <code>ThemeStylesheetDescription</code>
      */
-    public ThemeStylesheetDescription getThemeStylesheetDescription ();
+    public ThemeStylesheetDescription getThemeStylesheetDescription () {
+        return this.gulm.getThemeStylesheetDescription(this.sessionId);
+    }
 
     /**
      * Returns current structure stylesheet description
      * @return current <code>StructureStylesheetDescription</code>
      */
-    public StructureStylesheetDescription getStructureStylesheetDescription ();
+    public StructureStylesheetDescription getStructureStylesheetDescription () {
+        return this.gulm.getStructureStylesheetDescription(this.sessionId);
+    }
 
     /**
      * Returns a user layout node.
      * @param elementId node's Id value
      * @return <code>Node</code> that matches elementId
      */
-    public Node getUserLayoutNode (String elementId);
+    public Node getUserLayoutNode (String elementId) {
+        return this.gulm.getUserLayoutNode(elementId,this.sessionId);
+    }
 
     /**
      * Returns user layout root node. Careful, this is not a copy!
      * @return user layout <code>Document</code>
      */
-    public Document getUserLayout();
+    public Document getUserLayout() {
+        return this.gulm.getUserLayout(this.sessionId);
+    }
 
     /**
      * Returns current user preferences.
      * @return current <code>UserPreferences</code>
      */
-    public UserPreferences getUserPreferences();
+    public UserPreferences getUserPreferences() {
+        return this.gulm.getUserPreferences(this.sessionId);
+    }
 
     /**
      * helper function that allows to determine the name of a channel or
      *  folder in the current user layout given their Id.
-     * @param nodeId id of the node
+     * @param nodeID id of the node
      * @return node's name value
      */
-    public String getNodeName (String nodeId);
-    
+    public String getNodeName (String nodeId) {
+        return this.gulm.getNodeName(nodeId,this.sessionId);
+    }    
+
     /**
      * Removes a channel 
      * @param channelId channel instance Id
      */
-    public void removeChannel (String channelId) throws PortalException;
+    public void removeChannel (String channelId) throws PortalException {
+        this.gulm.removeChannel(channelId,this.sessionId);
+    }
 }
 
 

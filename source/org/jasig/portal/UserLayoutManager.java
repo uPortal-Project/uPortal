@@ -136,7 +136,7 @@ public class UserLayoutManager implements IUserLayoutManager {
         String root;
         if ((root = req.getParameter("uP_root")) != null) {
             // If a channel specifies "me" as its root, set the root
-            // to the channel's instance ID
+            // to the channel's instance Id
             if (root.equals("me")) {
                 String chanInstanceId = null;
                 String servletPath = req.getServletPath();
@@ -227,23 +227,23 @@ public class UserLayoutManager implements IUserLayoutManager {
     }
 
     /**
-     * Returns a global channel ID given a channel instance ID
-     * @param channelInstanceID instance id of a channel
+     * Returns a global channel Id given a channel instance Id
+     * @param channelInstanceId instance id of a channel
      * @return channel global id
      */
-    public String getChannelGlobalID (String channelInstanceID) {
+    public String getChannelGlobalId (String channelInstanceId) {
         // Get the channel node from the user's layout
-        Node channelNode = getUserLayoutNode(channelInstanceID);
+        Node channelNode = getUserLayoutNode(channelInstanceId);
         if (channelNode == null) {
             return  (null);
         }
-        // Get the global channel ID from the channel node
-        Node channelIDNode = channelNode.getAttributes().getNamedItem("chanID");
-        if (channelIDNode == null) {
+        // Get the global channel Id from the channel node
+        Node channelIdNode = channelNode.getAttributes().getNamedItem("chanID");
+        if (channelIdNode == null) {
             return  (null);
         }
-        // Return the channel's global ID
-        return  (channelIDNode.getNodeValue());
+        // Return the channel's global Id
+        return  (channelIdNode.getNodeValue());
     }
 
     /**
@@ -310,8 +310,8 @@ public class UserLayoutManager implements IUserLayoutManager {
         return  ssd;
     }
 
-    public Node getUserLayoutNode (String elementID) {
-        return  uLayoutXML.getElementById(elementID);
+    public Node getUserLayoutNode (String elementId) {
+        return  uLayoutXML.getElementById(elementId);
     }
     public Document getUserLayout () {
         return  uLayoutXML;
@@ -323,12 +323,12 @@ public class UserLayoutManager implements IUserLayoutManager {
 
     /**
      * helper function that allows to determine the name of a channel or
-     *  folder in the current user layout given their ID.
-     * @param nodeID
+     *  folder in the current user layout given their Id.
+     * @param nodeId
      * @return
      */
-    public String getNodeName (String nodeID) {
-        Element node = uLayoutXML.getElementById(nodeID);
+    public String getNodeName (String nodeId) {
+        Element node = uLayoutXML.getElementById(nodeId);
         if (node != null) {
             return  node.getAttribute("name");
         } 
@@ -336,13 +336,13 @@ public class UserLayoutManager implements IUserLayoutManager {
             return  null;
     }
 
-    public void removeChannel (String str_ID) throws PortalException {
+    public void removeChannel (String channelId) throws PortalException {
         // warning .. the channel should also be removed from uLayoutXML
-        Element channel = uLayoutXML.getElementById(str_ID);
+        Element channel = uLayoutXML.getElementById(channelId);
         if (channel != null) {
             if(!this.deleteNode(channel)) {
                 // unable to remove channel due to unremovable/immutable restrictionsn
-                Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+str_ID+"\"");
+                Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
             } else {
                 // channel has been removed from the userLayoutXML .. persist the layout ?
                 // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
@@ -357,11 +357,11 @@ public class UserLayoutManager implements IUserLayoutManager {
                     Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
                     throw new GeneralRenderingException("Unable to save layout changes.");
                 }
-                //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+str_ID+"\"");
+                //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+channelId+"\"");
             }  	
         }
         else
-            Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with ID=" + str_ID);
+            Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
     }
 
     /**

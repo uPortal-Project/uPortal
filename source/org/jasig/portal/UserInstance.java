@@ -81,7 +81,6 @@ public class UserInstance {
     
     public UserInstance (IPerson person) {
         this.person=person;
-        p_rendering_lock=new Object();
       
         // init the media manager
         if(mediaM==null) {
@@ -129,13 +128,14 @@ public class UserInstance {
             // if we got to this point, we can proceed with the rendering
             if (channelManager == null) {
                 channelManager = new ChannelManager(uLayoutManager); 
+                p_rendering_lock=new Object();
             }
 	    
             // call layout manager to process all user-preferences-related request parameters
             // this will update UserPreference object contained by UserLayoutManager, so that
             // appropriate attribute incorporation filters and parameter tables can be constructed.
             uLayoutManager.processUserPreferencesParameters(req);
-            renderState (req, res, out, this.channelManager, uLayoutManager.getUserLayout(), uLayoutManager.getUserPreferences(), uLayoutManager.getStructureStylesheetDescription(),uLayoutManager.getThemeStylesheetDescription());
+            renderState (req, res, out, this.channelManager, uLayoutManager.getUserLayout(), uLayoutManager.getUserPreferences(), uLayoutManager.getStructureStylesheetDescription(),uLayoutManager.getThemeStylesheetDescription(),p_rendering_lock);
         } catch (Exception e) {
             StringWriter sw=new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
@@ -155,8 +155,8 @@ public class UserInstance {
      * @param ssd a <code>StructureStylesheetDescription</code> of the structure stylesheet that's to be used
      * @param tsd a <code>ThemeStylesheetDescription</code> of the theme stylesheet that's to be used
      */
-    public void renderState (HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out, ChannelManager channelManager, Document userLayout, UserPreferences userPreferences, StructureStylesheetDescription ssd, ThemeStylesheetDescription tsd) throws Exception {
-        synchronized(getRenderingLock(req.getSession().getId())) {
+    public void renderState (HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out, ChannelManager channelManager, Document userLayout, UserPreferences userPreferences, StructureStylesheetDescription ssd, ThemeStylesheetDescription tsd, Object rendering_lock) throws Exception {
+        synchronized(rendering_lock) {
             // This function does ALL the content gathering/presentation work.
             // The following filter sequence is processed:
             //        userLayoutXML (in UserLayoutManager)
@@ -316,6 +316,9 @@ public class UserInstance {
      * @return rendering lock <code>Object</code>
      */
     Object getRenderingLock(String sessionId) {
+        if(p_rendering_lock==null) {
+            p_rendering_lock=new Object();
+        }
         return p_rendering_lock;
     }
 

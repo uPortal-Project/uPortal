@@ -74,19 +74,16 @@ public class UserInstanceFactory {
 		}
 	    }
 	}
-	return new UserInstance(person);
-
-	/*
-          if(guest) {
-          GuestUserInstance glb=(GuestUserInstance) glbs.get(new Integer(person.getID()));
-          if(glb==null) {
-          glb=new GuestUserInstance(person);
-          glbs.put(new Integer(person.getID()),glb);
-          }
-          glb.registerSession(req);
-          return null;
-          } else {
-          return new UserInstance(person);
-          }*/
+        if(guest) {
+            GuestUserInstance glb=(GuestUserInstance) glbs.get(new Integer(person.getID()));
+            if(glb==null) {
+                glb=new GuestUserInstance(person);
+                glbs.put(new Integer(person.getID()),glb);
+            }
+            glb.registerSession(req);
+            return glb;
+        } else {
+            return new UserInstance(person);
+        }
     }
 }
