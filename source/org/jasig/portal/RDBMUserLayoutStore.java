@@ -797,7 +797,7 @@ public class RDBMUserLayoutStore
               + chanId + " (ignored)");
             if (channel != null) {
             structure = channel.getDocument(doc, channelPrefix + structId,
-              "You do not have permission to this use channel.");
+              "You do not have permission to use this channel.");
            }
           }
         } catch (SQLException sqle) {
