@@ -885,7 +885,7 @@ public class RDBMUserLayoutStore
     int realUserId = userId;
     Connection con = rdbmService.getConnection();
     setAutoCommit(con, false);          // May speed things up, can't hurt
-    String str_uLayoutXML = null;
+
     try {
       DocumentImpl doc = new DocumentImpl();
       Element root = doc.createElement("layout");
@@ -924,13 +924,14 @@ public class RDBMUserLayoutStore
           rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
-            nextStructId = rs.getInt(1) + 1;
+            nextStructId = rs.getInt(1);
           } finally {
             rs.close();
           }
           sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
+          commit(con); // Make sure it appears in the store
         }
 
         int firstStructId = -1;
