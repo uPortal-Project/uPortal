@@ -67,7 +67,7 @@ public interface IUserLayoutStore {
   /* ChannelRegistry */
   public void addChannel(int id, int publisherId, String title, Document doc) throws Exception;
   public void addChannel(int id, int publisherId, String title, Document doc, String catID[]) throws Exception;
-  public Document getChannelRegistryXML() throws java.sql.SQLException;
+  public Document getChannelRegistryXML() throws Exception;
   public Document getChannelTypesXML() throws Exception;
   public void getCategoryXML(Document catsDoc, Element root, String role) throws Exception;
   public String getNextStructChannelId(int userId) throws Exception;

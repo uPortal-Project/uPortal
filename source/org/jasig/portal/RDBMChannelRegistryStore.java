@@ -59,16 +59,17 @@ public class RDBMChannelRegistryStore
   private Document types = null;
   String sRegDtd = "channelRegistry.dtd";
 
-  /** Returns a string of XML which describes the channel registry.
+  /** Returns an XML document which describes the channel registry.
    * Right now this is being stored as a string in a field but could be also implemented to get from multiple tables.
    * @return a string of XML
+   * @throws java.lang.Exception
    */
-  public Document getChannelRegistryXML () throws java.sql.SQLException {
+  public Document getChannelRegistryXML () throws Exception {
     return RdbmServices.getUserLayoutStoreImpl().getChannelRegistryXML();
   }  
   
   /** 
-   * Returns a string of XML which describes the channel types.
+   * Returns an XML document which describes the channel types.
    * @return channelTypes, the list of publishable channel types
    * @throws java.lang.Exception
    */
