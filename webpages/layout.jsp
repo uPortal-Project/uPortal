@@ -54,12 +54,6 @@
 <html>
 <head>
 <title>Portal Framework</title>
-<!-- Uncomment if you want a unified color scheme for all users and comment out the write body style below
-<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
-
-Then add these tags in place of the write body style method call below
-</head><body>
--->
 <script language="JavaScript">
 <!--hide
 
