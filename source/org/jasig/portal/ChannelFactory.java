@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,11 +133,13 @@ public class ChannelFactory {
                 // the default class loader before looking into the CARs
                 channelClass = classLoader.loadClass(className);                
             } catch (Exception e) {
+                log.error("Unable to load class '" + className + "'", e); 
                 throw new PortalException("Unable to load class '" + className + "'", e);
             }
             try {
                 cobj =  channelClass.newInstance();
             } catch (Throwable t) {
+                log.error("Unable to instantiate class '" + className + "'", t); 
                 throw new PortalException("Unable to instantiate class '" + className + "'", new Exception(t.getMessage()));
             }            
         }
