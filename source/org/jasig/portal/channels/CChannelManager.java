@@ -1106,7 +1106,8 @@ public class CChannelManager extends BaseChannel {
                     }
                 }
             } catch (PortalException pe) {
-            // Unable to open CPDDoc, just leave values uninitialized
+                // Unable to open CPDDoc, just leave values uninitialized
+                log.warn(pe,pe);
             }
         }
 
