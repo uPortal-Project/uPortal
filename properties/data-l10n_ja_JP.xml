@@ -9,64 +9,64 @@
         <column><name>GROUP_ID</name><value>0</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>全構成員</value></column>
-        <column><name>DESCRIPTION</name><value>大学の全構成員</value></column>
+        <column><name>GROUP_NAME</name><value>すべての構成員</value></column>
+        <column><name>DESCRIPTION</name><value>教職員・学生等の構成員すべて</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>1</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>全学生</value></column>
-        <column><name>DESCRIPTION</name><value>大学に所属している全学生</value></column>
+        <column><name>GROUP_NAME</name><value>学生</value></column>
+        <column><name>DESCRIPTION</name><value>学部生・大学院生等の学生</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>2</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>全教員</value></column>
-        <column><name>DESCRIPTION</name><value>大学の全教員</value></column>
+        <column><name>GROUP_NAME</name><value>教員</value></column>
+        <column><name>DESCRIPTION</name><value>教授，助教授，講師，助手等の大学教員</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>3</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
-        <column><name>GROUP_NAME</name><value>全職員</value></column>
-        <column><name>DESCRIPTION</name><value>大学の全職員</value></column>
+        <column><name>GROUP_NAME</name><value>職員</value></column>
+        <column><name>DESCRIPTION</name><value>大学職員</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>4</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>開発要員</value></column>
-        <column><name>DESCRIPTION</name><value>IT関係の開発要員全員</value></column>
+        <column><name>DESCRIPTION</name><value>IT 関係の開発要員</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>5</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>学部学生</value></column>
-        <column><name>DESCRIPTION</name><value>所属している全学部学生</value></column>
+        <column><name>DESCRIPTION</name><value>学部学生</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>6</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>全日制学部学生</value></column>
-        <column><name>DESCRIPTION</name><value>全日制の全学部学生</value></column>
+        <column><name>DESCRIPTION</name><value>学部学生</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>7</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>時間制学部学生</value></column>
-        <column><name>DESCRIPTION</name><value>時間制の全学部学生</value></column>
+        <column><name>DESCRIPTION</name><value>夜間学部学生</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>8</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>大学院生</value></column>
-        <column><name>DESCRIPTION</name><value>所属している全大学院生</value></column>
+        <column><name>DESCRIPTION</name><value>大学院生</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>9</value></column>
@@ -80,28 +80,28 @@
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>事務職員</value></column>
-        <column><name>DESCRIPTION</name><value>全事務職員</value></column>
+        <column><name>DESCRIPTION</name><value>事務職員</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>11</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>支援職員</value></column>
-        <column><name>DESCRIPTION</name><value>全支援職員</value></column>
+        <column><name>DESCRIPTION</name><value>補助職員等の支援職員</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>12</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>教授</value></column>
-        <column><name>DESCRIPTION</name><value>全教授</value></column>
+        <column><name>DESCRIPTION</name><value>教授</value></column>
       </row>
      <row>
         <column><name>GROUP_ID</name><value>13</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
         <column><name>GROUP_NAME</name><value>助教授</value></column>
-        <column><name>DESCRIPTION</name><value>全助教授</value></column>
+        <column><name>DESCRIPTION</name><value>助教授</value></column>
       </row>
       <row>
         <column><name>GROUP_ID</name><value>14</value></column>
@@ -117,7 +117,7 @@
         <column><name>GROUP_ID</name><value>50</value></column>
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
-        <column><name>GROUP_NAME</name><value>全カテゴリ</value></column>
+        <column><name>GROUP_NAME</name><value>すべてのカテゴリ</value></column>
         <column><name>DESCRIPTION</name><value>すべてのチャネルカテゴリ</value></column>
       </row>
       <row>
