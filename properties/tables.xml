@@ -355,7 +355,7 @@
       </column>
     </columns>
     <primary-key>CHAN_ID</primary-key>
-    <primary-key>ROLE_ID</primary-key>
+    <primary-key>GROUP_ID</primary-key>
     <primary-key>USER_ID</primary-key>
   </table>
 
