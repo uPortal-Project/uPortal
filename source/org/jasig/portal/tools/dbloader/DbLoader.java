@@ -199,7 +199,7 @@ public class DbLoader
 
         // okay, start processing
 
-        // get tablesURL and dataURL here 
+        // get tablesURL and dataURL here
         tablesURL = DbLoader.class.getResource(PropertiesHandler.properties.getTablesUri());
         dataURL = DbLoader.class.getResource(PropertiesHandler.properties.getDataUri());
         System.out.println("Getting tables from: "+tablesURL);
@@ -363,7 +363,6 @@ public class DbLoader
   private static Element getFirstChildWithName (Element parent, String name)
   {
     Element child = null;
-
     for (Node ch = parent.getFirstChild(); ch != null; ch = ch.getNextSibling())
     {
       if (ch instanceof Element && ch.getNodeName().equals(name))
@@ -1180,7 +1179,6 @@ public class DbLoader
     private void executeSQL (Table table, Row row, String action)
     {
       System.out.print("...");
-
       if (createScript)
       {
         if (action.equals("delete"))
@@ -1217,10 +1215,7 @@ public class DbLoader
 
             // Get a java sql data type for column name
             int javaSqlDataType = getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName());
-
-            if (value == null)
-              pstmt.setString(i, "");
-            else if (value.equals("NULL"))
+            if (value==null || (value!=null && value.equalsIgnoreCase("NULL")))
               pstmt.setNull(i, javaSqlDataType);
             else if (javaSqlDataType == Types.TIMESTAMP)
             {
