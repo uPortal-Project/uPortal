@@ -472,10 +472,20 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-discovery.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
-    <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
-    <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
+
+    <!-- This is Tomcat-specific!  We need to think about a new property
+         that lets us specify the appropriate directory for other servers
+    -->
+    <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
+    <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
+    
+    <!-- This is Tomcat-specific and server name-specific!  
+         We need to find out the best way to ensure cross-context 
+         behavior in all servlet containers.
+    -->
+    <copy todir="${server.home}/conf/Catalina/localhost" file="properties/uPortal.xml"/>
 
   </target>
 
