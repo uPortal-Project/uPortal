@@ -490,7 +490,12 @@ public class StylesheetSet extends SAX2FilterImpl {
       if (url != null)
       {
         // Put the loaded media properties in the cache
-        m_mediaPropsCache.put(uri, new OrderedProps(url.openStream()));
+        InputStream in = url.openStream();
+        try {
+          m_mediaPropsCache.put(uri, new OrderedProps(in));
+        } finally {
+          in.close();
+        }
       }
       else
       {
@@ -554,7 +559,7 @@ public class StylesheetSet extends SAX2FilterImpl {
           attVec.addElement(temp);
         }
       }
-		input.close();
+      input.close();
     }
 
     /**

@@ -36,6 +36,7 @@
 
 package  org.jasig.portal;
 
+import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -105,8 +106,12 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     try {
                         url = this.getClass().getResource("/properties/browser.mappings");
                         if (url != null) {
-                            uaMatcher = new PropsMatcher(url.openStream());
-                        }
+                          InputStream in = url.openStream();
+                          try {
+                            uaMatcher = new PropsMatcher(in);
+                          } finally {
+                            in.close();
+                          }                        }
                     } catch (IOException ioe) {
                         LogService.log(LogService.ERROR, "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
                     }
