@@ -46,6 +46,7 @@ import org.xml.sax.InputSource;
  * Provides a means to resolve uPortal DTDs
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Dave Wallace, dwallace@udel.edu modifications 
  * @version $Revision$
  */
 public class DTDResolver implements EntityResolver
@@ -82,10 +83,15 @@ public class DTDResolver implements EntityResolver
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/" + dtdName);
       else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd"))
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
-
-      inSrc = new InputSource(inStream);
+      else if (publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN"))
+         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
     }
-
+    
+    // Return null to let the parser handle this entity 
+    if ( null == inStream )
+        return null;
+        
+    inSrc = new InputSource(inStream);
     return inSrc;
   }
 }
