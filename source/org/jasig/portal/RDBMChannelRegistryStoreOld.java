@@ -105,7 +105,6 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
 
     IEntityGroup channelCategoriesGroup = GroupService.getChannelCategoriesGroup();
     processGroupsRecursively(channelCategoriesGroup, registry);
-    System.out.println(org.jasig.portal.utils.XML.serializeNode(doc));
 
     return doc;
   }
