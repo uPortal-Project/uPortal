@@ -138,12 +138,20 @@ public class PortalSessionManager extends HttpServlet {
       if ((redirectBase = this.doRedirect(myReq)) != null) {
         // cache request
         sc.setAttribute("oreqp_" + session.getId(), myReq);
-        // initial request, requires forwarding
-        session.setAttribute("forwarded", new Boolean(true));
-        // forward
-        // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
-        //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
-        res.sendRedirect(req.getContextPath() + redirectBase);
+
+        int index = myReq.requestURI.indexOf("worker");
+        if ( index != -1) {
+          String worker = myReq.requestURI.substring(index+7);
+          worker = worker.substring(0, worker.indexOf('/'));
+          workerTask (req, res, worker);
+        } else {
+          // initial request, requires forwarding
+          session.setAttribute("forwarded", new Boolean(true));
+          // forward
+          // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+          //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
+          res.sendRedirect(req.getContextPath() + redirectBase);
+        }
       }
       else {
         // delete old request
@@ -224,6 +232,44 @@ public class PortalSessionManager extends HttpServlet {
     }
     // redirect by default
     return '/' + renderBase;
+  }
+
+  /**
+   * Workers perform tasks other than channel rendering.  An example is downloading
+   * a MIME file from the portal server.
+   * To add a new worker:
+   *  1. Specify the worker name in the static final declarations.  This name will
+   *     be used to construct the URL to invoke the worker.
+   *  2. Call the worker method in the Channel manager from the workerTask() method.
+   */
+  public static final String FILE_DOWNLOAD = "download";
+
+  protected void workerTask (HttpServletRequest req, HttpServletResponse res, String worker) throws ServletException, IOException {
+    try
+    {
+      HttpSession session = req.getSession();
+
+      UserInstance userInstance = null;
+      try {
+        // Retrieve the user's UserInstance object
+        userInstance = UserInstanceManager.getUserInstance(req);
+      } catch (Exception e) {
+        LogService.instance().log(LogService.ERROR, e);
+      }
+
+      if (userInstance != null) {
+        ChannelManager channelManager = userInstance.channelManager;
+        if (channelManager != null) {
+          channelManager.setReqNRes(req, res, "PortalWorker");
+          if (worker.equals(FILE_DOWNLOAD))
+            channelManager.getMimeContent(req, res);
+          // else other workers.  Enter a value for each worker first.
+        }
+      }
+    }  catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, "PortalSessionManager::workerTask(): Worker " + worker + " task failed.");
+      LogService.instance().log(LogService.ERROR, e.getMessage());
+    }
   }
 
   /**

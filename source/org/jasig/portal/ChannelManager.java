@@ -44,6 +44,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
 import java.util.WeakHashMap;
 import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.security.provider.ReferencePermissionManager;
@@ -89,14 +91,14 @@ public class ChannelManager {
 
 
     public ChannelManager () {
-	channelTable=new Hashtable();
-	rendererTable=new Hashtable();
-	channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
+        channelTable=new Hashtable();
+        rendererTable=new Hashtable();
+        channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
     }
 
     public ChannelManager(IUserLayoutManager manager) {
-	this();
-	this.ulm=manager;
+        this();
+        this.ulm=manager;
         pcs=new PortalControlStructures();
         pcs.setUserLayoutManager(manager);
         pcs.setChannelManager(this);
@@ -156,7 +158,7 @@ public class ChannelManager {
         // clear the previous settings
         channelTarget = null;
         targetParams = new Hashtable ();
-        String sp=req.getServletPath();
+        String sp = req.getRequestURI();
         if(sp!=null) {
             int si1=sp.indexOf(this.channelAddressingPathElement+"/");
             if(si1!=-1) {
@@ -282,43 +284,43 @@ public class ChannelManager {
     private IChannel instantiateChannel(String chanId, String className, long timeOut, Hashtable params) throws Exception {
         IChannel ch=null;
 
-	boolean exists=false;
-	// this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
-	// channel more then once, but it's difficult to implement "instanceof" operation on
-	// the java.lang.Class. So, I just look into the staticChannels table.
-	Object cobj=staticChannels.get(className);
-	if(cobj!=null) {
-	    exists=true;
-	} else {
-	    cobj =  Class.forName (className).newInstance ();
-	}
+        boolean exists=false;
+        // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
+        // channel more then once, but it's difficult to implement "instanceof" operation on
+        // the java.lang.Class. So, I just look into the staticChannels table.
+        Object cobj=staticChannels.get(className);
+        if(cobj!=null) {
+            exists=true;
+        } else {
+            cobj =  Class.forName (className).newInstance ();
+        }
 
-	// determine what kind of a channel it is.
-	// (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
-	if(cobj instanceof IMultithreadedChannel) {
-	    String uid=this.pcs.getHttpServletRequest().getSession(false).getId()+"/"+chanId;
-	    if(cobj instanceof IMultithreadedCacheable) {
-		if(cobj instanceof IPrivileged) {
-		    // both cacheable and privileged
-		    ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
-		} else {
-		    // just cacheable
-		    ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
-		}
-	    } else if(cobj instanceof IPrivileged) {
-		ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
-	    } else {
-		// plain multithreaded
-		ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
-	    }
-	    // see if we need to add the instance to the staticChannels
-	    if(!exists) {
-		staticChannels.put(className,cobj);
-	    }
-	} else {
-	    // vanilla IChannel
-	    ch=(IChannel)cobj;
-	}
+        // determine what kind of a channel it is.
+        // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
+        if(cobj instanceof IMultithreadedChannel) {
+            String uid=this.pcs.getHttpServletRequest().getSession(false).getId()+"/"+chanId;
+            if(cobj instanceof IMultithreadedCacheable) {
+                if(cobj instanceof IPrivileged) {
+                    // both cacheable and privileged
+                    ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+                } else {
+                    // just cacheable
+                    ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+                }
+            } else if(cobj instanceof IPrivileged) {
+                ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
+            } else {
+                // plain multithreaded
+                ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
+            }
+            // see if we need to add the instance to the staticChannels
+            if(!exists) {
+                staticChannels.put(className,cobj);
+            }
+        } else {
+            // vanilla IChannel
+            ch=(IChannel)cobj;
+        }
 
         // construct a ChannelStaticData object
         ChannelStaticData sd = new ChannelStaticData ();
@@ -406,9 +408,9 @@ public class ChannelManager {
 
         ChannelRenderer cr = new ChannelRenderer (ch,rd);
         cr.setCharacterCacheable(ccacheable);
-	if(ch instanceof ICacheable) {
-	    cr.setCacheTables(this.channelCacheTable);
-	}
+        if(ch instanceof ICacheable) {
+            cr.setCacheTables(this.channelCacheTable);
+        }
         cr.setTimeout (timeOut);
         cr.startRendering ();
         rendererTable.put (chanId,cr);
@@ -418,9 +420,9 @@ public class ChannelManager {
      * Clean up after a rendering round.
      */
     public void finishedRendering() {
-	// clean up
-	rendererTable.clear();
-	targetParams=null;
+        // clean up
+        rendererTable.clear();
+        targetParams=null;
     }
 
     /**
@@ -666,6 +668,55 @@ public class ChannelManager {
         if(channelTable.get(channelId)!=null)
             channelTable.remove(channelId);
         channelTable.put(channelId,channelInstance);
+    }
+
+    /**
+     * Sets the HttpResponse object with the MIME content by accessing the channel
+     * through the IMimeRespnose interface methods.
+     * @param req  HttpServletRequest
+     * @param res  HttpServletResponse whose fields are set by this method.
+     */
+    public void getMimeContent (HttpServletRequest req, HttpServletResponse res) throws java.io.IOException, PortalException {
+      IChannel ch = (IChannel)channelTable.get(channelTarget);
+
+      ChannelRuntimeData rd = new ChannelRuntimeData ();
+      rd.setParameters(targetParams);
+      rd.setBrowserInfo(binfo);
+      rd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/"+uPElement);
+
+      ch.setRuntimeData(rd);
+
+      if (ch instanceof org.jasig.portal.IMimeResponse) {
+        org.jasig.portal.IMimeResponse ds = (org.jasig.portal.IMimeResponse)ch;
+
+        // Set the headers if available
+        Map httpHeaders = ds.getHeaders();
+        if (httpHeaders != null) {
+          Set headerKeys = httpHeaders.keySet();
+          Iterator it = headerKeys.iterator();
+          while (it.hasNext()) {
+            String param = (String)it.next();
+            String value = (String)httpHeaders.get(param);
+            res.setHeader(param, value);
+          }
+        }
+
+        // Set the MIME content type
+        res.setContentType (ds.getContentType());
+
+        // Set the data
+        javax.servlet.ServletOutputStream out = res.getOutputStream ();
+        java.io.InputStream ios = ds.getInputStream();
+
+        int size = 0;
+        byte[] contentBytes = new byte[8192];
+        while ((size = ios.read(contentBytes)) != -1) {
+          out.write(contentBytes,0, size);
+        }
+        out.flush();
+      } else {
+        LogService.instance().log(LogService.ERROR, "ChannelManager::getMimeContent(): Channel " + channelTarget + "needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
+      }
     }
 
 }

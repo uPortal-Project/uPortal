@@ -133,6 +133,24 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
   }
 
   /**
+   * Returns the URL to invoke one of the workers specified in PortalSessionManager.
+   * Typically the channel that is invoked with the worker will have to implement an
+   * interface specific for that worker.
+   * @param worker - Worker string must be a PortalSessionManager.xxx value.
+   * @return URL to invoke the worker.
+   *
+   */
+  public String getWorkerActionURL (String worker) {
+    StringBuffer sBuff = new StringBuffer(128);
+    sBuff.append(baseActionURL.substring(0, baseActionURL.indexOf('/',1)));
+    sBuff.append("/servlet/uPortal/");
+    sBuff.append(baseActionURL.substring(baseActionURL.indexOf("channel"), baseActionURL.lastIndexOf('/')));
+    sBuff.append("/worker/");
+    sBuff.append(worker);
+    return sBuff.toString();
+  }
+
+  /**
    * Tells whether or not the channel is rendering as the root of the layout.
    * @return <code>true</code> if channel is rendering as the root, otherwise <code>false</code>
    */
