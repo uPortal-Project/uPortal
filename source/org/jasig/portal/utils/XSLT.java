@@ -428,6 +428,25 @@ public class XSLT {
   }
 
   /**
+   * This method returns a localized TransformerHandler for a given stylesheet.
+   * @param stylesheetURI the URI of the XSLT stylesheet
+   * @param locales the list of locales
+   * @param caller the calling class
+   * @return <code>Transformer</code>
+   * @throws SAXException
+   */
+  public static TransformerHandler getTransformerHandler(String stylesheetURI, Locale[] locales, Object caller) throws SAXException, PortalException {
+      TransformerHandler th = null;
+      try {
+        String localizedStylesheetURI = LocaleAwareXSLT.getLocaleAwareXslUri(stylesheetURI, locales, caller);
+        th = getSAXTFactory().newTransformerHandler(getTemplates(localizedStylesheetURI));
+      } catch (TransformerConfigurationException tce) {
+        LogService.log(LogService.ERROR,"XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
+      }
+      return th;
+  }
+
+  /**
    * This method caches compiled stylesheet set objects, keyed by the stylesheet list's URI.
    * @param stylesheetListURI the URI of the XSLT stylesheet list file (.ssl)
    * @return the StlyesheetSet object
