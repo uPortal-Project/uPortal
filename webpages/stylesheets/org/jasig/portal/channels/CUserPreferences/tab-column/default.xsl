@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ascii"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
-<!--Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+  <!--Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
@@ -45,8 +44,19 @@ $Revision$
   <xsl:param name="showLockUnlock">true</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <!--remove for CVS-->
+  <!--  <xsl:variable name="mediaPath">C:\portal\webpages\media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+-->  
+  <!--end remove-->
 
   <xsl:template match="layout">
+    <!--remove for CVS-->
+    <!--    <html>
+      <head>
+        <title>uPortal 2.0</title>
+        <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
+      </head>-->
+    <!--end remove-->
 
     <xsl:call-template name="optionMenu"/>
     <br/>
@@ -72,6 +82,9 @@ $Revision$
       </tr>
     </table>
     <!--End Layout Table -->
+    <!--remove for CVS-->
+    <!--</html>-->
+    <!--end remove-->
   </xsl:template>
   <xsl:template name="tabRow">
     <!--Begin Tab Table -->
@@ -81,11 +94,10 @@ $Revision$
           <xsl:choose>
             <xsl:when test="not($activeTab = position())">
               <td nowrap="nowrap" class="uportal-background-light">
-
                 <xsl:choose>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                      <img alt="Click to move this tab left [{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}]" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                      <img alt="Click to move this tab left" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
@@ -105,7 +117,6 @@ $Revision$
                         <xsl:value-of select="$baseActionURL"/>?action=selectTab&amp;activeTab=<xsl:value-of select="position()"/></xsl:attribute>
                     </xsl:otherwise>
                   </xsl:choose>
-
                   <xsl:value-of select="@name"/>
                 </a>
               </td>
@@ -115,12 +126,12 @@ $Revision$
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this tab right [{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}]" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this tab right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=appendAfter_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this tab right [{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=appendAfter_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}]" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this tab right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -136,11 +147,10 @@ $Revision$
             </xsl:when>
             <xsl:otherwise>
               <td nowrap="nowrap" class="uportal-background-content">
-
                 <xsl:choose>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                      <img alt="Click to move this tab left [{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}]" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                      <img alt="Click to move this tab left" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
@@ -157,7 +167,6 @@ $Revision$
                     <xsl:attribute name="class">uportal-background-content</xsl:attribute>
                   </xsl:otherwise>
                 </xsl:choose>
-
                 <a class="uportal-navigation-category-selected">
                   <xsl:choose>
                     <xsl:when test="$action = 'moveColumn' or $action = 'moveChannel'">
@@ -174,19 +183,18 @@ $Revision$
                   </span>
                 </a>
               </td>
-
               <td nowrap="nowrap" class="uportal-background-content">
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this tab right [{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}]" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this tab right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=appendAfter_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move [{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=appendAfter_{following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}]" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this tab right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -214,7 +222,7 @@ $Revision$
             <xsl:if test="not($action='moveColumn' or $action='moveChannel')">
               <td nowrap="nowrap" bgcolor="#CCCCCC">
                 <a href="{$baseActionURL}?action=newTab" class="uportal-text-small">
-                  <img alt="click to add a new tab" src="{$mediaPath}/newtab.gif" width="59" height="20" border="0"/>
+                  <img alt="Click to add a new tab here" src="{$mediaPath}/newtab.gif" width="59" height="20" border="0"/>
                 </a>
               </td>
             </xsl:if>
@@ -360,42 +368,36 @@ $Revision$
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <!--Begin [select Column]row -->
         <tr>
-          <!--          <td>
-            <img alt="interface image" src="{$mediaPath}/leftarrow.gif" width="20" height="20"/>
-          </td>-->
           <td class="uportal-background-light" width="100%" align="center">
             <xsl:choose>
               <xsl:when test="($action = 'selectColumn' or $action = 'moveColumn') and $elementID=@ID">
                 <img alt="interface image" src="{$mediaPath}/transparent.gif" width="20" height="20"/>
               </xsl:when>
               <xsl:otherwise>
-
                 <xsl:choose>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                      <img alt="Click to move this column left [{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}]" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                      <img alt="Click to move this column left" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
                     <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16" border="0"/>
                   </xsl:otherwise>
                 </xsl:choose>
-
                 <a href="{$baseActionURL}?action=selectColumn&amp;elementID={@ID}" class="uportal-text-small">
-                  <img alt="click to select this column [{@ID}]" src="{$mediaPath}/selectcolumn.gif" width="79" height="20" border="0"/>
+                  <img alt="Click to select this column" src="{$mediaPath}/selectcolumn.gif" width="79" height="20" border="0"/>
                 </a>
-
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this column right [{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][2]/@ID}]" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this column right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this column right [{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::folder[not(@type='header' or @type='footer') and @hidden='false'][1]/@ID}]" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this column right" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
@@ -407,9 +409,6 @@ $Revision$
               </xsl:otherwise>
             </xsl:choose>
           </td>
-          <!--          <td>
-            <img alt="interface image" src="{$mediaPath}/rightarrow.gif" width="20" height="20"/>
-          </td>-->
         </tr>
         <!--End [select Column] row -->
       </table>
@@ -497,7 +496,7 @@ $Revision$
       <xsl:otherwise>
         <td class="uportal-background-light" width="20" valign="top">
           <a href="{$baseActionURL}?action=newColumn&amp;method=insertBefore&amp;elementID={@ID}" class="uportal-text-small">
-            <img alt="click to add a new column in this location [before {@ID}]" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
+            <img alt="Click to add a new column here" src="{$mediaPath}/newcolumn.gif" width="20" height="100" border="0"/>
           </a>
         </td>
       </xsl:otherwise>
@@ -534,9 +533,8 @@ $Revision$
           </xsl:when>
           <xsl:otherwise>
             <td>
-
               <a href="{$baseActionURL}?action=newChannel&amp;position=before&amp;elementID={@ID}" class="uportal-text-small">
-                <img alt="Click to add a new channel in this location [before {@ID}]" src="{$mediaPath}/newchannel.gif" border="0"/>
+                <img alt="Click to add a new channel here" src="{$mediaPath}/newchannel.gif" border="0"/>
               </a>
             </td>
           </xsl:otherwise>
@@ -560,15 +558,13 @@ $Revision$
           <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
         </xsl:if>
         <td>
-
           <table border="0" cellspacing="0" cellpadding="2">
             <tr class="uportal-background-content" align="center" valign="middle">
               <td colspan="3">
-
                 <xsl:choose>
                   <xsl:when test="not(position()=1)">
                     <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small">
-                      <img alt="Click to move this channel up [{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::channel[not(@hidden='true')][1]/@ID}" src="{$mediaPath}/arrow_up.gif" width="16" height="16" border="0"/>
+                      <img alt="Click to move this channel up" src="{$mediaPath}/arrow_up.gif" width="16" height="16" border="0"/>
                     </a>
                   </xsl:when>
                   <xsl:otherwise>
@@ -579,12 +575,20 @@ $Revision$
             </tr>
             <tr>
               <td align="center" valign="middle" class="uportal-background-content">
-
                 <xsl:choose>
                   <xsl:when test="not(../../folder[1]/@ID = parent::folder/@ID)">
-                    <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder/channel[1]/@ID}" class="uportal-text-small">
-                      <img alt="Click to move this channel to the top of the previous column [{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder/channel[1]/@ID}" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
-                    </a>
+                    <xsl:choose>
+                      <xsl:when test="parent::folder/preceding-sibling::folder[1]/channel[1]/@ID">
+                        <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[1]/channel[1]/@ID}" class="uportal-text-small">
+                          <img alt="Click to move this channel to the top of the previous column" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                        </a>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[1]/@ID}" class="uportal-text-small">
+                          <img alt="Click to move this channel to the top of the previous column" src="{$mediaPath}/arrow_left.gif" width="16" height="16" border="0"/>
+                        </a>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:when>
                   <xsl:otherwise>
                     <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16" border="0"/>
@@ -631,7 +635,7 @@ $Revision$
                           <td colspan="5">
                             <img src="{$mediaPath}/transparent.gif" width="1" height="8"/>
                             <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}" class="uportal-text-small">
-                              <img alt="click to select this channel [{@ID}]" src="{$mediaPath}/selectchannel.gif" width="79" height="20" border="0"/>
+                              <img alt="Click to select this channel" src="{$mediaPath}/selectchannel.gif" width="79" height="20" border="0"/>
                             </a>
                           </td>
                         </tr>
@@ -653,9 +657,18 @@ $Revision$
               <td align="center" valign="middle" class="uportal-background-content">
                 <xsl:choose>
                   <xsl:when test="not(../../folder[position()=last()]/@ID = parent::folder/@ID)">
-                    <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder/channel[1]/@ID}" class="uportal-text-small">
-                      <img alt="Click to move this channel to the top of the next column [{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder/channel[1]/@ID}]" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
-                    </a>
+                    <xsl:choose>
+                      <xsl:when test="parent::folder/following-sibling::folder/channel[1]/@ID">
+                        <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[1]/channel[1]/@ID}" class="uportal-text-small">
+                          <img alt="Click to move this channel to the top of the next column" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                        </a>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[1]/@ID}" class="uportal-text-small">
+                          <img alt="Click to move this channel to the top of the next column" src="{$mediaPath}/arrow_right.gif" width="16" height="16" border="0"/>
+                        </a>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:when>
                   <xsl:otherwise>
                     <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16" border="0"/>
@@ -665,18 +678,17 @@ $Revision$
             </tr>
             <tr class="uportal-background-content">
               <td colspan="3" align="center" valign="middle">
-
                 <xsl:choose>
                   <xsl:when test="not(position()=last())">
                     <xsl:choose>
                       <xsl:when test="not(position() = (last()-1))">
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::channel[not(@hidden='true')][2]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move this channel down [{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::channel[not(@hidden='true')][2]/@ID}]" src="{$mediaPath}/arrow_down.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this channel down" src="{$mediaPath}/arrow_down.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:when>
                       <xsl:otherwise>
                         <a href="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small">
-                          <img alt="Click to move [{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::channel[not(@hidden='true')][1]/@ID}]" src="{$mediaPath}/arrow_down.gif" width="16" height="16" border="0"/>
+                          <img alt="Click to move this channel down" src="{$mediaPath}/arrow_down.gif" width="16" height="16" border="0"/>
                         </a>
                       </xsl:otherwise>
                     </xsl:choose>
