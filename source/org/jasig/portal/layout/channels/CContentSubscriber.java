@@ -67,6 +67,10 @@ public class CContentSubscriber extends FragmentManager {
 	private Document registry;
 	private Vector expandedItems;
 	private Vector condensedItems;
+	private String searchFragment = "true";
+	private String searchChannel = "true";
+    private String searchCategory = "true";
+    private String searchQuery = null;
 	
 	private final static String CHANNEL = "channel";
 	private final static String FRAGMENT = "fragment";
@@ -138,9 +142,6 @@ public class CContentSubscriber extends FragmentManager {
 		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
 			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
 		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channel-state"),"browse");
-		    String searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"),"false");
-		    String searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
-		    String searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"),"false");
 			boolean all = false,
 			        expand = action.equals("expand"),
 			        condense = action.equals("condense");    
@@ -194,9 +195,12 @@ public class CContentSubscriber extends FragmentManager {
 			 	refreshFragmentMap(); 
 			 	initRegistry();
 		} else if ( action.equals("search") ) {
-			String query = runtimeData.getParameter("search-query");
+			searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"),"false");
+			searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
+			searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"),"false");
+			searchQuery = runtimeData.getParameter("search-query");
 			// Clear all the previous state
-			if ( query != null ) {
+			if ( searchQuery != null ) {
 				NodeList nodeList = XPathAPI.selectNodeList(registry,"//*");
 				for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				  Element node = (Element) nodeList.item(k);
@@ -204,14 +208,14 @@ public class CContentSubscriber extends FragmentManager {
 				  node.setAttribute("search-view","condensed");
 				} 	
 			}
-			if ( CommonUtils.nvl(query).length() > 0 ) {
+			if ( CommonUtils.nvl(searchQuery).length() > 0 ) {
 			  String[] xPathQueries = new String[3];
 			  if ( searchChannel.equals("true") )	
-			   xPathQueries[0] = "//channel[contains(@name,'"+query+"') or contains(@description,'"+query+"')]";
+			   xPathQueries[0] = "//channel[contains(@name,'"+searchQuery+"') or contains(@description,'"+searchQuery+"')]";
 			  if ( searchCategory.equals("true") )
-			   xPathQueries[1] = "//category[contains(@name,'"+query+"') or contains(@description,'"+query+"')]"; 
+			   xPathQueries[1] = "//category[contains(@name,'"+searchQuery+"') or contains(@description,'"+searchQuery+"')]"; 
 			  if ( searchFragment.equals("true") )
-			   xPathQueries[2] = "//fragment[contains(name,'"+query+"') or contains(description,'"+query+"')]";
+			   xPathQueries[2] = "//fragment[contains(name,'"+searchQuery+"') or contains(description,'"+searchQuery+"')]";
 			  for ( int i = 0; i < xPathQueries.length; i++) {  
 			   if ( xPathQueries[i] != null ) {	 	
 			    NodeList nodeList =  XPathAPI.selectNodeList(registry,xPathQueries[i]);
@@ -285,6 +289,7 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-fragment", searchFragment);
 		     xslt.setStylesheetParameter("search-channel", searchChannel);
 		     xslt.setStylesheetParameter("search-category", searchCategory);
+		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
 		     
 	  } catch ( Exception e ) {
 	  	  e.printStackTrace();
