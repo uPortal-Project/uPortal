@@ -121,15 +121,16 @@ public class CPermissionsManager
             prepServant(session);
         }
         if (session.principals != null){
-          if (session.staticData.getParameter("prmView") != null) {
-            session.view=session.staticData.getParameter("prmView");
-          }
-          else if (session.runtimeData.getParameter("prmView") != null) {
-            session.view=session.runtimeData.getParameter("prmView");
-          }
-          else {
-            session.view="Assign By Principal";
-          }
+            if (session.staticData.getParameter("prmView") != null) {
+              session.view=session.staticData.getParameter("prmView");
+              session.staticData.remove("prmView");
+            }
+            else if (session.runtimeData.getParameter("prmView") != null) {
+              session.view=session.runtimeData.getParameter("prmView");
+            }
+            else if (!session.view.startsWith("Assign")){
+              session.view="Assign By Principal";
+            }
         }
     }
 
