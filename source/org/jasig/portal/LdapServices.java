@@ -38,13 +38,13 @@ package org.jasig.portal;
 import javax.naming.directory.DirContext;
 
 /**
- * Legacy placeholder class. All work should now be done with
+ * Legacy placeholder class. As of uPortal 2.4 all work should now be done with
  * {@link org.jasig.portal.ldap.LdapServices}.
  * 
  * @see org.jasig.portal.ldap.LdapServices
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
- * @deprecated Use {@link org.jasig.portal.ldap.LdapServices}.
+ * @deprecated As of uPortal 2.4, use {@link org.jasig.portal.ldap.LdapServices}.
  */
 public class LdapServices {
     /**
@@ -54,7 +54,7 @@ public class LdapServices {
      * to the {@link org.jasig.portal.ldap.ILdapServer} is held in
      * an instance of <code>LdapServices</code>
      * 
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices} instead.
+     * @deprecated As of uPortal 2.4, use {@link org.jasig.portal.ldap.LdapServices} instead.
      */
     public LdapServices() {
     }
@@ -64,7 +64,7 @@ public class LdapServices {
      * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
      * @see org.jasig.portal.ldap.ILdapServer#getConnection()
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getConnection()}.
+     * @deprecated As of uPortal 2.4, use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getConnection()}.
      */
     public DirContext getConnection() {
         return org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().getConnection();
@@ -75,7 +75,7 @@ public class LdapServices {
      * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
      * @see org.jasig.portal.ldap.ILdapServer#getBaseDN()
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getBaseDN()}. 
+     * @deprecated As of uPortal 2.4, use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getBaseDN()}. 
      */
     public String getBaseDN() {
       return org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().getBaseDN();
@@ -86,7 +86,7 @@ public class LdapServices {
      * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
      * @see org.jasig.portal.ldap.ILdapServer#getUidAttribute()
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getUidAttribute()}.
+     * @deprecated As of uPortal 2.4, use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#getUidAttribute()}.
      */
     public String getUidAttribute() {
       return org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().getUidAttribute();
@@ -97,7 +97,7 @@ public class LdapServices {
      * {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()}.
      * 
      * @see org.jasig.portal.ldap.ILdapServer#releaseConnection(DirContext)
-     * @deprecated Use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#releaseConnection(DirContext)}.
+     * @deprecated As of uPortal 2.4, use {@link org.jasig.portal.ldap.LdapServices#getDefaultLdapServer()} and {@link org.jasig.portal.ldap.ILdapServer#releaseConnection(DirContext)}.
      */
     public void releaseConnection (DirContext conn) {
         org.jasig.portal.ldap.LdapServices.getDefaultLdapServer().releaseConnection(conn);
