@@ -57,6 +57,7 @@ public class ReferenceEntityCache implements IEntityCache
 {
     protected Map cache;
     protected Class entityType;
+    protected String simpleTypeName;
 
     // The interval between cache updates; defaults to 60 seconds.
     protected int sweepIntervalMillis = 60 * 1000;
@@ -120,10 +121,10 @@ private void initializeEntityType(Class type) throws CachingException
  */
 public void cleanupCache()
 {
-    debug("ENTERING ReferenceEntityCache.cleanupCache()");
     int before = size();
+    debug("ENTERING ReferenceEntityCache.cleanupCache() for " + getSimpleTypeName() + " : number of entries: " + before);
     ((LRUCache)getCache()).sweepCache();
-    debug("LEAVING ReferenceEntityCache.cleanupCache(): removed " +
+    debug("LEAVING ReferenceEntityCache.cleanupCache() for " + getSimpleTypeName() + " : removed " +
         (before - size()) + " cache entries.");
 }
 /**
@@ -183,8 +184,20 @@ public int size() {
  * @return a string representation of the receiver
  */
 public String toString() {
-    return "ReferenceEntityCache for " + getEntityType().getName();
+    return "ReferenceEntityCache for " + getSimpleTypeName();
 }
+private String getSimpleTypeName() 
+{
+    if ( simpleTypeName == null )
+    {
+        String name = getEntityType().getName();
+        while (name.indexOf('.') >= 0) 
+            { name = name.substring(name.indexOf('.')+1); }
+        simpleTypeName = name;
+    }
+    return simpleTypeName;
+}
+
 /**
  * @param IBasicEntity entity - the entity to be updated in the cache.
  */
