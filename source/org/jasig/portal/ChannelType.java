@@ -36,13 +36,15 @@
 package org.jasig.portal;
 
 /**
- * A channel type.
+ * A channel type references a particular java class that implements
+ * the IChannel interface.  It also references a channel publishing document
+ * that describes the parameters that must be fed to the channel.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class ChannelType {
 
-  private int channelTypeId;
+  private int id;
   private String javaClass;
   private String name;
   private String descr;
@@ -50,15 +52,15 @@ public class ChannelType {
 
   /**
    * Constructs a channel type.
-   * @param channelTypeId the channel type ID
+   * @param id the channel type ID
    * @param javaClass the fully-qualifed java class name of the channel
    * @param name the name of the channel type
    * @param descr the description of the channel type
    * @param cpdUri the path to the channel publishing document, an XML file ending in .cpd
    * @throws java.lang.Exception
    */
-  public ChannelType(int channelTypeId, String javaClass, String name, String descr, String cpdUri) {
-    this.channelTypeId = channelTypeId;
+  public ChannelType(int id, String javaClass, String name, String descr, String cpdUri) {
+    this.id = id;
     this.javaClass = javaClass;
     this.name = name;
     this.descr = descr;
@@ -66,14 +68,14 @@ public class ChannelType {
   }
 
   // Getter methods
-  public int getChannelTypeId() { return channelTypeId; }
+  public int getId() { return id; }
   public String getJavaClass() { return javaClass; }
   public String getName() { return name; }
   public String getDescription() { return descr; }
   public String getCpdUri() { return cpdUri; }
 
   // Setter methods
-  public void setChannelTypeId(int channelTypeId) { this.channelTypeId = channelTypeId; }
+  public void setId(int id) { this.id = id; }
   public void setJavaClass(String javaClass) { this.javaClass = javaClass; }
   public void setName(String name) { this.name = name; }
   public void setDescription(String descr) { this.descr = descr; }

@@ -47,7 +47,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public class ChannelDefinition {
-  private int channelPublishId = -1;
+  private int id = -1;
   private String chanTitle = "";
   private String chanDesc = "";
   private String chanClass = "";
@@ -90,25 +90,25 @@ public class ChannelDefinition {
 
   }
 
-  public ChannelDefinition(int channelPublishId, String chanTitle) {
-    this.channelPublishId = channelPublishId;
+  public ChannelDefinition(int id, String chanTitle) {
+    this.id = id;
     this.chanTitle = chanTitle;
   }
 
-  public ChannelDefinition(int channelPublishId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
+  public ChannelDefinition(int id, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
     java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
     String chanHasAbout, String chanName, String chanFName) {
-      this(channelPublishId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
+      this(id, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
             RDBMServices.dbFlag(chanEditable), RDBMServices.dbFlag(chanHasHelp),
             RDBMServices.dbFlag(chanHasAbout),
             chanName, chanFName);
   }
 
-  public ChannelDefinition(int channelPublishId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
+  public ChannelDefinition(int id, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
     java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, boolean chanEditable, boolean chanHasHelp,
     boolean chanHasAbout, String chanName, String chanFName) {
 
-    this.channelPublishId = channelPublishId;
+    this.id = id;
     this.chanTitle = chanTitle;
     this.chanDesc = chanDesc;
     this.chanClass = chanClass;
@@ -128,7 +128,7 @@ public class ChannelDefinition {
   }
 
   // Getter methods
-  public int getPublishId() { return channelPublishId; }
+  public int getId() { return id; }
   public String getFName() { return chanFName; }
   public String getName() { return chanName; }
   public String getDescription() { return chanDesc; }
@@ -157,7 +157,7 @@ public class ChannelDefinition {
     Element channel = doc.createElement("channel");
     ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(idTag, channel);
     channel.setAttribute("ID", idTag);
-    channel.setAttribute("chanID", channelPublishId + "");
+    channel.setAttribute("chanID", id + "");
     channel.setAttribute("timeout", chanTimeout + "");
     channel.setAttribute("name", chanName);
     channel.setAttribute("title", chanTitle);
