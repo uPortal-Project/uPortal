@@ -54,8 +54,7 @@ public class PADaoToAFADaoDelegator implements PersonAttributeDao {
      * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
      */
     public Set getAttributeNames() {
-        //TODO Could some of the AttributesFromAttributesDao impls provide this information?
-        return null;
+        return this.attributesFromAttributesDao.getAttributeNames();
     }
     
     /**
