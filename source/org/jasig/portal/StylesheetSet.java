@@ -116,7 +116,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param title
-   * @return
+   * @return Source
    */
   public Source getStylesheet (String title) {
     Hashtable media_table = (Hashtable)title_table.get(title);
@@ -141,7 +141,7 @@ public class StylesheetSet extends SAX2FilterImpl {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return Source
    */
   public Source getStylesheet () {
     // this is painful ... browse through all possible
@@ -172,7 +172,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param media
-   * @return
+   * @return Source
    */
   public Source getStylesheet (String title, String media) {
     Hashtable media_table = (Hashtable)title_table.get(title);
@@ -193,7 +193,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param media
-   * @return
+   * @return Source
    */
   public Source getStylesheet (String title, BrowserInfo bi) throws PortalException {
     String media = getMedia(bi);
@@ -231,7 +231,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param req
-   * @return
+   * @return Stylesheet URI
    */
   public String getStylesheetURI (HttpServletRequest req) throws PortalException {
     return  (getStylesheetURI(getMedia(req)));
@@ -240,7 +240,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param bi
-   * @return
+   * @return Stylesheet URI
    */
   public String getStylesheetURI (BrowserInfo bi) throws PortalException {
     return  getStylesheetURI(getMedia(bi));
@@ -250,7 +250,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param req
-   * @return
+   * @return Stylesheet URI
    */
   public String getStylesheetURI (String title, HttpServletRequest req) throws PortalException {
     return  getStylesheetURI(title, getMedia(req));
@@ -260,7 +260,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param bi
-   * @return
+   * @return Stylesheet URI
    */
   public String getStylesheetURI (String title, BrowserInfo bi) throws PortalException {
     return  getStylesheetURI(title, getMedia(bi));
@@ -298,7 +298,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param media
-   * @return
+   * @return Stylesheet Description
    */
   protected StylesheetDescription getStylesheetDescription (String media) throws GeneralRenderingException {
     if (media == null) {
@@ -333,7 +333,7 @@ public class StylesheetSet extends SAX2FilterImpl {
    * put your documentation comment here
    * @param title
    * @param req
-   * @return
+   * @return Source
    */
   public Source getStylesheet (String title, HttpServletRequest req) throws PortalException {
     //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
@@ -343,7 +343,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param req
-   * @return
+   * @return Source
    */
   public Source getStylesheet (HttpServletRequest req) throws PortalException {
     StylesheetDescription sd = getStylesheetDescription(getMedia(req));
@@ -358,7 +358,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param media
-   * @return
+   * @return Source
    */
   public Source getStylesheetByMedia (String media) throws GeneralRenderingException {
     //	LogService.instance().log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
@@ -469,7 +469,7 @@ public class StylesheetSet extends SAX2FilterImpl {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return Hashtable
    */
   public Hashtable getTitleTable () {
     return  title_table;
@@ -478,7 +478,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param req
-   * @return
+   * @return String
    */
   protected String getMedia (HttpServletRequest req) throws PortalException
   {
@@ -488,7 +488,7 @@ public class StylesheetSet extends SAX2FilterImpl {
   /**
    * put your documentation comment here
    * @param bi
-   * @return
+   * @return String
    */
   protected String getMedia (BrowserInfo bi) throws PortalException {
     return(getMediaProps().getValue(bi.getUserAgent()));

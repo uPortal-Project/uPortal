@@ -214,7 +214,7 @@ public class PortalSessionManager extends HttpServlet {
   /**
    * This function determines if a given request needs to be redirected
    * @param req
-   * @return
+   * @return String
    */
   private String doRedirect (HttpServletRequest req) {
     HttpSession session = req.getSession();
@@ -432,7 +432,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * Overloaded method
      * @param name
-     * @return
+     * @return parameter
      */
     public String getParameter (String name) {
       String[] value_array = this.getParameterValues(name);
@@ -444,7 +444,7 @@ public class PortalSessionManager extends HttpServlet {
 
     /**
      * Overloaded method
-     * @return
+     * @return parameter names
      */
     public Enumeration getParameterNames () {
       return  this.parameters.keys();

@@ -286,7 +286,7 @@ public class UserLayoutManager implements IUserLayoutManager {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return boolean
      */
     public boolean isUserAgentUnmapped () {
         return  unmapped_user_agent;
@@ -362,7 +362,7 @@ public class UserLayoutManager implements IUserLayoutManager {
      * helper function that allows to determine the name of a channel or
      *  folder in the current user layout given their Id.
      * @param nodeId
-     * @return
+     * @return node name
      */
     public String getNodeName (String nodeId) {
         Element node = uLayoutXML.getElementById(nodeId);

@@ -35,14 +35,14 @@ public class ChannelStaticData extends Hashtable {
   /**
    * Similar to the {@link #getParameter(String)}, but can be used to pass things other then strings.
    * @param key
-   * @return
+   * @return Object
    */
   public synchronized Object get (Object key) {
     return  super.get(key);
   }
   /**
    * Returns an instance of the IAuthorizationPrincipal for the IPerson
-   * @return
+   * @return instance of the IAuthorizationPrincipal for the IPerson
    */
   public IAuthorizationPrincipal getAuthorizationPrincipal () {
     String key = "" + getPerson().getID();
@@ -88,14 +88,14 @@ public class ChannelStaticData extends Hashtable {
   }
   /**
    * put your documentation comment here
-   * @return
+   * @return IPerson
    */
   public IPerson getPerson () {
     return  (m_person);
   }
   /**
    * put your documentation comment here
-   * @return
+   * @return timeout
    */
   public long getTimeout () {
     return  (m_timeout);
@@ -105,7 +105,7 @@ public class ChannelStaticData extends Hashtable {
    * Similar to the {@link #setParameter(String,String)}, but can be used to pass things other then strings.
    * @param key
    * @param value
-   * @return
+   * @return Object
    */
   public synchronized Object put (Object key, Object value) {
     return  super.put(key, value);

@@ -414,7 +414,7 @@ public class MediaManager {
 
     /**
      * put your documentation comment here
-     * @return
+     * @return String
      */
     String getDefaultValue () {
       return  ((String[])attVec.elementAt(0))[1];

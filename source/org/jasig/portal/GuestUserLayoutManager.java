@@ -440,7 +440,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
 
     /**
      * Returns current profile
-     * @return
+     * @return UserProfile
      */
     public UserProfile getCurrentProfile (String sessionId) {
         return  this.getUserPreferences(sessionId).getProfile();
@@ -544,7 +544,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
      * helper function that allows to determine the name of a channel or
      *  folder in the current user layout given their Id.
      * @param nodeId
-     * @return
+     * @return node name
      */
     public String getNodeName (String nodeId,String sessionId) {
         Element node = getUserLayout(sessionId).getElementById(nodeId);
