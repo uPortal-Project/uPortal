@@ -42,6 +42,7 @@ import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
@@ -84,6 +85,7 @@ public class RDBMServices {
   public static IJoinQueryString joinQuery = null;
   public static final String PORTAL_DB = "PortalDb"; // JNDI name for portal database
   public static final String PERSON_DB = "PersonDb"; // JNDI name for person database
+  private static boolean useToDate = false; // Use TO_DATE() function
 
   static {
     try {
@@ -174,6 +176,27 @@ public class RDBMServices {
             stmt.close();
           }
         } catch (SQLException sqle) {
+          // I guess not
+          // Try TO_DATE()
+          try {
+            SimpleDateFormat oracleTime = new SimpleDateFormat(
+                "yyyy MM dd HH:mm:ss");
+            sql = "SELECT USER_ID FROM UP_USER WHERE LST_CHAN_UPDT_DT = TO_DATE('2001 01 01 00:00', 'YYYY MM DD HH24:MI:SS') AND USER_ID=0";
+            Statement stmt = con.createStatement();
+            try {
+              ResultSet rs = stmt.executeQuery(sql);
+              try {
+                rs.close();
+              } catch (SQLException sqle2) {
+              }
+            } finally {
+              stmt.close();
+            }
+
+            useToDate = true;
+          } catch (SQLException sqle3) {
+          }
+
         }
 
         /**
@@ -202,7 +225,8 @@ public class RDBMServices {
           "/" + getJdbcDriver() + " (" + md.getDriverVersion() +
           ") database/driver supports:\n     Prepared statements=" + supportsPreparedStatements +
           ", Outer joins=" + supportsOuterJoins + ", Transactions=" + supportsTransactions + tranMsg +
-          ", '{ts' metasyntax=" + tsEnd.equals("}"));
+          ", '{ts' metasyntax=" + tsEnd.equals("}") + ", TO_DATE()=" +
+          useToDate);
       } finally {
         releaseConnection(con);
       }
@@ -418,7 +442,15 @@ public class RDBMServices {
    * @return SQL TimeStamp
    */
   public static final String sqlTimeStamp(long date) {
-    return tsStart + "'" + new java.sql.Timestamp(date).toString() + "'" + tsEnd;
+    if (useToDate) {
+      SimpleDateFormat toDateTime = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+
+      return "TO_DATE('" + toDateTime.format(new Date(date)) +
+        "', 'YYYY MM DD HH24:MI:SS')";
+    } else {
+      return tsStart + "'" + new java.sql.Timestamp(date).toString() + "'" +
+        tsEnd;
+    }
   }
 
   /**
