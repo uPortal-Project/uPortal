@@ -142,10 +142,10 @@
        'cd' into the newly-created 'lib' directory and place the
        following .jar files in it:
 
-          activation.jar    jaxp.jar     log4j-core.jar   w3c.jar
-          cos.jar           jndi.jar     mail.jar         xalan.jar
-          dxml.jar          ldap.jar     oromatcher11.jar xerces.jar
-          hsql.jar          ldapbp.jar   parser.jar       xml4j.jar
+       activation.jar hsql.jar ldapbp.jar       parser.jar       xalan.jar
+       classes12.jar  jaxp.jar log4j-core.jar   providerutil.jar xerces.jar
+       cos.jar        jndi.jar mail.jar         servlet.jar      xml4j.jar
+       dxml.jar       ldap.jar oromatcher11.jar w3c.jar
 
        traveling around the Internet and finding all of these can be
        tedious, which is one of the reasons why Yale makes the 'quick
@@ -320,10 +320,8 @@
             <exclude name="${props}/rdbm.properties"/>
             -->
          </fileset>
+
       </copy>
-
-      <!-- copy database stuff  -->
-
 
       <!-- Copy 3rd party .jar files into the build directory structure  -->
       <copy todir="${build}/${dist}/WEB-INF/lib">
@@ -339,20 +337,30 @@
 
    <target name="classes" depends="stage">
       <echo message="Compiling classes to ${build}/${dist}/WEB-INF/classes"/>
-      <echo message="using CLASSPATH ${classpath}"/>
-      <javac srcdir="${classsrc}" 
-         destdir="${build}/${dist}/WEB-INF/classes"
-         classpath="${classpath}"
-         excludes="**/*.bak"
-         deprecation="on" 
-         debug="on"
-      />
+
+
+
+      <javac srcdir="${classsrc}"
+             destdir="${build}/${dist}/WEB-INF/classes"
+             debug="on"
+             deprecation="on">
+             <!-- set up the CLASSPATH  -->
+             <classpath>
+                <pathelement path="${classpath}"/>
+                   <fileset dir="${lib}">
+                      <include name="**/*.jar"/>
+                   </fileset>
+                <pathelement location="${build}/${dist}/WEB-INF/classes"/>
+             </classpath>
+      </javac>
+
    </target>
 
    <target name="dist" depends="classes">
    <!-- make a .war file we can place into the server's webapps directory  -->
       <jar jarfile="${build}/${dist}/uPortal.war" 
-        basedir="${build}/${dist}"
+           excludes="**/uPortal.war"
+           basedir="${build}/${dist}"
       />
    </target>
 
