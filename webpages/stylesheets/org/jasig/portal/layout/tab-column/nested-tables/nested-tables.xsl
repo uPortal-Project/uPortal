@@ -16,13 +16,13 @@
   <xsl:template match="layout_fragment">
     <html>
       <head>
-        <title>uPortal 2.0</title>
+        <title><xsl:value-of select="content/channel/@name"/></title>
 	<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"></META>
 	<META HTTP-EQUIV="pragma" CONTENT="no-cache"></META>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
       </head>
-      <body>
+      <body class="uportal-background-content">
         <xsl:for-each select="content//channel">
           <xsl:apply-templates select="."/>
         </xsl:for-each>
@@ -399,7 +399,7 @@
           </xsl:if>          
           
           <!-- Minimize/maximize button -->          
-          <xsl:if test="not(@minimizable='false') and not(//focused)">
+          <xsl:if test="not(//focused)">
             <xsl:choose>
               <xsl:when test="@minimized='true'">
                 <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false">
@@ -415,11 +415,9 @@
           </xsl:if>
           
           <!-- Detach button -->
-          <xsl:if test="not(@detachable='false')">
-            <a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
-              <img alt="detach" src="{$mediaPath}/{$skin}/controls/detach.gif" width="16" height="16" border="0"/>
-            </a>
-          </xsl:if>
+          <a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
+            <img alt="detach" src="{$mediaPath}/{$skin}/controls/detach.gif" width="16" height="16" border="0"/>
+          </a>
 
           <!-- Remove button -->
           <xsl:if test="not(@unremovable='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
