@@ -228,8 +228,8 @@ public class PortletStateManager {
 	
 	
 	private static String encodeQueryString ( String text ) {
-		String result = text.replaceAll("&","-and-");
-		result = result.replaceAll("=","-eq-");
+		String result = text.replaceAll("&","_and_");
+		result = result.replaceAll("=","_eq_");
 		if ( UPFileSpec.PORTAL_URL_SEPARATOR.equals(".") )
 		 result = result.replaceAll("\\.","__");
 		else
@@ -239,8 +239,8 @@ public class PortletStateManager {
 
 
 	private static String decodeQueryString ( String text ) {
-		String result = text.replaceAll("-and-","&");
-		result = result.replaceAll("-eq-","=");
+		String result = text.replaceAll("_and_","&");
+		result = result.replaceAll("_eq_","=");
 		result = result.replaceAll("__",UPFileSpec.PORTAL_URL_SEPARATOR);
 		return result;
 	}		
