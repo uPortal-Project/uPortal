@@ -31,22 +31,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.channels;
 
-import org.xml.sax.DocumentHandler;
+package  org.jasig.portal.channels;
 
-import org.jasig.portal.IChannel;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.PortalEvent;
+import  org.xml.sax.DocumentHandler;
+import  org.jasig.portal.IChannel;
+import  org.jasig.portal.ChannelRuntimeData;
+import  org.jasig.portal.ChannelRuntimeProperties;
+import  org.jasig.portal.PortalException;
+import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.PortalEvent;
 
-import javax.naming.InitialContext;
-import javax.naming.Context;
-import java.util.Hashtable;
 
 /**
  * A base class from which channels implementing IChannel interface can be derived.
@@ -54,51 +53,50 @@ import java.util.Hashtable;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public abstract class BaseChannel implements IChannel
-{
+public abstract class BaseChannel
+    implements IChannel {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
 
-  public ChannelRuntimeProperties getRuntimeProperties ()
-  {
-    return new ChannelRuntimeProperties ();
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public ChannelRuntimeProperties getRuntimeProperties () {
+    return  new ChannelRuntimeProperties();
   }
 
-  public void receiveEvent (PortalEvent ev)
-  {
-  }
+  /**
+   * put your documentation comment here
+   * @param ev
+   */
+  public void receiveEvent (PortalEvent ev) {}
 
-  public void setStaticData (ChannelStaticData sd) throws PortalException
-  {
+  /**
+   * put your documentation comment here
+   * @param sd
+   * @exception PortalException
+   */
+  public void setStaticData (ChannelStaticData sd) throws PortalException {
     this.staticData = sd;
   }
 
-  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
-  {
+  /**
+   * put your documentation comment here
+   * @param rd
+   * @exception PortalException
+   */
+  public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
     this.runtimeData = rd;
   }
 
-  public void renderXML (DocumentHandler out) throws PortalException
-  {
-  }
-  
-  protected InitialContext getPortalContext()
-  {
-    Hashtable environment = new Hashtable(1);
-
-    // Set up the path
-    environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
-    
-    try
-    {
-      InitialContext ctx = new InitialContext(environment);
-      
-      return(ctx);
-    }
-    catch(Exception e)
-    {
-      e.printStackTrace(System.err);
-      return(null);
-    }
-  }
+  /**
+   * put your documentation comment here
+   * @param out
+   * @exception PortalException
+   */
+  public void renderXML (DocumentHandler out) throws PortalException {}
 }
+
+
+

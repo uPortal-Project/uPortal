@@ -31,12 +31,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import java.util.Map;
-import org.jasig.portal.security.*;
+package  org.jasig.portal;
+
+import  java.util.Map;
+import  org.jasig.portal.security.PermissionManager;
+import  org.jasig.portal.security.IPerson;
+import  org.jasig.portal.security.ISecurityContext;
+import  javax.naming.InitialContext;
+import  javax.naming.Context;
+import  java.util.Hashtable;
+
 
 /**
  * Used to store channel configuration items and parameters.
@@ -44,22 +53,22 @@ import org.jasig.portal.security.*;
  * @version $Revision$
  * @author Peter Kharchenko
  */
-public class ChannelStaticData extends java.util.Hashtable
-{
-  private String sChannelID = null;
-  private long l_timeOut=java.lang.Long.MAX_VALUE;
-  private IPerson person = null;
-  private ISecurityContext securityContext= null;
+public class ChannelStaticData extends java.util.Hashtable {
+  private InitialContext m_portalContext = null;
+  private String m_channelGlobalID = null;
+  private String m_channelInstanceID = null;
+  private long m_timeout = java.lang.Long.MAX_VALUE;
+  private IPerson m_person = null;
+  private ISecurityContext m_securityContext = null;
 
-  // Parameters are strings!
   /**
    * Set information contained in a channel <param> element
+   * Parameters are strings!
    * @param key param name
    * @param value param value
    */
-  public synchronized String setParameter (String key, String value)
-  {
-    return (String) super.put (key, value);
+  public synchronized String setParameter (String key, String value) {
+    return  (String)super.put(key, value);
   }
 
   /**
@@ -67,83 +76,140 @@ public class ChannelStaticData extends java.util.Hashtable
    * @param key param name
    * @return param value
    */
-  public synchronized String getParameter (String key)
-  {
-    return (String) super.get (key);
+  public synchronized String getParameter (String key) {
+    return  (String)super.get(key);
   }
 
-  // if you need to pass Objects, use this
   /**
+   * If you need to pass Objects, use this
    * Similar to the {@link #setParameter(String,String)}, but can be used to pass things other then strings.
+   * @param key
+   * @param value
+   * @return 
    */
-  public synchronized Object put (Object key, Object value)
-  {
-    return super.put (key, value);
+  public synchronized Object put (Object key, Object value) {
+    return  super.put(key, value);
   }
 
   /**
    * Similar to the {@link #getParameter(String)}, but can be used to pass things other then strings.
+   * @param key
+   * @return 
    */
-  public synchronized Object get (Object key)
-  {
-    return super.get (key);
+  public synchronized Object get (Object key) {
+    return  super.get(key);
   }
 
   /**
    * Copy parameter list from a Map
    * @param params a map of params
    */
-  public void setParameters (Map params)
-  {
+  public void setParameters (Map params) {
     // copy a Map
     this.putAll(params);
   }
 
   /**
-   * Sets the channel ID
+   * Sets the channel instance ID
    * @param sChannelID the unique channelID
    */
-  public void setChannelID (String sChID)
-  {
-    this.sChannelID = sChID;
+  public void setChannelID (String sChID) {
+    m_channelInstanceID = sChID;
   }
 
   /**
    * Gets the channel ID
    * @return the channel's ID
    */
-  public String getChannelID ()
-  {
-    return sChannelID;
+  public String getChannelID () {
+    return  (m_channelInstanceID);
   }
 
-  public void setTimeout (long value)
-  {
-    this.l_timeOut=value;
+  /**
+   * put your documentation comment here
+   * @param   String channelGlobalID
+   */
+  public void setChannelGlobalID (String channelGlobalID) {
+    m_channelGlobalID = channelGlobalID;
   }
 
-  public long getTimeout ()
-  {
-    return this.l_timeOut;
+  /**
+   * put your documentation comment here
+   */
+  public String getChannelGlobalID () {
+    return  (m_channelGlobalID);
   }
 
-  public IPerson getPerson ()
-  {
-    return this.person;
-  }
-  public void setPerson (IPerson per)
-  {
-    this.person=per;
+  /**
+   * put your documentation comment here
+   * @param value
+   */
+  public void setTimeout (long value) {
+    m_timeout = value;
   }
 
-  public ISecurityContext getSecurityContext ()
-  {
-    return this.securityContext;
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public long getTimeout () {
+    return  (m_timeout);
   }
-  public void setSecurityContext (ISecurityContext sc)
-  {
-    this.securityContext=sc;
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public IPerson getPerson () {
+    return  (m_person);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param per
+   */
+  public void setPerson (IPerson person) {
+    m_person = person;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public ISecurityContext getSecurityContext () {
+    return  (m_securityContext);
+  }
+
+  /**
+   * put your documentation comment here
+   * @param sc
+   */
+  public void setSecurityContext (ISecurityContext securitContext) {
+    m_securityContext = securitContext;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public InitialContext getPortalContext () {
+    if (m_portalContext != null) {
+      return  (m_portalContext);
+    } 
+    else {
+      Hashtable environment = new Hashtable(1);
+      // Set up the path
+      environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
+      try {
+        InitialContext ctx = new InitialContext(environment);
+        return  (ctx);
+      } catch (Exception e) {
+        e.printStackTrace(System.err);
+        return  (null);
+      }
+    }
   }
 }
+
 
 

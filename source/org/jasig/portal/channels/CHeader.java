@@ -40,6 +40,7 @@ package  org.jasig.portal.channels;
 
 import  java.net.URL;
 import  java.util.Hashtable;
+import  javax.naming.InitialContext;
 import  javax.naming.Context;
 import  javax.naming.NamingException;
 import  org.jasig.portal.UtilitiesBean;
@@ -89,7 +90,9 @@ public class CHeader extends BaseChannel {
     if (fullName != null && !fullName.equals("Guest")) {
       Context globalIDContext = null;
       try {
-        globalIDContext = (Context)getPortalContext().lookup("/users/" + staticData.getPerson().getID() + "/channel-ids");
+        // Get the context that holds the global IDs for this user
+        globalIDContext = (InitialContext)staticData.getPortalContext().lookup("/users/" + staticData.getPerson().getID()
+            + "/channel-ids");
         // Create <timestamp-short> element under <header>
         Element publishChanidEl = doc.createElement("publish-chanid");
         publishChanidEl.appendChild(doc.createTextNode((String)globalIDContext.lookup("/portal/publish/general")));
