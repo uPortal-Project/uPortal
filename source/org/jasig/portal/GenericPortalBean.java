@@ -31,14 +31,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-import java.io.*;
+package  org.jasig.portal;
+
+import  javax.servlet.*;
+import  javax.servlet.jsp.*;
+import  javax.servlet.http.*;
+import  java.io.*;
+
 
 /**
  * This is a base class for all the Portal beans to extend.
@@ -48,10 +52,9 @@ import java.io.*;
  * @author John Laker
  * @version $Revision$
  */
-public class GenericPortalBean
-{
+public class GenericPortalBean {
   private static String sPortalBaseDir = null;
-  private static IDBImpl dbImplObject = null;
+  private static IUserLayoutStore m_userLayoutStore = null;
   public boolean DEBUG = false;
 
   /**
@@ -59,8 +62,7 @@ public class GenericPortalBean
    * to use relative paths in the application for loading properties files, etc.
    * @param sPathToPortal
    */
-  public static void setPortalBaseDir (String sPathToPortal)
-  {
+  public static void setPortalBaseDir (String sPathToPortal) {
     sPortalBaseDir = sPathToPortal;
   }
 
@@ -68,35 +70,35 @@ public class GenericPortalBean
    * Get the top level directory for the portal.  This makes it possible
    * to use relative paths in the application for loading properties files, etc.
    */
-  public static String getPortalBaseDir ()
-  {
-    return sPortalBaseDir;
+  public static String getPortalBaseDir () {
+    return  sPortalBaseDir;
   }
 
   /**
-   * Set the DBImpl object that the portal should use
-   * @param dbImpl
+   * put your documentation comment here
+   * @param userLayoutStore
    */
-  public static void setDbImpl(IDBImpl dbImpl)
-  {
-    dbImplObject = dbImpl;
+  public static void setUserLayoutStore (IUserLayoutStore userLayoutStore) {
+    m_userLayoutStore = userLayoutStore;
   }
+
   /**
-   * Get the dbImpl object for the portal
-   * @return dbImpl
+   * Get the UserLayoutStore object for the portal
+   * @return 
    */
-  public static IDBImpl getDbImplObject()
-  {
-    return dbImplObject;
+  public static IUserLayoutStore getUserLayoutStore () {
+    return  m_userLayoutStore;
   }
 
   /**
    * Just a simple debug method that prints
    * messages to System.out
    */
-  public void debug(String message)
-  {
-    if (DEBUG) System.out.println ("DEBUG: " + message);
+  public void debug (String message) {
+    if (DEBUG)
+      System.out.println("DEBUG: " + message);
   }
 }
+
+
 
