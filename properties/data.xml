@@ -5421,630 +5421,630 @@
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.0</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>0</value></column>
+        <column><name>TARGET</name><value>local.0</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>9</value></column>
+        <column><name>TARGET</name><value>local.9</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>8</value></column>
+        <column><name>TARGET</name><value>local.8</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>7</value></column>
+        <column><name>TARGET</name><value>local.7</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>6</value></column>
+        <column><name>TARGET</name><value>local.6</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>5</value></column>
+        <column><name>TARGET</name><value>local.5</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>4</value></column>
+        <column><name>TARGET</name><value>local.4</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>3</value></column>
+        <column><name>TARGET</name><value>local.3</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>2</value></column>
+        <column><name>TARGET</name><value>local.2</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>1</value></column>
+        <column><name>TARGET</name><value>local.1</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>0</value></column>
+        <column><name>TARGET</name><value>local.0</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>14</value></column>
+        <column><name>TARGET</name><value>local.14</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>13</value></column>
+        <column><name>TARGET</name><value>local.13</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>12</value></column>
+        <column><name>TARGET</name><value>local.12</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>11</value></column>
+        <column><name>TARGET</name><value>local.11</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.3</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>10</value></column>
+        <column><name>TARGET</name><value>local.10</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.1</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>13</value></column>
+        <column><name>TARGET</name><value>local.13</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.1</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>12</value></column>
+        <column><name>TARGET</name><value>local.12</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.1</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>9</value></column>
+        <column><name>TARGET</name><value>local.9</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.1</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>8</value></column>
+        <column><name>TARGET</name><value>local.8</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.1</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>7</value></column>
+        <column><name>TARGET</name><value>local.7</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.1</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>6</value></column>
+        <column><name>TARGET</name><value>local.6</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.1</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>2</value></column>
+        <column><name>TARGET</name><value>local.2</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>13</value></column>
+        <column><name>TARGET</name><value>local.13</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>12</value></column>
+        <column><name>TARGET</name><value>local.12</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>9</value></column>
+        <column><name>TARGET</name><value>local.9</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>8</value></column>
+        <column><name>TARGET</name><value>local.8</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>7</value></column>
+        <column><name>TARGET</name><value>local.7</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>6</value></column>
+        <column><name>TARGET</name><value>local.6</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>5</value></column>
+        <column><name>TARGET</name><value>local.5</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>2</value></column>
+        <column><name>TARGET</name><value>local.2</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.2</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>1</value></column>
+        <column><name>TARGET</name><value>local.1</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>64</value></column>
+        <column><name>TARGET</name><value>local.64</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>63</value></column>
+        <column><name>TARGET</name><value>local.63</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>62</value></column>
+        <column><name>TARGET</name><value>local.62</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>61</value></column>
+        <column><name>TARGET</name><value>local.61</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>60</value></column>
+        <column><name>TARGET</name><value>local.60</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>59</value></column>
+        <column><name>TARGET</name><value>local.59</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>58</value></column>
+        <column><name>TARGET</name><value>local.58</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>57</value></column>
+        <column><name>TARGET</name><value>local.57</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>56</value></column>
+        <column><name>TARGET</name><value>local.56</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>55</value></column>
+        <column><name>TARGET</name><value>local.55</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>54</value></column>
+        <column><name>TARGET</name><value>local.54</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>53</value></column>
+        <column><name>TARGET</name><value>local.53</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>52</value></column>
+        <column><name>TARGET</name><value>local.52</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>51</value></column>
+        <column><name>TARGET</name><value>local.51</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>VIEW</value></column>
-        <column><name>TARGET</name><value>50</value></column>
+        <column><name>TARGET</name><value>local.50</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>64</value></column>
+        <column><name>TARGET</name><value>local.64</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>63</value></column>
+        <column><name>TARGET</name><value>local.63</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>62</value></column>
+        <column><name>TARGET</name><value>local.62</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>61</value></column>
+        <column><name>TARGET</name><value>local.61</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>60</value></column>
+        <column><name>TARGET</name><value>local.60</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>64</value></column>
+        <column><name>TARGET</name><value>local.64</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>63</value></column>
+        <column><name>TARGET</name><value>local.63</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>62</value></column>
+        <column><name>TARGET</name><value>local.62</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>61</value></column>
+        <column><name>TARGET</name><value>local.61</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>60</value></column>
+        <column><name>TARGET</name><value>local.60</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>59</value></column>
+        <column><name>TARGET</name><value>local.59</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>58</value></column>
+        <column><name>TARGET</name><value>local.58</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>57</value></column>
+        <column><name>TARGET</name><value>local.57</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>56</value></column>
+        <column><name>TARGET</name><value>local.56</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>55</value></column>
+        <column><name>TARGET</name><value>local.55</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>54</value></column>
+        <column><name>TARGET</name><value>local.54</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>53</value></column>
+        <column><name>TARGET</name><value>local.53</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>52</value></column>
+        <column><name>TARGET</name><value>local.52</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>ADD/REMOVE</value></column>
-        <column><name>TARGET</name><value>51</value></column>
+        <column><name>TARGET</name><value>local.51</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>59</value></column>
+        <column><name>TARGET</name><value>local.59</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>58</value></column>
+        <column><name>TARGET</name><value>local.58</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>57</value></column>
+        <column><name>TARGET</name><value>local.57</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>56</value></column>
+        <column><name>TARGET</name><value>local.56</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>55</value></column>
+        <column><name>TARGET</name><value>local.55</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>54</value></column>
+        <column><name>TARGET</name><value>local.54</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>53</value></column>
+        <column><name>TARGET</name><value>local.53</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>52</value></column>
+        <column><name>TARGET</name><value>local.52</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>51</value></column>
+        <column><name>TARGET</name><value>local.51</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>14</value></column>
+        <column><name>TARGET</name><value>local.14</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>13</value></column>
+        <column><name>TARGET</name><value>local.13</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>12</value></column>
+        <column><name>TARGET</name><value>local.12</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>11</value></column>
+        <column><name>TARGET</name><value>local.11</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>10</value></column>
+        <column><name>TARGET</name><value>local.10</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>9</value></column>
+        <column><name>TARGET</name><value>local.9</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>8</value></column>
+        <column><name>TARGET</name><value>local.8</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>7</value></column>
+        <column><name>TARGET</name><value>local.7</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>6</value></column>
+        <column><name>TARGET</name><value>local.6</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>5</value></column>
+        <column><name>TARGET</name><value>local.5</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>4</value></column>
+        <column><name>TARGET</name><value>local.4</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>3</value></column>
+        <column><name>TARGET</name><value>local.3</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>2</value></column>
+        <column><name>TARGET</name><value>local.2</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>1</value></column>
+        <column><name>TARGET</name><value>local.1</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
         <column><name>OWNER</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
         <column><name>PRINCIPAL</name><value>3.local.4</value></column>
         <column><name>ACTIVITY</name><value>SELECT</value></column>
-        <column><name>TARGET</name><value>0</value></column>
+        <column><name>TARGET</name><value>local.0</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
     </rows>
@@ -6439,10 +6439,9 @@
      <row>
         <column><name>GROUP_ID</name><value>4</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
-        <column><name>MEMBER_KEY</name><value>6</value></column>
+        <column><name>MEMBER_KEY</name><value>developer</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
-
      -->
 
      <!-- Channel categories -->
