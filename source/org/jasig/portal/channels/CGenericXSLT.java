@@ -35,7 +35,11 @@
 
 package org.jasig.portal.channels;
 
+import org.jasig.portal.*;
+import org.jasig.portal.utils.XSLT;
 import org.xml.sax.DocumentHandler;
+import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.File;
@@ -46,8 +50,6 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.MalformedURLException;
-import org.jasig.portal.*;
-import org.jasig.portal.utils.XSLT;
 
 /**
  * <p>A channel which transforms XML for rendering in the portal.</p>
@@ -83,7 +85,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   protected String xslUri;
   protected ChannelRuntimeData runtimeData;
   protected String media;
-    MediaManager mm;
+  protected MediaManager mm;
   protected static String fs = File.separator;
   protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
   protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
@@ -117,22 +119,22 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     String xmlUri = runtimeData.getParameter("xmlUri");
 
     if (xmlUri != null)
-       this.xmlUri = xmlUri;
+      this.xmlUri = xmlUri;
 
     String sslUri = runtimeData.getParameter("sslUri");
 
     if (sslUri != null)
-       this.sslUri = sslUri;
+      this.sslUri = sslUri;
 
     String xslTitle = runtimeData.getParameter("xslTitle");
 
     if (xslTitle != null)
-       this.xslTitle = xslTitle;
+      this.xslTitle = xslTitle;
 
     String xslUri = runtimeData.getParameter("xslUri");
 
     if (xslUri != null)
-       this.xslUri = xslUri;
+      this.xslUri = xslUri;
 
     media = runtimeData.getMedia();
   }
@@ -148,27 +150,33 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     return new ChannelRuntimeProperties ();
   }
 
-  // Set some channel properties.
+  // Set some channel properties -- going away
   public ChannelSubscriptionProperties getSubscriptionProperties ()
   {
-    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    csb.setDefaultDetachWidth ("550");
-    csb.setDefaultDetachHeight ("450");
-    return csb;
+    return new ChannelSubscriptionProperties ();
   }
 
   public void renderXML (DocumentHandler out) throws PortalException
   {
     String xml;
+    Document xmlDoc;
     sslUri = UtilitiesBean.fixURI(sslUri);
 
     try
     {
-      xml = UtilitiesBean.getContentsAsString(xmlUri);
+      org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
+      org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
+      domParser.setEntityResolver(dtdResolver);
+      domParser.parse(UtilitiesBean.fixURI(xmlUri));
+      xmlDoc = domParser.getDocument();
     }
-    catch (Exception e)
+    catch (IOException e)
     {
       throw new ResourceMissingException (xmlUri, "", e.getMessage());
+    }
+    catch (SAXException se)
+    {
+      throw new GeneralRenderingException("Problem parsing " + xmlUri + ": " + se);
     }
 
     runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
@@ -176,24 +184,25 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
     try
     {
       if (xslUri != null)
-        XSLT.transform(xml, new URL(xslUri), out, runtimeData);
+        XSLT.transform(xmlDoc, new URL(xslUri), out, runtimeData);
       else
       {
         if (xslTitle != null)
-          XSLT.transform(xml, new URL(sslUri), out, runtimeData, xslTitle, media);
+          XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, xslTitle, media);
         else
-          XSLT.transform(xml, new URL(sslUri), out, runtimeData, media);
+          XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, media);
       }
     }
-    catch (org.xml.sax.SAXException e)
+    catch (SAXException se)
     {
-
-      throw new GeneralRenderingException("problem performing the transformation");
-    } catch (IOException i) {
-        StringWriter sw = new StringWriter();
-        i.printStackTrace(new PrintWriter(sw));
-        sw.flush();
-        throw new GeneralRenderingException(sw.toString());
+      throw new GeneralRenderingException("Problem performing the transformation.");
+    }
+    catch (IOException ioe)
+    {
+      StringWriter sw = new StringWriter();
+      ioe.printStackTrace(new PrintWriter(sw));
+      sw.flush();
+      throw new GeneralRenderingException(sw.toString());
     }
   }
 }

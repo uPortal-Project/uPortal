@@ -39,6 +39,7 @@ import org.jasig.portal.Logger;
 import org.jasig.portal.UtilitiesBean;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileNotFoundException;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -52,6 +53,13 @@ public class DTDResolver implements EntityResolver
 {
   private String pathToDtd = UtilitiesBean.getPortalBaseDir() + "webpages" + File.separator + "dtd" + File.separator;
   private String dtdName = null;
+
+  /**
+   * Constructor for DTDResolver
+   */
+  public DTDResolver ()
+  {
+  }
 
   /**
    * Constructor for DTDResolver
@@ -70,23 +78,26 @@ public class DTDResolver implements EntityResolver
    */
   public InputSource resolveEntity (String publicId, String systemId)
   {
+    FileReader fr = null;
     InputSource inSrc = null;
 
-    if (systemId != null)
+    try
     {
-      if (systemId.indexOf(dtdName) != -1)
+      if (systemId != null)
       {
-        try
-        {
-          FileReader fr = new FileReader(pathToDtd + dtdName);
-          inSrc = new InputSource(fr);
-        }
-        catch (Exception e)
-        {
-          Logger.log(Logger.ERROR, "Problem opening " + dtdName + ". " + e.getMessage());
-        }
+        if (dtdName != null && systemId.indexOf(dtdName) != -1)
+          fr = new FileReader(pathToDtd + dtdName);
+        else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd"))
+          fr = new FileReader(pathToDtd + "rss-0.91.dtd");
+
+        inSrc = new InputSource(fr);
       }
     }
+    catch (FileNotFoundException fnfe)
+    {
+      Logger.log(Logger.ERROR, "Problem opening " + dtdName + ". " + fnfe.getMessage());
+    }
+
     return inSrc;
   }
 }
