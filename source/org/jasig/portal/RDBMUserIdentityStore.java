@@ -781,6 +781,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       insertStmt.executeUpdate();  
                   }
                   rs.close();
+                  rs = null;
                   queryStmt.close();
                   queryStmt = null;
 
@@ -797,7 +798,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   uPortalUID = newUID;
                                       
               } finally {
-                  try { rs.close(); } catch (Exception e) {}
+                  try { if (rs != null) rs.close(); } catch (Exception e) {}
               }                              
           } finally {
               try { if (queryStmt != null) queryStmt.close(); } catch (Exception e) {}
