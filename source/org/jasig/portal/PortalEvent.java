@@ -31,9 +31,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
+
+package  org.jasig.portal;
+
 
 /**
  * Signifies an event generated at the Layout level that is passed on to a channel.
@@ -47,48 +51,48 @@ package org.jasig.portal;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class PortalEvent
-{
-    // framework-generated events
+public class PortalEvent {
+  // Framework-generated events
   public static final int RENDERING_DONE = 0;
   public static final int SESSION_DONE = 1;
   public static final int UNSUBSCRIBE = 2;
   public static final int LOAD_HIGH = 3;
   public static final int MEMORY_LOW = 4;
-
-    // layout-generated events
+  // Layout-generated events
   public static final int EDIT_BUTTON_EVENT = 5;
   public static final int HELP_BUTTON_EVENT = 6;
   public static final int DETACH_BUTTON_EVENT = 7;
   public static final int ABOUT_BUTTON_EVENT = 8;
-
-  private static final String [] eventName =
-  {
-      "renderingDone",
-      "sessionDone",
-      "unsubscribe",
-      "loadHigh",
-      "memoryLow",
-      "editButtonEvent",
-      "helpButtonEvent",
-      "detachButtonEvent",
-      "aboutButtonEvent",
+  private static final String[] eventName =  {
+    "renderingDone", "sessionDone", "unsubscribe", "loadHigh", "memoryLow", "editButtonEvent", "helpButtonEvent", "detachButtonEvent", 
+        "aboutButtonEvent", 
   };
-
   private int event;
 
-  public PortalEvent (int ev)
-  {
+  /**
+   * put your documentation comment here
+   * @param   int ev
+   */
+  public PortalEvent (int ev) {
     event = ev;
   }
 
-  public String getEventName ()
-  {
-    return eventName[event];
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public String getEventName () {
+    return  eventName[event];
   }
 
-  public int getEventNumber ()
-  {
-    return event;
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public int getEventNumber () {
+    return  event;
   }
 }
+
+
+
