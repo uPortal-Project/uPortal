@@ -19,23 +19,6 @@ import  java.io.File;
  * @version 1.0
  */
 public class RegisterStylesheet {
-  private static String portalBaseDir;
-
-  /**
-   * put your documentation comment here
-   */
-  private static void setPortalBaseDir () {
-    String portalBaseDirParam = System.getProperty("portal.home");
-    if (portalBaseDirParam != null) {
-      portalBaseDir = portalBaseDirParam;
-      PortalSessionManager.setPortalBaseDir(portalBaseDir);
-      // Should obtain implementation in a different way!!
-    }
-    else {
-      System.out.println("Please set the system parameter portal.home.  For example: java -Dportal.home=/usr/local/portal");
-      java.lang.System.exit(1);
-    }
-  }
 
   /**
    * put your documentation comment here
@@ -48,7 +31,6 @@ public class RegisterStylesheet {
    * @param args
    */
   public static void main (String[] args) {
-    setPortalBaseDir();
     String stylesheetURI = null;
     String stylesheetDescriptionURI = null;
     int stylesheetId = -1;
