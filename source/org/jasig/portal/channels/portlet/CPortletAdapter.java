@@ -106,7 +106,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     private static PortletContainer portletContainer;
     private static ServletConfig servletConfig;
     
-    private static final String uniqueContainerName = "pluto-in-uPortal";
+    private static final String uniqueContainerName = "Pluto-in-uPortal";
     
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
@@ -206,7 +206,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     // the portlet-to-channel adapter.
                     Collection values = new ArrayList(1);
                     values.add(prefVal);
-                    preferences.add(prefName, values, true);
+                    preferences.add(prefName, values);
                 }
             }
             
