@@ -18,7 +18,7 @@ public interface ILayoutManager {
 	
 	public ILayoutNode addNode ( IUserLayoutNodeDescription nodeDesc, INodeId parentId, INodeId nextId );
 	
-	public ILayoutNode moveNode ( INodeId nodeId, INodeId parentId, INodeId nextId );
+	public boolean moveNode ( INodeId nodeId, INodeId parentId, INodeId nextId );
 	
 	public boolean deleteNode ( INodeId nodeId );
 	
