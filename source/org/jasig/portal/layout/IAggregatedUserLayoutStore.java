@@ -180,5 +180,13 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @exception PortalException if an error occurs
      */
     public String getNextFragmentId() throws PortalException;
+    
+	/**
+			* Returns the priority range defined for the given user group
+			* @param groupKey a <code>String</code> group key
+			* @return a int array containing the min and max priority values
+			* @exception PortalException if an error occurs
+			*/
+    public int[] getPriorityRange ( String groupKey ) throws PortalException;
 
 }

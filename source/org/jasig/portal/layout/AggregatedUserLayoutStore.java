@@ -3325,5 +3325,32 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 			RDBMServices.releaseConnection(con);
 		  }	
 	}
+	
+    /**
+			* Returns the priority range defined for the given user group
+			* @param groupKey a <code>String</code> group key
+			* @return a int array containing the min and max priority values
+			* @exception PortalException if an error occurs
+			*/
+	public int[] getPriorityRange ( String groupKey ) throws PortalException {
+		Connection con = RDBMServices.getConnection();
+			try {
+		        int[] range = new int[2];
+				String query = "SELECT MIN_PRIORITY, MAX_PRIORITY FROM UP_GROUP_PRIORITY_RANGE WHERE GROUP_KEY='"+groupKey+"'"; 
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query);
+				if ( rs.next() ) {
+				  range[0] = rs.getInt(1);
+				  range[1] = rs.getInt(2);	 
+				}
+				rs.close();  
+		        if ( stmt != null ) stmt.close();
+		        return ( range[1] > 0 ) ? range : new int[] {};
+		    } catch ( Exception e ) {
+				   throw new PortalException(e);
+			   } finally {
+				   RDBMServices.releaseConnection(con);
+				 }		
+	}
 
 }
