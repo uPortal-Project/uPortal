@@ -11,7 +11,7 @@
 
   <xsl:template match="/">
     <table width="100%" border="0">
-      <xsl:apply-templates select="CGroupsManager/descendant::*[name()='group'][@id=$grpViewId]" />
+      <xsl:apply-templates select="//group[@id=$grpViewId]" />
     </table>
   </xsl:template>
   <xsl:template match="group[@id=$grpViewId]">
