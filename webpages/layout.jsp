@@ -54,7 +54,12 @@
 <html>
 <head>
 <title>Portal Framework</title>
+<!-- Uncomment if you want a unified color scheme for all users and comment out the write body style below
 <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
+
+Then add these tags in place of the write body style method call below
+</head><body>
+-->
 <script language="JavaScript">
 <!--hide
 
@@ -65,12 +70,10 @@ function openWin(url, title, width, height)
 
 //stop hiding-->
 </script>
-
 <% layoutBean.writeBodyStyle (request, response, out); %>
 
-</head>
 
-
+>>>>>>> 1.9.2.1
 <!-- Header -->
 <table border="0" cellpadding="0" cellspacing="1" width="100%">
   <tr>
