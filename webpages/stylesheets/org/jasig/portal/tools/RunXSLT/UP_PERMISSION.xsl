@@ -54,8 +54,31 @@ Version $Revision$
 		<row>
 			<xsl:for-each select="column">
 				<xsl:choose>
-					<!-- in case of PRINCIPAL split into two columns -->
-					<xsl:when test="name='PRINCIPAL' and substring-before(./value,'.')='3'">
+					<!--
+  in case of PRINCIPAL split into two columns for the
+  group entity type
+-->
+					<xsl:when test="name='PRINCIPAL' and substring-before(./value,'.')='2'">
+						<column>
+							<name>PRINCIPAL_TYPE</name>
+							<value>
+								<xsl:value-of select="substring-before(./value,'.')"/>
+							</value>
+						</column>
+						<column>
+							<name>PRINCIPAL_KEY</name>
+							<value>
+								<xsl:variable name="oldKey" select="substring-after(./value,'.')"/>
+								<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.XML'))//row[column[name='USER_ID' and value=$oldKey]]"/>
+								<xsl:value-of select="$userRow/column[name='USER_NAME']/value"/>
+							</value>
+						</column>
+					</xsl:when>
+					<!--
+  in case of PRINCIPAL split into two columns for
+  all other group entity types
+-->
+					<xsl:when test="name='PRINCIPAL'">
 						<column>
 							<name>PRINCIPAL_TYPE</name>
 							<value>
@@ -67,23 +90,8 @@ Version $Revision$
 							<value>local.<xsl:value-of select="substring-after(./value,'.')"/></value>
 						</column>
 					</xsl:when>
-					<xsl:when test="name='PRINCIPAL' and substring-before(./value,'.')='2'">
-						<column>
-							<name>PRINCIPAL_TYPE</name>
-							<value>
-								<xsl:value-of select="substring-before(./value,'.')"/>
-							</value>
-						</column>
-						<column>
-							<name>PRINCIPAL_KEY</name>
-							<value>
-							<xsl:variable name="oldKey" select="substring-after(./value,'.')"/>
-							<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.xml'))//row[column[name='USER_ID' and value=$oldKey]]"/>
-							<xsl:value-of select="$userRow/column[name='USER_NAME']/value"/>
-							</value>
-						</column>
-					</xsl:when>
-					<!-- target needs lacal. inserted when Groups manager is the owner -->
+
+					<!-- target needs local. inserted when Groups manager is the owner -->
 					<xsl:when test="name='TARGET' and ../column[name='OWNER' and value='org.jasig.portal.channels.groupsmanager.CGroupsManager']">
 						<column>
 							<name>TARGET</name>
@@ -98,4 +106,4 @@ Version $Revision$
 			</xsl:for-each>
 		</row>
 	</xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->
+</xsl:stylesheet>
