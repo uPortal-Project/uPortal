@@ -28,7 +28,7 @@
 -->
 
 
-<project name="uPortal_2.3.patches" default="compile" basedir=".">
+<project name="uPortal" default="compile" basedir=".">
 
 
 <!-- ===================== Property Definitions =========================== -->
@@ -381,7 +381,7 @@
    description="Delete old build and dist directories">
     <delete dir="${build.home}"/>
     <delete dir="${dist.home}"/>
-    <!-- <delete dir="${deploy.home}"/> -->
+    <delete dir="${deploy.home}"/>
   </target>
 
 
@@ -600,9 +600,9 @@
   <target name="initportal" 
    description="Runs all the targets necessary to deploy the portal and prepare the portal database">
     <echo message="Initializing uPortal"/> 
-    <antcall target="deploy"/> <!--  
+    <antcall target="deploy"/>   
     <antcall target="db"/>   
-    <antcall target="i18n-db"/>   -->
+    <antcall target="i18n-db"/>   
     <antcall target="pubchan">
       <param name="channel" value="all"/>
     </antcall>   
