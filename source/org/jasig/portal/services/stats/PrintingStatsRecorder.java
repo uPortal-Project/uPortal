@@ -35,7 +35,9 @@
 
 package org.jasig.portal.services.stats;
 
+import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
 
 /**
@@ -79,6 +81,16 @@ public class PrintingStatsRecorder extends MessageStatsRecorder {
     String msg = super.getMessageForChannelDefinitionRemoved(person, channelDef);
     System.out.println(msg);
   }  
+  
+  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    String msg = super.getMessageForChannelAddedToLayout(person, profile, channelDesc);
+    System.out.println(msg);
+  }    
+  
+  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    String msg = super.getMessageForChannelRemovedFromLayout(person, profile, channelDesc);
+    System.out.println(msg);
+  }   
 }
 
 

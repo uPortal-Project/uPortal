@@ -35,7 +35,9 @@
 
 package org.jasig.portal.services.stats;
 
+import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
 
 /**
@@ -99,5 +101,20 @@ public interface IStatsRecorder {
    * @param channelDef, the channel being removed
    */
   public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef);
-    
+
+  /**
+   * Called when a channel is being added to a user layout
+   * @param person, the person adding the channel
+   * @param profile, the profile of the layout to which the channel is added
+   * @param channelDesc, the channel being subscribed to
+   */
+  public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);
+  
+  /**
+   * Called when a channel is being removed from a user layout
+   * @param person, the person removing the channel
+   * @param profile, the profile of the layout to which the channel is removed   
+   * @param channelDesc, the channel being removed from a user layout
+   */
+  public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
 }
