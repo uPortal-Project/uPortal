@@ -3,48 +3,47 @@
 <head>
   <title>Guide to Working with Portlets in uPortal 2.3</title>
   <meta http-equiv="content-type">
-  <link rel="stylesheet" href="../../uportal.css">
+  <link href="../../uportal.css" rel="stylesheet">
 </head>
 <body style="background-color: rgb(255, 255, 255);">
-<table width="100%" cellpadding="0" cellspacing="0">
+<table cellspacing="0" cellpadding="0" width="100%">
   <tbody>
     <tr>
-      <td colspan="3" valign="bottom" align="left"><img width="592"
- height="87" border="0" alt="uPortal by JA-SIG"
- src="../../images/uportal-head.gif"> </td>
+      <td align="left" valign="bottom" colspan="3"><img
+ src="../../images/uportal-head.gif" alt="uPortal by JA-SIG" border="0"
+ height="87" width="592"> </td>
     </tr>
     <tr>
-      <td><img width="1" height="4" border="0" alt="."
- src="../../images/spacer.gif"> </td>
+      <td><img src="../../images/spacer.gif" alt="." border="0"
+ height="4" width="1"> </td>
     </tr>
   </tbody>
 </table>
-<table border="0" width="100%" cellpadding="5" cellspacing="0">
+<table cellspacing="0" cellpadding="5" width="100%" border="0">
   <tbody>
     <tr>
-      <td bgcolor="#ccccff" width="150" valign="top"> <img height="4"
- border="0" src="../../images/spacer.gif"> <br>
-      <p><a href="http://www.ja-sig.org/" class="sidelinks"><b> JA-SIG
+      <td valign="top" width="150" bgcolor="#ccccff"> <img
+ src="../../images/spacer.gif" border="0" height="4"> <br>
+      <p><a class="sidelinks" href="http://www.ja-sig.org/"><b> JA-SIG
 Home</b></a></p>
-      <p><a href="../../index.html" class="sidelinks"><b> About uPortal</b></a></p>
-      <p><a href="../../docs.html" class="sidelinks"><b> Documentation</b></a></p>
-      <p><a href="../../administrators/index.html" class="sidelinks"><b>Getting
+      <p><a class="sidelinks" href="../../index.html"><b> About uPortal</b></a></p>
+      <p><a class="sidelinks" href="../../docs.html"><b> Documentation</b></a></p>
+      <p><a class="sidelinks" href="../../administrators/index.html"><b>Getting
 Started</b></a></p>
-      <p><a href="../../developers/index.html" class="sidelinks"><b>Developers</b></a></p>
-      <p><a href="../index.html" class="sidelinks"><b> Implementors</b></a></p>
-      <p><a href="../../users/index.html" class="sidelinks"><b> Users</b></a></p>
-      <p><a href="../../architecture/index.html" class="sidelinks"><b>Background</b></a></p>
-      <p><a href="../../release/index.html" class="sidelinks"><b>
-Release</b></a></p>
-      <p><img height="93" width="145" border="0" alt=""
- src="../../images/mellon.gif"> </p>
+      <p><a class="sidelinks" href="../../developers/index.html"><b>Developers</b></a></p>
+      <p><a class="sidelinks" href="../index.html"><b> Implementors</b></a></p>
+      <p><a class="sidelinks" href="../../users/index.html"><b> Users</b></a></p>
+      <p><a class="sidelinks" href="../../architecture/index.html"><b>Background</b></a></p>
+      <p><a class="sidelinks" href="../../release/index.html"><b>Release</b></a></p>
+      <p><img src="../../images/mellon.gif" alt="" border="0"
+ width="145" height="93"> </p>
       </td>
 <!-- main body goes in this table cell  (see BELOW)   --> <td
- valign="top"> <img alt="." border="0"
- src="../../images/orange-pixel.gif" width="692" height="4"> <a
- href="workingWithPortlets_prt.html"> <img align="right"
- alt="Printable version of this document" height="20" width="86"
- border="0" src="../../images/print_this.gif"> </a> <br>
+ valign="top"> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> <a
+ href="workingWithPortlets_prt.html"> <img
+ src="../../images/print_this.gif" border="0" width="86" height="20"
+ alt="Printable version of this document" align="right"> </a> <br>
 <!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
       <h1 style="text-align: center;">Guide to Working with Portlets in
 uPortal 2.3</h1>
@@ -55,6 +54,7 @@ uPortal 2.3</h1>
       <a href="#Deploying_Portlets">Deploying Portlets</a><br>
       <a href="#Publishing_Portlets">Publishing Portlets</a><br>
       <a href="#Portlet_Caching">Portlet Caching</a><br>
+      <a href="#User_Information">User Information</a><br>
       <a href="#Future_of_Portlets_in_uPortal">Future of Portlets in
 uPortal</a><br>
       <h2><a name="Introduction"></a>Introduction</h2>
@@ -220,6 +220,25 @@ activities happens again.&nbsp; Therefore, simply clicking refresh on
 your browser will not cause the Portlet to render itself again.&nbsp;
 The optional Portlet caching settings mentioned in the Portlet
 Specification are not implemented at this time.<br>
+      <h2><a name="User_Information"></a>User Information</h2>
+The accessibility of user information (person attributes) is not yet
+available in uPortal 2.3.&nbsp;&nbsp; This feature, when completed will
+be made
+available in a 2.3.x release.&nbsp; You will be able to access a user
+attribute with the following code: <br>
+      <pre wrap=""><code>Map userInfo = (Map)request.getAttribute(PortletRequest.USER_INFO);<br>String givenName = (String)userInfo.get("user.name.given");<br>String lastName = (String)userInfo.get("user.name.last");<br></code></pre>
+The Portlet Specification says that you should be able to map user
+attribute names declared in the portlet.xml file at deployment
+time.&nbsp;
+In uPortal 2.3, this feature will not be available.&nbsp; Instead, you
+will
+have to use the <code>portlet.xml</code> file to specify user
+attributes from the set of person attributes definied in
+portlet.xml.&nbsp;
+Only the attributes definied in portlet.xml will be accessible to your
+portlet.&nbsp; Full support of deployment-time mapping will be
+available in
+uPortal 3.0.<br>
       <h2><a name="Future_of_Portlets_in_uPortal"></a>Future of
 Portlets in
 uPortal</h2>
@@ -235,39 +254,39 @@ More will be added to this section as the design matures.<br>
       <br>
       <br>
 <!-- end cut this section to put into jasig table cell format --> <br>
-<!-- end of main body table cell --> <img alt="." border="0"
- src="../../images/orange-pixel.gif" width="692" height="4"> </td>
+<!-- end of main body table cell --> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> </td>
     </tr>
   </tbody>
 </table>
 <!-- page footer -->
-<table width="100%" cellpadding="0" cellspacing="0">
+<table cellspacing="0" cellpadding="0" width="100%">
   <tbody>
     <tr>
       <td align="center">&nbsp;</td>
     </tr>
     <tr>
-      <td align="center"><img alt="." border="0" width="1"
- src="../../images/spacer.gif" height="3"> <br>
-      <font size="1" face="Verdana, Arial, sans-serif"><a
- href="http://www.ja-sig.org/">JA-SIG Home</a> <img border="0"
- width="8" src="../../images/diamond-lo.gif" alt="*" height="13"> <a
- href="../../index.html"> About uPortal</a> <img border="0" width="8"
- src="../../images/diamond-lo.gif" alt="*" height="13"> <a
- href="../../faq.html">FAQ</a> <img border="0" width="8"
- src="../../images/diamond-lo.gif" alt="*" height="13"> <a
- href="../download.html">Download</a> <img border="0" width="8"
- src="../../images/diamond-lo.gif" alt="*" height="13"> <a
- href="../../docs.html">Documentation</a> <img border="0" width="8"
- src="../../images/diamond-lo.gif" alt="*" height="13"> <a
- href="../../getinv.html">Getting Involved</a> <img border="0"
- width="8" src="../../images/diamond-lo.gif" alt="*" height="13"> <br>
-      <a href="../../cvs.html">Code Repository</a> <img border="0"
- width="8" src="../../images/diamond-lo.gif" alt="*" height="13"> <a
- href="../../bugs.html">Reporting Bugs</a> <img border="0" width="8"
- src="../../images/diamond-lo.gif" alt="*" height="13"> <a
- href="../../license.html">License</a> <img border="0" width="8"
- src="../../images/diamond-lo.gif" alt="*" height="13"> </font></td>
+      <td align="center"><img height="3" src="../../images/spacer.gif"
+ width="1" border="0" alt="."> <br>
+      <font face="Verdana, Arial, sans-serif" size="1"><a
+ href="http://www.ja-sig.org/">JA-SIG Home</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../index.html"> About uPortal</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../faq.html">FAQ</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../download.html">Download</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../docs.html">Documentation</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../getinv.html">Getting Involved</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <br>
+      <a href="../../cvs.html">Code Repository</a> <img height="13"
+ alt="*" src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../bugs.html">Reporting Bugs</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../license.html">License</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> </font></td>
     </tr>
   </tbody>
 </table>

@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <meta http-equiv="content-type"
- content="text/html; charset=ISO-8859-1">
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
   <title>Guide to Working with Portlets in uPortal 2.3</title>
 </head>
 <body>
@@ -15,6 +15,7 @@ uPortal 2.3</h1>
 <a href="#Deploying_Portlets">Deploying Portlets</a><br>
 <a href="#Publishing_Portlets">Publishing Portlets</a><br>
 <a href="#Portlet_Caching">Portlet Caching</a><br>
+<a href="#User_Information">User Information</a><br>
 <a href="#Future_of_Portlets_in_uPortal">Future of Portlets in uPortal</a><br>
 <h2><a name="Introduction"></a>Introduction</h2>
 uPortal is committed to supporting open standards including the <a
@@ -175,6 +176,22 @@ activities happens again.&nbsp; Therefore, simply clicking refresh on
 your browser will not cause the Portlet to render itself again.&nbsp;
 The optional Portlet caching settings mentioned in the Portlet
 Specification are not implemented at this time.<br>
+<h2><a name="User_Information"></a>User Information</h2>
+The accessibility of user information (person attributes) is not yet
+available in uPortal 2.3.&nbsp;&nbsp; This feature, when completed will
+be made available in a 2.3.x release.&nbsp; You will be able to access
+a user attribute with the following code: <br>
+<pre wrap=""><code>Map userInfo = (Map)request.getAttribute(PortletRequest.USER_INFO);<br>String givenName = (String)userInfo.get("user.name.given");<br>String lastName = (String)userInfo.get("user.name.last");<br></code></pre>
+The Portlet Specification says that you should be able to map user
+attribute names declared in the portlet.xml file at deployment
+time.&nbsp; In uPortal 2.3, this feature will not be available.&nbsp;
+Instead, you will have to use the <code>portlet.xml</code> file to
+specify user attributes from the set of person attributes definied in
+portlet.xml.&nbsp; Only the attributes definied in portlet.xml will be
+accessible to your portlet.&nbsp; Full support of deployment-time
+mapping will be available in uPortal 3.0.<br>
+<pre wrap=""><code></code><code></code></pre>
+<pre wrap=""><code></code><code></code></pre>
 <h2><a name="Future_of_Portlets_in_uPortal"></a>Future of Portlets in
 uPortal</h2>
 uPortal 3.0 will continue to support Portlets using the Pluto Portlet
