@@ -35,28 +35,26 @@
 
 package org.jasig.portal;
 
-import javax.servlet.http.*;
 import java.util.Hashtable;
 import java.util.Map;
-import java.io.File;
+import java.util.Locale;
 import java.util.Enumeration;
-import javax.servlet.ServletOutputStream;
-import java.io.IOException;
-import  org.jasig.portal.car.CarResources;
-import  org.jasig.portal.car.CarClassLoader;
+import org.jasig.portal.car.CarResources;
+import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.services.LogService;
 import com.oreilly.servlet.multipart.Part;
 
 /**
- * A set of runtime data accessable by a channel.
+ * A set of runtime data accessible by a channel.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
 public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private BrowserInfo binfo=null;
+    private Locale[] locales = null;
     private UPFileSpec channelUPFile;
-    private String baseActionURL = null; // Not sure if this will stay
+    private String baseActionURL = null;
     private String httpRequestMethod=null;
     private String keywords=null;
     private boolean renderingAsRoot=false;
@@ -78,9 +76,11 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     public Object clone() {
       ChannelRuntimeData crd = new ChannelRuntimeData();
       crd.binfo = binfo;
+      crd.locales = locales;
       crd.channelUPFile = channelUPFile;
       crd.baseActionURL = baseActionURL;
       crd.httpRequestMethod = httpRequestMethod;
+      crd.keywords = keywords;
       crd.renderingAsRoot = renderingAsRoot;
       crd.putAll(this);
       return crd;
@@ -156,6 +156,24 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         return  binfo;
     }
 
+    /**
+     * Setter method for array of locales. A channel should
+     * make an effort to render itself according to the 
+     * order of the locales in this array.
+     * @param locales an ordered list of locales
+     */
+    public void setLocales(Locale[] locales) {
+        this.locales = locales;
+    }
+
+    /**
+     * Accessor method for ordered set of locales.
+     * @return locales an ordered list of locales
+     */
+    public Locale[] getLocales() {
+        return locales;
+    }    
+    
     /**
      * A convenience method for setting a whole set of parameters at once.
      * The values in the Map must be object arrays. If (name, value[]) is in
@@ -354,11 +372,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         }
                         
         url=upfs.getUPFile();
-            /*
-        } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
-        }
-            */
+
         return url;
     }
 
