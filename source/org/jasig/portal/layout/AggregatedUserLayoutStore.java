@@ -2988,18 +2988,16 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
             profileId;
         log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + subSelectString);
-        int layoutId;
+        int layoutId = 0;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
-          rs.next();
-          layoutId = rs.getInt(1);
-          if (rs.wasNull()) {
-            layoutId = 0;
+          if (rs.next()) {
+              layoutId = rs.getInt(1);
           }
         } finally {
           rs.close();
         }
-
+        
         if (layoutId == 0) { // First time, grab the default layout for this user
           String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
           log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
