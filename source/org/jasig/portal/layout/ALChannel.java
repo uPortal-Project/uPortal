@@ -62,6 +62,6 @@ public class ALChannel extends ALNode {
      * @return a node type
      */
     public int getNodeType() {
-        return CHANNEL_TYPE;
+        return CHANNEL;
     }
 }
