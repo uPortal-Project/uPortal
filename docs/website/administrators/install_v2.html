@@ -99,17 +99,20 @@
          <dt>
          <a href="#uportal-require"> Requirements </a>
          </dt>
- 	      <dt>
-         <a href="#uportal-compile"> Compiling and Deploying uPortal </a>
-         </dt>
-         <dt>
-	      <dt>
-         <a href="#uportal-database"> Setting up a Database </a>
-         </dt>
-			<dt>
+	 <dt>
          <a href="#uportal-webapp"> Setting up a Web Application Environment </a>
          </dt>
                         
+ 	 <dt>
+         <a href="#uportal-compile"> Compiling and Deploying uPortal </a>
+         </dt>
+         <dt>
+	 <dt>
+         <a href="#uportal-database"> Setting up a Database </a>
+         </dt>
+	 <dt>
+         <a href="#complete-install"> Complete the Installation </a>
+         </dt>
       </dl>
    </dd>
    <dt>
@@ -138,9 +141,9 @@ Quick Start or uPortal Only?
 UPortal is available either as a &quot;Quick Start&quot; release or as a
 &quot;uPortal-only&quot; distribution.  Both releases are available from
 the 
-<a href="http://mis105.mis.udel.edu" target="_top"> <i> JA-SIG uPortal website</i> </a>
+<a href="http://www.uportal.org" target="_top"> <i> JA-SIG uPortal website</i> </a>
 in the 
-<a href="http://mis105.mis.udel.edu/ja-sig/uportal/download.html" target="_top"> <i> download</i> </a>
+<a href="http://www.uportal.org/download.html" target="_top"> <i> download</i> </a>
 section.
 </p>
             
@@ -531,6 +534,18 @@ the documentation page at:
 <p> The uPortal system can be deployed such that a database from several 
 different vendors may be used.  Installation and configuration information
 about databases can be found in the:</p>
+<p>
+<a href="database.html">Database Installation and Configuration Document</a>
+</p>
+            
+<h4 class="title"> <a name="complete-install"></a> Complete the Installation</h4>
+<p> 
+Once you have compiled and deployed uPortal and setup a database for it
+to utilize, you still need to publish the channel fragments and
+internationalize the database.  This can be done in one step by issuing
+the `ant initportal` command.  Once this command completes without
+errors, your uPortal instance should be fully functional.
+</p>
 <p>
 <a href="database.html">Database Installation and Configuration Document</a>
 </p>
