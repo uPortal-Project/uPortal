@@ -7,7 +7,6 @@ package org.jasig.portal.layout.al;
 
 import java.util.Set;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayoutCommandManager;
 import org.jasig.portal.layout.al.common.ILayoutSubtree;
 import org.jasig.portal.layout.al.common.LayoutEventListener;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
@@ -27,7 +26,7 @@ import org.xml.sax.ContentHandler;
  */
 public class AggregatedLayoutImpl implements  IAggregatedLayout {
 	
-    private ILayoutCommandManager layoutCommandManager;
+    private IAggregatedLayoutCommandManager layoutCommandManager;
     private IRestrictionManager restrictionManager;
     
     // internal representation of an assembled layout
@@ -39,7 +38,10 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
     // assemble user layout from scratch
     public void loadUserLayout() {
         // obtain user fragment, set it to be root
-        // should lost folder (i.e. loose nodes be obtained separately?)
+        IFragment userFragment=fragmentRegistry.getFragment(fragmentRegistry.getUserFragmentId());
+        // seed currentLayout with the user fragment
+        currentLayout=importSubtree(userFragment);        
+        // assume that lost folder is always a part of the user fragment (or should be created automatically upon demand)
         
         // obtain list of all pushed fragments
         
@@ -48,35 +50,50 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
         // perform operations, recording which pushed fragments
         // has been successfully attached
         
+        // attach remaining pushed fragments
     }
     
     protected ILayoutNode addNodeToLostFolder(INode node) throws PortalException {
-      return currentLayout.addNode(node,IALFolder.LOST_FOLDER_ID,null);	
+        // TODO: peterk: depending on how the initial assembly works, we might have to check here
+        // if the node belongs to the same fragment lost folder does, and record "add" operation if
+        // that's not the case.
+        return currentLayout.addNode(node,IALFolder.LOST_FOLDER_ID,null);	
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.ILayout#addNodes(org.jasig.portal.layout.al.common.node.ILayoutNode, org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeId)
      */
     public ILayoutNode addNode(INode node, INodeId parentId, INodeId nextId) throws PortalException {
-    	
-        // attach newly constructed copy to the active layout, checking restrictions first
-    	if ( node != null && restrictionManager.checkAddRestrictions(node,parentId,nextId) ) {
-         IALNode parentNode = (IALNode) getNode(parentId);		
-    	 if ( ((IALNode)node).getFragmentId().equals(parentNode.getFragmentId())) {	
-    	   return currentLayout.addNode(node,parentId,nextId);
-           // if fragmentId of the nodes being attached is not the same as the
-           // fragmentId of the attachment point, place the subtree under the "lost folder" for that fragment
-           // and record appropriate "move" operation.
-    	 } else { 
-    	 	ILayoutNode newNode = addNodeToLostFolder(node);
-    	 	if (layoutCommandManager.moveNode(newNode.getId(),parentId,nextId) &&
-    	 	    currentLayout.moveNode(newNode.getId(),parentId,nextId) );
-    	 	  return newNode;
-    	 }
-    	} 
+        // the operation can only be performed if the central modification on the fragment of the
+        // parent node is allowed
+        if(isCentralModification(parentId)) {
+            IALNode parentNode = (IALNode) getNode(parentId);
+            IFragment fragment=fragmentRegistry.getFragment(parentNode.getFragmentId());
+            IFragmentLocalNodeId localNextNodeId=null;
+            if(nextId!=null) {
+                IALNode nextNode=(IALNode)getNode(nextId);
+                localNextNodeId=nextNode.getFragmentNodeId();
+            }
+            fragment.addNode(node,parentNode.getFragmentNodeId(),localNextNodeId);
+            return currentLayout.addNode(node,parentId,nextId);
+        }
+        return null;
+    } 
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.al.IAggregatedLayout#addLayoutFragment(org.jasig.portal.layout.al.IFragmentId, org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeId)
+     */
+    public ILayoutNode addFragment(IFragmentId fragmentId, INodeId parentId, INodeId nextId) throws PortalException {
+        // no need to check for central modification here - we don't support chained fragment attachment
+        IFragment fragment=fragmentRegistry.getFragment(fragmentId);
+        INode fragmentRootNode=fragment.getNode(fragment.getRootNodeId()); 
+        if(restrictionManager.checkAddRestrictions(fragmentRootNode,parentId,nextId)) {
+            layoutCommandManager.addFragment(fragmentId,parentId,nextId);
+            INode importedNode=importNodes(fragmentRootNode);
+            return currentLayout.addNode(importedNode,parentId,nextId);
+        }
         return null;
     }
-    
     /* (non-Javadoc)
 	 * @see org.jasig.portal.layout.al.ILayout#deleteNode(org.jasig.portal.layout.node.INodeId)
 	 */
@@ -148,14 +165,6 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
 	    // }
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.layout.al.ILayout#updateNode(org.jasig.portal.layout.node.INodeDescription)
-	 */
-	public INodeDescription updateNode(INodeDescription nodeDesc) {
-		 
-		return null;
-	}
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.al.common.ILayoutManagerCommands#updateNode(org.jasig.portal.layout.al.common.node.INodeId, org.jasig.portal.layout.al.common.node.INodeDescription)
@@ -197,6 +206,15 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
         
         return null;
     }
+    
+    /**
+     * Import an entire subtree, creating a copy with existing ids
+     * @param subtree to import
+     * @return a copy of the original subtree with layout ids set
+     */
+    public ILayoutSubtree importSubtree(ILayoutSubtree subtree) {
+        return null;
+    }
     	
 	/**
 	 * Determine if a fragment to which a given node belongs is currently being centrally modified.
@@ -211,14 +229,14 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
 	/**
      * @return Returns the layoutCommandManager.
      */
-    public ILayoutCommandManager getLayoutCommandManager() {
+    public IAggregatedLayoutCommandManager getLayoutCommandManager() {
         return layoutCommandManager;
     }
     /**
      * Secify layout command manager to be used
      * @param layoutCommandManager The layoutCommandManager to set.
      */
-    public void setLayoutCommandManager(ILayoutCommandManager layoutCommandManager) {
+    public void setLayoutCommandManager(IAggregatedLayoutCommandManager layoutCommandManager) {
         this.layoutCommandManager = layoutCommandManager;
     }
     /**
