@@ -427,8 +427,8 @@ public class XSLT
     }
   }
 
-  private static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException
-  {
+    public static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws SAXException, ResourceMissingException
+    {
     // First, check the cache...
     StylesheetRoot stylesheetRoot = (StylesheetRoot)stylesheetRootCache.get(stylesheetURI);
 
