@@ -123,9 +123,9 @@ public class ReferenceAuthorization implements IAuthorization {
    * @param roles
    * @return
    */
-  public int setChannelRoles (int channelID, Vector roles) {
+  public int setChannelRoles (int channelID, org.jasig.portal.security.IAuthorization.RoleAuthorization[] roles) {
     // Don't do anything if no roles were passed in
-    if (roles == null || roles.size() < 1) {
+    if (roles == null || roles.length < 1) {
       return  (0);
     }
     // When changing the channel's roles, we must dump the cache!

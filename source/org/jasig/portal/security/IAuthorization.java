@@ -36,6 +36,7 @@
 package org.jasig.portal.security;
 
 import java.util.Vector;
+import java.util.Date;
 
 import org.jasig.portal.security.IRole;
 import org.jasig.portal.security.IPerson;
@@ -46,11 +47,30 @@ import org.jasig.portal.security.IPerson;
  */
 public interface IAuthorization
 {
+  public class RoleAuthorization implements java.lang.Comparable {
+    String roleName;
+    boolean authorized;
+    Date authorizedDate;
+    public RoleAuthorization(String roleName, boolean authorized, Date authorizedDate) {
+      this.roleName = roleName;
+      this.authorized = authorized;
+      this.authorizedDate = authorizedDate;
+    }
+
+    public String getRoleName() {return roleName;}
+    public boolean getAuthorized() {return authorized;}
+    public Date getAuthorizedDate() {return authorizedDate;}
+
+    public int compareTo(Object o) {
+      return this.roleName.compareTo(((RoleAuthorization)o).roleName);
+    }
+  }
+
   // For the publish mechanism to use
   public boolean isUserInRole(IPerson person, IRole role);
   public Vector  getAllRoles();
   public Vector getChannelRoles(int channelID);
-  public int     setChannelRoles(int channelID, Vector roles);
+  public int     setChannelRoles(int channelID, RoleAuthorization[] roles);
   public boolean canUserPublish(IPerson person);
 
   // For the subscribe mechanism to use

@@ -99,7 +99,7 @@ public interface IUserLayoutStore {
   public boolean isUserInRole(IPerson Person, String role) throws Exception;
   public Vector getAllRoles() throws Exception;
   public void getChannelRoles(Vector roles, int channelID) throws Exception;
-  public int setChannelRoles(int channelID, Vector roles) throws Exception;
+  public int setChannelRoles(int channelID, org.jasig.portal.security.IAuthorization.RoleAuthorization[] roles) throws Exception;
   public void getUserRoles(Vector userRoles, IPerson Person) throws Exception;
   public void addUserRoles(IPerson Person, Vector roles) throws Exception;
   public void removeUserRoles(IPerson Person, Vector roles) throws Exception;

@@ -114,7 +114,7 @@ public class Authorization {
    * @param roles
    * @return
    */
-  public int setChannelRoles (int channelID, Vector roles) {
+  public int setChannelRoles (int channelID, org.jasig.portal.security.IAuthorization.RoleAuthorization[] roles) {
     return  (m_authorization.setChannelRoles(channelID, roles));
   }
 

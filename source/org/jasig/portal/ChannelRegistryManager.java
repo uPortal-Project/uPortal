@@ -159,8 +159,8 @@ public class ChannelRegistryManager {
     chanRegStore.addChannel(ID, publisherID, channelDoc, catIDs);
 
     // Set roles
-    java.util.Vector vRoles = new java.util.Vector(roles);
-    int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(ID, vRoles);
+    org.jasig.portal.security.IAuthorization.RoleAuthorization[] aRoles = (org.jasig.portal.security.IAuthorization.RoleAuthorization[])roles.toArray(new org.jasig.portal.security.IAuthorization.RoleAuthorization[0]);
+    int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(ID, aRoles);
 
     // Approve channel
     chanRegStore.approveChannel(ID, publisherID, new java.sql.Timestamp(System.currentTimeMillis()));

@@ -52,6 +52,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.List;
@@ -265,7 +266,8 @@ public class CChannelManager extends BaseChannel {
         roleSettings.removeRoles();
         if (roles != null) {
           for (int i = 0; i < roles.length; i++) {
-            roleSettings.addSelectedRole(roles[i]);
+            org.jasig.portal.security.IAuthorization.RoleAuthorization ra = new org.jasig.portal.security.IAuthorization.RoleAuthorization(roles[i], true, new Date());
+            roleSettings.addSelectedRole(ra);
           }
         }
       }
@@ -1022,7 +1024,7 @@ public class CChannelManager extends BaseChannel {
     }
 
     protected Set getSelectedRoles() { return selectedRoles; }
-    protected void addSelectedRole(String selectedRole) { selectedRoles.add(selectedRole); }
+    protected void addSelectedRole(org.jasig.portal.security.IAuthorization.RoleAuthorization selectedRole) { selectedRoles.add(selectedRole); }
     protected void removeRoles() { selectedRoles = new TreeSet(); }
     protected void setRoles(Set roles) { selectedRoles = roles; }
 
@@ -1035,7 +1037,8 @@ public class CChannelManager extends BaseChannel {
         Iterator iter = selectedRoles.iterator();
         while (iter.hasNext()) {
           Element selectedRoleE = emptyDoc.createElement("selectedRole");
-          selectedRoleE.appendChild(emptyDoc.createTextNode((String)iter.next()));
+          org.jasig.portal.security.IAuthorization.RoleAuthorization ra= (org.jasig.portal.security.IAuthorization.RoleAuthorization) iter.next();
+          selectedRoleE.appendChild(emptyDoc.createTextNode(ra.getRoleName()));
           selectedRolesE.appendChild(selectedRoleE);
         }
         userSettingsE.appendChild(selectedRolesE);
