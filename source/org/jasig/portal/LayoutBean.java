@@ -9,6 +9,7 @@ import java.util.*;
 import java.text.*;
 import java.sql.*;
 import java.net.*;
+import java.lang.Byte;
 
 import com.objectspace.xml.*;
 
@@ -131,22 +132,30 @@ public class LayoutBean extends GenericPortalBean
       String sATabColor = layout.getAttribute ("activeTabColor");
       String sTabColor = layout.getAttribute ("tabColor");
       String sChanColor = layout.getAttribute ("channelHeadingColor");
-      out.println ("<style>");
-      out.println ("body { color: " + sFgColor + "; background: " + sBgColor + "; }");
+
+      out.println ("  <style type=\"text/css\">");
+      out.println ("    body      { background: " + sBgColor + "; }");
       out.println ("A:link { color: " + sATabColor + "}");
       out.println ("A:visited { color: " + sTabColor + "}");
       out.println ("A:active { color: " + sChanColor + "}");
-      out.println (".PortalTitleText     { text-decoration:none; color: " + sFgColor + ";");
-  out.println ("font-weight:bold; font-family:arial,helvetica,times,courier; font-size:14pt}");
-      out.println (".PortalText          { text-decoration:none; color: " + sFgColor + ";");
-      out.println ("font-weight:plain; font-family:arial,helvetica,times,courier; font-size:12pt}");
-      out.println ("</style></head>");
+      out.println ("    .PortalTitleText { color: " + sFgColor + "}");
+
+      int iBgColor   = Integer.parseInt(sBgColor.substring(1), 16);
+      int iColorMask = Integer.parseInt("FFFFFF", 16);
+
+      iBgColor = iBgColor ^ iColorMask;
+
+      String sPortalTextColor = "#" + Integer.toHexString(iBgColor).toUpperCase();
+
+      out.println ("    .PortalText      { color: " + sPortalTextColor + "}");
+      out.println ("  </style>");
+
+      out.println ("</head>");
 
       /* <BODY> tag is deprecated.   However Netscape does not properly implement the style tag
          and ignores the color setting for the body.   When browser versions do handle this, you should remove
          this redundant body tag code below.  */
-      out.println ("<body bgcolor=" + sBgColor + " text=" + sFgColor + " link=" + sATabColor + " vlink=" + sTabColor + " alink=" + sChanColor + ">");
-
+      out.println ("<body bgcolor=\"" + sBgColor + "\" link=\"" + sATabColor + "\" vlink=\"" + sTabColor + "\" alink=\"" + sChanColor + "\">");
     }
     catch (Exception e)
     {
@@ -221,6 +230,7 @@ public class LayoutBean extends GenericPortalBean
     {
       rdbmService.releaseConnection (con);
     }
+
     return null;
   }
 
@@ -397,7 +407,7 @@ public class LayoutBean extends GenericPortalBean
     try
     {
       out.println ("<!-- Tabs -->");
-      out.println ("<table border=0 width=100% cellspacing=0 cellpadding=0>");
+      out.println ("<table border=0 width=\"100%\" cellspacing=0 cellpadding=0>");
       out.println ("<tr>");
 
       IXml layoutXml = getLayoutXml (req, getUserName (req));
@@ -420,8 +430,8 @@ public class LayoutBean extends GenericPortalBean
         sTabName = tabs[i].getAttribute ("name");
         sBgcolor = i == iTab ? sActiveTabColor : sTabColor;
 
-        out.println ("<td bgcolor=" + sBgcolor + " align=center width=20%>");
-        out.println ("  <table bgcolor=" + sBgcolor + " border=0 width=100% cellspacing=0 cellpadding=2>");
+        out.println ("<td bgcolor=\"" + sBgcolor + "\" align=center width=\"20%\">");
+        out.println ("  <table bgcolor=\"" + sBgcolor + "\" border=0 width=\"100%\" cellspacing=0 cellpadding=2>");
         out.println ("    <tr align=center>");
 
         if (i == iTab)
@@ -479,14 +489,14 @@ public class LayoutBean extends GenericPortalBean
       if (activeTab != null)
       {
         out.println ("<!-- Channels -->");
-        out.println ("<table border=0 cellpadding=0 cellspacing=0 width=100%>");
+        out.println ("<table border=0 cellpadding=0 cellspacing=0 width=\"100%\">");
         out.println ("  <tr>");
 
         IColumn[] columns = activeTab.getColumns ();
 
         for (int iCol = 0; iCol < columns.length; iCol++)
         {
-          out.println ("    <td valign=top width=" + columns[iCol].getAttribute ("width") + ">");
+          out.println ("    <td valign=top width=\"" + columns[iCol].getAttribute ("width") + "\">");
 
           // Get channels for column iCol
           org.jasig.portal.layout.IChannel[] channels = columns[iCol].getChannels ();
@@ -551,26 +561,27 @@ public class LayoutBean extends GenericPortalBean
              String hiddenAttribute = channels[iChan].getAttribute("hidden");
              if(hiddenAttribute != null && hiddenAttribute.equals("false"))
              {
-              out.println ("<table border=0 cellpadding=1 cellspacing=4 width=100%>");
+              out.println ("<table border=0 cellpadding=1 cellspacing=4 width=\"100%\">");
               out.println ("  <tr>");
-              out.println ("    <td bgcolor=cccccc>");
+              out.println ("    <td bgcolor=\"#CCCCCC\">");
 
               // Channel heading
               IXml layoutXml = getLayoutXml (req, getUserName (req));
               ILayout layout = (ILayout) layoutXml.getRoot ();
 
-              out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
+              out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=\"100%\" bgcolor=\"" + layout.getAttribute ("channelHeadingColor") + "\">");
               out.println ("        <tr>");
               out.println ("          <td>");
               out.println ("            <span CLASS=\"PortalTitleText\">&nbsp;" + ch.getName() + "</span>");
               out.println ("          </td>");
-              out.println ("          <td nowrap valign=center align=right>");
+              out.println ("          <td nowrap valign=\"middle\" align=right>");
               out.println ("            &nbsp;");
 
               // Channel control buttons
               if (channels[iChan].getAttribute ("minimized").equals ("true"))
                 out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=maximize\"><img border=0 width=\"18\" height=\"15\" src=\"images/maximize.gif\" alt=\"Maximize\"></a>");
-              else if (ch.isMinimizable ())
+              else
+              if(ch.isMinimizable ())
                 out.println ("<a href=\"layout.jsp?tab=" + iTab + "&column=" + iCol + "&channel=" + iChan + "&resize=minimize\"><img border=0 width=\"18\" height=\"15\" src=\"images/minimize.gif\" alt=\"Minimize\"></a>");
 
               if (ch.isDetachable ())
@@ -591,13 +602,14 @@ public class LayoutBean extends GenericPortalBean
               out.println ("      </table>");
 
               // Channel body
-              out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100%>");
+              out.println ("      <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">");
               out.println ("        <tr>");
-              out.println ("          <td bgcolor=#ffffff>");
+              out.println ("          <td bgcolor=\"#ffffff\">");
 
-              out.println ("            <table border=0 cellpadding=3 cellspacing=0 width=100% bgcolor=#ffffff>");
+              out.println ("            <table border=0 cellpadding=3 cellspacing=0 width=\"100%\" bgcolor=\"#ffffff\">");
               out.println ("              <tr>");
               out.println ("                <td valign=top>");
+              out.println ("                  <div class=\"PortalChannelText\">");
 
               if (channels[iChan].getAttribute ("minimized").equals ("false"))
               {
@@ -609,6 +621,7 @@ public class LayoutBean extends GenericPortalBean
                 // Channel is minimized -- don't render it
               }
 
+              out.println ("                  </div>");
               out.println ("                </td>");
               out.println ("              </tr>");
               out.println ("            </table>");
@@ -697,7 +710,7 @@ public class LayoutBean extends GenericPortalBean
 
       // Fill columns with channels
       out.println ("<table border=0 cellpadding=3 cellspacing=3>");
-      out.println ("<tr bgcolor=#dddddd>");
+      out.println ("<tr bgcolor=\"#dddddd\">");
 
       for (int iCol = 0; iCol < columns.length; iCol++)
       {
@@ -1007,6 +1020,7 @@ public class LayoutBean extends GenericPortalBean
             String sParamValue = parameters[iParam].getAttribute ("value");
             chConfig.setParameter (sParamName, sParamValue);
           }
+
           chConfig.setChannelID (sKey);
         }
 
@@ -1015,9 +1029,14 @@ public class LayoutBean extends GenericPortalBean
 
         // If necessary, wrap an IXMLChannel to be compatible with 1.0's IChannel
         if (channelObject instanceof org.jasig.portal.IChannel)
+        {
           ch = (org.jasig.portal.IChannel) channelObject;
-        else if (channelObject instanceof org.jasig.portal.IXMLChannel)
+        }
+        else
+        if(channelObject instanceof org.jasig.portal.IXMLChannel)
+        {
           ch = new XMLChannelWrapper ((org.jasig.portal.IXMLChannel) channelObject);
+        }
 
         // Send the channel its parameters
         ch.init (chConfig);
@@ -1048,9 +1067,15 @@ public class LayoutBean extends GenericPortalBean
     try
     {
       if (htChannelInstances != null)
+      {
+        // Uncomment this line to enable channel instance caching
+        //  Caching channels may cause memory problems
         ch = (org.jasig.portal.IChannel) htChannelInstances.get (sChannelID);
+      }
       else
+      {
         Logger.log (Logger.ERROR, "Cannot use channel ID to lookup a channel instance.  Channel instances have not yet been created.");
+      }
 
       return ch;
     }
