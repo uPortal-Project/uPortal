@@ -45,7 +45,7 @@ public interface ILayoutBean
   // Channels
   public void minimizeChannel (HttpServletRequest req);
   public void maximizeChannel (HttpServletRequest req);
-  public void addChannel (HttpServletRequest req, org.jasig.portal.layout.IChannel channel);
+  public void addChannel (HttpServletRequest req);
   public void removeChannel (HttpServletRequest req);
   public void moveChannelLeft (HttpServletRequest req);
   public void moveChannelRight (HttpServletRequest req);
