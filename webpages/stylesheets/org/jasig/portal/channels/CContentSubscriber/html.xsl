@@ -1429,7 +1429,7 @@ Version $Revision$
         <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
-              <img src="{$mediaPath}/condensed.gif" width="16" height="16" border="0" alt="" title=""/>
+              <img src="{$mediaPath}/collapsed.gif" width="16" height="16" border="0" alt="" title=""/>
             </td>
             <td class="uportal-navigation-category">
               <img src="{$mediaPath}/transparent.gif" width="10" height="1" border="0" alt="" title=""/>
@@ -1437,7 +1437,7 @@ Version $Revision$
             <td width="100%" valign="bottom" class="uportal-navigation-category">
               <img src="{$mediaPath}/folder_closed.gif" width="16" height="16" border="0" alt="" title=""/>
               <img src="{$mediaPath}/transparent.gif" width="3" height="1" border="0" alt="" title=""/>
-              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID='Fragments'">
+              <a href="{$baseActionURL}?uPcCS_action=expand&amp;uPcCS_categoryID={category/@ID}">
                 <strong> Fragments </strong>
               </a>
             </td>
