@@ -43,6 +43,10 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     try 
     {
       m_sUrl = (String) chConfig.get ("url");
+      // if the URL has only two slashes, terminate it with a third
+      if (m_sUrl.substring(m_sUrl.indexOf("/")+1).lastIndexOf("/") == 
+	  m_sUrl.substring(m_sUrl.indexOf("/")+1).indexOf("/"))
+	  m_sUrl = new String(m_sUrl + "/");
       m_sUrlBaseDir =
 	  new String(m_sUrl.substring(0, m_sUrl.lastIndexOf("/")));
       if (m_sUrlBaseDir.substring(7).indexOf("/") != -1)
@@ -81,7 +85,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       }
       else
       {
-        out.println ("<p>The page you chose cannot be rendered within a channel. Please choose another.  <p><i>Note: Pages containing framesets are not allowed.</i>");
+        out.println ("<b>" + m_sUrl + "</b> cannot be rendered within a channel. <p><i>Note: Pages containing framesets are not allowed.</i>");
       }
     }
     catch (Exception e)
