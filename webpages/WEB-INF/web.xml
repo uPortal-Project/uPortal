@@ -5,22 +5,23 @@
     "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
 
 <web-app>
-   <servlet>
-        <servlet-name>
-	    uPortal
-        </servlet-name>
-        <servlet-class>
-	org.jasig.portal.PortalSessionManager
-        </servlet-class>
-         <init-param>
-            <param-name>portalBaseDir</param-name>
-            <param-value>/home/bw/ibs/portal/</param-value>
-        </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>
-	   uPortal
-        </servlet-name>
-        <url-pattern>*.uP</url-pattern>
-    </servlet-mapping>
+  <servlet>
+    <servlet-name>uPortal</servlet-name>
+    <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
+    <init-param>
+      <param-name>portalBaseDir</param-name>
+      <param-value>/home/bw/ibs/portal/</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>uPortal</servlet-name>
+    <url-pattern>*.uP</url-pattern>
+  </servlet-mapping>
+
+  <mime-mapping>
+    <extension>wbmp</extension>
+    <mime-type>image/vnd.wap.wbmp</mime-type>
+  </mime-mapping>
+
 </web-app>
