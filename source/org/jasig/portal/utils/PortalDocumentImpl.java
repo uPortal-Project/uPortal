@@ -66,6 +66,7 @@ import org.w3c.dom.Text;
 public class PortalDocumentImpl implements IPortalDocument {
 
     private final Hashtable identifiers = new Hashtable(1024);
+    private final Hashtable keys = new Hashtable(1024);
 
     public Document document = null;
 
@@ -101,6 +102,7 @@ public class PortalDocumentImpl implements IPortalDocument {
         }
 
         identifiers.put(key, element);
+        keys.put(XML.serializeNode(element),key);
     }
 
     /**
@@ -119,6 +121,7 @@ public class PortalDocumentImpl implements IPortalDocument {
 
     private void removeElement(String key) {
         identifiers.remove(key);
+        keys.remove(XML.serializeNode(getElementById(key)));
     }
 
     private void preserveCache(IPortalDocument sourceDoc, Node node) {
@@ -139,16 +142,7 @@ public class PortalDocumentImpl implements IPortalDocument {
     }
 
     private String getElementKey(Element element) {
-        String key = null;
-        String serializedNode = XML.serializeNode(element);
-        Iterator itr = identifiers.keySet().iterator();
-        while (itr.hasNext()) {
-            key = (String)itr.next();
-            if (serializedNode.equals(XML.serializeNode(getElementById(key)))) {
-                return key;
-            }
-        }
-        return null;
+        return (String) keys.get(XML.serializeNode(element));
     }
 
     // decorator methods
