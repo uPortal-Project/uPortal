@@ -149,12 +149,12 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
 
         ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
 
-        if(channelAttributeValues.put(channelSubscribeId,l)!=null)
+        if(channelAttributeValues.put(channelSubscribeId,l)!=null && log.isDebugEnabled())
             log.debug("ThemeStylesheetUserPreferences::addChannel() : Readding an existing channel (channelSubscribeId=\""+channelSubscribeId+"\"). All values will be set to default.");
     }
 
     public void removeChannel(String channelSubscribeId) {
-        if(channelAttributeValues.remove(channelSubscribeId)==null)
+        if(channelAttributeValues.remove(channelSubscribeId)==null && log.isDebugEnabled())
             log.error("ThemeStylesheetUserPreferences::removeChannel() : Attempting to remove an non-existing channel (channelSubscribeId=\""+channelSubscribeId+"\").");
     }
 
