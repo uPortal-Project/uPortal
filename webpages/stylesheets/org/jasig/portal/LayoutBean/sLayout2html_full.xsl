@@ -116,7 +116,7 @@ function openBrWindow(theURL,winName,features) {
                            </td>
 
                            <td class="uportal-background-content">
-                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/before_active_tab.GIF" width="11" height="28" />
+                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/before_active_tab.gif" width="11" height="28" />
                            </td>
                         </xsl:when>
 
@@ -130,7 +130,7 @@ function openBrWindow(theURL,winName,features) {
                            </td>
 
                            <td width="100%">
-                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_last_tab_inactive.GIF" width="11" height="28" />
+                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_last_tab_inactive.gif" width="11" height="28" />
                            </td>
                         </xsl:when>
 
@@ -144,7 +144,7 @@ function openBrWindow(theURL,winName,features) {
                            </td>
 
                            <td width="100%">
-                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_last_tab_active.GIF" width="11" height="28" />
+                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_last_tab_active.gif" width="11" height="28" />
                            </td>
                         </xsl:when>
 
@@ -158,7 +158,7 @@ function openBrWindow(theURL,winName,features) {
                            </td>
 
                            <td class="uportal-background-med">
-                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_inactive_tab.GIF" width="11" height="28" />
+                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_inactive_tab.gif" width="11" height="28" />
                            </td>
                         </xsl:when>
 
@@ -172,7 +172,7 @@ function openBrWindow(theURL,winName,features) {
                            </td>
 
                            <td class="uportal-background-med">
-                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_active_tab.GIF" width="11" height="28" />
+                              <img alt="interface image" src="{$mediaPath}/theme_{$theme}/after_active_tab.gif" width="11" height="28" />
                            </td>
                         </xsl:when>
                      </xsl:choose>
