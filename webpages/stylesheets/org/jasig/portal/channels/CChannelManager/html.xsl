@@ -425,11 +425,11 @@
                 <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-med">
                   <tr>
                     <td class="uportal-text-small" align="center">
-                      <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
-                        <xsl:choose>
-                        <xsl:when test="name !=''">
-                        <xsl:value-of select="name"/>
-                        </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
+                      <a href="#"><xsl:attribute name="onclick">document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
+                      <xsl:choose>
+                      <xsl:when test="name !=''">
+                      <xsl:value-of select="name"/>
+                      </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
                       </a>
                     </td>
                   </tr>
@@ -460,7 +460,7 @@
               <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
                 <tr>
                   <td class="uportal-text-small" align="center">
-                    <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
+                      <a href="#"><xsl:attribute name="onclick">document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';<xsl:if test="name(.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select=".//step/ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                         <xsl:when test=".//step/name != ''">
                         <xsl:value-of select=".//step/name"/>
@@ -489,7 +489,7 @@
                 <table border="0" cellspacing="0" cellpadding="2" class="uportal-background-light" width="8">
                   <tr>
                     <td class="uportal-text-small" align="center">
-                      <a href="{$baseActionURL}?uPCM_action=&amp;uPCM_capture=">
+                      <a href="#"><xsl:attribute name="onclick">document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';<xsl:if test="name(../../.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                         <xsl:when test="name !=''">
                         <xsl:value-of select="name"/>
@@ -2289,4 +2289,5 @@
     </table>
 </xsl:template>
 </xsl:stylesheet>
+
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
