@@ -34,15 +34,16 @@
  */
 
 
-package  org.jasig.portal.services.entityproperties;
+package org.jasig.portal.services.entityproperties;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.LogService;
 
 
@@ -53,137 +54,170 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class RDBMPropertyStore
-        implements IEntityPropertyStore {
-    protected final static String TABLE_NAME = "UP_ENTITY_PROP";
-    protected final static String TYPE_COL = "ENTITY_TYPE_ID";
-    protected final static String KEY_COL = "ENTITY_KEY";
-    protected final static String NAME_COL = "PROPERTY_NAME";
-    protected final static String VALUE_COL = "PROPERTY_VALUE";
-    protected final static String DATE_COL = "LAST_MODIFIED";
-    protected final static String selectPropertyNames = "SELECT " + NAME_COL
-            + " FROM " + TABLE_NAME + " WHERE " + TYPE_COL + "=? AND " + KEY_COL
-            + "=?";
-    protected final static String selectProperty = "SELECT " + VALUE_COL +
-            " FROM " + TABLE_NAME + " WHERE " + TYPE_COL + "=? AND " + KEY_COL
-            + "=? AND " + NAME_COL + "=?";
-    protected final static String deleteProperty = "DELETE FROM " + TABLE_NAME
-            + " WHERE " + TYPE_COL + "=? AND " + KEY_COL + "=? AND " + NAME_COL
-            + "=?";
-    protected final static String insertProperty = "INSERT INTO " + TABLE_NAME
-            + " VALUES (?,?,?,?,?)";
+      implements IEntityPropertyStore {
+   protected static Class propsType = null;
+   protected final static String TABLE_NAME = "UP_ENTITY_PROP";
+   protected final static String TYPE_COL = "ENTITY_TYPE_ID";
+   protected final static String KEY_COL = "ENTITY_KEY";
+   protected final static String NAME_COL = "PROPERTY_NAME";
+   protected final static String VALUE_COL = "PROPERTY_VALUE";
+   protected final static String DATE_COL = "LAST_MODIFIED";
+   protected final static String selectProperties = "SELECT " + NAME_COL + ", " + VALUE_COL
+         + " FROM " + TABLE_NAME + " WHERE " + TYPE_COL + "=? AND " + KEY_COL
+         + "=?";
+   protected final static String deleteProperty = "DELETE FROM " + TABLE_NAME
+         + " WHERE " + TYPE_COL + "=? AND " + KEY_COL + "=? AND " + NAME_COL
+         + "=?";
+   protected final static String insertProperty = "INSERT INTO " + TABLE_NAME
+         + " VALUES (?,?,?,?,?)";
 
-    public RDBMPropertyStore() {
-    }
+   public RDBMPropertyStore() {
+      try{
+         if (propsType == null){
+            propsType = Class.forName("org.jasig.portal.services.entityproperties.EntityProperties");
+         }
+      } catch (Exception e) {
+         LogService.log(LogService.ERROR, "RDBMPropertyStore.Constructor Unable to create propstype");
+         LogService.log(LogService.ERROR, e);
+      }   
+   }
 
-    public String[] getPropertyNames(EntityIdentifier entityID) {
-        String[] rn = new String[0];
-        ArrayList ar = new ArrayList();
-        Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
-        try {
+   public String[] getPropertyNames(EntityIdentifier entityID) {
+      String[] propNames = null;
+      EntityProperties ep = getCachedProperties(entityID);
+      if (ep != null) {
+         propNames = ep.getPropertyNames();
+      }
+      return propNames;
+   }
+
+   public String getProperty(EntityIdentifier entityID, String name) {
+      String propVal = null;
+      EntityProperties ep = getCachedProperties(entityID);
+      if (ep != null) {
+         propVal = ep.getProperty(name);
+      }
+      return propVal;
+   }
+
+   public void storeProperty(EntityIdentifier entityID, String name, String value) {
+      this.unStoreProperty(entityID, name);
+      Connection conn = null;
+      RDBMServices.PreparedStatement ps = null;
+      try {
+         conn = this.getConnection();
+         ps = new RDBMServices.PreparedStatement(conn, insertProperty);
+         ps.clearParameters();
+         ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
+         ps.setString(2, entityID.getKey());
+         ps.setString(3, name);
+         ps.setString(4, value);
+         ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+         int i = ps.executeUpdate();
+         //System.out.println(i+" "+ps.toString());
+         ps.close();
+         clearCache(entityID);
+      } catch (Exception e) {
+         LogService.log(LogService.ERROR, "RDBMPropertyStore.storeProperty "
+                                          + ps);
+         LogService.log(LogService.ERROR, e);
+      } finally {
+         this.releaseConnection(conn);
+      }
+   }
+
+   public void unStoreProperty(EntityIdentifier entityID, String name) {
+      Connection conn = null;
+      RDBMServices.PreparedStatement ps = null;
+      try {
+         conn = this.getConnection();
+         ps = new RDBMServices.PreparedStatement(conn, deleteProperty);
+         ps.clearParameters();
+         ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
+         ps.setString(2, entityID.getKey());
+         ps.setString(3, name);
+         int i = ps.executeUpdate();
+         //System.out.println(i+" "+ps.toString());
+         ps.close();
+         clearCache(entityID);
+      } catch (Exception e) {
+         LogService.log(LogService.ERROR, "RDBMPropertyStore.unStoreProperty "
+                                          + ps);
+         LogService.log(LogService.ERROR, e);
+      } finally {
+         this.releaseConnection(conn);
+      }
+   }
+
+   protected Connection getConnection() {
+      return RDBMServices.getConnection();
+   }
+
+   protected void releaseConnection(Connection conn) {
+      RDBMServices.releaseConnection(conn);
+   }
+
+   protected EntityProperties getCachedProperties(EntityIdentifier entityID) {
+      EntityProperties ep = null;
+      try {
+         ep = (EntityProperties) EntityCachingService.instance().get(propsType,
+                                                                     entityID.getKey());
+      } catch (CachingException e) {
+         LogService.log(LogService.ERROR, e);
+         Exception ee = e.getRecordedException();
+         if (ee != null) {
+            LogService.log(LogService.ERROR, ee);
+         }
+      }
+      if (ep == null) {
+         ep = new EntityProperties(entityID.getKey());
+         Connection conn = null;
+         RDBMServices.PreparedStatement ps = null;
+         try {
             conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, selectPropertyNames);
+            ps = new RDBMServices.PreparedStatement(conn, selectProperties);
             ps.clearParameters();
             ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
             ps.setString(2, entityID.getKey());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                ar.add(rs.getString(NAME_COL));
+               ep.setProperty(rs.getString(NAME_COL), rs.getString(VALUE_COL));
             }
+            addToCache(ep);
             rs.close();
             ps.close();
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, "RDBMPropertyStore.getPropertyNames: "
-                    + ps);
+         } catch (Exception e) {
+            LogService.log(LogService.ERROR, "RDBMPropertyStore.getPropertyNames: " + ps);
             LogService.log(LogService.ERROR, e);
-        } finally {
+         } finally {
             this.releaseConnection(conn);
-        }
-        return  (String[])ar.toArray(rn);
-    }
+         }
+      }
+      return ep;
+   }
 
-    public String getProperty(EntityIdentifier entityID, String name) {
-        String r = null;
-        Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
-        try {
-            conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, selectProperty);
-            ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
-            ps.setString(2, entityID.getKey());
-            ps.setString(3, name);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                r = rs.getString(VALUE_COL);
-            }
-            rs.close();
-            ps.close();
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, "RDBMPropertyStore.getProperty "
-                    + ps);
-            LogService.log(LogService.ERROR, e);
-        } finally {
-            this.releaseConnection(conn);
-        }
-        return  r;
-    }
+   protected void clearCache(EntityIdentifier entityID) {
+      try {
+         EntityCachingService.instance().remove(entityID.getType(), entityID.getKey());
+      } catch (CachingException e) {
+         LogService.log(LogService.ERROR, e);
+         Exception ee = e.getRecordedException();
+         if (ee != null) {
+            LogService.log(LogService.ERROR, ee);
+         }
+      }
+   }
 
-    public void storeProperty(EntityIdentifier entityID, String name, String value) {
-        this.unStoreProperty(entityID, name);
-        Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
-        try {
-            conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, insertProperty);
-            ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
-            ps.setString(2, entityID.getKey());
-            ps.setString(3, name);
-            ps.setString(4, value);
-            ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-            int i = ps.executeUpdate();
-            //System.out.println(i+" "+ps.toString());
-            ps.close();
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, "RDBMPropertyStore.storeProperty "
-                    + ps);
-            LogService.log(LogService.ERROR, e);
-        } finally {
-            this.releaseConnection(conn);
-        }
-    }
+   protected void addToCache(EntityProperties ep) {
+      try {
+         EntityCachingService.instance().add(ep);
+      } catch (CachingException e) {
+         LogService.log(LogService.ERROR, e);
+         Exception ee = e.getRecordedException();
+         if (ee != null) {
+            LogService.log(LogService.ERROR, ee);
+         }
+      }
+   }
 
-    public void unStoreProperty(EntityIdentifier entityID, String name) {
-        Connection conn = null;
-        RDBMServices.PreparedStatement ps = null;
-        try {
-            conn = this.getConnection();
-            ps = new RDBMServices.PreparedStatement(conn, deleteProperty);
-            ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
-            ps.setString(2, entityID.getKey());
-            ps.setString(3, name);
-            int i = ps.executeUpdate();
-            //System.out.println(i+" "+ps.toString());
-            ps.close();
-        } catch (Exception e) {
-            LogService.log(LogService.ERROR, "RDBMPropertyStore.unStoreProperty "
-                    + ps);
-            LogService.log(LogService.ERROR, e);
-        } finally {
-            this.releaseConnection(conn);
-        }
-    }
-
-    protected Connection getConnection() {
-        return  RDBMServices.getConnection();
-    }
-
-    protected void releaseConnection(Connection conn) {
-        RDBMServices.releaseConnection(conn);
-    }
 }
-
-
-
