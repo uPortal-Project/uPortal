@@ -326,20 +326,20 @@ public class MediaManager
     }
 
     public BaseMarkupSerializer getSerializerByName(String serializerName, java.io.Writer out) {
-        if (serializerName.equals ("WML")) {
+        if (serializerName != null && serializerName.equals ("WML")) {
             OutputFormat frmt = new OutputFormat ("wml", "UTF-8", true);
             frmt.setDoctype ("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
             return new XMLSerializer (out, frmt);
         }
-      else if (serializerName.equals ("PalmHTML")) {
+      else if (serializerName != null && serializerName.equals ("PalmHTML")) {
           OutputFormat frmt = new OutputFormat ("HTML", "UTF-8", true);
           return new PalmHTMLSerializer (out, frmt);
       }
-        else if (serializerName.equals ("XML")) {
+        else if (serializerName != null && serializerName.equals ("XML")) {
             OutputFormat frmt = new OutputFormat ("XML", "UTF-8", true);
             return new XMLSerializer (out, frmt);
         }
-      else if (serializerName.equals ("XHTML")) {
+      else if (serializerName != null && serializerName.equals ("XHTML")) {
           OutputFormat frmt = new OutputFormat ("XHTML", "UTF-8", true);
           frmt.setPreserveSpace(true);
           return new XHTMLSerializer (out, frmt);
