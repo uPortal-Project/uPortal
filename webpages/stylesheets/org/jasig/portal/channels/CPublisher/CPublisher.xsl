@@ -10,6 +10,7 @@ function xml(nodelist){
 
 	<xsl:param name="baseActionURL">Default</xsl:param>
 	<xsl:param name="currentStep" select="1"/>
+	<xsl:param name="specialStep" select="none"/>
 	<xsl:param name="numSteps" select="count(*/params/step)"/>
 	<xsl:param name="modified">false</xsl:param>
 	<xsl:param name="mode">publish</xsl:param>
