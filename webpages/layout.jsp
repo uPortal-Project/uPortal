@@ -44,67 +44,75 @@
   -- base directory is an application-wide parameter set in web.xml.
   --%>
 <% if (org.jasig.portal.GenericPortalBean.getPortalBaseDir() == null) { %>
-<jsp:forward page="index.jsp"/>
+  <jsp:forward page="index.jsp"/>
 <% } %>
 
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 
 <%
-  String sUserName = (String)session.getAttribute("userName");
+  response.setContentType("text/html");
   UtilitiesBean.preventPageCaching(response);
-  IPerson person = (IPerson)session.getAttribute("Person");
+
+  IPerson person    = (IPerson)session.getAttribute("Person");
+  String sUserName  = null;
+  String sFirstName = null;
+  if(person != null)
+  {
+    sUserName = person.getID();
+  }
 %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<title>Portal Framework</title>
-<script language="JavaScript">
-<!--hide
-function openWin(url, title, width, height)
-{
-  var newWin = window.open(url, title, 'width=' + width + ',height=' + height +',resizable=yes,scrollbars=yes')
-}
-//stop hiding-->
-</script>
-  </head>
+  <head>
+    <title>MyIBS</title>
+    <link rel="stylesheet" href="stylesheets/portal.css" type="text/css">
+    <script language="JavaScript" type="text/javascript">
+      <!--hide
+        function openWin(url, title, width, height)
+        {
+          var newWin = window.open(url, title, 'width=' + width + ', height=' + height +', resizable=yes, scrollbars=yes')
+        }
+      //stop hiding-->
+    </script>
 
-  <%-- This method call writes the opening body tag --%>
-<% layoutBean.writeBodyStyle (request, response, out); %>
+  <%-- This method call writes the opening body tag and closing head tag --%>
+  <% layoutBean.writeBodyStyle(request, response, out); %>
 
-<!-- Header -->
-<table border="0" cellpadding="0" cellspacing="1" width="100%">
-  <tr>
-    <td width="100"><img src="images/MyIBS.gif" width="100" height="50" border="0"></td>
-    <td width="300"><font size="2" color="blue">Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!</font><br>
-        <font size="1" color="#444444"><%= UtilitiesBean.getDate () %></font><br>
-        <%= sUserName == null || sUserName.equals ("guest") ? "&nbsp;" : "<a href=\"logout.jsp\">Logout</a>" %></td>
-    <td align="right">
-      <% if (sUserName == null || sUserName.equals ("guest")) { %>
-      &nbsp;
-      <% } else { %>
-            Channels ->
-            <%
-              if(layoutBean.canUserPublish(person))
-              {
-            %>
-                <a href="publish.jsp">Publish</a> |
-            <%
-              }
-            %>
-            <a href="subscribe.jsp">Subscribe</a><br>
-      Personalize -> <a href="personalizeColors.jsp">Colors</a> | <a href="personalizeTabs.jsp">Tabs</a> | <a href="personalizeLayout.jsp">Layout</a>
-      <% } %>
-    </td>
-  </tr>
-</table>
+    <table border="0" cellpadding="0" cellspacing="1" width="100%">
+      <tr>
+        <td width="25%"><img src="images/myibs.gif" width="128" height="47" border="0" alt="MyIBS"></td>
+        <td width="300">
+          <span class="PortalHeaderText">
+            Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!<br>
+            <%= UtilitiesBean.getDate () %><br>
+            <%= person == null || sUserName.equals ("guest") ? "&nbsp;" : "<a href=\"logout.jsp\">Logout</a>" %>
+          </span>
+        </td>
+        <% if (person == null || sUserName.equals ("guest")) { %>
+        <td align="right">&nbsp;</td>
+        <% } else { %>
+        <td align="right"><span class="PortalHeaderText">Channels ->
+          <%
+            if(layoutBean.canUserPublish(person)) {
+          %>
+          <a href="publish.jsp">Publish</a> |
+          <%
+            }
+          %>
+          <a href="subscribe.jsp">Subscribe</a><br>
+          Personalize -> <a href="personalizeColors.jsp">Colors</a> | <a href="personalizeTabs.jsp">Tabs</a> | <a href="personalizeLayout.jsp">Layout</a></span></td>
+        <% } %>
+      </tr>
+    </table>
 
-<%
-layoutBean.writeTabs (request, response, out);
-layoutBean.writeChannels (request, response, out);
-%>
+    <%
+      layoutBean.writeTabs(request, response, out);
+      layoutBean.writeChannels(request, response, out);
+    %>
 
-<jsp:include page="footer.jsp" flush="true" />
+    <%-- Footer --%>
+    <%@ include file="footer.jsp" %>
 
-</body>
+  </body>
 </html>
-

@@ -91,112 +91,108 @@ if (sAction != null)
 
 <% UtilitiesBean.preventPageCaching (response); %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<title>Personalize Tabs</title>
-<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
-<script language="JavaScript">
-<!-- hide
-function getActionAndSubmit(theForm, buttonValue)
-{
-  theForm.action.value = buttonValue
+  <head>
+    <title>Personalize Tabs</title>
+    <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
+    <script language="JavaScript">
+    <!-- hide
+    function getActionAndSubmit(theForm, buttonValue)
+    {
+      theForm.action.value = buttonValue
 
-  if (theForm.tab.selectedIndex > -1)
-    theForm.submit ()
-  else
-    alert ('Please select a tab and try again.')
-}
-//stop hiding-->
-</script>
-</head>
+      if (theForm.tab.selectedIndex > -1)
+        theForm.submit ()
+      else
+        alert ('Please select a tab and try again.')
+    }
+    //stop hiding-->
+    </script>
 
-<% layoutBean.writeBodyStyle (request, response, out); %>
-<body>
+  <% layoutBean.writeBodyStyle (request, response, out); %>
 
-<%-- Header --%>
-<% session.setAttribute ("headerTitle", "Personalize Tabs"); %>
-<%@ include file="header.jsp" %>
+    <%-- Header --%>
+    <% session.setAttribute ("headerTitle", "Personalize Tabs"); %>
+    <%@ include file="header.jsp" %>
 
-<%-- Finished and Cancel Changes buttons --%>
-<form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=finished value="Finished" onClick="location='personalizeTabs.jsp?action=save'">
-  <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeTabs.jsp?action=cancel'">
-</table>
-</form>
+    <%-- Finished and Cancel Changes buttons --%>
+    <form>
+    <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+      <input type=button name=finished value="Finished" onClick="location='personalizeTabs.jsp?action=save'">
+      <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeTabs.jsp?action=cancel'">
+    </table>
+    </form>
 
-<%-- Add a new tab --%>
-<form name="addTab" action="personalizeTabs.jsp" method=post>
-<input type=hidden name="action" value="addTab">
-<input type=submit name="submit" value="Add">
-new tab
-<select name="tab">
+    <%-- Add a new tab --%>
+    <form name="addTab" action="personalizeTabs.jsp" method=post>
+    <input type=hidden name="action" value="addTab">
+    <input type=submit name="submit" value="Add">
+    new tab
+    <select name="tab">
+      <%
+        ITab[] tabs = layoutBean.getTabs (request);
 
-<%
-ITab[] tabs = layoutBean.getTabs (request);
+        for (int iTab = 0; iTab < tabs.length; iTab++)
+        {
+      %>
+        <option value="<%= iTab %>">before '<%= tabs[iTab].getNameAttribute () %>'</option>
+      <%
+        }
+      %>
+      <option value="<%= tabs.length %>" selected>at the end</option>
+    </select>
+    </form>
 
-for (int iTab = 0; iTab < tabs.length; iTab++)
-{
-%>
-  <option value="<%= iTab %>">before '<%= tabs[iTab].getNameAttribute () %>'</option>
-<%
-}
-%>
+    <form name="tabs" action="personalizeTabs.jsp" method=post>
+    <input type=hidden name="action" value="none">
+    <table border=0 cellspacing=2 cellpadding=3>
+      <tr>
+        <td>
+          <select name="tab" size=10>
+          <%
+          for (int iTab = 0; iTab < tabs.length; iTab++)
+          {
+          %>
+                <option value="<%= iTab %>"><%= tabs[iTab].getNameAttribute () %></option>
+          <%
+          }
+          %>
+          </select>
+        </td>
+        <td align="center">
+          <%-- Edit (rename/change layout) tab --%>
+          <a href="javascript:getActionAndSubmit (document.tabs, 'changeLayout')">
+          <img src="images/edit.gif" border=0 alt="Rename/change tab layout"></a><br><br>
 
-<option value="<%= tabs.length %>" selected>at the end</option>
-</select>
-</form>
+          <%-- Move tab up --%>
+          <a href="javascript:getActionAndSubmit (document.tabs, 'moveTabUp')">
+          <img src="images/up.gif" border=0 alt="Move tab up"></a><br><br>
 
-<form name="tabs" action="personalizeTabs.jsp" method=post>
-<input type=hidden name="action" value="none">
-<table border=0 cellspacing=2 cellpadding=3>
-  <tr>
-    <td>
-      <select name="tab" size=10>
-<%
-for (int iTab = 0; iTab < tabs.length; iTab++)
-{
-%>
-      <option value="<%= iTab %>"><%= tabs[iTab].getNameAttribute () %></option>
-<%
-}
-%>
-      </select>
-    </td>
-    <td align="center">
-      <%-- Edit (rename/change layout) tab --%>
-      <a href="javascript:getActionAndSubmit (document.tabs, 'changeLayout')">
-      <img src="images/edit.gif" border=0 alt="Rename/change tab layout"></a><br><br>
+          <%-- Remove tab --%>
+          <a href="javascript:getActionAndSubmit (document.tabs, 'removeTab')">
+          <img src="images/remove.gif" border=0 alt="Remove tab"></a><br><br>
 
-      <%-- Move tab up --%>
-      <a href="javascript:getActionAndSubmit (document.tabs, 'moveTabUp')">
-      <img src="images/up.gif" border=0 alt="Move tab up"></a><br><br>
+          <%-- Move tab down --%>
+          <a href="javascript:getActionAndSubmit (document.tabs, 'moveTabDown')">
+          <img src="images/down.gif" border=0 alt="Move tab down"></a><br>
+        </td>
+      </tr>
+    </table>
+    </form>
 
-      <%-- Remove tab --%>
-      <a href="javascript:getActionAndSubmit (document.tabs, 'removeTab')">
-      <img src="images/remove.gif" border=0 alt="Remove tab"></a><br><br>
+    <%-- Revert to default layout xml --%>
+    [<a href="personalizeTabs.jsp?action=revertToDefaultLayoutXml">Revert to default layout</a>]
 
-      <%-- Move tab down --%>
-      <a href="javascript:getActionAndSubmit (document.tabs, 'moveTabDown')">
-      <img src="images/down.gif" border=0 alt="Move tab down"></a><br>
-    </td>
-  </tr>
-</table>
-</form>
+    <%-- Finished and Cancel Changes buttons --%>
+    <form>
+    <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+      <input type=button name=finished value="Finished" onClick="location='personalizeTabs.jsp?action=save'">
+      <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeTabs.jsp?action=cancel'">
+    </table>
+    </form>
 
-<%-- Revert to default layout xml --%>
-[<a href="personalizeTabs.jsp?action=revertToDefaultLayoutXml">Revert to default layout</a>]
-
-<%-- Finished and Cancel Changes buttons --%>
-<form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=finished value="Finished" onClick="location='personalizeTabs.jsp?action=save'">
-  <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeTabs.jsp?action=cancel'">
-</table>
-</form>
-
-<%-- Footer --%>
-<%@ include file="footer.jsp" %>
-
-</body>
+    <%-- Footer --%>
+    <%@ include file="footer.jsp" %>
+  </body>
 </html>

@@ -34,12 +34,15 @@
 --%>
 
 <!-- Footer -->
-<br>
-<table border=0 cellpadding=0 cellspacing=1 width=100%>
-  <tr bgcolor="#000000">
-    <td><font face=Arial size=1 color=ffffff>&nbsp;Example Footer</font></td>
+<br/>
+<table border="0" cellpadding="0" cellspacing="1" width="100%">
+  <tr bgcolor="<%= layoutBean.getActiveTabColor(request, response, out) %>">
+    <td colspan="8">&nbsp;</td>
   </tr>
   <tr>
-    <td><img src="images/MyIBS.gif" width=100 height=50 border=0></td>
+    <td align="left"><img src="images/myibs.gif" width="428" height="37" border="0" alt="MyIBS"></td>
+    <td align="center"><font size="-1" color="#63188C">MyIBS</font></td>
+    <td align="center"><font size="-1" color="#63188C"><a href="mailto:">Feedback</a></font><td>
+    <td align="right"><a href="http://www.mis2.udel.edu/ja-sig/portal.html"><img src="images/powered_by_uPortal.gif" width="149" height="35" border="0" alt="Powered By uPortal"></a></td>
   </tr>
 </table>

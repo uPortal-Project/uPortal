@@ -33,15 +33,30 @@
  *
 --%>
 
+<%@ page import="org.jasig.portal.security.IPerson" %>
+<%@ page import="org.jasig.portal.UtilitiesBean" %>
+
+<%
+  IPerson person    = (IPerson)session.getAttribute("Person");
+  String sUserName  = null;
+  String sFirstName = null;
+  if(person != null)
+  {
+    sUserName  = person.getID();
+  }
+%>
+
 <!-- Header -->
 <table border="0" cellpadding="0" cellspacing="1" width="100%">
   <tr>
-    <td width="10%"><img src="images/MyIBS.gif" width="100" height="50" border="0"></td>
-    <td width="20%" align="left"><font color="blue"><a href="layout.jsp">Home</a> > <%= session.getAttribute ("headerTitle") != null ? session.getAttribute ("headerTitle") : "" %></font></td>
-    <td width="70%">&nbsp;</td>
+    <td width="25%"><span class="PortalHeaderText"><img src="images/MyIBS.gif" width="128" height="47" border="0" alt="MyIBS"></span></td>
+    <td width="300"><span class="PortalHeaderText">Hello <%= sUserName == null ? "guest" : sUserName %>, Welcome to MyIBS!<br>
+                                             <%= UtilitiesBean.getDate () %><br>
+                                             <%= person == null || sUserName.equals ("guest") ? "&nbsp;" : "<a href=\"logout.jsp\">Logout</a>" %></span></td>
+    <td align="right"><span class="PortalHeaderText"><a href="layout.jsp">Home</a> > <%= session.getAttribute ("headerTitle") != null ? session.getAttribute ("headerTitle") : "" %></span></td>
   </tr>
-  <tr bgcolor="#000000">
-    <td colspan="3"><font size="1" color="#ffffff">&nbsp;Example Header</font></td>
+  <tr bgcolor="<%= layoutBean.getActiveTabColor(request, response, out) %>">
+    <td colspan="3">&nbsp;</td>
   </tr>
 </table>
 <br />

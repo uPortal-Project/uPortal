@@ -108,52 +108,50 @@ if (sAction != null)
 
 <% UtilitiesBean.preventPageCaching (response); %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<title>Personalize Layout</title>
-<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
-<script language="JavaScript">
-<!-- hide
-function getActionAndSubmit(theForm, buttonValue)
-{
-  theForm.action.value = buttonValue
+  <head>
+    <title>Personalize Layout</title>
+    <link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
+    <script language="JavaScript">
+    <!-- hide
+    function getActionAndSubmit(theForm, buttonValue)
+    {
+      theForm.action.value = buttonValue
 
-  if (theForm.elements[0].selectedIndex > -1)
-    theForm.submit ()
-  else
-    alert ('Please select a channel and try again.')
-}
-//stop hiding-->
-</script>
-</head>
+      if (theForm.elements[0].selectedIndex > -1)
+        theForm.submit ()
+      else
+        alert ('Please select a channel and try again.')
+    }
+    //stop hiding-->
+    </script>
 
-<% layoutBean.writeBodyStyle (request, response, out); %>
-<body>
+  <% layoutBean.writeBodyStyle (request, response, out); %>
 
-<%-- Header --%>
-<% session.setAttribute ("headerTitle", "Personalize Layout"); %>
-<%@ include file="header.jsp" %>
+    <%-- Header --%>
+    <% session.setAttribute ("headerTitle", "Personalize Layout"); %>
+    <%@ include file="header.jsp" %>
 
-<%-- Finished and Cancel Changes buttons --%>
-<form>
-<table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
-  <input type=button name=finished value="Finished" onClick="location='personalizeLayout.jsp?action=save'">
-  <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeLayout.jsp?action=cancel'">
-</td></tr></table>
-</form>
+    <%-- Finished and Cancel Changes buttons --%>
+    <form>
+    <table border=0 cellspacing=5 cellpadding=5 width="100%"><tr bgcolor="#dddddd"><td>
+      <input type=button name=finished value="Finished" onClick="location='personalizeLayout.jsp?action=save'">
+      <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeLayout.jsp?action=cancel'">
+    </td></tr></table>
+    </form>
 
-<% layoutBean.writePersonalizeLayoutPage (request, response, out); %>
+    <% layoutBean.writePersonalizeLayoutPage (request, response, out); %>
 
-<%-- Finished and Cancel Changes buttons --%>
+    <%-- Finished and Cancel Changes buttons --%>
 
-<table border=0 cellspacing=5 cellpadding=5 width="100%">
-  <form><tr bgcolor="#dddddd"><td>
-  <input type=button name=finished value="Finished" onClick="location='personalizeLayout.jsp?action=save'">
-  <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeLayout.jsp?action=cancel'">
-</td></tr></form></table>
+    <table border=0 cellspacing=5 cellpadding=5 width="100%">
+      <form><tr bgcolor="#dddddd"><td>
+      <input type=button name=finished value="Finished" onClick="location='personalizeLayout.jsp?action=save'">
+      <input type=button name=cancel value="Cancel Changes" onClick="location='personalizeLayout.jsp?action=cancel'">
+    </td></tr></form></table>
 
 
-<jsp:include page="footer.jsp" flush="true" />
-
-</body>
+    <%@ include file="footer.jsp" %>
+  </body>
 </html>
