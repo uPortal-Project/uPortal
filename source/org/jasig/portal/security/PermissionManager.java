@@ -68,14 +68,15 @@ public abstract class PermissionManager {
   public abstract void setPermissions (Permission[] newPermissions) throws AuthorizationException;
 
   /**
-   * Retrieves a set of Permissions that meet the following criteria. Blank parameters will be ignored.
+   * Retrieves a set of Permissions that meet the following criteria. Null parameters will be ignored.
    * @param principal
    * @param activity
    * @param target
+   * @param type
    * @return 
    * @exception AuthorizationException
    */
-  public abstract Permission[] getPermissions (String principal, String activity, String target) throws AuthorizationException;
+  public abstract Permission[] getPermissions (String principal, String activity, String target, String type) throws AuthorizationException;
 }
 
 

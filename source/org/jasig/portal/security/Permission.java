@@ -68,61 +68,72 @@ public abstract class Permission {
    * Returns the principal that this object is bound to
    * @return 
    */
-  public abstract String getPrincipal () throws AuthorizationException;
+  public abstract String getPrincipal ();
 
   /**
    * Sets the principal that this object is bound to
    * @param principal
    */
-  public abstract void setPrincipal (String principal) throws AuthorizationException;
+  public abstract void setPrincipal (String principal);
 
   /**
    * Gets the activity that this Permission is associated with
    * @return 
    */
-  public abstract String getActivity () throws AuthorizationException;
+  public abstract String getActivity ();
 
   /**
    * Sets the activity that this Permission is associated with
    * @param activity
    */
-  public abstract void setActivity (String activity) throws AuthorizationException;
+  public abstract void setActivity (String activity);
 
   /**
    * Gets the target that this Permission is associated with
    * @return 
    */
-  public abstract String getTarget () throws AuthorizationException;
+  public abstract String getTarget ();
 
   /**
    * Gets the target that this Permission is associated with
    * @param target
    */
-  public abstract void setTarget (String target) throws AuthorizationException;
+  public abstract void setTarget (String target);
+
+  /**
+   * put your documentation comment here
+   */
+  public abstract String getType ();
+
+  /**
+   * put your documentation comment here
+   * @param type
+   */
+  public abstract void setType (String type);
 
   /**
    * Gets that date that this Permission should become effective on
    * @return 
    */
-  public abstract Date getEffective () throws AuthorizationException;
+  public abstract Date getEffective ();
 
   /**
    * Sets the date that this Permission should become effective on
    * @param effective
    */
-  public abstract void setEffective (Date effective) throws AuthorizationException;
+  public abstract void setEffective (Date effective);
 
   /**
    * Gets the date that this Permission should expire on
    * @return 
    */
-  public abstract Date getExpires () throws AuthorizationException;
+  public abstract Date getExpires ();
 
   /**
    * Sets the date that this Permission should expire on
    * @param expires
    */
-  public abstract void setExpires (Date expires) throws AuthorizationException;
+  public abstract void setExpires (Date expires);
 }
 
 

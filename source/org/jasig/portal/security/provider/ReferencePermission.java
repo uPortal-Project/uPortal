@@ -49,6 +49,7 @@ public class ReferencePermission extends Permission {
   private String m_principal = null;
   private String m_activity = null;
   private String m_target = null;
+  private String m_type = null;
   private Date m_effective = null;
   private Date m_expires = null;
 
@@ -106,6 +107,22 @@ public class ReferencePermission extends Permission {
    */
   public void setTarget (String target) {
     m_target = target;
+  }
+
+  /**
+   * Returns the type of permission that this is, generally GRANT or DENY
+   * @return 
+   */
+  public String getType () {
+    return  (m_type);
+  }
+
+  /**
+   * Sets the permission type
+   * @param type
+   */
+  public void setType (String type) {
+    m_type = type;
   }
 
   /**
