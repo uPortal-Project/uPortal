@@ -150,11 +150,11 @@ An <code>IEntityGroup</code> that contains entities of type <code>Object</code>
 can contain memberships for entities of any type, as long as their keys
 do not collide. &nbsp;<br>
       <br>
-Conceptually, groups form acyclic graphs; a group can belong to 0 or
-more parent groups, can contain 0 or more child groups, and cannot
-contain a circular reference.&nbsp; In addition, a group name must be
-unique within its containing group.&nbsp; An actual group service
-implementation, like one for LDAP, may impose further constraints. &nbsp;<br>
+Groups form acyclic graphs; a group can belong to 0 or more parent
+groups, can contain 0 or more child groups, and cannot contain a
+circular reference.&nbsp; An actual group service implementation, like
+the Person Attributes Group Service, may impose further constraints.
+&nbsp;<br>
       <br>
       <h4><a name="Using_the_Groups_Service&quot;"></a>Using the Groups
 Service</h4>
@@ -195,20 +195,19 @@ single node containing the key that all component group services must
 use to identify the underlying entity.&nbsp; The assumption here is that
 in the portal, an entity key like a userid will transcend an individual
 source, service or application.&nbsp; The userid will be understood by
-ldap, ERP systems, the portal database, etc.&nbsp; In many, perhaps
-most installations, this will be the case.&nbsp; But suppose for a
-minute that it isn't.&nbsp; Assume that a person, say Mick Jagger, is
-known in ldap as "mjagger", in People Soft as "mj1" and in a third
-system as "J.J.Flash".&nbsp; In this portal, the deployer would have to
-select one system to be the <span style="font-style: italic;">base</span>
+ldap, ERP systems, the portal database, etc.&nbsp; In many, perhaps most
+installations, this will be the case.&nbsp; But suppose for a minute
+that it isn't.&nbsp; Assume that a person, say Mick Jagger, is known in
+ldap as "mjagger", in People Soft as "mj1" and in a third system as
+"J.J.Flash".&nbsp; In this portal, the deployer would have to select
+one system to be the <span style="font-style: italic;">base</span>
 source of person entities (perhaps ldap) and provide translations for
 the other sources.&nbsp; If&nbsp; ldap were chosen, then a request to
 find groups that contain "mjagger" would have to be understood by the
 People Soft component as meaning "find groups that contain "mj1", and
 other systems would have to perform their own translations.&nbsp;
-Regardless of whether it is necessary to do these translations, a
-groups client should see an entity as having a single, untranslated
-key.&nbsp; <br>
+Regardless of whether it is necessary to do these translations, a groups
+client should see an entity as having a single, untranslated key.&nbsp; <br>
       </p>
       <p class="Code">In fact, an <code>IEntity</code> has 2 keys, one
 for its underlying entity and one for itself as an <code>IBasicEntity</code>,
@@ -247,9 +246,8 @@ System.out.println(basicEI.getKey()); &nbsp; &nbsp;&nbsp;&nbsp; //
 5.guest<br>
 System.out.println(basicEI.getType());&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //
 interface org.jasig.portal.Groups.IEntity</code> </small></p>
-      <p> For more
-information on keys in the group system, see the section on group and
-entity keys in <a
+      <p> For more information on keys in the group system, see the
+section on group and entity keys in <a
  href="compositeGroupService.html#Groups_Keys_and_Service_Names">The
 Composite Group Service Guide</a>.&nbsp; <br>
       <br>
@@ -615,7 +613,7 @@ exclusive updates:<br>
 }</code><span style="font-size: 11pt; font-family: Arial;"><code><br>
       </code><br>
       <br>
-      <i>de. last revised: 10/14/2003</i><br>
+      <i>last revised: 03/31/2004</i><br>
       <br>
       <br>
 <!-- end cut this section to put into jasig table cell format --> <br>

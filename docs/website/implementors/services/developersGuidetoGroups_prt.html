@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
 <head>
   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
@@ -109,11 +109,11 @@ An <code>IEntityGroup</code> that contains entities of type <code>Object</code>
 can contain memberships for entities of any type, as long as their keys
 do not collide. &nbsp;<br>
 <br>
-Conceptually, groups form acyclic graphs; a group can belong to 0 or
-more parent groups, can contain 0 or more child groups, and cannot
-contain a circular reference.&nbsp; In addition, a group name must be
-unique within its containing group.&nbsp; An actual group service
-implementation, like one for LDAP, may impose further constraints. &nbsp;<br>
+Groups form acyclic graphs; a group can belong to 0 or more parent
+groups, can contain 0 or more child groups, and cannot contain a
+circular reference.&nbsp; An actual group service implementation, like
+the Person Attributes Group Service, may impose further constraints.
+&nbsp;<br>
 <br>
 <h4><a name="Using_the_Groups_Service&quot;"></a>Using the Groups Service</h4>
 <p class="Code">Clients of the groups service use its façade, <code>org.jasig.portal.services.GroupService</code>
@@ -163,11 +163,11 @@ sources.&nbsp; If&nbsp; ldap were chosen, then a request to find groups
 that contain "mjagger" would have to be understood by the People Soft
 component as meaning "find groups that contain "mj1", and other systems
 would have to perform their own translations.&nbsp; Regardless of
-whether it is necessary to do these translations, a groups client
-should see an entity as having a single, untranslated key.&nbsp; <br>
+whether it is necessary to do these translations, a groups client should
+see an entity as having a single, untranslated key.&nbsp; <br>
 </p>
-<p class="Code">&nbsp;In fact, an <code>IEntity</code> has 2 keys,
-one for its underlying entity and one for itself as an <code>IBasicEntity</code>,
+<p class="Code">&nbsp;In fact, an <code>IEntity</code> has 2 keys, one
+for its underlying entity and one for itself as an <code>IBasicEntity</code>,
 which allows it<code></code> to be cached with other <code>IEntities</code>.&nbsp;
 This duality is reflected in the <code>IGroupMember</code> interface,
 which has getters for the basic <code>EntityIdentifier</code> (inherited
@@ -241,8 +241,7 @@ never be null<br>
 <p class="Code"><code></code>You can override this behavior by asking
 for the <code>IEntity</code> from a non-default source by passing in the
 name of the component group service, after you have reimplemented the
-entity factory, (the <code>IEntityStore</code>) for this
-service.&nbsp; <br>
+entity factory, (the <code>IEntityStore</code>) for this service.&nbsp; <br>
 &nbsp;<br>
 <code>// Get an entity by key (could be null):<br>
 String service = "myService";<br>
@@ -372,26 +371,25 @@ retrieve related group members:<br>
 </span></p>
 Once you get a group member from the service, you can use it to
 retrieve related group members:<br>
-      </span></p>
-      <p class="Code"><code>IGroupMember student =
+<p></p>
+<p class="Code"><code>IGroupMember student =
 GroupService.getEntity("student");</code></p>
-      <p class="Code"><code>// Find groups that the entity belongs to:<br>
+<p class="Code"><code>// Find groups that the entity belongs to:<br>
 Iterator studentGroups = student.getContainingGroups();<br>
 ...<br>
-      </code> </p>
-      <p class="Code"><code>// (Recursively) find groups the entity
-belongs to:<br>
+</code> </p>
+<p class="Code"><code>// (Recursively) find groups the entity belongs
+to:<br>
 Iterator allStudentGroups = student.getAllContainingGroups();<br>
 ...<br>
-      </code> </p>
-      <p class="Code"><code>// Find if an entity is a member of a group:<br>
+</code> </p>
+<p class="Code"><code>// Find if an entity is a member of a group:<br>
 IGroupMember gradStudents = GroupService.findGroup("local.8");<br>
 if ( gradStudents != null &amp;&amp; student.isMemberOf(gradStudents) )<br>
 {<br>
 &nbsp;&nbsp;&nbsp; ...<br>
 }</code><span style="font-size: 11pt; font-family: Arial;"><code><br>
-      </code></span></p>
-
+</code></span></p>
 <p class="Code"><span style="font-size: 11pt; font-family: Arial;"><code>IEntities</code>
 are not updatable.&nbsp; An <code>IEntityGroup</code> may or may not be,
 depending on whether its component group service implements update
@@ -574,8 +572,7 @@ exclusive updates:<br>
 &nbsp; public void updateMembersAndRenewLock() throws GroupsException;<br>
 }</code><span style="font-size: 11pt; font-family: Arial;"><code><br>
 </code><br>
-<br>
-<i>de. last revised 10/14/2003</i><br>
+<i>last revised 03/31/2004</i>, d.e.<br>
 <br>
 <!-- end cut this section to put into jasig table cell format --> <br>
 <!-- end of main body table cell --> <img height="4" width="692"><br>

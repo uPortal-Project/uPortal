@@ -59,9 +59,9 @@ group information.<br>
  href="#Goals_and_Rationale_of_the_Composite">Goals and Rationale of
 the Composite Service</a> sets out the argument for a composite
 service.&nbsp; The next section (<a href="#The_Service_Design">The
-Service Design</a>)  describes  the service api and and the service
-class hierarchy.&nbsp; This  is followed by a discussion of group keys
-and their relationship to the composite design (<a
+Service Design</a>)  describes  the service api and the service class
+hierarchy.&nbsp; This  is followed by a discussion of group keys and
+their relationship to the composite design (<a
  href="#Groups_Keys_and_Service_Names">Groups, Keys and Service Names</a>)
 .&nbsp; These first 3 sections are aimed at developers.&nbsp; If you
 are interested only in deploying a composite service, you can skim them
@@ -99,7 +99,7 @@ needs an LDAP <span style="font-style: italic;">adaptor</span> that
 makes LDAP attributes look like portal group memberships.&nbsp; These
 memberships, supplemented by memberships stored in the reference portal
 database, can be associated with <span style="font-style: italic;">Permissions</span>.&nbsp;
-In this way, portal authorization can be driven from LDAP and modified
+In this way, portal authorization can be driven from LDAP and managed
 from within the portal. &nbsp; </p>
 <p>The composite groups system is a framework for creating and managing
 group adaptors.&nbsp; Its job is to aggregate group information from a
@@ -211,15 +211,18 @@ IIndividualGroupService inherits<code> find()</code> methods from
 ICompositeGroupService, but whereas an ICompositeGroupService would
 probably delegate these requests, an IIndividualGroupService would most
 likely perform them itself.&nbsp; In addition, an
-IIndividualGroupService must answer if it can be updated (<code>isEditable()</code>),
+IIndividualGroupService must answer if one of its groups contains a
+particular member (contains()), if the service can be updated (<code>isEditable()</code>),
 and more specifically, if it     is possible to edit a particular group
 (<code>isEditable(IEntityGroup group)</code>).&nbsp;     An attempt to
 update a group that is not editable should throw a GroupsException.
 &nbsp;</p>
 <blockquote><code>public interface <b>IIndividualGroupService</b>
 extends ICompositeGroupService </code><br>
-  <code> {</code><br>
-  <code> &nbsp; public void deleteGroup(IEntityGroup group) </code><br>
+  <code> {<br>
+&nbsp; public boolean contains(IEntityGroup group, IGroupMember member) <br>
+&nbsp;&nbsp;&nbsp; throws GroupsException;<br>
+  </code><code>&nbsp; public void deleteGroup(IEntityGroup group) </code><br>
   <code> &nbsp;&nbsp;&nbsp; throws GroupsException;</code><br>
   <code> &nbsp; public IEntityGroup findGroup(CompositeEntityIdentifier
 ent)</code><br>
@@ -433,55 +436,60 @@ public List getServiceDescriptors()<br>
   </code></blockquote>
 <p> uPortal 2.2 ships with the following configuration:<br>
 </p>
-<blockquote><small>&lt;?xml version="1.0"?&gt;</small><br>
-  <small> &lt;!-- $Revision$ --&gt;</small><br>
-  <small> &lt;!--</small><br>
-  <small> This list of component group services is processed by the
-composite, or  "root" service as it assembles itself.&nbsp; Each service
-element has   2 required  elements: name and service_factory.&nbsp; The
-values of all service  elements  are delivered to the service_factory.
-&nbsp;</small><br>
-  <small> --&gt;</small><br>
-  <small> </small><br>
-  <small> &lt;servicelist defaultService="local"
-compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
-nodeSeparator="."&gt;</small><br>
-  <small> &nbsp; &lt;service&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;entity_store_factory&gt;org.jasig.portal.groups.ReferenceEntityStoreFactory&lt;/entity_store_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;group_store_factory&gt;org.jasig.portal.groups.ReferenceEntityGroupStoreFactory&lt;/group_store_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;entity_searcher_factory&gt;org.jasig.portal.groups.ReferenceEntitySearcherFactory&lt;/entity_searcher_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;internally_managed&gt;true&lt;/internally_managed&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;caching_enabled&gt;true&lt;/caching_enabled&gt;</small><br>
-  <small> &nbsp; &lt;/service&gt;</small><br>
-  <small> </small><br>
-  <small> &lt;!--</small><br>
-  <small> &nbsp; &lt;service&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;ldap&lt;/name&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;entity_store_factory&gt;org.jasig.portal.groups.ldap.LDAPEntityStoreFactory&lt;/entity_store_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;group_store_factory&gt;org.jasig.portal.groups.ldap.LDAPGroupStoreFactory&lt;/group_store_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;entity_searcher_factory&gt;org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory&lt;/entity_searcher_factory&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;internally_managed&gt;false&lt;/internally_managed&gt;</small><br>
-  <small> &nbsp;&nbsp;&nbsp;
-&lt;caching_enabled&gt;false&lt;/caching_enabled&gt;</small><br>
-  <small> &nbsp; &lt;/service&gt;</small><br>
-  <small> --&gt;<br>
+<hr style="width: 100%; height: 2px;">
+<blockquote><small>&lt;?xml version="1.0"?&gt;<br>
+&lt;!-- $Revision$ --&gt;<br>
+&lt;!--<br>
+This list of component group services is processed by the composite, or
+"root" service as it assembles itself.&nbsp; Each service element has 2
+required elements: name and service_factory.&nbsp; The values of all
+service elements are delivered to the service_factory.&nbsp; <br>
+--&gt;<br>
   <br>
+&lt;servicelist defaultService="local" <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+nodeSeparator="."&gt;<br>
+&nbsp; &lt;service&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_store_factory&gt;org.jasig.portal.groups.ReferenceEntityStoreFactory&lt;/entity_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;group_store_factory&gt;org.jasig.portal.groups.ReferenceEntityGroupStoreFactory&lt;/group_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_searcher_factory&gt;org.jasig.portal.groups.ReferenceEntitySearcherFactory&lt;/entity_searcher_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;internally_managed&gt;true&lt;/internally_managed&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;true&lt;/caching_enabled&gt;<br>
+&nbsp; &lt;/service&gt;<br>
+  <br>
+&lt;!--&nbsp; UNcomment to configure an LDAP group service
+component.&nbsp; Be sure to edit LDAPGroupStoreConfig.xml with your
+values. --&gt;<br>
+&lt;!--&nbsp; <br>
+&nbsp; &lt;service&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;name&gt;ldap&lt;/name&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_store_factory&gt;org.jasig.portal.groups.ldap.LDAPEntityStoreFactory&lt;/entity_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;group_store_factory&gt;org.jasig.portal.groups.ldap.LDAPGroupStoreFactory&lt;/group_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_searcher_factory&gt;org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory&lt;/entity_searcher_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;internally_managed&gt;false&lt;/internally_managed&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;false&lt;/caching_enabled&gt;<br>
+&nbsp; &lt;/service&gt;<br>
+--&gt;<br>
+  <br>
+&lt;!-- UNcomment to configure a file system group service
+component.&nbsp; Change groupsRoot as appropriate.&nbsp; --&gt;<br>
 &lt;!-- <br>
-&nbsp; &lt;service groupsRoot="C:/temp/dan"&gt;<br>
+&nbsp; &lt;service groupsRoot="C:/groups"&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;name&gt;filesystem&lt;/name&gt;<br>
 &nbsp;&nbsp;&nbsp;
 &lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;<br>
@@ -495,13 +503,35 @@ nodeSeparator="."&gt;</small><br>
 &lt;internally_managed&gt;false&lt;/internally_managed&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;false&lt;/caching_enabled&gt;<br>
 &nbsp; &lt;/service&gt;<br>
-  </small><small> --&gt;</small><br>
-  <small> </small><br>
-  <small> &lt;/servicelist&gt;</small><br>
+--&gt;<br>
+  <br>
+&lt;!-- <br>
+&nbsp; UNcomment to configure a Person Attributes group service
+component.&nbsp; Configure your person attributes groups<br>
+&nbsp; in PAGSGroupStoreConfig.xml.&nbsp; <br>
+--&gt;<br>
+&lt;!-- <br>
+&nbsp; &lt;service&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;name&gt;pags&lt;/name&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_store_factory&gt;org.jasig.portal.groups.pags.PersonAttributesEntityStoreFactory&lt;/entity_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;group_store_factory&gt;org.jasig.portal.groups.pags.PersonAttributesGroupStoreFactory&lt;/group_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_searcher_factory&gt;org.jasig.portal.groups.pags.PersonAttributesEntitySearcherFactory&lt;/entity_searcher_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;internally_managed&gt;false&lt;/internally_managed&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;true&lt;/caching_enabled&gt;<br>
+&nbsp; &lt;/service&gt;<br>
+--&gt;<br>
+  <br>
+&lt;/servicelist</small><small></small><br>
 </blockquote>
-<br>
+<hr style="width: 100%; height: 2px;">
 <p>Note that the servicelist element has 3 attributes, <code>defaultService</code>,&nbsp;<code>compositeFactory</code>
-and <code>nodeSeparator</code>, and that 2 of the 3 <code>service</code>
+and <code>nodeSeparator</code>, and that 3 of the 4 <code>service</code>
 entries are commented out. &nbsp;</p>
 <p><i>Required servicelist Attributes.</i>&nbsp; The attributes <code>defaultService</code>
 and <code>compositeFactory</code> are both required. &nbsp;</p>
@@ -556,13 +586,13 @@ them via:</p>
 GroupServiceConfiguration.getAttributes().get("myAttribute");</code><br>
   <code> </code></blockquote>
 <br>
-<p><i>The servicelist elements</i>.&nbsp; The elements of the <code>servicelist</code>
+<i>The servicelist elements</i>.&nbsp; The elements of the <code>servicelist</code>
 describe<i> top-level</i> component services.&nbsp; The default
 configuration contains a single <code>service</code> element named
 "local".&nbsp; This is the default service whose group store is the
 reference portal database.&nbsp; The service elements"ldap" and
-"filesystem" are commented out.&nbsp; All 3 elements define leaf
-services.&nbsp; The service named "local" has the following entry: </p>
+"filesystem" are commented out.&nbsp; All 4 elements define leaf
+services.&nbsp; The service named "local" has the following entry:
 <blockquote><small>&lt;service&gt;</small><br>
   <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;local&lt;/name&gt;</small><br>
   <small> &nbsp;&nbsp;&nbsp;
@@ -658,11 +688,11 @@ basis. &nbsp;</p>
 which     controls whether the component service uses the portal's
 entity caching   service  to cache groups.&nbsp; The value for the
 "local" service  is set  to <i>true</i> to  eliminate excess database
-calls.&nbsp; It is set to <i>false</i> for  "ldap" and "filesystem"
-because both do their own caching. &nbsp;</p>
-<i>Additional services</i>.&nbsp; Comment in the "ldap" service if you
-want to hook up an ldap group service and the "filesystem" element if
-you want to use the filesystem group service (or create your own):
+calls.&nbsp; It is set to <i>false</i> for  the other services because
+they do their own caching. &nbsp;</p>
+<i>Additional services</i>.&nbsp; Comment in one or more of the other
+group service declarations if you want to supplement the local groups
+with groups from other sources, (or create your own service):
 <blockquote> &nbsp;<small> &lt;service&gt;</small><br>
   <small> &nbsp;&nbsp;&nbsp; &lt;name&gt;<span style="font-weight: bold;">ldap</span>&lt;/name&gt;</small><br>
   <small> &nbsp;&nbsp;&nbsp;
@@ -692,22 +722,34 @@ you want to use the filesystem group service (or create your own):
 &nbsp;&nbsp;&nbsp;
 &lt;internally_managed&gt;false&lt;/internally_managed&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;false&lt;/caching_enabled&gt;<br>
-&nbsp; &lt;/service&gt;<br>
-  </small> <br>
+  </small><small> &nbsp; &lt;/service&gt;<br>
+  <br>
+  </small><small>&nbsp;</small><small> &nbsp; &lt;service&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;name&gt;<span style="font-weight: bold;">pags</span>&lt;/name&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;service_factory&gt;org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory&lt;/service_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_store_factory&gt;org.jasig.portal.groups.pags.PersonAttributesEntityStoreFactory&lt;/entity_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;group_store_factory&gt;org.jasig.portal.groups.pags.PersonAttributesGroupStoreFactory&lt;/group_store_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;entity_searcher_factory&gt;org.jasig.portal.groups.pags.PersonAttributesEntitySearcherFactory&lt;/entity_searcher_factory&gt;<br>
+&nbsp;&nbsp;&nbsp;
+&lt;internally_managed&gt;false&lt;/internally_managed&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;caching_enabled&gt;true&lt;/caching_enabled&gt;<br>
+&nbsp; &lt;/service&gt;</small><br>
 </blockquote>
 Note that the value of <code>service_factory</code> is the  same   for
 all of the service elements.&nbsp; All of the services are instances of <code>ReferenceIndividualGroupService</code>,
 customized by their respective service configurations.&nbsp; In the
-case of the "ldap" and "filesystem" services, the entries for <code>entity_store_factory</code>,<code>
+case of the "ldap", "pags" and "filesystem" services, the entries for <code>entity_store_factory</code>,<code>
 group_store_factory</code> and <code>entity_searcher_factory</code> all
 designate different factory classes but return a single group store
 instance that implements&nbsp; <code>IEntityStore</code>, <code>IEntityGroupStore</code>
-and <code>IEntitySearcher</code>.&nbsp; Both services have <code>internally_managed</code>
-set to <i>false</i>.&nbsp; Updates to the filesystem store occur
-outside the transactional control of the portal and, at least in most
-environments, LDAP will   not be updatable from the portal either.&nbsp;
-In any event, neither <code>LDAPGroupStore</code> nor <code>FilesystemGroupStore</code>supports
-updates. &nbsp;
+and <code>IEntitySearcher</code>.&nbsp; These services have <code>internally_managed</code>
+set to <i>false</i> since updates to them occur outside the
+transactional control of the portal and, in any event, their stores do
+not support updates. &nbsp;
 <h4><a name="Caching_of_Group_Members"></a>Caching of Group Members</h4>
 <span style="font-style: italic;">Caching of Groups.</span>&nbsp; When
 caching is set <span style="font-style: italic;">on</span> for a
@@ -748,14 +790,26 @@ have the update, but the cached entities will not.&nbsp; In the case of <code>IE
 for <code>IPersons</code> (users), we remove the cache entry when the
 user's portal session is destroyed, but this still requires the user to
 log off and log on again to see the effect of a concurrent membership
-change in an external group source.&nbsp; <br>
+change in an external group source.<br>
+<br>
+<span style="font-style: italic;">Key Caches.</span>&nbsp; Groups cache
+the keys of their members so they do not have to keep re-retrieving
+membership information.&nbsp; These caches are initialized when a group
+is first asked for its members.&nbsp; If a group has a large number of
+members, this process is expensive, so it is not performed unless <code>getMembers()</code>
+is actually called.&nbsp; For example, if <code>contains()</code> is
+called on a group that has not yet been initialized, the group will
+delegate this method to its store to spare it the expense of
+initialization just to answer if it contains a single group
+member.&nbsp; <br>
 <h4><a name="Alternate_Group_Stores"></a>Alternate Group Stores</h4>
 <p>The composite design anticipates that a group system will have
 multiple sources of groups.&nbsp; The group information that ships with
 the basic uPortal distribution comes from the local group service, which
-uses RDBMEntityGroupStore as its store.&nbsp; As of version 2.3, there
-are 3 alternate stores that come with uPortal.&nbsp; If none meets your
-needs, consider writing a custom store for your environment.&nbsp; <br>
+uses <code>RDBMEntityGroupStore</code> as its store.&nbsp; As of version
+2.3, there are 3 alternate stores that come with uPortal, described at
+the links below.&nbsp; If none of them meets your needs, consider
+writing a custom store.&nbsp; <br>
 </p>
 <ul>
   <li>The <a href="ldapGroupStore_prt.html">LDAP Group Store</a>
@@ -791,9 +845,9 @@ need to draw groups from another source,   you will have to implement
 the <code>IEntityGroupStore</code> and <code>IEntitySearcher</code>
 interfaces. &nbsp;You should not have to write a custom group serivce
 (an <code>IIndividualGroupService</code>) unless you need to change the
-transactional    rules of the service. &nbsp;Of course, you can always
-re-implement  or sublcass    the reference implementations for reasons
-of efficiency, correctness   or to add new functions. &nbsp;Please
+transactional rules of the service. &nbsp;Of course, you can always
+re-implement or sublcass    the reference implementations for reasons of
+efficiency, correctness   or to add new functions. &nbsp;Please
 contribute your code back to the project so that the entire uPortal
 community can benefit from your improvements. &nbsp;<br>
 </p>
@@ -811,7 +865,7 @@ your own  caching mechanism. &nbsp; &nbsp;</p>
 <p>Please post your questions, comments, suggestions and ideas to the <a
  href="mailto:jasig-portal@unm.edu">JA-SIG Portal Discussion List</a>.
 &nbsp;Good luck! </p>
-<i>last revised: 03/30/2004</i><br>
+<i>last revised: 03/31/2004, d.e.</i><br>
 <br>
 <!-- end cut this section to put into jasig table cell format --> <br>
 <!-- end of main body table cell --><!-- end cut this section to put into jasig table cell format -->
