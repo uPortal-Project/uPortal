@@ -37,7 +37,6 @@
 package  org.jasig.portal.services;
 
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.entityproperties.EntityProperties;
 import org.jasig.portal.services.entityproperties.IEntityPropertyFinder;
 import org.jasig.portal.services.entityproperties.IEntityPropertyStore;
@@ -55,6 +54,10 @@ import org.w3c.dom.NodeList;
  *
  * @author Alex Vigdor av317@columbia.edu
  * @version $Revision$
+ *
+ * @author Don Fracapane df7@columbia.edu
+ * Removed caching from this class and delegated it to the finder classes. Each
+ * finder can choose the method of caching if caching is appropriate.
  */
 public class EntityPropertyRegistry {
     protected static EntityPropertyRegistry _instance;
@@ -126,78 +129,44 @@ public class EntityPropertyRegistry {
 
     public static void storeProperty(EntityIdentifier entityID, String name, String value) {
         instance().store.storeProperty(entityID, name, value);
-        instance().clearCache(entityID);
     }
 
     public static void unStoreProperty (EntityIdentifier entityID, String name) {
         instance().store.unStoreProperty(entityID, name);
-        instance().clearCache(entityID);
-    }
-
-    protected void clearCache(EntityIdentifier entityID) {
-        try {
-            EntityCachingService.instance().remove(propsType, getPropKey(entityID));
-        } catch (CachingException e) {
-            LogService.log(LogService.ERROR, e);
-            Exception ee = e.getRecordedException();
-            if (ee != null) {
-                LogService.log(LogService.ERROR, ee);
-            }
-        }
     }
 
     protected String getPropKey(EntityIdentifier entityID) {
-        return  org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).toString()
-                + "." + entityID.getKey();
+       String key = org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).toString()
+                + "." + entityID.getKey(); 
+       return  key;
     }
 
-    protected EntityProperties getProperties(EntityIdentifier entityID) {
-        EntityProperties ep = null;
-        try {
-            ep = (EntityProperties)EntityCachingService.instance().get(propsType,
-                    getPropKey(entityID));
-        } catch (CachingException e) {
-            LogService.log(LogService.ERROR, e);
-            Exception ee = e.getRecordedException();
-            if (ee != null) {
-                LogService.log(LogService.ERROR, ee);
+   protected EntityProperties getProperties(EntityIdentifier entityID) {
+      EntityProperties ep = null;
+      ep = new EntityProperties(getPropKey(entityID));
+      for (int i = 0; i < finders.length; i++) {
+         IEntityPropertyFinder finder;
+         if (i == storePrecedence) {
+            finder = store;
+         }
+         else {
+            if ((finderTypes[i]!=null) && (finderTypes[i].equals("*") || entityID.getType().equals(finderTypes[i]))) {
+               finder = finders[i];
             }
-        }
-        if (ep == null) {
-            ep = new EntityProperties(getPropKey(entityID));
-            for (int i = 0; i < finders.length; i++) {
-                IEntityPropertyFinder finder;
-                if (i == storePrecedence) {
-                    finder = store;
-                }
-                else {
-                    if ((finderTypes[i]!=null) && (finderTypes[i].equals("*") || entityID.getType().equals((Class) finderTypes[i]))) {
-                        finder = finders[i];
-                    }
-                    else {
-                        finder = null;
-                    }
-                }
-                if (finder != null) {
-                    String[] names = finder.getPropertyNames(entityID);
-                    for (int j = 0; j < names.length; j++) {
-                        ep.setProperty(names[j], finder.getProperty(entityID,
-                                names[j]));
-                    }
-                }
+            else {
+               finder = null;
             }
-            try {
-                EntityCachingService.instance().add(ep);
-            } catch (CachingException e) {
-                LogService.log(LogService.ERROR, e);
-                Exception ee = e.getRecordedException();
-                if (ee != null) {
-                    LogService.log(LogService.ERROR, ee);
-                }
+         }
+         if (finder != null) {
+            String[] names = finder.getPropertyNames(entityID);
+            for (int j = 0; j < names.length; j++) {
+               ep.setProperty(names[j], finder.getProperty(entityID,
+                       names[j]));
             }
-        }
-        return  ep;
-    }
+         }
+      }
+      return  ep;
+   }
 }
 
 
