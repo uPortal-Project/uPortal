@@ -44,6 +44,7 @@ import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.services.Authorization;
 import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
@@ -57,6 +58,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.sql.SQLException;
+
 
 /**
  * <p>Manages channels, replaces CPublisher</p>
@@ -412,9 +414,11 @@ public class CChannelManager extends BaseChannel {
         Set roles = roleSettings.getSelectedRoles();
         int publisherID = staticData.getPerson().getID();
         try {
-          ChannelRegistryManager.publishChannel(channelDef.toXML(), catIDs, roles, publisherID);
+          Element channelE = channelDef.toXML();
+          ChannelRegistryManager.publishChannel(channelE, catIDs, roles, publisherID);
         } catch (Exception e) {
           // need to revisit this and handle the error!
+          e.printStackTrace();
           throw new GeneralRenderingException(e.getMessage());
         }
 
@@ -440,6 +444,26 @@ public class CChannelManager extends BaseChannel {
           userSettings.setFilterByID(filterByID);
           channelManagerDoc = getChannelManagerDoc(userSettings);
         }
+      } else if (action.equals("editChannelSettings")) {
+        String chanID = runtimeData.getParameter("channelID");
+        // Set the channel definition
+        channelDef.setChannelDefinition(ChannelRegistryManager.getChannel(chanID));
+
+        // Set the roles
+        int channelID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
+        roleSettings.setRoles(new TreeSet(new Authorization().getChannelRoles(channelID)));
+
+        // Set the categories
+        Set categories = new TreeSet();
+        org.w3c.dom.NodeList nl = ChannelRegistryManager.getCategories(chanID);
+        for (int i = 0; i < nl.getLength(); i++) {
+          Element category = (Element)nl.item(i);
+          categories.add(category.getAttribute("ID"));
+        }
+        categorySettings.setSelectedCategories(categories);
+
+        action = "reviewChannel";
+        doAction();
       }
     }
 
@@ -896,6 +920,32 @@ public class CChannelManager extends BaseChannel {
       }
     }
 
+    protected void setChannelDefinition(Element channelE) throws PortalException {
+      ID = channelE.getAttribute("ID");
+      typeID = channelE.getAttribute("typeID");
+      name = channelE.getAttribute("name");
+      timeout = channelE.getAttribute("timeout");
+      fname = channelE.getAttribute("fname");
+      javaClass = channelE.getAttribute("class");
+      minimizable = channelE.getAttribute("minimizable");
+      editable = channelE.getAttribute("editable");
+      hasHelp = channelE.getAttribute("hasHelp");
+      hasAbout = channelE.getAttribute("hasAbout");
+      printable = channelE.getAttribute("printable");
+      removable = channelE.getAttribute("removable");
+      detachable = channelE.getAttribute("detachable");
+
+      for (Node n = channelE.getFirstChild(); n != null; n = n.getNextSibling()) {
+        if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("parameter")) {
+          Element parameterE = (Element)n;
+          String name = parameterE.getAttribute("name");
+          String value = parameterE.getAttribute("value");
+          String override = parameterE.getAttribute("override");
+          parameters.put(name, new Parameter(name, value, override));
+        }
+      }
+    }
+
     protected Element toXML() {
       Element channelE = emptyDoc.createElement("channel");
       setAttribute(channelE, "ID", ID);
@@ -937,14 +987,9 @@ public class CChannelManager extends BaseChannel {
 
     protected Set getSelectedCategories() { return selectedCategories; }
     protected void setBrowsingCategory(String browsingCategory) { this.browsingCategory = browsingCategory; }
-
-    protected void addSelectedCategory(String category) {
-      selectedCategories.add(category);
-    }
-
-    protected void removeCategory(String category) {
-      selectedCategories.remove(category);
-    }
+    protected void addSelectedCategory(String category) { selectedCategories.add(category); }
+    protected void setSelectedCategories(Set selectedCategories) { this.selectedCategories = selectedCategories; }
+    protected void removeCategory(String category) { selectedCategories.remove(category); }
 
     protected Element toXML() {
       Element userSettingsE = emptyDoc.createElement("userSettings");
@@ -969,7 +1014,6 @@ public class CChannelManager extends BaseChannel {
   }
 
   protected class RoleSettings {
-    // change to a Set!
     protected Set selectedRoles;
 
     protected RoleSettings() {
@@ -977,14 +1021,9 @@ public class CChannelManager extends BaseChannel {
     }
 
     protected Set getSelectedRoles() { return selectedRoles; }
-
-    protected void addSelectedRole(String selectedRole) {
-      selectedRoles.add(selectedRole);
-    }
-
-    protected void removeRoles() {
-      selectedRoles = new TreeSet();
-    }
+    protected void addSelectedRole(String selectedRole) { selectedRoles.add(selectedRole); }
+    protected void removeRoles() { selectedRoles = new TreeSet(); }
+    protected void setRoles(Set roles) { selectedRoles = roles; }
 
     protected Element toXML() {
       Element userSettingsE = emptyDoc.createElement("userSettings");
