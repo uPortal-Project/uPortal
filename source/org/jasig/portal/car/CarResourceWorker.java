@@ -53,6 +53,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.RequestParamWrapper;
+import org.jasig.portal.services.LogService;
 
 /**
  * Class to handle incoming portal requests with specified worker of
@@ -112,9 +113,10 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
         if ( resourceSize != -1 )
             res.setHeader( "Content-Length", "" + resourceSize );
         
+        OutputStream out = null;
         try
         {
-            OutputStream out = res.getOutputStream();
+            out = res.getOutputStream();
             byte[] bytes = new byte[4096];
             int bytesRead = 0;
             bytesRead = in.read( bytes );
@@ -130,7 +132,17 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
         catch( IOException ioe )
         {
             throw new PortalException( "Error writing resource" );
-        }
+        } finally {
+			try {
+				in.close();
+				if (out != null)
+					out.close();
+			} catch (IOException ioe) {
+				LogService.log(LogService.ERROR,
+						"CarResourceWorker::processWorkerDispatch() could not close IO Stream"
+								+ ioe);
+			}
+		}
     }
 
     /**
