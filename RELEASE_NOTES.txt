@@ -1,0 +1,49 @@
+$Id$
+
+uPortal Release Notes
+---------------------
+
+Release Notes - uPortal - Version 2.4.2
+
+** Bug
+    * [UP-338] - RENDERING_DONE Event never sent
+    * [UP-476] - User's LDAP groups not loaded if username contains uppercase
+    * [UP-512] - User agent too long for db column
+    * [UP-685] - wrong fname in fragment produces exception with no useful error
+                 message
+    * [UP-744] - PersonDirectory has a memory leak related to caching IPersons in
+                 a WeakHashMap
+    * [UP-745] - ChannelManager has a memory leak, when it swaps out a channel
+                 for the CError channel, the end session events never progagate
+                 to the original channel
+    * [UP-746] - CSecureInfo has a memory leak, when ChannelManager swaps out a
+                 channel for the CSecureInfo channel, the to end session events 
+                 never propagate to the original channel
+    * [UP-747] - Change to portlet parameter encoding breaks download worker URLs
+    * [UP-748] - Infinite recursion in RestrictedPerson
+    * [UP-749] - render parameter does not survive refresh
+    * [UP-753] - ChannelFactory should not expose internal map of static channels, 
+                 not create more than one instance of a multithreaded channel
+    * [UP-758] - CContentSubscriber prints exception to stdout instead of log
+    * [UP-759] - Xalan jar should be deployed to endorsed directory
+    * [UP-760] - Entity locks not expired correctly
+    * [UP-761] - A lock owner is limited to single READ lock on an entity
+    * [UP-772] - Classpath resources not being copied to build
+    * [UP-775] - Duplicate read locks for a single owner not permitted.
+    * [UP-776] - WebApplicationMarshaller.java turns resource-ref into 
+                 resource-env-ref
+    * [UP-778] - AggregatedLayoutManager.loadUserLayout() fails to log stack 
+                 trace for exception
+    * [UP-779] - ChannelRenderer declares constants that are already declared 
+                 in its base class
+    * [UP-780] - Eliminate "unknown additional descriptor warning" when using 
+                 ChainingSecurityContext
+    * [UP-796] - contains() doesn't always work for PAGS groups
+    * [UP-798] - GroupService.isComposite always returns null
+    * [UP-811] - NPE when Data tag not present in DatabaseTagHandler
+
+** Improvement
+    * [UP-770] - Document hsqldb version included with uPortal
+    * [UP-800] - Add comment to clarify usage of Logger.properties
+    * [UP-809] - Move portlet request attribute configuration to helper method
+    * [UP-810] - Log logging implementation
