@@ -124,7 +124,7 @@ public class PortalSessionManager extends HttpServlet {
         // forward
         // LogService.instance().log(LogService.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
         //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
-        res.sendRedirect(req.getContextPath() + '/' + redirectBase);
+        res.sendRedirect(req.getContextPath() + redirectBase);
       }
       else {
         // delete old request
