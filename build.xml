@@ -819,7 +819,7 @@
 -->
 
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
-    <java classname="org.jasig.portal.AllTests">
+    <java fork="true" classname="org.jasig.portal.AllTests">
       <classpath>
        <path refid="tests.classpath"/>
        <path location="${build.home}/WEB-INF/classes"/>
