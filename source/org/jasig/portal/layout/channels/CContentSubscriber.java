@@ -36,6 +36,7 @@
 package org.jasig.portal.layout.channels;
 
 import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalControlStructures;
@@ -332,9 +333,8 @@ public class CContentSubscriber extends FragmentManager {
 			  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!");  
 	}
 
-    public void setStaticData (ChannelStaticData sd) throws PortalException {
-       super.setStaticData(sd);
-       if ( channelRegistry == null )
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
+        super.setRuntimeData(rd);
         channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
     }
 
