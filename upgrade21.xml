@@ -28,10 +28,11 @@
     <antcall target="pushfragment">
       <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
     </antcall>
+    <antcall target="convertprofiles"/>
     <echo message="Finished initializing uPortal"/>
   </target>
 
- <target name="upgradedb">
+ <target name="upgradedb" depends="compile">
     <echo message="Invoking DbLoader"/>
     <property name="usetable" value=" "/>
     <property name="tablefile" value=" "/>
@@ -64,6 +65,15 @@
       <arg value="${upgrade}"/>
       <arg value="${upgradeVersion}"/>
     </java>
+ </target>
+ 
+ <target name="convertprofiles" depends="compile">
+  <java fork="false" classname="org.jasig.portal.tools.ConvertProfilesToAL">
+   <classpath>
+    <pathelement path="${build.home}/WEB-INF/classes"/>
+    <path refid="compile.classpath"/>
+   </classpath>
+  </java>
  </target>
 
 </project>
