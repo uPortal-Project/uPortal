@@ -3,6 +3,7 @@
 <%@ page import="org.jasig.portal.*" %>
 <%@ page errorPage="error.jsp" %>
 <%@ include file="checkinit.jsp" %>
+<%@ include file="checkGuest.jsp" %>
 
 <jsp:useBean id="layoutBean" class="org.jasig.portal.LayoutBean" type="org.jasig.portal.ILayoutBean" scope="session" />
 <jsp:useBean id="publish" class="org.jasig.portal.PublisherBean" scope="request" />

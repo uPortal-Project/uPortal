@@ -4,6 +4,7 @@
 <%@ page import="com.objectspace.xml.*" %>
 <%@ page errorPage="error.jsp" %>
 <%@ include file="checkinit.jsp" %>
+<%@ include file="checkGuest.jsp" %>
 
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 

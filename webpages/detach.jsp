@@ -2,6 +2,7 @@
 <%@ page import="org.jasig.portal.layout.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
 <%@ include file="checkinit.jsp" %>
+<%@ include file="checkGuest.jsp" %>
 <jsp:useBean id="layoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 
 <%
