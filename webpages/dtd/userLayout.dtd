@@ -35,6 +35,7 @@ $Revision$
 -->
 
 <!ELEMENT layout (folder|channel)*>
+<!ELEMENT layout_fragment (folder|channel)*>
 
 <!ELEMENT folder (folder|channel)*>
 <!ATTLIST folder
@@ -53,13 +54,14 @@ $Revision$
   description CDATA #REQUIRED
   title CDATA #REQUIRED 
   class CDATA #REQUIRED
+  chanID CDATA #REQUIRED
   typeID CDATA #REQUIRED
   fname CDATA #IMPLIED   
   timeout CDATA "10000"
+  hidden (true|false) "false"
   editable (true|false) "false"
   hasHelp (true|false) "false"
-  hasAbout (true|false) "false"
-  printable (true| false) "false">
+  hasAbout (true|false) "false">
 
 
 <!ELEMENT parameter EMPTY>
