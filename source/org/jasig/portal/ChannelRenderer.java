@@ -563,7 +563,7 @@ public class ChannelRenderer
                             getChannelCache().put(key.getKey(),entry);
                         }
                     } else {
-                        LogService.instance().log(LogService.WARN,"ChannelRenderer::setCharacterCache() : channel cache key is null !");
+                        LogService.instance().log(LogService.DEBUG,"ChannelRenderer::setCharacterCache() : channel cache key is null.");
                     }
                 }
             }
