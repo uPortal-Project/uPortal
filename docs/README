@@ -5,58 +5,36 @@ framework. The documentation is in a few different formats, and you
 can compile them into a few other formats as explained in the sections
 below.
 
+
 Manifest
 --------
+channel docs/          o Documentation for channel and content developers
+developers/            o Documentation for portal framework developers
+docs.xml               o Ant build file for convering the documentation into 
+                         human reader-friendly formats
+overview.xml           o An overview of compiling and installing uPortal 2.x
+README                 o This file
+website/               o A complete copy of the uPortal website. Some files
+                         in this directory are generated as a result of the
+                          process outlined below (see "Compiling"). 
 
-README                    this file
-buildPortalJavaDocs.bat   a MS-DOS batch file wrapper for creating 
-                           javadocs on windows. 
-TODO                      planned features not yet implemented
-BUGS                      known problems
-VERSION                   the current version number
-WhatsNew                  changes since the last public release
-                           for a complete list of changes, see the ChangeLog
-                           file(s))
-javadocs/                 HTML documentation produced by the javadoc tool. 
-diagrams/                 UML diagrams describing uPortal internals
-overview.html             HTMl installation guide for the uPortal framework
-overview.xml              XML source for overview.html
-uPortalDoc.xsl            XSL stylesheet for producing overview.html
-
-Changes
--------
-
-See the ChangeLog for additional information about the specific changes.
-
-See WhatsNew for changes since the last release.
-
-
-Formats
--------
-
-...TBD...
 
 Compiling
 ------------
 
 To compile these source files into a more human-readable format, you
-must have some tools already installed.
+must have some tools already installed. Assuming that you already have
+a copy of the Java Development Kit (JDK, version 1.2.2 or later)
+installed for your platform, you can compile the documentation after
+installing the following:
 
-   Tool                           Location (URL)
-   ----------------------------   --------------
-   Ant:                           jakarta.apache.org/ant/
-   DocBook XSL stylesheets:       www.nwalsh.com/docbook/xsl/
-   FOP:                           xml.apache.org/fop/
-   Xalan:                         xml.apache.org/xalan/
+Tool                      Location (URL)
+------------------------  --------------
+Ant:                      jakarta.apache.org/ant/
+DocBook XSL stylesheets:  sourceforge.net/project/showfiles.php?group_id=21935
+FOP:                      xml.apache.org/fop/
+Xalan:                    xml.apache.org/xalan/
 
-
-Use
----
-
-From this single set of source files, you can produce xhtml, html, or
-.pdf. RTF is also possible, but we haven't tested this.
-
-...TBC...
 
 
 Copyright
