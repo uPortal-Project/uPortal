@@ -305,8 +305,6 @@ throws LockingException
         {
             if ( locks[i].getLockType() == WRITE_LOCK )
                 { throw new LockingException("Could not create lock: entity already write locked."); }
-            if ( locks[i].getLockOwner().equals(owner) )
-                { throw new LockingException("Could not create lock: owner " + owner + " already holds lock on this entity."); }
         }
     }
 
