@@ -103,6 +103,28 @@ public class ChannelRenderer
     }
   }
 
+
+    /**
+     * Sets the channel on which ChannelRenderer is to operate.
+     *
+     * @param channel an <code>IChannel</code>
+     */
+    public void setChannel(IChannel channel) {
+        LogService.instance().log(LogService.ERROR,"ChannelRenderer::setChannel() : channel is being reset!");        
+        this.channel=channel;
+        if(worker!=null) {
+            worker.setChannel(channel);
+        }
+        // clear channel chace
+        channelCache=null;
+        cacheWriteLock=new Object();
+    }
+    
+    /**
+     * Obtains a content cache specific for this channel instance.
+     *
+     * @return a key->rendering map for this channel
+     */
     Map getChannelCache() {
 	if(channelCache==null) {
 	    if((channelCache=(SoftHashMap)cacheTables.get(channel))==null) {
@@ -112,6 +134,7 @@ public class ChannelRenderer
 	}
 	return channelCache;
     }
+
 
   /**
    * Set the timeout value
@@ -418,6 +441,10 @@ public class ChannelRenderer
             this.channel=ch;  this.rd=runtimeData;
             successful = false; done = false;
 	    buffer=null; cbuffer=null;
+        }
+
+        public void setChannel(IChannel ch) {
+            this.channel=ch;
         }
 
         public void run () {

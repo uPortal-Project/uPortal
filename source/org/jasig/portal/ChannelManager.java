@@ -197,6 +197,9 @@ public class ChannelManager {
                     IChannel badChannel=(IChannel) channelTable.get(chanId);
                     channelTable.remove(badChannel);
                     CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,chanId,badChannel);
+                    // replace the channel object in ChannelRenderer (for cache recording purposes)
+                    cr.setChannel(errorChannel);
+                    // replace the channel object in the channel table
                     channelTable.put(chanId,errorChannel);
                     // demand output
                     try {
@@ -227,6 +230,9 @@ public class ChannelManager {
                     IChannel badChannel=(IChannel) channelTable.get(chanId);
                     channelTable.remove(badChannel);
                     CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,chanId,badChannel);
+                    // replace the channel object in ChannelRenderer (for cache recording purposes)
+                    cr.setChannel(errorChannel);
+                    // replace the channel object in the channel table
                     channelTable.put(chanId,errorChannel);
                     // demand output
                     try {
@@ -485,6 +491,9 @@ public class ChannelManager {
                     IChannel badChannel=(IChannel) channelTable.get(chanId);
                     channelTable.remove(badChannel);
                     CError errorChannel=new CError(CError.TIMEOUT_EXCEPTION,(Exception) null,chanId,badChannel);
+                    // replace the channel object in ChannelRenderer (for cache recording purposes)
+                    cr.setChannel(errorChannel);
+                    // replace the channel object in the channel table
                     channelTable.put(chanId,errorChannel);
                     // demand output
                     try {
@@ -515,6 +524,9 @@ public class ChannelManager {
                     IChannel badChannel=(IChannel) channelTable.get(chanId);
                     channelTable.remove(badChannel);
                     CError errorChannel=new CError(CError.RENDER_TIME_EXCEPTION,channelException,chanId,badChannel);
+                    // replace the channel object in ChannelRenderer (for cache recording purposes)
+                    cr.setChannel(errorChannel);
+                    // replace the channel object in the channel table
                     channelTable.put(chanId,errorChannel);
                     // demand output
                     try {
