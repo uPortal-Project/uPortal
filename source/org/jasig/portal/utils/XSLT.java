@@ -608,5 +608,46 @@ public class XSLT {
         s = CommonUtils.replaceText(s,"'","\u2019");
         return s;
     }
+    
+    
+    /**
+     * Purge the cache of stylesheet roots and stylesheet sets.
+     */
+    public static void purgeStylesheetCache () {
+        stylesheetRootCache.clear();
+        stylesheetSetCache.clear();
+      }
+      
+    /**
+     * Get the number of stylesheets in the stylesheet root cache.
+     * @return the number of stylesheets in the stylesheet root cache.
+     */
+      public static int getStylesheetCacheSize () {
+        return stylesheetRootCache.size();
+      }
+    
+    public String toString(){
+        StringBuffer sb = new StringBuffer();
+        sb.append("XSLT: ");
+        sb.append(" stylesheetRootCacheEnabled:");
+        sb.append(XSLT.stylesheetRootCacheEnabled);
+        sb.append(" stylesheetSetCacheEnabled: ");
+        sb.append(XSLT.stylesheetSetCacheEnabled);
+        sb.append(" mediaProps: ");
+        sb.append(XSLT.mediaProps);
+        if (this.caller != null){
+            sb.append(" caller:");
+            sb.append(this.caller.getClass().getName()); 
+        }
+        if (this.xslURI != null){
+            sb.append(" xslURI:");
+            sb.append(this.xslURI);
+        }
+        if (this.stylesheetParams != null){
+            sb.append(" stylesheetParams:");
+            sb.append(this.stylesheetParams);
+        }
+        return sb.toString();
+    }
 }
 
