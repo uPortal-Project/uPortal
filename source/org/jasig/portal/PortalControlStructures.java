@@ -31,11 +31,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import javax.servlet.http.*;
+package  org.jasig.portal;
+
+import  javax.servlet.http.*;
+
 
 /**
  * <p>This object is passed to special channels</p>
@@ -43,29 +47,53 @@ import javax.servlet.http.*;
  * @version $Revision$
  */
 public class PortalControlStructures {
-    protected UserLayoutManager ulm;
-    protected HttpServletRequest req;
-    protected HttpServletResponse res;
-    protected ChannelManager cm;
+  protected HttpServletRequest m_request;
+  protected HttpServletResponse m_response;
 
-    public UserLayoutManager getUserLayoutManager() { return ulm; }
-    public HttpServletRequest getHttpServletRequest() { return req;}
-    public HttpServletResponse getHttpServletResponse() { return res; }
-    public ChannelManager getChannelManager() {return cm; }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public HttpServletRequest getHttpServletRequest () {
+    return  (m_request);
+  }
 
-    /**
-     * Convience method for getting just the HttpSession
-     * @return the session
-     */
-    public HttpSession getHttpSession() {
-      HttpSession session = null;
-      if (req != null)
-         session = req.getSession(false);
-      return session;
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public HttpServletResponse getHttpServletResponse () {
+    return  (m_response);
+  }
+
+  /**
+   * Convience method for getting just the HttpSession
+   * @return the session
+   */
+  public HttpSession getHttpSession () {
+    HttpSession session = null;
+    if (m_request != null) {
+      session = m_request.getSession(false);
     }
+    return  (session);
+  }
 
-    public void setUserLayoutManager(UserLayoutManager lm) { ulm=lm; }
-    public void setHttpServletRequest(HttpServletRequest r) { req=r; }
-    public void setHttpServletResponse(HttpServletResponse r) { res=r; }
-    public void setChannelManager(ChannelManager m) { cm=m; }
+  /**
+   * put your documentation comment here
+   * @param r
+   */
+  public void setHttpServletRequest (HttpServletRequest request) {
+    m_request = request;
+  }
+
+  /**
+   * put your documentation comment here
+   * @param r
+   */
+  public void setHttpServletResponse (HttpServletResponse response) {
+    m_response = response;
+  }
 }
+
+
+
