@@ -2,15 +2,14 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="html"/>
 
-<xsl:param name="channelID">default</xsl:param>
+<xsl:param name="baseActionURL">default.uP</xsl:param>
 <xsl:param name="bookmarkID">default</xsl:param>
 
 <xsl:param name="newBookmark">false</xsl:param>
 
 <xsl:template match="bookmark">
-<form action="index.jsp">
+<form action="{$baseActionURL}" method="post">
 
-<input type="hidden" name="channelTarget"><xsl:attribute name="value"><xsl:value-of select="$channelID"/></xsl:attribute></input>	
 <xsl:choose>
 <xsl:when test="$newBookmark='false'">
 <input type="hidden" name="action" value="saveBookmark"/>

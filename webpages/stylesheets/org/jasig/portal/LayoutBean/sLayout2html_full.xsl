@@ -6,6 +6,7 @@
 
 <xsl:param name="activeTab" select="1"/>
 <xsl:param name="userName" select="'Guest'"/>
+<xsl:param name="baseActionURL">render.uP</xsl:param>
 
 <xsl:variable name="channelHeadingColor">#83a3b8</xsl:variable>
 <xsl:variable name="activeTabColor">#83a3b8</xsl:variable>
@@ -105,19 +106,19 @@
           <td nowrap="true" valign="center" align="right">
            <xsl:if test="@hasHelp='true'">
             <a>
-            <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=help</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=help</xsl:attribute>
             <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/help.gif" alt="Help"/>
             </a>
            </xsl:if>
            <xsl:if test="@editable='true'">
             <a>
-            <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=edit</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=edit</xsl:attribute>
             <img border="0" width="23" height="15" src="media/org/jasig/portal/layout/tabColumn/edit.gif" alt="Edit"/>
             </a>
            </xsl:if>
            <xsl:if test="@minimizable='true'">
             <a>
-            <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=minimize</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=minimize</xsl:attribute>
             <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/minimize.gif" alt="Minimize"/>
             </a>
            </xsl:if>
@@ -129,7 +130,7 @@
            </xsl:if>
            <xsl:if test="@removable='true'">
             <a>
-            <xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=remove</xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=remove</xsl:attribute>
             <img border="0" width="18" height="15" src="media/org/jasig/portal/layout/tabColumn/remove.gif" alt="Remove"/>
             </a>
            </xsl:if>
@@ -149,7 +150,7 @@
          <table bgcolor="{$activeTabColor}" border="0" cellspacing="0" cellpadding="2">
          <tr align="center">
             <td>
-             <font face="Arial"><a><xsl:attribute name="href">index.jsp?stylesheetTarget=s&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a></font>
+             <font face="Arial"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?stylesheetTarget=s&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a></font>
             </td>
         </tr>
         </table>
@@ -162,7 +163,7 @@
          <tr align="center">
             <td>
              <font face="Arial">
-              <a><xsl:attribute name="href">index.jsp?stylesheetTarget=s&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a>
+              <a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?stylesheetTarget=s&amp;activeTab=<xsl:number count="tab"/></xsl:attribute><b><xsl:value-of select="@name"/></b></a>
              </font>
             </td>
         </tr>
