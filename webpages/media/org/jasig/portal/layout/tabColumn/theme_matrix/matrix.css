@@ -1,44 +1,44 @@
 BODY {
-	background : #666666;
+	background-image : url(background.GIF);
 }
 
 
 A {
 	text-decoration : none;
 	font-family : System, Verdana, Geneva, Arial, Helvetica, sans-serif;
-	color : #6495ED;
+	color : Green;
 }
 A:VISITED {
-	color : #333333;
+	color : Green;
 }
 A:HOVER {
-	color : #000000;
+	color : Lime;
 }
 A.navigation {
-	color : Black;
+	color : Green;
 }
 A.navigation:visited {
-	color : Black;
+	color : Green;
 }
 A.navigation:hover {
-	color : Navy;
+	color : Lime;
 }
 .uportal-text{
-	color : Black;
+	color : Olive;
 	font-family: Century Gothic, Arial, Verdana, Helvetica;
 }
 A.uportal-navigation-category{
-	color : Black;
+	color : Green;
 	font-size : 12px;
 	font-weight : bold;
 }
 A.uportal-navigation-category:visited{
-	color : Black;
+	color : Green;
 	font-size : 12px;
 	font-weight : bold;
 }
 A.uportal-navigation-category:hover{
-	color : Navy;
+	color : Lime;
 	font-size : 12px;
 	font-weight : bold;
 }
@@ -48,15 +48,15 @@ A.uportal-navigation-category:hover{
 	color : #666666;
 }
 A.uportal-navigation-channel{
-	color : Black;
+	color : Green;
 	font-size : 12px;
 }
 A.uportal-navigation-channel:visited{
-	color : Black;
+	color : Green;
 	font-size : 12px;
 }
 A.uportal-navigation-channel:hover{
-	color : #6495ED;
+	color : Lime;
 	font-size : 12px;
 }
 .uportal-navigation-channel-selected{
@@ -71,22 +71,22 @@ A.uportal-navigation-channel:hover{
 .uportal-copyright{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 11px;
-	color : Black;
+	color : 666666;
 	font-style : italic;
 }
 .uportal-channel-text{
-	color : Black;
+	color : Olive;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 12px;
 }
 .uportal-channel-title{
-	color : #000000;
+	color : #990000;
 	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
 	font-size : 16px;
 	font-weight : bold;
 }
 .uportal-channel-subtitle{
-	color : #bbbbbb;
+	color : #999999;
 	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
 	font-size : 12px;
 	font-weight : bold;
@@ -109,22 +109,23 @@ A.uportal-navigation-channel:hover{
 .uportal-channel-copyright{
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 11px;
-	color : Black;
+	color : 666666;
 	font-style : italic;
 }
 .uportal-background{
-	background : #FFFFFF;
+	background : #555555;
 }
 .uportal-background-dark{
-	background : #eeeeee;
+	background : #555555;
 }
 .uportal-background-med{
-	background : #ddeeff;
+	background : #444444;
 }
 .uportal-background-light{
-	background : #bbccdd;
+	background : #333333;
 }
 .uportal-background-content{
-	background : #99aabb;
+	background : #333333;
+	background-image : url(contentBackground.GIF);
 }
 

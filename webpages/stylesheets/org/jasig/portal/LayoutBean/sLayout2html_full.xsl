@@ -51,6 +51,8 @@ function openBrWindow(theURL,winName,features) {
 
                            <a href="{$baseActionURL}?uP_tparam=theme&amp;theme=vsac">vsac,</a>
 
+                           <a href="{$baseActionURL}?uP_tparam=theme&amp;theme=matrix">matrix,</a>
+
                            <a href="{$baseActionURL}?uP_tparam=theme&amp;theme=uosm">uosm</a>
 
                            <xsl:if test="not($userName = 'Guest')">
@@ -408,3 +410,4 @@ function openBrWindow(theURL,winName,features) {
       </table>
    </xsl:template>
 </xsl:stylesheet>
+
