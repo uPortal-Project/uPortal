@@ -1,0 +1,323 @@
+uPortal 2.2 Distribution
+------------------------
+
+Purpose
+-------
+This distribution is targeted towards
+people who would like to install
+uPortal in a development or production 
+environment.  It contains uPortal source
+code and properties files, but not a servlet
+container, directory, or relational database, 
+which are required.  Use of this distribution
+requires knowledge of J2EE environments and the
+Ant tool from the Apache Jakarta project.
+
+
+Contents
+--------
+1) uPortal 2.2
+2) uPortal 2.2 java libraries (Xalan, Log4J, etc).
+3) uPortal Architecture overview and JavaDoc API
+   (see docs directory)
+
+
+System requirements
+-------------------
+JDK 1.3 or higher
+JAVA_HOME environment variable must be set
+Installation of Ant from Jakarta: 
+  http://ant.apache.org/
+
+
+Instructions
+------------
+Modify build.properties with local settings.
+
+Use the following ant targets:
+
+initportal - installs uPortal into a servlet container, 
+             prepares a relational database with uPortal schema and data,
+	     publishes channels and pushed layout fragments
+dist - creates JavaDoc, uPortal jar, and uPortal WAR files.
+
+For descriptions of other Ant targets, 
+see docs/uPortal_tools_overview.txt.
+
+Make sure the database and servlet container are running and
+access uPortal with http://localhost:8080/uPortal
+Your URL may be different if you have configured a different port
+and/or context name.
+
+You can login to uPortal with the following user name/password 
+combinations:
+
+demo, demo
+student, student
+faculty, faculty
+staff, staff
+developer, developer
+
+Each user may have a slightly different layout.
+
+
+Notes 
+-----
+-Several properties files and database tables have changed
+ since uPortal 2.1.x.  If you are upgrading from this version,
+ you will need to see to it that your properties files and
+ database schema AND data are upgraded appropriately.  
+ An upgrade tool is badly needed, but not yet available.
+
+-uPortal does not strictly require the use of connection
+ pooling, but it is highly recommended for production
+ installations.  If your servlet container does not provide
+ connection pooling, try something like Yet Another Poolman.  
+ For information about Yet Another Poolman, 
+ see http://yapoolman.sourceforge.net/.
+
+-Bug fixes from 2.1.x releases have been implemented in 2.2
+ whenever they were appropriate
+
+-If you experience XML/XSLT-related errors, there is a good
+ chance that your environment is not using the version of
+ Xalan/Xerces that comes with this release. If you are using
+ Tomcat, try copying the following files into Tomcat's
+ common/endorsed directory: xalan.jar, xercesImpl.jar, xml-apis.jar.
+ Alternatively, you can specify the use of these jar files
+ via a java parameter when starting your servlet container:
+  -Xbootclasspath/p:xalan.jar;xercesImpl.jar;xml-apis.jar
+ For more information, see Version section of
+ http://xml.apache.org/xalan-j/faq.html
+
+Please report bugs and suggestions:
+
+ http://mis105.mis.udel.edu/bugzilla/
+
+uPortal website:
+
+ http://www.uportal.org
+
+
+Changes since uPortal 2.1.5
+---------------------------
+Database:
+
+-Changed values of UP_SS_STRUCT.SS_URI, UP_SS_STRUCT.SS_DESCRIPTION_URI,
+   UP_SS_THEME.SS_URI, and UP_SS_THEME.SS_DESCRIPTION_URI. New values start with
+   "/org/" rather than "stylesheets/org/".
+-Added new row to UP_LAYOUT_STRUCT for each user layout
+   For example:
+   <!-- layout root node -->
+   <row>
+     <column><name>STRUCT_ID</name><value>1</value></column>
+     <column><name>USER_ID</name><value>1</value></column>
+     <column><name>LAYOUT_ID</name><value>1</value></column>
+     <column><name>NAME</name><value>Root folder</value></column>
+     <column><name>TYPE</name><value>root</value></column>
+     <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
+     <column><name>CHLD_STRUCT_ID</name><value>1</value></column>
+     <column><name>UNREMOVABLE</name><value>Y</value></column>
+     <column><name>IMMUTABLE</name><value>N</value></column>
+   </row>
+-Removed "User Preferences" folder and channels from UP_LAYOUT_STRUCT table.  
+-Added new tables and data to support aggregated layouts:
+   UP_RESTRICTIONS
+   UP_LAYOUT_RESTRICTIONS
+   UP_FRAGMENT_RESTRICTIONS
+   UP_FRAGMENTS
+   UP_FRAGMENT_PARAM
+   UP_USER_LAYOUT_AGGR
+   UP_LAYOUT_STRUCT_AGGR
+   UP_OWNER_FRAGMENT
+   UP_GROUP_FRAGMENT
+   UP_GROUP_PRIORITY_RANGE
+-Added new tables and data to support I18N:
+   UP_CHAN_TYPE_MDATA
+   UP_CHANNEL_MDATA
+   UP_LAYOUT_STRUCT_MDATA
+   UP_USER_PROFILE_MDATA
+   UP_USER_LAYOUT_MDATA
+   UP_USER_MDATA
+   UP_USER_LOCALE
+   UP_USER_PROFILE_LOCALE
+   UP_LAYOUT_STRUCT_LOCALE
+-Added SkinSelector channel to UP_CHANNEL with CHAN_ID=80, and related subscribe permission in UP_PERMISSION
+-Added ContentSubscriber channel to UP_CHANNEL with CHAN_ID=81, and related subscribe permission in UP_PERMISSION
+-Added Session Locales Selector channel to UP_CHANNEL with CHAN_ID=96, and related subscribe permission in UP_PERMISSION
+-Added ENTITY_CACHE_ID column to UP_ENTITY_CACHE_INVALIDATION table.
+-Added new rows to UP_SEQUENCE table:
+   <row>
+     <column><name>SEQUENCE_NAME</name><value>UP_ENTITY_CACHE</value></column>
+     <column><name>SEQUENCE_VALUE</name><value>0</value></column>
+   </row>
+   <row>
+     <column><name>SEQUENCE_NAME</name><value>UP_FRAGMENT</value></column>
+     <column><name>SEQUENCE_VALUE</name><value>10</value></column>
+   </row>
+-Added new row to UP_ENTITY_TYPE table:
+   <row>
+     <column><name>ENTITY_TYPE_ID</name><value>7</value></column>
+     <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.security.IPermissionSet</value></column>
+     <column><name>DESCRIPTIVE_NAME</name><value>IPermissions for an IAuthorizationPrincipal</value></column>
+   </row>
+-Added UP_CHANNEL.CHAN_SECURE column and data
+-Added a UP_PERMISSION entry for the CSecureInfo channel.
+-Replaced "Remote channel" channel type in UP_CHAN_TYPE with a "WSRP Consumer" channel type.
+-In UP_USER_PROFILE, changed STRUCTURE_SS_ID and THEME_SS_ID from 1 to 3 for all web browser profiles.
+ 
+
+
+Properties:
+
+-Moved dbloader.xml, data.xml, tables.xml, and localized versions of those files
+ to a new directory: properties/db.
+-build.properties
+  -Added server.home and lib.path property to make it easier to customize.
+-security.properties
+  -Added optional logoutRedirect property
+-Logger.properties
+  -Added log4j.appender.R.Encoding=UTF-8
+-portal.properties
+  -Added flag to determine wether UserPreferences should be saved at the end of each session:
+    org.jasig.portal.UserPreferencesManager.save_UserPreferences_at_logout=false
+  -Added property to specify the portal Document implementation:
+    org.jasig.portal.utils.IPortalDocument.implementation=org.jasig.portal.utils.PortalDocumentImpl
+  -Added properties to support locales:
+    org.jasig.portal.i18n.LocaleManager.locale_aware
+    org.jasig.portal.i18n.LocaleManager.portal_locales
+  -Added property for system clock fudge factor:
+    org.jasig.portal.concurrency.clockTolerance=5000
+  -Removed property
+    org.jasig.portal.concurrency.IEntityLockService.lockTolerance=5
+  -Added ChannelRendererFactory and thread pool properties:
+    org.jasig.portal.ChannelManager.ChannelRendererFactory.className=org.jasig.portal.ChannelRendererFactoryImpl
+    org.jasig.portal.ChannelManager.threadPool_initialThreads=20
+    org.jasig.portal.ChannelManager.threadPool_maxThreads=150
+    org.jasig.portal.ChannelManager.threadPool_threadPriority=5
+    org.jasig.portal.ChannelManager.threadPool_shared=true
+  -Added property for implementation of ILocaleStore:
+    org.jasig.portal.i18n.LocaleStoreFactory.implementation=org.jasig.portal.i18n.RDBMLocaleStore
+
+    org.jasig.portal.StandaloneChannelRenderer.ChannelRendererFactory.className=org.jasig.portal.ChannelRendererFactoryImpl
+    org.jasig.portal.StandaloneChannelRenderer.threadPool_initialThreads=20
+    org.jasig.portal.StandaloneChannelRenderer.threadPool_maxThreads=150
+    org.jasig.portal.StandaloneChannelRenderer.threadPool_threadPriority=5
+    org.jasig.portal.StandaloneChannelRenderer.threadPool_shared=true
+
+    org.jasig.portal.webservices.RemoteChannel.ChannelRendererFactory.className=org.jasig.portal.ChannelRendererFactoryImpl
+    org.jasig.portal.webservices.RemoteChannel.threadPool_initialThreads=20
+    org.jasig.portal.webservices.RemoteChannel.threadPool_maxThreads=150
+    org.jasig.portal.webservices.RemoteChannel.threadPool_threadPriority=5
+    org.jasig.portal.webservices.RemoteChannel.threadPool_shared=true
+  -Added property to control caching of permissions:
+    org.jasig.portal.security.IAuthorizationService.cachePermissions=true
+  -Added property to control the name of a "guest" user:
+    org.jasig.portal.security.PersonFactory.guest_user_name=guest
+  -Added properties to enable proxying of resources when running portal in ssl.
+    org.jasig.portal.serialize.ProxyWriter.resource_proxy_enabled=off
+    org.jasig.portal.serialize.ProxyWriter.resource_proxy_rewrite_prefix=/servlet/ProxyServlet/
+    org.jasig.portal.HttpProxyServlet.checkReferer=
+    org.jasig.portal.serialize.ProxyWriter.proxy_files_uri=
+    org.jasig.portal.serialize.ProxyWriter.proxy_files_path=
+
+-services.xml
+  -Added DOMInitService
+
+
+Bug fixes:
+
+-Fix spelling of setRefreshable method in PortalException.
+-Changed parentstylesheet element to parentStructureStylesheet in deck-of-cards.sdf.
+-Fixed removal of invalid entities in a multi-server configuration - bug 1380.
+-URL encoded base URLs generated in ChannelRuntimeData.
+-Fixed incorrect portal error generated when bad username is entered.
+
+
+Other changes:
+
+-Give portal logger a name so log output can be separated from output of other packages using log4j.
+-Use Logger class instead of deprecated Category class in LogService.
+-Groups Manager: 
+  Improved exception handling. 
+  Permission attributes are now on the group member xml elements,
+    making the xsl maintenance easier and allowing pluggable group manager permission policies.
+  Added pluggable permission policy capability and default implmentation. 
+-Override PortalException's getMessage and printStackTrace methods to return data from recorded exception.
+-Changed stylesheet deployment so that stylesheets are only deployed into classpath.
+   UserInstance now locates the structure and theme stylesheet using the ResourceLoader 
+   rather than the PortalSessionManager - bug 1265.
+-Added array of Locales to ChannelRuntimeData along with get/set methods.
+-LogoutServlet now allows each security context to define its own logout redirection string.
+-Changed RDBMServices.sqlTimeStamp() method to return "NULL" when passed a null Date object.
+-RDBMChannelRegistryStore now saves a ChannelDefinition object with its actual approval information.
+-RDBMLayoutStore no longer attaches "root" ID to layout element.
+-Added new channels for layout management: CContentSubscriber and CSkinSelector.
+-Introduced IUserLayoutNodeDescription interface and its descendants, 
+   changed framework classes to use interfaces instead of the actual implementations.
+-Introduced root level folder into user layout XML directly below layout element.
+-Introduced separate interfaces for aggregated layout node classes.
+-Added remove(IBasicEntity ent) method to EntityCachingService.
+-Added to UserInstance the recognition of new request parameters:
+   uP_request_move_targets, uP_move_target, uP_rename_target, uP_request_add_targets, uP_add_target, uP_locale.
+-Added facility in UserInstance to add new content to the layout.
+-Changed labels in CWebProxy.cpd to include actual CWebProxy parameter names.
+-Added new parameters "XSL Title" and "Application XSL" to CWebProxy.cpd.
+-Added new method newGroupStore(ComponentGroupServiceDescriptor svcDescriptor) to IEntityGroupStoreFactory.
+-Added new group service called "filesystem" that uses a native files system as its back end.
+-Added ability for user layout manager to manage channel instances that are not persisted.
+-Changed CHeader channel to use the fname, rather than subscribe IDs, 
+   to reference channel manager and user preferences channels.
+-Renamed AuthenticationServlet (and Authentication alias) to LoginServlet (and Login alias).
+-Added channel publishing tool and a related ant target called "pubchan".
+-Changed ReferenceSequenceGenerator to sleep for a short time before trying to increment the counter again.
+-Added WSRP producer and consumer support.
+-Added IMultithreadedPrivileged interface.
+-Added new overloaded XML.serializeNode() method that accepts an OutputFormat.
+-Added ChannelRendererFactory, IChannelRendererFactory, and IChannelRenderer - bug 1285.
+-Made ChannelStaticData.getAuthorizationPrincipal() static.
+-Added new parameters to ThemeStylesheetUserPreferences: "authenticated" and "channelManager".
+-Added new theme: portal/webpages/media/org/jasig/portal/layout/AL_TabColumn/integratedModes.
+-Moved caching of entity properties from EntityPropertyRegistry to the finder implementations.
+-Added entity property refreshing to Groups Manager channel.
+-Added forking of JVM on addstylesheet, modstylesheet ant targets in build.xml.
+-Removed all references to org.apache.xerces.dom.DocumentImpl in source code.
+-Added DOMInitService along with IPortalDocument to abstract treatment of Documents - bug 1299.
+-Added SAXDocumentFilter to filter out document start and end events.
+-Added PropertiesManager.getPropertyUntrimmed() - bug 1371.
+-Added character(serialized) channel interface/implementations - bug 1372.
+-Added org.jasig.portal.i18n package to support internationalization effort.
+-Added CLocaleChooser channel which switches the locale for the current session. Now displayed in header area.
+-Changed ChannelDefinition to use locales.
+-Removed bookmarks.dtd and xbel-1.0.dtd since bookmarks channel is separate from the framework.
+-Add methods for getting IEntities from non-default group service in ICompositeGroupService.
+-Added log message when uPortal is shut down - bug 1398.
+-Moved hasValue method from CGroupsManager to Utility class.
+-Added IGroupsManagerPermissions as an argument to getGroupsServantforSelection method.
+-Added secure field to channelDefinition.dtd and updated related framework code.
+-Modified ChannelManager to check for channels that are identified as secure, and render CSecureInfo if necessary - bug 1287.
+-Services, workers, and channel types are now deployable from within a CAR file.
+-Any file type can be served directly to the browser from within a CAR.
+-CAR deployment descriptors can now be included in a CAR file.
+-Aggregate and cache permissions in entity caching service. 
+-Deprecated unused methods in IAuthorizationService: addPermissions(), removePermissions(), updatePermissions().
+-Replaced Remote Channel service definition with WSRP service definitions in server-config.wsdd.
+-Added lib folder to uPortal CVS repository - bug 1395.
+-Added "Revert to default layout" option in preferences.
+-Added org.jasig.portal.utils.GuidGenerator to generate globally unique identifiers.
+-Added marking of nodes to user layout in SimpleUserLayoutManager.
+-Renamed AggregatedUserLayoutImpl to AggregatedLayoutManager.
+-Added IUserLayout, IAggregatedUserLayout, AggregatedLayout.
+-Added fragment publishing tool and a related ant target called "pushfragment".
+-Set name of threads in ReferenceEntityCache and org.jasig.portal.utils.threading.Worker.
+-Added new exception handling classes: ProblemsTable, Errors, ErrorID, ExceptionHelper, Problems.
+-Addressed browser mixed content warning for when portal is rendered over https - bug 1375.
+-Added site map channel which allows quick access to all channels in a layout.
+-Added ILocaleStore, RDBMLocaleStore and LocaleStoreFactory.
+-Show end user nice error message instead of container message and stack trace.
+-Added XSLT.getTrasformer(Object object) and XSLT.getTransformer(Object object, Locale[] locales) methods.
+-Added IMimeResponse.reportDownloadError(Exception e) - bug 1397.
+
+
+
+

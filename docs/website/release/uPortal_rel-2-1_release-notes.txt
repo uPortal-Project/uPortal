@@ -1,0 +1,314 @@
+uPortal 2.1 Distribution
+------------------------
+
+Purpose
+-------
+This distribution is targeted towards
+people who would like to install
+uPortal in a development or production 
+environment.  It contains uPortal source
+code and properties files, but not a servlet
+container, directory, or relational database, 
+which are required.  Use of this distribution
+requires knowledge of J2EE environments and the
+Ant tool from the Apache Jakarta project.
+
+
+Contents
+--------
+1) uPortal 2.1
+2) uPortal 2.1 java libraries (Xalan, Log4J, etc).
+3) uPortal Architecture overview and JavaDoc API
+   (see docs directory)
+
+
+System requirements
+-------------------
+JDK 1.3 or higher
+JAVA_HOME environment variable must be set
+Installation of Ant from Jakarta: 
+  http://jakarta.apache.org/ant
+
+
+Instructions
+------------
+Modify build.properties with local settings.
+
+Use the following ant targets:
+
+deploy - installs uPortal into a servlet container
+db - prepares a relational database with uPortal schema
+     and data
+dist - creates JavaDoc, uPortal jar, and uPortal WAR files.
+
+For descriptions of other Ant targets, 
+see docs/uPortal_tools_overview.txt.
+
+Make sure the database and servlet container are running and
+access uPortal with http://localhost:8080/uPortal
+Your URL may be different if you have configured a different port
+and or context name.
+
+You can login to uPortal with the following user name/password 
+combinations:
+
+demo, demo
+student, student
+faculty, faculty
+staff, staff
+developer, developer
+
+Each user may have a slightly different layout.
+
+
+Notes 
+-----
+-Several properties files and database tables have changed
+ since uPortal 2.0.x.  If you are upgrading from this version,
+ you will need to see to it that your properties files and
+ database schema AND data are upgraded appropriately.  
+ An upgrade tool is included, but it has not been tested
+ thoroughly. The tool can be launched using the following
+ ant command:
+
+ IMPORTANT: First make sure to backup your original database!!!
+ 
+ ant -f convert.xml all
+
+ See the uPortal website to get the latest
+ version of the upgrade tool.
+
+-uPortal does not strictly require the use of connection
+ pooling, but it is highly recommended for production
+ installations.  If your servlet container does not provide
+ connection pooling, try something like Poolman.  
+ For information about Poolman, see http://www.codestudio.com.
+
+-Bug fixes from 2.0.x releases have been implemented in 2.1
+ whenever they were appropriate
+
+Please report bugs and suggestions:
+
+ http://mis105.mis.udel.edu/bugzilla/
+
+uPortal website:
+
+ http://www.udel.edu/uPortal
+
+
+Changes since uPortal 2.0.x
+---------------------------
+Database:
+
+-Increased the size of TYPE column in UP_CHAN_TYPE to 128.
+-Added Applet channel type to UP_CHAN_TYPE
+-Changed Minesweeper channel type from "Custom" to "Applet": UP_CHANNEL.CHAN_TYPE_ID from -1 to 6
+-Updated UP_CHANNEL.CHAN_CLASS for CWebProxy channels to reflect new package name.
+-Updated UP_CHANNEL_PARAM.CHAN_PARM_VAL for CWebProxy channels from "CWebProxy/XHTML.ssl" to "XHTML.ssl"
+-Updated UP_CHAN_TYPE.TYPE and UP_CHAN_TYPE.CHAN_DEF_URI for Web Proxy channel type with values
+ "org.jasig.portal.channels.webproxy.CWebProxy" and "/org/jasig/portal/channels/webproxy/CWebProxy.cpd"
+-Changed "Simple XML Transformation" to "XML Transformation" in UP_CHAN_TYPE
+-Added default admin user layout.
+-Added Groups Manager and Permissions Manager channels to layout
+-Added permissions for org.jasig.portal.channels.groupsmanager.CGroupsManager
+-Added new tables for caching and locking in concurrency packages:
+ UP_ENTITY_CACHE_INVALIDATION
+ UP_ENTITY_LOCK
+-Added table UP_ENTITY_PROP to store entity properties for RDBMPropertyStore in support of the EntityPropertyRegistry
+-Renamed UP_GROUP_ENTITY_TYPE to UP_ENTITY_TYPE
+-Added new column: UP_ENTITY_TYPE.DESCRIPTIVE_NAME
+-Added new row to UP_ENTITY_TYPE: ENTITY_TYPE_NAME=org.jasig.portal.groups.IEntity
+-Changed the size of UP_GROUP.GROUP_ID and UP_GROUP.CREATOR_ID from 255 to 240
+-Changed UP_GROUP.CREATOR_ID values from numbers to Strings, i.e. "0" to "system".
+-Changed UP_GROUP_MEMBERSHIP.MEMBER_ID values from numerical user IDs to usernames for members that are IPersons. 
+ For example, 2 --> demo
+-Added new row to UP_SEQUENCE: SEQUENCE_NAME=UP_ENTITY_TYPE and SEQUENCE_VALUE=20
+-Changed UP_PERMISSION.PRINCIPAL value format from "3.4" to "3.local.4"
+-Changed UP_PERMISSION.TARGET value format from "6" to "local.6"
+-Added UP_GROUP_MEMBERSHIP.MEMBER_SERVICE column with values equal to "local".
+-Changed UP_GROUP_MEMBERSHIP.GROUP_ID to VARCHAR(200)
+-Changed UP_GROUP_MEMBERSHIP.MEMBER_KEY to VARCHAR(200)
+-Split UP_PERMISSION.PRINCIPAL into PRINCIPAL_TYPE and PRINCIPAL_KEY.
+
+
+Properties:
+
+Please see the comments within each properties file 
+for more information about any of the changes below.
+
+-Added the following properties to portal.properties:
+
+ org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation=org.jasig.portal.layout.SimpleUserLayoutManager
+ org.jasig.portal.RDBMServices.getDatasourceFromJndi=false
+ org.jasig.portal.channels.CWebProxy.cache_default_timeout=900
+ org.jasig.portal.channels.CWebProxy.cache_default_mode=none
+ org.jasig.portal.channels.webproxy.CWebProxy.person_allow=
+ org.jasig.portal.concurrency.multiServer=false
+ org.jasig.portal.concurrency.IEntityLockServiceFactory=org.jasig.portal.concurrency.locking.ReferenceEntityLockServiceFactory
+ org.jasig.portal.concurrency.IEntityLockService.defaultLockDuration=300
+ org.jasig.portal.concurrency.IEntityLockService.lockTolerance=5  
+ org.jasig.portal.concurrency.IEntityCachingServiceFactory=org.jasig.portal.concurrency.caching.ReferenceEntityCachingServiceFactory
+ org.jasig.portal.concurrency.IEntityCachingService.defaultMaxCacheSize=1000
+ org.jasig.portal.concurrency.IEntityCachingService.defaultSweepInterval=60
+ org.jasig.portal.concurrency.IEntityCachingService.defaultMaxIdleTime=1800
+ org.jasig.portal.groups.IEntityGroupService.useCache=true
+ org.jasig.portal.utils.ResourceLoader.HttpsHandler=com.sun.net.ssl.internal.www.protocol
+ org.jasig.portal.services.stats.StatsRecorderFactory.implementation=org.jasig.portal.services.stats.DoNothingStatsRecorderFactory
+ org.jasig.portal.services.stats.StatsRecorderSettings.*=off where "*" is the portal stat type
+ org.jasig.portal.services.StatsRecorder.threadPool_initialThreads=5
+ org.jasig.portal.services.StatsRecorder.threadPool_maxThreads=15
+ org.jasig.portal.services.StatsRecorder.threadPool_threadPriority=5
+ org.jasig.portal.UserInstance.log_xml_before_structure_transformation=false
+ org.jasig.portal.UserInstance.log_xml_before_theme_transformation=false
+ org.jasig.portal.ChannelManager.threadPool_initialThreads=20
+ org.jasig.portal.ChannelManager.threadPool_maxThreads=150
+ org.jasig.portal.ChannelManager.threadPool_threadPriority=5
+ org.jasig.portal.security.IPermissionStore.implementation=org.jasig.portal.security.provider.RDBMPermissionImpl
+ org.jasig.portal.security.IPermissionPolicy.defaultImplementation=org.jasig.portal.security.provider.DefaultPermissionPolicy
+
+-Changed the following properties in portal.properties:
+ 
+ WAS: org.jasig.portal.groups.ReferenceGroupService.key_org.jasig.portal.security.IPerson=0
+ IS:  org.jasig.portal.services.GroupService.key_org.jasig.portal.security.IPerson=local.0
+ 
+ WAS: org.jasig.portal.groups.ReferenceGroupService.key_org.jasig.portal.ChannelDefinition=50
+ IS:  org.jasig.portal.services.GroupService.key_org.jasig.portal.ChannelDefinition=local.50
+
+ WAS: org.jasig.portal.groups.ReferenceGroupService.key_org.jasig.portal.security.IPerson.PortalAdministrators=14
+ IS:  org.jasig.portal.services.GroupService.key_org.jasig.portal.security.IPerson.PortalAdministrators=local.14
+
+ WAS: org.jasig.portal.services.EntityNameFinderService.NameFinderFactory.implementation_org.jasig.portal.security.IPerson=org.jasig.portal.groups.ReferencePersonNameFinderFactory
+ IS:  org.jasig.portal.services.EntityNameFinderService.NameFinderFactory.implementation_org.jasig.portal.security.IPerson=org.jasig.portal.groups.PersonDirNameFinderFactory
+
+ WAS: org.jasig.portal.GuestUserLayoutManager.save_profile_guesses
+ IS:  org.jasig.portal.GuestUserPreferencesManager.save_profile_guesses
+
+-Added the following properties to ldap.properties:
+ 
+ ldap.protocol=ssl
+
+-Added the following properties to worker.properties:
+
+ carRsrc=org.jasig.portal.car.CarResourceWorker
+
+-Added the following properties to security.properties:
+
+ principalToken.root=userName
+ credentialToken.root=password
+
+-Added the following new properties files:
+ 
+ EntityPropertyRegistry.xml
+ groups/LDAPGroupStoreConfig.xml
+ groups/compositeGroupsServices.xml
+
+-Added commented section to services.xml to start composite groups service:
+
+ <service>
+    <name>Composite Group Service</name>
+    <class>org.jasig.portal.services.GroupService</class>
+    <method type="static">startUp</method>
+ </service>
+ 
+
+Bug fixes:
+
+-Added UTF-8 arguments to various serialization-related constructors in MediaManager - bug 1083.
+-Changed profile id to layout id in a call to obtain channel jndi context - bug 1223.
+-Fixed PortalSessionManager so tags are not generated when they are not needed - bug 980.
+
+
+Other changes:
+
+-Changed InitialSecurityContext.java to InitialSecurityContextFactory.java in order 
+ to allow channels access to methods exposed by security providers.
+-Added Poolman, JUnit, RunXSLT and test targets to build.xml file.
+-Abstracted user layout manager: added org.jasig.portal.layout package
+-Renamed IUserLayoutManager to IUserPreferencesManager
+-Refactored ChannelManager to use one, unified channel output method.
+-Added "id" attribute to "layout" element with value "root" in the user layout XML.
+-Added getChannelDefinition(String channelFunctionalName) to IChannelRegistryStore.
+-Added a getHeaders() method to org.jasig.portal.BrowserInfo
+-Added setBaseActionURL(), setParametersSingleValued(), and getParameters() methods to ChannelRuntimeData
+-Changed getWorkerActionURL() to getBaseWorkerURL() in ChannelRuntimeData.
+-Added getHttpRequestMethod() method to ChannelRuntimeData.
+-Allowed for security provider that does not have username before authentication.
+-Added new package, org.jasig.portal.webservices, which exposes channels via web services
+-Added new remote channel proxy channel for accessing remote channels exposed by the web service
+-Added new method: getConnection(String dbName) in RDBMServices that gets connection via JNDI
+-Added jdbc2_0stdext.jar to build.xml and build.properties.  It is needed for code that obtains a connection via JNDI
+-Moved org.jasig.portal.ChannelDefinition.ChannelParameter into its own class: org.jasig.portal.ChannelParameter
+-Moved ChannelParameter to its own class - was an inner class of ChannelDefinition.
+-Added org.jasig.portal.utils.CommonUtils
+-Multivalued and unvalued runtime parameters now supported in CWebProxy.
+ Rewrote CWebProxy as a multithreaded cachable channel.
+ Added new parameters for multithreaded cachable version + cw_person to CPD file.
+ Added manual handling of redirects from HTTP status 302 and 303, and 301 in the case of a GET request.
+ Now accepts cookies received with a 3xx request before following the redirect.
+ Implemented IMultithreadedMimeResponse and made other changes to allow proxied applications to deliver downloads via the DownloadWorker
+ Added support for cw_personAllow, and passing keyword-only query strings 
+-Channel manager now implements LayoutEventListener.
+-Added way of specifying JDBC DataSource names in PersonDirs.xml.
+-Added channel functional names (fname) to publishing in CChannelManager.
+-Removed CBookmarks channel, images, stylesheets, and database tables.  Now in portal_channels repository.
+-Added support for multithreaded channel adapters that implement IMultithreadedMimeResponse.
+-Added new thread pool implementation.
+-Added channel rendering groups support.
+-Added inter-channel communication registry (ICCRegistry) and access to it via ChannelStaticData.
+ Added new tabs of channels that demonstrate inter-channel communication.
+-Added support for downloading MIME files in a multithreaded channel.
+-Added parameter persistence to CGenericXSLT.
+-Now shows username as well as display name in PersonDirNameFinder.
+-Separated inner and outer exceptions in CError for better readability
+-Allowed credentials and principals to be defined and held separately by each security context
+-Added org.jasig.portal.concurrency packages for caching and locking entities
+-Added services EntityCachingService and EntityLockService
+-Removed ChannelRegistryStoreFactoryOld, IChannelRegistryStoreOld, and RDBMChannelRegistryStoreOld
+-Added new channel type: Applet
+-Added new elements to channelPublishingDocument.dtd to support arbitrary parameters: 
+ arbitrary-parameters, paramName-prefix
+-Made it easier to plug in alternate group factory implementations
+ Added method IGroupService getGroupService() to GroupService
+ Added method IEntityGroupStore getGroupStore() to IGroupService
+-Added a new service EntityPropertyRegistry, along with supporting xml configuration file, dtd and classes in the subpackage 'services.entityproperties'.  
+ Can be used to store and query properties of portal entities such as IPersons, Channels and Groups.
+-Changed package of EntityTypes from org.jasig.portal.groups to org.jasig.portal
+-Added new class org.jasig.portal.utils.CookieCutter which manages cookies for CWebProxy
+-Added org.jasig.portal.security.ILocalConnectionContext
+ Added ability for CGenericXSLT to use ILocalConnectionContext via a new property: upc_localConnContext
+ Added ability for CWebProxy to use ILocalConnectionContext via a new property: upc_localConnContext
+-Moved URL filtering logic out of CWebProxy stylesheet and into new filter classes.
+-Changed package of CWebProxy to org.jasig.portal.channels.webproxy
+-Added DeleteUser tool and corresponding Ant target
+-Removed org.jasig.portal.groups.MinimalEntity.
+-Added pluggable permission policies: org.jasig.portal.security.IPermissionPolicy
+-Added search methods for entities and groups to org.jasig.portal.services.GroupService
+-IServant now extends IChannel.
+-Added ability to specify individual people as well as groups when granting access while publishing a channel
+-Added delete and update capability to DbLoader.
+-Added command line options to DbLoader.
+-Added new tool: org.jasig.portal.tools.DbTest which prints out db metadata
+-Added ability for ResourceLoader to set the HTTPS handler according to the setting in portal.properties
+-Changed code in serveral places to construct an AuthorizationPrincipal based on an IPerson EntityIdentifier
+-PersonDirNameFinder no longer requires database lookup to get username.
+-Made IPerson implement IBasicEntity.
+-Enhanced CPersonAttributes so that it can display a user's jpeg photo.
+-Added StatsRecorder which can record portal statistics
+ Added org.jasig.portal.services.StatsRecorder
+ Added org.jasig.portal.services.stats package
+-Added Channel ARchive (CAR) support.
+ Modified org.jasig.portal.ChannelFactory
+ Added getBaseMediaURL() methods to ChannelRuntimeData
+ Added getInstance() method to PortalSessionManager
+ Added org.jasig.portal.car package
+-Added setKeywords() and getKeywords() to ChannelRuntimeData and calls to these methods in ChannelManager.
+-Added support for composite groups.
+ Changed ChannelCategory id and creatorId from int to String to support composite group keys.
+-Added remote user security context. New files:
+ org.jasig.portal.security.provider.RemoteUserSecurityContext 
+ org.jasig.portal.security.provider.RemoteUserSecurityContextFactory
+ org.jasig.portal.security.provider.RemoteUserPersonManager
+-Added db converstion tool: convert.xml and RunXSLT tool
+-Added reading of authorization properties in AuthorizationImpl.
+-Added test code that works with JUnit  
+

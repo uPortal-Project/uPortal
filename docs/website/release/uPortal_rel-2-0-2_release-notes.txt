@@ -1,0 +1,127 @@
+uPortal 2.0.2 Distribution
+------------------------
+
+Purpose
+-------
+This distribution is targeted towards
+people who would like to install
+uPortal in a development or production 
+environment.  It contains uPortal source
+code and properties files, but not a servlet
+container, directory, or relational database, 
+which are required.  Use of this distribution
+requires knowledge of J2EE environments and the
+Ant tool from the Apache Jakarta project.
+
+
+Contents
+--------
+1) uPortal 2.0.2
+2) uPortal 2.0.2 java libraries (Xalan, Log4J, etc).
+3) uPortal Architecture overview and JavaDoc API
+   (see docs directory)
+
+
+System requirements
+-------------------
+JDK 1.3 or higher
+JAVA_HOME environment variable must be set
+Installation of Ant from Jakarta: 
+  http://jakarta.apache.org/ant
+
+
+Instructions
+------------
+Modify build.properties with local settings.
+
+Use the following ant targets:
+
+deploy - installs uPortal into a servlet container
+db - prepares a relational database with uPortal schema
+     and data
+dist - creates JavaDoc, uPortal jar, and uPortal WAR files.
+
+For descriptions of other Ant targets, 
+see docs/uPortal_tools_overview.txt.
+
+Make sure the database and servlet container are running and
+access uPortal with http://localhost:8080/uPortal2
+Your URL may be different if you have configured a different port
+and or context name.
+
+You can login to uPortal with the following user name/password 
+combinations:
+
+demo, demo
+student, student
+faculty, faculty
+staff, staff
+developer, developer
+
+Each user may have a slightly different layout.
+
+
+Notes 
+-----
+-If upgrading from uPortal 2.0.1, be sure to:
+
+   * Update the size of the USER_AGENT column in UP_USER_UA_MAP to 255
+   * Change the value of the UNREMOVABLE and IMMUTABLE columns in UP_LAYOUT_STRUCT to 'N'
+     for the guest user (where USER_ID=1)
+
+-uPortal does not strictly require the use of connection
+pooling, but it is highly recommended for production
+installations.  If your servlet container does not provide
+connection pooling, try something like Poolman.  
+For information about Poolman, see http://www.codestudio.com.
+
+
+Please report bugs and suggestions:
+
+http://mis105.mis.udel.edu/bugzilla/
+
+uPortal website:
+
+http://www.udel.edu/uPortal
+
+
+Changes since uPortal 2.0.1
+---------------------------
+Database:
+
+-Added default layouts for student, staff and faculty.
+-Changed size of UP_USER_UA_MAP.USER_AGENT from 100 to 255 to accommodate larger user agent strings
+-Changed the IMMUTABLE and UNREMOVABLE properties of the guest layout tabs from 'Y' to 'N'
+
+
+Properties:
+
+-Added mapping to dbloader.xml for PostgreSQL 7.2.1 driver
+
+
+Bug fixes:
+
+-Fixed transaction support for counters in RDBMUserLayoutStore and RDBMCounterStore.
+-Fixed UPFile tag problem in StandaloneChannelRenderer that prevented its links from working.
+-Used username set after authentication in org.jasig.portal.services.Authentication.
+ Some authentication methods do not have username before hand.
+-Fixed problem in ChannelRegistryManager that was allowing users to share documents - bug 896.
+-Fixed preservation of internal element IDs in XML.cloneDocument() method.
+-Added logic to use default template user from portal.properties when requested template not found - bug 800.
+-Fixed getObjectParameter method in ChannelRuntimeData.
+-Added sorting for Categories in "Filter by" drop down list of Channel Admin - bug 967.
+-Fixed paging problems in "modify an existing channel" listing in Channel Admin section - bug 956.
+-Changed access to inner class ChannelParameter of ChannelDefinition from protected to public - bug 970.
+-Cookie expiry date now parsed correctly in CWebProxy - bug 979.
+-Fixed bug where pending changes to group memberships were not being cleared after update. 
+-Fixed bug with generation of cache key for groups.
+
+
+Other changes:
+
+-Removed caching of permissions in CHeader - they are already cached by AuthorizationImpl.
+-Added "-//Netscape Communications//DTD RSS 0.91//EN" in DTDResolver as a mapping to the local dtd rss-0.91.dtd
+-Implemented setTimestamp() in RDBMServices wrapper for prepared statements.
+-Removed bsf.jar from the included java libraries.
+-Reworked UI of preferences to decrease the size of channel icons.
+

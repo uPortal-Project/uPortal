@@ -1,0 +1,159 @@
+uPortal 2.1.4 Distribution
+--------------------------
+
+Purpose
+-------
+This distribution is targeted towards
+people who would like to install
+uPortal in a development or production 
+environment.  It contains uPortal source
+code and properties files, but not a servlet
+container, directory, or relational database, 
+which are required.  Use of this distribution
+requires knowledge of J2EE environments and the
+Ant tool from the Apache Jakarta project.
+
+
+Contents
+--------
+1) uPortal 2.1.4
+2) uPortal 2.1.4 java libraries (Xalan, Log4J, etc).
+3) uPortal Architecture overview and JavaDoc API
+   (see docs directory)
+
+
+System requirements
+-------------------
+JDK 1.3 or higher
+JAVA_HOME environment variable must be set
+Installation of Ant from Jakarta: 
+  http://ant.apache.org/
+
+
+Instructions
+------------
+Modify build.properties with local settings.
+
+Use the following ant targets:
+
+deploy - installs uPortal into a servlet container
+db - prepares a relational database with uPortal schema and data
+dist - creates JavaDoc, uPortal jar, and uPortal WAR files.
+
+For descriptions of other Ant targets, 
+see docs/uPortal_tools_overview.txt.
+
+Make sure the database and servlet container are running and
+access uPortal with http://localhost:8080/uPortal
+Your URL may be different if you have configured a different port
+and/or context name.
+
+You can login to uPortal with the following user name/password 
+combinations:
+
+demo, demo
+student, student
+faculty, faculty
+staff, staff
+developer, developer
+
+Each user may have a slightly different layout.
+
+
+Notes 
+-----
+-Several properties files and database tables have changed
+ since uPortal 2.0.x.  If you are upgrading from this version,
+ you will need to see to it that your properties files and
+ database schema AND data are upgraded appropriately.  
+ An upgrade tool is included and can be launched using the 
+ following ant command:
+
+ IMPORTANT: First make sure to backup your original database!!!
+ 
+ ant -f convert.xml all
+
+ See the uPortal website to get the latest
+ version of the upgrade tool.
+
+-uPortal does not strictly require the use of connection
+ pooling, but it is highly recommended for production
+ installations.  If your servlet container does not provide
+ connection pooling, try something like Poolman.  
+ For information about Poolman, see http://www.codestudio.com.
+
+-Bug fixes from 2.0.x releases have been implemented in 2.1.4
+ whenever they were appropriate
+
+-If you experience XML/XSLT-related errors, there is a good
+ chance that your environment is not using the version of
+ Xalan/Xerces that comes with this release. If you are using
+ Tomcat, try copying the following files into Tomcat's
+ common/endorsed directory: xalan.jar, xercesImpl.jar, xml-apis.jar.
+ Alternatively, you can specify the use of these jar files
+ via a java parameter when starting your servlet container:
+  -Xbootclasspath/p:xalan.jar;xercesImpl.jar;xml-apis.jar
+ For more information, see Version section of
+ http://xml.apache.org/xalan-j/faq.html
+
+Please report bugs and suggestions:
+
+ http://mis105.mis.udel.edu/bugzilla/
+
+uPortal website:
+
+ http://www.uportal.org
+
+
+Changes since uPortal 2.1.3
+---------------------------
+Database:
+
+(No changes)
+
+
+Properties:
+
+-Added optional nodeSeparator attribute to servicelist element of compositeGroupServices.xml.
+
+
+Bug fixes:
+
+-Handled empty user-defined channel parameters - bug 1254.
+-Corrected for the cases where user agent header is null or empty - bug 1282.
+-Passed isRenderingAsRoot parameter to CGenericXSLT transformation - bug 1301.
+-Trapped sub-context authentication exception in ChainingSecurityContext - bug 1321.
+-Changed SimpleSecurityContext from "package-access" to public access - bug 1325.
+-Stopped treating a wrong LDAP username/password combo as an LDAP error - bug 1334.
+-Changed AUTHTYPE values in SimpleLdapSecurityProvider and CacheLdapSecurityProvider - bug 1336.
+-Fixed group lock problem in RDBMUserIdentityStore - bug 1341.
+-Fixed serious SQL-injection security hole - bug 1352.
+-Deprecated IEntityGroup.findEntitiesForGroup method - bug 1357.
+-Un-cache user's group member when session is destroyed - bug 1360.
+-Changing of column widths and skins in prefs channel no longer exits prefs mode - bug 1361.
+-Added LocalConnectionContext descriptor to CGenericXSLT cache key - bug 1362.
+-Fixed adding new tab and channel for new user - bug 1369.
+-Trimmed whitespace off property values in PropertiesManager - bug 1371.
+-Corrected many log messages in RDBMUserLayoutStore - bug 1378.
+-Reset action URL in CWebProxy after cw_download is used in a form - bug 1379.
+-No longer ignore CWebProxy target attribute in - bug 1381.
+-Check for null session in SimplePersonManager - bug 1383.
+-Fixed concurrency problem with UserLayoutStoreFactory during high load - bug 1385.
+-Excluded non-http URLs from URL rewriting - bug 1388.
+-AbsuluteURLFilter now correctly rewrites relative URLs with '/' in the query string - bug 1389.
+-Make node separator configurable in the group service key - bug 1391.
+-Removed reference to general.css in error.jsp - bug 1393.
+-Closed input streams in various files - bug 1396.
+-CWebProxy's cw_person parameter is no longer set to null if not present in runtime data - bug 1400.
+-Fixed web proxy processing of XHTML with XHTML namespace declaration in root <html> element - bug 1401.
+-Prevent transformation exceptions from being hidden - bug 1404.
+-Skip over LDAP entries with null attribute values in LDAPGroupStore - bug 1407.
+-Avoid possibility of abandoned connections - bugs 1409, 1410, 1411, 1412, 1414, 1415.
+
+
+Other changes:
+
+-Added favicon.ico which contains a 16x16 and 32x32 uPortal icon.
+
+
+

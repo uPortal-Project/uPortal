@@ -1,0 +1,153 @@
+uPortal 2.1.5 Distribution
+--------------------------
+
+Purpose
+-------
+This distribution is targeted towards
+people who would like to install
+uPortal in a development or production 
+environment.  It contains uPortal source
+code and properties files, but not a servlet
+container, directory, or relational database, 
+which are required.  Use of this distribution
+requires knowledge of J2EE environments and the
+Ant tool from the Apache Jakarta project.
+
+
+Contents
+--------
+1) uPortal 2.1.5
+2) uPortal 2.1.5 java libraries (Xalan, Log4J, etc).
+3) uPortal Architecture overview and JavaDoc API
+   (see docs directory)
+
+
+System requirements
+-------------------
+JDK 1.3 or higher
+JAVA_HOME environment variable must be set
+Installation of Ant from Jakarta: 
+  http://ant.apache.org/
+
+
+Instructions
+------------
+Modify build.properties with local settings.
+
+Use the following ant targets:
+
+deploy - installs uPortal into a servlet container
+db - prepares a relational database with uPortal schema and data
+dist - creates JavaDoc, uPortal jar, and uPortal WAR files.
+
+For descriptions of other Ant targets, 
+see docs/uPortal_tools_overview.txt.
+
+Make sure the database and servlet container are running and
+access uPortal with http://localhost:8080/uPortal
+Your URL may be different if you have configured a different port
+and/or context name.
+
+You can login to uPortal with the following user name/password 
+combinations:
+
+demo, demo
+student, student
+faculty, faculty
+staff, staff
+developer, developer
+
+Each user may have a slightly different layout.
+
+
+Notes 
+-----
+-Several properties files and database tables have changed
+ since uPortal 2.0.x.  If you are upgrading from this version,
+ you will need to see to it that your properties files and
+ database schema AND data are upgraded appropriately.  
+ An upgrade tool is included and can be launched using the 
+ following ant command:
+
+ IMPORTANT: First make sure to backup your original database!!!
+ 
+ ant -f convert.xml all
+
+ See the uPortal website to get the latest
+ version of the upgrade tool.
+
+-uPortal does not strictly require the use of connection
+ pooling, but it is highly recommended for production
+ installations.  If your servlet container does not provide
+ connection pooling, try something like Poolman.  
+ For information about Poolman, see http://www.codestudio.com.
+
+-Bug fixes from 2.0.x releases have been implemented in 2.1.5
+ whenever they were appropriate
+
+-If you experience XML/XSLT-related errors, there is a good
+ chance that your environment is not using the version of
+ Xalan/Xerces that comes with this release. If you are using
+ Tomcat, try copying the following files into Tomcat's
+ common/endorsed directory: xalan.jar, xercesImpl.jar, xml-apis.jar.
+ Alternatively, you can specify the use of these jar files
+ via a java parameter when starting your servlet container:
+  -Xbootclasspath/p:xalan.jar;xercesImpl.jar;xml-apis.jar
+ For more information, see Version section of
+ http://xml.apache.org/xalan-j/faq.html
+
+Please report bugs and suggestions:
+
+ http://mis105.mis.udel.edu/bugzilla/
+
+uPortal website:
+
+ http://www.uportal.org
+
+
+Changes since uPortal 2.1.4
+---------------------------
+Database:
+
+-Changed primary key of UP_ENTITY_TYPE from ENTITY_TYPE_ID to ENTITY_TYPE_NAME.
+
+
+Properties:
+
+-Added new property to portal.properties to control output escaping:
+ org.jasig.portal.serialize.BaseMarkupSerializer.allow_disable_output_escaping=no
+
+
+Bug fixes:
+
+-Another attempt to fix duplicate IDs - bug 1345.
+-Avoid possibility of abandoned connections - bugs 1405, 1408. 1413.
+-Fixed NPE in DeleteUser tool on attempt to delete group memberships - bug 1418.
+-Trap Exception or Error appropriately in ChannelFactory.instantiateChannel() - bug 1420.
+-Fixed persistent session support by implementing java.io.Serializable in various classes - bug 1425.
+-Fixed setDepth() method in UserLayoutNode - bug 1426.
+-Avoided display of bad user/password messages when authentication throws exception - bug 1428.
+-Fixed thread blocking in HTMLdtd.java - bug 1429.
+-Made AuthorizationImpl a true singleton - bug 1443.
+-Made ChannelCacheEntry and CharacterCacheEntry into outer classes - bug 1444.
+-Passed file string returned by ResourceLoader.getResourceAsFileString() through URLDecoder - bug 1449.
+-Changed tag <image> to <img> in CImage.xsl - bug 1450.
+-Fixed bogus LDAP search in LDAP security context - bug 1451.
+-Avoid NPE in find() method in LDAPGroupsStore - bug 1452.
+-Fix duplicate entity type in UP_ENTITY_TYPE - bug 1454.
+-Cleaned up result set/statement db resource leaks in RDBMUserIdentityStore - bug 1455.
+-Fixed ConcurrentModificationException in LRUCache sweepCache method - bug 1458.
+-Closed file output streams to /dev/null or /nul in CWebProxy - bug 1460.
+-Remove quoted integers in SQL - bug 1461.
+-Modified BaseMarkupSerializer to handle disable-output-escaping instructions - bug 1462.
+-Fixed interruption of wrong thread in WorkerTask.
+
+
+Other changes:
+
+-Changed handling of file uploads - now attempts upload to a file instead of to memory.
+-Surrounded stack trace text in Error channel with <pre> to improve readability.
+
+
+
+
