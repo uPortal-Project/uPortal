@@ -39,11 +39,11 @@ package org.jasig.portal.layout.restrictions;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.CommonUtils;
 import java.util.StringTokenizer;
-import org.jasig.portal.layout.UserLayoutNode;
+import org.jasig.portal.layout.ALNode;
 
 /**
  * <p>Title: Boolean Restriction class</p>
- * <p>Description: This class checks the restriction on the boolean property for a given UserLayoutNode object</p>
+ * <p>Description: This class checks the restriction on the boolean property for a given ALNode object</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: Instructional Media & Magic </p>
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
@@ -55,11 +55,13 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
 
          boolean boolValue = false;
 
-         public BooleanRestriction(UserLayoutNode node) {
-           super(node);
+         public BooleanRestriction(String nodePath) {
+           super(nodePath);
          }
 
-
+         public BooleanRestriction() {
+           super();
+         }
 
           /**
             * Parses the restriction expression of the current node
@@ -77,17 +79,28 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
 
          /**
            * Gets the boolean property value for the specified node
-           * @param node a <code>UserLayoutNode</code> user layout node to be checked
          */
-         protected abstract boolean getBooleanPropertyValue( UserLayoutNode node );
+         protected abstract boolean getBooleanPropertyValue( ALNode node );
 
          /**
            * Checks the restriction for the specified node
-           * @param node a <code>UserLayoutNode</code> user layout node to be checked
+           * @param node a <code>ALNode</code> user layout node to be checked
            * @exception PortalException
          */
-         public boolean checkRestriction( UserLayoutNode node ) throws PortalException {
+         public boolean checkRestriction( ALNode node ) throws PortalException {
            boolean boolProperty = getBooleanPropertyValue(node);
+           if ( boolProperty == boolValue )
+             return true;
+             return false;
+         }
+
+         /**
+           * Checks the restriction for the specified property
+           * @param propertyValue a <code>String</code> property value
+           * @exception PortalException
+         */
+         public boolean checkRestriction( String propertyValue ) throws PortalException {
+           boolean boolProperty = CommonUtils.strToBool(propertyValue);
            if ( boolProperty == boolValue )
              return true;
              return false;

@@ -38,7 +38,7 @@ package org.jasig.portal.layout.restrictions;
 
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.UserLayoutNode;
+import org.jasig.portal.layout.ALNode;
 
 
 /**
@@ -70,39 +70,29 @@ public interface IUserLayoutRestriction {
      */
   public int getRestrictionType();
 
-  /**
-     * Checks the restriction for the current node without necessity to parse the restriction expression
-     * @exception PortalException
-     */
-  public boolean checkRestriction() throws PortalException;
-
-
-  /**
-     * Checks the restriction for the nodes on the given path parsing the restriction expression
-     * @param url a <code>String</code> tree node path in the User Layout
-     * @exception PortalException
-     */
-  public boolean checkRestriction(String url) throws PortalException;
-
-
-  /**
-     * Checks the restriction for the given node parsing the restriction expression
-     * @param node a <code>UserLayoutNode</code> object
-     * @exception PortalException
-     */
-  public boolean checkRestriction(UserLayoutNode node) throws PortalException;
-
-  /**
-     * Sets the name of the restriction
-     * @param restrictionName a <code>String</code> name of the restriction
-     */
-  public void setRestrictionName ( String restrictionName );
-
-  /**
-     * Gets the name of the restriction
-     * @return a <code>String</code> name of the restriction
+   /**
+     * Gets the restriction name
+     * @return a <code>String</code> restriction name
      */
   public String getRestrictionName();
+
+
+  /**
+     * Checks the restriction for the given property value
+     * @param propertyValue a <code>String</code> property value to be checked
+     * @return a boolean value
+     * @exception PortalException
+     */
+  public boolean checkRestriction(String propertyValue) throws PortalException;
+
+
+  /**
+     * Checks the relative restriction on a given node
+     * @param node a <code>ALNode</code> node
+     * @return a boolean value
+     * @exception PortalException
+     */
+  public boolean checkRestriction ( ALNode node ) throws PortalException;
 
 
   /**
@@ -117,6 +107,13 @@ public interface IUserLayoutRestriction {
      * @return a <code>String</code> expression
      */
   public String getRestrictionExpression();
+
+
+   /**
+     * Gets the tree path for the current restriction
+     * @return a <code>String</code> tree path
+     */
+  public String getRestrictionPath();
 
 }
 

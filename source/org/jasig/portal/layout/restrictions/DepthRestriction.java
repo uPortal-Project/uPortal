@@ -58,10 +58,13 @@ public class DepthRestriction extends UserLayoutRestriction {
 
          private Integer[] minDepthArray, maxDepthArray, depthArray;
 
-         public DepthRestriction(UserLayoutNode node) {
-            super(node);
+         public DepthRestriction(String nodePath) {
+            super(nodePath);
          }
 
+         public DepthRestriction() {
+            super();
+         }
 
          /**
            * Returns the type of the current restriction
@@ -69,7 +72,7 @@ public class DepthRestriction extends UserLayoutRestriction {
            * @exception PortalException
            */
           public int getRestrictionType() {
-           return RestrictionTypes.DEPTH_RESTRICTION;
+           return RestrictionTypes.DEPTH_RESTRICTION|super.getRestrictionType();
           }
 
           /**
@@ -92,11 +95,20 @@ public class DepthRestriction extends UserLayoutRestriction {
              } else
                  depthList.add(token);
             }
-               minDepthArray = (Integer[]) minDepthList.toArray();
-               maxDepthArray = (Integer[]) maxDepthList.toArray();
-               depthArray = (Integer[]) depthList.toArray();
+               int size = minDepthList.size();
+               minDepthArray = new Integer[size];
+               maxDepthArray = new Integer[size];
+               for ( int i = 0; i < size; i++ ) {
+                 minDepthArray[i] = Integer.valueOf((String)minDepthList.get(i));
+                 maxDepthArray[i] = Integer.valueOf((String)maxDepthList.get(i));
+               }
+               size = depthList.size();
+               depthArray = new Integer[size];
+               for ( int i = 0; i < size; i++ )
+                depthArray[i] = Integer.valueOf((String)depthList.get(i));
 
            } catch ( Exception e ) {
+             e.printStackTrace();
              throw new PortalException(e.getMessage());
             }
 
@@ -104,11 +116,11 @@ public class DepthRestriction extends UserLayoutRestriction {
 
          /**
            * Checks the restriction for the specified node
-           * @param node a <code>UserLayoutNode</code> user layout node to be checked
+           * @param propertyValue a <code>String</code> property value to be checked
            * @exception PortalException
          */
-         public boolean checkRestriction( UserLayoutNode node ) throws PortalException {
-           int depth = node.getDepth();
+         public boolean checkRestriction(String propertyValue) throws PortalException {
+           int depth = CommonUtils.parseInt(propertyValue);
            for ( int i = 0; i < minDepthArray.length || i < depthArray.length; i++ ) {
              if ( i < minDepthArray.length )
                if ( depth <= maxDepthArray[i].intValue() && depth >= minDepthArray[i].intValue() )
@@ -119,6 +131,23 @@ public class DepthRestriction extends UserLayoutRestriction {
            }
               return false;
          }
+
+         /**
+           * Checks the restriction for the specified node
+           * @exception PortalException
+         */
+         /*public boolean checkRestriction( UserLayoutNode node ) throws PortalException {
+           int depth = node.getDepth();
+           for ( int i = 0; i < minDepthArray.length || i < depthArray.length; i++ ) {
+             if ( i < minDepthArray.length )
+               if ( depth <= maxDepthArray[i].intValue() && depth >= minDepthArray[i].intValue() )
+                 return true;
+             if ( i < depthArray.length )
+              if ( depthArray[i].intValue() == depth )
+                 return true;
+           }
+              return false;
+         }*/
 
 
 

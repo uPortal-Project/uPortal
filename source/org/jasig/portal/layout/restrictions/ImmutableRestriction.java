@@ -38,12 +38,12 @@ package org.jasig.portal.layout.restrictions;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.CommonUtils;
-import org.jasig.portal.layout.UserLayoutNode;
+import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 
 /**
  * <p>Title: Immutable Restriction class</p>
- * <p>Description: This class checks the restriction on the "immutable" property for a given UserLayoutNode object</p>
+ * <p>Description: This class checks the restriction on the "immutable" property for a given ALNode object</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: Instructional Media & Magic </p>
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
@@ -53,24 +53,28 @@ import org.jasig.portal.layout.IUserLayoutNodeDescription;
 public class ImmutableRestriction extends BooleanRestriction {
 
 
-         public ImmutableRestriction(UserLayoutNode node) {
-           super(node);
+         public ImmutableRestriction(String nodePath) {
+           super(nodePath);
          }
+
+         public ImmutableRestriction() {
+           super();
+         }
+
 
          /**
            * Returns the type of the current restriction
            * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
           */
          public int getRestrictionType() {
-           return RestrictionTypes.IMMUTABLE_RESTRICTION;
+           return RestrictionTypes.IMMUTABLE_RESTRICTION|super.getRestrictionType();
          }
 
 
          /**
            * Gets the boolean property value for the specified node
-           * @param node a <code>UserLayoutNode</code> user layout node to be checked
          */
-         protected boolean getBooleanPropertyValue( UserLayoutNode node ) {
+         protected boolean getBooleanPropertyValue( ALNode node ) {
            IUserLayoutNodeDescription nodeDesc = node.getNodeDescription();
            return nodeDesc.isImmutable();
          }

@@ -36,24 +36,45 @@
 
 package org.jasig.portal.layout.restrictions;
 
+import org.jasig.portal.PortalException;
+
 /**
- * <p>Title: The Restriction Types</p>
- * <p>Description: This interface contains the restriction types </p>
+ * <p>Title: </p>
+ * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic </p>
+ * <p>Company: </p>
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version 1.0
  */
 
-public interface RestrictionTypes {
+public class UserLayoutRestrictionFactory {
 
-  public static final int PRIORITY_RESTRICTION = 1;
-  public static final int DEPTH_RESTRICTION = 2;
-  public static final int GROUP_RESTRICTION = 4;
-  public static final int IMMUTABLE_RESTRICTION = 8;
-  public static final int UNREMOVABLE_RESTRICTION = 16;
-  public static final int HIDDEN_RESTRICTION = 32;
-  //public static final int REMOTE_RESTRICTION = 64;
-
+ public static IUserLayoutRestriction createRestriction( int restrictionType, String restrictionValue, String restrictionPath ) throws PortalException {
+    IUserLayoutRestriction restriction = null;
+    switch ( restrictionType ) {
+      case RestrictionTypes.DEPTH_RESTRICTION:
+        restriction = new DepthRestriction(restrictionPath);
+        break;
+      case RestrictionTypes.GROUP_RESTRICTION:
+        restriction = new GroupRestriction(restrictionPath);
+        break;
+      case RestrictionTypes.HIDDEN_RESTRICTION:
+        restriction = new HiddenRestriction(restrictionPath);
+        break;
+      case RestrictionTypes.IMMUTABLE_RESTRICTION:
+        restriction = new ImmutableRestriction(restrictionPath);
+        break;
+      case RestrictionTypes.PRIORITY_RESTRICTION:
+        restriction = new PriorityRestriction(restrictionPath);
+        break;
+      case RestrictionTypes.UNREMOVABLE_RESTRICTION:
+        restriction = new UnremovableRestriction(restrictionPath);
+        break;
+      default:
+        restriction = new UnremovableRestriction(restrictionPath);
+    }
+        restriction.setRestrictionExpression(restrictionValue);
+        return restriction;
+  }
 
 }

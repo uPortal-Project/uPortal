@@ -121,7 +121,7 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      *
      * @param node an <code>Element</code> value
      */
-    protected void addNodeAttributes(Element node) {
+    public void addNodeAttributes(Element node) {
         node.setAttribute("ID",this.getId());
         node.setAttribute("name",this.getName());
         node.setAttribute("unremovable",(new Boolean(this.isUnremovable())).toString());

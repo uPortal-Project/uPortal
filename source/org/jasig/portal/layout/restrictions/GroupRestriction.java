@@ -45,13 +45,13 @@ import java.util.Vector;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.IGroupServiceFactory;
-import org.jasig.portal.layout.UserLayoutNode;
+import org.jasig.portal.groups.ReferenceGroupServiceFactory;
+import org.jasig.portal.layout.*;
 
 
 /**
  * <p>Title: The Group Restriction class</p>
- * <p>Description: This class checks the group restriction for a given UserLayoutNode object</p>
- * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Description: This class checks the group restriction for a given ALNode object</p>
  * <p>Company: Instructional Media & Magic </p>
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.1
@@ -63,23 +63,31 @@ public class GroupRestriction extends UserLayoutRestriction {
          // This group key can be come from different sources, for instance, from IEntityGroup object
          private IEntityGroup groups[];
          private static IGroupService groupService;
+         private static IGroupServiceFactory groupServiceFactory;
 
-         public GroupRestriction(UserLayoutNode node) throws PortalException {
-           super(node);
+         public GroupRestriction(String nodePath) throws PortalException {
+           super(nodePath);
            try {
+            if ( groupServiceFactory == null )
+             groupServiceFactory = new ReferenceGroupServiceFactory();
             if ( groupService == null )
-             groupService = NodeGroupServiceFactory.newInstance();
+             groupService = groupServiceFactory.newGroupService();
            } catch ( Exception e ) {
              throw new PortalException(e.getMessage());
             }
          }
+
+         public GroupRestriction() throws PortalException {
+          this(null);
+         }
+
 
          /**
            * Returns the type of the current restriction
            * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
           */
          public int getRestrictionType() {
-           return RestrictionTypes.GROUP_RESTRICTION;
+           return RestrictionTypes.GROUP_RESTRICTION|super.getRestrictionType();
          }
 
 
@@ -105,12 +113,25 @@ public class GroupRestriction extends UserLayoutRestriction {
          }
 
          /**
-           * Checks the restriction for the specified node
-           * @param node a <code>UserLayoutNode</code> user layout node to be checked
+           * Checks the restriction for the specified property value
+           * @param propertyValue a <code>String</code> property value to be checked
            * @exception PortalException
          */
-         public boolean checkRestriction( UserLayoutNode node ) throws PortalException {
-           IEntityGroup group = groupService.findGroup(node.getGroupName());
+         public boolean checkRestriction( String propertyValue ) throws PortalException {
+           IEntityGroup group = groupService.findGroup(propertyValue);
+           for ( int i = 0; i < groups.length; i++ )
+            if ( groups[i].contains(group) )
+             return true;
+             return false;
+         }
+
+         /**
+           * Checks the restriction for the current node
+           * @exception PortalException
+         */
+         public boolean checkRestriction( ALNode node ) throws PortalException {
+
+           IEntityGroup group = groupService.findGroup(((IALNodeDescription)node.getNodeDescription()).getGroup());
            for ( int i = 0; i < groups.length; i++ )
             if ( groups[i].contains(group) )
              return true;

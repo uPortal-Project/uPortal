@@ -123,7 +123,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
         return node;
     }
 
-    protected void addNodeAttributes(Element node) {
+    public void addNodeAttributes(Element node) {
         super.addNodeAttributes(node);
         node.setAttribute("type",folderTypeNames[this.getFolderType()]);
     }

@@ -33,27 +33,12 @@
  *
  */
 
-
-package org.jasig.portal.layout.restrictions;
+package org.jasig.portal.layout;
 
 /**
- * <p>Title: The Restriction Types</p>
- * <p>Description: This interface contains the restriction types </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic </p>
- * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * An interface describing an Aggregated Layout folder descriptions 
+ *
+ * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @version 1.0
  */
-
-public interface RestrictionTypes {
-
-  public static final int PRIORITY_RESTRICTION = 1;
-  public static final int DEPTH_RESTRICTION = 2;
-  public static final int GROUP_RESTRICTION = 4;
-  public static final int IMMUTABLE_RESTRICTION = 8;
-  public static final int UNREMOVABLE_RESTRICTION = 16;
-  public static final int HIDDEN_RESTRICTION = 32;
-  //public static final int REMOTE_RESTRICTION = 64;
-
-
-}
+public interface IALChannelDescription extends IUserLayoutChannelDescription, IALNodeDescription {};

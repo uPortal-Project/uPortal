@@ -38,10 +38,11 @@ package org.jasig.portal.layout.restrictions;
 
 import org.jasig.portal.PortalException;
 import java.util.StringTokenizer;
-import org.jasig.portal.layout.UserLayoutNode;
+import org.jasig.portal.layout.ALNode;
+import org.jasig.portal.layout.restrictions.RestrictionTypes;
 
 /**
- * <p>Title: UserLayoutRestriction class</p>
+ * <p>Title: UserLayoutRelativeRestriction class</p>
  * <p>Description: The base class for UserLayout restrictions</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: Instructional Media & Magic</p>
@@ -52,14 +53,20 @@ import org.jasig.portal.layout.UserLayoutNode;
 public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 
 
-  private String restrictionName;
   private String restrictionExpression;
-  private String nodePath;
-  protected UserLayoutNode node;
+  protected String nodePath;
 
-  public UserLayoutRestriction( UserLayoutNode node ) {
-     this.node = node;
+  public UserLayoutRestriction() {
+
   }
+
+  public UserLayoutRestriction( String nodePath ) {
+     this.nodePath = nodePath;
+  }
+
+
+
+
 
   /**
      * Parses the restriction expression of the current node
@@ -68,99 +75,51 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   protected abstract void parseRestrictionExpression() throws PortalException;
 
   /**
-     * Checks the restriction for the given node parsing the restriction expression
-     * @param node a <code>UserLayoutNode</code> object
+     * Checks the restriction for the given property value
+     * @param propertyValue a <code>String</code> property value to be checked
      * @exception PortalException
      */
-  public abstract boolean checkRestriction(UserLayoutNode node) throws PortalException;
+  public abstract boolean checkRestriction(String propertyValue) throws PortalException;
+
+
+  /**  Checks the relative restriction on a given node
+     * @param node a <code>ALNode</code> node
+     * @return a boolean value
+     * @exception PortalException
+     */
+  public boolean checkRestriction ( ALNode node ) throws PortalException {
+     return true;
+  }
 
 
   /**
    * Returns the type of the current restriction
    * @return a restriction type respresented in the <code>RestrictionTypes</code> interface
    */
-  public abstract int getRestrictionType();
-
-
-  /**
-     * Checks the restriction for the current node
-     * @param needParsing a boolean value specified if the existent expression needs to be parsed
-     * @exception PortalException
-     */
-  public boolean checkRestriction( boolean needParsing ) throws PortalException {
-    if ( needParsing ) parseRestrictionExpression();
-    if ( nodePath != null ) checkRestriction(nodePath);
-    return checkRestriction(node);
-  }
-
-
-    /**
-     * Gets all the nodes specified by the ptah expression
-     * @return a <code>String</code> name of the restriction
-     */
-     protected UserLayoutNode[] findNodesByPath( String url) {
-      // TO BE DONE!!!
-      return new UserLayoutNode[] { node };
-     }
-
-  /**
-     * Checks the restriction for the nodes on the given path parsing the restriction expression
-     * @param url a <code>String</code> tree node path in the User Layout
-     * @exception PortalException
-     */
-  public boolean checkRestriction(String url) throws PortalException {
-    if ( url == null ) return checkRestriction();
-    else {
-       UserLayoutNode[] nodes = findNodesByPath(url);
-       int i = 0;
-       for ( ; i < nodes.length && checkRestriction(node); i++ );
-       if ( i == nodes.length )
-        return true;
-        return false;
-    }
+  public int getRestrictionType() {
+     //return (nodePath==null||nodePath.length()==0)?RestrictionTypes.REMOTE_RESTRICTION:0;
+     return 0;
   }
 
   /**
-     * Checks the restriction for the current node without necessity to parse the restriction expression
-     * @exception PortalException
-     */
-  public boolean checkRestriction() throws PortalException {
-    return checkRestriction(false);
-  }
-
-  /**
-     * Sets the name of the restriction
-     * @param restrictionName a <code>String</code> name of the restriction
-     */
-  public void setRestrictionName ( String restrictionName ) {
-    this.restrictionName = restrictionName;
-  }
-
-
-  /**
-     * Gets the name of the restriction
-     * @return a <code>String</code> name of the restriction
+     * Gets the restriction name
+     * @return a <code>String</code> restriction name
      */
   public String getRestrictionName() {
-    return restrictionName;
-  }
-
-  /**
-     * Sets the name of the restriction
-     * @param nodePath a <code>String</code> path in the UserLayout tree to be checked
-     */
-  public void setUserLayoutNodePath ( String nodePath ) {
-    this.nodePath = nodePath;
+     return getRestrictionName(getRestrictionType(),nodePath);
   }
 
 
   /**
-     * Gets the name of the restriction
-     * @return a <code>String</code> path in the UserLayout tree to be checked
+     * Gets the restriction name based on a restriction type and a node path
+     * @param restrictionType a restriction type
+     * @param nodePath a <code>String</code> node path
+     * @return a <code>String</code> restriction name
      */
-  public String getUserLayoutNodePath() {
-    return nodePath;
+  public static String getRestrictionName( int restrictionType, String nodePath ) {
+     return (nodePath!=null && nodePath.length()>0)?restrictionType+":"+nodePath:restrictionType+"";
   }
+
 
   /**
      * Sets the restriction expression
@@ -170,7 +129,10 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
     if ( !restrictionExpression.equals(this.restrictionExpression) ) {
      this.restrictionExpression = restrictionExpression;
      try { parseRestrictionExpression(); }
-     catch ( PortalException pe ) { System.out.println("setRestrictionExpression: " + pe); }
+     catch ( PortalException pe ) { pe.printStackTrace();
+                                    System.out.println( "restriction expression: " + restrictionExpression );
+                                    System.out.println("setRestrictionExpression: " + pe);
+                                  }
     }
   }
 
@@ -182,6 +144,15 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      */
   public String getRestrictionExpression() {
      return restrictionExpression;
+  }
+
+
+  /**
+     * Gets the tree path for the current restriction
+     * @return a <code>String</code> tree path
+     */
+  public String getRestrictionPath() {
+     return nodePath;
   }
 
 }

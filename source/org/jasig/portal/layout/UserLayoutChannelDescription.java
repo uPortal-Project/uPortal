@@ -438,7 +438,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         }
     }
 
-    protected void addNodeAttributes(Element node) {
+    public void addNodeAttributes(Element node) {
         super.addNodeAttributes(node);
         node.setAttribute("title",this.getTitle());
         node.setAttribute("description",this.getDescription());
