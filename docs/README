@@ -36,6 +36,54 @@ FOP:                      xml.apache.org/fop/
 Xalan:                    xml.apache.org/xalan/
 
 
+The uPortal team is currently in the process of producing their own
+stylesheets for DocBook XML, but until we have JA-SIG-specific
+stylesheets, you can use the Norm Walsh stylesheets(so-called because
+the author is Norm Walsh, the author of DocBook: The Definitive Guide
+and a longtime proponent of DocBook).
+
+From the URL shown above, download docbook-xsl-1.46-experimental. The
+actual filenames will end in either .tar.gz or .zip, download the one
+most appropriate for the platform you'll be working with. In the same
+directory where you've placed portal/docs from the uPortal 2.0 source,
+unpack this file so that you have a new directory named
+"docbook-xsl-1.46-experimental". For example, I do most of my work on
+Solaris, and after I've unpacked the file docbook-xsl-1.46.tar.gz, my
+portal/docs directory looks like the following:
+
+channel docs/
+CVS/
+developers/
+docbook-xsl-1.46-experimental/
+docs.xml
+overview.xml
+README
+website/
+
+- Compiling to .xhtml:
+
+To produce .xhtml documentation, invoke ant with the docs.xml build
+file and 'xhtml' as an argument. For example, on most UNIX-like
+operating systems, issuing the following command in the shell will
+begin the compilation process:
+
+
+  ant -buildfile docs.xml xhtml
+
+..you'll get a lot of error messages, but just ignore them. After a while, 
+you'll get the following message:
+
+BUILD SUCCESSFUL
+
+Total time: 1 minute 35 seconds
+
+...this is the time it takes on my vastly underpowered 300Mhz
+machine. On yours it will undoubtedly take much less time.
+
+Now you will be able to 'cd' into the 'website' directory and view the
+resulting .xhtml files. 
+
+
 
 Copyright
 ---------
