@@ -29,6 +29,7 @@ public class ChannelStaticData extends Hashtable {
   private String m_channelSubscribeId = null;
   // Cache the IPerson
   private IPerson m_person = null;
+  private ICCRegistry iccr=null;
 
   // Cache the PermissionManager for this channel
   //  private PermissionManager m_permissionManager = null;
@@ -164,5 +165,23 @@ public class ChannelStaticData extends Hashtable {
      */
     public void setTimeout(long value) {
         m_timeout = value;
+    }
+
+    /**
+     * Obtain inter-channel communication registry object
+     *
+     * @return an <code>ICCRegistry</code> value
+     */
+    public ICCRegistry getICCRegistry() {
+        return this.iccr;
+    }
+
+    /**
+     * Set inter-channel communication registry object
+     *
+     * @param registry an <code>ICCRegistry</code> value
+     */
+    public void setICCRegistry(ICCRegistry registry) {
+        this.iccr=registry;
     }
 }
