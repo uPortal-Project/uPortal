@@ -261,10 +261,8 @@ public class VersionsManager
      * one should fail since the major, minor, and/or micro versions had in 
      * cache will not map to those now in the database.
      * 
-     * @param fname
-     * @param major
-     * @param minor
-     * @param micro
+     * @param old
+     * @param next
      * @return boolean
      */
     private boolean updateVersion(Version old, Version next)
