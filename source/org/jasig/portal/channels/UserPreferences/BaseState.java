@@ -84,4 +84,8 @@ class BaseState implements IPrivilegedChannel {
     public void setState(IPrivilegedChannel state) {
         this.internalState=state;
     }
+
+    public void setContext(CUserPreferences context) {
+        this.context=context;
+    }
 }
