@@ -137,7 +137,7 @@
 
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
                        into HTML, text, or other XML document types.
-                       Version: 2.2 D13
+                       Version: 2.2 D14
                        URL: http://xml.apache.org/xalan-j/
 
   xerces.jar           Xerces2 is the next generation of high performance,
@@ -200,6 +200,11 @@
                        Version: 19Jun2001
                        URL: http://www.servlets.com/cos/
 
+  oro.jar              A set of text-processing Java classes that provide Perl5 
+                       compatible regular expressions.
+                       Version: 2.0.4
+                       URL: http://jakarta.apache.org/oro/
+
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
                        Version: 2.2 or 2.3
@@ -225,6 +230,7 @@
   <property name="log4j.jar" value="(set this in build.properties!)"/>
   <property name="jaas.jar" value="(set this in build.properties!)"/>
   <property name="cos.jar" value="(set this in build.properties!)"/>
+  <property name="oro.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
 
@@ -256,6 +262,7 @@
     <pathelement location="${log4j.jar}"/>
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${cos.jar}"/>
+    <pathelement location="${oro.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
 
@@ -375,6 +382,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${log4j.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jaas.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
 
   </target>
