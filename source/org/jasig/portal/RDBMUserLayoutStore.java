@@ -2115,27 +2115,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  public void saveBookmarkXML (IPerson person, Document doc) throws Exception {
-    int userId = person.getID();
-    StringWriter outString = new StringWriter();
-    XMLSerializer xsl = new XMLSerializer(outString, new OutputFormat(doc));
-    xsl.serialize(doc);
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement statem = con.createStatement();
-      try {
-        String sQuery = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString() + "' WHERE PORTAL_USER_ID = "
-            + userId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveBookmarkXML(): " + sQuery);
-        statem.executeUpdate(sQuery);
-      } finally {
-        statem.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-  }
-
   protected final int saveStructure (Node node, RDBMServices.PreparedStatement structStmt, RDBMServices.PreparedStatement parmStmt) throws java.sql.SQLException {
     if (node == null || node.getNodeName().equals("parameter")) { // No more or parameter node
       return  0;
