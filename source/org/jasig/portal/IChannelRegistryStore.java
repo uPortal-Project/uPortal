@@ -66,6 +66,14 @@ public interface IChannelRegistryStore {
   public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories) throws Exception;
 
   /**
+   * Disassociates a channel definition from a category.
+   * @param channelDef, the channel definition
+   * @param category, the channel category from which to disassociate the channel definition
+   * @throws org.jasig.portal.PortalException
+   */
+  public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
+
+  /**
    * Permanently deletes a channel definition from the store.
    * @param channelPublishId a channel publish ID
    * @throws java.lang.Exception
@@ -100,6 +108,13 @@ public interface IChannelRegistryStore {
    */
   public void addChannelType (ChannelType chanType) throws Exception;
 
+  /**
+   * Associates a channel definition with a category.
+   * @param channelDef, the channel definition
+   * @param category, the channel category to which to associate the channel definition
+   * @throws org.jasig.portal.PortalException
+   */
+  public void addChannelToCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
 
   /**
    * Returns an array of ChannelTypes.
