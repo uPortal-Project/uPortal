@@ -76,7 +76,7 @@ import  java.io.StringReader;
 import  java.io.StringWriter;
 import  java.util.Hashtable;
 import  java.util.Enumeration;
-
+import  java.net.URL;
 
 /**
  * 
@@ -610,7 +610,8 @@ public class CBookmarks extends BaseChannel {
     // Add the baseActionURL to the stylesheet parameters
     parameters.put("baseActionURL", runtimeData.getBaseActionURL());
     // Use the XSLT utility to perform the transformation
-    XSLT.transform(inputXML, m_stylesheetSet, out, parameters, stylesheetName, runtimeData.getMedia());
+    String xslURI=m_stylesheetSet.getStylesheetURI(stylesheetName,runtimeData.getBrowserInfo());
+    XSLT.transform(inputXML, new URL(xslURI), out, parameters);
   }
 
   /**

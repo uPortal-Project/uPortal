@@ -176,6 +176,28 @@ public class StylesheetSet extends SAXFilterImpl {
   }
 
   /**
+   * put your documentation comment here
+   * @param title
+   * @param media
+   * @return 
+   */
+  public XSLTInputSource getStylesheet (String title, BrowserInfo bi) {
+      String media=getMedia(bi);
+    Hashtable media_table = (Hashtable)title_table.get(title);
+    if (media_table == null)
+      return  null;
+    StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
+    if (sd == null) {
+      Enumeration sls = media_table.elements();
+      if (sls.hasMoreElements())
+        sd = (StylesheetDescription)sls.nextElement();
+    }
+    if (sd == null)
+      return  null;
+    return  (new XSLTInputSource(sd.getURI()));
+  }
+
+  /**
    * Returns the URI of the stylesheet matching the media
    * @param media
    * @return the stylesheet URI

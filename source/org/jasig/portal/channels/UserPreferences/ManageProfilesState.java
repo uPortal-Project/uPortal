@@ -260,7 +260,7 @@ class ManageProfilesState extends BaseState {
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
-      String xslURI = runtimeData.getStylesheetURI("profileList", set);
+      String xslURI = set.getStylesheetURI("profileList", runtimeData.getBrowserInfo());
       UserProfile currentProfile = context.getCurrentUserPreferences().getProfile();
       Hashtable params = new Hashtable();
       params.put("baseActionURL", runtimeData.getBaseActionURL());
@@ -574,7 +574,7 @@ class ManageProfilesState extends BaseState {
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = null;
-      xslURI = runtimeData.getStylesheetURI("editProfile", set);
+      xslURI = set.getStylesheetURI("editProfile", runtimeData.getBrowserInfo());
       Hashtable params = new Hashtable();
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       if (xslURI != null) {

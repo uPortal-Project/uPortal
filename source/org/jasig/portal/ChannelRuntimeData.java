@@ -249,45 +249,6 @@ public class ChannelRuntimeData extends Hashtable
     return  (Enumeration)super.keys();
   }
 
-  /**
-   * Find a stylesheet for this connection
-   * @parameter stylesheet title
-   * @parameter Stylesheet object
-   * @deprecated
-   */
-  public String getStylesheetURI (String title, StylesheetSet set) throws GeneralRenderingException {
-    return  set.getStylesheetURI(title, request);
-  }
-
-  /**
-   * Find a stylesheet for this connection
-   * @parameter stylesheet title
-   * @parameter Stylesheet object
-   * @deprecated
-   */
-  public XSLTInputSource getStylesheet (String title, StylesheetSet set) {
-    return  set.getStylesheet(title, request);
-  }
-
-  /**
-   * Find a stylesheet for this connection
-   * @parameter stylesheet title
-   * @parameter Stylesheet object
-   * @depricated
-   */
-  public XSLTInputSource getStylesheet (StylesheetSet set) throws GeneralRenderingException {
-    return  set.getStylesheet(request);
-  }
-
-  /**
-   * Return media type for this connection
-   */
-  public String getMedia () {
-    MediaManager mm = new MediaManager();
-    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
-    return  mm.getMedia(request);
-  }
-
   // if you need to pass objects, use this
   public synchronized Object put (Object key, Object value) {
     return  super.put(key, value);

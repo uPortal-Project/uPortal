@@ -508,7 +508,7 @@ class GPreferencesState extends BaseState {
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = null;
-      xslURI = runtimeData.getStylesheetURI("editItem", set);
+      xslURI = set.getStylesheetURI("editItem", runtimeData.getBrowserInfo());
       Hashtable params = new Hashtable();
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       if (xslURI != null) {
@@ -631,7 +631,7 @@ class GPreferencesState extends BaseState {
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = null;
-      xslURI = runtimeData.getStylesheetURI("editGPrefs", set);
+      xslURI = set.getStylesheetURI("editGPrefs", runtimeData.getBrowserInfo());
       Hashtable params = new Hashtable();
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       if (xslURI != null) {
@@ -738,7 +738,7 @@ class GPreferencesState extends BaseState {
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = null;
-      xslURI = runtimeData.getStylesheetURI("browse", set);
+      xslURI = set.getStylesheetURI("browse", runtimeData.getBrowserInfo());
       Hashtable params = new Hashtable();
       params.put("folderID", context.getFolderID());
       params.put("modified", new Boolean(context.isModified()));
@@ -851,7 +851,7 @@ class GPreferencesState extends BaseState {
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
       String xslURI = null;
-      xslURI = runtimeData.getStylesheetURI("moveTo", set);
+      xslURI = set.getStylesheetURI("moveTo", runtimeData.getBrowserInfo());
       Hashtable params = new Hashtable();
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       if (xslURI != null) {

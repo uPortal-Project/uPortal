@@ -154,7 +154,7 @@ public class CApplet implements IChannel
   private void processXML (String sXml, DocumentHandler out) throws org.xml.sax.SAXException
   {
     XSLTInputSource xmlSource = new XSLTInputSource (new StringReader(sXml));
-    XSLTInputSource xslSource = runtimeData.getStylesheet("main", set);
+    XSLTInputSource xslSource = set.getStylesheet("main", runtimeData.getBrowserInfo());
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
     if (xslSource != null)
