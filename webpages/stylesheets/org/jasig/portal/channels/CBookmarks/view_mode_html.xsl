@@ -6,7 +6,7 @@
 	<xsl:output method="xml" indent="no"/>
 	
 	<xsl:param name="baseActionURL">default</xsl:param>
-	<xsl:param name="imagesURL">/stylesheets/org/jasig/portal/CBookmarks/</xsl:param>
+	<xsl:param name="imagesURL">media/org/jasig/portal/channels/CBookmarks/</xsl:param>
 	
 	<xsl:template match="/">
 		<div>

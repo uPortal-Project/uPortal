@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:param name="baseActionURL">default</xsl:param>
-	<xsl:param name="imagesURL">/stylesheets/org/jasig/portal/channels/CBookmarks/</xsl:param>
+	<xsl:param name="imagesURL">media/org/jasig/portal/channels/CBookmarks/</xsl:param>
 
 	<xsl:template name="BookmarkTree" match="xbel">
 		<xsl:param name="TreeMode">View</xsl:param>
