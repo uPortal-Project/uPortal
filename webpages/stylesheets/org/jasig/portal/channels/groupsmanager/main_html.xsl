@@ -18,8 +18,12 @@
   <xsl:key name="can" match="//principal/permission[@type='GRANT']" use="concat(@activity,'|',@target)" />
   <xsl:key name="selectedGroup" match="group[@selected='true']" use="@key"/>
   <xsl:key name="selectedEntity" match="entity[@selected='true']" use="@key"/>
+  <xsl:key name="groupByID" match="group" use="@id"/>
+  <xsl:variable name="rootGroup" select="key('groupByID',$rootViewGroupID)"/>
+  <xsl:variable name="highlightedGroup" select="key('groupByID',$highlightedGroupID)"/>
 
   <xsl:template match="/">
+  	
   		<SCRIPT LANGUAGE='JavaScript1.2' TYPE='text/javascript'>
 		function grpRemoveMember(path,member,group){
 			if (window.confirm('Are you sure you want to remove \''+member+'\' from \''+group+'\'?')){
@@ -59,67 +63,37 @@
           </tr>
         </xsl:if>
         
-    
-        <!--
         <tr>
-        	<td colspan="6" class="uportal-background-dark">
-        		<img src="{$spacerIMG}" width="1" height="1"/>
-        	</td>
-        </tr>
-        -->
-        <tr>
-        	<!--
-        	<td rowspan="4" class="uportal-background-dark">
-        		<img src="{$spacerIMG}" width="1" height="1"/>
-        	</td>
-        	-->
         	<td rowspan="3" valign="top">
         		<xsl:call-template name="tree"/>
         	</td>
-        	<xsl:if test="//group[@id=$highlightedGroupID]">
+        	<xsl:if test="$highlightedGroup">
 				<td class="uportal-background-highlight" rowspan="3" width="2"><img src="{$spacerIMG}" width="2" height="2"/></td>
 				<td class="uportal-background-highlight" height="2"><img src="{$spacerIMG}" width="2" height="2"/></td>
 				<td class="uportal-background-highlight" rowspan="3" width="2">
 					<img src="{$spacerIMG}" width="2" height="2"/>
 				</td>
         	</xsl:if>
-        	<!--
-        	<td rowspan="4" class="uportal-background-dark">
-        		<img src="{$spacerIMG}" width="1" height="1"/>
-        	</td>
-        	-->
         </tr>
         <tr>
         	<td valign="top">
-        		<xsl:if test="//group[@id=$highlightedGroupID]">
+        		<xsl:if test="key('groupByID',$highlightedGroupID)">
         		<xsl:call-template name="rightPane">
-        			<xsl:with-param name="group" select="//group[@id=$highlightedGroupID]"/>
+        			<xsl:with-param name="group" select="$highlightedGroup"/>
         		</xsl:call-template>
         		</xsl:if>
         	</td>
         </tr>
         <tr>
         	<td height="2">
-        		<xsl:if test="//group[@id=$highlightedGroupID]">
+        		<xsl:if test="key('groupByID',$highlightedGroupID)">
         			<xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
         			<img src="{$spacerIMG}" width="2" height="2"/>
         		</xsl:if>
         	</td>
         </tr>
-        <tr>
-        	<td height="10">
-        			<img src="{$spacerIMG}" width="2" height="10"/>
-        	</td>
-        </tr>
-        
-        
-        <!--
-        <tr>
-        	<td colspan="4" class="uportal-background-dark">
-        		<img src="{$spacerIMG}" width="1" height="1"/>
-        	</td>
-        </tr>
-        -->
+        <tr><td height="10"><img src="{$spacerIMG}" width="2" height="10"/></td></tr>
+
         
         <xsl:if test="not($mode='edit')">
         	<xsl:call-template name="hrow">
@@ -128,11 +102,12 @@
 			<tr><td height="5"><img src="{$spacerIMG}" width="2" height="5"/></td></tr>
 			<form action="{$baseActionURL}">
 				<input type="hidden" name="grpCommand" value="Search"/>
+				<input type="hidden" name="uP_root" value="me"/>
 				<tr>
 				<td colspan="5" nowrap="nowrap" class="uportal-channel-text">
 				Search for a 
 				<select class="uportal-button" name="grpType">
-					<xsl:variable name="stype" select="//group[@id=$rootViewGroupID]/@entityType"/>
+					<xsl:variable name="stype" select="$rootGroup/@entityType"/>
 					<xsl:for-each select="/CGroupsManager/entityTypes/entityType">
 						<xsl:if test="not($stype) or @type=$stype"> 
 						<option value="{@type}">
@@ -155,7 +130,7 @@
 				<input type="submit" class="uportal-button" value="Go"/>
 				</td>
 				</tr>
-				<xsl:if test="//group[(@id=$highlightedGroupID) and not(@id=0) and not(@searchResults='true')]"> 
+				<xsl:if test="$highlightedGroup[not(@id=0) and not(@searchResults='true')]"> 
 					<tr>
 					<td colspan="5" class="uportal-channel-text">
 					<input type="checkbox" name="grpCommandArg" value="{//group[@id=$highlightedGroupID]/@key}"/>
@@ -285,11 +260,6 @@
               My Groups
             </xsl:text>
           </td>
-          <!--
-          <xsl:call-template name="rightPaneButtons">
-          	<xsl:with-param name="group" select="$group"/>
-          </xsl:call-template>
-          -->
         </tr>
       </xsl:when>
       <xsl:otherwise>
@@ -308,31 +278,29 @@
         
           <tr>
             <td>
-            		<xsl:choose>
-							<xsl:when test="($mode='select') and not($group/@searchResults='true')">
-							  
-								<xsl:if test="not($group/@id=0) and ($ignorePermissions or key('can',concat('SELECT','|',$group/@key)))">
-								  <xsl:choose>
-									<xsl:when test="($group/@selected='true') or (key('selectedGroup',$group/@key))">
-									  <span class="uportal-channel-warning">
-										<xsl:text>
-										  X
-										</xsl:text>
-									  </span>
-									</xsl:when>
-									<xsl:otherwise>
-									  <input type="checkbox" name="grpSelect//{$group/@id}|group" value="true" />
-									</xsl:otherwise>
-								  </xsl:choose>
-								</xsl:if>
-							  
+				<xsl:choose>
+					<xsl:when test="($mode='select') and not($group/@searchResults='true')">
+					  
+						<xsl:if test="not($group/@id=0) and ($ignorePermissions or key('can',concat('SELECT','|',$group/@key)))">
+						  <xsl:choose>
+							<xsl:when test="($group/@selected='true') or (key('selectedGroup',$group/@key))">
+							  <span class="uportal-channel-warning">
+								<xsl:text>
+								  X
+								</xsl:text>
+							  </span>
 							</xsl:when>
 							<xsl:otherwise>
-							  <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" />
+							  <input type="checkbox" name="grpSelect//{$group/@id}|group" value="true" />
 							</xsl:otherwise>
-						</xsl:choose>
-            
-             <!-- <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" /> -->
+						  </xsl:choose>
+						</xsl:if>
+					  
+					</xsl:when>
+					<xsl:otherwise>
+					  <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" />
+					</xsl:otherwise>
+				</xsl:choose>
             </td>
             <td class="uportal-text" colspan="2">
               <xsl:choose>
@@ -411,7 +379,6 @@
 			  </xsl:if>
 			</xsl:if>
         </xsl:if>
-       <!-- </form>-->
         
       </xsl:otherwise>
     </xsl:choose>
@@ -485,13 +452,11 @@
 				</tr>
     		</table>
 		
-		
-		<!--<xsl:value-of select="concat(((($page - 1)*$pageSize)+1),' through ',(($page * $pageSize)),' of ',$siblingCount,':')"/>-->
 	  </td>
 	</tr>
 
     <xsl:call-template name="hrow"/>
-    <!--<form action="{$baseActionURL}" method="POST">-->
+
     <xsl:for-each select="$group/node()[name()='group' or name()='entity']">
     	<xsl:sort data-type="text" order="descending" select="name()"/>
     	<xsl:sort data-type="text" order="ascending" select="RDF/Description/title"/>
@@ -529,16 +494,6 @@
 						<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg={@id}"> <span class="uportal-channel-table-row-even"><strong>
 							  <xsl:value-of select="RDF/Description/title" /></strong>
 							</span> </a>
-					  <!--<xsl:choose>
-						<xsl:when test="not($grpServantMode='true')">
-						  <a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg={@id}"> <span class="uportal-channel-table-row-even"><strong>
-							  <xsl:value-of select="RDF/Description/title" /></strong>
-							</span> </a>
-						</xsl:when>
-						<xsl:otherwise>
-						  <xsl:value-of select="RDF/Description/title" />
-						</xsl:otherwise>
-					  </xsl:choose>-->
 					</td>
 					<td align="right" valign="top" class="uportal-channel-table-row-even" nowrap="nowrap">
 					  <xsl:if test="$mode='edit' and ($ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true'))">
@@ -664,30 +619,6 @@
             <xsl:call-template name="hrow"/>
           </xsl:if>
      </form>
-    <!--
-    <xsl:for-each select="$group/entity">
-    	<xsl:sort data-type="text" order="ascending" select="@displayName"/>
-		<tr>
-		  <td>
-			<img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" />
-			<xsl:value-of select="$posCount"/>
-		  </td>
-		  <td width="100%" class="uportal-channel-table-row-odd">
-			<xsl:value-of select="@displayName" />
-		  </td>
-		  <td align="right" valign="top" class="uportal-channel-table-row-odd">
-			<xsl:if test="$mode='edit' and ($ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true'))">
-			  <a href="{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}"> <span class="uportal-channel-table-row-odd">
-				  <xsl:text>
-					Remove
-				  </xsl:text>
-				</span> </a>
-			</xsl:if>
-		  </td>
-		</tr>
-		<xsl:variable name="posCount" select="$posCount+1"/>
-    </xsl:for-each>
-    -->
     
     <xsl:if test="($mode='edit') and ($grpServantMode='true')">
 		<form action="{$baseActionURL}" method="POST">
@@ -716,11 +647,17 @@
   	</tr>
   </xsl:template>
 
-  
   <xsl:template name="tree">
         <form action="{$baseActionURL}" method="POST">
           <input type="hidden" name="uP_root" value="me"/>
-          <xsl:apply-templates select="//group[@id=$rootViewGroupID]" />
+          <xsl:apply-templates select="$rootGroup" />
+           <xsl:variable name="stype" select="$rootGroup/@entityType"/>
+          <xsl:for-each select="/CGroupsManager/group[@searchResults='true']">
+          	<xsl:sort data-type="number" order="ascending" select="@id"/>
+          	<xsl:if test="not($stype) or @entityType=$stype"> 
+				 <xsl:apply-templates select="." />
+			</xsl:if>
+          </xsl:for-each>
         </form>
   </xsl:template>
   
@@ -728,26 +665,6 @@
     <xsl:if test="$ignorePermissions or key('can',concat('VIEW','|',@key)) or (@id=0)">
     <table border="0" cellpadding="0" cellspacing="0" width="100%">	
       <tr>
-      	<!--
-        <xsl:if test="$mode='select'">
-          <td align="center" valign="top">
-            <xsl:if test="not(@id=0) and ($ignorePermissions or key('can',concat('SELECT','|',@key)))">
-              <xsl:choose>
-                <xsl:when test="(@selected='true') or (key('selectedGroup',@key))">
-                  <span class="uportal-channel-warning">
-                    <xsl:text>
-                      X
-                    </xsl:text>
-                  </span>
-                </xsl:when>
-                <xsl:otherwise>
-                  <input type="checkbox" name="grpSelect//{@id}|group" value="true" />
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:if>
-          </td>
-        </xsl:if>
-        -->
         <td width="100%" colspan="2">
           <table border="0" cellpadding="0" cellspacing="0" width="100%">
             <tr>
@@ -793,16 +710,7 @@
           </table>
         </td>
       </tr>
-      
-      <!--
-      <xsl:if test="@expanded='true'">
-        <xsl:apply-templates select="entity">
-          <xsl:with-param name="emptyWidth">
-            <xsl:value-of select="($depth*14)+14" />
-          </xsl:with-param>
-        </xsl:apply-templates>
-      </xsl:if>
-      -->
+
       <xsl:if test="(@expanded='true') and (count(group) &gt; 0)">
       	<tr>
       		<td background="{$mediaBase}/dot.gif">
@@ -812,11 +720,6 @@
         <xsl:apply-templates select="group[not(@searchResults='true')]">
         	<xsl:sort data-type="text" order="ascending" select="RDF/Description/title"/>
         </xsl:apply-templates>
-        <xsl:if test="@id=$rootViewGroupID">
-			<xsl:apply-templates select="//group[@searchResults='true']">
-				<xsl:sort data-type="number" order="ascending" select="@id"/>
-			</xsl:apply-templates>
-        </xsl:if>
         	</td>
         </tr>
       </xsl:if>
@@ -825,44 +728,5 @@
     </xsl:if>
     
   </xsl:template>
-  
-  <xsl:template match="entity">
-    <xsl:param name="emptyWidth">
-      1
-    </xsl:param>
-    <tr>
-      <xsl:if test="$mode='select'">
-        <td align="center" valign="top">
-        	<!--
-          <xsl:if test="($ignorePermissions or key('can',concat('SELECT','|',parent::group/@key))) and not($blockEntitySelect)">
-            <xsl:choose>
-              <xsl:when test="(@selected='true') or key('selectedEntity',@key)">
-                <span class="uportal-channel-warning">
-                  <xsl:text>
-                    X
-                  </xsl:text>
-                </span>
-              </xsl:when>
-              <xsl:otherwise>
-                <input type="checkbox" name="grpSelect//{@id}|entity" value="true" />
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:if>
-          -->
-        </td>
-      </xsl:if>
-      <td width="100%">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-          <tr>
-            <td>
-              <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="{$emptyWidth}" />
-            </td>
-            <td class="uportal-channel-table-row-odd" width="100%">
-              <xsl:value-of select="@displayName" />
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </xsl:template>
+ 
 </xsl:stylesheet>
