@@ -239,9 +239,6 @@ public class Authentication {
       IPrincipal principalInstance = securityContext.getPrincipalInstance();
       if (username != null && !username.equals("")) {
          principalInstance.setUID(username);
-         // prime userid in person object before authenticated so can be
-         // displayed after failure if desired
-         person.setAttribute(IPerson.USERNAME, principalInstance.getUID());
       }
       // Retrieve and populate an instance of the credentials object
       IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
