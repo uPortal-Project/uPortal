@@ -36,25 +36,28 @@
 package org.jasig.portal.container.services.information;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Hashtable;
-import java.util.Vector;
 import java.util.StringTokenizer;
-import java.net.URLDecoder;
-
+import java.util.Vector;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.utils.CommonUtils;
 
 
@@ -69,7 +72,7 @@ import org.jasig.portal.utils.CommonUtils;
  * @version $Revision$
  */
 public class PortletStateManager {
-	
+    private static final Log log = LogFactory.getLog(PortletStateManager.class);
 	
     // The portlet control parameter names
     public static final String ACTION = "uP_portlet_action";
@@ -238,19 +241,40 @@ public class PortletStateManager {
 	
 	
 	private static String encodeQueryString ( String text ) {
-		String result = CommonUtils.replaceText(text, "&", "_and_");
-		result = CommonUtils.replaceText(result, "=", "_eq_");
-		result = CommonUtils.replaceText(result, UPFileSpec.PORTAL_URL_SEPARATOR, "__"); 
-		return result;
+        String result = CommonUtils.replaceText(text, UPFileSpec.PORTAL_URL_SEPARATOR, getPercentEncodedString(UPFileSpec.PORTAL_URL_SEPARATOR));
+        result = URLEncoder.encode(result);
+        
+        return result;
 	}
-
-
+    
 	private static String decodeQueryString ( String text ) {
-		String result = CommonUtils.replaceText(text, "_and_", "&");
-		result = CommonUtils.replaceText(result, "_eq_", "=");
-		result = CommonUtils.replaceText(result, "__", UPFileSpec.PORTAL_URL_SEPARATOR);
-		return result;
-	}		
+        String result = result = URLDecoder.decode(text);;
+        result = CommonUtils.replaceText(result, getPercentEncodedString(UPFileSpec.PORTAL_URL_SEPARATOR), UPFileSpec.PORTAL_URL_SEPARATOR);
+        
+        return result;
+    }
+    
+    //% Encodes a string of characters
+    private static String getPercentEncodedString(String str) {
+        StringBuffer stringbuffer = new StringBuffer();
+        
+        for (int cIndex = 0; cIndex < str.length(); cIndex++) {
+            char cIn = str.charAt(cIndex);
+            
+            stringbuffer.append('%');
+            char cOut = Character.forDigit(cIn >> 4 & 0xf, 16);
+            if (Character.isLetter(cOut))
+                cOut -= ' ';
+            stringbuffer.append(cOut);
+            
+            cOut = Character.forDigit(cIn & 0xf, 16);
+            if (Character.isLetter(cOut))
+                cOut -= ' ';
+            stringbuffer.append(cOut);
+        }
+        
+        return stringbuffer.toString();
+    }
 	
 	
 	public static Hashtable decodeURLParameters ( String encodedParameters ) {
@@ -523,7 +547,8 @@ public class PortletStateManager {
         
 		String encodedURLParams = encodeURLParameters(this.toString());
         StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
-				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+java.net.URLEncoder.encode(encodedURLParams)+
+				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+
+                  java.net.URLEncoder.encode(encodedURLParams)+
 				  UPFileSpec.PORTLET_PARAMS_DELIM_END+
 				  UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
         
