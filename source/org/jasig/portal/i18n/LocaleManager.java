@@ -228,7 +228,7 @@ public class LocaleManager  {
      * @param locales the list of locales
      * @return a string representing the list of locales
      */
-    public String stringValueOf(Locale[] locales) {
+    public static String stringValueOf(Locale[] locales) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < locales.length; i++) {
             Locale locale = locales[i];
