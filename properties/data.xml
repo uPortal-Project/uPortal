@@ -3723,9 +3723,9 @@
     <rows>
       <row>
         <column><name>TYPE_ID</name><value>0</value></column>
-        <column><name>TYPE_NAME</name><value>RSS (Rich Site Summary)</value></column>
+        <column><name>TYPE_NAME</name><value>RSS</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
-        <column><name>TYPE_DESCR</name><value>RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.</value></column>
+        <column><name>TYPE_DESCR</name><value>Renders content provided in the popular RSS (Rich Site Summary) format</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</value></column>
       </row>
 
@@ -3733,7 +3733,7 @@
         <column><name>TYPE_ID</name><value>1</value></column>
         <column><name>TYPE_NAME</name><value>Simple XML Transformation</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
-        <column><name>TYPE_DESCR</name><value>XSL renders XML to a particular style, is a channel which has its content defined through an XML document. Anyone may publish an XSL channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL or Path for the XML and XSL file.</value></column>
+        <column><name>TYPE_DESCR</name><value>Performs a transformation given an XML and XSLT document</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</value></column>
       </row>
 
@@ -3741,7 +3741,7 @@
         <column><name>TYPE_ID</name><value>2</value></column>
         <column><name>TYPE_NAME</name><value>Inline Frame</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CInlineFrame</value></column>
-        <column><name>TYPE_DESCR</name><value>The Inline Frame channel can be used to render an HTML page within a frame. This channel does not work correctly in browsers older than Internet Explorer 5 and Netscape 6.</value></column>
+        <column><name>TYPE_DESCR</name><value>Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</value></column>
       </row>
 
@@ -3749,7 +3749,7 @@
         <column><name>TYPE_ID</name><value>3</value></column>
         <column><name>TYPE_NAME</name><value>Image</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CImage</value></column>
-        <column><name>TYPE_DESCR</name><value>Simple channel to display an image with optional caption and subcaption</value></column>
+        <column><name>TYPE_DESCR</name><value>Displays an image with optional caption and subcaption</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CImage/CImage.cpd</value></column>
       </row>
 
@@ -3757,7 +3757,7 @@
         <column><name>TYPE_ID</name><value>4</value></column>
         <column><name>TYPE_NAME</name><value>Web Proxy</value></column>
         <column><name>TYPE</name><value>org.jasig.portal.channels.CWebProxy</value></column>
-        <column><name>TYPE_DESCR</name><value>Incorporate a dynamic HTML or XML application</value></column>
+        <column><name>TYPE_DESCR</name><value>Incorporates a dynamic HTML or XML application</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</value></column>
       </row>
 
@@ -3767,6 +3767,14 @@
         <column><name>TYPE</name><value>org.jasig.portal.channels.remotechannel.CRemoteChannel</value></column>
         <column><name>TYPE_DESCR</name><value>Uses SOAP to communicate with and present to the user the contents of a channel living in a remote instance of uPortal</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/remotechannel/CRemoteChannel.cpd</value></column>
+      </row>
+
+      <row>
+        <column><name>TYPE_ID</name><value>6</value></column>
+        <column><name>TYPE_NAME</name><value>Applet</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CApplet</value></column>
+        <column><name>TYPE_DESCR</name><value>Displays a java applet</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CApplet/CApplet.cpd</value></column>
       </row>
 
     </rows>
