@@ -175,42 +175,6 @@ public class CGroupsManager
    }
 
    /**
-    * Get the viewDoc from staticData, or generate if null
-    * @param uid
-    * @return Document
-    */
-   protected Document getViewDoc (String uid) {
-      Utility.logMessage("DEBUG", this.getClass().getName() + "::getViewDoc(): this = " + this);
-      CGroupsManagerSessionData sessionData = getSessionData(uid);
-      ChannelStaticData staticData = sessionData.staticData;
-      ChannelRuntimeData runtimeData= sessionData.runtimeData;
-      Document viewDoc = null;
-      try {
-         Utility.logMessage("DEBUG", this.getClass().getName() + "::getViewDoc() groups management START");
-         //String key = "xmlDoc";
-         //viewDoc = (Document)staticData.get((Object)key);
-         viewDoc = (Document)sessionData.model;
-         // get the groups data in xml format
-         if (viewDoc == null) {
-            Utility.logMessage("DEBUG", this.getClass().getName() + "::getViewDoc() about to get xmlDoc");
-            viewDoc = GroupsManagerXML.getGroupsManagerXml(runtimeData, staticData);
-            //staticData.put(key, viewDoc);
-            sessionData.model = viewDoc;
-            Utility.logMessage("DEBUG", this.getClass().getName() + "::getViewDoc(): view doc was created");
-         }
-         /** @todo why would we store what we just retrieved????? */
-//         else {
-//            staticData.put(key, viewDoc);
-//            Utility.logMessage("DEBUG", this.getClass().getName() + "::getViewDoc(): view doc was cached");
-//         }
-      } catch (Exception e) {
-         Utility.logMessage("ERROR", this.getClass().getName() + "::getViewDoc():  \n"
-               + e);
-      }
-      return  viewDoc;
-   }
-
-   /**
     * Ask channel to render its content.
     * @param out the SAX ContentHandler to output content to
     * @exception PortalException
@@ -230,7 +194,7 @@ public class CGroupsManager
             Utility.logMessage("DEBUG", this.getClass().getName() + ".renderXML(): Defering to servant render");
          }
          else {
-            viewDoc = getViewDoc(uid);
+            viewDoc = sessionData.model;
             time2 = Calendar.getInstance().getTime().getTime();
             XSLT xslt = new XSLT(this);
             xslt.setXML(viewDoc);
@@ -241,35 +205,43 @@ public class CGroupsManager
             if (admin.deepContains(currUser)) {
                xslt.setStylesheetParameter("ignorePermissions", "true");
             }
-            if (hasValue(sessionData.staticData.getParameter("grpServantMessage"))) {
-               Utility.logMessage("DEBUG", "CgroupsManagerServant - setting grpServantMessage to "
-                     + sessionData.staticData.getParameter("grpServantMessage"));
-               xslt.setStylesheetParameter("grpServantMessage", sessionData.staticData.getParameter("grpServantMessage"));
+            if (sessionData.customMessage !=null) {
+               xslt.setStylesheetParameter("customMessage", sessionData.customMessage);
             }
-            if (sessionData.runtimeData.getParameter("grpMode") != null) {
-               xslt.setStylesheetParameter("grpMode", sessionData.runtimeData.getParameter("grpMode"));
+            xslt.setStylesheetParameter("mode", sessionData.mode);
+            xslt.setStylesheetParameter("page", String.valueOf(sessionData.currentPage));
+            if (sessionData.highlightedGroupID != null) {
+               xslt.setStylesheetParameter("highlightedGroupID", sessionData.highlightedGroupID);
             }
-            if (sessionData.runtimeData.getParameter("grpViewId") != null) {
-               xslt.setStylesheetParameter("grpViewId", sessionData.runtimeData.getParameter("grpViewId"));
+            if (sessionData.rootViewGroupID != null) {
+               xslt.setStylesheetParameter("rootViewGroupID", sessionData.rootViewGroupID);
             }
-            if (sessionData.runtimeData.getParameter("commandResponse") != null) {
-               xslt.setStylesheetParameter("commandResponse", sessionData.runtimeData.getParameter("commandResponse"));
+            if (sessionData.feedback != null) {
+               xslt.setStylesheetParameter("feedback", sessionData.feedback);
+               sessionData.feedback = null;
             }
-            if (sessionData.staticData.getParameter("grpServantMode") != null && sessionData.staticData.getParameter("grpServantMode").equals("true")) {
+            if (sessionData.servantMode) {
                xslt.setStylesheetParameter("grpServantMode", "true");
             }
-            if (hasValue(sessionData.staticData.getParameter("grpAllowFinish"),"false")) {
+            if (!sessionData.allowFinish) {
               xslt.setStylesheetParameter("blockFinishActions", "true");
             }
-            if (hasValue(sessionData.staticData.getParameter("grpBlockEntitySelect"),"true")) {
+            if (sessionData.blockEntitySelect) {
               xslt.setStylesheetParameter("blockEntitySelect", "true");
             }
             try {
                //Utility.logMessage("DEBUG", this.getClass().getName()
                //        + ".renderXML(): grpView=" + runtimeData.getParameter("grpView"));
-               xslt.setXSL(sslLocation, sessionData.runtimeData.getParameter("grpView"), sessionData.runtimeData.getBrowserInfo());
+               xslt.setXSL(sslLocation, "main", sessionData.runtimeData.getBrowserInfo());
                xslt.transform();
-            } catch (Exception e) {
+            } 
+            catch (PortalException pe){
+               LogService.instance().log(LogService.ERROR, pe);
+               if (pe.getRecordedException()!=null){
+                LogService.instance().log(LogService.ERROR, pe.getRecordedException());
+               }
+            }
+            catch (Exception e) {
                LogService.instance().log(LogService.ERROR, e);
             }
             //StringWriter sw = new StringWriter();
@@ -308,37 +280,38 @@ public class CGroupsManager
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       sessionData.startRD = Calendar.getInstance().getTime().getTime();
-      //Iterator i = this.runtimeData.entrySet().iterator();
-      //while (i.hasNext())
-      //{
-      //  Entry m = (Entry) i.next();
-      //  Utility.logMessage("DEBUG","CGroupsManager::setRuntimeData(): runtimeData "+m.getKey()+" = "+m.getValue());
-      //}
-      // start servant code
-      ChannelRuntimeData slaveRD = runtimeData;
-      if (hasValue(runtimeData.getParameter("grpView"), "AssignPermissions") && sessionData.servantChannel
-            == null) {
-         try {
-            Utility.logMessage("DEBUG", this.getClass().getName() + ".setRuntimeData() : generating permissions servant "
-                  + staticData.getParameter("grpView"));
-            String[] tgts = new String[1];
-            tgts[0] = (runtimeData.getParameter("grpViewKey"));
-            sessionData.servantChannel = CPermissionsManagerServantFactory.getPermissionsServant((IPermissible)Class.forName(OWNER).newInstance(),
-                  staticData, null, null, tgts);
-            slaveRD = (ChannelRuntimeData)runtimeData.clone();
-            Enumeration srd = slaveRD.keys();
-            while (srd.hasMoreElements()) {
-               slaveRD.remove(srd.nextElement());
+      if(sessionData.servantChannel == null){
+        if (hasValue(runtimeData.getParameter("grpCommand"))) {
+            GroupsManagerCommandFactory cf = GroupsManagerCommandFactory.instance();
+            String theCommand = runtimeData.getParameter("grpCommand");
+            Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): COMMAND PROCESS About to get the'"
+                  + theCommand + "' command");
+            IGroupsManagerCommand c = cf.get(theCommand);
+            Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): Got the '"
+                  + theCommand + "' command = " + (c != null));
+            if (c != null) {
+               Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): setup parms and about to execute command");
+               try{
+                c.execute(sessionData);
+               }
+               catch(Exception e){
+                  LogService.instance().log(LogService.ERROR,e);
+                  sessionData.feedback = "Error executing command "+theCommand+": "+e.getMessage();
+               }
             }
-
-         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+         }
+         if (hasValue(runtimeData.getParameter("grpPageForward"))){
+            sessionData.currentPage += Integer.parseInt(runtimeData.getParameter("grpPageForward"));
+         }
+         if (hasValue(runtimeData.getParameter("grpPageBack"))){
+            sessionData.currentPage -= Integer.parseInt((String)runtimeData.getParameter("grpPageBack"));
          }
       }
+
       if (sessionData.servantChannel != null) {
          try {
             Utility.logMessage("DEBUG", this.getClass().getName() + ".setRuntimeData(): Setting Servant runtimedata");
-            ((IChannel)sessionData.servantChannel).setRuntimeData(slaveRD);
+            ((IChannel)sessionData.servantChannel).setRuntimeData(sessionData.runtimeData);
             if (sessionData.servantChannel.isFinished()) {
                sessionData.servantChannel = null;
                // flushing runtimedata for case where GroupsManager is master and servant, to prevent dirtiness
@@ -346,8 +319,6 @@ public class CGroupsManager
                while (rd2.hasMoreElements()) {
                   runtimeData.remove(rd2.nextElement());
                }
-               //runtimeData.setParameter("view",getFromView(staticData.getParameter("view")));
-               //staticData.remove("view");
                Utility.logMessage("DEBUG", this.getClass().getName() +
                      ".setRuntimeData(): removed servant");
             }
@@ -359,157 +330,6 @@ public class CGroupsManager
             Utility.logMessage("ERROR", this.getClass().getName() + ".setRuntimeDat(): Problem setting servant runtimedata "
                   + e);
          }
-      }
-      //end servant code
-      if (sessionData.servantChannel == null) {
-         if (!hasValue(runtimeData.getParameter("grpView")) || hasValue(runtimeData.getParameter("grpView"),
-               "AssignPermissions")) {
-            if (hasValue(staticData.get("grpView"))) {
-               Utility.logMessage("DEBUG", this.getClass().getName() +
-                     ".setRuntimeData() : using cached grpView " + staticData.getParameter("grpView"));
-               runtimeData.setParameter("grpView", staticData.getParameter("grpView"));
-            }
-            else {
-               runtimeData.setParameter("grpView", "tree");
-            }
-         }
-         runtimeData.setParameter("username", "guest");
-         if (sessionData.user != null) {
-            runtimeData.setParameter("username", String.valueOf(sessionData.user.getID()));
-         }
-         if (!hasValue(runtimeData.getParameter("grpMode"))) {
-            if (hasValue(staticData.get("grpMode"))) {
-               Utility.logMessage("DEBUG", this.getClass().getName() +
-                     ".setRuntimeData() : using cached grpMode " + staticData.getParameter("grpMode"));
-               runtimeData.setParameter("grpMode", staticData.getParameter("grpMode"));
-            }
-            else {
-               runtimeData.setParameter("grpMode", "browse");
-            }
-         }
-         if (!hasValue(runtimeData.getParameter("grpCommand"))) {
-            runtimeData.remove("grpCommand");
-         }
-         if (!hasValue(runtimeData.getParameter("grpCommandIds"))) {
-            runtimeData.remove("grpCommandIds");
-         }
-         if (!hasValue(runtimeData.getParameter("grpName"))) {
-            runtimeData.remove("grpName");
-         }
-
-         if (hasValue(runtimeData.getParameter("grpCommand"))) {
-            GroupsManagerCommandFactory cf = GroupsManagerCommandFactory.instance();
-            String theCommand = runtimeData.getParameter("grpCommand");
-            Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): COMMAND PROCESS About to get the'"
-                  + theCommand + "' command");
-            IGroupsManagerCommand c = cf.get(theCommand);
-            Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): Got the '"
-                  + theCommand + "' command = " + (c != null));
-            if (c != null) {
-               Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): setup parms and about to execute command");
-               c.execute(sessionData);
-            }
-         }
-         if (!hasValue(runtimeData.getParameter("grpViewKey"))) {
-            if (hasValue(staticData.getParameter("grpViewKey"))) {
-               runtimeData.setParameter("grpViewKey", staticData.getParameter("grpViewKey"));
-            }
-            else {
-               runtimeData.remove("grpViewKey");
-            }
-         }
-         if (hasValue(runtimeData.getParameter("grpViewKey"))) {
-            Document viewDoc = getViewDoc(uid);
-            String grpKey = runtimeData.getParameter("grpViewKey");
-            Element grpViewKeyElem;
-            Iterator grpItr = GroupsManagerXML.getNodesByTagNameAndKey(viewDoc, GROUP_TAGNAME,
-                  grpKey);
-            IEntityGroup gm = GroupsManagerXML.retrieveGroup(grpKey);
-            if (gm != null) {
-               if (!grpItr.hasNext()) {
-                  grpViewKeyElem = GroupsManagerXML.getGroupMemberXml(gm, true, null,
-                        viewDoc);
-                  Element rootElem = viewDoc.getDocumentElement();
-                  rootElem.appendChild(grpViewKeyElem);
-               }
-               else {
-                  grpViewKeyElem = (Element)grpItr.next();
-                  GroupsManagerXML.getGroupMemberXml(gm, true, grpViewKeyElem, viewDoc);
-               }
-               runtimeData.setParameter("grpViewId", grpViewKeyElem.getAttribute("id"));
-               staticData.remove("grpViewKey");
-            }
-            else {
-               runtimeData.put("commandResponse", "Unable to locate requested group.");
-            }
-         }
-         if (hasValue(staticData.get("grpPreSelectForMember"))){
-            Document viewDoc = getViewDoc(uid);
-            Element rootElem = viewDoc.getDocumentElement();
-            try{
-              IGroupMember gm = (IGroupMember) staticData.get("grpPreSelectForMember");
-              Iterator parents = gm.getContainingGroups();
-              IEntityGroup parent;
-              while (parents.hasNext()){
-                 parent = (IEntityGroup) parents.next();
-                 Element parentElem = GroupsManagerXML.getGroupMemberXml(parent,false,null,viewDoc);
-                 parentElem.setAttribute("selected","true");
-                 rootElem.appendChild(parentElem);
-              }
-            }
-            catch (Exception e){
-              LogService.instance().log(LogService.ERROR,e);
-            }
-            staticData.remove("grpPreSelectForMember");
-         }
-         if (hasValue(staticData.get("grpPreSelectedMembers"))){
-            Document viewDoc = getViewDoc(uid);
-            Element rootElem = viewDoc.getDocumentElement();
-            try{
-                IGroupMember[] mems = (IGroupMember[])staticData.get("grpPreSelectedMembers");
-                for (int mm = 0; mm< mems.length;mm++){
-                  IGroupMember mem = mems[mm];
-                  Element memelem = GroupsManagerXML.getGroupMemberXml(mem,false,null,viewDoc);
-                  memelem.setAttribute("selected","true");
-                  rootElem.appendChild(memelem);
-                }
-            }
-            catch (Exception e){
-              LogService.instance().log(LogService.ERROR,e);
-            }
-            staticData.remove("grpPreSelectedMembers");
-         }
-         if (!hasValue(runtimeData.getParameter("grpViewId"))) {
-            if (hasValue(staticData.get("grpViewId"))) {
-               Utility.logMessage("DEBUG", this.getClass().getName() +
-                     ".setRuntimeData() : using cached grpViewID " + staticData.getParameter("grpViewId"));
-               runtimeData.setParameter("grpViewId", staticData.getParameter("grpViewId"));
-            }
-            else {
-               runtimeData.remove("grpViewId");
-            }
-         }
-         else {
-            staticData.setParameter("grpViewId", runtimeData.getParameter("grpViewId"));
-         }
-         staticData.setParameter("grpMode", runtimeData.getParameter("grpMode"));
-         staticData.setParameter("grpView", runtimeData.getParameter("grpView"));         /*
-          Enumeration names = runtimeData.getParameterNames();
-          while (names.hasMoreElements()) {
-          String n = (String)names.nextElement();
-          Utility.logMessage("DEBUG", this.getClass().getName()
-          + ".setRuntimeData() RuntimeData paramaters: " + n +
-          " = " + runtimeData.getParameter(n));
-          }
-          Enumeration names2 = staticData.keys();
-          while (names2.hasMoreElements()) {
-          String n2 = (String)names2.nextElement();
-          Utility.logMessage("DEBUG", this.getClass().getName()
-          + ".setRuntimeData() StaticData paramaters: " + n2 +
-          " = " + staticData.get(n2).toString());
-          }
-          */
-
       }
    }
 
@@ -528,6 +348,7 @@ public class CGroupsManager
       Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): sd = " + sd);
       Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): uid = " + uid);
       sessionData.staticData = sd;
+      sessionData.model = GroupsManagerXML.getGroupsManagerXml(sd);
       //ChannelStaticData staticData = sessionData.staticData;
       sessionData.user = sessionData.staticData.getPerson();
       Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): staticData Person ID = "
@@ -691,7 +512,7 @@ public class CGroupsManager
       else {
          valid = ((ICacheable)sessionData.servantChannel).isCacheValid(validity);
       }
-      return  valid;
+      return valid;
    }
 
    /**
