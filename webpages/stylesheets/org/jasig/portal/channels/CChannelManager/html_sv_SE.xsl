@@ -69,16 +69,16 @@
         <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
             <tr class="uportal-channel-strong" valign="top">
-              <td colspan="2" class="uportal-channel-text">Val för att hantera kanaler:</td>
+              <td colspan="2" class="uportal-channel-text">Val för att hantera kanaler</td>
             </tr>
             <tr valign="top">
               <td colspan="2">
-                <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
               </td>
             </tr>
             <tr class="uportal-channel-text" valign="top">
               <td>
-                <img alt="utfyllnadsbild" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td width="100%" class="uportal-channel-text">
                 <a href="{$baseActionURL}?uPCM_action=selectChannelType">Publicera ny kanal</a>
@@ -86,10 +86,10 @@
             </tr>
             <tr valign="top">
               <td>
-                <img alt="utfyllnadsbild" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
-                <a href="{$baseActionURL}?uPCM_action=selectModifyChannel">Modifiera publicerad kanal</a>
+                <a href="{$baseActionURL}?uPCM_action=selectModifyChannel">Modifiera en redan publicerad kanal</a>
               </td>
             </tr>
           </table>
@@ -108,19 +108,19 @@
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
-            <strong>Kanaltyp:</strong> Välj typ av kanal att lägga till genom att klicka på en 'Välj'-knapp i Val-kolumnen</td>
+            <strong>Kanaltyp</strong> Välj den typ av kanal du vill lägga till genom att välja den ikon som finns i valmöjlighets-kolumnen</td>
         </tr>
         <tr>
           <td>
             <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
               <tr>
-                <td nowrap="nowrap" class="uportal-channel-table-header">Val</td>
+                <td nowrap="nowrap" class="uportal-channel-table-header">Valmöjlighet</td>
                 <td nowrap="nowrap" class="uportal-channel-table-header">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
                 <td nowrap="nowrap" class="uportal-channel-table-header">Kanaltyp</td>
                 <td nowrap="nowrap" class="uportal-channel-table-header">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
                 <td width="100%" class="uportal-channel-table-header">Beskrivning</td>
               </tr>
@@ -129,7 +129,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                       </td>
                     </tr>
                   </table>
@@ -143,13 +143,13 @@
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
                 <td nowrap="nowrap">
-                  <strong>Anpassad</strong>
+                  <strong>Valfri</strong>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
                 <td width="100%">Denna kanal typ möjligör publicerandet av kanaler utan en medföljande CPD (Channel Publishing Document).</td>
               </tr>
@@ -159,7 +159,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                          <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -171,7 +171,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                          <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -186,7 +186,7 @@
                     <xsl:if test="@ID=../../channel/@typeID">
                      <xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input> </td>
                   <td nowrap="nowrap">
-                    <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                    <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                   </td>
                   <td nowrap="nowrap">
                     <strong>
@@ -194,7 +194,7 @@
                     </strong>
                   </td>
                   <td nowrap="nowrap">
-                    <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                    <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                   </td>
                   <td width="100%">
                     <xsl:value-of select="description"/>
@@ -205,7 +205,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                          <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                         </td>
                       </tr>
                     </table>
@@ -222,7 +222,7 @@
         <tr>
           <td>
             <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
         </tr>
       </table>
@@ -242,10 +242,10 @@
         <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-channel-text">
             <tr class="uportal-channel-strong" valign="top">
-              <td colspan="2">Modifiera publicerad kanal:</td>
+              <td colspan="2">Modifiera en redan publicerad kanal:</td>
             </tr>
             <tr valign="top">
-              <td colspan="2">Välj alternativ med ikonerna nedan.</td>
+              <td colspan="2">Välj en typ genom att klicka på en ikon i tabellen nedan</td>
             </tr>
             <tr class="uportal-channel-text" valign="top">
               <td colspan="2">
@@ -256,7 +256,7 @@
             </tr>
             <tr valign="top">
               <td>
-                <img alt="utfyllnadsbild" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
                 <a href="{$baseActionURL}?uPCM_action=cancel">Avbryt och återvänd</a>
@@ -278,7 +278,7 @@
           </td>
           <form method="post" action="{$baseActionURL}">
           <input type="hidden" name="uPCM_action" value="filterByCategory"/>
-          <td width="100%" class="uportal-background-med">Filtrera per kategori:<xsl:for-each select="//*[@ID = $filterByID]">
+          <td width="100%" class="uportal-background-med">Filtera per kategori:<xsl:for-each select="//*[@ID = $filterByID]">
           <xsl:for-each select="ancestor::category">
           <a class="uportal-navigation-category-selected"><xsl:attribute name="href">
           <xsl:value-of select="$baseActionURL"/>?uPCM_action=filterByCategory&amp;newCategory=<xsl:value-of select="@ID"/></xsl:attribute>
@@ -295,7 +295,7 @@
                   <xsl:attribute name="value">
                     <xsl:value-of select="//registry[1]/@ID"/>
                   </xsl:attribute>Inget filter</option></select>
-              <input type="submit" name="uPCM_submit" value="Kör" class="uportal-input-text"/></xsl:for-each>
+              <input type="submit" name="uPCM_submit" value="kör" class="uportal-input-text"/></xsl:for-each>
           </td>
           </form>
       </tr>
@@ -305,13 +305,13 @@
             <xsl:choose>
               <xsl:when test="(//*[@ID = $filterByID]//channel)">
                 <tr class="uportal-channel-table-header">
-                  <td colspan="2" align="center" valign="top">Val</td>
+                  <td colspan="2" align="center" valign="top">Valmöjlighet</td>
                   <td nowrap="nowrap" valign="top">
-                    <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td nowrap="nowrap" valign="top">Kanalnamn</td>
+                  <td nowrap="nowrap" valign="top">Channel Namn</td>
                   <td valign="top">
-                    <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                   </td>
                   <td width="100%" valign="top">Beskrivning</td>
                 </tr>
@@ -320,7 +320,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="2"/>
+                          <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -332,16 +332,16 @@
                     <tr class="uportal-channel-text" valign="top">
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=editChannelSettings&amp;channelID={@ID}">
-                          <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Editera inställnignar för {@ID}"/>
+                          <img src="{$mediaPath}/edit.gif" width="16" height="16" border="0" alt="Editera inställningarna för {@ID}"/>
                         </a>
                       </td>
                       <td nowrap="nowrap" align="center">
                         <a href="{$baseActionURL}?uPCM_action=removePublishedChannel&amp;channelID={@ID}">
-                          <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Ta bort publiceradkanal - {@ID}" onclick="return confirm('You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this?')"/>
+                          <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Radera publicerad kanal - {@ID}" onclick="return confirm('You are about to remove this channel as well as its role and category settings!\nAre you sure you want to do this?')"/>
                         </a>
                       </td>
                       <td valign="top">
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                       <td nowrap="nowrap" valign="top">
                         <strong>
@@ -349,7 +349,7 @@
                         </strong>
                       </td>
                       <td valign="top">
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                       <td width="100%" valign="top">
                         <xsl:value-of select="@description"/>
@@ -360,7 +360,7 @@
                         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                           <tr>
                             <td>
-                              <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                              <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                             </td>
                           </tr>
                         </table>
@@ -372,7 +372,7 @@
               <xsl:otherwise>
                 <tr class="uportal-channel-table-header">
                   <td colspan="3" valign="top" nowrap="nowrap">
-                    <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>Inga kanaler att visa</td>
+                    <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>Det finns inga kanaler att visa</td>
                 </tr>
               </xsl:otherwise>
             </xsl:choose>
@@ -390,7 +390,7 @@
               <xsl:with-param name="maxPages" select="$maxPages"/>
             </xsl:call-template>
           </td>
-          <td width="100%" class="uportal-background-med" valign="top">Visa<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input>poster i taget.<img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/><input type="submit" name="buttonRecordsDisplayed" value="Kör" class="uportal-button"/></td>
+          <td width="100%" class="uportal-background-med" valign="top">Display<input type="text" name="recordsPerPage" size="2" class="uportal-input-text"><xsl:attribute name="value"><xsl:value-of select="$recsPerPage"/></xsl:attribute></input>records at a time.<img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/><input type="submit" name="buttonRecordsDisplayed" value="kör" class="uportal-button"/></td>
         </form>
       </tr>
     </table>
@@ -401,10 +401,10 @@
     <xsl:param name="maxPages"/>
 
     <xsl:if test="$i &lt;= $maxPages">
-      <xsl:if test="$i = 1">sida:</xsl:if>
+      <xsl:if test="$i = 1">page:</xsl:if>
       <xsl:if test="($i = 1) and ($currPage=1)">
         <img src="{$mediaPath}/arrow_left_off.gif" width="16" height="16" alt="Föregående" border="0"/>
-        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="($i = 1) and ($currPage &gt; 1)">
         <a>
@@ -412,13 +412,13 @@
             <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)-1"/></xsl:attribute>
           <img src="{$mediaPath}/arrow_left.gif" width="16" height="16" ID="left" alt="Go to page [{($currPage)-1}]" border="0"/>
         </a>
-        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="$i = $currPage">
         <strong>
           <xsl:value-of select="$i"/>
         </strong>
-        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="$i != $currPage">
         <a>
@@ -426,7 +426,7 @@
             <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="$i"/></xsl:attribute>
           <xsl:value-of select="$i"/>
         </a>
-        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
+        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>
       </xsl:if>
       <xsl:if test="($i = $maxPages) and ($currPage = $maxPages)">
         <img src="{$mediaPath}/arrow_right_off.gif" width="16" height="16" alt="Nästa" border="0"/>
@@ -435,7 +435,7 @@
         <a>
           <xsl:attribute name="href">
             <xsl:value-of select="$baseActionURL"/>?uPCM_action=changePage&amp;newPage=<xsl:value-of select="($currPage)+1"/></xsl:attribute>
-          <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" ID="right" alt="Gå till nästa sida [{($currPage)+1}]" border="0"/>
+          <img src="{$mediaPath}/arrow_right.gif" width="16" height="16" ID="right" alt="Gå till sida [{($currPage)+1}]" border="0"/>
         </a>
       </xsl:if>
       <xsl:call-template name="pagingWidget">
@@ -454,14 +454,14 @@
 
             <tr class="uportal-channel-strong" valign="top">
               <td colspan="2">
-                <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
               </td>
             </tr>
             <tr valign="top">
               <td colspan="2">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td class="uportal-channel-table-header" nowrap="nowrap">Arbetsflöde:<img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="10" height="10"/></td>
+                    <td class="uportal-channel-table-header" nowrap="nowrap">Arbetsflöde:<img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="10" height="10"/></td>
                     <xsl:apply-templates select="manageChannels//step" mode="workflow"/>
                   </tr>
                 </table>
@@ -469,7 +469,7 @@
             </tr>
             <tr class="uportal-channel-text" valign="top">
               <td colspan="2">
-                <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
               </td>
             </tr>
           </table>
@@ -488,7 +488,7 @@
             <table border="0" cellspacing="0" cellpadding="0" width="100%">
               <tr>
                 <td class="uportal-background-shadow">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
               </tr>
             </table>
@@ -505,7 +505,7 @@
                         <xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name) !=''"><xsl:value-of select="name"/></xsl:when>
-                          <xsl:otherwise>Kanalparametrar</xsl:otherwise>
+                          <xsl:otherwise>Kanal-parametrar</xsl:otherwise>
                         </xsl:choose>
                       </a>
                     </td>
@@ -521,14 +521,14 @@
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-background-shadow">
-                <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
               </td>
             </tr>
           </table>
         </td>
       </xsl:if>
       <td>
-        <img alt="utfyllnadsbild" src="{$mediaPath}/arrow_right_timeline.gif"/>
+        <img alt="gränssnittsbild" src="{$mediaPath}/arrow_right_timeline.gif"/>
       </td>
       <td>
         <table border="0" cellspacing="0" cellpadding="1" class="uportal-background-dark">
@@ -540,7 +540,7 @@
                     <a><xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name) != ''"><xsl:value-of select="name"/></xsl:when>
-                          <xsl:otherwise>Kanalparametrar</xsl:otherwise>
+                          <xsl:otherwise>Kanal-parametrar</xsl:otherwise>
                         </xsl:choose>
                     </a>
                   </td>
@@ -555,7 +555,7 @@
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="uportal-background-med">
-                <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
               </td>
             </tr>
           </table>
@@ -571,7 +571,7 @@
                         <xsl:attribute name="href">javascript:document.workflow.uPCM_action.value='<xsl:value-of select="name(../../.)"/>';document.workflow.uPCM_step.value='<xsl:value-of select="ID"/>';document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
                           <xsl:when test="normalize-space(name)!='' "><xsl:value-of select="name"/></xsl:when>
-                          <xsl:otherwise>Kanalparametrar</xsl:otherwise>
+                          <xsl:otherwise>Kanal-parametrar</xsl:otherwise>
                         </xsl:choose>
                       </a>
                     </td>
@@ -595,21 +595,21 @@
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
-            <strong>Inställningar [ett]:</strong> Fyll i formuläret nedan</td>
+            <strong>Inställningar [1]</strong> Fyll i inställningarna nedan</td>
         </tr>
         <tr>
           <td>
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header" valign="bottom">
-                <!--<td align="center" nowrap="nowrap">Användaren kan<br/> Ändra?</td>-->
+                <!--<td align="center" nowrap="nowrap">Användaren kan<br/> ändra?</td>-->
 
                 <td align="center" nowrap="nowrap">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Val
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Valmöjligheter
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
                 <td>
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td width="100%">Almänna inställningar</td>
+                <td width="100%">Generella inställningar</td>
               </tr>
               
               <tr class="uportal-channel-table-header">
@@ -617,7 +617,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                       </td>
                     </tr>
                   </table>
@@ -627,13 +627,13 @@
               <!-- Channel Title -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Namn: Kanalens titel\n\nExempel: StockCharts\n\nBeskrivning: Detta är kanalens titel. Normalt visas detta som rubrik när kanalen visas.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+                  <a href="javascript:alert('Namn: Kanalens titel\n\nExempel: StockCharts\n\nBeskrivning: Detta är kanalens titel. Den visas som rubrik till kanalen. Normalt är titel och namn samma.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Kanaltitel:</span> <span class="uportal-text-small">[exempel - StockCharts]<br/>
+                  <span class="uportal-label">Kanaltitel</span> <span class="uportal-text-small">[exempel - StockCharts]<br/>
                   <input type="text" name="title" size="50" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@title">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@title"/></xsl:attribute></xsl:if></input>
@@ -645,7 +645,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -655,13 +655,13 @@
               <!-- Channel name -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Name\n\nExempel: StockCharts\n\nBeskrivning: Detta är kanalens namn. Normalt ser användaren detta när han/hon prenumererar på kanalen. Ofta är namn och titel lika.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+                  <a href="javascript:alert('Name: Channel Name\n\nExempel: StockCharts\n\nBeskrivning: Detta är kanalens namn. Det visas när användarna letar efter en kanal att prenumerera på. Normalt är titel och namn samma.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Kanalnamn:</span> <span class="uportal-text-small">[exempel - StockCharts]<br/>
+                  <span class="uportal-label">Kanalens namn</span> <span class="uportal-text-small">[exempel - StockCharts]<br/>
                   <input type="text" name="name" size="50" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@name">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@name"/></xsl:attribute></xsl:if></input>
@@ -673,7 +673,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -683,8 +683,8 @@
               <!-- Channel fname -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Namn: Kanalens funktionella namn\n\nExempel: stock-charts\n\nBeskrivning: This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identify this channel definition.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+                  <a href="javascript:alert('Namn: kanalens funktionella namn\n\nExempel: stock-charts\n\nBeskrivning: This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identify this channel definition.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
                   </a></td>
                 <td>
                 </td>
@@ -701,7 +701,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -711,13 +711,13 @@
               <!-- Channel Description -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Namn: Kanalbeskrivning\n\nExempel: StockCharts is är en tjänst som erbjuder finansiell info som en akties börskursutveckling över tid.\n\nBeskrivning: This is the description of the channel that is used when it is helpful to provide additional information to a user about a channel.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+                  <a href="javascript:alert('Namn: kanalbeskrivning\n\nExempel: StockCharts är en kanal som ger tillgång till tjänstere som att se en akties utveckling över tiden.\n\nBeskrivning: This is the description of the channel that is used when it is helpful to provide additional information to a user about a channel.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Kanalbeskrivning:</span><br/>
+                  <span class="uportal-label">Kanal-beskrivning</span><br/>
                   <textarea name="description" cols="50" rows="3" class="uportal-input-text">
                     <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@description">
                       <xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@description"/>
@@ -731,7 +731,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -744,13 +744,13 @@
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                  <td align="center" valign="top">
-                  <a href="javascript:alert('Namn: Kanal-timeout\n\nExempel: 10000 (10 sekunder)\n\nBeskrivning: This is the number of milliseconds a channel will be given to render itself before the portal terminates that channels rendering.')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+                  <a href="javascript:alert('Namn: Kanalens timeout.\n\nExempel: 10000\n\nBeskrivning: This is the number of milliseconds a channel will be given to render itself before the portal terminates that channels rendering.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Kanal-timeout:</span> <br/>
+                  <span class="uportal-label">Kanal-timeout</span> <br/>
                    <input type="text" name="timeout" size="6" class="uportal-input-text">
                                        <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@timeout">
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@timeout"/></xsl:attribute></xsl:if></input>
@@ -762,7 +762,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -775,13 +775,13 @@
                   <input type="checkbox" name="modifySecure" value="checkbox"/>
                 </td>-->
                  <td align="center" valign="top">
-                  <a href="javascript:alert('Namn: Kanalens säkerhet\n\nBeskrivning: Detta indikerar om kanalen bara ska visas då portsalen anropas på ett säkert sätt (t.ex. via https:)')">
-                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+                  <a href="javascript:alert('Name: Channel Secure\n\nBeskrivning: This indicates whether or not a channel should only be rendered in a secure setting (i.e. https).')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
                   </a></td>
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Kanalens säkerhet:</span><br/>
+                  <span class="uportal-label">Channel Secure:</span><br/>
                     <input type="checkbox" name="secure" class="uportal-input-text">
                       <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@secure = 'true'">
                         <xsl:attribute name="checked">
@@ -797,7 +797,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -812,14 +812,14 @@
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                 <td align="center" valign="top">
-    <a href="javascript:alert('Name: Kanal-klass\n\nExempel: se.liu.unit.mittProjekt.MinKanal\n\nBeskrivning: Java-klassen för en anpassad kanal. En java-klass måste anges')">
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+    <a href="javascript:alert('Namn: Kanal-klass\n\nExempel: se.liu.unit.ChannelClass\n\nBeskrivning: Detta är Java-klassen för en valfri kanal. Obligatorsk uppgift')">
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
     </a></td>
 
                 <td>
                 </td>
                 <td>
-                  <span class="uportal-label">Kanalklass:</span> <br/>
+                  <span class="uportal-label">Java-klass för kanalen</span> <br/>
                    <input type="text" name="class" size="50" class="uportal-input-text">
                                        <xsl:if test="/manageChannels/selectGeneralSettings/params/step/channel/@class">
                      <xsl:attribute name="value"><xsl:value-of select="/manageChannels/selectGeneralSettings/params/step/channel/@class"/></xsl:attribute></xsl:if></input></td>
@@ -830,7 +830,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -846,9 +846,9 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='channelParams'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
         </tr>
       </table>
@@ -883,8 +883,8 @@
             <xsl:when test="normalize-space(params/step[position()=$stepID]/name) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/name"/>
             </xsl:when>
-            <xsl:otherwise>Namn på steget</xsl:otherwise></xsl:choose>:</strong>
-            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+            <xsl:otherwise>Stegnamn</xsl:otherwise></xsl:choose>:</strong>
+            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
                         <xsl:choose>
             <xsl:when test="normalize-space(params/step[position()=$stepID]/description) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/description"/>
@@ -898,21 +898,21 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
               <tr class="uportal-channel-table-header" valign="bottom">
                 <td align="center" nowrap="nowrap">
-                <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Val
-                <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
+                <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>Valmöjligheter
+                <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/></td>
 
-                <td align="center" nowrap="nowrap">Användaren kan<br/> Ändra?</td>
+                <td align="center" nowrap="nowrap">Användaren kan<br/> ändra?</td>
                 <td>
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
-                <td width="100%">Almänna inställningar</td>
+                <td width="100%">Generella inställningar</td>
               </tr>
               <tr class="uportal-channel-table-header">
                 <td align="center" colspan="4">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                       </td>
                     </tr>
                   </table>
@@ -926,7 +926,7 @@
         <tr>
         
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" class="uportal-button">
+            <input type="submit" name="uPCM_submit" value="&lt; Föregående" class="uportal-button">
               <xsl:attribute name="onclick">
                 <xsl:choose>
                   <xsl:when test="$stepID = 1">document.workflow.uPCM_action.value='selectGeneralSettings';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
@@ -942,7 +942,7 @@
                 </xsl:choose>
               </xsl:attribute>
             </input>
-            <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
           </td>
         </tr>
@@ -964,8 +964,8 @@
             <xsl:when test="normalize-space(params/step[position()=$stepID]/name) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/name"/>
             </xsl:when>
-            <xsl:otherwise>Namn på steget</xsl:otherwise></xsl:choose>:</strong>
-            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+            <xsl:otherwise>Stegnamn</xsl:otherwise></xsl:choose>:</strong>
+            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
                         <xsl:choose>
             <xsl:when test="normalize-space(params/step[position()=$stepID]/description) != ''">
               <xsl:value-of select="params/step[position()=$stepID]/description"/>
@@ -989,7 +989,7 @@
 
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
-                    <td>Namn:<br />
+                    <td>Name:<br />
                      <input type="text" name="name" class="uportal-input-text" />
                     </td>
                   </tr>
@@ -1003,30 +1003,30 @@
                   <tr class="uportal-label">
                     <td>
                      <input type="checkbox" name="override" value="checkbox"/>
-                     <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" />
+                     <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" />
                      Användaren kan ändra?
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td align="right"><input type="submit" name="uPCM_submit" value="lägg till" class="uportal-button" /></td>
+                    <td align="right"><input type="submit" name="uPCM_submit" value="Lägg till" class="uportal-button" /></td>
                   </tr>
                 </table>
                 </form>
               </td>
 
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td class="uportal-background-light"><img alt="utfyllnadsbild" src="transparent.gif" width="2" height="2" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td class="uportal-background-light"><img alt="gränssnittsbild" src="transparent.gif" width="2" height="2" /></td>
               <td width="100%">
 
                 <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
                   <tr>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">Val</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">User can<br/>Ändra?</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Valmöjlighet</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Användaren<br/>kan ändra?</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="16" height="8" /></td>
                     <td nowrap="nowrap" class="uportal-channel-table-header">Namn</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="8" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="8" height="8" /></td>
                     <td width="100%" class="uportal-channel-table-header">Värde</td>
                   </tr>
 
@@ -1034,7 +1034,7 @@
                     <td nowrap="nowrap" colspan="7">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
-                          <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                          <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                         </tr>
                       </table>
                     </td>
@@ -1045,26 +1045,26 @@
                       <xsl:for-each select="params/step[ID=$stepID]/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;uPCM_step={$stepID}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Ta bort parametern"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}&amp;uPCM_step={$stepID}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Ta bort denna parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                                                     <td nowrap="nowrap" align="center">
-                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="utfyllnadsbild" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
-                          <xsl:otherwise><img alt="utfyllnadsbild" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
+                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="gränssnittsbild" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
+                          <xsl:otherwise><img alt="gränssnittsbild" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
                           </td>
                                                     <td nowrap="nowrap">
-                            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                           <td nowrap="nowrap"><strong><xsl:value-of select="substring(@name,$prefixLength+1)"/></strong></td>
-                          <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                          <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                           <td width="100%"><xsl:value-of select="@value"/></td>
                         </tr>
                         <tr class="uportal-channel-text" valign="top">
                           <td colspan="7" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                              <tr><td><img alt="utfyllnadsbild" src="transparent.gif" width="1" height="1" /></td></tr>
+                              <tr><td><img alt="gränssnittsbild" src="transparent.gif" width="1" height="1" /></td></tr>
                             </table>
                           </td>
                         </tr>
@@ -1089,9 +1089,9 @@
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
         </form>
@@ -1102,7 +1102,7 @@
       <input type="hidden" name="uPCM_capture" value="channelDef"/>
       <input type="hidden" name="uPCM_step" value="changeMe"/>
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" class="uportal-button">
+            <input type="submit" name="uPCM_submit" value="&lt; Föregående" class="uportal-button">
               <xsl:attribute name="onclick">
                 <xsl:choose>
                   <xsl:when test="$stepID = 1">document.workflow.uPCM_action.value='selectGeneralSettings';document.workflow.uPCM_step.value='<xsl:value-of select="$stepID"/>'</xsl:when>
@@ -1118,7 +1118,7 @@
                 </xsl:choose>
               </xsl:attribute>
             </input>
-            <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
           </td></form>
         </tr>
@@ -1157,7 +1157,7 @@
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
                       <td>
-                        <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                        <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
                       </td>
                     </tr>
                   </table>
@@ -1200,7 +1200,7 @@
           </input>
         </xsl:when>
         <xsl:otherwise>
-          <img alt="utfyllnadsbild" src="{$mediaPath}/nocheck.gif" width="16" height="16"/>
+          <img alt="gränssnittsbild" src="{$mediaPath}/nocheck.gif" width="16" height="16"/>
         </xsl:otherwise>
       </xsl:choose>
     </td>
@@ -1509,12 +1509,12 @@
   </xsl:template>
 
   <xsl:template match="example">
-    <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small">[exempel - <xsl:value-of select="."/>]</span>
   </xsl:template>
 
     <xsl:template match="units">
-    <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+    <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
     <span class="uportal-text-small"><xsl:value-of select="."/></span>
   </xsl:template>
 
@@ -1522,7 +1522,7 @@
     <a>
     <xsl:attribute name="href">
     javascript:alert('Name: <xsl:value-of select="label"/>\n\nExempel: <xsl:value-of select="example"/>\n\nBeskrivning: <xsl:value-of select="description"/>')</xsl:attribute>
-    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp"/>
+    <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Visa hjälp-information"/>
     </a>
   </xsl:template>
 
@@ -1538,7 +1538,7 @@
         <tr class="uportal-channel-text">
           <td>
             <strong>Kanalkontroller:</strong>
-            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>Välj kanalkontroller nedan</td>
+            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4"/>Ställ in nedan vilka kanalkontroller som ska synas</td>
         </tr>
         <tr>
           <td>
@@ -1546,15 +1546,15 @@
               <tr class="uportal-channel-table-header">
                 <td align="center">Välj</td>
                 <td align="center">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
                 <td nowrap="nowrap" align="center">Kanalkontroller</td>
                 <td nowrap="nowrap" align="center">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
                 <td nowrap="nowrap" align="center">Ikon</td>
                 <td align="center">
-                  <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                  <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
                 </td>
                 <td width="100%">Beskrivning</td>
               </tr>
@@ -1563,7 +1563,7 @@
                 <td align="center" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/></td>
+                      <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="2" height="2"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1589,12 +1589,12 @@
                   </xsl:choose>
                   </input>
                 </td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td><strong>Editerbar</strong></td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td>När den väljs, skicka ändra-händelse</td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Kan ändras</strong></td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="gränssnittsbild" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td>hanterar 'Ändra'-knappen</td>
               </tr>
 
               </xsl:when>
@@ -1609,12 +1609,12 @@
                       <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
                     </xsl:choose>
                   </td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td><strong>Editerbar</strong></td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td>När den väljs, skicka ändra-händelse</td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Kan ändras</strong></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="gränssnittsbild" src="{$mediaPath}/edit.gif" width="16" height="16"/></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>hanterar 'Ändra'-knappen</td>
                 </tr>
               </xsl:otherwise>
               </xsl:choose>
@@ -1625,7 +1625,7 @@
                 <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
+                      <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1651,12 +1651,12 @@
                   </xsl:choose>
                   </input>
                 </td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td><strong>Har hjälp</strong></td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td>När den väljs, skicka hjälp-händelse</td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Har 'Hjälp'-knapp</strong></td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="gränssnittsbild" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td>hanterar 'Hjälp'-knappen</td>
               </tr>
 
               </xsl:when>
@@ -1671,12 +1671,12 @@
                       <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
                     </xsl:choose>
                   </td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td><strong>Har hjälp</strong></td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td>När den väljs, skicka hjälp-händelse</td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Har 'Hjälp'-knapp</strong></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="gränssnittsbild" src="{$mediaPath}/help.gif" width="16" height="16"/></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>hanterar 'Hjälp'-knappen</td>
                 </tr>
               </xsl:otherwise>
               </xsl:choose>
@@ -1687,7 +1687,7 @@
                 <td align="center" valign="top" colspan="7">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                     <tr>
-                      <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
+                      <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1"/></td>
                     </tr>
                   </table>
                 </td>
@@ -1713,12 +1713,12 @@
                   </xsl:choose>
                   </input>
                 </td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td><strong>Har Om</strong></td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
-                <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                <td>När den väljs, skicka om-händelse</td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td><strong>Har 'Om'-knapp</strong></td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td align="center"><img alt="gränssnittsbild" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
+                <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                <td>hanterar 'Om'-knappen</td>
               </tr>
 
               </xsl:when>
@@ -1733,12 +1733,12 @@
                       <xsl:otherwise><img alt="check" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/></xsl:otherwise>
                     </xsl:choose>
                   </td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td><strong>Har Om</strong></td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif"/></td>
-                  <td>När den väljs, skicka om-händelse</td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td><strong>Har 'Om'-knapp</strong></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td align="center"><img alt="gränssnittsbild" src="{$mediaPath}/about.gif" width="16" height="16"/></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif"/></td>
+                  <td>hanterar 'Om'-knappen</td>
                 </tr>
               </xsl:otherwise>
               </xsl:choose>
@@ -1748,9 +1748,9 @@
         </tr>
         <tr>
           <td>
-            <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='channelParams';document.workflow.uPCM_step.value='{count(//channelDef//step)}'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='channelParams';document.workflow.uPCM_step.value='{count(//channelDef//step)}'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
         </tr>
       </table>
@@ -1775,9 +1775,9 @@
 
       <tr>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
       </tr>
@@ -1795,7 +1795,7 @@
         <input type="hidden" name="uPCM_action" value="changeMe"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
       <tr class="uportal-channel-text">
-        <td><strong>Granska:</strong> Vänligen granska inställningarna så att de stämmer (klicka för att ändra inställningarna)</td>
+        <td><strong>Kontroll:</strong> Vänligen kontrollera att inställningarna stämmer (klicka på ikoner eller texten för att ändra)</td>
       </tr>
       <!-- Display an error message when appropriate -->
       <xsl:if test="$errorMsg='NO_CATEGORIES'"><tr><td class="uportal-channel-error">Please select at least one category before continuing.</td></tr></xsl:if>
@@ -1807,9 +1807,9 @@
             <tr class="uportal-channel-table-header" valign="bottom">
               <td nowrap="nowrap" align="center">Användaren kan<br />
                 ändra?</td>
-              <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
               <td nowrap="nowrap">Namn</td>
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
               <td width="100%">Värde</td>
             </tr>
 
@@ -1817,17 +1817,17 @@
               <td nowrap="nowrap" colspan="5">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                   <tr>
-                    <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                    <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                   </tr>
                 </table>
              </td>
            </tr>
 
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">Kanaltyp:</a></strong></td>
-             <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">Kanaltyp</a></strong></td>
+             <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">
                <xsl:value-of select="//selectChannelType/params/step/channelTypes/channelType[@ID=/manageChannels/reviewChannel/params/step/channel/@typeID]/name"/></a></td>
            </tr>
@@ -1836,24 +1836,24 @@
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
            </tr>
 
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanaltitel:</a></strong></td>
-             <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanaltitel</a></strong></td>
+             <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@title"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1861,17 +1861,17 @@
            
            <!-- Channel name -->
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanalnamn:</a></strong></td>
-             <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanalens namn</a></strong></td>
+             <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@name"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1879,17 +1879,17 @@
            
            <!-- Channel fname -->
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanalens funktionella namn:</a></strong></td>
-             <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@fname"/></a></td>
            </tr>
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1897,10 +1897,10 @@
 
            <!-- Channel Description -->           
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanalbeskrivning:</a></strong></td>
-             <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanal-beskrivning</a></strong></td>
+             <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@description"/></a></td>
            </tr>
 
@@ -1908,7 +1908,7 @@
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
@@ -1916,19 +1916,19 @@
 
            <!-- Channel Timeout -->
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanal-timeout:</a></strong></td>
-             <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanal-timeout</a></strong></td>
+             <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@timeout"/>
-               <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>millisekunder</a></td>
+               <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>millisekunder</a></td>
            </tr>
 
            <tr class="uportal-channel-text">
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
               </table>
             </td>
@@ -1936,14 +1936,14 @@
 
            <!-- Channel Secure -->
            <tr class="uportal-channel-text">
-             <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-             <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanalens säkerhet:</a></strong></td>
-             <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Channel Secure:</a></strong></td>
+             <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">
              <xsl:choose>
-               <xsl:when test="/manageChannels/reviewChannel/params/step/channel/@secure = 'true'"><img alt="Säker" title="Säker" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
-               <xsl:otherwise><img alt="Inte säker" title="Inte säker" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
+               <xsl:when test="/manageChannels/reviewChannel/params/step/channel/@secure = 'true'"><img alt="Secure" title="Secure" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
+               <xsl:otherwise><img alt="Not Secure" title="Not Secure" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
              </xsl:choose></a></td>
            </tr>
 
@@ -1951,28 +1951,28 @@
              <td nowrap="nowrap" colspan="5">
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
-                   <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                   <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
               </table>
             </td>
           </tr>
 
-           <!-- Kanalparametrar -->
+           <!-- Kanal-parametrar -->
           <xsl:choose>
             <xsl:when test="/manageChannels/reviewChannel/params/step/channel/@typeID = -1">
 
           <tr class="uportal-channel-text">
-            <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
-            <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Kanalklass:</a></strong></td>
-            <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+            <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Java-klass för kanalen</a></strong></td>
+            <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="/manageChannels/reviewChannel/params/step/channel/@class"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                 <tr>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                 </tr>
               </table>
             </td>
@@ -1985,16 +1985,16 @@
               <xsl:otherwise><img alt="Användaren kan inte ändra" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise>
             </xsl:choose></a>
             </td>
-            <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel">Parameter:</a></strong></td>
-            <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=reviewChannel"><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/></a></td>
           </tr>
           <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                 <tr>
-                  <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                  <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                 </tr>
               </table>
             </td>
@@ -2015,9 +2015,9 @@
             <img alt="Användaren kan ändra" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/></xsl:when>
             <xsl:otherwise><img alt="Användaren kan inte ändra" src="{$mediaPath}/check.gif" width="16" height="16" border="0" /></xsl:otherwise></xsl:choose></a>
             </td>
-            <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}"><xsl:value-of select="//parameter/name[.=$name]/../label"/></a></strong></td>
-            <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={//parameter/name[.=$name]/../../ID}">
             <xsl:choose><xsl:when test="@value = //channelDef//restriction/value and //channelDef//restriction/value[.=$value]/@display"><xsl:value-of select="//channelDef//restriction/value[.=$value]/@display"/></xsl:when>
             <xsl:otherwise><xsl:value-of select="@value"/></xsl:otherwise></xsl:choose>
@@ -2027,7 +2027,7 @@
             <td nowrap="nowrap" colspan="5">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
             </tr>
             </table>
             </td>
@@ -2047,16 +2047,16 @@
             <img alt="Användaren kan inte ändra" src="{$mediaPath}/check.gif" width="16" height="16" border="0" />
             </xsl:otherwise>
             </xsl:choose></a></td>
-            <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@name"/></a></strong></td>
-            <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+            <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
             <td width="100%"><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step={$firstArbParamID}"><xsl:value-of select="@value"/></a></td>
             </tr>
             <tr class="uportal-channel-text">
             <td nowrap="nowrap" colspan="5">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
             </tr>
             </table>
             </td>
@@ -2072,42 +2072,42 @@
 
       <tr class="uportal-channel-text">
 
-        <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+        <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
-        <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
         <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">Kanalkontroller</a></strong></td>
 
 
 
-        <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
 
 
         <td><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">
 
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@editable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@editable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
         Editerbar<br/>
 
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@hasHelp='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@hasHelp='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
-        Har hjälp<br/>
+        Har 'Hjälp'-knapp<br/>
 
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@hasAbout='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@hasAbout='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
-        Har Om<br/>
+        Har 'Om'-knapp<br/>
 
         <!--
         <xsl:choose>
-          <xsl:when test="//reviewChannel//channel[@printable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
+          <xsl:when test="//reviewChannel//channel[@printable='true']"><img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+          <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise>
         </xsl:choose>
         Printable<br/>
         -->
@@ -2128,7 +2128,7 @@
 
             <tr>
 
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
             </tr>
 
@@ -2142,11 +2142,11 @@
 
       <tr class="uportal-channel-text">
 
-        <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+        <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
 
 
-        <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
 
 
@@ -2154,14 +2154,14 @@
 
 
 
-        <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
 
 
 
         <td ><a href="{$baseActionURL}?uPCM_action=selectCategories&amp;uPCM_capture=reviewChannel">
 
         <xsl:for-each select="//selectedCategory">
-          <img alt="utfyllnadsbild" src="{$mediaPath}/category.gif" width="16" height="16" border="0" /><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
+          <img alt="gränssnittsbild" src="{$mediaPath}/category.gif" width="16" height="16" border="0" /><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
           <xsl:value-of select="@name"/>
           <br/>
         </xsl:for-each>
@@ -2182,7 +2182,7 @@
 
             <tr>
 
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
 
             </tr>
 
@@ -2194,14 +2194,14 @@
 
       <!-- Selected groups/people -->
       <tr class="uportal-channel-text">
-        <td nowrap="nowrap" align="center"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
-        <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td nowrap="nowrap" align="center"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+        <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
         <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">Valda grupper och/eller personer:</a></strong></td>
-        <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+        <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
         <td>
           <a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">
             <xsl:for-each select="//selectedGroup">
-              <img alt="utfyllnadsbild" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>
+              <img alt="gränssnittsbild" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>
               <xsl:value-of select="@name"/>
               <br/>
             </xsl:for-each>
@@ -2214,7 +2214,7 @@
         <td nowrap="nowrap" colspan="5">
           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
             <tr>
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
             </tr>
           </table>
         </td>
@@ -2224,7 +2224,7 @@
       </tr>
       <tr>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button" />
+          <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button" />
           <input type="submit" name="uPCM_submit" value="Klar" onclick="document.workflow.uPCM_action.value='finished'" class="uportal-button" />
           <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button" />
         </td>
@@ -2239,7 +2239,7 @@
     <xsl:call-template name="workflow"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
-        <td><strong>Lägg till parameter:</strong> Komplettera nedan med kanalparametrar</td>
+        <td><strong>Lägg till parametrar</strong> Fyll i nedan för att lägga till kanalparametrar</td>
       </tr>
 
       <tr>
@@ -2254,7 +2254,7 @@
                   <input type="hidden" name="uPCM_subAction" value="addParameter"/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
-                    <td>Namn:<br />
+                    <td>Name:<br />
                      <input type="text" name="name" class="uportal-input-text" />
                     </td>
                   </tr>
@@ -2268,30 +2268,30 @@
                   <tr class="uportal-label">
                     <td>
                      <input type="checkbox" name="override" value="checkbox"/>
-                     <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" />
+                     <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" />
                      Användaren kan ändra?
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td align="right"><input type="submit" name="uPCM_submit" value="lägg till" class="uportal-button" /></td>
+                    <td align="right"><input type="submit" name="uPCM_submit" value="Lägg till" class="uportal-button" /></td>
                   </tr>
                 </table>
                 </form>
               </td>
 
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td class="uportal-background-light"><img alt="utfyllnadsbild" src="transparent.gif" width="2" height="2" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td class="uportal-background-light"><img alt="gränssnittsbild" src="transparent.gif" width="2" height="2" /></td>
               <td width="100%">
 
                 <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
                   <tr>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">Val</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">User can<br/>Ändra?</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Valmöjlighet</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Användaren<br/>kan ändra?</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="16" height="8" /></td>
                     <td nowrap="nowrap" class="uportal-channel-table-header">Namn</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="8" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="8" height="8" /></td>
                     <td width="100%" class="uportal-channel-table-header">Värde</td>
                   </tr>
 
@@ -2299,7 +2299,7 @@
                     <td nowrap="nowrap" colspan="7">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
-                          <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                          <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                         </tr>
                       </table>
                     </td>
@@ -2310,26 +2310,26 @@
                       <xsl:for-each select="manageChannels/customSettings/params/step/channel/parameter">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Ta bort parametern"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Ta bort denna parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                                                     <td nowrap="nowrap" align="center">
-                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="utfyllnadsbild" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
-                          <xsl:otherwise><img alt="utfyllnadsbild" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
+                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="gränssnittsbild" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
+                          <xsl:otherwise><img alt="gränssnittsbild" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
                           </td>
                                                     <td nowrap="nowrap">
-                            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                           <td nowrap="nowrap"><strong><xsl:value-of select="@name"/></strong></td>
-                          <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                          <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                           <td width="100%"><xsl:value-of select="@value"/></td>
                         </tr>
                         <tr class="uportal-channel-text" valign="top">
                           <td colspan="7" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                              <tr><td><img alt="utfyllnadsbild" src="transparent.gif" width="1" height="1" /></td></tr>
+                              <tr><td><img alt="gränssnittsbild" src="transparent.gif" width="1" height="1" /></td></tr>
                             </table>
                           </td>
                         </tr>
@@ -2354,9 +2354,9 @@
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
         </form>
@@ -2377,7 +2377,7 @@
                   <input type="hidden" name="uPCM_step" value="{$stepID}"/>
                 <table width="100%" border="0" cellspacing="0" cellpadding="4">
                   <tr class="uportal-label">
-                    <td>Namn:<br />
+                    <td>Name:<br />
                      <input type="text" name="name" class="uportal-input-text" />
                     </td>
                   </tr>
@@ -2391,30 +2391,30 @@
                   <tr class="uportal-label">
                     <td>
                      <input type="checkbox" name="override" value="checkbox"/>
-                     <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" />
+                     <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="4" height="4" />
                      Användaren kan ändra?
                     </td>
                   </tr>
 
                   <tr class="uportal-label">
-                    <td align="right"><input type="submit" name="uPCM_submit" value="lägg till" onclick="document.addParameter.name.value='{/manageChannels/channelDef/params/step[position()=$stepID]/arbitrary-parameters/paramName-prefix[1]}' + document.addParameter.name.value" class="uportal-button" /></td>
+                    <td align="right"><input type="submit" name="uPCM_submit" value="Lägg till" onclick="document.addParameter.name.value='{/manageChannels/channelDef/params/step[position()=$stepID]/arbitrary-parameters/paramName-prefix[1]}' + document.addParameter.name.value" class="uportal-button" /></td>
                   </tr>
                 </table>
                 </form>
               </td>
 
-              <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-              <td class="uportal-background-light"><img alt="utfyllnadsbild" src="transparent.gif" width="2" height="2" /></td>
+              <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+              <td class="uportal-background-light"><img alt="gränssnittsbild" src="transparent.gif" width="2" height="2" /></td>
               <td width="100%">
 
                 <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
                   <tr>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">Val</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="16" height="8" /></td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header">User can<br/>Ändra?</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Valmöjlighet</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="16" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Användaren<br/>kan ändra?</td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="16" height="8" /></td>
                     <td nowrap="nowrap" class="uportal-channel-table-header">Namn</td>
-                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="utfyllnadsbild" src="transparent.gif" width="8" height="8" /></td>
+                    <td nowrap="nowrap" class="uportal-channel-table-header"><img alt="gränssnittsbild" src="transparent.gif" width="8" height="8" /></td>
                     <td width="100%" class="uportal-channel-table-header">Värde</td>
                   </tr>
 
@@ -2422,7 +2422,7 @@
                     <td nowrap="nowrap" colspan="7">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                         <tr>
-                          <td><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
+                          <td><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="2" /></td>
                         </tr>
                       </table>
                     </td>
@@ -2434,26 +2434,26 @@
                       <xsl:for-each select="/manageChannels/channelDef/params/step/channel/parameter[substring(@name,1,$prefixLength)=$prefix]">
                         <tr class="uportal-channel-text" valign="top">
                           <td nowrap="nowrap" align="center">
-                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Ta bort parametern"/></a>
+                            <a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deleteParameter&amp;name={@name}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Ta bort denna parameter"/></a>
                           </td>
                           <td nowrap="nowrap">
-                            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                                                     <td nowrap="nowrap" align="center">
-                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="utfyllnadsbild" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
-                          <xsl:otherwise><img alt="utfyllnadsbild" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
+                          <xsl:choose><xsl:when test="@override ='yes'"><img alt="gränssnittsbild" src="{$mediaPath}/checked.gif" width="16" height="16" /></xsl:when>
+                          <xsl:otherwise><img alt="gränssnittsbild" src="{$mediaPath}/check.gif" width="16" height="16" /></xsl:otherwise></xsl:choose>
                           </td>
                                                     <td nowrap="nowrap">
-                            <img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
+                            <img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" />
                           </td>
                           <td nowrap="nowrap"><strong><xsl:value-of select="substring(@name,$prefixLength+1)"/></strong></td>
-                          <td nowrap="nowrap"><img alt="utfyllnadsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                          <td nowrap="nowrap"><img alt="gränssnittsbild" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                           <td width="100%"><xsl:value-of select="@value"/></td>
                         </tr>
                         <tr class="uportal-channel-text" valign="top">
                           <td colspan="7" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                              <tr><td><img alt="utfyllnadsbild" src="transparent.gif" width="1" height="1" /></td></tr>
+                              <tr><td><img alt="gränssnittsbild" src="transparent.gif" width="1" height="1" /></td></tr>
                             </table>
                           </td>
                         </tr>
@@ -2478,9 +2478,9 @@
         <input type="hidden" name="uPCM_capture" value="customSettings"/>
         <input type="hidden" name="uPCM_step" value="changeMe"/>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
         </form>
@@ -2506,9 +2506,9 @@
 
       <tr>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Tillbaka" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="&lt; Föregående" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Nästa &gt;" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Granska" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Kontroll" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Avbryt" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
       </tr>
