@@ -117,6 +117,8 @@ public class DbLoader
 {
   private static String portalBaseDir;
   private static String propertiesUri;
+  private static String tablesUri;
+  private static String tablesXslUri;
   private static Connection con;
   private static Statement stmt;
   private static PreparedStatement pstmt;
@@ -158,21 +160,20 @@ public class DbLoader
 
         try
         {
-          String tablesURI = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
-          
           // Read tables.xml
           DOMParser domParser = new DOMParser();
           // Eventually, write and validate against a DTD
           //domParser.setFeature ("http://xml.org/sax/features/validation", true);
           //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
+          tablesUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri());
           domParser.parse(tablesURI);
           tablesDoc = domParser.getDocument();
         }
         catch(Exception e)
         {
-          System.out.println("Could not open " + UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesUri()));
+          System.out.println("Could not open " + tablesUri);
           e.printStackTrace();
-          
+
           return;
         }
 
@@ -182,11 +183,10 @@ public class DbLoader
         // Replace all generic data types with local data types
         replaceDataTypes(tablesDoc);
 
-        String tablesXslUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesXslUri());
-        
         // tables.xml + tables.xsl --> DROP TABLE and CREATE TABLE sql statements
         XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
         XSLTInputSource tablesInputSource = new XSLTInputSource(tablesDoc);
+        tablesXslUri = UtilitiesBean.fixURI(PropertiesHandler.properties.getTablesXslUri());
         XSLTInputSource tablesXslInputSource = new XSLTInputSource(tablesXslUri);
         XSLTResultTarget tablesTarget = new XSLTResultTarget(new TableHandler());
         processor.process (tablesInputSource, tablesXslInputSource, tablesTarget);
