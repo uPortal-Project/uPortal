@@ -59,6 +59,7 @@ public class RdbmServices {
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";      // reduce noise in log file
 
+  protected static final boolean usePreparedStatements = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RdbmServices.usePreparedStatements");
   protected static boolean supportsPreparedStatements = false;
   public static boolean supportsOuterJoins = false;
   public static boolean supportsTransactions = false;
@@ -93,7 +94,7 @@ public class RdbmServices {
             pstmt.clearParameters ();
             pstmt.setInt(1, 0);
             pstmt.executeQuery();
-            supportsPreparedStatements = true;
+            supportsPreparedStatements = usePreparedStatements && true;
           } finally {
             pstmt.close();
           }
