@@ -35,11 +35,13 @@ Author: Ken Weiner, kweiner@interactivebusiness.com
 $Revision$
 -->
 
-<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, parameters?)>
+<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?)>
 
 <!ELEMENT categories (category)*>
 
 <!ELEMENT groups (group)*>
+
+<!ELEMENT users (user)*>
 
 <!ELEMENT parameters (parameter)*>
 
@@ -60,6 +62,7 @@ $Revision$
 
 <!ELEMENT category (#PCDATA)>
 <!ELEMENT group (#PCDATA)>
+<!ELEMENT user (#PCDATA)>
 
 <!ELEMENT value (#PCDATA)>
 <!ELEMENT description (#PCDATA)>
