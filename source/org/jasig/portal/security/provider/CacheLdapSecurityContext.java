@@ -153,7 +153,7 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
             LogService.log(LogService.DEBUG,
                            "SimpleLdapSecurityContext: Looking in " +
                            dnBuffer.toString() + " for " + attrSearch);            
-            conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
+            conn.search(dnBuffer.toString(), attrSearch, searchCtls);
             
             // Save our credentials so that the parent's authenticate()
             // method doesn't blow them away.
