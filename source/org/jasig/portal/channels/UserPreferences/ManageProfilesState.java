@@ -38,6 +38,25 @@ import org.xml.sax.ContentHandler;
  */
 class ManageProfilesState extends BaseState {
   private static final Log log = LogFactory.getLog(ManageProfilesState.class);
+  
+    /**
+     * Default value for ALLOW_USER_PROFILES.
+     * This value will be used when the relevant property cannot be accessed.
+     */
+    private static final boolean DEFAULT_ALLOW_USER_PROFILES = true;
+    
+    /**
+     * Default value for ALLOW_SYSTEM_BROWSER_MAPPING.
+     * This value will be used when the relevant property cannot be accessed.
+     */
+    private static final boolean DEFAULT_ALLOW_SYSTEM_BROWSER_MAPPING = true;
+    
+    /**
+     * Default value for ALLOW_NEW_PROFILE_USER_BUTTON.
+     * This value will be used when the relevant property cannot be accessed.
+     */
+    private static final boolean DEFAULT_ALLOW_NEW_PROFILE_BUTTON = true;
+  
   protected Hashtable userProfileList;
   protected Hashtable systemProfileList;
   protected Hashtable userExpandStates;
@@ -45,9 +64,9 @@ class ManageProfilesState extends BaseState {
   protected ChannelRuntimeData runtimeData;
   IUserLayoutStore ulsdb;
 
-  static final boolean ALLOW_USER_PROFILES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowUserProfiles");
-  static final boolean ALLOW_SYSTEM_BROWSER_MAPPING=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowSystemProfileBrowserMapping");
-  static final boolean ALLOW_NEW_PROFILE_BUTTON=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowNewProfileCreation");
+  static final boolean ALLOW_USER_PROFILES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowUserProfiles", DEFAULT_ALLOW_USER_PROFILES);
+  static final boolean ALLOW_SYSTEM_BROWSER_MAPPING=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowSystemProfileBrowserMapping", DEFAULT_ALLOW_SYSTEM_BROWSER_MAPPING);
+  static final boolean ALLOW_NEW_PROFILE_BUTTON=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowNewProfileCreation", DEFAULT_ALLOW_NEW_PROFILE_BUTTON);
 
  
   public ManageProfilesState(CUserPreferences context) {
