@@ -3112,28 +3112,37 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           "WHERE USER_ID=? AND PROFILE_ID=?";
 
       Connection con = RDBMServices.getConnection();
-
-      PreparedStatement pstmt = con.prepareStatement(query);
-
-      LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getLayoutID(userId=" + userId + ", profileId=" + profileId + " ): " + query);
-
-      pstmt.setInt(1, userId);
-      pstmt.setInt(2, profileId);
-      ResultSet rs = pstmt.executeQuery();
-
       int layoutId = 0;
-
+      
       try {
-          if (rs.next()) {
-              layoutId = rs.getInt(1);
-
-              if (rs.wasNull()) {
-                  layoutId = 0;
+          PreparedStatement pstmt = con.prepareStatement(query);
+    
+          try {
+              LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getLayoutID(userId=" + userId + ", profileId=" + profileId + " ): " + query);
+        
+              pstmt.setInt(1, userId);
+              pstmt.setInt(2, profileId);
+              ResultSet rs = pstmt.executeQuery();
+        
+              try {
+                  if (rs.next()) {
+                      layoutId = rs.getInt(1);
+        
+                      if (rs.wasNull()) {
+                          layoutId = 0;
+                      }
+                  }
               }
+              finally {
+                  rs.close();
+              }
+          }
+          finally {
+              pstmt.close();
           }
       }
       finally {
-          rs.close();
+          RDBMServices.releaseConnection(con);
       }
 
       return layoutId;
