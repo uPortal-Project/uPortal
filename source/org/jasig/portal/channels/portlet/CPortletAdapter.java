@@ -134,7 +134,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             environment.addContainerService(factorManagerService);
             environment.addContainerService(informationProviderService);
 
-            portletContainer = new PortletContainerImpl(uniqueContainerName);
+            portletContainer = new PortletContainerImpl();
             portletContainer.init(uniqueContainerName, servletConfig, environment, new Properties());
             
             portletContainerInitialized = true;
@@ -170,6 +170,10 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             }
             
             PortletDefinition portletDefinition = InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));
+            if (portletDefinition == null) {
+                throw new PortalException("Unable to find portlet definition for ID '" + portletDefinitionId + "'");
+            }
+            
             ChannelDefinition channelDefinition = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(sd.getChannelPublishId()));
             ((PortletDefinitionImpl)portletDefinition).setChannelDefinition(channelDefinition);      
                     
