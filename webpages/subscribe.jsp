@@ -4,6 +4,7 @@
 <%@ page import="com.objectspace.xml.*" %>
 <%@ page import= "java.sql.*" %>
 <%@ page errorPage="error.jsp" %>
+<%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 <jsp:useBean id="subscribe" class="org.jasig.portal.SubscriberBean" scope="session" />

@@ -1,5 +1,6 @@
 <%@ page errorPage="error.jsp" %>
 <%@ page import="org.jasig.portal.*" %>
+<%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="authBean" class="org.jasig.portal.AuthorizationBean"
                            type="org.jasig.portal.IAuthorizationBean"/>

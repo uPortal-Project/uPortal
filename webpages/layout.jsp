@@ -2,6 +2,15 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
+
+<%-- If the portal base directory hasn't been set, forward back to
+  -- index.jsp, which retrives it from the ServletContext.  The portal
+  -- base directory is an application-wide parameter set in web.xml.
+  --%>
+<% if (org.jasig.portal.GenericPortalBean.getPortalBaseDir() == null) { %>
+<jsp:forward page="index.jsp"/>
+<% } %>
+
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
 
 <% String sUserName = (String) session.getAttribute ("userName"); %>

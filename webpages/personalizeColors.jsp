@@ -1,6 +1,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
 <%@ page errorPage="error.jsp" %>
+<%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="layoutBean" class="org.jasig.portal.LayoutBean" type="org.jasig.portal.ILayoutBean" scope="session" />
 

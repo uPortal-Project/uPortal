@@ -1,6 +1,7 @@
 <%@ page errorPage="error.jsp" %>
 <%@ page import="org.jasig.portal.layout.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
+<%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" />
 <jsp:useBean id="layoutBean" type="org.jasig.portal.ILayoutBean" class="org.jasig.portal.LayoutBean" scope="session" />
