@@ -1684,7 +1684,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         HashMap layoutStructure = new HashMap();
         ArrayList chanIds = new ArrayList();
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
-          StringBuffer structParms = new StringBuffer();
+        StringBuffer structChanIds = new StringBuffer();
         rs = stmt.executeQuery(sql);
         try {
           int lastStructId = 0;
@@ -1735,7 +1735,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 } while (structId == lastStructId);
               } else { // Do second SELECT later on for structure parameters
                 if (ls.isChannel()) {
-                  structParms.append(sepChar + ls.chanId);
+                  structChanIds.append(sepChar + ls.chanId);
                   sepChar = ",";
                 }
                 if (rs.next()) {
@@ -1781,8 +1781,28 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
 
         if (!RDBMServices.supportsOuterJoins) { // Pick up structure parameters
+          // first, get the struct ids for the channels
+          sql = "SELECT STRUCT_ID FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
+            " AND LAYOUT_ID=" + layoutId +
+            " AND CHAN_ID IN (" + structChanIds.toString() + ") ORDER BY STRUCT_ID";
+
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+          StringBuffer structIdsSB = new StringBuffer( "" );
+          String sep = "";
+          rs = stmt.executeQuery(sql);
+          try {
+            // use the results to build a correct list of struct ids to look for
+            while( rs.next()) {
+              structIdsSB.append(sep + rs.getString(1));
+              sep = ",";
+            }// while
+          } finally {
+            rs.close();
+          } // be a good doobie
+
+
           sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
-            " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
+            " AND STRUCT_ID IN (" + structIdsSB.toString() + ") ORDER BY STRUCT_ID";
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
           rs = stmt.executeQuery(sql);
           try {
