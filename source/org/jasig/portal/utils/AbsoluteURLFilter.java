@@ -141,7 +141,12 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
           else
           {
             if (i2 != -1)
-              attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
+            {
+              if (baseUrl.indexOf("?") != -1)
+                attValue = baseUrl.substring(0, baseUrl.substring(0, baseUrl.indexOf( "?" )).lastIndexOf("/")+1).concat(attValue);
+              else
+                attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
+            }
             else
               attValue = baseUrl.concat("/").concat(attValue);
           }
