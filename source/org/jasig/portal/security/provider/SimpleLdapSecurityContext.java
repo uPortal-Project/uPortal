@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * the String {@link #LDAP_PROPERTIES_CONNECTION_NAME} "connection".
  * This property allows a specific, named, LDAP connection to be used by
  * the context. If no "connection" property is specified the default
- * LDAP connection returned by {@link org.jasig.portal.LdapServices} is
+ * LDAP connection returned by {@link org.jasig.portal.ldap.LdapServices} is
  * used. 
  * </p>
  *
