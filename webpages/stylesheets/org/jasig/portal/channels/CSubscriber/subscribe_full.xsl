@@ -26,7 +26,7 @@
 <xsl:template match="folder">
   <!-- Indent according to position in hierarchy-->
   <xsl:for-each select="ancestor::*">
-    <img src="{$imageDir}/transparent1x1.gif" width="20" height="1"/>
+    <img src="{$imageDir}/transparent.gif" width="20" height="1"/>
   </xsl:for-each>
 
   <input type="radio" name="destination" value="{@ID}"/>
