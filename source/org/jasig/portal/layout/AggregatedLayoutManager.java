@@ -35,14 +35,6 @@
 
 package org.jasig.portal.layout;
 
-/**
- * An implementation of Aggregated User Layout Interface defining common operations on user layout nodes,
- * that is channels and folders
- *
- * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.0
- */
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -69,6 +61,13 @@ import org.xml.sax.ContentHandler;
 
 
 
+/**
+ * An implementation of Aggregated User Layout Interface defining common operations on user layout nodes,
+ * that is channels and folders
+ *
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
+ * @version $Revision$
+ */
 public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
   private IAggregatedUserLayoutStore layoutStore;
@@ -116,6 +115,14 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
   private void updateCacheKey() {
      cacheKey = guid.getNewGuid();
+  }
+  
+  public IUserLayout getUserLayout() {
+      return layout;    
+  }
+
+  public void setUserLayout(IUserLayout userLayout) {
+      setUserLayout(userLayout);
   }
 
   /**
@@ -895,9 +902,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       layout.writeTo(document);
       return document;
     }
-
-
-
+        
     private void setUserLayoutDOM( Node n, String parentNodeId, Hashtable layoutData ) throws PortalException {
 
       Element node = (Element) n;
