@@ -10,6 +10,16 @@
    <xsl:param name="baseActionURL">default</xsl:param>
    <xsl:param name="cw_passThrough">default</xsl:param>
    <xsl:param name="cw_xml">default</xsl:param>
+   <xsl:param name="base">
+     <xsl:choose>
+       <xsl:when test="//base/@href">
+         <xsl:value-of select="//base/@href"/>
+       </xsl:when>
+       <xsl:otherwise>
+         <xsl:value-of select="$cw_xml"/>
+       </xsl:otherwise>
+     </xsl:choose>
+   </xsl:param>
 
    <xsl:template match="html">
       <xsl:apply-templates select="body"/>
@@ -36,20 +46,7 @@
         <xsl:choose>
            <!--handles relative URIs for action attributes-->
            <xsl:when test="not(string-length(normalize-space(@action))=0) and (not(contains(@action, ':')) or not( contains(@action, ':') and not(contains(substring-before(@action, ':'), '/')) ))">       
-              <xsl:choose>
-                <xsl:when test="//base">
-                  <xsl:call-template name="get-absolute-uri">
-                    <xsl:with-param name="uri" select="//base/@href"/>
-                    <xsl:with-param name="file" select="@action"/>
-                  </xsl:call-template>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:call-template name="get-absolute-uri">
-                    <xsl:with-param name="uri" select="$cw_xml"/>
-                    <xsl:with-param name="file" select="@action"/>
-                  </xsl:call-template>
-                </xsl:otherwise>
-              </xsl:choose>
+             <xsl:value-of select="portal:getAbsURI(string($base), string(@action))"/>
            </xsl:when>  
            <xsl:otherwise>
              <xsl:value-of select="@action"/>
@@ -123,22 +120,9 @@
         <xsl:when test="@src">
           <xsl:param name="src-uri">
             <xsl:choose>
+              <!--handles relative URIs for src attributes-->
               <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
-                 <!--handles relative URIs for src attributes-->
-                 <xsl:choose>
-                   <xsl:when test="//base">
-                     <xsl:call-template name="get-absolute-uri">
-                       <xsl:with-param name="uri" select="//base/@href"/>
-                       <xsl:with-param name="file" select="@src"/>
-                     </xsl:call-template>
-                   </xsl:when>
-                   <xsl:otherwise>
-                     <xsl:call-template name="get-absolute-uri">
-                       <xsl:with-param name="uri" select="$cw_xml"/>
-                       <xsl:with-param name="file" select="@src"/>
-                     </xsl:call-template>
-                   </xsl:otherwise>
-                 </xsl:choose>
+                <xsl:value-of select="portal:getAbsURI(string($base), string(@src))"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="@src"/>
@@ -162,21 +146,8 @@
       <xsl:param name="href-uri">
         <xsl:choose>
            <!--handles relative URIs for href attributes-->
-           <xsl:when test=" not(string-length(normalize-space(@href))=0) and (not(contains(@href, ':')) or not( contains(@href, ':') and not(contains(substring-before(@href, ':'), '/')) ))">
-              <xsl:choose>
-                <xsl:when test="//base">
-                  <xsl:call-template name="get-absolute-uri">
-                    <xsl:with-param name="uri" select="//base/@href"/>
-                    <xsl:with-param name="file" select="@href"/>
-                  </xsl:call-template>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:call-template name="get-absolute-uri">
-                    <xsl:with-param name="uri" select="$cw_xml"/>
-                    <xsl:with-param name="file" select="@href"/>
-                  </xsl:call-template>
-                </xsl:otherwise>
-              </xsl:choose> 
+           <xsl:when test="not(string-length(normalize-space(@href))=0) and (not(contains(@href, ':')) or not( contains(@href, ':') and not(contains(substring-before(@href, ':'), '/')) ))">
+             <xsl:value-of select="portal:getAbsURI(string($base), string(@href))"/>
            </xsl:when>
            <xsl:otherwise>
              <xsl:value-of select="@href"/>
@@ -252,20 +223,7 @@
          <xsl:when test="not(contains(@src, ':')) or not( contains(@src, ':') and not(contains(substring-before(@src, ':'), '/')) )">
            <xsl:copy-of select="attribute::*[not(name()='src')]"/>
            <xsl:attribute name="src">
-              <xsl:choose>
-                <xsl:when test="//base">
-                  <xsl:call-template name="get-absolute-uri">
-                    <xsl:with-param name="uri" select="//base/@href"/>
-                    <xsl:with-param name="file" select="@src"/>
-                  </xsl:call-template>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:call-template name="get-absolute-uri">
-                    <xsl:with-param name="uri" select="$cw_xml"/>
-                    <xsl:with-param name="file" select="@src"/>
-                  </xsl:call-template>
-                </xsl:otherwise>
-              </xsl:choose>
+             <xsl:value-of select="portal:getAbsURI(string($base), string(@src))"/>
            </xsl:attribute>
            <xsl:apply-templates/>
          </xsl:when>
@@ -276,46 +234,6 @@
       </xsl:copy>
    </xsl:template>
  
-   <!--returns the directory part of the URI concatenated with the file-->
-   <xsl:template name="get-absolute-uri">
-      <xsl:param name="uri"/>
-      <xsl:param name="file"/>
-      <xsl:param name="base"/>
-      <xsl:choose>
-         <!--handles relative uri's beginning with /-->
-         <xsl:when test="starts-with($file, '/')">
-            <xsl:call-template name="get-absolute-uri-slash">
-               <xsl:with-param name="file" select="$file"/>
-               <xsl:with-param name="uri" select="$uri"/>
-            </xsl:call-template>
-         </xsl:when>
-         <!--handles all other relative uri's-->
-         <xsl:otherwise>
-           <xsl:choose>
-             <xsl:when test="contains($uri, '/') and not(starts-with($file, '/'))">
-                <xsl:call-template name="get-absolute-uri">
-                   <xsl:with-param name="base"
-                         select="concat($base, substring-before($uri, '/'), '/')"/>
-                   <xsl:with-param name="uri" select="substring-after($uri, '/')"/>
-                   <xsl:with-param name="file" select="$file"/>
-                </xsl:call-template>
-             </xsl:when>
-             <xsl:otherwise>
-                <xsl:value-of select="portal:getAbsURI(concat($base, $file))"/>
-             </xsl:otherwise>
-           </xsl:choose>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
-
-   <!--returns the correct URI when given a relative URI beginning with a '/'-->
-   <xsl:template name="get-absolute-uri-slash">
-       <xsl:param name="file"/>
-       <xsl:param name="uri"/>
-       <xsl:value-of select="concat(substring-before($uri, '://'), '://', 
-                    substring-before(substring-after($uri, '://'), '/'), $file)"/>
-   </xsl:template>
-
    <!--outputs script code (for the case when script in source is an html comment)--> 
    <xsl:template match="script/comment()">
      <xsl:value-of select="."/>
