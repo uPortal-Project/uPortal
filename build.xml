@@ -1230,8 +1230,11 @@
 
   The "deployPortletApp" target runs the portlet Deployer tool.
   This tool takes a portlet WAR file, rewrites the web.xml file
-  and deploys the results to the servlet container.
-  Example:
+  and deploys the results to the servlet container.  You can deploy
+  multiple portlets at once by placing them in the lib/portlets
+  directory and specifying "all" as the porletApp.
+  Examples:
+  ant deployPortletApp -DportletApp=all
   ant deployPortletApp -DportletApp=C:/TEMP/myPortlet.war
 
 -->
