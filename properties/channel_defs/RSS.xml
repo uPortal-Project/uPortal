@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelDef>
+	<description>
+   	This is a channel for rendering local or remote RSS files
+	</description>
+	<params>
+		<step>
+			<ID>1</ID>
+			<name>Provide RSS URL.</name>
+			<!-- displayed at the top of the step screen -->
+			<description/>
+			<!-- intention is for documentation but could be used for other things -->
+			<parameter modify="publish-only">
+				<name>prot</name>
+				<!-- the name value -->
+				<label>Protocol</label>
+				<!-- the field label -->
+				<type>
+					<data>string</data>
+					<!-- for data type error checking -->
+					<base>single-choice</base>
+					<!-- generic display type -->
+					<display>drop-down</display>
+					<!-- more specific display type - if not specified the default will be displayed -->
+					<restriction type="enumeration">
+						<!-- list of values used -->
+						<value>http://</value>
+						<value>ftp://</value>
+						<value default="true">file://</value>
+						<!-- value flagged as default -->
+					</restriction>
+				</type>
+			</parameter>
+			<parameter modify="publish">
+				<name>xml</name>
+				<label>RSS</label>
+				<type>
+					<data>string</data>
+					<base>text</base>
+					<display>text</display>
+					<length>30</length>
+					<!-- length and maxlength for text field -->
+					<maxlength>40</maxlength>
+					<restriction type="range">
+						<!-- range could be used for error checking -->
+						<min>0</min>
+						<max>40</max>
+					</restriction>
+				</type>
+				<defaultValue>webpages/rss/news.rss</defaultValue>
+				<!-- default value for text field -->
+			</parameter>
+			<parameter modify="publish">
+				<name>ssl</name>
+				<label/>
+				<type>
+					<data>string</data>
+					<base>text</base>
+					<display>hidden</display>
+				</type>
+				<defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</defaultValue>
+			</parameter>
+		</step>
+		<step>
+			<ID>2</ID>
+			<name>How many healines do you want displayed?</name>
+			<description>user sets limit on number of displayed headlines</description>
+			<parameter modify="subscribe-only">
+				<name>hlNum</name>
+				<label>Number of headlines:</label>
+				<type>
+					<data>integer</data>
+					<base>text</base>
+					<display>text</display>
+					<length>2</length>
+					<maxlength>2</maxlength>
+				</type>
+				<defaultValue>5</defaultValue>
+			</parameter>
+		</step>
+	</params>
+</channelDef>
