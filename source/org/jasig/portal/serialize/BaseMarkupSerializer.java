@@ -98,10 +98,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
-import org.w3c.dom.Entity;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.Notation;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.DocumentHandler;
@@ -1054,10 +1051,6 @@ public abstract class BaseMarkupSerializer
         case Node.DOCUMENT_NODE : {
             DocumentType      docType;
             DOMImplementation domImpl;
-            NamedNodeMap      map;
-            Entity            entity;
-            Notation          notation;
-            int               i;
 
             // If there is a document type, use the SAX events to
             // serialize it.
@@ -1306,7 +1299,6 @@ public abstract class BaseMarkupSerializer
                                     boolean preserveSpace, boolean unescaped )
         throws IOException
     {
-        int index;
         char ch;
 
         if ( preserveSpace ) {
