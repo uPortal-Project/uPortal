@@ -38,7 +38,6 @@ package org.jasig.portal.utils;
 import java.io.Writer;
 import java.io.IOException;
 
-
 /**
  * A simple wrapper to present {@link IWriteable} interface for a regular <code>java.io.Writer</code>.
  *
@@ -57,9 +56,22 @@ public class WriteableWriterWrapper implements IWriteable {
 
     public void flush() throws IOException {
         out.flush();
-    } 
+    }
 
     public void close() throws IOException {
         out.close();
+    }
+    public void write(int[] ibuf, int off, int len) throws IOException{
+      char[] cbuf = new char[len-off];
+      int j = 0;
+      for (int i=off; i< len;i++){
+        cbuf[j++]=(char)ibuf[i];
+      }
+      if (j > 0){
+        out.write(cbuf);
+      }
+    }
+    public void write(int[] ibuf) throws IOException{
+      write(ibuf,0,ibuf.length);
     }
 }

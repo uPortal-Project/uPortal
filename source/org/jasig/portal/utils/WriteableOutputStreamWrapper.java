@@ -56,9 +56,24 @@ public class WriteableOutputStreamWrapper implements IWriteable {
 
     public void flush() throws IOException {
         out.flush();
-    } 
+    }
 
     public void close() throws IOException {
         out.close();
+    }
+
+    public void write(int[] ibuf, int off, int len) throws IOException{
+      byte[] bbuf = new byte[len-off];
+      int j = 0;
+      for (int i=off; i< len;i++){
+        bbuf[j++]=(byte)ibuf[i];
+      }
+      if (j > 0){
+        out.write(bbuf);
+      }
+    }
+
+    public void write(int[] ibuf) throws IOException{
+      write(ibuf,0,ibuf.length);
     }
 }
