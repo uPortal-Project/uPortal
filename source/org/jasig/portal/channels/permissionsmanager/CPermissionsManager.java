@@ -130,7 +130,8 @@ public class CPermissionsManager
                   ArrayList gmembers = new ArrayList();
                   Element[] owners = PermissionsXML.getSelectedOwners(session);
                   for (int j= 0; j < owners.length ; j++){
-                    log.debug("analyzing owner "+owners[j].getAttribute("name"));
+                    if (log.isDebugEnabled())
+                      log.debug("analyzing owner "+owners[j].getAttribute("name"));
                     String ownerKey = owners[j].getAttribute("token");
                     IPermissionManager pm = AuthorizationService.instance().newPermissionManager(ownerKey);
                     String[] acts = null;
@@ -193,11 +194,14 @@ public class CPermissionsManager
     }
 
     protected void populateMembers(ArrayList gmembers, IAuthorizationPrincipal[] aps){
-      log.debug("PermissionsManager.PopulateMembers(): checking principal set of size"+aps.length);
+      if (log.isDebugEnabled())
+          log.debug("PermissionsManager.PopulateMembers(): checking principal set of size"+aps.length);
       for (int a = 0; a< aps.length ; a++){
         try {
           IGroupMember agm = AuthorizationService.instance().getGroupMember(aps[a]);
-          log.debug("PermissionsManager.PopulateMembers(): checking whether "+agm.getType()+"."+agm.getKey()+" needs to be added");
+          if (log.isDebugEnabled())
+              log.debug("PermissionsManager.PopulateMembers(): checking whether "+
+                      agm.getType()+"."+agm.getKey()+" needs to be added");
           if (!gmembers.contains(agm)){
             gmembers.add(agm);
           }
@@ -281,12 +285,15 @@ public class CPermissionsManager
                 }
                 xslt.setXSL(sslLocation, "CPermissions", session.runtimeData.getBrowserInfo());
                 transform(xslt);
-                long time3 = Calendar.getInstance().getTime().getTime();
-                log.debug("CPermissionsManager timer: "
-                        + String.valueOf((time3 - time1)) + " ms total, xsl took "
-                        + String.valueOf((time3 - time2)) + " ms for view " + session.view);
-                log.debug("CPermissionsManager timer: "
-                        + String.valueOf((time3 - session.startRD)) + " since start RD");
+                if (log.isDebugEnabled()) {
+                    long time3 = Calendar.getInstance().getTime().getTime();
+                    log.debug("CPermissionsManager timer: "
+                            + String.valueOf((time3 - time1)) + " ms total, xsl took "
+                            + String.valueOf((time3 - time2)) + " ms for view " + session.view);
+                    log.debug("CPermissionsManager timer: "
+                            + String.valueOf((time3 - session.startRD)) + " since start RD");
+                }
+               
             }
         } catch (Exception e) {
             log.error(e, e);
@@ -363,9 +370,12 @@ public class CPermissionsManager
                     valid = true;
                 }
             }
-            long time3 = Calendar.getInstance().getTime().getTime();
-            log.debug("CPermissionsManager.isCacheValid() time since setRD: "
-                    + String.valueOf((time3 - session.startRD)) + ", valid=" + valid);
+            if (log.isDebugEnabled()) {
+                long time3 = Calendar.getInstance().getTime().getTime();
+                log.debug("CPermissionsManager.isCacheValid() time since setRD: "
+                        + String.valueOf((time3 - session.startRD)) + ", valid=" + valid);
+            }
+
         }
         else {
             valid = ((ICacheable)session.servant).isCacheValid(validity);

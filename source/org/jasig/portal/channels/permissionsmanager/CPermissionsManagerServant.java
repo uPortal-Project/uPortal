@@ -93,7 +93,8 @@ public class CPermissionsManagerServant extends CPermissionsManager
                   if (((HashMap)session.staticData.get("prmTargets")).get(selOwners[j].getOwnerToken())
                           != null) {
                     String[] selTargets = (String[])((HashMap)session.staticData.get("prmTargets")).get(selOwners[j].getOwnerToken());
-                    log.debug("PermissionServant.setStaticData(): got "+selTargets.length+" pre-selected targets");
+                    if (log.isDebugEnabled())
+                        log.debug("PermissionServant.setStaticData(): got "+selTargets.length+" pre-selected targets");
                     for (int s=0;s<selTargets.length;s++){
                       PermissionsXML.setSelected(session,selOwners[j].getClass().getName(),"target",selTargets[s],true);
                     }
@@ -108,7 +109,8 @@ public class CPermissionsManagerServant extends CPermissionsManager
                   if (((HashMap)session.staticData.get("prmActivities")).get(selOwners[j].getOwnerToken())
                           != null) {
                       String[] selActivities = (String[])((HashMap)session.staticData.get("prmActivities")).get(selOwners[j].getOwnerToken());
-                      log.debug("PermissionServant.setStaticData(): got "+selActivities.length+" pre-selected activities");
+                      if (log.isDebugEnabled())
+                          log.debug("PermissionServant.setStaticData(): got "+selActivities.length+" pre-selected activities");
                       for (int s=0;s<selActivities.length;s++){
                         PermissionsXML.setSelected(session,selOwners[j].getClass().getName(),"activity",selActivities[s],true);
                       }
