@@ -22,9 +22,9 @@ if (sAction != null && sAction.equals ("saveColors"))
 
 <% layoutBean.writeBodyTag (request, response, out); %>
 
-<jsp:include page="header.jsp" flush="true">
-  <jsp:param name="title" value="Personalize Colors" />
-</jsp:include>
+<%-- Header --%>
+<% session.setAttribute ("headerTitle", "Personalize Colors"); %>
+<%@ include file="header.jsp" %>
 
 <form action="personalizeColors.jsp" method=post>
 <table border=0 cellspacing=3 cellpadding=3>
@@ -53,7 +53,8 @@ if (sAction != null && sAction.equals ("saveColors"))
 <input type=hidden name=action value="saveColors">
 </form>
 
-<jsp:include page="footer.jsp" flush="true" />
+<%-- Footer --%>
+<%@ include file="footer.jsp" %>
 
 </body>
 </html>
