@@ -356,19 +356,19 @@
         </td>
 
         <td align="right" nowrap="nowrap">
-          <xsl:if test="@hasHelp='true'">
+          <xsl:if test="not(@hasHelp='false')">
             <a href="{$baseActionURL}?uP_help_target={@ID}">
               <img alt="help" src="{$mediaPath}/help.gif" width="16" height="16" border="0" />
             </a>
           </xsl:if>
 
-          <xsl:if test="@hasAbout='true'">
+          <xsl:if test="not(@hasAbout='false')">
             <a href="{$baseActionURL}?uP_about_target={@ID}">
               <img alt="about" src="{$mediaPath}/about.gif" width="16" height="16" border="0" />
             </a>
           </xsl:if>
 
-          <xsl:if test="@editable='true'">
+          <xsl:if test="not(@editable='false')">
             <a href="{$baseActionURL}?uP_edit_target={@ID}">
               <img alt="edit" src="{$mediaPath}/edit.gif" width="16" height="16" border="0" />
             </a>
@@ -380,7 +380,7 @@
             </a>
           </xsl:if>
 
-          <xsl:if test="@minimizable='true'">
+          <xsl:if test="not(@minimizable='false')">
             <xsl:choose>
               <xsl:when test="@minimized='true'">
                 <a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false">
@@ -396,13 +396,13 @@
             </xsl:choose>
           </xsl:if>
 
-          <xsl:if test="@detachable='true'">
+          <xsl:if test="not(@detachable='false')">
             <a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
               <img alt="detach" src="{$mediaPath}/detach.gif" width="16" height="16" border="0" />
             </a>
           </xsl:if>
 
-          <xsl:if test="@removable='true'">
+          <xsl:if test="not(@unremovable='true')">
             <a href="{$baseActionURL}?uP_remove_target={@ID}">
               <img alt="remove" src="{$mediaPath}/remove.gif" width="16" height="16" border="0" />
             </a>
