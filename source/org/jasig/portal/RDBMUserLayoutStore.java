@@ -602,7 +602,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         String sQuery = "DELETE FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
-        
+
         // remove profile mappings
         sQuery= "DELETE FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
@@ -612,11 +612,11 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         sQuery= "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
-        
+
         sQuery= "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
-        
+
       } finally {
         stmt.close();
       }
@@ -2489,9 +2489,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               } finally {
                 rs.close();
               }
-              sQuery = "UPDATE UP_USER SET CURR_LAY_ID=" + layoutId + " WHERE USER_ID=" + userId;
-              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-              stmt.executeUpdate(sQuery);
 
               sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
