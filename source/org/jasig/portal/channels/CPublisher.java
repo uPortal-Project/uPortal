@@ -59,8 +59,7 @@ import  java.sql.*;
  * @author John Laker
  * @version $Revision$
  */
-public class CPublisher
-    implements IPrivilegedChannel {
+public class CPublisher implements IPrivilegedChannel {
   private boolean DEBUG = false;
   private ChannelStaticData staticData = null;
   private ChannelRuntimeData runtimeData = null;
@@ -433,7 +432,7 @@ public class CPublisher
     try {
       this.con = this.rdbmService.getConnection();
       Statement stmt = con.createStatement();
-      String sUpdate = "UPDATE UP_CHANNELS SET APPROVED = 1 WHERE CHAN_ID = " + sChanId;
+      String sUpdate = "UPDATE UP_CHANNEL SET APPROVED = 1 WHERE CHAN_ID = " + sChanId;
       int iUpdated = stmt.executeUpdate(sUpdate);
       LogService.instance().log(LogService.DEBUG, "Approving channel ID: " + sChanId + ". Updated " + iUpdated + " rows.");
       stmt.close();
@@ -496,7 +495,7 @@ public class CPublisher
 
   /**
    * set up a control document for the stylesheet.
-   * grab it from the CPD.  The channelDefinition DTD should ensure
+   * grab it from the CPD.  The channelPublishingDocument DTD should ensure
    * that it's there and has all the attributes.
    * @return
    */
