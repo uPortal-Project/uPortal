@@ -313,7 +313,7 @@ public class ChannelRegistryManager {
             } else if (parameterAttName.equals("value")) {
               paramValue = parameterAttValue;
             } else if (parameterAttName.equals("override") && parameterAttValue.equals("yes")) {
-              paramOverride = "'Y'";
+              paramOverride = "Y";
             }
           }
 
