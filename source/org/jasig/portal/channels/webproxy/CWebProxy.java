@@ -47,6 +47,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -272,6 +273,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     state.xmlUri = sd.getParameter ("cw_xml");
     state.sslUri = sd.getParameter ("cw_ssl");
+    state.xslTitle = sd.getParameter ("cw_xslTitle");
+    state.xslUri = sd.getParameter ("cw_xsl");
     state.fullxmlUri = sd.getParameter ("cw_xml");
     state.passThrough = sd.getParameter ("cw_passThrough");
     state.tidy = sd.getParameter ("cw_tidy");
@@ -420,102 +423,118 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
        if ( state.buttonxmlUri != null )  // shouldn't happen here, but...
            state.fullxmlUri = state.buttonxmlUri;
-       else {
+       else 
+       {
+         //LogService.log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
+
+         // pass IPerson atts independent of the value of cw_passThrough
+         StringBuffer newXML = new StringBuffer();
+         String appendchar = "";
+
+         // here add in attributes according to cw_person
+         if (state.person != null && state.personAllow_set != null) 
+         {
+           StringTokenizer st = new StringTokenizer(state.person,",");
+           if (st != null)
+           {
+             while (st.hasMoreElements ())
+             {
+               String pName = st.nextToken();
+               if ((pName!=null)&&(!pName.trim().equals("")))
+               {
+                 if ( state.personAllow.trim().equals("*") ||
+                      state.personAllow_set.contains(pName) )
+                 {
+                   newXML.append(appendchar);
+                   appendchar = "&";
+                   newXML.append(pName);
+                   newXML.append("=");
+                   // note, this only gets the first one if it's a
+                   // java.util.Vector.  Should check
+                   String pVal = (String)state.iperson.getAttribute(pName);
+                   if (pVal != null)
+                     newXML.append(URLEncoder.encode(pVal));
+                 } 
+                 else {
+                   LogService.log(LogService.INFO,
+                   "CWebProxy: request to pass " + pName + " denied.");
+                 }
+               }
+             }
+           }
+         }
+         // end cw_person code
+
          // Is this a case where we need to pass request parameters to the xmlURI?
          if ( state.passThrough != null &&
             !state.passThrough.equalsIgnoreCase("none") &&
               ( state.passThrough.equalsIgnoreCase("all") ||
                 state.passThrough.equalsIgnoreCase("application") ||
                 rd.getParameter("cw_inChannelLink") != null ) )
-           {
-             //LogService.log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
-
-             StringBuffer newXML = new StringBuffer();
-             String appendchar = "";
-
-	     // here add in attributes according to cw_person
-	     
-	     if (person != null && state.personAllow_set != null) {
-               StringTokenizer st = new StringTokenizer(person,",");
-               if (st != null)
-                 {
-                   while (st.hasMoreElements ())
-                     {
-                       String pName = st.nextToken();
-                       if ((pName!=null)&&(!pName.trim().equals("")))
-		       {
-			 if ( state.personAllow.trim().equals("*") ||
-			   state.personAllow_set.contains(pName) )
-			 {
-                           newXML.append(appendchar);
-                           appendchar = "&";
-                           newXML.append(pName);
-                           newXML.append("=");
-                           // note, this only gets the first one if it's a
-                           // java.util.Vector.  Should check
-                           String pVal = (String)state.iperson.getAttribute(pName);
-                           if (pVal != null)
-                             newXML.append(URLEncoder.encode(pVal));
-			 } else {
-			   LogService.log(LogService.INFO,
-			     "CWebProxy: request to pass " + pName + " denied.");
-			 }
-                       }
-                     }
-                 }
-	       }
-	     // end cw_person code
-
-             // keyword and parameter processing
-             // NOTE: if both exist, only keywords are appended
-	     String keywords = rd.getKeywords();
-	     if (keywords != null)
-	     {
-	       if (appendchar.equals("&"))
-	         newXML.append("&keywords=" + keywords);
-	       else
-	         newXML.append(keywords);   
-	     }
+         {
+           // keyword and parameter processing
+           // NOTE: if both exist, only keywords are appended
+	   String keywords = rd.getKeywords();
+	   if (keywords != null)
+	   {
+	     if (appendchar.equals("&"))
+	       newXML.append("&keywords=" + keywords);
 	     else
-	     {
-               // want all runtime parameters not specific to WebProxy
-               Enumeration e=rd.getParameterNames ();
-               if (e!=null)
+	       newXML.append(keywords);   
+	   }
+	   else
+	   {
+             // want all runtime parameters not specific to WebProxy
+             Enumeration e=rd.getParameterNames ();
+             if (e!=null)
+             {
+               while (e.hasMoreElements ())
                {
-                 while (e.hasMoreElements ())
+                 String pName = (String) e.nextElement ();
+                 if ( !pName.startsWith("cw_") && !pName.startsWith("upc_")
+                                               && !pName.trim().equals("")) 
+                 {
+                   String[] value_array = rd.getParameterValues(pName);
+                   int i = 0;
+                   while ( i < value_array.length ) 
                    {
-                     String pName = (String) e.nextElement ();
-                     if ( !pName.startsWith("cw_") && !pName.startsWith("upc_")
-                                                   && !pName.trim().equals("")) {
-                       String[] value_array = rd.getParameterValues(pName);
-                       int i = 0;
-                       while ( i < value_array.length ) {
-                         newXML.append(appendchar);
-                         appendchar = "&";
-                         newXML.append(pName);
-                         newXML.append("=");
-                         newXML.append(URLEncoder.encode(value_array[i++]));
-                       }
-                     }
+                     newXML.append(appendchar);
+                     appendchar = "&";
+                     newXML.append(pName);
+                     newXML.append("=");
+                     newXML.append(URLEncoder.encode(value_array[i++]));
                    }
+                 }
                }
              }
+           }
+         }
 
-             state.reqParameters = newXML.toString();
-             state.fullxmlUri = state.xmlUri;
-             if (!state.runtimeData.getHttpRequestMethod().equals("POST")){
-                if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
-                  appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
-                  state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
-                }
-                state.reqParameters = null;
-             }
-             //LogService.log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
-          }
+         state.reqParameters = newXML.toString();
+         state.fullxmlUri = state.xmlUri;
+         if (!state.runtimeData.getHttpRequestMethod().equals("POST")) 
+         {
+           if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals("")))
+           {
+             appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
+             state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
+           }
+           state.reqParameters = null;
+         }
+
+         //LogService.log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
        }
-       state.key = state.fullxmlUri;
-     }
-     }
+
+       // set key for cache based on request parameters
+       // NOTE: POST requests are not idempotent and therefore are not
+       // retrievable from the cache
+       if (!state.runtimeData.getHttpRequestMethod().equals("POST"))
+         state.key = state.fullxmlUri;
+       else //generate a unique string as key
+         state.key = String.valueOf((new Date()).getTime());
+
+      }
+    }
   }
 
   /**
@@ -630,7 +649,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       XSLT xslt = new XSLT(this);
       if (xml != null)
         xslt.setXML(xml);
-      if (state.xslUri != null)
+      if (state.xslUri != null && (!state.xslUri.trim().equals("")))
         xslt.setXSL(state.xslUri);
       else
         xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
@@ -728,6 +747,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
   private URLConnection getConnection(String uri, ChannelState state) throws Exception
   {
+      // before making the connection, ensure all spaces in the URI are encoded
+      // not sure if any other characters will need to be re-encoded; will check it out
+      uri = uri.replaceAll(" ", "%20");
       URL url;
       if (state.localConnContext != null)
         url = ResourceLoader.getResourceAsURL(this.getClass(), state.localConnContext.getDescriptor(uri, state.runtimeData));
