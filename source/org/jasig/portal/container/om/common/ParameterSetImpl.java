@@ -88,5 +88,9 @@ public class ParameterSetImpl implements ParameterSet, ParameterSetCtrl, Seriali
     public void add(Parameter parameter) {
         parameters.put(parameter.getName(), parameter);
     }
+    
+    public int size() {
+        return parameters.size();
+    }
 
 }

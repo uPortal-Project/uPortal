@@ -88,5 +88,13 @@ public class ServletDefinitionListImpl implements ServletDefinitionList, Servlet
     public void add(ServletDefinition servletDefinition) {
         servletDefinitions.put(servletDefinition.getServletName(), servletDefinition);
     }
+    
+    /**
+     * Indicates the number of servlet definitions in this list
+     * @return size the number of servlets definitions in this list
+     */
+    public int size() {
+        return servletDefinitions.size();
+    }
 
 }
