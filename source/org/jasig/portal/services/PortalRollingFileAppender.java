@@ -55,15 +55,15 @@ import  org.apache.log4j.spi.LoggingEvent;
 
 
 /**
- * PortalRollingFileAppender extends FileAppender to backup the log files when 
- * they reach a certain size. 
+ * PortalRollingFileAppender extends FileAppender to backup the log files when
+ * they reach a certain size.
  * @author Heinz Richter
  * @author Ceki G&uuml;lc&uuml;
- * @author Bernie Durfee 
+ * @author Bernie Durfee
  */
 public class PortalRollingFileAppender extends FileAppender {
   /**
-   * The default maximum file size is 10MB. 
+   * The default maximum file size is 10MB.
    */
   protected long maxFileSize = 10*1024*1024;
   /**
@@ -87,7 +87,7 @@ public class PortalRollingFileAppender extends FileAppender {
    * Instantiate a RollingFileAppender and open the file designated by
    * <code>filename</code>. The opened filename will become the ouput
    * destination for this appender.
-   * 
+   *
    * <p>If the <code>append</code> parameter is true, the file will be
    * appended to. Otherwise, the file desginated by
    * <code>filename</code> will be truncated before being opened.
@@ -128,7 +128,7 @@ public class PortalRollingFileAppender extends FileAppender {
    * Implements the usual roll over behaviour.
    * <p>If <code>MaxBackupIndex</code> is positive, then files
    * {<code>File.1</code>, ..., <code>File.MaxBackupIndex -1</code>}
-   * are renamed to {<code>File.2</code>, ..., 
+   * are renamed to {<code>File.2</code>, ...,
    * <code>File.MaxBackupIndex</code>}. Moreover, <code>File</code> is
    * renamed <code>File.1</code> and closed. A new <code>File</code> is
    * created to receive further log output.
@@ -137,7 +137,7 @@ public class PortalRollingFileAppender extends FileAppender {
    */
   public void rollOver () {
     // Open the current file
-    File currentFile = new File(fileName);
+    File currentFile = new File(fileName).getAbsoluteFile();
     // Get just the name of the logfile
     String logFileName = currentFile.getName();
     // Get just the path to the log file
@@ -168,7 +168,7 @@ public class PortalRollingFileAppender extends FileAppender {
       }
       // Rename fileName to fileName.1
       target = new File(logFilePath + df.format(1) + '-' + logFileName);
-      this.closeFile();         // keep windows happy. 
+      this.closeFile();         // keep windows happy.
       file = new File(fileName);
       LogLog.debug("Renaming file " + file + " to " + target);
       file.renameTo(target);
@@ -198,7 +198,7 @@ public class PortalRollingFileAppender extends FileAppender {
 
   /**
    * Set the maximum number of backup files to keep around.
-   * 
+   *
    * <p>The <b>MaxBackupIndex</b> option determines how many backup
    * files are kept before the oldest is erased. This option takes
    * a positive integer value. If set to zero, then there will be no
@@ -248,7 +248,7 @@ public class PortalRollingFileAppender extends FileAppender {
 
   /**
    * This method differentiates RollingFileAppender from its super
-   * class.  
+   * class.
    */
   protected void subAppend (LoggingEvent event) {
     // Make sure the logs have rolled at least once
