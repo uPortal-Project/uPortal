@@ -36,6 +36,7 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.ChannelDefinition;
 
 /**
  * <p>Gathers portal usage statistics such as user logins.
@@ -78,5 +79,25 @@ public interface IStatsRecorder {
    */
   public void recordSessionDestroyed(IPerson person);
   
-  
+  /**
+   * Called when a user publishes a channel
+   * @param person, the person pubishing the channel
+   * @param channelDef, the channel being published
+   */
+  public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef);
+ 
+  /**
+   * Called when a user modifies an existing channel
+   * @param person, the person modifying the channel
+   * @param channelDef, the channel being modified
+   */
+  public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef);
+
+  /**
+   * Called when a user removes an existing channel
+   * @param person, the person removing the channel
+   * @param channelDef, the channel being removed
+   */
+  public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef);
+    
 }

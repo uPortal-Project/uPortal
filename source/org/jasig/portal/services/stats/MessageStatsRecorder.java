@@ -37,6 +37,7 @@ package org.jasig.portal.services.stats;
 
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.ChannelDefinition;
 
 /**
  * Formulates stats messages which can be logged, printed, etc.
@@ -77,7 +78,37 @@ public abstract class MessageStatsRecorder implements IStatsRecorder {
                  new java.util.Date();
     return fixMsg(msg);                 
   }
+  
+  public String getMessageForChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
+    String msg = "Channel '" +
+                 channelDef.getName() + "' " +
+                 "was published by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    return fixMsg(msg);
+  }    
 
+  public String getMessageForChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
+    String msg = "Channel '" +
+                 channelDef.getName() + "' " +
+                 "was modified by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    return fixMsg(msg);
+  }    
+  
+  public String getMessageForChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
+    String msg = "Channel '" +
+                 channelDef.getName() + "' " +
+                 "was removed by " +
+                 getDisplayName(person) + " " +
+                 "at " + 
+                 new java.util.Date();
+    return fixMsg(msg);
+  }  
+  
   /**
    * Creates a name suitable for displaying in a
    * stats message.  Indicates if user is a "guest" user.

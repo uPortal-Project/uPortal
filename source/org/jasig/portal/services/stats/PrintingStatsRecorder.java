@@ -36,6 +36,7 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.ChannelDefinition;
 
 /**
  * Prints portal statistics to std out.
@@ -63,6 +64,21 @@ public class PrintingStatsRecorder extends MessageStatsRecorder {
     String msg = super.getMessageForSessionDestroyed(person);
     System.out.println(msg);
   }
+  
+  public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
+    String msg = super.getMessageForChannelDefinitionPublished(person, channelDef);
+    System.out.println(msg);
+  }
+
+  public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
+    String msg = super.getMessageForChannelDefinitionModified(person, channelDef);
+    System.out.println(msg);
+  }
+
+  public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
+    String msg = super.getMessageForChannelDefinitionRemoved(person, channelDef);
+    System.out.println(msg);
+  }  
 }
 
 

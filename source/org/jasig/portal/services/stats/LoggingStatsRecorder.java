@@ -37,6 +37,7 @@ package org.jasig.portal.services.stats;
 
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.ChannelDefinition;
 
 /**
  * Logs portal statistics to the portal's log.
@@ -64,6 +65,21 @@ public class LoggingStatsRecorder extends MessageStatsRecorder {
     String msg = super.getMessageForSessionDestroyed(person);
     LogService.instance().log(LogService.INFO, msg);
   }
+  
+  public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
+    String msg = super.getMessageForChannelDefinitionPublished(person, channelDef);
+    LogService.instance().log(LogService.INFO, msg);
+  }
+
+  public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
+    String msg = super.getMessageForChannelDefinitionModified(person, channelDef);
+    LogService.instance().log(LogService.INFO, msg);
+  }
+
+  public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
+    String msg = super.getMessageForChannelDefinitionRemoved(person, channelDef);
+    LogService.instance().log(LogService.INFO, msg);
+  }  
 }
 
 

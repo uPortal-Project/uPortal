@@ -42,10 +42,14 @@ import org.jasig.portal.services.stats.RecordLoginWorkerTask;
 import org.jasig.portal.services.stats.RecordLogoutWorkerTask;
 import org.jasig.portal.services.stats.RecordSessionCreatedWorkerTask;
 import org.jasig.portal.services.stats.RecordSessionDestroyedWorkerTask;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.stats.RecordChannelDefinitionPublishedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelDefinitionModifiedWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelDefinitionRemovedWorkerTask;
 import org.jasig.portal.utils.threading.ThreadPool;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.jasig.portal.utils.threading.WorkTracker;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.PropertiesManager;
 
 /**
@@ -134,4 +138,37 @@ public class StatsRecorder {
     task.setStatsRecorder(instance().statsRecorder);
     WorkTracker workTracker = instance().threadPool.execute(task);
   }
+  
+  /**
+   * Record that a new channel is being published
+   * @param person, the person publishing the channel
+   * @param channelDef, the channel being published
+   */
+  public static void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
+    StatsRecorderWorkerTask task = new RecordChannelDefinitionPublishedWorkerTask(person, channelDef);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  } 
+  
+  /**
+   * Record that an existing channel is being modified
+   * @param person, the person modifying the channel
+   * @param channelDef, the channel being modified
+   */
+  public static void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
+    StatsRecorderWorkerTask task = new RecordChannelDefinitionModifiedWorkerTask(person, channelDef);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }  
+  
+  /**
+   * Record that a channel is being removed
+   * @param person, the person removing the channel
+   * @param channelDef, the channel being modified
+   */
+  public static void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
+    StatsRecorderWorkerTask task = new RecordChannelDefinitionRemovedWorkerTask(person, channelDef);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }   
 }

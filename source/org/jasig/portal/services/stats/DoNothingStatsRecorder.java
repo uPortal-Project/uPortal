@@ -36,6 +36,7 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.ChannelDefinition;
 
 /**
  * Does absolutely nothing with the recorded statistics.
@@ -49,6 +50,9 @@ public class DoNothingStatsRecorder implements IStatsRecorder {
   public void recordLogout(IPerson person) {}  
   public void recordSessionCreated(IPerson person) {}
   public void recordSessionDestroyed(IPerson person) {}
+  public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {}
+  public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {}
+  public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {}
 }
 
 
