@@ -54,7 +54,7 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
     
     private ServletConfig servletConfig = null;
     private Properties properties = null;
-	private static StaticInformationProvider staticInfoProvider = null;
+	private static StaticInformationProviderImpl staticInfoProvider = null;
     
     private static final String dynamicInformationProviderRequestParameterName = "org.apache.pluto.services.information.DynamicInformationProvider";
 
@@ -64,7 +64,7 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
         this.servletConfig = servletConfig;
         this.properties = properties;
 		staticInfoProvider = new StaticInformationProviderImpl();
-        ((StaticInformationProviderImpl)staticInfoProvider).init(servletConfig, properties);
+        staticInfoProvider.init(servletConfig, properties);
     }
     
     public void destroy() throws Exception {
