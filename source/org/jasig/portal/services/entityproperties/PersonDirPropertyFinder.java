@@ -37,6 +37,8 @@
 package  org.jasig.portal.services.entityproperties;
 
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.LogService;
