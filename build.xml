@@ -87,8 +87,8 @@
 
 -->
 
-  <property name="app.name"      value="uPortal"/>
-  <property name="app.version"   value="2.1"/>
+  <property name="app.name"      value="(set this in build.properties!)"/>
+  <property name="app.version"   value="(set this in build.properties!)"/>
   <property name="build.home"    value="build"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
