@@ -54,7 +54,7 @@ import  org.jasig.portal.utils.DTDResolver;
 import  org.jasig.portal.services.LogService;
 import  org.apache.xml.serialize.OutputFormat;
 import  org.apache.xml.serialize.XMLSerializer;
-import  org.jasig.portal.security.provider.RoleImpl;
+import  org.jasig.portal.security.IRole;
 
 
 /**
@@ -251,7 +251,7 @@ public class RDBMUserLayoutStore
     }
     return  channel;
   }
-  
+
   /**
    * put your documentation comment here
    * @param node
@@ -853,7 +853,7 @@ public class RDBMUserLayoutStore
             int catId = rs.getInt(1);
             String catTitle = rs.getString(2);
             String catDesc = rs.getString(3);
-            
+
             // Top level <category>
             Element category = doc.createElement("category");
             category.setAttribute("ID", "cat" + catId);
@@ -861,7 +861,7 @@ public class RDBMUserLayoutStore
             category.setAttribute("description", catDesc);
             ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(category.getAttribute("ID"), category);
             registry.appendChild(category);
-            
+
             // Add child categories and channels
             appendChildCategoriesAndChannels(category, catId);
           }
@@ -876,7 +876,7 @@ public class RDBMUserLayoutStore
     }
     return doc;
   }
-  
+
   protected void appendChildCategoriesAndChannels (Element category, int catId) throws SQLException {
     Document doc = category.getOwnerDocument();
     Connection con = rdbmService.getConnection();
@@ -899,11 +899,11 @@ public class RDBMUserLayoutStore
         childCategory.setAttribute("description", childCatDesc);
         ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(childCategory.getAttribute("ID"), childCategory);
         category.appendChild(childCategory);
-        
+
         // Append child categories and channels recursively
         appendChildCategoriesAndChannels(childCategory, childCatId);
       }
-      
+
       // Append children channels
       query = "SELECT CHAN_ID FROM UP_CAT_CHAN WHERE CAT_ID=" + catId;
       LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): " + query);
@@ -922,7 +922,7 @@ public class RDBMUserLayoutStore
       con.close();
     }
   }
-  
+
   protected void appendChildChannel (Node category, int chanId) throws SQLException {
     Document doc = category.getOwnerDocument();
     Connection con = rdbmService.getConnection();
@@ -951,15 +951,15 @@ public class RDBMUserLayoutStore
         rs = stmt.executeQuery(query);
         while (rs.next()) {
           createChannelNodeParameters((org.apache.xerces.dom.DocumentImpl)doc, rs, channel);
-        }        
+        }
         category.appendChild(channel);
       }
     } finally {
       rs.close();
       stmt.close();
     }
-  }  
-  
+  }
+
   /**
    * Get channel types xml.
    * It will look something like this:
@@ -1003,33 +1003,33 @@ public class RDBMUserLayoutStore
             String name = rs.getString(3);
             String descr = rs.getString(4);
             String cpdUri = rs.getString(5);
-            
+
             // <channelType>
             Element channelType = doc.createElement("channelType");
             channelType.setAttribute("ID", String.valueOf(ID));
 
             Element elem = null;
-            
+
             // <class>
             elem = doc.createElement("class");
             elem.appendChild(doc.createTextNode(javaClass));
             channelType.appendChild(elem);
-            
+
             // <name>
             elem = doc.createElement("name");
             elem.appendChild(doc.createTextNode(name));
             channelType.appendChild(elem);
-            
+
             // <description>
             elem = doc.createElement("description");
             elem.appendChild(doc.createTextNode(descr));
             channelType.appendChild(elem);
-            
+
             // <cpd-uri>
             elem = doc.createElement("cpd-uri");
             elem.appendChild(doc.createTextNode(cpdUri));
             channelType.appendChild(elem);
-            
+
             root.appendChild(channelType);
           }
         } finally {
@@ -1187,9 +1187,9 @@ public class RDBMUserLayoutStore
   /**
    * put your documentation comment here
    * @return
-   * @exception Exception
+   * @exception java.sql.SQLException
    */
-  public Vector getAllRoles () throws Exception {
+  public Vector getAllRoles () throws SQLException {
     Vector roles = new Vector();
     Connection con = rdbmService.getConnection();
     try {
@@ -1199,11 +1199,12 @@ public class RDBMUserLayoutStore
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getAllRolessQuery(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
-          RoleImpl roleImpl = null;
+          IRole role = null;
           // Add all of the roles in the portal database to to the vector
           while (rs.next()) {
-            roleImpl = new RoleImpl(rs.getString("ROLE_TITLE"));
-            roles.add(roleImpl);
+            role = new org.jasig.portal.security.provider.RoleImpl(rs.getString(1));
+            role.setAttribute("description", rs.getString(2));
+            roles.add(role);
           }
         } finally {
           rs.close();
