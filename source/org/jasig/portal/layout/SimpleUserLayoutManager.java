@@ -475,13 +475,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public void markAddTargets(IUserLayoutNodeDescription node) {
         // get all folders
-        this.updateCacheKey();
+        //this.updateCacheKey();
     }
 
 
     public void markMoveTargets(String nodeId) throws PortalException {
         //IUserLayoutNodeDescription node=getNode(nodeId);
-        this.updateCacheKey();
+        //this.updateCacheKey();
     }
 
     public String getParentId(String nodeId) throws PortalException {
