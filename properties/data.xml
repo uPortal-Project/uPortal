@@ -2177,7 +2177,6 @@
     <name>UPC_BOOKMARKS</name>
     <rows>
       <row>
-        <column><name>ID</name><value>0</value></column>
         <column><name>PORTAL_USER_ID</name><value>0</value></column>
         <column><name>BOOKMARK_XML</name><value><![CDATA[
           <?xml version="1.0"?>

@@ -247,11 +247,10 @@
   <table>
     <name>UPC_BOOKMARKS</name>
     <columns>
-      <column> <name>ID</name>             <type>INTEGER</type>     </column>
       <column> <name>PORTAL_USER_ID</name> <type>INTEGER</type>     </column>
       <column> <name>BOOKMARK_XML</name>   <type>LONGVARCHAR</type> </column>
     </columns>
-    <primary-key>ID</primary-key>
+    <primary-key>PORTAL_USER_ID</primary-key>
   </table>
 
   <table>

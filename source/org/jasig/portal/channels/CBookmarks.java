@@ -78,6 +78,7 @@ import  java.util.Hashtable;
 import  java.util.Enumeration;
 import  java.net.URL;
 
+
 /**
  * 
  * @author Peter Kharchenko
@@ -134,7 +135,7 @@ public class CBookmarks extends BaseChannel {
       // Get the current user's ID
       int userid = staticData.getPerson().getID();
       // Attempt to retrieve the user's bookmark's
-      String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID='" + userid + "'";
+      String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + userid;
       // Get the result set
       ResultSet rs = connection.createStatement().executeQuery(query);
       if (rs.next()) {
@@ -190,8 +191,8 @@ public class CBookmarks extends BaseChannel {
         Logger.log(Logger.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
       }
       // Now add a row to the database for the user
-      String insert = "INSERT INTO UPC_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) " + "VALUES (" + staticData.getPerson().getID()
-          + ", " + staticData.getPerson().getID() + ",'" + inputXML + "')";
+      String insert = "INSERT INTO UPC_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) VALUES (" + staticData.getPerson().getID()
+          + ",'" + inputXML + "')";
       //Logger.log(Logger.DEBUG, insert);
       connection.createStatement().executeUpdate(insert);
     } catch (Exception e) {
@@ -224,8 +225,8 @@ public class CBookmarks extends BaseChannel {
       xmlSerializer.serialize(m_bookmarksXML);
       // Get a connection to the database
       connection = getConnection();
-      String update = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + stringWriter.toString() + "' " + "WHERE PORTAL_USER_ID = '"
-          + staticData.getPerson().getID() + "'";
+      String update = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + stringWriter.toString() + "' WHERE PORTAL_USER_ID = "
+          + staticData.getPerson().getID();
       connection.createStatement().executeUpdate(update);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
@@ -610,7 +611,7 @@ public class CBookmarks extends BaseChannel {
     // Add the baseActionURL to the stylesheet parameters
     parameters.put("baseActionURL", runtimeData.getBaseActionURL());
     // Use the XSLT utility to perform the transformation
-    String xslURI=m_stylesheetSet.getStylesheetURI(stylesheetName,runtimeData.getBrowserInfo());
+    String xslURI = m_stylesheetSet.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     XSLT.transform(inputXML, new URL(xslURI), out, parameters);
   }
 
