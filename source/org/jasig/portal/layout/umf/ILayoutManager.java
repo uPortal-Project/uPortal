@@ -16,9 +16,11 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  */
 public interface ILayoutManager {
 	
-	public ILayoutNode addNode ( ILayoutNodeId nodeId, ILayoutNodeId parentId, INodeId nextId );
+	public ILayoutNode addNode ( IUserLayoutNodeDescription nodeDesc, INodeId parentId, INodeId nextId );
 	
-	public boolean deleteNode ( ILayoutNodeId nodeId );
+	public ILayoutNode moveNode ( INodeId nodeId, INodeId parentId, INodeId nextId );
+	
+	public boolean deleteNode ( INodeId nodeId );
 	
 	public IUserLayoutNodeDescription updateNode ( IUserLayoutNodeDescription nodeDesc );
 

@@ -7,6 +7,7 @@ package org.jasig.portal.layout.umf;
 
 import org.jasig.portal.layout.node.INodeId;
 import org.jasig.portal.layout.node.ILayoutNode;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 
 /**
  * User Modifiable Fragment Layout Manager interface.
@@ -15,9 +16,13 @@ import org.jasig.portal.layout.node.ILayoutNode;
  */
 public interface IUmfLayoutManager extends ILayoutManager {
 	
-	public ILayoutNode addNode ( ILayoutNodeId nodeId, IFragmentNodeId parentId, INodeId nextId );
-	public ILayoutNode addNode ( IFragmentNodeId nodeId, ILayoutNodeId parentId, INodeId nextId );
-	public ILayoutNode addNode ( IFragmentNodeId nodeId, IFragmentNodeId parentId, INodeId nextId );
+	public ILayoutNode addNode ( IUserLayoutNodeDescription nodeDesc, IFragmentNodeId parentId, INodeId nextId );
+	public ILayoutNode addNode ( IUserLayoutNodeDescription nodeDesc, ILayoutNodeId parentId, INodeId nextId );
+	
+	public ILayoutNode moveNode ( ILayoutNodeId nodeId, ILayoutNodeId parentId, INodeId nextId );
+	public ILayoutNode moveNode ( ILayoutNodeId nodeId, IFragmentNodeId parentId, INodeId nextId );
+	public ILayoutNode moveNode ( IFragmentNodeId nodeId, ILayoutNodeId parentId, INodeId nextId );
+	public ILayoutNode moveNode ( IFragmentNodeId nodeId, IFragmentNodeId parentId, INodeId nextId );
 	
 	public boolean deleteNode ( IFragmentNodeId nodeId );
 	
