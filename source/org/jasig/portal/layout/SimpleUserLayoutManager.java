@@ -164,7 +164,6 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                         LayoutEventListener lel=(LayoutEventListener)i.next();
                         lel.layoutLoaded();
                     }
-
                 } else {
                     throw new PortalException("Null user layout returned for ownerId=\""+owner.getID()+"\", profileId=\""+profile.getProfileId()+"\", layoutId=\""+profile.getLayoutId()+"\"");
                 }
@@ -593,6 +592,16 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public int getLayoutId() {
         return profile.getLayoutId();
+    }
+
+    /**
+     * Returns a subscription id given a functional name.
+     *
+     * @param fname  the functional name to lookup.
+     * @return a <code>String</code> subscription id.
+     */
+    public String getSubscribeId(String fname){
+        return "";
     }
 
     public boolean addLayoutEventListener(LayoutEventListener l) {

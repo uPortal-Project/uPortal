@@ -1758,5 +1758,14 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
         return ROOT_FOLDER_ID;
     }
 
+    /**
+     * Returns a subscription id given a functional name.
+     *
+     * @param fname  the functional name to lookup.
+     * @return a <code>String</code> subscription id.
+     */
+    public String getSubscribeId(String fname){
+        return "";
+    }
 
 }

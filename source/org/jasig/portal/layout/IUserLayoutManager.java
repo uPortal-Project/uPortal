@@ -278,6 +278,14 @@ public interface IUserLayoutManager {
     public int getLayoutId();
 
     /**
+     * Returns a subscription id using the supplied functional name.
+     *
+     * @param fname  the functional name to lookup
+     * @return a <code>String</code> subscription id
+     */
+    public String getSubscribeId(String fname);
+
+    /**
      * Returns an id of the root folder.
      *
      * @return a <code>String</code> value

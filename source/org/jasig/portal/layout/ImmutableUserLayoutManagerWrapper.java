@@ -167,6 +167,16 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     /**
+     * Returns a subscription id given a functional name.
+     *
+     * @param fname  the functional name to lookup.
+     * @return a <code>String</code> subscription id.
+     */
+    public String getSubscribeId(String fname){
+        return man.getSubscribeId(fname);
+    }
+
+    /**
      * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
      *
      * @param nodeType a node type value
