@@ -89,8 +89,7 @@ public interface IEntityGroup extends IGroupMember
  */
   public void setName(String name) throws GroupsException;
 /**
- * Commit the <code>IEntityGroup</code> BUT NOT ITS MEMBERSHIPS to the data store.
- * Use <code>updateMembers()</code> to commit the memberships.
+ * Commit the <code>IEntityGroup</code> AND ITS MEMBERSHIPS to the data store.
  */
   public void update() throws GroupsException;
 /**
