@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">reviewChannel</xsl:param>
+  <xsl:param name="action">selectGeneralSettings</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -671,9 +671,11 @@
                 <td>
                   <span class="uportal-label">Channel Description:</span><br/>
                   <textarea name="description" cols="50" rows="3" class="uportal-input-text">
-                    <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@description">
+                  <xsl:choose>
+                    <xsl:when test="manageChannels/selectGeneralSettings/params/step/channel/@description">
                       <xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@description"/>
-                    </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>Enter a description</xsl:otherwise></xsl:choose>
                   </textarea>
                 </td>
               </tr>
