@@ -61,38 +61,19 @@ public class RDBMChannelRegistryStore
 
   /** Returns a string of XML which describes the channel registry.
    * Right now this is being stored as a string in a field but could be also implemented to get from multiple tables.
-   * @param catID a category ID
-   * @param role role of the current user
    * @return a string of XML
    */
-  public Document getRegistryXML (String catID, String role) {
-    try {
-      chanDoc = new org.apache.xerces.dom.DocumentImpl();
-      Element root = chanDoc.createElement("registry");
-      root.appendChild(GenericPortalBean.getUserLayoutStore().getRegistryXML(chanDoc, root, catID, role));
-      chanDoc.appendChild(root);
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
-    }
-    return  chanDoc;
-  }
-
-  /** Returns a string of XML which describes the channel types.
-   * Right now this is being stored as a string in a field but could be also implemented to get from multiple tables.
-   * @param catID a category ID
-   * @param role role of the current user
-   * @return a string of XML
+  public Document getChannelRegistryXML () throws java.sql.SQLException {
+    return RdbmServices.getUserLayoutStoreImpl().getChannelRegistryXML();
+  }  
+  
+  /** 
+   * Returns a string of XML which describes the channel types.
+   * @return channelTypes, the list of publishable channel types
+   * @throws java.lang.Exception
    */
-  public Document getTypesXML (String role) {
-    try {
-      types = new DocumentImpl();
-      Element root = types.createElement("channelTypes");
-      GenericPortalBean.getUserLayoutStore().getTypesXML(types, root, role);
-      types.appendChild(root);
-    } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
-    }
-    return  types;
+  public Document getChannelTypesXML () throws Exception {
+    return RdbmServices.getUserLayoutStoreImpl().getChannelTypesXML();
   }
 
   /** Returns a string of XML which describes the channel categories.

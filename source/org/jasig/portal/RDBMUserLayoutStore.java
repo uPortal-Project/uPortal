@@ -51,6 +51,7 @@ import  java.util.*;
 import  org.xml.sax.EntityResolver;
 import  org.xml.sax.InputSource;
 import  org.jasig.portal.utils.DTDResolver;
+import  org.jasig.portal.services.LogService;
 import  org.apache.xml.serialize.OutputFormat;
 import  org.apache.xml.serialize.XMLSerializer;
 import  org.jasig.portal.security.provider.RoleImpl;
@@ -249,7 +250,7 @@ public class RDBMUserLayoutStore
     }
     return  channel;
   }
-
+  
   /**
    * put your documentation comment here
    * @param node
@@ -290,7 +291,7 @@ public class RDBMUserLayoutStore
     Element structure;
     String sQuery = "SELECT * FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID="
         + structId;
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
+    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
     ResultSet rs = stmt.executeQuery(sQuery);
     try {
       rs.next();
@@ -306,7 +307,7 @@ public class RDBMUserLayoutStore
     }
     sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID="
         + structId;
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
+    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
     rs = stmt.executeQuery(sQuery);
     try {
       while (rs.next()) {
@@ -383,7 +384,7 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "SELECT UC.CHAN_ID FROM UP_CHANNEL UC, UP_ROLE_CHAN URC, UP_ROLE UR, UP_USER_ROLE UUR " + "WHERE UUR.USER_ID="
           + userId + " AND UC.CHAN_ID=" + chanId + " AND UUR.ROLE_ID=UR.ROLE_ID AND UR.ROLE_ID=URC.ROLE_ID AND URC.CHAN_ID=UC.CHAN_ID";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::channelInUserRole(): " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::channelInUserRole(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (!rs.next()) {
@@ -419,7 +420,7 @@ public class RDBMUserLayoutStore
         /* No access to channel. Replace it with the error channel and a suitable message */
 
         /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-        Logger.log(Logger.INFO, "RDBMUserLayoutStore::createLayoutStructure(): No role access (ignored at the moment) for channel "
+        LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::createLayoutStructure(): No role access (ignored at the moment) for channel "
             + chanId + " for user " + userId);
 
         // return new ErrorChannel()
@@ -469,7 +470,7 @@ public class RDBMUserLayoutStore
         long startTime = System.currentTimeMillis();
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
             profileId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
         int layoutId;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
@@ -479,7 +480,7 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
@@ -493,7 +494,7 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         long stopTime = System.currentTimeMillis();
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
         doc.appendChild(root);
         if (DEBUG > 1) {
@@ -525,7 +526,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           if (rs.next()) {
@@ -536,10 +537,10 @@ public class RDBMUserLayoutStore
         }
         String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
         String sQuery = "DELETE FROM UP_STRUCT_PARAM WHERE " + selectString;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "DELETE FROM UP_LAYOUT_STRUCT WHERE " + selectString;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
         stmt.executeUpdate(sQuery);
         if (DEBUG > 1) {
           System.err.println("--> saving document");
@@ -600,7 +601,7 @@ public class RDBMUserLayoutStore
     int childStructId = 0;
     String sQuery;
     if (DEBUG > 0) {
-      Logger.log(Logger.DEBUG, "-->" + node.getNodeName() + "@" + saveStructId);
+      LogService.instance().log(LogService.DEBUG, "-->" + node.getNodeName() + "@" + saveStructId);
     }
     if (node.hasChildNodes()) {
       childStructId = saveStructure(node.getFirstChild(), stmt, userId, layoutId);
@@ -625,7 +626,7 @@ public class RDBMUserLayoutStore
         + chanId + "," + structName + ",'" + structure.getAttribute("type") + "'," + "'" + dbBool(structure.getAttribute("hidden"))
         + "','" + dbBool(structure.getAttribute("immutable")) + "'," + "'" + dbBool(structure.getAttribute("unremovable"))
         + "')";
-    Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
+    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
     stmt.executeUpdate(sQuery);
 
     NodeList parameters = node.getChildNodes();
@@ -648,7 +649,7 @@ public class RDBMUserLayoutStore
           else {
             sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) VALUES ("
                 + userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nodeValue + "')";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -677,7 +678,7 @@ public class RDBMUserLayoutStore
       try {
         for (int i = 0; i < catID.length; i++) {
           String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + catID[i] + ")";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
           stmt.executeUpdate(sInsert);
         }
         // Commit the transaction
@@ -754,7 +755,7 @@ public class RDBMUserLayoutStore
         String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approverId + ", CHAN_APVL_DT = " +
         "{ts '" + approveDate.toString() + "'}" +
         " WHERE CHAN_ID = " + chanId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
       } finally {
         stmt.close();
@@ -790,7 +791,7 @@ public class RDBMUserLayoutStore
           + "'" + ",'" + dbBool(channel.getAttribute("editable")) + "'" + ",'" + dbBool(channel.getAttribute("hasHelp"))
           + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" + ",'" + dbBool(channel.getAttribute("unremovable"))
           + "'," + "'" + dbBool(channel.getAttribute("detachable")) + "'" + ",'" + sqlName + "','" + sqlFName + "')";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
       stmt.executeUpdate(sInsert);
       NodeList parameters = channel.getChildNodes();
       if (parameters != null) {
@@ -821,7 +822,7 @@ public class RDBMUserLayoutStore
             }
             sInsert = "INSERT INTO UP_CHAN_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
                 ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
             stmt.executeUpdate(sInsert);
           }
         }
@@ -836,52 +837,33 @@ public class RDBMUserLayoutStore
     }
   }
 
-  /**
-   * put your documentation comment here
-   * @param chanDoc
-   * @param root
-   * @param catID
-   * @param role
-   * @return
-   * @exception Exception
-   */
-  public Element getRegistryXML (org.apache.xerces.dom.DocumentImpl chanDoc, Element root, String catID, String role) throws Exception {
-    String catid = "";
-    Element cat = null;
+  public Document getChannelRegistryXML () throws SQLException {
+    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Element registry = doc.createElement("registry");
+    doc.appendChild(registry);
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
-        java.sql.Timestamp rightNow = new java.sql.Timestamp(System.currentTimeMillis());
-        String sQuery = "SELECT CL.CAT_ID, CL.CAT_TITLE, CHCL.CHAN_ID " + "FROM UP_CATEGORY CL, UP_CHANNEL CH, UP_CAT_CHAN CHCL "
-            + "WHERE CH.CHAN_ID=CHCL.CHAN_ID AND CHCL.CAT_ID=CL.CAT_ID AND CH.CHAN_APVL_DT <=" +
-            "{ts '" + (new java.sql.Timestamp(System.currentTimeMillis())).toString() + "'}";
-        if (catID != null)
-          sQuery += " AND CL.CAT_ID=" + catID;
-        sQuery += " ORDER BY CL.CAT_TITLE, CH.CHAN_TITLE";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getRegistryXML(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
+        String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID=NULL ORDER BY CAT_TITLE";
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
+        ResultSet rs = stmt.executeQuery(query);
         try {
           while (rs.next()) {
-            String catnm = rs.getString(2);
-            int chanId = rs.getInt(3);
-            Node chan = null;
-            String s = rs.getString(1);
-            if (!s.equals(catid)) {
-              if (catid.length() > 0) {
-                root.appendChild(cat);
-              }
-              catid = s;
-              cat = chanDoc.createElement("category");
-              cat.setAttribute("ID", "cat" + catid);
-              cat.setAttribute("name", catnm);
-              chanDoc.putIdentifier(cat.getAttribute("ID"), cat);
-            }
-            Element child = createChannelNode(con, chanDoc, chanId, "t" + chanId);
-            if (DEBUG > 3) {
-              System.err.println("channel " + child.getAttribute("name") + " has ID " + child.getAttribute("ID"));
-            }
-            cat.appendChild(child);
+            int catId = rs.getInt(1);
+            String catTitle = rs.getString(2);
+            String catDesc = rs.getString(3);
+            
+            // Top level <category>
+            Element category = doc.createElement("category");
+            category.setAttribute("ID", "cat" + catId);
+            category.setAttribute("name", catTitle);
+            category.setAttribute("description", catDesc);
+            ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(category.getAttribute("ID"), category);
+            registry.appendChild(category);
+            
+            // Add child categories and channels
+            appendChildCategoriesAndChannels(category, catId);
           }
         } finally {
           rs.close();
@@ -892,39 +874,163 @@ public class RDBMUserLayoutStore
     } finally {
       rdbmService.releaseConnection(con);
     }
-    return  cat;
+    return doc;
   }
+  
+  protected void appendChildCategoriesAndChannels (Element category, int catId) throws SQLException {
+    Document doc = category.getOwnerDocument();
+    Connection con = rdbmService.getConnection();
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      stmt = con.createStatement();
+      String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID=" + catId;
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): " + query);
+      rs = stmt.executeQuery(query);
+      while (rs.next()) {
+        int childCatId = rs.getInt(1);
+        String childCatTitle = rs.getString(2);
+        String childCatDesc = rs.getString(3);
 
+        // Child <category>
+        Element childCategory = doc.createElement("category");
+        childCategory.setAttribute("ID", "cat" + childCatId);
+        childCategory.setAttribute("name", childCatTitle);
+        childCategory.setAttribute("description", childCatDesc);
+        ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(childCategory.getAttribute("ID"), childCategory);
+        category.appendChild(childCategory);
+        
+        // Append child categories and channels recursively
+        appendChildCategoriesAndChannels(childCategory, childCatId);
+      }
+      
+      // Append children channels
+      query = "SELECT CHAN_ID FROM UP_CAT_CHAN WHERE CAT_ID=" + catId;
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): " + query);
+      rs = stmt.executeQuery(query);
+      while (rs.next()) {
+        int chanId = rs.getInt(1);
+        // This createChannelNode() method is getting a null pointer exception.
+        // If I can fix this then I can
+        // use the next two lines and remove the appendChildChannel(category, chanId) method.
+        // Element channel = createChannelNode (con, (org.apache.xerces.dom.DocumentImpl)doc, chanId, "chan" + chanId);
+        // category.appendChild(channel);
+        appendChildChannel(category, chanId);
+      }
+    } finally {
+      stmt.close();
+      con.close();
+    }
+  }
+  
+  protected void appendChildChannel (Node category, int chanId) throws SQLException {
+    Document doc = category.getOwnerDocument();
+    Connection con = rdbmService.getConnection();
+    Statement stmt = null;
+    ResultSet rs = null;
+    Element channel = null;
+    try {
+      stmt = con.createStatement();
+      String query = "SELECT * FROM UP_CHANNEL WHERE CHAN_ID=" + chanId;
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildChannel(): " + query);
+      rs = stmt.executeQuery(query);
+      if (rs.next()) {
+        if (!channelApproved(rs.getTimestamp("CHAN_APVL_DT"))) {
+          /* Channel hasn't been approved yet. Replace it with the error channel and a suitable message */
+
+          /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
+          LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::createLayoutStructure(): Channel " + chanId + "hasn't been approved for publishing yet (ignored at the moment)");
+          // return new ErrorChannel()
+        }
+
+        channel = doc.createElement("channel");
+        createChannelNodeHeaders((org.apache.xerces.dom.DocumentImpl)doc, chanId, "chan" + chanId, rs, channel);
+        rs.close();
+        query = "SELECT * FROM UP_CHAN_PARAM WHERE CHAN_ID=" + chanId;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createChannelNode(): " + query);
+        rs = stmt.executeQuery(query);
+        while (rs.next()) {
+          createChannelNodeParameters((org.apache.xerces.dom.DocumentImpl)doc, rs, channel);
+        }        
+        category.appendChild(channel);
+      }
+    } finally {
+      rs.close();
+      stmt.close();
+    }
+  }  
+  
   /**
-   * put your documentation comment here
-   * @param types
-   * @param root
-   * @param role
-   * @exception Exception
+   * Get channel types xml.
+   * It will look something like this:
+   * <p><code>
+   *
+   *<channelTypes>
+   *  <channelType ID="0">
+   *    <class>org.jasig.portal.channels.CImage</class>
+   *    <name>Image</name>
+   *    <description>Simple channel to display an image with optional
+   *        caption and subcaption</description>
+   *    <definition>webpages/media/org/jasig/portal/channels/CImage/CImage.cpd</definition>
+   *  </channelType>
+   *  <channelType ID="1">
+   *    <class>org.jasig.portal.channels.CWebProxy</class>
+   *    <name>Web Proxy</name>
+   *    <description>Incorporate a dynamic HTML or XML application</description>
+   *    <definition>webpages/media/org/jasig/portal/channels/CWebProxy/CWebProxy.cpd</definition>
+   *  </channelType>
+   *</channelTypes>
+   *
+   * </code></p>
+   * @return types, the channel types as a Document
+   * @throws java.lang.Exception
    */
-  public void getTypesXML (Document types, Element root, String role) throws Exception {
-    String chanXML = null;
-    String catid = "";
+  public Document getChannelTypesXML () throws Exception {
+    Document doc = new org.apache.xerces.dom.DocumentImpl();
+    Element root = doc.createElement("channelTypes");
+    doc.appendChild(root);
     Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
-        String sQuery = "SELECT TYPE_NAME, TYPE_DEF_URI FROM UP_CHAN_TYPES";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getTypesXML(): " + sQuery);
+        String sQuery = "SELECT TYPE_ID, TYPE, TYPE_NAME, TYPE_DESCR, TYPE_DEF_URI FROM UP_CHAN_TYPES";
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelTypesXML(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
-            String name = rs.getString(1);
-            String uri = rs.getString(2);
-            Node chan = null;
-            Element type = types.createElement("channelType");
-            Element elem = types.createElement("name");
-            elem.appendChild(types.createTextNode(name));
-            type.appendChild(elem);
-            elem = types.createElement("definition");
-            elem.appendChild(types.createTextNode(uri));
-            type.appendChild(elem);
-            root.appendChild(type);
+            int ID = rs.getInt(1);
+            String javaClass = rs.getString(2);
+            String name = rs.getString(3);
+            String descr = rs.getString(4);
+            String cpdUri = rs.getString(5);
+            
+            // <channelType>
+            Element channelType = doc.createElement("channelType");
+            channelType.setAttribute("ID", String.valueOf(ID));
+
+            Element elem = null;
+            
+            // <class>
+            elem = doc.createElement("class");
+            elem.appendChild(doc.createTextNode(javaClass));
+            channelType.appendChild(elem);
+            
+            // <name>
+            elem = doc.createElement("name");
+            elem.appendChild(doc.createTextNode(name));
+            channelType.appendChild(elem);
+            
+            // <description>
+            elem = doc.createElement("description");
+            elem.appendChild(doc.createTextNode(descr));
+            channelType.appendChild(elem);
+            
+            // <definition>
+            elem = doc.createElement("definition");
+            elem.appendChild(doc.createTextNode(cpdUri));
+            channelType.appendChild(elem);
+            
+            root.appendChild(channelType);
           }
         } finally {
           rs.close();
@@ -935,6 +1041,7 @@ public class RDBMUserLayoutStore
     } finally {
       rdbmService.releaseConnection(con);
     }
+    return doc;
   }
 
   /** Returns a string of XML which describes the channel categories.
@@ -951,7 +1058,7 @@ public class RDBMUserLayoutStore
               "' AND URC.ROLE_ID = UR.ROLE_ID AND URC.CHAN_ID = UC.CHAN_ID" + " AND UC.CHAN_ID = UCC.CHAN_ID AND UCC.CAT_ID = UC.CAT_ID";
         }
         sQuery += " ORDER BY UC.CAT_TITLE";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getCategoryXML(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getCategoryXML(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           Element cat = null;
@@ -1020,7 +1127,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           rs.next();
@@ -1028,7 +1135,7 @@ public class RDBMUserLayoutStore
           int nextStructId = currentStructId + 1;
           sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + userId + " AND NEXT_STRUCT_ID="
               + currentStructId;
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getNextStructId(): " + sQuery);
           stmt.executeUpdate(sQuery);
           return  prefix + nextStructId;
         } finally {
@@ -1055,7 +1162,7 @@ public class RDBMUserLayoutStore
     try {
       String query = "SELECT * FROM UP_USER_ROLE UUR, UP_ROLE UR, UP_USER UU " + "WHERE UU.USER_ID=" + userId + " UUR.USER_ID=UU.USER_ID AND UUR.ROLE_ID=UR.ROLE_ID "
           + "AND " + "UPPER(ROLE_TITLE)=UPPER('" + role + "')";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::isUserInRole(): " + query);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::isUserInRole(): " + query);
       Statement stmt = con.createStatement();
       try {
         ResultSet rs = stmt.executeQuery(query);
@@ -1089,7 +1196,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT ROLE_TITLE, ROLE_DESC FROM UP_ROLE";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getAllRolessQuery(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getAllRolessQuery(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           RoleImpl roleImpl = null;
@@ -1128,13 +1235,13 @@ public class RDBMUserLayoutStore
         // Count the number of records inserted
         for (int i = 0; i < roles.size(); i++) {
           String sQuery = "SELECT ROLE_ID FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           try {
             rs.next();
             int roleId = rs.getInt("ROLE_ID");
             String sInsert = "INSERT INTO UP_ROLE_CHAN (CHAN_ID, ROLE_ID) VALUES (" + channelID + "," + roleId + ")";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sInsert);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setChannelRoles(): " + sInsert);
             recordsInserted += stmt.executeUpdate(sInsert);
           } finally {
             rs.close();
@@ -1168,7 +1275,7 @@ public class RDBMUserLayoutStore
       try {
         String query = "SELECT ROLE_TITLE, CHAN_ID FROM UP_ROLE_CHAN UCR, UP_ROLE UR, UP_CHANNEL UC " + "WHERE UC.CHAN_ID="
             + channelID + " AND UC.CHAN_ID=URC.CHAN_ID AND URC.ROLE_ID=UR.ROLE_ID";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getChannelRoles(): " + query);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRoles(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           while (rs.next()) {
@@ -1198,7 +1305,7 @@ public class RDBMUserLayoutStore
       try {
         String query = "SELECT ROLE_TITLE, USER_ID FROM UP_USER_ROLE UUR, UP_ROLE UR, UP_USER UU " + "WHERE UU.USER_ID="
             + userId + " AND UU.USER_ID=UUR.USER_ID AND UUR.ROLE_ID=UR.ROLE_ID";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserRoles(): " + query);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserRoles(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
           while (rs.next()) {
@@ -1231,16 +1338,16 @@ public class RDBMUserLayoutStore
         int insertCount = 0;
         for (int i = 0; i < roles.size(); i++) {
           String query = "SELECT ROLE_ID, ROLE_TITLE FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addUserRoles(): " + query);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addUserRoles(): " + query);
           ResultSet rs = stmt.executeQuery(query);
           try {
             rs.next();
             int roleId = rs.getInt("ROLE_ID");
             String insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID) VALUES (" + userId + ", " + roleId + ")";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addUserRoles(): " + insert);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addUserRoles(): " + insert);
             insertCount = stmt.executeUpdate(insert);
             if (insertCount != 1) {
-              Logger.log(Logger.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
+              LogService.instance().log(LogService.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
             }
           } finally {
             rs.close();
@@ -1276,10 +1383,10 @@ public class RDBMUserLayoutStore
         int deleteCount = 0;
         for (int i = 0; i < roles.size(); i++) {
           String delete = "DELETE FROM UP_USER_ROLE WHERE USER_ID=" + userId + " AND ROLE_ID=" + roles.elementAt(i);
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeUserRoles(): " + delete);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeUserRoles(): " + delete);
           deleteCount = stmt.executeUpdate(delete);
           if (deleteCount != 1) {
-            Logger.log(Logger.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
+            LogService.instance().log(LogService.ERROR, "AuthorizationBean removeUserRoles(): SQL failed -> " + delete);
           }
         }
         // Commit the transaction
@@ -1311,7 +1418,7 @@ public class RDBMUserLayoutStore
       try {
         String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
             + "UP_USER.USER_NAME = '" + username + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserAccountInformation(): " + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
@@ -1349,7 +1456,7 @@ public class RDBMUserLayoutStore
       try {
         String query = "SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR " + "WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
             + "UP_USER.USER_NAME = '" + username + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserDirectoryInformation(): " + query);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserDirectoryInformation(): " + query);
         ResultSet rset = stmt.executeQuery(query);
         try {
           if (rset.next()) {
@@ -1380,7 +1487,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + tableName + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           rs.next();
@@ -1389,7 +1496,7 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + id + " WHERE SEQUENCE_NAME='" + tableName + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sInsert);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getIncrementInteger(): " + sInsert);
         stmt.executeUpdate(sInsert);
       } finally {
         stmt.close();
@@ -1411,7 +1518,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE/*/) VALUES ('" + tableName + "',0)";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
         stmt.executeUpdate(sInsert);
       } finally {
         stmt.close();
@@ -1433,7 +1540,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + value + "WHERE SEQUENCE_NAME='" + tableName + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
       } finally {
         stmt.close();
@@ -1453,7 +1560,7 @@ public class RDBMUserLayoutStore
       if (connection.getMetaData().supportsTransactions())
         connection.setAutoCommit(autocommit);
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -1466,7 +1573,7 @@ public class RDBMUserLayoutStore
       if (connection.getMetaData().supportsTransactions())
         connection.commit();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -1479,7 +1586,7 @@ public class RDBMUserLayoutStore
       if (connection.getMetaData().supportsTransactions())
         connection.rollback();
     } catch (Exception e) {
-      Logger.log(Logger.ERROR, e);
+      LogService.instance().log(LogService.ERROR, e);
     }
   }
 
@@ -1494,7 +1601,7 @@ public class RDBMUserLayoutStore
       try {
         String sQuery = "SELECT PROFILE_ID, USER_ID FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND USER_AGENT='" +
             userAgent + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserBrowserMapping(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserBrowserMapping(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
@@ -1531,11 +1638,11 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID='" + userId + "' AND USER_AGENT='" + userAgent + "'";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "',"
             + profileId + ")";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // Commit the transaction
         commit(con);
@@ -1566,7 +1673,7 @@ public class RDBMUserLayoutStore
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILES WHERE USER_ID="
             + userId + " AND PROFILE_ID=" + profileId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserProfileId(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserProfileId(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
@@ -1602,7 +1709,7 @@ public class RDBMUserLayoutStore
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILES WHERE USER_ID="
             + userId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getUserProfileList(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserProfileList(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -1636,7 +1743,7 @@ public class RDBMUserLayoutStore
         // this is ugly, but we have to know wether to do INSERT or UPDATE
         String sQuery = "SELECT USER_ID, PROFILE_NAME FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profile.getProfileId();
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserProfile() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserProfile() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           if (rs.next()) {
@@ -1652,7 +1759,7 @@ public class RDBMUserLayoutStore
         } finally {
           rs.close();
         }
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setUserProfile(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserProfile(): " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -1681,13 +1788,13 @@ public class RDBMUserLayoutStore
         // get user defined defaults
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_USER_SS_PARMS WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
             // stylesheet param
             tsd.setStylesheetParameterDefaultValue(rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
-            //			Logger.log(Logger.DEBUG,"RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  read stylesheet param "+rs.getString("PARAM_NAME")+"=\""+rs.getString("PARAM_VAL")+"\"");
+            //			LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  read stylesheet param "+rs.getString("PARAM_NAME")+"=\""+rs.getString("PARAM_VAL")+"\"");
           }
         } finally {
           rs.close();
@@ -1706,31 +1813,31 @@ public class RDBMUserLayoutStore
         // get user preferences
         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID FROM UP_USER_SS_ATTS UUSA, UP_LAYOUT_STRUCT ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
             int param_type = rs.getInt("PARAM_TYPE");
             if (param_type == 1) {
               // stylesheet param
-              Logger.log(Logger.ERROR, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_USER_SS_ATTS is corrupt. (userId="
+              LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_USER_SS_ATTS is corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString("PARAM_NAME") + "\", param_type=" + Integer.toString(param_type));
             }
             else if (param_type == 2) {
               // folder attribute
-              Logger.log(Logger.ERROR, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  folder attribute specified for the theme stylesheet! UP_USER_SS_ATTS corrupt. (userId="
+              LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  folder attribute specified for the theme stylesheet! UP_USER_SS_ATTS corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString("PARAM_NAME") + "\", param_type=" + Integer.toString(param_type));
             }
             else if (param_type == 3) {
               // channel attribute
               tsup.setChannelAttributeValue(getStructId(rs.getInt("STRUCT_ID"),rs.getInt("CHAN_ID")), rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
-              //Logger.log(Logger.DEBUG,"RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  read folder attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
+              //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getThemeStylesheetUserPreferences() :  read folder attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
             }
             else {
               // unknown param type
-              Logger.log(Logger.ERROR, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
+              LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getThemeStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString("PARAM_NAME") + "\", param_type=" + Integer.toString(param_type));
             }
@@ -1766,13 +1873,13 @@ public class RDBMUserLayoutStore
         // get user defined defaults
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_USER_SS_PARMS WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
             // stylesheet param
             ssd.setStylesheetParameterDefaultValue(rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
-            //Logger.log(Logger.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read stylesheet param "+rs.getString("PARAM_NAME")+"=\""+rs.getString("PARAM_VAL")+"\"");
+            //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read stylesheet param "+rs.getString("PARAM_NAME")+"=\""+rs.getString("PARAM_VAL")+"\"");
           }
         } finally {
           rs.close();
@@ -1795,30 +1902,30 @@ public class RDBMUserLayoutStore
         // get user preferences
         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID FROM UP_USER_SS_ATTS UUSA, UP_LAYOUT_STRUCT ULS WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
             int param_type = rs.getInt("PARAM_TYPE");
             if (param_type == 1) {
               // stylesheet param
-              Logger.log(Logger.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_USER_SS_ATTS is corrupt. (userId="
+              LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_USER_SS_ATTS is corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString("PARAM_NAME") + "\", param_type=" + Integer.toString(param_type));
             }
             else if (param_type == 2) {
               // folder attribute
               ssup.setFolderAttributeValue(getStructId(rs.getInt("STRUCT_ID"),rs.getInt("CHAN_ID")), rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
-              //Logger.log(Logger.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read folder attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
+              //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read folder attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
             }
             else if (param_type == 3) {
               // channel attribute
               ssup.setChannelAttributeValue(getStructId(rs.getInt("STRUCT_ID"),rs.getInt("CHAN_ID")), rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
-              //Logger.log(Logger.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read channel attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
+              //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read channel attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
             }
             else {
               // unknown param type
-              Logger.log(Logger.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
+              LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                   + ", param_name=\"" + rs.getString("PARAM_NAME") + "\", param_type=" + Integer.toString(param_type));
             }
@@ -1873,7 +1980,7 @@ public class RDBMUserLayoutStore
           // see if the parameter was already there
           String sQuery = "SELECT PARAM_VAL FROM UP_USER_SS_PARMS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
@@ -1886,7 +1993,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_USER_SS_PARMS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                 + "," + profileId + "," + stylesheetId + ",1,'" + pName + "','" + ssup.getParameterValue(pName) + "')";
           }
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // write out folder attributes
@@ -1900,7 +2007,7 @@ public class RDBMUserLayoutStore
               String sQuery = "SELECT PARAM_VAL FROM UP_USER_SS_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + folderId.substring(1) + "' AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=2";
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -1914,7 +2021,7 @@ public class RDBMUserLayoutStore
                     + userId + "," + profileId + "," + stylesheetId + ",1,'" + folderId.substring(1) + "','" + pName + "',2,'" + pValue
                     + "')";
               }
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -1930,7 +2037,7 @@ public class RDBMUserLayoutStore
               String sQuery = "SELECT PARAM_VAL FROM UP_USER_SS_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -1944,7 +2051,7 @@ public class RDBMUserLayoutStore
                     + userId + "," + profileId + "," + stylesheetId + ",1,'" + channelId.substring(1) + "','" + pName + "',3,'" + pValue
                     + "')";
               }
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -1984,7 +2091,7 @@ public class RDBMUserLayoutStore
           // see if the parameter was already there
           String sQuery = "SELECT PARAM_VAL FROM UP_USER_SS_PARMS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
               + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
           ResultSet rs = stmt.executeQuery(sQuery);
           if (rs.next()) {
             // update
@@ -1997,7 +2104,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_USER_SS_PARMS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                 + "," + profileId + "," + stylesheetId + ",2,'" + pName + "','" + tsup.getParameterValue(pName) + "')";
           }
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // write out channel attributes
@@ -2011,7 +2118,7 @@ public class RDBMUserLayoutStore
               String sQuery = "SELECT PARAM_VAL FROM UP_USER_SS_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='" + pName
                   + "' AND PARAM_TYPE=3";
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
               ResultSet rs = stmt.executeQuery(sQuery);
               if (rs.next()) {
                 // update
@@ -2025,7 +2132,7 @@ public class RDBMUserLayoutStore
                     + userId + "," + profileId + "," + stylesheetId + ",2,'" + channelId.substring(1) + "','" + pName + "',3,'" + pValue
                     + "')";
               }
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
               stmt.executeUpdate(sQuery);
             }
           }
@@ -2058,7 +2165,7 @@ public class RDBMUserLayoutStore
         String sQuery = "UPDATE UP_USER_PROFILES SET THEME_SS_ID=" + profile.getThemeStylesheetId() + ", STRUCTURE_SS_ID="
             + profile.getStructureStylesheetId() + ", DESCRIPTION='" + profile.getProfileDescription() + "', PROFILE_NAME='"
             + profile.getProfileName() + "' WHERE USER_ID = " + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateUserProfile() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -2086,7 +2193,7 @@ public class RDBMUserLayoutStore
         String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION) VALUES ("
             + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
             + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "')";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addUserProfile(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addUserProfile(): " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -2109,7 +2216,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
         stmt.close();
@@ -2133,10 +2240,10 @@ public class RDBMUserLayoutStore
       serial.asDOMSerializer();                 // As a DOM Serializer
       serial.serialize(chanDoc.getDocumentElement());
     } catch (java.io.IOException ioe) {
-      Logger.log(Logger.ERROR, ioe);
+      LogService.instance().log(LogService.ERROR, ioe);
     }
     return  stringOut.toString();
-    //Logger.log(Logger.DEBUG, "STRXML = " + stringOut.toString());
+    //LogService.instance().log(LogService.DEBUG, "STRXML = " + stringOut.toString());
   }
 
   /**
@@ -2150,7 +2257,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPES A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getMimeTypeList() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getMimeTypeList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2180,7 +2287,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT A.SS_ID FROM UP_STRUCT_SS A, UP_THEME_SS B WHERE B.MIME_TYPE='" + mimeType + "' AND B.STRUCT_SS_ID=A.SS_ID";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2213,7 +2320,7 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SS_ID FROM UP_THEME_SS WHERE STRUCT_SS_ID=" + structureStylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2245,7 +2352,7 @@ public class RDBMUserLayoutStore
       try {
         // detele all associated theme stylesheets
         String sQuery = "SELECT SS_ID FROM UP_THEME_SS WHERE STRUCT_SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -2255,11 +2362,11 @@ public class RDBMUserLayoutStore
           rs.close();
         }
         sQuery = "DELETE FROM UP_STRUCT_SS WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // delete params
         sQuery = "DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // clean up user preferences
         // should we do something about profiles ?
@@ -2287,18 +2394,18 @@ public class RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_THEME_SS WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // delete params
         sQuery = "DELETE FROM UP_THEME_PARAMS WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // clean up user preferences
         sQuery = "DELETE FROM UP_USER_SS_PARMS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         sQuery = "DELETE FROM UP_USER_SS_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // nuke the profiles as well ?
         commit(con);
@@ -2330,7 +2437,7 @@ public class RDBMUserLayoutStore
       try {
         String sQuery = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString() + "' WHERE PORTAL_USER_ID = "
             + userId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::saveBookmarkXML(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveBookmarkXML(): " + sQuery);
         statem.executeUpdate(sQuery);
       } finally {
         statem.close();
@@ -2402,12 +2509,12 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "DELETE FROM UP_THEME_PARAMS WHERE SS_ID=" + stylesheetId + " AND TYPE=1 AND PARAM_NAME='" + pName
           + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_USER_SS_PARMS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=1 AND PARAM_NAME='"
           + pName + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2425,12 +2532,12 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "DELETE FROM UP_THEME_PARAMS WHERE SS_ID=" + stylesheetId + " AND TYPE=3 AND PARAM_NAME='" + pName
           + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeChannelAttribute() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeChannelAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_USER_SS_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=3 AND PARAM_NAME='"
           + pName + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2453,13 +2560,13 @@ public class RDBMUserLayoutStore
         String sQuery = "UPDATE UP_THEME_SS SET SS_NAME='" + tsd.getStylesheetName() + "',SS_URI='" + tsd.getStylesheetURI()
             + "',SS_DESCRIPTION_URI='" + tsd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + tsd.getStylesheetWordDescription()
             + "' WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // first, see what was there before
         HashSet oparams = new HashSet();
         HashSet ocattrs = new HashSet();
         sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_THEME_PARAMS WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
         Statement stmtOld = con.createStatement();
         ResultSet rsOld = stmtOld.executeQuery(sQuery);
         try {
@@ -2478,12 +2585,12 @@ public class RDBMUserLayoutStore
                 sQuery = "UPDATE UP_THEME_PARAMS SET PARAM_DEFAULT_VAL='" + tsd.getStylesheetParameterDefaultValue(pName)
                     + "',PARAM_DESCRIPT='" + tsd.getStylesheetParameterWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=1";
-                Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
             else if (type == 2) {
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! DB is corrupt. (stylesheetId="
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! DB is corrupt. (stylesheetId="
                   + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + rsOld.getInt("TYPE") +
                   ").");
             }
@@ -2500,12 +2607,12 @@ public class RDBMUserLayoutStore
                 sQuery = "UPDATE UP_THEME_PARAMS SET PARAM_DEFAULT_VAL='" + tsd.getChannelAttributeDefaultValue(pName) +
                     "',PARAM_DESCRIPT='" + tsd.getChannelAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=3";
-                Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
+                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
             else {
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                   + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + rsOld.getInt("TYPE") +
                   ").");
             }
@@ -2522,7 +2629,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
                 + ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
                 + "',1)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2533,7 +2640,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
                 + ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
                 + "',3)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2562,12 +2669,12 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID=" + stylesheetId + " AND TYPE=1 AND PARAM_NAME='" + pName
           + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_USER_SS_PARMS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=1 AND PARAM_NAME='"
           + pName + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2585,12 +2692,12 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID=" + stylesheetId + " AND TYPE=2 AND PARAM_NAME='" + pName
           + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_USER_SS_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=2 AND PARAM_NAME='"
           + pName + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2608,12 +2715,12 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "DELETE FROM UP_STRUCT_PARAMS WHERE SS_ID=" + stylesheetId + " AND TYPE=3 AND PARAM_NAME='" + pName
           + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_USER_SS_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=3 AND PARAM_NAME='"
           + pName + "'";
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
       stmt.executeQuery(sQuery);
     } finally {
       stmt.close();
@@ -2636,14 +2743,14 @@ public class RDBMUserLayoutStore
         String sQuery = "UPDATE UP_STRUCT_SS SET SS_NAME='" + ssd.getStylesheetName() + "',SS_URI='" + ssd.getStylesheetURI()
             + "',SS_DESCRIPTION_URI='" + ssd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + ssd.getStylesheetWordDescription()
             + "' WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // first, see what was there before
         HashSet oparams = new HashSet();
         HashSet ofattrs = new HashSet();
         HashSet ocattrs = new HashSet();
         sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_STRUCT_PARAMS WHERE SS_ID=" + stylesheetId;
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
         Statement stmtOld = con.createStatement();
         ResultSet rsOld = stmtOld.executeQuery(sQuery);
         try {
@@ -2662,7 +2769,7 @@ public class RDBMUserLayoutStore
                 sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='" + ssd.getStylesheetParameterDefaultValue(pName)
                     + "',PARAM_DESCRIPT='" + ssd.getStylesheetParameterWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=1";
-                Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
@@ -2679,7 +2786,7 @@ public class RDBMUserLayoutStore
                 sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='" + ssd.getFolderAttributeDefaultValue(pName) +
                     "',PARAM_DESCRIPT='" + ssd.getFolderAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "'AND TYPE=2";
-                Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
@@ -2696,12 +2803,12 @@ public class RDBMUserLayoutStore
                 sQuery = "UPDATE UP_STRUCT_PARAMS SET PARAM_DEFAULT_VAL='" + ssd.getChannelAttributeDefaultValue(pName) +
                     "',PARAM_DESCRIPT='" + ssd.getChannelAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
                     + " AND PARAM_NAME='" + pName + "' AND TYPE=3";
-                Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
+                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
             }
             else {
-              Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                   + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + rsOld.getInt("TYPE") +
                   ").");
             }
@@ -2718,7 +2825,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
                 + "',1)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2729,7 +2836,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
                 + "',2)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2740,7 +2847,7 @@ public class RDBMUserLayoutStore
             sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
                 stylesheetId + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
                 + "',3)";
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
             stmt.executeUpdate(sQuery);
           }
         }
@@ -2775,7 +2882,7 @@ public class RDBMUserLayoutStore
         String sQuery = "INSERT INTO UP_STRUCT_SS (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("
             + id + ",'" + ssd.getStylesheetName() + "','" + ssd.getStylesheetURI() + "','" + ssd.getStylesheetDescriptionURI()
             + "','" + ssd.getStylesheetWordDescription() + "')";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // insert all stylesheet params
         for (Enumeration e = ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
@@ -2783,7 +2890,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
               + "',1)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all folder attributes
@@ -2792,7 +2899,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
               + "',2)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all channel attributes
@@ -2801,7 +2908,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_STRUCT_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
               + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
               + "',3)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
@@ -2830,7 +2937,7 @@ public class RDBMUserLayoutStore
     Statement stmt = con.createStatement();
     try {
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT FROM UP_STRUCT_SS WHERE SS_ID=" + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       if (rs.next()) {
         try {
@@ -2846,7 +2953,7 @@ public class RDBMUserLayoutStore
       }
       // retreive stylesheet params and attributes
       sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_STRUCT_PARAMS WHERE SS_ID=" + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
       rs = stmt.executeQuery(sQuery);
       try {
         while (rs.next()) {
@@ -2864,7 +2971,7 @@ public class RDBMUserLayoutStore
             ssd.addChannelAttribute(rs.getString("PARAM_NAME"), rs.getString("PARAM_DEFAULT_VAL"), rs.getString("PARAM_DESCRIPT"));
           }
           else {
-            Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString("PARAM_NAME") + "\" type=" + rs.getInt("TYPE") + ").");
           }
         }
@@ -2890,7 +2997,7 @@ public class RDBMUserLayoutStore
     try {
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS FROM UP_THEME_SS WHERE SS_ID="
           + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (rs.next()) {
@@ -2913,7 +3020,7 @@ public class RDBMUserLayoutStore
       }
       // retreive stylesheet params and attributes
       sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_THEME_PARAMS WHERE SS_ID=" + stylesheetId;
-      Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
       rs = stmt.executeQuery(sQuery);
       try {
         while (rs.next()) {
@@ -2928,11 +3035,11 @@ public class RDBMUserLayoutStore
           }
           else if (type == 2) {
             // folder attributes are not allowed here
-            Logger.log(Logger.ERROR, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! Corrupted DB entry. (stylesheetId="
+            LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! Corrupted DB entry. (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString("PARAM_NAME") + "\" type=" + rs.getInt("TYPE") + ").");
           }
           else {
-            Logger.log(Logger.ERROR, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
+            LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString("PARAM_NAME") + "\" type=" + rs.getInt("TYPE") + ").");
           }
         }
@@ -2965,7 +3072,7 @@ public class RDBMUserLayoutStore
             + "','" + tsd.getStylesheetWordDescription() + "'," + tsd.getStructureStylesheetId() + ",'" + tsd.getSamplePictureURI()
             + "','" + tsd.getSampleIconURI() + "','" + tsd.getMimeType() + "','" + tsd.getDeviceType() + "','" + tsd.getSerializerName()
             + "','" + tsd.getCustomUserPreferencesManagerClass() + "')";
-        Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // insert all stylesheet params
         for (Enumeration e = tsd.getStylesheetParameterNames(); e.hasMoreElements();) {
@@ -2973,7 +3080,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
               ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
               + "',1)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // insert all channel attributes
@@ -2982,7 +3089,7 @@ public class RDBMUserLayoutStore
           sQuery = "INSERT INTO UP_THEME_PARAMS (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
               ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
               + "',3)";
-          Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
