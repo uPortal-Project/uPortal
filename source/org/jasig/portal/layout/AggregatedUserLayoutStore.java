@@ -163,14 +163,15 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         RDBMServices.joinQuery.addQuery("layout_aggr",
           "{oj UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.NODE_ID = USP.STRUCT_ID} WHERE");
         fragmentJoinQuery =
-          "{oj UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID} WHERE UF.FRAGMENT_ID = UFP.FRAGMENT_ID AND";
+            "{oj UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID} WHERE";
+
         //RDBMServices.joinQuery.addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
         //RDBMServices.joinQuery.addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
       } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
          RDBMServices.joinQuery.addQuery("layout_aggr",
           "UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.NODE_ID = USP.STRUCT_ID WHERE");
          fragmentJoinQuery =
-          "UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID WHERE UF.FRAGMENT_ID = UFP.FRAGMENT_ID AND";
+             "UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID WHERE";
         //RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
         //RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
      } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
@@ -700,10 +701,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
       int tmpValue = -1;
-
-      System.out.println( "fragmentId: " + fragmentId );
-      System.out.println( "fragmentNodeId: " + fragmentNodeId );
-      System.out.println( "nodeIdUpdate: " + nodeId );
 
    try {
 
@@ -1534,6 +1531,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
         sqlLayout += " ULS.USER_ID=? AND ULS.LAYOUT_ID=?";
 
+        System.out.println( "SQL LAYOUT QUERY: " + sqlLayout );
+
         PreparedStatement psLayout = con.prepareStatement(sqlLayout);
         psLayout.setInt(1,userId);
         psLayout.setInt(2,layoutId);
@@ -1547,8 +1546,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           sqlFragment += " FROM up_fragments UF, up_layout_struct_aggr ULS WHERE ";
         }
         sqlFragment += " UF.fragment_id=ULS.fragment_id" + ((pushFragmentIds!=null)?" OR UF.fragment_id IN ("+pushFragmentIds+")":"");
+        System.out.println( "SQL FRAGMENT QUERY: " + sqlFragment );
         PreparedStatement psFragment = con.prepareStatement(sqlFragment);
-        System.out.println( "query: " + sqlFragment );
         //psFragment.setInt(1,userId);
         //psFragment.setInt(2,layoutId);
 
@@ -1623,8 +1622,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 IALFolderDescription folderDesc = new ALFolderDescription();
                 childIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+":"+childId):(childId+"");
                 ((ALFolder)node).setFirstChildNodeId(childIdStr);
-                //System.out.println("FIRST!!!!!!!!! INSIDE: " + childId );
-                //System.out.println( "3" );
                 String type = rs.getString(8);
                 int intType;
                 if ( "header".equalsIgnoreCase(type))
@@ -1640,12 +1637,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                  //if ( node == null )
                  node = new ALNode();
                  ALChannelDescription channelDesc = new ALChannelDescription();
-                 //System.out.println( "5" );
                  channelDesc.setChannelPublishId(rs.getString(6));
                  nodeDesc = channelDesc;
                 }
-
-              //System.out.println( "6" );
 
               // Setting node description attributes
               if ("folder".equalsIgnoreCase(node.getNodeType()))
@@ -1691,16 +1685,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               // Setting up the parent id
               node.setParentNodeId(parentId);
 
-               /*  //Setting the current node to the parent
-                 ALFolder parentFolder = (ALFolder) layout.get(node.getParentNodeId());
-                 // If parent node is null we have to create the new node and put it into the layout hashtable
-                 if ( parentFolder == null ) {
-                   parentFolder = new ALFolder();
-                   layout.put(node.getParentNodeId(),parentFolder);
-                 }
-                  parentFolder.addChildNode(structId+"");
-             */
-
               // Setting the previous node id
               if ( prevId != 0 ) {
                 //node.setPreviousNodeId((prevId!=LOST_NODE_ID)?(prevId+""):IALFolderDescription.LOST_FOLDER_ID);
@@ -1708,13 +1692,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                node.setPreviousNodeId(prevIdStr);
               }
 
-              //node.setPriority();
-              //node.setRestrictions();
-
-              //System.out.println( "8" );
-
-              /*ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(8),rs.getString(8),rs.getString(9));
-              layoutStructure.put(new Integer(structId), ls);*/
               lastStructId = structId;
 
 
@@ -1749,6 +1726,26 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 chanIds.add(nodeDesc.getId());
               }
 
+              // getting restrictions for the nodes
+              PreparedStatement psRestr = null;
+              if ( ps.equals(psLayout) && fragmentNodeId <= 0) {
+                  psRestrLayout.setInt(1,structId);
+                  psRestr = psRestrLayout;
+              } else {
+                  psRestrFragment.setInt(1,fragmentId);
+                  psRestrFragment.setInt(2,(fragmentNodeId>0)?fragmentNodeId:structId);
+                  psRestr = psRestrFragment;
+              }
+              ResultSet rsRestr = psRestr.executeQuery();
+              while (rsRestr.next()) {
+                  int restrType = rsRestr.getInt(1);
+                  String restrExp = rsRestr.getString(2);
+                  String restrPath = rsRestr.getString(3);
+                  IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrType,restrExp,restrPath);
+                  nodeDesc.addRestriction(restriction);
+              }
+              rsRestr.close();
+
               int index = (ps.equals(psLayout))?15:14;
 
               if (RDBMServices.supportsOuterJoins) {
@@ -1756,14 +1753,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                   String name = rs.getString(index);
                   String value = rs.getString(index+1); // Oracle JDBC requires us to do this for longs
                   if (name != null) { // may not be there because of the join
-                    //ls.addParameter(name, value);
-                    if ( channelDesc != null ) {
-                     //System.out.println( "param name: " + name + " param value: " + value + " nodeId: " + node.getId() );
-                     channelDesc.setParameterValue(name,value);
-                    }
+                      if ( channelDesc != null )
+                          channelDesc.setParameterValue(name,value);
                   }
 
-                  //System.out.println( "10" );
 
                   if (!rs.next()) {
                     break readLayout;
@@ -1775,7 +1768,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 } while (structId == lastStructId);
               } else { // Do second SELECT later on for structure parameters
 
-                //System.out.println( "11" );
                   // Adding the channel ID to the String buffer
                   if ("channel".equalsIgnoreCase(node.getNodeType())) {
                    structParms.append(sepChar + chanId);
@@ -1792,28 +1784,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                    }
                 } //end else
 
-             // getting restrictions for the nodes
-             PreparedStatement psRestr = null;
-             if ( ps.equals(psLayout) ) {
-
-              psRestrLayout.setInt(1,CommonUtils.parseInt(nodeDesc.getId()));
-              psRestr = psRestrLayout;
-             } else {
-                psRestrFragment.setInt(1,CommonUtils.parseInt(nodeDesc.getFragmentId()));
-                psRestrFragment.setInt(2,CommonUtils.parseInt(nodeDesc.getId()));
-                psRestr = psRestrFragment;
-               }
-                ResultSet rsRestr = psRestr.executeQuery();
-                while (rsRestr.next()) {
-                  int restrType = rsRestr.getInt(1);
-                  String restrExp = rsRestr.getString(2);
-                  String restrPath = rsRestr.getString(3);
-                  IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(restrType,restrExp,restrPath);
-                  nodeDesc.addRestriction(restriction);
-                }
-                rsRestr.close();
-
-
                 // Setting up the priority values based on the appropriate priority restrictions
                 PriorityRestriction priorityRestriction = AggregatedUserLayoutImpl.getPriorityRestriction(node);
                 if ( priorityRestriction != null ) {
@@ -1828,7 +1798,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                  // Changing the node priority if it's been changed
                  if ( newPriority != priority )
-                 node.setPriority(newPriority);
+                     node.setPriority(newPriority);
                 }
 
 
@@ -1851,7 +1821,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             //RDBMServices.PreparedStatement pstmtChannelParm = crs.getChannelParmPstmt(con);
             //try {
               // Pre-prime the channel pump
-              System.out.println( layout.toString() );
               for (int i = 0; i < chanIds.size(); i++) {
 
 
@@ -1937,12 +1906,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           ps.close();
        } // End of for
 
-        /*if (layoutStructure.size() > 0) { // We have a layout to work with
-          createLayout(layoutStructure, doc, root, firstStructId);
-          layoutStructure.clear();
-        */
-
-
        // Very suspicious place !!!!
        // Check if the node from an user layout points to a fragment node, we have to bind them
        // The loop for all the nodes from the hashtable
@@ -2004,48 +1967,58 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         // Binding the push-fragments to the end of the sibling line of the root children
         for ( Enumeration fragmentIds = pushFragmentRoots.keys(); fragmentIds.hasMoreElements() ;) {
-              String strFragmentId = fragmentIds.nextElement().toString();
-              String strFragmentRootId = pushFragmentRoots.get(strFragmentId).toString();
-              ALNode node = (ALNode) layout.get(strFragmentId+":"+strFragmentRootId);
-              if ( node != null ) {
-                 if ( lastNode != null ) {
-                    lastNode.setNextNodeId(node.getId());
+            String strFragmentId = fragmentIds.nextElement().toString();
+            String strFragmentRootId = pushFragmentRoots.get(strFragmentId).toString();
+            String key = strFragmentId+":"+strFragmentRootId;
+            ALNode node = (ALNode) layout.get(key);
+            if ( node != null ) {
+                IALNodeDescription nodeDesc = node.getNodeDescription();
+                // Setting the new next struct node ID and fragment node id since we have all the pushed fragments attached to the layout
+                String newId = getNextStructId(person,"");
+                nodeDesc.setId(newId);
+                nodeDesc.setFragmentNodeId(strFragmentRootId);
+                // Remove the old node and put the new one with another ID
+                layout.remove(key);
+                layout.put(newId,node);
+                if ( lastNode != null ) {
+                    lastNode.setNextNodeId(newId);
                     node.setPreviousNodeId(lastNode.getId());
-                 } else
-                    rootNode.setFirstChildNodeId(node.getId());
+                } else
+                    rootNode.setFirstChildNodeId(newId);
 
-                 node.setParentNodeId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
-                 lastNode = node;
-              }
+                if ( "folder".equalsIgnoreCase(node.getNodeType()) ) {
+                    //Changing the parent Ids for all the children
+                    for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
+                        ALNode child = (ALNode) layout.get(nextIdStr);
+                        child.setParentNodeId(newId);
+                        nextIdStr = child.getNextNodeId();
+                    }
+                }
+
+                node.setParentNodeId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
+                lastNode = node;
+            }
         }
 
         for ( Enumeration fragmentNodesEnum = fragmentNodes.keys(); fragmentNodesEnum.hasMoreElements() ;) {
                String key = fragmentNodesEnum.nextElement().toString();
                ALNode node  = (ALNode ) fragmentNodes.get(key);
                if ( "folder".equalsIgnoreCase(node.getNodeType()) ) {
+                   String parentId = node.getId();
                  for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
-                       ALNode child = (ALNode) layout.get(nextIdStr);
-                       System.out.println ( "nextIdStr: " + nextIdStr );
-                       System.out.println ( "child: " + child );
-                       System.out.println ( "node: " + node );
-                       System.out.println ( "node.getId(): " + node.getId() );
-                       child.setParentNodeId(node.getId());
-                       nextIdStr = child.getNextNodeId();
+                     ALNode child = (ALNode) layout.get(nextIdStr);
+                     child.setParentNodeId(parentId);
+                     nextIdStr = child.getNextNodeId();
                  }
                }
         }
 
+        System.out.println( "datastore layout: " + layout );
 
           long stopTime = System.currentTimeMillis();
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
-          //doc.appendChild(root);
 
-          /*if (DEBUG > 1) {
-            System.err.println("--> created document");
-            dumpDoc(doc, "");
-            System.err.println("<--");
-          }*/
       } finally {
         stmt.close();
       }
