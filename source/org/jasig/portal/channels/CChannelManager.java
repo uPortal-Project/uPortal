@@ -112,6 +112,9 @@ public class CChannelManager extends BaseChannel {
         xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
         xslt.setTarget(out);
         xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        xslt.setStylesheetParameter("stylesheetCacheSize",
+                XSLT.getStylesheetCacheSize()+"");
+        
         String action = null;
         switch (state) {
             case DEFAULT_STATE:
@@ -531,6 +534,13 @@ public class CChannelManager extends BaseChannel {
                 }
                 channelManagerDoc = getChannelManagerDoc(modChanSettings);
             }
+            
+            else if (action.equals("purgeStylesheetCache")) {
+                state = DEFAULT_STATE;
+                XSLT.purgeStylesheetCache();
+                action = null;
+            }
+            
         }
         if (action == null || action.equals("cancel")) {
             state = DEFAULT_STATE;
