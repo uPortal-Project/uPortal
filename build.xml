@@ -196,7 +196,7 @@
 
   oro.jar              A set of text-processing Java classes that provide Perl5
                        compatible regular expressions.
-                       Version: 2.0.7
+                       Version: 2.0.8
                        URL: http://jakarta.apache.org/oro/
 
   axis.jar             Web services support. Axis is the next generation of the
@@ -561,7 +561,7 @@
 -->
   
   <target name="initportal" description="Publish a channel" depends="deploy, db, i18n-db, pubchan, pushfragment">
-    <echo message="Initializing uPortal"/>    
+    <echo message="Finished initializing uPortal"/>    
   </target>
   
   
