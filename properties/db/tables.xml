@@ -69,7 +69,7 @@
     </columns>
     <not-null>USER_ID</not-null>
     <not-null>LAYOUT_ID</not-null>
-    <not-null>STRUCT_ID</not-null>
+    <not-null>CHAN_DESC_ID</not-null>
     <not-null>PORTLET_PREFERENCES_NAME</not-null>
   </table>  
 
