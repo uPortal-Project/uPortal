@@ -837,8 +837,8 @@ public class RDBMUserLayoutStore
     setAutoCommit(con, false);
     Statement stmt = con.createStatement();
     try {
-      String sqlTitle = channel.getAttribute("title");
-      String sqlDescription = channel.getAttribute("description");
+      String sqlTitle = sqlEscape(channel.getAttribute("title"));
+      String sqlDescription = sqlEscape(channel.getAttribute("description"));
       String sqlClass = channel.getAttribute("class");
       String sqlTypeID = channel.getAttribute("typeID");
       String sysdate = "{ts '" + new Timestamp(System.currentTimeMillis()).toString() + "'}";
