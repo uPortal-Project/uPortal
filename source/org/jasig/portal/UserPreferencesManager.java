@@ -311,7 +311,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         // fname and root are mutually exclusive and
         // should not be used in the same request,
         // as an fname is treated as the root target.
-        String fname = req.getParameter("uP_fname");
+        String fname = req.getParameter( Constants.FNAME_PARAM );
         if (fname != null) {
             // get a subscribe id for the fname
             String subId = ulm.getSubscribeId(fname);

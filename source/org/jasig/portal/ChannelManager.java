@@ -60,6 +60,7 @@ import org.jasig.portal.channels.CSecureInfo;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
@@ -716,8 +717,26 @@ public class ChannelManager implements LayoutEventListener {
         channelTarget = null;
         targetParams = new Hashtable();
         
-        // check if the uP_channelTarget parameter has been passed
-        channelTarget=req.getParameter("uP_channelTarget");
+        // see if this is targeted at an fname channel. if so then it takes
+        // precedence. This is done so that a baseActionURL can be used for
+        // the basis of an fname targeted channel with the fname query parm
+        // appended to direct all query parms to the fname channel
+        String fname = req.getParameter( Constants.FNAME_PARAM );
+        
+        if ( fname != null )
+        {
+            // need to get to wrapper for obtaining a subscribe id
+            TransientUserLayoutManagerWrapper iulm =
+                (TransientUserLayoutManagerWrapper) upm
+                .getUserLayoutManager();
+            // get a subscribe id for the fname
+            channelTarget = iulm.getSubscribeId(fname);
+        }
+        if ( channelTarget == null )
+        {
+            // check if the uP_channelTarget parameter has been passed
+            channelTarget=req.getParameter("uP_channelTarget");
+        }
         if(channelTarget==null) {
             // determine target channel id
             UPFileSpec upfs=new UPFileSpec(req);
