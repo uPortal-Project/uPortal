@@ -559,7 +559,7 @@ public class CChannelManager extends BaseChannel {
                 String channelPublishId = runtimeData.getParameter("channelID");
                 if (channelPublishId != null) {
                     try {
-                        ChannelRegistryManager.removeChannel(channelPublishId);
+                        ChannelRegistryManager.removeChannel(channelPublishId, person);
                     } catch (Exception e) {
                         throw  new GeneralRenderingException(e.getMessage());
                     }
