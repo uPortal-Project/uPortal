@@ -374,12 +374,6 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
 		  if (rs.next ())
 		  {
 		    String sBookmarksXml = rs.getString ("BOOKMARK_XML");
-        
-        // Tack on the full path to bookmarks.dtd
-        int iInsertBefore = sBookmarksXml.indexOf ("bookmarks.dtd");
-        sBookmarksXml = sBookmarksXml.substring (0, iInsertBefore) + sPathToBookmarksDtd + sBookmarksXml.substring (iInsertBefore);
-
-        
 		    String xmlFilePackage = "org.jasig.portal.channels.bookmarks";
 		    bookmarkXml = Xml.openDocument (xmlFilePackage, new StringReader (sBookmarksXml));
 		  }
