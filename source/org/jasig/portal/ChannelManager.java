@@ -52,7 +52,6 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 import org.jasig.portal.utils.SoftHashMap;
-// import org.jasig.portal.security.provider.ReferencePermissionManager;
 import java.util.Collections;
 import org.xml.sax.ContentHandler;
 import org.w3c.dom.Element;
@@ -713,7 +712,7 @@ public class ChannelManager {
                 if(ulm.removeChannel(channelSubscribeId)) {
                     // clean up channel cache
                     channelCacheTable.remove(ch);
-                    ch.receiveEvent(new PortalEvent(PortalEvent.SESSION_DONE));
+                    ch.receiveEvent(new PortalEvent(PortalEvent.UNSUBSCRIBE));
                     channelTable.remove(ch);
                 }
             } catch (PortalException gre) {
