@@ -72,7 +72,11 @@ public class CPublisher implements IPrivilegedChannel
   private static final int CATS     = 4;
   private static final int ROLES    = 5;
   private static final int PUBROLES = 6;
-  private static final int PREVIEW  = 7;
+  private static final int NAME = 7;
+  private static final int PREVIEW  = 8;
+  
+  //number of extra steps
+  private static final int EXTRA = 2;
 
   private int mode = NONE;
   private Document channelTypes = null;
@@ -80,12 +84,15 @@ public class CPublisher implements IPrivilegedChannel
   private Document chanDoc = null;
   private String action = null;
   private String currentStep = "1";
-  private int numSteps;
+  private String specialStep = "";
+  private int numSteps = 0;
+  private int newNumSteps = 0;
   private String declURI;
   private String catID[] = null;
   private boolean modified = false; // modification flag
   public static Vector vReservedParams = getReservedParams();
   private Hashtable hParams = null;
+  
 
   /** Construct a CPublisher.
    */
@@ -108,6 +115,8 @@ public class CPublisher implements IPrivilegedChannel
         v.addElement("currentStep");
         v.addElement("numSteps");
         v.addElement("ssl");
+        v.addElement("class");
+        v.addElement("chanName");
         return v;
     }
 
@@ -224,6 +233,8 @@ public class CPublisher implements IPrivilegedChannel
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
       processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));
       processor.setStylesheetParam("currentStep", processor.createXString (currentStep));
+      processor.setStylesheetParam("specialStep", processor.createXString (specialStep));
+      processor.setStylesheetParam("numSteps", processor.createXString (Integer.toString(newNumSteps)));
       processor.setStylesheetParam("modified", processor.createXBoolean (modified));
       processor.process (xmlSource, xslSource, xmlResult);
     }
@@ -255,7 +266,8 @@ public class CPublisher implements IPrivilegedChannel
     mode = PUBLISH;
     if (hParams==null) hParams = new Hashtable();
     currentStep = runtimeData.getParameter("currentStep");
-    numSteps = Integer.parseInt(runtimeData.getParameter("numSteps"));
+    if(numSteps==0) numSteps = Integer.parseInt(runtimeData.getParameter("numSteps"));
+    if(newNumSteps==0) newNumSteps = numSteps + EXTRA;
     Enumeration e = runtimeData.getParameterNames();
 
     if(!currentStep.equals("end")) {
@@ -269,13 +281,18 @@ public class CPublisher implements IPrivilegedChannel
             mode = CATS;
             currentStep = Integer.toString(i+1);
         }
+        else if(i == numSteps+1){
+            mode = NAME;
+            specialStep = "name";
+            currentStep = Integer.toString(i+1);
+        }
        // else if(i == numSteps + 1) {
        //     mode = ROLES;
        //     currentStep = Integer.toString(i+1);
        // }
         else {
             publishChannel();
-            currentStep = "end";
+            specialStep = "end";
         }
 
     //System.out.println("numSteps: "+ numSteps);
@@ -284,13 +301,11 @@ public class CPublisher implements IPrivilegedChannel
     while(e.hasMoreElements()) {
         String s = (String)e.nextElement();
 
-        if(!vReservedParams.contains(s)){
             if (runtimeData.getParameter(s)!=null) {
                 //System.out.println("adding param: "+ s);
                 //System.out.println("adding param value: "+ runtimeData.getParameter(s));
             hParams.put(s, runtimeData.getParameter(s));
             }
-        }
     }
   }
   }
@@ -300,6 +315,7 @@ public class CPublisher implements IPrivilegedChannel
         String nextID = chanReg.getNextId();
         Document doc = new DocumentImpl();
         Element chan = doc.createElement("channel");
+
         chan.setAttribute("timeout", "5000");
         chan.setAttribute("priority", "1");
         chan.setAttribute("minimized", "false");
@@ -308,19 +324,29 @@ public class CPublisher implements IPrivilegedChannel
         chan.setAttribute("removable", "true");
         chan.setAttribute("detachable", "true");
         chan.setAttribute("class", (String)hParams.get("class"));
+        
+        String cName = (String)hParams.get("chanName");
+        if(cName == null) cName = "new channel";
+        
+        chan.setAttribute("name", cName);
+        
         if (nextID!=null) chan.setAttribute("ID", "chan"+nextID);
 
         Enumeration e = hParams.keys();
         while (e.hasMoreElements()) {
             String name = (String)e.nextElement();
             String value = (String) hParams.get(name);
+            
+            if(!vReservedParams.contains(name)){
             Element el = doc.createElement("parameter");
-            el.setAttribute(XMLEscaper.escape(name), XMLEscaper.escape(value));
+            el.setAttribute("name", XMLEscaper.escape(name));
+            el.setAttribute("value", XMLEscaper.escape(value));
             chan.appendChild(el);
+            }
         }
         doc.appendChild(chan);
 
-        chanReg.addChannel(nextID, "new channel", doc, catID);
+        chanReg.addChannel(nextID, cName, doc, catID);
     }
 
 
