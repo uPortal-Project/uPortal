@@ -136,7 +136,7 @@ public class CBookmarks implements IXMLChannel {
       // Get the current user's ID
       String userName = runtimeData.getPerson().getID();
       // Attempt to retrieve the user's bookmark's
-      String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM PORTAL_BOOKMARKS WHERE PORTAL_USER_ID='" + getUserId(userName) + "'";
+      String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM PORTAL_BOOKMARKS WHERE PORTAL_USER_ID=" + getUserId(userName);
       // Get the result set
       ResultSet rs = connection.createStatement().executeQuery(query);
       if (rs.next()) {
@@ -227,8 +227,8 @@ public class CBookmarks implements IXMLChannel {
       xmlSerializer.serialize(m_bookmarksXML);
       // Get a connection to the database
       connection = getConnection();
-      String update = "UPDATE PORTAL_BOOKMARKS SET BOOKMARK_XML = '" + stringWriter.toString() + "' " + "WHERE PORTAL_USER_ID = '"
-          + getUserId(runtimeData.getPerson().getID()) + "'";
+      String update = "UPDATE PORTAL_BOOKMARKS SET BOOKMARK_XML = '" + stringWriter.toString() + "' WHERE PORTAL_USER_ID = "
+          + getUserId(runtimeData.getPerson().getID());
       connection.createStatement().executeUpdate(update);
     } catch (Exception e) {
       Logger.log(Logger.ERROR, e);
