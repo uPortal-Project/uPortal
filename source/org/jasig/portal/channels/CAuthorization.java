@@ -15,10 +15,11 @@ import java.net.*;
  * Authorization channel.  This channel works in conjunction with
  * authorization.jsp
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class CAuthorization implements org.jasig.portal.IChannel                             
 {  
-  public void initParams (Hashtable params) {};
+  public void init (ChannelConfig chConfig) {};
   public String getName () {return "Sign in";}
   public boolean isMinimizable () {return false;}
   public boolean isDetachable () {return false;}
@@ -46,7 +47,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -84,7 +85,7 @@ public class CAuthorization implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     
   }

@@ -14,6 +14,7 @@ import com.objectspace.xml.*;
  * This is a channel for storing user-defined bookmarks.
  * 
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IChannel                         
 { 
@@ -22,7 +23,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
   private String xmlFilePackage = "org.jasig.portal.channels.bookmarks";
   
   public String getName () {return "My Bookmarks";}
-  public void initParams (Hashtable params) {};
+  public void init (ChannelConfig chConfig) {};
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
@@ -58,7 +59,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -83,7 +84,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
     
@@ -122,7 +123,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -161,7 +162,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -183,7 +184,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -215,7 +216,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
 
@@ -259,7 +260,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }  
   
@@ -273,7 +274,7 @@ public class CBookmarks extends GenericPortalBean implements org.jasig.portal.IC
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }  
   

@@ -6,7 +6,7 @@ import javax.servlet.http.*;
 
 public interface IChannel
 {
-  public void initParams (Hashtable params);
+  public void init (ChannelConfig chConfig);
   public String getName ();
   public boolean isMinimizable ();
   public boolean isDetachable ();

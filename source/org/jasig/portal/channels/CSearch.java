@@ -6,6 +6,7 @@ import javax.servlet.http.*;
 
 import java.io.*;
 import java.util.*;
+import org.jasig.portal.*;
 import org.jasig.portal.layout.*;
 
 import java.net.*;
@@ -15,10 +16,11 @@ import java.net.*;
  * All in one search from 1Blink.com.
  * 
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class CSearch implements org.jasig.portal.IChannel                     
 {  
-  public void initParams (Hashtable params) {};
+  public void init (ChannelConfig chConfig) {};
   public String getName () {return "Search";}
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return true;}
@@ -56,7 +58,7 @@ public class CSearch implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      Logger.log (Logger.ERROR, e);
     }
   }
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)

@@ -17,14 +17,15 @@ import java.net.*;
  * This is a user-defined channel for rendering a web page.
  * 
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class CPageRenderer implements org.jasig.portal.IChannel                            
 { 
   protected String m_sUrl = null;
-  private Hashtable params = null;
+  private ChannelConfig chConfig = null;
   
-  public void initParams (Hashtable params) {this.params = params;}
-  public String getName () {return (String) params.get ("name");}
+  public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
+  public String getName () {return (String) chConfig.get ("name");}
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return false;}
   public boolean isRemovable () {return true;}
@@ -38,7 +39,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   {    
     try 
     {
-      m_sUrl = (String) params.get ("url");
+      m_sUrl = (String) chConfig.get ("url");
       String sLine = null;
       URL url = new URL (m_sUrl);
       HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
@@ -75,10 +76,10 @@ public class CPageRenderer implements org.jasig.portal.IChannel
       }
       catch (Exception ex)
       {
-        System.out.println ("\nERROR: \n" + e);
+        Logger.log (Logger.ERROR, e);
       }
       
-      System.out.println ("\nERROR: \n" + e);
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -113,7 +114,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      Logger.log (Logger.ERROR, e);
     }
     return null;
   }
@@ -158,7 +159,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      Logger.log (Logger.ERROR, e);
     }
     return null;
   }

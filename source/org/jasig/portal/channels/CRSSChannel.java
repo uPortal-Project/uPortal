@@ -21,21 +21,21 @@ import java.net.*;
  * cache and retrieved again.
  * 
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class CRSSChannel implements org.jasig.portal.IChannel                           
 { 
   private static RSSCache m_RSSCache = new RSSCache (3600);
-  //private static SmartCache m_RSSCache = new SmartCache (3600);
-  private Hashtable params = null;
+  private ChannelConfig chConfig = null;
   
-  public void initParams (Hashtable params) {this.params = params;}
+  public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
   
   public String getName () 
   {
     try
     {
       // Check if RSSXml is already in the cache
-      String sUrl = (String) params.get ("url");
+      String sUrl = (String) chConfig.get ("url");
       IXml xml = (IXml) m_RSSCache.get (sUrl);
       
       // If the RSSXml isn't already cached, download it and put it in the cache
@@ -45,10 +45,8 @@ public class CRSSChannel implements org.jasig.portal.IChannel
         String sXmlPackage = "org.jasig.portal.channels.rss";
         InputStream xmlStream = url.openStream();
         xml = Xml.openDocument (sXmlPackage, xmlStream);
-        //m_RSSCache.put (sUrl, xml, 3600);
         m_RSSCache.put (sUrl, xml);
         Logger.log (Logger.INFO, "Caching RSS at URL: " + sUrl);
-        System.out.println ("Ch: Caching RSS at URL: " + sUrl);
       }
       
       IRss rss = (IRss) xml.getRoot ();            
@@ -68,7 +66,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      e.printStackTrace  ();
+      Logger.log (Logger.ERROR, e);
     }
     
     return "&nbsp;";
@@ -88,7 +86,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     try 
     {
       // Check if RSSXml is already in the cache
-      String sUrl = (String) params.get ("url");
+      String sUrl = (String) chConfig.get ("url");
       IXml xml = (IXml) m_RSSCache.get (sUrl);
       
       // If the RSSXml isn't already cached, download it and put it in the cache
@@ -184,7 +182,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
       
       try
       {
@@ -192,6 +190,7 @@ public class CRSSChannel implements org.jasig.portal.IChannel
       }
       catch (Exception ex)
       {
+        Logger.log (Logger.ERROR, ex);
       }
     }
   }

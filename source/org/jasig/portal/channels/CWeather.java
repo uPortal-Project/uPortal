@@ -6,6 +6,7 @@ import javax.servlet.http.*;
 
 import java.io.*;
 import java.util.*;
+import org.jasig.portal.*;
 import org.jasig.portal.layout.*;
 
 import java.net.*;
@@ -15,12 +16,13 @@ import java.net.*;
  * Weather.
  * 
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class CWeather implements org.jasig.portal.IChannel 
 {  
-  private Hashtable params = null;
+  private ChannelConfig chConfig = null;
   
-  public void initParams (Hashtable params) {this.params = params;}
+  public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
   public String getName () {return "Weather";}
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return true;}
@@ -37,8 +39,8 @@ public class CWeather implements org.jasig.portal.IChannel
     {
       // Change station parameter to reflect local area.  
       // Station guide at http://www.abcnews.go.com/local/
-      String sState = (String) params.get ("state");
-      String sCity = ((String) params.get ("city")).replace (' ', '_');
+      String sState = (String) chConfig.get ("state");
+      String sCity = ((String) chConfig.get ("city")).replace (' ', '_');
       
       out.println ("<center>");
       out.println ("<a href=\"http://www.wunderground.com/US/" + sState + "/" + sCity + ".html\">");
@@ -47,7 +49,7 @@ public class CWeather implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      Logger.log (Logger.ERROR, e);
     }
   }
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)

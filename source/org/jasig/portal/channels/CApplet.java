@@ -25,10 +25,10 @@ import java.net.*;
  */
 public class CApplet implements org.jasig.portal.IChannel                   
 {
-  private Hashtable params = null;
+  private Hashtable chConfig = null;
   
-  public void initParams (Hashtable params) {this.params = params;}
-  public String getName () {return (String) params.get ("name");}
+  public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
+  public String getName () {return (String) chConfig.get ("name");}
   public boolean isMinimizable () {return true;}
   public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
@@ -45,10 +45,10 @@ public class CApplet implements org.jasig.portal.IChannel
       // Change station parameter to reflect local area.  
       // Station guide at http://www.abcnews.go.com/local/
       out.println ("<center>");
-      out.println ("<applet CODE=\"" + params.get ("code") + "\" CODEBASE=\"" + params.get ("codeBase") + "\" WIDTH=\"" + params.get ("width") + "\" HEIGHT=\"" + params.get ("height") + "\" ALIGN=top border=0 archive=\"" + params.get ("archive") + "\">");
+      out.println ("<applet CODE=\"" + chConfig.get ("code") + "\" CODEBASE=\"" + chConfig.get ("codeBase") + "\" WIDTH=\"" + chConfig.get ("width") + "\" HEIGHT=\"" + chConfig.get ("height") + "\" ALIGN=top border=0 archive=\"" + chConfig.get ("archive") + "\">");
   	  
   	  // Split "params" string into name-value pairs
-  	  String sParams = (String) params.get ("params");
+  	  String sParams = (String) chConfig.get ("params");
   	  StringTokenizer stParams = new StringTokenizer (sParams, "^");
   	   
   	  // For each "param" string, parse to get name and value
