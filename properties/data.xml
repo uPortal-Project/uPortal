@@ -136,6 +136,30 @@
               <channel ID="chan91" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish" fname="portal/publish/general"/>
               <channel ID="chan92" priority="0" timeout="10000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.UserPreferences.CUserPreferences" name="User Preferences" fname="portal/userpreferences/general"/>
             </folder>
+            <folder ID="t04" priority="0" name="Tests">
+              <folder ID="col05" priority="0" name="Column 1">
+		<channel ID="chan12" priority="0" timeout="10000" minimized="false" editable="true" hasHelp="true" hasAbout="true" removable="true" detachable="true" class="org.jasig.portal.channels.CWebProxy" name="Tomcat NumGuess">
+		  <parameter value="http://localhost:8080/examples/jsp/num/numguess.jsp" name="cw_xml"/>
+		  <parameter value="http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
+		  <parameter value="on" name="cw_tidy"/>
+		  <parameter value="all" name="cw_passThrough"/>
+		  <parameter value="http://www.mun.ca/cc/portal/cw/num_help.html" name="cw_help"/>
+		  <parameter value="http://www.mun.ca/cc/portal/cw/num_info.html" name="cw_info"/>
+		  <parameter value="http://www.mun.ca/cc/portal/cw/num_edit.html" name="cw_edit"/>
+		</channel>
+              </folder>
+              <folder ID="col06" priority="0" name="Column 2">
+		<channel ID="chan13" priority="0" timeout="10000" minimized="false" editable="true" hasHelp="true" hasAbout="true" removable="true" detachable="true" class="org.jasig.portal.channels.CWebProxy" name="Tomcat NumGuess">
+		  <parameter value="http://localhost:8080/examples/jsp/num/numguess.jsp" name="cw_xml"/>
+		  <parameter value="http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
+		  <parameter value="on" name="cw_tidy"/>
+		  <parameter value="all" name="cw_passThrough"/>
+		  <parameter value="http://www.mun.ca/cc/portal/cw/num_help.html" name="cw_help"/>
+		  <parameter value="http://www.mun.ca/cc/portal/cw/num_info.html" name="cw_info"/>
+		  <parameter value="http://www.mun.ca/cc/portal/cw/num_edit.html" name="cw_edit"/>
+		</channel>
+              </folder>
+            </folder>
           </layout>
 
         ]]></value></column>
@@ -301,6 +325,24 @@
           </channel>
           ]]></value></column>
       </row>
+
+      <row>
+        <column><name>CHAN_ID</name><value>10</value></column>
+        <column><name>TITLE</name><value>Tomcat NumGuess</value></column>
+        <column><name>PUB_ID</name><value>0</value></column>
+        <column><name>APPROVED</name><value>0</value></column>
+        <column><name>CHANNEL_XML</name><value><![CDATA[
+	  <channel ID="chan10" priority="0" timeout="10000" minimized="false" editable="true" hasHelp="true" hasAbout="true" removable="true" detachable="true" class="org.jasig.portal.channels.CWebProxy" name="Tomcat NumGuess">
+            <parameter value="http://localhost:8080/examples/jsp/num/numguess.jsp" name="cw_xml"/>
+              <parameter value="http://localhost:8080/webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl" name="cw_ssl"/>
+              <parameter value="on" name="cw_tidy"/>
+              <parameter value="all" name="cw_passThrough"/>
+              <parameter value="http://www.mun.ca/cc/portal/cw/num_help.html" name="cw_help"/>
+              <parameter value="http://www.mun.ca/cc/portal/cw/num_info.html" name="cw_info"/>
+              <parameter value="http://www.mun.ca/cc/portal/cw/num_edit.html" name="cw_edit"/>
+          </channel>
+          ]]></value></column>
+      </row>
     </rows>
   </table>
 
@@ -348,6 +390,13 @@
         <column><name>TYPE</name><value>org.jasig.portal.channels.CImage</value></column>
         <column><name>DESCR</name><value>Simple channel to display an image with optional caption and subcaption</value></column>
         <column><name>DEF_URI</name><value>properties/channel_defs/Image.xml</value></column>
+      </row>
+
+      <row>
+        <column><name>NAME</name><value>Web Proxy</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CWebProxy</value></column>
+        <column><name>DESCR</name><value>Incorporate a dynamic HTML or XML application</value></column>
+        <column><name>DEF_URI</name><value>properties/channel_defs/WebProxy.xml</value></column>
       </row>
       
     </rows>
@@ -424,6 +473,11 @@
       <row>
         <column><name>CLASS_ID</name><value>3</value></column>
         <column><name>CHAN_ID</name><value>9</value></column>
+      </row>
+
+      <row>
+        <column><name>CLASS_ID</name><value>3</value></column>
+        <column><name>CHAN_ID</name><value>10</value></column>
       </row>
     </rows>
   </table>
@@ -548,6 +602,8 @@
                 <folder folderid="col02" value="30%"/>
                 <folder folderid="col03" value="30%"/>
                 <folder folderid="col04" value="70%"/>
+                <folder folderid="col05" value="50%"/>
+                <folder folderid="col06" value="50%"/>
               </attribute>
             </folderattributes>
             <channelattributes/>
