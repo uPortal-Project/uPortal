@@ -1595,7 +1595,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     Connection con = RDBMServices.getConnection();
 
      if ( !(layoutImpl instanceof AggregatedLayout) )
-       throw new PortalException("The user layout object has an incorrect type!");
+       throw new PortalException("The user layout object must have "+AggregatedLayout.class.getName()+" type!");
 
     AggregatedLayout layout = (AggregatedLayout) layoutImpl;
 
@@ -1615,7 +1615,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( rs != null ) rs.close();
 
       if ( !isOwner )
-        throw new PortalException("The user is not an owner of that fragment");
+        throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
 
       // Clear the previous data related to the user layout
       stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
@@ -2674,7 +2674,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                      break readParm;
                    }
                  } while ((structId = rs.getInt(1)) == lastStructId);
-                } // end if
+                } else break readParm; // if else
               }
             }
           } finally {
