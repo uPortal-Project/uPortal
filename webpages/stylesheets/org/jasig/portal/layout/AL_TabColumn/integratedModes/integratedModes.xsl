@@ -1612,7 +1612,7 @@ Version $Revision$
                                     <xsl:if test="not($currentFragmentID = 'default_layout')">
                                         <span> |<xsl:text>&#160;</xsl:text>
                                         </span>
-                                        <a href="{$baseActionURL}?uP_fragment_action=save&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Save Fragment</a>
+                                        <a href="{$baseActionURL}?uP_fragment_action=save&amp;uP_fragment_ID={$currentFragmentID}&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true">Save Fragment</a>
                                     </xsl:if>
                                     <xsl:if test="$currentFragmentID = fragments/fragment/@ID and not($currentFragmentID = 'default_layout')">
                                         <span> |<xsl:text>&#160;</xsl:text>
