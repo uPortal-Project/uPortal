@@ -71,7 +71,7 @@
                 <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td width="100%">
-                <a href="{$baseActionURL}?action=newChannel">Publish a new channel</a>
+                <a href="{$baseActionURL}?action=selectChannelType">Publish a new channel</a>
               </td>
             </tr>
             <tr valign="top">
@@ -90,6 +90,8 @@
   <xsl:template name="selectChannelType">
     <xsl:call-template name="workflow"/>
     <!-- form begin -->
+    <form method="post" action="{$baseActionURL}">
+      <input type="hidden" name="action" value="selectGeneralSettings"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
       <tr class="uportal-channel-text">
         <td>
@@ -123,7 +125,7 @@
             <xsl:for-each select="//selectChannelType//channelType">
               <tr class="uportal-channel-text" valign="top">
                 <td nowrap="nowrap" align="center">
-                  <input type="radio" name="radiobutton" value="radiobutton" checked="checked"/> </td>
+                  <input type="radio" name="ID" value="{@ID}" checked="checked"/> </td>
                 <td nowrap="nowrap">
                   <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
                 </td>
@@ -159,6 +161,7 @@
           <input type="submit" name="Submit33" value="Next &gt;" class="uportal-button"/> <input type="submit" name="Submit53" value="Review" class="uportal-button"/> <input type="submit" name="Submit8" value="Cancel" class="uportal-button"/> </td>
       </tr>
     </table>
+    </form>
     <!-- form end -->
   </xsl:template>
   <xsl:template name="selectModifyChannel">
