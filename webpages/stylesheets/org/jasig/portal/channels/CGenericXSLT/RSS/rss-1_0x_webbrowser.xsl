@@ -46,40 +46,36 @@ Version $Revision$
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CGenericXSLT</xsl:variable>
 
   <xsl:template match="rdf:RDF" name="documentNode">
-    <html>
+    <!--<html>
       <head>
         <title>uPortal 2.0</title>
       </head>
 
-      <body>
-        <xsl:apply-templates select="rss10:channel" />
-      </body>
-    </html>
-  </xsl:template>
-
-  <xsl:template match="rss10:channel">
+      <body>-->
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr align="left">
         <td width="100%" valign="bottom" class="uportal-channel-subtitle">
-          <xsl:value-of select="rss10:description" />
+          <xsl:value-of select="./rss10:channel/rss10:description" />
         </td>
+		<xsl:if test="./rss10:image != ''">
         <td>
-          <a target="_blank" href="{rss10:image/rss10:link}">
-            <img border="0" alt="{rss10:image/rss10:title}" src="{rss10:image/rss10:url}"/>
+          <a target="_blank" href="{./rss10:image/rss10:link}">
+            <img border="0" alt="{./rss10:image/rss10:title}" src="{./rss10:image/rss10:url}"/>
           </a>
         </td>
+		</xsl:if>
       </tr>
     </table>
-
-    <br/>
+    <br />
 
     <xsl:apply-templates select="/rdf:RDF/rss10:item" />
-
-    <br/>
+    <br />
 
     <xsl:apply-templates select="/rdf:RDF/rss10:textinput" />
-
+      <!--</body>
+    </html>-->
   </xsl:template>
+
 
   <xsl:template match="rss10:item">
     <table width="100%" border="0" cellspacing="0" cellpadding="2">
@@ -97,7 +93,7 @@ Version $Revision$
 
       <xsl:if test="rss10:description != ''">
       <tr class="uportal-channel-text">
-        <td>-</td>
+        <td></td>
         <td width="100%">
           <xsl:value-of select="rss10:description" />
         </td>
@@ -113,14 +109,15 @@ Version $Revision$
         <xsl:value-of select="rss10:description" />
       </span>
 
-      <br/>
+      <br />
 
       <input type="text" name="{rss10:name}" size="30" class="uportal-input-text" />
 
-      <br/>
+      <br />
 
       <input type="submit" name="Submit" value="Submit" class="uportal-button" />
     </form>
   </xsl:template>
 
 </xsl:stylesheet>
+
