@@ -476,7 +476,7 @@
 
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
-      <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties"/>
+        <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties" excludes="**/*.UTF-8.properties"/>
     </copy>
 
     <!-- Copy everything in media except for files that are accessible from the web -->
@@ -489,7 +489,9 @@
     <copy file="${basedir}/webpages/dtd/web-app_2_3.dtd" todir="${build.home}/WEB-INF/classes/org/jasig/portal/container/deploy"/>
     
     <!-- Build Unicode-encoded property files from UTF-8 encoded ones-->
-    <native2ascii encoding="UTF-8" src="webpages/stylesheets" dest="${build.home}/WEB-INF/classes" includes="**/*.UTF-8.properties" ext=""/>
+    <native2ascii encoding="UTF-8" src="webpages/stylesheets" dest="${build.home}/WEB-INF/classes" includes="**/*.UTF-8.properties">
+        <mapper type="glob" from="*.UTF-8.properties" to="*.properties"/>
+    </native2ascii>
     
   </target>
 
