@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ public class AssignPermissions extends GroupsManagerCommand implements GroupsMan
          acts = sessionData.permissible.getActivityTokens();
       }
       else{
-        acts = new String[] {VIEW_PERMISSION, SELECT_PERMISSION, ASSIGN_PERMISSION}; 
+        acts = new String[] {VIEW_PERMISSION, SELECT_PERMISSION, ASSIGN_PERMISSION};
       }
       sessionData.servantChannel = CPermissionsManagerServantFactory.getPermissionsServant(sessionData.permissible,
             sessionData.staticData, null, acts, tgts);

@@ -34,47 +34,49 @@
  */
 
 
-package  org.jasig.portal.channels.groupsmanager;
+package  org.jasig.portal.channels.groupsmanager.permissions;
 
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IPermissible;
-import org.jasig.portal.IServant;
-import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
+import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 
 
 /**
- * Session data for a cached thread stored in a Map in CGroupsManager
+ * GroupsManagerBlockEntitySelectPermissions answers if the Authorization Principal is able to
+ * perform specific actions on the target Group Member.
  * @author Don Fracapane
  * @version $Revision$
  */
-public class CGroupsManagerSessionData extends CGroupsManagerUnrestrictedSessionData
-      implements GroupsManagerConstants {
-   public ChannelRuntimeData runtimeData;
-   public ChannelStaticData staticData;
-   public IServant servantChannel = null;
-   public boolean servantMode = false;
-   public boolean allowFinish = true;
-   //public boolean blockEntitySelect = false;
-   public String uid;
-   public long startRD;
-   public ILockableEntityGroup lockedGroup = null;
-   public String highlightedGroupID;
-   public int currentPage = 1;
-   public String rootViewGroupID;
-   public String defaultRootViewGroupID = "0";
-   public String mode = BROWSE_MODE;   //"browse", "edit" or "select"
-   public String returnToMode;
-   public String feedback;             // use to display info to user (eg. "Unable to lock...")
-   public String customMessage;
-   public IPermissible permissible;
+public class GroupsManagerBlockEntitySelectPermissions extends GroupsManagerDefaultPermissions
+      implements IGroupsManagerPermissions, GroupsManagerConstants {
 
    /**
-    * Returns a subset of unrestricted variables to be used for Document manipulation.
-    * This is accomplished by casting this into the unrestricted partent class.
-    * @return CGroupsManagerUnrestrictedSessionData
+    * put your documentation comment here
     */
-   public CGroupsManagerUnrestrictedSessionData getUnrestrictedData () {
-      return  (CGroupsManagerUnrestrictedSessionData) this;
+   public GroupsManagerBlockEntitySelectPermissions () {
+   }
+
+   /**
+    * Return the single instance of GroupsManagerDefaultPermissions.
+    * @return IGroupsManagerPermissions
+    */
+   public static IGroupsManagerPermissions getInstance()
+   {
+      if (_instance == null){
+         _instance = new GroupsManagerBlockEntitySelectPermissions();
+      }
+      return _instance;
+   }
+
+   /**
+    * Answers if principal can select the target group member.
+    * @param ap AuthorizationPrincipal
+    * @param gm IGroupMember
+    * @return boolean
+    */
+   public boolean canSelect (IAuthorizationPrincipal ap, IGroupMember gm) {
+      //throw new java.lang.UnsupportedOperationException("Method canSelect() not yet implemented.");
+      return  (gm.isGroup() && isAuthorized(ap, "SELECT", gm));
    }
 }

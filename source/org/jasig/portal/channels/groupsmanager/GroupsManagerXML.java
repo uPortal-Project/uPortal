@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.EntityTypes;
+import org.jasig.portal.EntityTypes;  /** @todo remove when groups/EntityTypes is removed */
 import org.jasig.portal.IPermissible;
+import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerAdminPermissions;
+import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerDefaultPermissions;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -58,6 +60,7 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -90,9 +93,11 @@ public class GroupsManagerXML
       viewDoc.appendChild(viewRoot);
       //don't create permission elements for an admin user
       Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): sessionData.isAdminUser = " + sessionData.isAdminUser);
-      if (!sessionData.isAdminUser){
-         Element apRoot = getAuthorizationXml(sd, null, viewDoc);
-         viewRoot.appendChild(apRoot);
+      if (sessionData.gmPermissions == null) {
+         if (sessionData.isAdminUser)
+            sessionData.gmPermissions = GroupsManagerAdminPermissions.getInstance();
+         else
+            sessionData.gmPermissions = GroupsManagerDefaultPermissions.getInstance();
       }
       Element etRoot = getEntityTypesXml(viewDoc);
       viewRoot.appendChild(etRoot);

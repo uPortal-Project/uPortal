@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,9 @@
 
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
-import org.jasig.portal.channels.groupsmanager.CGroupsManagerUnrestrictedSessionData;
-import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
-import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
-import org.jasig.portal.channels.groupsmanager.IGroupsManagerWrapper;
-import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.channels.groupsmanager.*;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -77,6 +74,26 @@ public abstract class GroupMemberWrapper
       Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): grp: " + gm);
       getXml(gm, rootElem, sessionData);
       return  rootElem;
+   }
+
+   /**
+    * Adds permission attributes to the group member element.
+    * @param rootElem Element
+    * @param gm IGroupMember
+    * @param gmp IGroupsManagerPermissions
+    * @param ap IAuthorizationPrincipal
+    */
+   public void applyPermissions (Element rootElem, IGroupMember gm, IGroupsManagerPermissions gmp, IAuthorizationPrincipal ap) {
+      // set user permissions for group
+      rootElem.setAttribute("canAssignPermissions", String.valueOf(gmp.canAssignPermissions(ap, gm)));
+      rootElem.setAttribute("canCreateGroup", String.valueOf(gmp.canCreateGroup(ap, gm)));
+      rootElem.setAttribute("canManageMembers", String.valueOf(gmp.canManageMembers(ap, gm)));
+      rootElem.setAttribute("canDelete", String.valueOf(gmp.canDelete(ap, gm)));
+      rootElem.setAttribute("canSelect", String.valueOf(gmp.canSelect(ap, gm)));
+      rootElem.setAttribute("canUpdate", String.valueOf(gmp.canUpdate(ap, gm)));
+      rootElem.setAttribute("canView", String.valueOf(gmp.canView(ap, gm)));
+      rootElem.setAttribute("canViewProperties", String.valueOf(gmp.canViewProperties(ap, gm)));
+      return;
    }
 
    /**

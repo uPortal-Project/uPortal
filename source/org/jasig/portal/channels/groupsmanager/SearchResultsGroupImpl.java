@@ -1,3 +1,38 @@
+/**
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 package org.jasig.portal.channels.groupsmanager;
 
 import java.util.ArrayList;
@@ -32,16 +67,16 @@ public class SearchResultsGroupImpl implements IEntityGroup{
     this.leafType = leafType;
     ei = new EntityIdentifier(null,IEntityGroup.class);
   }
-  
+
   public void addMember(IGroupMember gm) throws GroupsException{
     members.add(gm);
   }
-  
+
   public java.util.Iterator getMembers() throws GroupsException {
     return members.iterator();
   }
   public String getCreatorID() {
-    return this.creator;  
+    return this.creator;
   }
   public String getDescription() {
     return this.description;
@@ -77,8 +112,8 @@ public class SearchResultsGroupImpl implements IEntityGroup{
     while (members.hasNext()){
       IGroupMember m = (IGroupMember) members.next();
       if (m.isGroup() && m.getKey().equals(gm.getKey())){
-        return true; 
-      } 
+        return true;
+      }
     }
     return false;
   }
@@ -111,13 +146,13 @@ public class SearchResultsGroupImpl implements IEntityGroup{
     throw new java.lang.UnsupportedOperationException("Method getEntities() not yet implemented.");
   }
   public Class getEntityType() {
-    return leafType;    
+    return leafType;
   }
   public String getKey() {
     return ei.getKey();
   }
   public Class getLeafType() {
-    return leafType;    
+    return leafType;
   }
   public IEntityGroup getMemberGroupNamed(String name) throws GroupsException {
     /**@todo: Implement this org.jasig.portal.groups.IGroupMember method*/
@@ -127,7 +162,7 @@ public class SearchResultsGroupImpl implements IEntityGroup{
     return IEntityGroup.class;
   }
   public EntityIdentifier getUnderlyingEntityIdentifier() {
-    return ei;   
+    return ei;
   }
   public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException {
     return false;
@@ -138,17 +173,17 @@ public class SearchResultsGroupImpl implements IEntityGroup{
   public EntityIdentifier getEntityIdentifier() {
     return ei;
   }
-  
+
   public void update() throws GroupsException{
-    
+
   }
 
   public void updateMembers() throws GroupsException{
-    
+
   }
-  
+
   public boolean isEditable() throws GroupsException{
-    return true; 
+    return true;
   }
   public void delete() throws GroupsException {
     /**@todo: Implement this org.jasig.portal.groups.IEntityGroup method*/
@@ -158,7 +193,7 @@ public class SearchResultsGroupImpl implements IEntityGroup{
   public boolean hasMembers() throws GroupsException {
     if (members.size()>0){
     return true;
-    } 
+    }
     return false;
   }
   public boolean isEntity() {

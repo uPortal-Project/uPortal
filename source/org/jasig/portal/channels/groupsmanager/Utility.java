@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,10 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Iterator;
+
+import java.io.StringWriter;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Priority;
@@ -45,6 +46,7 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.LogService;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

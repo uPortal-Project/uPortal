@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,22 +41,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.ICacheable;
-import org.jasig.portal.IChannel;
-import org.jasig.portal.IMultithreadedCacheable;
-import org.jasig.portal.IPermissible;
-import org.jasig.portal.PortalEvent;
-import org.jasig.portal.PortalException;
+import org.jasig.portal.*;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.XSLT;
+
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
@@ -234,9 +226,10 @@ public class CGroupsManager
             if (!sessionData.allowFinish) {
               xslt.setStylesheetParameter("blockFinishActions", "true");
             }
-            if (sessionData.blockEntitySelect) {
-              xslt.setStylesheetParameter("blockEntitySelect", "true");
-            }
+            // now handled in the permissions policy
+            //if (sessionData.blockEntitySelect) {
+            //  xslt.setStylesheetParameter("blockEntitySelect", "true");
+            //}
             try {
                //Utility.logMessage("DEBUG", this.getClass().getName()
                //        + ".renderXML(): grpView=" + runtimeData.getParameter("grpView"));
@@ -255,7 +248,8 @@ public class CGroupsManager
             //Utility.printDoc(viewDoc, "viewXMl ready:\n");
 
             Utility.logMessage("DEBUG","CGroupsManager::renderXML(): Servant services complete");
-            //Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
+            /** @todo remove following print statement */
+            Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
          }
       } catch (Exception e) {
          Utility.logMessage("ERROR", e.toString(), e);

@@ -6,8 +6,6 @@
   <xsl:param name="grpMode" />
   <xsl:param name="commandResponse">null</xsl:param>
   <xsl:param name="grpServantMode">false </xsl:param>
-  <xsl:param name="ignorePermissions" select="false()"/>
-  <xsl:key name="can" match="//principal/permission[@type='GRANT']" use="concat(@activity,'|',@target)"/>
 
   <xsl:template match="/">
     <table width="100%" border="0">
@@ -49,7 +47,7 @@
             </td>
             <td class="uportal-channel-text">
               <xsl:choose>
-                <xsl:when test="not($ignorePermissions) and not(key('can',concat('UPDATE','|',@key)))">
+                <xsl:when test="not($group/@canUpdate='true')">
                   <xsl:value-of select="RDF/Description/title" />
                 </xsl:when>
                 <xsl:otherwise>
@@ -62,10 +60,10 @@
               </xsl:choose>
             </td>
             <td nowrap="true">
-              <xsl:if test="$ignorePermissions or key('can',concat('UPDATE','|',@key))">
+              <xsl:if test="$group/@canUpdate='true'">
                 <input type="submit" name="grpCommand" value="Update" class="uportal-button" />
               </xsl:if>
-              <xsl:if test="$ignorePermissions or key('can',concat('DELETE','|',@key))">
+              <xsl:if test="$group/@canDelete='true')">
                 <input type="submit" name="grpCommand" value="Delete" class="uportal-button" />
               </xsl:if>
             </td>
@@ -104,7 +102,7 @@
 
   <xsl:template name="AddAndCreateRows">
     <xsl:param name="grpKey">null </xsl:param>
-    <xsl:if test="$ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true')">
+    <xsl:if test="$group/@canManageMembers='true' or ($grpServantMode='true')">
       <form action="{$baseActionURL}" method="POST">
         <input type="hidden" name="grpView" value="tree" /> <input type="hidden" name="grpMode" value="select" /> <input type="hidden" name="grpViewId" value="0" /> <input type="hidden" name="grpCommand" value="Add" /> <input type="hidden" name="grpCommandIds" value="{$grpViewId}" />
         <tr>
@@ -119,7 +117,7 @@
       </form>
     </xsl:if>
     <xsl:if test="not($grpServantMode='true')">
-      <xsl:if test="not($grpViewId='0') and not($grpKey='null') and ($ignorePermissions or key('can',concat('ASSIGNPERMISSIONS','|',$grpKey)))">
+      <xsl:if test="not($grpViewId='0') and not($grpKey='null') and ($group/@canAssignPermissions='true')">
         <form action="{$baseActionURL}" method="POST">
           <tr>
             <input type="hidden" name="grpView" value="AssignPermissions" /> <input type="hidden" name="grpViewKey" value="{$grpKey}" />
@@ -133,7 +131,7 @@
           </tr>
         </form>
       </xsl:if>
-      <xsl:if test="$ignorePermissions or key('can',concat('CREATE','|',$grpKey))">
+      <xsl:if test="$group/@canCreate='true'">
         <form action="{$baseActionURL}" method="POST">
           <input type="hidden" name="grpView" value="edit" /> <input type="hidden" name="grpViewId" value="{$grpViewId}" /> <input type="hidden" name="grpCommand" value="Create" /> <input type="hidden" name="grpCommandIds" value="{$grpViewId}" />
           <tr>
@@ -175,7 +173,7 @@
 
   <xsl:template match="group[@id!=$grpViewId]">
     <xsl:param name="grpKey">null</xsl:param>
-    <xsl:if test="$ignorePermissions or key('can',concat('VIEW','|',@key))">
+    <xsl:if test="$group/@canView='true'">
       <tr>
         <td>
           <img src="media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif" height="5" width="14" />
@@ -193,7 +191,7 @@
           </xsl:choose>
         </td>
         <td align="right" valign="top" class="uportal-channel-table-row-even">
-          <xsl:if test="$ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true')">
+          <xsl:if test="$group/@canManageMembers='true' or ($grpServantMode='true')">
             <a href="{$baseActionURL}?grpView=edit&amp;grpViewId={$grpViewId}&amp;grpCommand=Remove&amp;grpCommandIds=parent.{parent::group/@id}|child.{@id}"> <span class="uportal-channel-table-row-even">
                 <xsl:text>
                   Remove
@@ -215,7 +213,7 @@
         <xsl:value-of select="@displayName" />
       </td>
       <td align="right" valign="top" class="uportal-channel-table-row-odd">
-        <xsl:if test="$ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true')">
+        <xsl:if test="$group/@canManageMembers='true' or ($grpServantMode='true')">
           <a href="{$baseActionURL}?grpView=edit&amp;grpViewId={$grpViewId}&amp;grpCommand=Remove&amp;grpCommandIds=parent.{parent::group/@id}|child.{@id}"> <span class="uportal-channel-table-row-odd">
               <xsl:text>
                 Remove

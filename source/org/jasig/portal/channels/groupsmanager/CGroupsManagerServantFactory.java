@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,10 +43,12 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IServant;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerBlockEntitySelectPermissions;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.services.GroupService;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -130,7 +132,8 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
         servant.getSessionData().mode = "select";
         servant.getSessionData().allowFinish = allowFinish;
         if(!allowEntitySelect){
-           servant.getSessionData().blockEntitySelect = true;
+           servant.getSessionData().gmPermissions = GroupsManagerBlockEntitySelectPermissions.getInstance();
+           //servant.getSessionData().blockEntitySelect = true;
         }
         if (message != null){
           servant.getSessionData().customMessage = message;
@@ -215,7 +218,8 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
         servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
         servant.getSessionData().mode = "select";
         servant.getSessionData().allowFinish = allowFinish;
-        servant.getSessionData().blockEntitySelect = true;
+        servant.getSessionData().gmPermissions = GroupsManagerBlockEntitySelectPermissions.getInstance();
+        //servant.getSessionData().blockEntitySelect = true;
         if (message != null){
           servant.getSessionData().customMessage = message;
         }

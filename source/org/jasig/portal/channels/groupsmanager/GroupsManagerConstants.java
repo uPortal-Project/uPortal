@@ -1,5 +1,5 @@
 /**
- * Copyright ï¿½ 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ public interface GroupsManagerConstants {
    String EDIT_MODE = "edit";
    String SELECT_MODE = "select";
    String MEMBERS_ONLY_MODE = "members";
-   
+
    String VIEW_PERMISSION = "VIEW";
    String CREATE_PERMISSION = "CREATE";
    String UPDATE_PERMISSION = "UPDATE";

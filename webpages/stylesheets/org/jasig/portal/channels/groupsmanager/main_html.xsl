@@ -7,19 +7,16 @@
   <xsl:param name="mode" />
   <xsl:param name="customMessage" select="false()"/>
   <xsl:param name="feedback" select="false()"/>
-  <xsl:param name="ignorePermissions" select="false()"/>
   <xsl:param name="blockFinishActions" select="false()"/>
-  <xsl:param name="blockEntitySelect" select="false()"/>  
   <xsl:param name="grpServantMode">false </xsl:param>
   <xsl:param name="spacerIMG">media/org/jasig/portal/channels/CUserPreferences/tab-column/transparent.gif</xsl:param>
   <xsl:param name="pageSize" select="number(12)"/>
   <xsl:param name="page"/>
   <xsl:param name="mediaBase">media/org/jasig/portal/channels/groupsmanager</xsl:param>
-  <xsl:key name="can" match="//principal/permission[@type='GRANT']" use="concat(@activity,'|',@target)" />
   <xsl:key name="selectedGroup" match="group[@selected='true']" use="@key"/>
   <xsl:key name="selectedEntity" match="entity[@selected='true']" use="@key"/>
   <xsl:key name="groupByID" match="group" use="@id"/>
-  <xsl:key name="members" match="node()[((name()='group') and ((//principal/permission[@type='GRANT' and @activity='VIEW']/@target=@key) or $ignorePermissions)) or name()='entity']" use="parent::group/@id"/>
+  <xsl:key name="members" match="node()[((name()='group') and (@canView='true')) or name()='entity']" use="parent::group/@id"/>
   <xsl:variable name="rootGroup" select="key('groupByID',$rootViewGroupID)"/>
   <xsl:variable name="highlightedGroup" select="key('groupByID',$highlightedGroupID)"/>
 
@@ -235,11 +232,11 @@
           		</xsl:when>
           		<xsl:when test="$mode='edit'">
           			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="Finish Editing Group" title="Finish Editing Group"/></a>
-          			<xsl:if test="$ignorePermissions or key('can',concat('DELETE','|',$group/@key))">
+          			<xsl:if test="$group/@canDelete='true'">
 						<a href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="Delete Group" title="Delete Group"/></a>
 					</xsl:if>
           		</xsl:when>
-          		<xsl:when test="($group/@editable='true') and ($ignorePermissions or key('can',concat('UPDATE','|',$group/@key)) or key('can',concat('ASSIGNPERMISSIONS','|',$group/@key)) or key('can',concat('ADD/REMOVE','|',$group/@key)) or key('can',concat('CREATE','|',$group/@key)))">
+          		<xsl:when test="($group/@editable='true') and ($group/@canUpdate='true' or $group/@canAssignPermissions='true' or $group/@canManageMembers='true' or $group/@canCreateGroup='true')">
           			<a href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/lock.gif" alt="Edit Group" title="Edit Group"/></a>
           		</xsl:when>
           	</xsl:choose>
@@ -282,7 +279,7 @@
 				<xsl:choose>
 					<xsl:when test="($mode='select') and not($group/@searchResults='true')">
 					  
-						<xsl:if test="not($group/@id=0) and ($ignorePermissions or key('can',concat('SELECT','|',$group/@key)))">
+						<xsl:if test="not($group/@id=0) and ($group/@canSelect='true')">
 						  <xsl:choose>
 							<xsl:when test="($group/@selected='true') or (key('selectedGroup',$group/@key))">
 							  <span class="uportal-channel-warning">
@@ -305,7 +302,7 @@
             </td>
             <td class="uportal-text" colspan="2">
               <xsl:choose>
-                <xsl:when test="not($mode='edit') or (not($ignorePermissions) and not(key('can',concat('UPDATE','|',$group/@key))))">
+                <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
                   <xsl:value-of select="$group/RDF/Description/title" />
                 </xsl:when>
                 <xsl:otherwise>
@@ -332,7 +329,7 @@
           </td>
           <td class="uportal-text" colspan="2">
           	<xsl:choose>
-                <xsl:when test="not($mode='edit') or (not($ignorePermissions) and not(key('can',concat('UPDATE','|',$group/@key))))">
+                <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
                   <xsl:value-of select="$group/RDF/Description/description" />
                 </xsl:when>
                 <xsl:otherwise>
@@ -347,21 +344,21 @@
 			<tr>	
 				<td></td>
 				<td nowrap="nowrap" colspan="2">
-					<xsl:if test="$ignorePermissions or key('can',concat('UPDATE','|',$group/@key))">
+					<xsl:if test="$group/@canUpdate='true'">
 						<input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Update';" value="Update" class="uportal-button" />
 						<input type="reset" value="Reset Form"  class="uportal-button" />
 					  </xsl:if>
 					 <img src="{$spacerIMG}" width="15" height="1"/>
-					<xsl:if test="not($highlightedGroupID='0') and not($grpKey='null') and ($ignorePermissions or key('can',concat('ASSIGNPERMISSIONS','|',$grpKey)))">
+					<xsl:if test="not($highlightedGroupID='0') and not($grpKey='null') and $group/@canAssignPermissions='true'">
 						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Permissions';" value="Assign Permissions" class="uportal-button" />
 					  </xsl:if>
-					<xsl:if test="$ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true')">
+					<xsl:if test="$group/@canManageMembers='true' or ($grpServantMode='true')">
 						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Add';" value="Add Members" class="uportal-button" />
 					</xsl:if>
 				</td>
 			</tr>
 			<xsl:if test="not($grpServantMode='true')">
-			  <xsl:if test="$ignorePermissions or key('can',concat('CREATE','|',$grpKey))">
+			  <xsl:if test="$group/@canCreateGroup='true'">
 				  <tr>
 					<td>
 					  <xsl:text>
@@ -461,13 +458,13 @@
     	<xsl:sort data-type="text" order="ascending" select="@displayName"/>
     	<xsl:if test="(position() &gt; (($page - 1)*$pageSize)) and (position() &lt; (($page * $pageSize)+1))">
 			<xsl:if test="name()='group'">
-				<xsl:if test="$ignorePermissions or key('can',concat('VIEW','|',@key))">
+				<xsl:if test="@canView='true'">
 				  <tr>
 					<td align="center" valign="top">
 						<xsl:choose>
 							<xsl:when test="$mode='select'">
 							  
-								<xsl:if test="not(@id=0) and ($ignorePermissions or key('can',concat('SELECT','|',@key)))">
+								<xsl:if test="not(@id=0) and @canSelect='true'">
 								  <xsl:choose>
 									<xsl:when test="(@selected='true') or (key('selectedGroup',@key))">
 									  <span class="uportal-channel-warning">
@@ -494,12 +491,13 @@
 							</span> </a>
 					</td>
 					<td align="right" valign="top" class="uportal-channel-table-row-even" nowrap="nowrap">
-					  <xsl:if test="$mode='edit' and ($ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true'))">
+					  <xsl:if test="$mode='edit' and (@canManageMembers='true' or ($grpServantMode='true'))">
 						<a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{RDF/Description/title}','{parent::group/RDF/Description/title}');">
 						<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 						</a>
 					  </xsl:if>
 					  <xsl:choose>
+						<xsl:when test="not($group/@canViewProperties='true')"/>
 						<xsl:when test="properties">
 							<a href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$mediaBase}/hideinfo.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Hide Info" title="Hide Info"/></a>
 						</xsl:when>
@@ -522,7 +520,7 @@
 				  <td>
 				  	<xsl:choose>
 				  		<xsl:when test="$mode='select'">
-						   <xsl:if test="(($group/@searchResults='true') or $ignorePermissions or key('can',concat('SELECT','|',parent::group/@key))) and not($blockEntitySelect)">
+						   <xsl:if test="(($group/@searchResults='true') or @canSelect='true')">
 							<xsl:choose>
 							  <xsl:when test="(@selected='true') or key('selectedEntity',@key)">
 								<span class="uportal-channel-warning">
@@ -548,7 +546,7 @@
 					</strong>
 				  </td>
 				  <td align="right" valign="top" class="uportal-channel-table-row-odd">
-					<xsl:if test="$mode='edit' and ($ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true'))">
+					<xsl:if test="$mode='edit' and ((@canManageMembers='true') or ($grpServantMode='true'))">
 					  <a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{@displayName}','{parent::group/RDF/Description/title}');">
 					  	<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 					  </a>
@@ -654,7 +652,7 @@
   </xsl:template>
   
   <xsl:template match="group">
-    <xsl:if test="$ignorePermissions or key('can',concat('VIEW','|',@key)) or (@id=0) or (@searchResults='true')">
+    <xsl:if test="@canView='true' or (@id=0) or (@searchResults='true')">
     <table border="0" cellpadding="0" cellspacing="0" width="100%">	
       <tr>
         <td width="100%" colspan="2">

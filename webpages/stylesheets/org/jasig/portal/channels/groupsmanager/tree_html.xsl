@@ -6,10 +6,7 @@
   <xsl:param name="grpMode" />
   <xsl:param name="grpServantMessage" select="false()"/>
   <xsl:param name="commandResponse">null</xsl:param>
-  <xsl:param name="ignorePermissions" select="false()"/>
   <xsl:param name="blockFinishActions" select="false()"/>
-  <xsl:param name="blockEntitySelect" select="false()"/>
-  <xsl:key name="can" match="//principal/permission[@type='GRANT']" use="concat(@activity,'|',@target)" />
   <xsl:key name="selectedGroup" match="group[@selected='true']" use="@key"/>
   <xsl:key name="selectedEntity" match="entity[@selected='true']" use="@key"/>
 
@@ -130,11 +127,11 @@
     <xsl:param name="depth">
       1
     </xsl:param>
-    <xsl:if test="$ignorePermissions or key('can',concat('VIEW','|',@key)) or (@id=0)">
+    <xsl:if test="$group/@canView='true' or (@id=0)">
       <tr>
         <xsl:if test="$grpMode='select'">
           <td align="center" valign="top">
-            <xsl:if test="not(@id=0) and ($ignorePermissions or key('can',concat('SELECT','|',@key)))">
+            <xsl:if test="not(@id=0) and ($group/@canSelect='true')">
               <xsl:choose>
                 <xsl:when test="(@selected='true') or (key('selectedGroup',@key))">
                   <span class="uportal-channel-warning">
@@ -205,7 +202,7 @@
     <tr>
       <xsl:if test="$grpMode='select'">
         <td align="center" valign="top">
-          <xsl:if test="($ignorePermissions or key('can',concat('SELECT','|',parent::group/@key))) and not($blockEntitySelect)">
+          <xsl:if test="@canSelect='true'">
             <xsl:choose>
               <xsl:when test="(@selected='true') or key('selectedEntity',@key)">
                 <span class="uportal-channel-warning">
