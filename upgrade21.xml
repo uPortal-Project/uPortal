@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<!--
+     This build file can be used to upgrade a database serving uPortal 2.1.x
+     to the current version.  It performs all of the 2.2+ database population
+     tasks in the main initportal target, plus an upgrade task which replaces
+     the "db" task of the initportal task.  The upgrade task just populates
+     the data that is new since 2.1.x.
+     
+     Once this is done, there may be additional steps needed, such as:
+      - updating user profiles to use aggregated layouts
+      - updating themes to use the new path scheme
+      
+     Author: Al Wold
+     Version: $Revision$
+-->
+<project name="upgrade21" default="upgrade21">
+<import file="build.xml"/>
+
+  <target name="upgrade21" depends="compile" 
+   description="Runs all the targets necessary to upgrade the portal database">
+    <echo message="Initializing uPortal"/>
+    <antcall target="upgradedb"/>
+    <antcall target="i18n-db"/>
+    <antcall target="pubchan">
+      <param name="channel" value="layout-sitemap.xml"/>
+    </antcall>
+    <antcall target="pushfragment">
+      <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
+    </antcall>
+    <echo message="Finished initializing uPortal"/>
+  </target>
+
+ <target name="upgradedb">
+    <echo message="Invoking DbLoader"/>
+    <property name="usetable" value=" "/>
+    <property name="tablefile" value=" "/>
+    <property name="usedata" value=" "/>
+    <property name="datafile" value=" "/>
+    <property name="createscript" value=" "/>
+    <property name="droptables" value="-nD"/>
+    <property name="createtables" value=" "/>
+    <property name="populatetables" value=" "/>
+    <property name="localeaware" value=" "/>
+    <property name="adminlocale" value=" "/>
+    <property name="upgrade" value="-u"/>
+    <property name="upgradeVersion" value="2.1"/>
+    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <path refid="compile.classpath"/>
+      </classpath>
+                                                                                                                 
+      <arg value="${usetable}"/>
+      <arg value="${tablefile}"/>
+      <arg value="${usedata}"/>
+      <arg value="${datafile}"/>
+      <arg value="${createscript}"/>
+      <arg value="${droptables}"/>
+      <arg value="${createtables}"/>
+      <arg value="${populatetables}"/>
+      <arg value="${localeaware}"/>
+      <arg value="${adminlocale}"/>
+      <arg value="${upgrade}"/>
+      <arg value="${upgradeVersion}"/>
+    </java>
+ </target>
+
+</project>
