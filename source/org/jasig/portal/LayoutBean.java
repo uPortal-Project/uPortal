@@ -17,7 +17,7 @@ import org.jasig.portal.layout.*;
  * a user's layout.  This includes changing the colors, size and
  * positions of tabs, columns, and channels.
  * @author Ken Weiner
- * @version %I%, %G%
+ * @version $Revision$
  */
 public class LayoutBean extends GenericPortalBean
                         implements ILayoutBean
@@ -26,6 +26,7 @@ public class LayoutBean extends GenericPortalBean
   private static String sPathToLayoutDtd = null;
   private static String sLayoutDtd = "layout.dtd";
   private Hashtable htChannelInstances = new Hashtable ();
+  private static Object dummyObject = new Object (); // For syncronizing code
 
   /**
    * Default constructor
@@ -45,7 +46,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -125,7 +126,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
     
@@ -143,41 +144,45 @@ public class LayoutBean extends GenericPortalBean
     
     try 
     {    
-      HttpSession session = req.getSession (false);
-      layoutXml = (IXml) session.getAttribute ("layoutXml");
-      
-      if (layoutXml != null)
-        return layoutXml;
-      
-      if (sUserName == null)
-        sUserName = "guest";
-                
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-        
-      String sQuery = "SELECT LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
-      System.out.println (sQuery);
-      ResultSet rs = stmt.executeQuery (sQuery);
-      
-      if (rs.next ())
+      synchronized (dummyObject)
       {
-        String sLayoutXml = rs.getString ("LAYOUT_XML");
+        HttpSession session = req.getSession (false);
+        layoutXml = (IXml) session.getAttribute ("layoutXml");
         
-        // Tack on the full path to layout.dtd
-        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
+        if (layoutXml != null)
+          return layoutXml;
+        
+        if (sUserName == null)
+          sUserName = "guest";
+                  
+        con = rdbmService.getConnection ();
+        Statement stmt = con.createStatement();
+          
+        String sQuery = "SELECT LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
+        Logger.log (Logger.DEBUG, sQuery);
+      
+        ResultSet rs = stmt.executeQuery (sQuery);
+        
+        if (rs.next ())
+        {
+          String sLayoutXml = rs.getString ("LAYOUT_XML");
+          
+          // Tack on the full path to layout.dtd
+          int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
+          sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
 
-        String xmlFilePackage = "org.jasig.portal.layout";
-        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-        session.setAttribute ("layoutXml", layoutXml);
+          String xmlFilePackage = "org.jasig.portal.layout";
+          layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
+          session.setAttribute ("layoutXml", layoutXml);
+        }
+        stmt.close ();
       }
-      stmt.close ();
       
       return layoutXml;
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }    
     finally
     {
@@ -193,29 +198,32 @@ public class LayoutBean extends GenericPortalBean
     
     try 
     { 
-      if (sUserName == null)
-        sUserName = "guest";
+      synchronized (dummyObject)
+      {
+        if (sUserName == null)
+          sUserName = "guest";
+          
+        con = rdbmService.getConnection ();
+        Statement stmt = con.createStatement();
+          
+        StringWriter sw = new StringWriter ();
+        layoutXml.saveDocument (sw);
+        String sLayoutXml = sw.toString();
         
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-        
-      StringWriter sw = new StringWriter ();
-      layoutXml.saveDocument (sw);
-      String sLayoutXml = sw.toString();
-      
-      // Remove path to layout dtd before saving
-      int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
-      int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
-      sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
-        
-      String sUpdate = "UPDATE USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
-      int iUpdated = stmt.executeUpdate (sUpdate);
-      System.out.println ("Saving layout xml. Updated " + iUpdated + " rows.");
-      stmt.close ();
+        // Remove path to layout dtd before saving
+        int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
+        int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
+        sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
+          
+        String sUpdate = "UPDATE USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
+        int iUpdated = stmt.executeUpdate (sUpdate);
+        Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
+        stmt.close ();
+      }
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     finally
     {
@@ -237,33 +245,37 @@ public class LayoutBean extends GenericPortalBean
     
     try 
     {    
-      HttpSession session = req.getSession (false);      
-      con = rdbmService.getConnection ();
-      Statement stmt = con.createStatement();
-        
-      String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
-      System.out.println (sQuery);
-      ResultSet rs = stmt.executeQuery (sQuery);
-      
-      if (rs.next ())
+      synchronized (dummyObject)
       {
-        String sLayoutXml = rs.getString ("DEFAULT_LAYOUT_XML");
+        HttpSession session = req.getSession (false);      
+        con = rdbmService.getConnection ();
+        Statement stmt = con.createStatement();
+          
+        String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
+        Logger.log (Logger.DEBUG, sQuery);
+      
+        ResultSet rs = stmt.executeQuery (sQuery);
         
-        // Tack on the full path to layout.dtd
-        int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-        sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
+        if (rs.next ())
+        {
+          String sLayoutXml = rs.getString ("DEFAULT_LAYOUT_XML");
+          
+          // Tack on the full path to layout.dtd
+          int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
+          sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
 
-        String xmlFilePackage = "org.jasig.portal.layout";
-        layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
-        session.setAttribute ("layoutXml", layoutXml);
+          String xmlFilePackage = "org.jasig.portal.layout";
+          layoutXml = Xml.openDocument (xmlFilePackage, new StringReader (sLayoutXml));
+          session.setAttribute ("layoutXml", layoutXml);
+        }
+        stmt.close ();
       }
-      stmt.close ();
       
       return layoutXml;
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }    
     finally
     {
@@ -309,7 +321,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }    
     return iActiveTab;
   }  
@@ -329,7 +341,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }    
   }          
         
@@ -408,7 +420,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }
   
@@ -545,7 +557,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }  
   
@@ -728,7 +740,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }    
   
@@ -751,7 +763,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     
     return "";
@@ -776,7 +788,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     
     return "";
@@ -801,7 +813,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     
     return "";
@@ -826,7 +838,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     
     return "";
@@ -851,7 +863,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     
     return "";
@@ -883,7 +895,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -945,7 +957,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
     return null;
   }  
@@ -987,7 +999,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1010,7 +1022,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1030,7 +1042,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }        
   
@@ -1051,7 +1063,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1078,7 +1090,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1105,7 +1117,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1129,7 +1141,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1149,7 +1161,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -1171,7 +1183,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1193,7 +1205,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -1215,7 +1227,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -1236,7 +1248,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
@@ -1257,7 +1269,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -1278,7 +1290,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -1303,7 +1315,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -1328,7 +1340,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   } 
   
@@ -1356,7 +1368,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
 
@@ -1384,7 +1396,7 @@ public class LayoutBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace ();
+      Logger.log (Logger.ERROR, e);
     }
   }      
   
