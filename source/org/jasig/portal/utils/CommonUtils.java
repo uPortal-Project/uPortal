@@ -37,8 +37,12 @@
 
 package org.jasig.portal.utils;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * CommonUtils class contains base useful utilities

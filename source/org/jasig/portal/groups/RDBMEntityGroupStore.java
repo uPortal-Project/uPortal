@@ -36,19 +36,20 @@ package org.jasig.portal.groups;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.GroupService;
 
 /**
  * Store for <code>EntityGroupImpl</code>.
@@ -89,6 +90,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String MEMBER_IS_GROUP_COLUMN = "MEMBER_IS_GROUP";
     private static String MEMBER_IS_ENTITY = "F";
     private static String MEMBER_IS_GROUP = "T";
+    private static String GROUP_NODE_SEPARATOR;
 
     // SQL strings for group MEMBERS crud:
     private static String allMemberColumns;
@@ -108,6 +110,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 public RDBMEntityGroupStore()
 {
     super();
+    initialize();
 }
 /**
  * @param conn java.sql.Connection
@@ -424,7 +427,7 @@ public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException
             {
                 while (rs.next())
                 {
-                    groupKey = rs.getString(1) + NODE_SEPARATOR + rs.getString(2);
+                    groupKey = rs.getString(1) + GROUP_NODE_SEPARATOR + rs.getString(2);
                     groupKeys.add(groupKey);
                 }
             }
@@ -906,6 +909,20 @@ private static java.lang.String getUpdateGroupSql()
     return updateGroupSql;
 }
 /**
+ * Get the node separator character from the GroupServiceConfiguration.  
+ * Default it to IGroupConstants.NODE_SEPARATOR.
+ */
+private void initialize() {
+    String sep;
+    try
+        { sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
+    catch (Exception ex)
+        { sep = NODE_SEPARATOR; }
+    GROUP_NODE_SEPARATOR = sep;
+    String msg = "RDBMEntityGroupStore.initialize(): Node separator set to " + sep;
+    LogService.log (LogService.INFO, msg);
+}
+/**
  * Find and return an instance of the group.
  * @return org.jasig.portal.groups.IEntityGroup
  * @param key java.lang.Object
@@ -959,7 +976,7 @@ protected static void logNoTransactionWarning()
     String msg = "You are running the portal on a database that does not support transactions.  " +
                  "This is not a supported production environment for uPortal.  " +
                  "Sooner or later, your database will become corrupt.";
-    LogService.instance().log(LogService.WARN, msg);
+    LogService.log(LogService.WARN, msg);
 }
 /**
  * @return org.jasig.portal.groups.IEntity
@@ -1113,8 +1130,10 @@ private void primDelete(IEntityGroup group) throws SQLException
     }
     finally
     {
-        setAutoCommit(conn, true);
-        RDBMServices.releaseConnection(conn);
+        try 
+            { setAutoCommit(conn, true); }
+        finally
+            { RDBMServices.releaseConnection(conn); }
     }
 }
 /**
@@ -1389,8 +1408,8 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
             }
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            LogService.log(LogService.ERROR, e);
         } finally {
             RDBMServices.releaseConnection(conn);
         }
@@ -1459,8 +1478,7 @@ public void update(IEntityGroup group) throws GroupsException
         try { setAutoCommit(conn, true); }
         catch (SQLException sqle)
             { throw new GroupsException(sqle.getMessage()); }
-
-        RDBMServices.releaseConnection(conn);
+        finally { RDBMServices.releaseConnection(conn); }
     }
 }
 /**
@@ -1497,7 +1515,7 @@ public void updateMembers(IEntityGroup eg) throws GroupsException
         try { setAutoCommit(conn, true); }
         catch (SQLException sqle)
             { throw new GroupsException(sqle.getMessage()); }
-        RDBMServices.releaseConnection(conn);
+        finally { RDBMServices.releaseConnection(conn); }
     }
 }
 }

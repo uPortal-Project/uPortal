@@ -36,11 +36,12 @@ package org.jasig.portal.groups;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 

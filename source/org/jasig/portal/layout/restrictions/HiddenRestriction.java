@@ -37,8 +37,6 @@
 package org.jasig.portal.layout.restrictions;
 
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.layout.UserLayoutNode;
 import org.jasig.portal.layout.UserLayoutNodeDescription;
 

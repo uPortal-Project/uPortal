@@ -35,20 +35,18 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.IPrivilegedChannel;
-import org.jasig.portal.ChannelStaticData;
+import javax.servlet.http.HttpServletRequest;
+
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.XMLEscaper;
+import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 
 /**
  * <p>A channel which displays HTTP request and HTML header info.

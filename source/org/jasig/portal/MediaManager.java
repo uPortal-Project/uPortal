@@ -36,24 +36,24 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.services.LogService;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Vector;
-import java.util.StringTokenizer;
 import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.jasig.portal.serialize.BaseMarkupSerializer;
-import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.serialize.CachingXHTMLSerializer;
 import org.jasig.portal.serialize.CachingHTMLSerializer;
-import org.jasig.portal.serialize.HTMLSerializer;
+import org.jasig.portal.serialize.CachingXHTMLSerializer;
 import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -71,6 +71,11 @@ public class MediaManager {
   protected OrderedProps serializerProps = null;
   private static boolean outputIndenting = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting");
   private static boolean omitDoctype = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype");
+
+  /**
+   * A user agent string to use when the user-agent header value itself is null.
+   */
+  public static final String NULL_USER_AGENT="null";
 
   /**
    * Constructs a MediaManager
@@ -105,10 +110,15 @@ public class MediaManager {
       else
         url = new URL(uri);
       if (url != null) {
-        mediaProps = new OrderedProps(url.openStream());
+        InputStream in = url.openStream();
+        try {
+          mediaProps = new OrderedProps(in);
+        } finally {
+          in.close();
+        }
       }
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
+      LogService.log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -125,10 +135,15 @@ public class MediaManager {
       else
         url = new URL(uri);
       if (url != null) {
-        mimeProps = new OrderedProps(url.openStream());
+        InputStream in = url.openStream();
+        try {
+          mimeProps = new OrderedProps(in);
+        } finally {
+          in.close();
+        }
       }
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
+      LogService.log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -145,10 +160,15 @@ public class MediaManager {
       else
         url = new URL(uri);
       if (url != null) {
-        serializerProps = new OrderedProps(url.openStream());
+        InputStream in = url.openStream();
+        try {
+          serializerProps = new OrderedProps(in);
+        } finally {
+          in.close();
+        }
       }
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
+      LogService.log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
           uri + ". " + ioe);
     }
   }
@@ -163,7 +183,11 @@ public class MediaManager {
       this.setMediaProps((String)null);
     }
     if (mediaProps != null) {
-      return  mediaProps.getValue(req.getHeader("User-Agent"));
+        String ua=req.getHeader("User-Agent");
+        if(ua==null || ua.equals("")) { 
+            ua=NULL_USER_AGENT; 
+        }
+      return  mediaProps.getValue(ua);
     }
     return  (String)null;
   }
@@ -269,7 +293,7 @@ public class MediaManager {
       return getSerializerByName(serializerName, out);
     }
     else {
-      LogService.instance().log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
+      LogService.log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize serializerProperties. Returning a null serializer object");
       return  null;
     }
   }
@@ -340,10 +364,14 @@ public class MediaManager {
       this.setMediaProps((String)null);
     }
     if (mediaProps != null) {
-      return  getSerializer(mediaProps.getValue(req.getHeader("User-Agent")), out);
+        String ua=req.getHeader("User-Agent");
+        if(ua==null || ua.equals("")) { 
+            ua=NULL_USER_AGENT; 
+        }
+        return getSerializer(mediaProps.getValue(ua), out);
     }
     else {
-      LogService.instance().log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
+      LogService.log(LogService.ERROR, "MediaManager::getSerializer() : Unable to initialize mediaProperties. Returning a null serializer object");
       return  null;
     }
   }
@@ -393,6 +421,7 @@ public class MediaManager {
           attVec.addElement(temp);
         }
       }
+                input.close();
     }
 
     /**

@@ -35,15 +35,19 @@ package org.jasig.portal.services;
  *
  */
 
-import java.util.Vector;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.security.*;
+
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IAuthorizationServiceFactory;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -64,19 +68,20 @@ public class AuthorizationService
     Properties pr = new Properties();
     try {
       pr.load(secprops);
+		secprops.close();
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
-        LogService.instance().log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
+        LogService.log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
       }
       else {
         try {
           m_Factory = (IAuthorizationServiceFactory)Class.forName(s_factoryName).newInstance();
         } catch (Exception e) {
-          LogService.instance().log(LogService.ERROR, new PortalSecurityException("Failed to instantiate " + s_factoryName));
+          LogService.log(LogService.ERROR, new PortalSecurityException("Failed to instantiate " + s_factoryName));
         }
       }
     } catch (IOException e) {
-      LogService.instance().log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
+      LogService.log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
     }
   }
 

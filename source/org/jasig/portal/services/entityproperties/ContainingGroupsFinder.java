@@ -35,10 +35,13 @@
 
 package org.jasig.portal.services.entityproperties;
 
+import java.util.Iterator;
+
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.groups.*;
-import java.util.*;
-import org.jasig.portal.services.*;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 
 /**
  * A finder implementation to provide a , delimited list of containing groups
@@ -75,7 +78,7 @@ public class ContainingGroupsFinder implements IEntityPropertyFinder {
       r = buf.toString();
     }
     catch(Exception e){
-       LogService.instance().log(LogService.ERROR,e);
+       LogService.log(LogService.ERROR,e);
     }
     return r;
   }

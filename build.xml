@@ -87,8 +87,8 @@
 
 -->
 
-  <property name="app.name"      value="uPortal"/>
-  <property name="app.version"   value="2.1"/>
+  <property name="app.name"      value="(set this in build.properties!)"/>
+  <property name="app.version"   value="(set this in build.properties!)"/>
   <property name="build.home"    value="build"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
@@ -166,7 +166,7 @@
 
   tyrex.jar            An in-memory JNDI implementation.
                        Version: 1.0
-                       URL: http://tyrex.exolab.org/
+                       URL: http://tyrex.sourceforge.net/
 
   activation.jar       JavaBeans Activation Framework. Used by MultiPartDataSource.
                        Version: 1.0.2
@@ -712,6 +712,8 @@
     <java dir="${basedir}" classname="org.jasig.portal.security.md5passwd">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
+        <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${xercesImpl.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
@@ -733,7 +735,7 @@ Example:
   <target name="deluser" >
     <echo message="Invoking DeleteUser"/>
     <property name="user" value=" "/>   
-    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser">
+    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true" >
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>

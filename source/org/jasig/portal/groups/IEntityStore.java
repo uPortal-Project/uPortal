@@ -46,6 +46,8 @@ public interface IEntityStore {
  * the <code>IEntityGroup</code>.
  * @return java.util.Iterator
  * @param group org.jasig.portal.groups.IEntityGroup
+ * @deprecated
+ * replaced by <code>IEntityGroupStore.findEntitiesForGroup(IEntityGroup)</code>.
  */
 java.util.Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException;
 /**

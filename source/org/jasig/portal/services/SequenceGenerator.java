@@ -1,6 +1,9 @@
 package org.jasig.portal.services;
 
-import  org.jasig.portal.*;
+import org.jasig.portal.ISequenceGenerator;
+import org.jasig.portal.ISequenceGeneratorFactory;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PropertiesManager;
 
 /**
  * @author Dan Ellentuck 

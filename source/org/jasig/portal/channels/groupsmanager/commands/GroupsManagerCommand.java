@@ -35,17 +35,20 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  java.util.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.services.*;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.ChainedException;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
+import org.jasig.portal.channels.groupsmanager.IGroupsManagerCommand;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * This class is the parent class of all other command classes.

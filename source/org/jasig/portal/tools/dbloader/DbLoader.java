@@ -35,44 +35,45 @@
 
 package org.jasig.portal.tools.dbloader;
 
-import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.RDBMServices;
-import org.jasig.portal.utils.DTDResolver;
-import org.jasig.portal.utils.XSLT;
-import java.io.File;
-import java.io.PrintWriter;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
-import java.io.StringReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.sql.Types;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.ContentHandler;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * <p>A tool to set up a uPortal database. This tool was created so that uPortal

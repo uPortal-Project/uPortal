@@ -35,7 +35,6 @@ package org.jasig.portal.security;
  *
  */
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.security.Permission;
 
 /**
  * Interface for creating, finding and maintaining <code>IPermissions</code>.

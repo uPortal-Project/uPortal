@@ -34,9 +34,9 @@
  */
 
 package org.jasig.portal.channels.permissionsmanager.commands;
-import org.jasig.portal.channels.permissionsmanager.*;
-import org.jasig.portal.*;
-import org.jasig.portal.services.*;
+import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
+import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
+import org.jasig.portal.services.LogService;
 
 /**
  * An IPermissionCommand implementation that resets CPermissionsManager
@@ -62,6 +62,7 @@ public class Cancel implements IPermissionCommand {
         //sd.remove("prmActivities");
         // re-instate when this funcion is available
         session.principals=null;
+        session.owners = null;
         //sd.remove("prmPrincipals");
         session.servant = null;
         //sd.remove("prmServant");
@@ -70,7 +71,7 @@ public class Cancel implements IPermissionCommand {
         session.isFinished=true;
         session.view = null;
         //sd.setParameter("prmFinished","true");
-        LogService.instance().log(LogService.DEBUG,"PermissionsManager.Cancel complete");
+        LogService.log(LogService.DEBUG,"PermissionsManager.Cancel complete");
     }
 
 }

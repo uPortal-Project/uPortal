@@ -35,29 +35,30 @@
 
 package org.jasig.portal.channels.remotechannel;
 
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.IPrivileged;
-import org.jasig.portal.ICacheable;
-import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.PortalEvent;
-import org.jasig.portal.BrowserInfo;
-import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.security.*;
-import org.jasig.portal.security.provider.*;
-import org.w3c.dom.Element;
-import org.xml.sax.ContentHandler;
-import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.Map;
+import java.net.URL;
 import java.rmi.RemoteException;
-import javax.servlet.http.Cookie;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.rpc.ServiceException;
+
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IPrivileged;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.security.IOpaqueCredentials;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 
 /**
  * <p>A proxy channel for remote channels exposed by the uPortal

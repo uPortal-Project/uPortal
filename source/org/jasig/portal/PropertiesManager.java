@@ -35,11 +35,9 @@
 
 package  org.jasig.portal;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+
 import org.jasig.portal.services.LogService;
 
 /**
@@ -66,14 +64,16 @@ public class PropertiesManager {
     try {
       props.load(PropertiesManager.class.getResourceAsStream(PORTAL_PROPERTIES_FILE_NAME));
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "Unable to read portal.properties file.");
-      LogService.instance().log(LogService.ERROR, ioe);
+      LogService.log(LogService.ERROR, "Unable to read portal.properties file.");
+      LogService.log(LogService.ERROR, ioe);
     }
   }
 
   /**
-   * Returns the value of a property for a given name. A runtime exception is
-   * throws in the property cannot be found
+   * Returns the value of a property for a given name.
+   * Any whitespace is trimmed off the beginning and
+   * end of the property value. A runtime exception is thrown 
+   * if the property cannot be found.
    * @param name the name of the requested property
    * @return value the value of the property matching the requested name
    */
@@ -81,6 +81,8 @@ public class PropertiesManager {
     String val = props.getProperty(name);
     if (val == null)
       throw new RuntimeException("Property " + name + " not found!");
+    else
+      val = val.trim();
     return val;
   }
 

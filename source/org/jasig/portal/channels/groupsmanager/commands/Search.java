@@ -35,14 +35,19 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  java.util.*;
-import  java.io.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.services.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerCommandFactory;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.SearchResultsGroupImpl;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.GroupService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 /** This command delegates to the GroupsService to find entities requested

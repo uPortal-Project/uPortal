@@ -36,10 +36,10 @@
 
 package org.jasig.portal.layout.restrictions;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupService;
+import org.jasig.portal.groups.IGroupServiceFactory;
+import org.jasig.portal.services.LogService;
 
 /**
  * Creates the UserLayout node implemetation of <code>IGroupService</code>.

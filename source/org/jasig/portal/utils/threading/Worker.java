@@ -34,7 +34,6 @@
  */
 package org.jasig.portal.utils.threading;
 
-import org.jasig.portal.services.LogService;
 
 /**
  * A ThreadPool worker thread.
@@ -45,22 +44,26 @@ import org.jasig.portal.services.LogService;
 
 
 public final class Worker extends Thread {
+
 	private ThreadPool pool;
 	private Queue work;
 	private WorkerTask task;
 	private WorkTracker tracker;
 	private boolean continueWorking;
+        private static int iThreadID = 0;
 
 	/**
 	 * Worker Constructor
 	 *
 	 * @param pool the ThreadPool that this worker belongs to
-	 * @param workQueue the queue of work for this thread
+	 * @param work the queue of work for this thread
 	 */
 	public Worker(ThreadPool pool, Queue work) {
 		this.pool = pool;
                 this.work = work;
                 continueWorking = true;
+                iThreadID++;
+                setName("uPortal thread pool worker #" + iThreadID);
 	}
 
 
@@ -74,6 +77,7 @@ public final class Worker extends Thread {
                                 // Lock this thread
                                 pool.lockThread(this);
 
+                                task.setWorker(this);
 				tracker = task.getWorkTracker();
 
 				//check to make sure this job hasn't been killed before we got it
@@ -105,7 +109,7 @@ public final class Worker extends Thread {
 					cleanState();
 				}
 				//clear this threads interrupted status
-				this.interrupted();
+				Worker.interrupted();
 
 			} finally {
                             Thread.yield();
@@ -118,7 +122,8 @@ public final class Worker extends Thread {
 	 */
 	public void stopWorker() {
 		continueWorking = false;
-		Thread.currentThread().interrupt();
+                if ( !this.isInterrupted() )
+		 this.interrupt();
                 pool.destroyThread(this);
 	}
 

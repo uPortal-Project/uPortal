@@ -34,9 +34,10 @@
 
 package org.jasig.portal.groups;
 
-import java.util.*;
-import org.jasig.portal.IBasicEntity;
+import java.util.Iterator;
+
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 
 /**
  * An <code>IGroupMember</code> defines common behavior for both the leaf

@@ -84,24 +84,31 @@
 package org.jasig.portal.serialize;
 
 
-import java.io.Writer;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Vector;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.w3c.dom.*;
-import org.xml.sax.DocumentHandler;
+import javax.xml.transform.Result;
+
+import org.jasig.portal.PropertiesManager;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.Entity;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Notation;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
+import org.xml.sax.DocumentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Attributes;
-import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.ext.DeclHandler;
+import org.xml.sax.ext.LexicalHandler;
 
 
 /**
@@ -111,7 +118,7 @@ import org.xml.sax.ext.DeclHandler;
  * serializing mechanisms.
  * <p>
  * The serializer must be initialized with the proper writer and
- * output format before it can be used by calling {@link #init}.
+ * output format before it can be used by calling <code>init</code>.
  * The serializer can be reused any number of times, but cannot
  * be used concurrently by two threads.
  * <p>
@@ -249,6 +256,15 @@ public abstract class BaseMarkupSerializer
     private OutputStream    _output;
 
 
+    /**
+     * A portal property indicating whether or not to allow the disabling
+     * of output escaping.  When allowed, XSLT stylesheets can request
+     * to disable output escaping, therefore enabling the direct pass-through
+     * of markup such as HTML.
+     */
+    private boolean         _allowDisableOutputEscaping;
+    
+
     //--------------------------------//
     // Constructor and initialization //
     //--------------------------------//
@@ -267,6 +283,8 @@ public abstract class BaseMarkupSerializer
         for ( i = 0 ; i < _elementStates.length ; ++i )
             _elementStates[ i ] = new ElementState();
         _format = format;
+        
+        _allowDisableOutputEscaping = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.serialize.BaseMarkupSerializer.allow_disable_output_escaping");
     }
 
 
@@ -321,7 +339,6 @@ public abstract class BaseMarkupSerializer
         _format = format;
         reset();
     }
-
 
     public boolean reset()
     {
@@ -410,7 +427,7 @@ public abstract class BaseMarkupSerializer
      * writer and output format. Throws an exception only if
      * an I/O exception occured while serializing.
      *
-     * @param elem The element to serialize
+     * @param frag the document fragment to serialize
      * @throws IOException An I/O exception occured while
      *   serializing
      */
@@ -597,6 +614,13 @@ public abstract class BaseMarkupSerializer
             if ( _indenting )
             state.afterElement = true;
         }
+        
+        if (_allowDisableOutputEscaping) {
+            if (target.equals(Result.PI_DISABLE_OUTPUT_ESCAPING))
+                startNonEscaping();
+            else if (target.equals(Result.PI_ENABLE_OUTPUT_ESCAPING))
+                endNonEscaping();
+        }        
     }
 
 

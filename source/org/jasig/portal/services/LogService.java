@@ -27,9 +27,12 @@
 
 package  org.jasig.portal.services;
 
+import java.io.File;
+
+import org.apache.log4j.Category;
+import org.apache.log4j.Priority;
+import org.apache.log4j.PropertyConfigurator;
 import org.jasig.portal.utils.ResourceLoader;
-import java.io.*;
-import org.apache.log4j.*;
 
 
 /**

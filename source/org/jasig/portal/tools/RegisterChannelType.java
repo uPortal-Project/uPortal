@@ -36,8 +36,8 @@
 package org.jasig.portal.tools;
 
 import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.ChannelType;
+import org.jasig.portal.IChannelRegistryStore;
 
 /**
  * <p>A tool for registering a new channel type with uPortal.

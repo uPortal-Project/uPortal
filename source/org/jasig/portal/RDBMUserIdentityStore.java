@@ -39,13 +39,16 @@ COLLABORATIVE "AS IS" AND ANY
 
 package  org.jasig.portal;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.GroupService;
-import  java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CounterStoreFactory;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
@@ -91,66 +94,47 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
      Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      if (RDBMServices.supportsTransactions)  
+      if (RDBMServices.supportsTransactions)
         con.setAutoCommit(false);
 
       try {
-        String SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = '" + uPortalUID + "'";
+        String SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = '" + uPortalUID + "'";
+        SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = " + uPortalUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
         stmt.executeUpdate(SQLDelete);
 
-        /* remove from all groups */
-        try{
-          IGroupMember user = GroupService.getEntity(String.valueOf(uPortalUID), Class.forName("org.jasig.portal.security.IPerson"));
-          java.util.Iterator userGroups =  user.getContainingGroups();
-          LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID("+uPortalUID+"): removing group memberships.");
-          while (userGroups.hasNext())
-          {
-                IEntityGroup eg = (IEntityGroup) userGroups.next();
-
-                LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::removePortalUID("+uPortalUID+"): removing user from group "+eg.getName());
-                eg.removeMember(user);
-                eg.updateMembers();
-          }
-        }
-        catch (Exception e) {
-          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error removing user from groups: ", e);
-        }
-
-
-        if (RDBMServices.supportsTransactions)  
+        if (RDBMServices.supportsTransactions)
           con.commit();
 
       } finally {
@@ -159,7 +143,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     catch (SQLException se) {
       try {
-        if (RDBMServices.supportsTransactions)  
+        if (RDBMServices.supportsTransactions)
           con.rollback();
       }
       catch (SQLException e) {
@@ -188,12 +172,13 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @throws Authorization exception if createPortalData is false and no user is found
    *  or if a sql error is encountered
    */
-   public int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+   public synchronized int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
     int uPortalUID=-1;
     // Get a connection to the database
     Connection con = rdbmService.getConnection();
     Statement stmt = null;
     Statement insertStmt = null;
+    ResultSet rset = null;
 
     try
     {
@@ -213,7 +198,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       catch(Exception e) {}
 
       // Log the exception
-      LogService.instance().log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): Could not create database statement", se);
+      LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): Could not create database statement", se);
       throw new AuthorizationException("RDBMUserIdentityStore: Could not create database statement");
     }
 
@@ -225,7 +210,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       // DEBUG
       LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
       // Execute the query
-      ResultSet rset = stmt.executeQuery(query);
+      rset = stmt.executeQuery(query);
 
       // Check to see if we've got a result
       if (rset.next())
@@ -253,7 +238,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + "template name is " + templateName);
 
         // Just use the default template if requested template not populated
-        if (templateName == null || templateName=="")
+        if (templateName == null || templateName.equals(""))
         {
           templateName=defaultTemplateUserName;
         }
@@ -262,6 +247,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         query = "SELECT USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT FROM UP_USER WHERE USER_NAME = '"+templateName+"'";
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         // Execute the query
+        rset.close();
         rset = stmt.executeQuery(query);
         // Check to see if the template user exists
         if (rset.next())
@@ -282,6 +268,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             templateName+"'";
           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
           // Execute the query
+          rset.close();
           rset = stmt.executeQuery(query);
           // Check to see if the template user exists
           if (rset.next())   {
@@ -305,24 +292,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
         }
 
-        /* put new user in groups that template is in */
-        try{
-          IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-
-          IGroupMember template = GroupService.getEntity(templateName, Class.forName("org.jasig.portal.security.IPerson"));
-          java.util.Iterator templateGroups =  template.getContainingGroups();
-          while (templateGroups.hasNext())
-          {
-                IEntityGroup eg = (IEntityGroup) templateGroups.next();
-                eg.addMember(me);
-                eg.updateMembers();
-          }
-        }
-        catch (Exception e) {
-          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
-        }
+                /* Put the new user in the template user's groups */
+            try {
+              IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
+              IGroupMember template = GroupService.getEntity(templateName, Class.forName("org.jasig.portal.security.IPerson"));
+              java.util.Iterator templateGroups =  template.getContainingGroups();
+              while (templateGroups.hasNext())
+              {
+                  IEntityGroup eg = (IEntityGroup) templateGroups.next();
+                  eg.addMember(me);
+                  eg.updateMembers();
+              }  // end while()
+            }    // end try
+            catch (Exception e) {
+              LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to groups: ", e);
+            }
+        
         try
-        {
+            {
           // Turn off autocommit if the database supports it
           if (RDBMServices.supportsTransactions)
           {
@@ -332,7 +319,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         catch(SQLException se)
         {
           // Log the exception
-          LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
+          LogService.log(LogService.WARN, "RDBMUserIdentityStore: Could not turn off autocommit", se);
         }
 
         String Insert = new String();
@@ -358,6 +345,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         query =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID) "+
@@ -375,6 +363,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         query = "SELECT USER_ID,USER_PARAM_NAME,USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
@@ -390,10 +379,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_profile */
 
-        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
+        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION "+
                 "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
 
@@ -417,6 +407,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                 " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
@@ -435,6 +426,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           " FROM UP_SS_USER_PARM WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + query);
         if (DEBUG>0) System.err.println(query);
+        rset.close();
         rset = stmt.executeQuery(query);
         while (rset.next()) {
            Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
@@ -482,7 +474,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
       catch (SQLException e)
       {
-        LogService.instance().log(LogService.WARN, "RDBMUserIdentityStore.getPortalUID(): Unable to rollback transaction", se);
+        LogService.log(LogService.WARN, "RDBMUserIdentityStore.getPortalUID(): Unable to rollback transaction", se);
       }
       // DEBUG
       if (DEBUG>0)
@@ -497,6 +489,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     finally
     {
+      try { 
+        if (rset != null) rset.close(); 
+      } catch (Exception e) { 
+        LogService.log(LogService.ERROR, e); 
+      } 
+    
+      try { 
+        if (stmt != null) stmt.close(); 
+      } catch (Exception e) { 
+        LogService.log(LogService.ERROR, e); 
+      } 
+    
+      try { 
+        if (insertStmt != null) insertStmt.close(); 
+      } catch (Exception e) { 
+        LogService.log(LogService.ERROR, e); 
+      } 
+
       rdbmService.releaseConnection(con);
     }
     // Return the user's ID

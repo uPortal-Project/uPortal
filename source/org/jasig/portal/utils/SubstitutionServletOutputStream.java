@@ -35,8 +35,8 @@
 
 package org.jasig.portal.utils;
 
-import java.io.OutputStream;
 import java.io.IOException;
+
 import javax.servlet.ServletOutputStream;
 
 

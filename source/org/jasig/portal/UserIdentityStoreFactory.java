@@ -36,7 +36,6 @@
 
 package org.jasig.portal;
 
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -52,12 +51,12 @@ public class UserIdentityStoreFactory {
     String className = PropertiesManager.getProperty("org.jasig.portal.UserIdentityStoreFactory.implementation");
     // Fail if this is not found
     if (className == null)
-      LogService.instance().log(LogService.ERROR, "UserIdentityStoreFactory: org.jasig.portal.UserIdentityStoreFactory.implementation must be specified in portal.properties");
+      LogService.log(LogService.ERROR, "UserIdentityStoreFactory: org.jasig.portal.UserIdentityStoreFactory.implementation must be specified in portal.properties");
     try {
       // Create an instance of the IUserIdentityStore as specified in portal.properties
       UserIdentityStoreImpl = (IUserIdentityStore)Class.forName(className).newInstance();
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "UserIdentityStoreFactory: Could not instantiate " + className, e);
+      LogService.log(LogService.ERROR, "UserIdentityStoreFactory: Could not instantiate " + className, e);
     }
   }
 

@@ -35,20 +35,22 @@
 
 package org.jasig.portal;
 
-import org.jasig.portal.services.LogService;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.SQLException;
-import java.sql.Driver;
-import javax.sql.DataSource;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+import org.jasig.portal.services.LogService;
 
 /**
  * Provides relational database access and helper methods.
@@ -86,6 +88,11 @@ public class RDBMServices {
   static {
     try {
       loadProps();
+      if (!bPropsLoaded && !getDatasourceFromJndi)
+        {
+        System.err.println("Unable to connect to database");
+        throw new PortalException("Unable to connect to database");
+      }
 
       /**
        * See what the database allows us to do
@@ -191,7 +198,7 @@ public class RDBMServices {
           }
         }
 
-        LogService.instance().log(LogService.INFO, md.getDatabaseProductName() +
+        LogService.log(LogService.INFO, md.getDatabaseProductName() +
           "/" + getJdbcDriver() + " (" + md.getDriverVersion() +
           ") database/driver supports:\n     Prepared statements=" + supportsPreparedStatements +
           ", Outer joins=" + supportsOuterJoins + ", Transactions=" + supportsTransactions + tranMsg +
@@ -200,7 +207,7 @@ public class RDBMServices {
         releaseConnection(con);
       }
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+      LogService.log(LogService.ERROR, e);
     }
   }
 
@@ -208,6 +215,7 @@ public class RDBMServices {
    * Loads the JDBC properties from rdbm.properties file.
    */
   protected static void loadProps () throws Exception {
+  try {
       if (!bPropsLoaded) {
         InputStream inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
         Properties jdbcProps = new Properties();
@@ -219,7 +227,14 @@ public class RDBMServices {
         jdbcDriverProps.put("password", jdbcProps.getProperty("jdbcPassword"));
         jdbcDriver = (java.sql.Driver)Class.forName(sJdbcDriver).newInstance();
         bPropsLoaded = true;
+        }
       }
+      catch (Exception e){
+        // let caller handle situation where no proerties file is found.
+        // When getting datasource from jndi properties file is optional
+        // and would be used as a dallback only
+        return;
+        }
   }
 
   /**
@@ -244,12 +259,12 @@ public class RDBMServices {
           conn.setAutoCommit(true);
         }
       } else {
-        LogService.instance().log(LogService.ERROR, "The database '" + dbName + "' could not be found.");
+        LogService.log(LogService.ERROR, "The database '" + dbName + "' could not be found.");
       }
     } catch (javax.naming.NamingException ne) {
-      LogService.instance().log(LogService.ERROR, ne);
+      LogService.log(LogService.ERROR, ne);
     } catch (SQLException sqle) {
-      LogService.instance().log(LogService.ERROR, sqle);
+      LogService.log(LogService.ERROR, sqle);
     }
     return conn;
   }
@@ -274,6 +289,7 @@ public class RDBMServices {
         return conn;
     }
 
+    if (bPropsLoaded)
     for (int i = 0; i < RETRY_COUNT && conn == null; ++i) {
       try {
         conn = jdbcDriver.connect(sJdbcUrl, jdbcDriverProps);
@@ -286,8 +302,8 @@ public class RDBMServices {
       } catch (SQLException SQLe) {
         String errMsg = SQLe.getMessage();
         if (!errMsg.equals(prevErrorMsg)) {                     // Only need to see one instance of this error
-          LogService.instance().log(LogService.WARN, "Driver " + sJdbcDriver + " produced error: " + SQLe.getMessage() + ". Trying to get connection again.");
-          LogService.instance().log(LogService.INFO, SQLe);
+          LogService.log(LogService.WARN, "Driver " + sJdbcDriver + " produced error: " + SQLe.getMessage() + ". Trying to get connection again.");
+          LogService.log(LogService.INFO, SQLe);
           prevErrorMsg = errMsg;
         }
       }
@@ -304,7 +320,7 @@ public class RDBMServices {
       if (con != null)
         con.close();
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+      LogService.log(LogService.ERROR, e);
     }
   }
 
@@ -365,7 +381,7 @@ public class RDBMServices {
     if (supportsTransactions) {
         connection.rollback();
     } else {
-      LogService.instance().log(LogService.SEVERE, "RDBMUserLayout::rollback() called, but JDBC/DB does not support transactions. User data most likely corrupted");
+      LogService.log(LogService.SEVERE, "RDBMUserLayout::rollback() called, but JDBC/DB does not support transactions. User data most likely corrupted");
       throw new SQLException("Unable to rollback user data");
     }
   }

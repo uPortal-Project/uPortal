@@ -35,22 +35,25 @@
 
 package  org.jasig.portal.utils;
 
-import org.jasig.portal.ResourceMissingException;
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.File;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Properties;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Document;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * <p>This utility provides methods for accessing resources.
@@ -78,8 +81,8 @@ public class ResourceLoader {
       System.setProperty("java.protocol.handler.pkgs",handler);
     }
     catch(Exception e){
-      LogService.instance().log(LogService.ERROR,"Unable to set HTTPS Protocol handler:"); 
-      LogService.instance().log(LogService.ERROR,e);
+      LogService.log(LogService.ERROR,"Unable to set HTTPS Protocol handler:"); 
+      LogService.log(LogService.ERROR,e);
     }
   }
 
@@ -145,7 +148,7 @@ public class ResourceLoader {
    * @throws org.jasig.portal.ResourceMissingException
    */
   public static String getResourceAsFileString(Class requestingClass, String resource) throws ResourceMissingException {
-    return getResourceAsURL(requestingClass, resource).getFile();
+    return URLDecoder.decode(getResourceAsURL(requestingClass, resource).getFile());
   }
 
   /**
@@ -199,6 +202,7 @@ public class ResourceLoader {
     InputStream inputStream = getResourceAsStream(requestingClass, resource);
     Properties props = new Properties();
     props.load(inputStream);
+	 inputStream.close();
     return props;
   }  
   

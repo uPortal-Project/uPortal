@@ -38,14 +38,14 @@
 
 package  org.jasig.portal;
 
-import  javax.servlet.http.HttpServletRequest;
-import  javax.servlet.http.HttpSessionBindingEvent;
-import  javax.servlet.http.HttpSessionBindingListener;
-import  java.util.Hashtable;
-import  org.jasig.portal.security.PortalSecurityException;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.PersonManagerFactory;
-import  org.jasig.portal.services.LogService;
+import java.util.Hashtable;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 
 
@@ -71,7 +71,7 @@ public class UserInstanceManager {
       // Retrieve the person object that is associated with the request
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
     } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, "UserInstanceManager: Unable to retrieve IPerson!", e);
+      LogService.log(LogService.ERROR, "UserInstanceManager: Unable to retrieve IPerson!", e);
       throw  (new PortalSecurityException("Could not retrieve IPerson"));
     }
     // Return the UserInstance object if it's in the session

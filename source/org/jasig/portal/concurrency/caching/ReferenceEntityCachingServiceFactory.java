@@ -35,7 +35,9 @@
 
 package org.jasig.portal.concurrency.caching;
 
-import org.jasig.portal.concurrency.*;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityCachingService;
+import org.jasig.portal.concurrency.IEntityCachingServiceFactory;
 import org.jasig.portal.services.LogService;
 
 /**

@@ -35,7 +35,9 @@
 
 package org.jasig.portal;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * <p>This object is passed to special channels</p>

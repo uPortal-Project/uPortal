@@ -1,9 +1,9 @@
 package org.jasig.portal.channels.iccdemo;
 
 
-import java.util.LinkedList;
-import java.util.Iterator;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * A trivial class for keeping a queue of N strings.

@@ -35,7 +35,8 @@
 
 package org.jasig.portal.serialize;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 /**
  * <code>CachingSerializer</code> interface allows low-level character interaction with a serializer.
  *

@@ -35,8 +35,8 @@
 
  package org.jasig.portal;
 
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Description of properties common for all core stylesheets

@@ -36,8 +36,8 @@ Version $Revision$
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output indent="yes"/>
-	<!--<xsl:variable name="uripath">file://c:/itsproj/portal/uportal21/portal/build/RunXSLT/</xsl:variable>
-	-->
+	<!--<xsl:variable name="uripath">file://c:/itsproj/portal/uportal21/portal/build/RunXSLT/</xsl:variable>-->
+
 	<xsl:variable name="uripath"/>
 
 	<xsl:template match="/">
@@ -60,8 +60,16 @@ Version $Revision$
 							<name>CREATOR_ID</name>
 							<value>
 								<xsl:variable name="oldKey" select="value"/>
-								<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.xml'))//row[column[name='USER_ID' and value=$oldKey]]"/>
-								<xsl:value-of select="$userRow/column[name='USER_NAME']/value"/>
+								<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.XML'))//row[column[name='USER_ID' and value=$oldKey]]"/>
+								<xsl:variable name="newKey" select="$userRow/column[name='USER_NAME']/value"/>
+								<xsl:choose>
+									<xsl:when test="string-length($newKey)=0">
+										<xsl:value-of select="$oldKey"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$newKey"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</value>
 						</column>
 					</xsl:when>

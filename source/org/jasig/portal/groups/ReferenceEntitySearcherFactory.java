@@ -38,7 +38,6 @@ import org.jasig.portal.groups.local.EntitySearcherImpl;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
 import org.jasig.portal.groups.local.searchers.RDBMChannelDefSearcher;
 import org.jasig.portal.groups.local.searchers.RDBMPersonSearcher;
-import org.jasig.portal.services.LogService;
 
 /**
  * Creates an instance of the reference <code>IEntitySearcher</code>.

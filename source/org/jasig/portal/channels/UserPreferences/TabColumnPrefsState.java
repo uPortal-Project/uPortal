@@ -35,64 +35,54 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.UserPreferencesManager;
-import org.jasig.portal.UserPreferences;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.StructureAttributesIncorporationFilter;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.ChannelSAXStreamFilter;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.UserLayoutStoreFactory;
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Hashtable;
-import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.dom.DOMSource;
 
-import org.apache.xpath.XPathAPI;
-import org.w3c.dom.traversal.NodeIterator;
-
+import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelSAXStreamFilter;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.StructureAttributesIncorporationFilter;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.UserLayoutNodeDescription;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.layout.UserLayoutFolderDescription;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.UserLayoutNodeDescription;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.ContentHandler;
 
 
 
@@ -121,8 +111,8 @@ public class TabColumnPrefsState extends BaseState
 
   // These can be overridden in a sub-class.
   protected static String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
-  protected static String SKIN_LIST_FILE = "media/org/jasig/portal/layout/tab-column/nested-tables/skinList.xml";
-
+  protected static String SKINS_PATH = "media/org/jasig/portal/layout/tab-column/nested-tables";
+  
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
   // very good and should be improved.  For example, there needs to be a way to let a user know that
@@ -213,7 +203,7 @@ public class TabColumnPrefsState extends BaseState
     if (this.internalState != null)
       this.internalState.renderXML(out);
     else
-      LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
+      LogService.log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
   }
 
   // Helper methods...
@@ -246,7 +236,7 @@ public class TabColumnPrefsState extends BaseState
     }
     catch (Exception e)
     {
-      LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
+      LogService.log(LogService.ERROR, "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
     }
 
     return activeTab;
@@ -306,8 +296,13 @@ public class TabColumnPrefsState extends BaseState
         newTab.setName(BLANK_TAB_NAME);
     }
     String siblingId=null;
-    if(method.equals("insertBefore")) siblingId=destinationTabId;
+    if(method.equals("insertBefore")) 
+      siblingId=destinationTabId;
     ulm.addNode(newTab,UserLayoutNodeDescription.ROOT_FOLDER_ID,siblingId);
+    
+    // Add a new column to this tab
+    UserLayoutFolderDescription newColumn = createFolder("Column");
+    ulm.addNode(newColumn, newTab.getId(), null);
   }
 
   /**
@@ -335,10 +330,6 @@ public class TabColumnPrefsState extends BaseState
 
   private final void changeColumnWidths(HashMap columnWidths) throws Exception
   {
-    // Must get from store because the one in memory is comtaminated with stylesheet params
-    // that shouldn't get persisted
-    //UserPreferences userPrefsFromStore = context.getUserPreferencesFromStore(context.getCurrentUserPreferences().getProfile());
-    //StructureStylesheetUserPreferences ssup = userPrefsFromStore.getStructureStylesheetUserPreferences();
     StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
     java.util.Set sColWidths = columnWidths.keySet();
     java.util.Iterator iterator = sColWidths.iterator();
@@ -361,7 +352,7 @@ public class TabColumnPrefsState extends BaseState
       if (widthIsValid)
         ssup.setFolderAttributeValue(folderId, "width", newWidth);
       else
-        LogService.instance().log(LogService.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
+        LogService.log(LogService.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
 
     }
 
@@ -541,21 +532,8 @@ public class TabColumnPrefsState extends BaseState
   private final void updateTabLock(String elementId, boolean locked) throws Exception
   {
       // NOTE: this method is to be removed soon.
-      /*
-    Element element = userLayout.getElementById(elementId);
-    if(locked)
-    {
-      element.setAttribute("unremovable", "true");
-      element.setAttribute("immutable", "true");
-    }
-    else
-    {
-      element.setAttribute("unremovable", "false");
-      element.setAttribute("immutable", "false");
-    }
-    saveLayout(false);
-      */
   }
+  
   /**
    * A folder is a tab if its parent element is the layout element
    * @param folder the folder in question
@@ -564,7 +542,7 @@ public class TabColumnPrefsState extends BaseState
   private final boolean isTab (String folderId) throws PortalException
   {
       // we could be a bit more careful here and actually check the type
-      return (ulm.getParentId(folderId)==UserLayoutNodeDescription.ROOT_FOLDER_ID);
+      return ulm.getParentId(folderId).equals(UserLayoutNodeDescription.ROOT_FOLDER_ID);
   }
 
   /**
@@ -633,6 +611,7 @@ public class TabColumnPrefsState extends BaseState
 
   private void saveUserPreferences () throws PortalException
   {
+    userPrefs.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", staticData.getChannelSubscribeId());
     IUserPreferencesManager upm = context.getUserPreferencesManager();
     if (modifyingCurrentUserLayout()) {
         upm.setNewUserLayoutAndUserPreferences(null, userPrefs);
@@ -691,7 +670,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageSetActiveTab;
           }
@@ -708,7 +687,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageRenameTab;
           }
@@ -734,7 +713,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveTab;
           }
@@ -760,7 +739,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageAddTab;
           }
@@ -776,7 +755,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteTab;
           }
@@ -792,7 +771,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageLockTab;
           }
@@ -808,7 +787,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageUnlockTab;
           }
@@ -840,7 +819,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageChangeColumnWidths;
           }
@@ -870,7 +849,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveColumn;
           }
@@ -885,10 +864,11 @@ public class TabColumnPrefsState extends BaseState
             String destinationColumnId = elementID;
 
             addColumn(method, destinationColumnId);
+            action = "none";
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageNewColumn;
           }
@@ -911,7 +891,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteColumn;
           }
@@ -963,7 +943,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveChannel;
           }
@@ -979,7 +959,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteChannel;
           }
@@ -1053,14 +1033,14 @@ public class TabColumnPrefsState extends BaseState
           
           // Debug piece to print out the recorded pre-structure transformation XML
           if (printXMLToLog) {
-            LogService.instance().log(LogService.DEBUG, "TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
+            LogService.log(LogService.DEBUG, "TablColumnPrefsState::renderXML() : XML incoming to the structure transformation :\n\n" + sw.toString() + "\n\n");
           }          
 
         } else {
-          LogService.instance().log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
+          LogService.log(LogService.ERROR, "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
         }
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, e);
         throw new GeneralRenderingException(e.getMessage());
       }
     }
@@ -1085,12 +1065,8 @@ public class TabColumnPrefsState extends BaseState
                 // save
                 String skinName = runtimeData.getParameter("skinName");
                 userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
-                // save user preferences ?
+                // save user preferences
                 saveUserPreferences();
-                // reset state
-                BaseState df=new DefaultState(context);
-                df.setStaticData(staticData);
-                context.setState(df);
             } else if (runtimeData.getParameter("submitCancel")!=null) {
                 // return to the default state
                 BaseState df=new DefaultState(context);
@@ -1102,13 +1078,14 @@ public class TabColumnPrefsState extends BaseState
 
     public void renderXML (ContentHandler out) throws PortalException
     {
-      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKIN_LIST_FILE);
+      InputStream xmlStream = PortalSessionManager.getResourceAsStream(SKINS_PATH + "/skinList.xml");
       String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
 
       XSLT xslt = new XSLT (this);
       xslt.setXML(xmlStream);
       xslt.setXSL(sslLocation, "skinList", runtimeData.getBrowserInfo());
       xslt.setTarget(out);
+      xslt.setStylesheetParameter("skinsPath", SKINS_PATH);
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       if(currentSkin!=null)
         xslt.setStylesheetParameter("currentSkin", currentSkin);
@@ -1345,3 +1322,4 @@ public class TabColumnPrefsState extends BaseState
   }
 
 }
+

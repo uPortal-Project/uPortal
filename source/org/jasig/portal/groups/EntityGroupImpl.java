@@ -34,18 +34,43 @@
 
 package org.jasig.portal.groups;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.naming.Name;
-import org.jasig.portal.*;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.services.EntityCachingService;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
 
 /**
  * Reference implementation for <code>IEntityGroup</code>.
+ * <p>
+ * Groups do not keep references to their members but instead cache 
+ * member keys.  The members are cached externally.  The rules
+ * for controlling access to the key caches are a bit obscure, but you 
+ * should understand them before writing code that updates groups.  
+ * Access to the caches themselves is synchronized via the cache 
+ * getters and setters.  All requests to get group members and to add or 
+ * remove group members ultimately go through these methods.  The 
+ * mutating methods, <code>addMember()</code> and <code>removeMember()</code> 
+ * however, do a copy-on-write.  That is, they first make a copy of the 
+ * cache, add or remove the member key, and then replace the original 
+ * cache with the copy.  This permits multiple read and write threads to run 
+ * concurrently without throwing <code>ConcurrentModificationExceptions</code>.  
+ * But it still leaves open the danger of data races because nothing in 
+ * this class guarantees serialized write access.  You must impose this 
+ * from without, either via explicit locking (<code>GroupService.getLockableGroup()</code>) 
+ * or by synchronizing access from the caller.  
+ *  
  * @author Dan Ellentuck
  * @version $Revision$
  * @see org.jasig.portal.groups.IEntityGroup
+ * 
+ * 
  */
 public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup
 {
@@ -106,21 +131,6 @@ public void addMember(IGroupMember gm) throws GroupsException
         { getAddedMembers().put(cacheKey, gm); }
 
     primAddMember(gm);
-}
-/**
- * Add <code>this</code> to the containing groups of the added members.
- */
-protected void addToAddedMembers() throws GroupsException
-{
-    for (Iterator it=getAddedMembers().values().iterator(); it.hasNext();)
-    {
-        GroupMemberImpl gmi = (GroupMemberImpl) it.next();
-        gmi.addGroup(this);
-        try
-            { EntityCachingService.instance().update(gmi); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating group member " + gmi.getKey() + " : " + ce.getMessage()); }
-    }
 }
 /**
  * @return boolean
@@ -199,15 +209,28 @@ protected void clearPendingUpdates()
     removedMembers = null;
 }
 /**
+ * Clone the member entity keys.
+ * @return Set
+ */
+private Set copyMemberEntityKeys() throws GroupsException
+{
+   return castAndCopyHashSet(getMemberEntityKeys());
+}
+/**
+ * Clone the member group keys.
+ * @return Set
+ */
+private Set copyMemberGroupKeys() throws GroupsException
+{
+   return castAndCopyHashSet(getMemberGroupKeys());
+}
+/**
  * Checks if <code>GroupMember</code> gm is a member of this.
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
 public boolean contains(IGroupMember gm) throws GroupsException
 {
-    if ( ! areMemberKeysInitialized() )
-        { initializeMembers(); }
-
     Object cacheKey = gm.getKey();
     return getMemberGroupKeys().contains(cacheKey) ||
            getMemberEntityKeys().contains(cacheKey);
@@ -345,12 +368,6 @@ public String getGroupID() {
     return getKey();
 }
 /**
- * @return IGroupService
- */
-protected IGroupService getGroupService() throws GroupsException {
-    return groupService;
-}
-/**
  * Returns the entity type of this groups's members.
  *
  * @return java.lang.Class
@@ -380,10 +397,7 @@ public String getLocalKey()
  */
 protected java.util.Iterator getMemberEntities() throws GroupsException
 {
-    if ( ! areMemberKeysInitialized() )
-        { initializeMembers(); }
-
-    Collection members = new ArrayList(getMemberEntityKeys().size());
+    Collection members = new ArrayList();
     for ( Iterator i = getMemberEntityKeys().iterator(); i.hasNext(); )
     {
         String key = (String) i.next();
@@ -394,17 +408,17 @@ protected java.util.Iterator getMemberEntities() throws GroupsException
 /**
  * @return java.util.Set
  */
-private Set getMemberEntityKeys() {
-    if ( this.memberEntityKeys == null )
-        this.memberEntityKeys = new HashSet(10);
+private synchronized Set getMemberEntityKeys() throws GroupsException{
+    if ( ! areMemberKeysInitialized() )
+        { initializeMembers(); }
     return memberEntityKeys;
 }
 /**
  * @return java.util.Set
  */
-private Set getMemberGroupKeys() {
-    if ( this.memberGroupKeys == null )
-        this.memberGroupKeys = new HashSet(10);
+private synchronized Set getMemberGroupKeys() throws GroupsException {
+    if ( ! areMemberKeysInitialized() )
+        { initializeMembers(); }
     return memberGroupKeys;
 }
 /**
@@ -430,10 +444,7 @@ public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
  */
 protected java.util.Iterator getMemberGroups() throws GroupsException
 {
-    if ( ! areMemberKeysInitialized() )
-        { initializeMembers(); }
-
-    Collection members = new ArrayList(getMemberGroupKeys().size());
+    Collection members = new ArrayList();
     for ( Iterator i = getMemberGroupKeys().iterator(); i.hasNext(); )
     {
         String key = (String) i.next();
@@ -448,10 +459,7 @@ protected java.util.Iterator getMemberGroups() throws GroupsException
  */
 public java.util.Iterator getMembers() throws GroupsException
 {
-    if ( ! areMemberKeysInitialized() )
-        { initializeMembers(); }
-
-    Collection members = new ArrayList();
+    Collection members = new ArrayList(100);
     Iterator itr = null;
 
     for ( itr = getMemberGroups(); itr.hasNext(); )
@@ -541,12 +549,17 @@ public boolean hasMembers() throws GroupsException
  */
 private void initializeMembers() throws GroupsException
 {
-    Iterator members = getLocalGroupService().findMembers(this);
-    while ( members.hasNext() )
+    Set groupKeys = new HashSet();
+    Set entityKeys = new HashSet(100);
+    
+    for ( Iterator it = getLocalGroupService().findMembers(this); it.hasNext(); )
     {
-        IGroupMember gm = (IGroupMember) members.next();
-        primAddMember(gm);
+        IGroupMember gm = (IGroupMember) it.next();
+        Set cache = ( gm.isGroup() ) ? groupKeys : entityKeys;
+        cache.add(gm.getKey());
     }
+    setMemberEntityKeys(entityKeys);
+    setMemberGroupKeys(groupKeys);
     setMemberKeysInitialized(true);
 }
 /**
@@ -575,16 +588,21 @@ public boolean isGroup()
 }
 /**
  * Adds the <code>IGroupMember</code> key to the appropriate member key
- * cache, although gm does not yet have <code>this</code> in its containing
- * group cache.  That cache entry is not added until update(), when changes
- * are committed to the store.
+ * cache by copying the cache, adding to the copy, and then replacing the
+ * original with the copy.  At this point, <code>gm</code> does not yet 
+ * have <code>this</code> in its containing group cache.  That cache entry 
+ * is not added until update(), when changes are committed to the store.
  * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-protected void primAddMember(IGroupMember gm)
+protected void primAddMember(IGroupMember gm) throws GroupsException
 {
-    Set cache = (gm.isGroup()) ? getMemberGroupKeys() : getMemberEntityKeys();
+    Set cache = (gm.isGroup()) ? copyMemberGroupKeys() : copyMemberEntityKeys();
     cache.add(gm.getKey());
+    if ( gm.isGroup() )
+        setMemberGroupKeys(cache);
+    else
+        setMemberEntityKeys(cache);
 }
 /**
  * Returns the <code>Set</code> of <code>IEntities</code> in our member <code>Collection</code>
@@ -625,16 +643,22 @@ protected java.util.Set primGetAllMembers(Set s) throws GroupsException
     return s;
 }
 /**
- * Removes <code>IGroupMember</code> gm from the appropriate key cache, although
- * gm still has <code>this</code> in its containing group cache.  That cache
- * entry is not removed until update(), when changes are committed to the store.
+ * Removes the <code>IGroupMember</code> key from the appropriate key cache, by
+ * copying the cache, removing the key from the copy and replacing the original
+ * with the copy.  At this point, <code>gm</code> still has <code>this</code> 
+ * in its containing groups cache.  That cache entry is not removed until update(), 
+ * when changes are committed to the store.  
  * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-protected void primRemoveMember(IGroupMember gm)
+protected void primRemoveMember(IGroupMember gm) throws GroupsException
 {
-    Set cache = (gm.isGroup()) ? getMemberGroupKeys() : getMemberEntityKeys();
+    Set cache = (gm.isGroup()) ? copyMemberGroupKeys() : copyMemberEntityKeys();
     cache.remove(gm.getKey());
+    if ( gm.isGroup() )
+        setMemberGroupKeys(cache);
+    else
+        setMemberEntityKeys(cache);
 }
 /**
  * @param newName java.lang.String
@@ -644,38 +668,13 @@ public void primSetName(java.lang.String newName)
     name = newName;
 }
 /**
- * Add or remove <code>this</code> from updated members.
- */
-protected void primUpdateMembers() throws GroupsException
-{
-    if ( hasAdds() )
-        { addToAddedMembers(); }
-    if ( hasDeletes() )
-        { removeFromRemovedMembers(); }
-}
-/**
- * Remove <code>this</code> from the containing groups of the removed members.
- */
-protected void removeFromRemovedMembers() throws GroupsException
-{
-    for (Iterator it=getRemovedMembers().values().iterator(); it.hasNext();)
-    {
-        GroupMemberImpl gmi = (GroupMemberImpl) it.next();
-        gmi.removeGroup(this);
-        try
-            { EntityCachingService.instance().update(gmi); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating group member " + gmi.getKey() + " : " + ce.getMessage()); }
-    }
-}
-/**
  * Removes <code>IGroupMember</code> gm from our member <code>Map</code> and,
  * conversely, remove this from gm's group <code>Map</code>.  Remember that we
  * have removed it so we can update the database, if necessary.
  * @return void
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-public void removeMember(IGroupMember gm)
+public void removeMember(IGroupMember gm) throws GroupsException
 {
     Object cacheKey = gm.getEntityIdentifier().getKey();
 
@@ -699,12 +698,6 @@ public void setDescription(java.lang.String newDescription) {
     description = newDescription;
 }
 /**
- * @param newGroupService IGroupService
- */
-public void setGroupService(IGroupService newGroupService) {
-    groupService = newGroupService;
-}
-/**
  * @param newLocalGroupService IIndividualGroupService
  */
 public void setLocalGroupService(IIndividualGroupService newIndividualGroupService)
@@ -720,8 +713,22 @@ private void setMemberKeysInitialized(boolean newMemberKeysInitialized) {
     memberKeysInitialized = newMemberKeysInitialized;
 }
 /**
- * @Exception GroupsException is thrown if a sibling group with the same name already exists.
+ * @param newMemberEntityKeys Set
+ */
+private synchronized void setMemberEntityKeys(Set newMemberEntityKeys)
+{
+    memberEntityKeys = newMemberEntityKeys;
+}
+/**
+ * @param newMemberGroupKeys Set
+ */
+private synchronized void setMemberGroupKeys(Set newMemberGroupKeys)
+{
+    memberGroupKeys = newMemberGroupKeys;
+}
+/**
  * @param newName java.lang.String
+ * @exception GroupsException is thrown if a sibling group with the same name already exists. 
  */
 public void setName(java.lang.String newName) throws GroupsException
 {
@@ -764,7 +771,6 @@ public String toString()
 public void update() throws GroupsException
 {
     getLocalGroupService().updateGroup(this);
-    primUpdateMembers();
     clearPendingUpdates();
 }
 /**
@@ -773,7 +779,6 @@ public void update() throws GroupsException
 public void updateMembers() throws GroupsException
 {
     getLocalGroupService().updateGroupMembers(this);
-    primUpdateMembers();
     clearPendingUpdates();
 }
 }

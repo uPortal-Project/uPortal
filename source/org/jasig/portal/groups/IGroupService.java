@@ -36,6 +36,7 @@
 package org.jasig.portal.groups;
 
 import java.util.Iterator;
+
 import org.jasig.portal.EntityIdentifier;
 
 /**

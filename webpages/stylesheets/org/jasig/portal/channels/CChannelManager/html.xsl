@@ -4,7 +4,7 @@
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="action">defaultView</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
-  <xsl:param name="errorMessage">no parameter passed</xsl:param>
+  <xsl:param name="errorMsg">no parameter passed</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
   <xsl:variable name="defaultLength">10</xsl:variable>
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
@@ -14,12 +14,12 @@
 
 
   <xsl:template match="/">
-    <html>
+<!--    <html>
       <head>
         <link rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css" type="text/css"/>
       <xsl:comment></xsl:comment>
       </head>
-      <body>
+      <body>-->
 
         <xsl:choose>
           <xsl:when test="$action='selectChannelType'">
@@ -59,8 +59,8 @@
             <xsl:call-template name="defaultView"/>
           </xsl:otherwise>
         </xsl:choose>
-      </body>
-    </html>
+<!--      </body>
+    </html>-->
   </xsl:template>
   <xsl:template name="defaultView">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
@@ -1761,6 +1761,9 @@
       <tr class="uportal-channel-text">
         <td><strong>Review:</strong> Please review the settings for accuracy (click workflow icons or items in the table below to edit settings)</td>
       </tr>
+      <!-- Display an error message when appropriate -->
+      <xsl:if test="$errorMsg='NO_CATEGORIES'"><tr><td class="uportal-channel-error">Please select at least one category before continuing.</td></tr></xsl:if>
+      <xsl:if test="$errorMsg='NO_GROUP_MEMBERS'"><tr><td class="uportal-channel-error">Please select at least one group and/or person before continuing.</td></tr></xsl:if>
       <tr>
         <td>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">

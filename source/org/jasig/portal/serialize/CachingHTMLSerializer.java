@@ -1,10 +1,10 @@
 package org.jasig.portal.serialize;
 
 
-import java.io.OutputStream;
-import java.io.Writer;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
 
 /**

@@ -200,7 +200,7 @@ $Revision$
                               <strong>2.</strong>
                             </td>
                             <td width="100%">Select a channel<xsl:choose>
-                                <xsl:when test="$catID = 'all'">from "All catagories"</xsl:when>
+                                <xsl:when test="$catID = 'all'"> from "All categories"</xsl:when>
                                 <xsl:otherwise> from the "<xsl:value-of select="//category[@ID=$catID]/@name"/>" category
                                 <br/><span class="uportal-text-small">Description: <xsl:value-of select="//category[@ID=$catID]/@description"/></span>
                                 </xsl:otherwise></xsl:choose>

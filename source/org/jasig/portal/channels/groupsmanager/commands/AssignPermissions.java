@@ -35,11 +35,14 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import org.jasig.portal.channels.groupsmanager.*;
-import org.jasig.portal.services.*;
-import org.jasig.portal.*;
-import org.jasig.portal.channels.permissionsmanager.*;
-import java.util.*;
+import java.util.Enumeration;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.permissionsmanager.CPermissionsManagerServantFactory;
+import org.jasig.portal.groups.IEntityGroup;
 
 /**
  * A Groups Manager command to instantiate a permissions manager servant
@@ -47,7 +50,7 @@ import java.util.*;
  * @author Alex Vigdor
  * @version $Revision$
  */
-public class AssignPermissions extends GroupsManagerCommand {
+public class AssignPermissions extends GroupsManagerCommand implements GroupsManagerConstants{
 
   public AssignPermissions() {
   }
@@ -60,9 +63,17 @@ public class AssignPermissions extends GroupsManagerCommand {
    public void execute(CGroupsManagerSessionData sessionData) throws Exception{
       ChannelRuntimeData slaveRD = sessionData.runtimeData;
       String[] tgts = new String[1];
-      tgts[0] = this.getCommandArg(sessionData.runtimeData);
-      sessionData.servantChannel = CPermissionsManagerServantFactory.getPermissionsServant((IPermissible)Class.forName(OWNER).newInstance(),
-            sessionData.staticData, null, null, tgts);
+      String[] acts = null;
+      IEntityGroup g = (IEntityGroup) GroupsManagerXML.retrieveGroupMemberForElementId(this.getXmlDoc(sessionData), this.getCommandArg(sessionData.runtimeData));
+      tgts[0] = g.getKey();
+      if (g.isEditable()){
+         acts = sessionData.permissible.getActivityTokens();
+      }
+      else{
+        acts = new String[] {VIEW_PERMISSION, SELECT_PERMISSION, ASSIGN_PERMISSION}; 
+      }
+      sessionData.servantChannel = CPermissionsManagerServantFactory.getPermissionsServant(sessionData.permissible,
+            sessionData.staticData, null, acts, tgts);
       slaveRD = (ChannelRuntimeData)sessionData.runtimeData.clone();
       Enumeration srd = slaveRD.keys();
       while (srd.hasMoreElements()) {

@@ -35,25 +35,24 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.IPrivilegedChannel;
-import org.jasig.portal.ICacheable;
+import javax.servlet.http.HttpSession;
+
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.UserInstance;
+import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.security.*;
-import org.xml.sax.ContentHandler;
-import javax.servlet.http.HttpSession;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 
 /**
  * <p>Allows a user to logon to the portal.  Logon info is posted to

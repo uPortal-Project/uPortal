@@ -35,28 +35,23 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.IMultithreadedMimeResponse;
-import org.jasig.portal.ChannelStaticData;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IMultithreadedMimeResponse;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.utils.XML;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.UPFileSpec;
-import org.xml.sax.ContentHandler;
-import org.w3c.dom.Node;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import javax.xml.transform.TransformerException;
-import  java.util.Iterator;
-//
-import  java.util.Map;
-import  java.io.IOException;
-import  java.io.OutputStream;
+import org.xml.sax.ContentHandler;
 /**
  * This channel demonstrates the method of obtaining and displaying
  * standard uPortal person attributes.

@@ -34,8 +34,16 @@
 
 package org.jasig.portal;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 
@@ -59,6 +67,9 @@ public class EntityTypes {
     // Caches for EntityType instances.
     private Map entityTypesByID;
     private Map entityTypesByType;
+    
+    // Lock for crud operations.
+    private Object updateLock = new Object();
 
     // Constant strings for ENTITY TYPE table:
     private static String ENTITY_TYPE_TABLE = "UP_ENTITY_TYPE";
@@ -92,17 +103,27 @@ public class EntityTypes {
 /**
  * EntityTypes constructor comment.
  */
-public EntityTypes()
+private EntityTypes()
 {
     super();
     initialize();
 }
+
 /**
- * @return java.util.Iterator
+ * Add the new type if it does not already exist.
  */
-public synchronized void addEntityType(Class newType, String description) throws java.lang.Exception
+public static void addIfNecessary(Class newType, String description)
+throws java.lang.Exception
 {
-    refresh();
+    singleton().addEntityTypeIfNecessary(newType, description);
+}
+
+/**
+ * Add the new type if it does not already exist in the cache.
+ */
+private void addEntityType(Class newType, String description)
+throws java.lang.Exception
+{
     if ( getEntityTypesByType().get(newType) == null )
     {
         int nextKey = getNextKey();
@@ -111,17 +132,57 @@ public synchronized void addEntityType(Class newType, String description) throws
         primAddEntityType(et);
     }
 }
+
 /**
- * @return java.util.Iterator
+ * Check if we have the type in our cache.  If not, re-retrieve.  Someone 
+ * might have added it since we last retrieved.  If the type is not
+ * found, try to add it to the store.  If the add is not successful,
+ * re-retrieve again.  If the type is still not found, rethrow the 
+ * SQLException.  Synchronize on update lock to serialize adds, deletes 
+ * and updates while letting reads proceed.
  */
-public synchronized void deleteEntityType(Class type) throws SQLException
+public void addEntityTypeIfNecessary(Class newType, String description)
+throws java.lang.Exception
 {
-    refresh();
-    EntityType et = (EntityType)getEntityTypesByType().get(type);
-    if ( et != null )
-    {
-        deleteEntityType(et);
-        primRemoveEntityType(et);
+    synchronized (updateLock) {
+        if ( getEntityTypesByType().get(newType) == null )
+        {
+            refresh();
+            if ( getEntityTypesByType().get(newType) == null )
+            {
+                try
+                {
+                    addEntityType(newType, description);
+                }
+                catch (Exception ex)
+                {
+                    refresh();
+                    if ( getEntityTypesByType().get(newType) == null )
+                    {
+                        String errString = "Attempt to add entity type failed: " + ex.getMessage();
+                        LogService.log (LogService.ERROR, errString);
+                        throw ex;
+                    }
+                }  // end catch
+            }      // end if
+        }          // end if
+    }              // end synchronized
+}
+/**
+ * Synchronize on update lock to serialize adds, deletes and updates
+ * while letting reads proceed.
+ */
+public void deleteEntityType(Class type) throws SQLException
+{
+    synchronized (updateLock) {
+
+        refresh();
+        EntityType et = (EntityType)getEntityTypesByType().get(type);
+        if ( et != null )
+        {
+            deleteEntityType(et);
+            primRemoveEntityType(et);
+        }
     }
 }
 /**
@@ -148,15 +209,22 @@ private void deleteEntityType(EntityType et) throws SQLException
 
             if ( rc != 1 )
             {
-                String errString = "Problem adding deleting type " + et;
+                String errString = "Problem deleting type " + et;
                 LogService.log (LogService.ERROR, errString);
                 throw new SQLException(errString);
             }
         }
         finally
         {
-            if (ps != null) { ps.close(); }
-            RDBMServices.releaseConnection(conn); }
+            try
+            {
+                if (ps != null) { ps.close(); }
+            }
+            finally
+            {
+                RDBMServices.releaseConnection(conn); 
+            }
+        }
     }
     catch (java.sql.SQLException sqle)
     {
@@ -223,7 +291,7 @@ public String getDescriptiveNameForType(Class type)
 public Integer getEntityIDFromType(Class type)
 {
     EntityType et = (EntityType)getEntityTypesByType().get(type);
-    return et.getTypeId();
+    return (et == null) ? null : et.getTypeId();
 }
 /**
  * Interface to the entity types cache.
@@ -240,7 +308,7 @@ public static Class getEntityType(Integer typeID)
 public Class getEntityTypeFromID(Integer id)
 {
     EntityType et = (EntityType)getEntityTypesByID().get(id);
-    return et.getType();
+    return (et == null) ? null : et.getType();
 }
 /**
  * Interface to the entity types cache.
@@ -253,21 +321,26 @@ public static Integer getEntityTypeID(Class type)
 /**
  * @return java.util.Map
  */
-private synchronized java.util.Map getEntityTypesByID()
+private synchronized Map getEntityTypesByID()
 {
     return entityTypesByID;
+}
+private Map cloneHashMap(Map m)
+{
+    return ((Map)((HashMap)m).clone());
 }
 /**
  * @return java.util.Map
  */
-private synchronized java.util.Map getEntityTypesByType()
+private synchronized Map getEntityTypesByType()
 {
     return entityTypesByType;
 }
+
 /**
  * @return java.lang.String
  */
-private static java.lang.String getInsertEntityTypeSql()
+private static String getInsertEntityTypeSql()
 {
     return "INSERT INTO " + ENTITY_TYPE_TABLE + " (" + getAllColumnNames() + ") VALUES (?, ?, ?)";
 }
@@ -375,8 +448,15 @@ private void insertEntityType(EntityType et) throws SQLException
         }
         finally
         {
-            if (ps != null) { ps.close(); }
-            RDBMServices.releaseConnection(conn); }
+            try
+            {
+                if (ps != null) { ps.close(); }
+            }
+            finally
+            {
+                RDBMServices.releaseConnection(conn); 
+            }
+        }
     }
     catch (java.sql.SQLException sqle)
     {
@@ -385,20 +465,28 @@ private void insertEntityType(EntityType et) throws SQLException
     }
 }
 /**
- * @return java.util.Iterator
+ * Copy on write to prevent ConcurrentModificationExceptions.
  */
 private void primAddEntityType(EntityType et)
 {
-    getEntityTypesByType().put(et.getType(), et);
-    getEntityTypesByID().put(et.getTypeId(), et);
+    Map typesByType = cloneHashMap(getEntityTypesByType());
+    typesByType.put(et.getType(), et);
+    Map typesByID = cloneHashMap(getEntityTypesByID());
+    typesByID.put(et.getTypeId(), et);
+    setEntityTypesByType(typesByType);
+    setEntityTypesByID(typesByID);
 }
 /**
- * @return java.util.Iterator
+ * Copy on write to prevent ConcurrentModificationExceptions.
  */
 private void primRemoveEntityType(EntityType et)
 {
-    getEntityTypesByType().remove(et.getType());
-    getEntityTypesByID().remove(et.getTypeId());
+    Map typesByType = cloneHashMap(getEntityTypesByType());
+    typesByType.remove(et.getType());
+    Map typesByID = cloneHashMap(getEntityTypesByID());
+    typesByID.remove(et.getTypeId());
+    setEntityTypesByType(typesByType);
+    setEntityTypesByID(typesByID);
 }
 /**
  * Interface to the entity types cache.
@@ -407,6 +495,14 @@ private void primRemoveEntityType(EntityType et)
 public static synchronized void refresh()
 {
     singleton().initialize();
+}
+public synchronized void setEntityTypesByID(Map m)
+{
+    entityTypesByID = m;   
+}
+public synchronized void setEntityTypesByType(Map m)
+{
+    entityTypesByType = m;   
 }
 /**
  * @return org.jasig.portal.groups.EntityTypes
@@ -418,21 +514,24 @@ public static synchronized EntityTypes singleton()
     return singleton;
 }
 /**
- * @return java.util.Iterator
+ * Synchronize on update lock to serialize adds, deletes and updates
+ * while letting reads proceed.
  */
-public synchronized void updateEntityType(Class type, String newDescription) throws Exception
+public void updateEntityType(Class type, String newDescription) throws Exception
 {
-    refresh();
-    EntityType et = (EntityType)getEntityTypesByType().get(type);
-    if ( et == null )
-    {
-        addEntityType(type, newDescription);
-    }
-    else
-    {
-        et.descriptiveName = newDescription;
-        updateEntityType(et);
-        primAddEntityType(et);
+    synchronized (updateLock) {
+        refresh();
+        EntityType et = (EntityType)getEntityTypesByType().get(type);
+        if ( et == null )
+        {
+            addEntityType(type, newDescription);
+        }
+        else
+        {
+            et.descriptiveName = newDescription;
+            updateEntityType(et);
+            primAddEntityType(et);
+        }
     }
 }
 /**
@@ -459,15 +558,22 @@ private void updateEntityType(EntityType et) throws SQLException
 
             if ( rc != 1 )
             {
-                String errString = "Problem adding updating type " + et;
+                String errString = "Problem updating type " + et;
                 LogService.log (LogService.ERROR, errString);
                 throw new SQLException(errString);
             }
         }
         finally
         {
-            if (ps != null) { ps.close(); }
-            RDBMServices.releaseConnection(conn); }
+            try
+            {
+                if (ps != null) { ps.close(); }
+            }
+            finally
+            {
+                RDBMServices.releaseConnection(conn); 
+            }
+        }
     }
     catch (java.sql.SQLException sqle)
     {

@@ -36,13 +36,12 @@
 
 package org.jasig.portal.car;
 
-import java.security.SecureClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
-import java.security.PrivilegedActionException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Hashtable;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.security.SecureClassLoader;
 
 /**
    Loads classes and resources from installed CARs via the CarResources class.

@@ -34,14 +34,22 @@
  */
 
 package org.jasig.portal.channels.groupsmanager;
-import org.jasig.portal.services.*;
-import org.jasig.portal.groups.*;
-import org.jasig.portal.IServant;
-import org.jasig.portal.*;
+import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.*;
-import java.lang.reflect.Constructor;
-import org.w3c.dom.*;
+import java.util.Iterator;
+
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IServant;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A Factory that produces a Groups Manager <code>IServant</code> for
@@ -59,7 +67,7 @@ import org.w3c.dom.*;
  * @version $Revision$
  */
 
-public class CGroupsManagerServantFactory {
+public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     private static CGroupsManagerServantFactory _instance;
     private static int UID = 0;
     private HashMap servantClasses = new HashMap();
@@ -153,12 +161,12 @@ public class CGroupsManagerServantFactory {
                 }
             }
             catch (Exception e){
-              LogService.instance().log(LogService.ERROR,e);
+              LogService.log(LogService.ERROR,e);
             }
         }
       }
       catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          LogService.log(LogService.ERROR,e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
       long time2 = System.currentTimeMillis();
@@ -223,7 +231,7 @@ public class CGroupsManagerServantFactory {
           }
         }
         catch (Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          LogService.log(LogService.ERROR,e);
         }
       }
       catch (Exception e){
@@ -289,17 +297,19 @@ public class CGroupsManagerServantFactory {
         long time1 = Calendar.getInstance().getTime().getTime();
       CGroupsManagerServant servant;
       try {
-        IEntityGroup testgroup = GroupService.findGroup(groupKey);
-        testgroup.getClass();
+        ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(groupKey,staticData.getAuthorizationPrincipal().getPrincipalString());
+        lockedGroup.getClass();
         servant = getGroupsServant();
         ChannelStaticData slaveSD = cloneStaticData(staticData);
 
         ((IChannel)servant).setStaticData(slaveSD);
-        servant.getSessionData().mode = "edit";
+        servant.getSessionData().mode = MEMBERS_ONLY_MODE;
+        servant.getSessionData().lockedGroup = lockedGroup;
         servant.getSessionData().highlightedGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
-        servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
+        servant.getSessionData().defaultRootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
       }
       catch (Exception e){
+        LogService.log(LogService.ERROR,e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
         long time2 = Calendar.getInstance().getTime().getTime();

@@ -35,19 +35,21 @@
 
 package  org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.security.provider.*;
-import org.jasig.portal.LdapServices;
-import org.jasig.portal.services.LogService;
 import java.util.Vector;
-import java.security.MessageDigest;
-import javax.naming.NamingException;
+
 import javax.naming.NamingEnumeration;
-import javax.naming.directory.SearchResult;
-import javax.naming.directory.DirContext;
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
-import javax.naming.directory.SearchControls;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
+import org.jasig.portal.LdapServices;
+import org.jasig.portal.security.IOpaqueCredentials;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -59,6 +61,7 @@ import javax.naming.directory.Attributes;
  * @author Russell Tokuyama (University of Hawaii)
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated As of uPortal 2.1.3, use {@link SimpleLdapSecurityContext} chained with {@link CacheSecurityContext} instead
  */
 public class CacheLdapSecurityContext extends ChainingSecurityContext implements ISecurityContext {
   // Attributes that we're interested in.
@@ -70,7 +73,7 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
     "givenName",                // first name
     "sn"        // last name
   };
-  private final int CACHELDAPSECURITYAUTHTYPE = 0xFF03;
+  private final int CACHELDAPSECURITYAUTHTYPE = 0xFF06;
   private byte[] cachedcredentials;
 
 
@@ -107,18 +110,27 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
       String passwd = null;
       String first_name = null;
       String last_name = null;
+      
       user.append(ldapservices.getUidAttribute()).append("=");
       user.append(this.myPrincipal.UID).append(")");
-      LogService.instance().log(LogService.DEBUG, "Looking for " + user.toString());
+      LogService.log(LogService.DEBUG,
+                     "CacheLdapSecurityContext: Looking for " +
+                     user.toString());
       conn = ldapservices.getConnection();
+      
       // set up search controls
       SearchControls searchCtls = new SearchControls();
       searchCtls.setReturningAttributes(attributes);
       searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+      
       // do lookup
       try {
         results = conn.search(ldapservices.getBaseDN(), user.toString(), searchCtls);
         if (results != null) {
+          if (!results.hasMore())
+            LogService.log(LogService.ERROR,
+                           "CacheLdapSecurityContext: user not found , " +
+                           this.myPrincipal.UID);          
           Vector entries = new Vector();
           while (results != null && results.hasMore()) {
             SearchResult entry = (SearchResult)results.next();
@@ -136,32 +148,45 @@ public class CacheLdapSecurityContext extends ChainingSecurityContext implements
             searchCtls = new SearchControls();
             searchCtls.setReturningAttributes(new String[0]);
             searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
-            conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
+            
+            String attrSearch = "(" + ldapservices.getUidAttribute() + "=*)";
+            LogService.log(LogService.DEBUG,
+                           "SimpleLdapSecurityContext: Looking in " +
+                           dnBuffer.toString() + " for " + attrSearch);            
+            conn.search(dnBuffer.toString(), attrSearch, searchCtls);
+            
             // Save our credentials so that the parent's authenticate()
             // method doesn't blow them away.
             this.cachedcredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
             System.arraycopy(this.myOpaqueCredentials.credentialstring, 0, this.cachedcredentials, 0, this.myOpaqueCredentials.credentialstring.length);
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
-            LogService.instance().log(LogService.DEBUG, "User " + this.myPrincipal.UID + " (" + this.myPrincipal.FullName + ") is authenticated");
+            LogService.log(LogService.DEBUG,
+                           "CacheLdapSecurityContext: User " +
+                           this.myPrincipal.UID + " (" +
+                           this.myPrincipal.FullName + ") is authenticated");
 
             // Since LDAP is case-insensitive with respect to uid, force
             // user name to lower case for use by the portal
             this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
-
           } // while (results != null && results.hasMore())
         }
         else {
-          LogService.instance().log(LogService.ERROR, "No such user: " + this.myPrincipal.UID);
+          LogService.log(LogService.ERROR,
+                         "CacheLdapSecurityContext: No such user: " +
+                         this.myPrincipal.UID);
         }
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, new PortalSecurityException("LDAP Error" + e + " with user: " + this.myPrincipal.UID));
+        LogService.log(LogService.ERROR,
+                       "CacheLdapSecurityContext: LDAP Error with user: " +
+                       this.myPrincipal.UID + "; " + e);
+        throw new PortalSecurityException("SimpleLdapSecurityContext: LDAP Error" + e + " with user: " + this.myPrincipal.UID);
       } finally {
         ldapservices.releaseConnection(conn);
       }
     }
     else {
-      LogService.instance().log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
+      LogService.log(LogService.ERROR, "Principal or OpaqueCredentials not initialized prior to authenticate");
     }
     // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();

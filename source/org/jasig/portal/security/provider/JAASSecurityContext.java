@@ -35,16 +35,18 @@
 
 package org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.RDBMServices;
-import java.util.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import javax.security.auth.*;
-import javax.security.auth.callback.*;
-import javax.security.auth.login.*;
-import org.jasig.portal.security.provider.JAASInlineCallbackHandler;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's

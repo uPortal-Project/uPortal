@@ -35,35 +35,22 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
-
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.utils.*;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IMultithreadedChannel;
+import org.jasig.portal.IServant;
+import org.jasig.portal.MultithreadedCacheableChannelAdapter;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.LogService;
 
 /**
  * CGroupsManagerServant is an IServant subclass of CGroupsManager
  * This will allow other channels to delegate to CGroupsManager at runtime
- *
- * Master channels should instantiate this channel with the following
- * staticData parameter preset:
- *
- * prmOwners = IPermissible[] owners
- *
- * where owners is an array with a single element being an instance of the
- * master's representative IPermissible class.
- *
- * see org.jasig.portal.IPermissible for more information
- *
+ * @author Alex Vigdor, av317@columbia.edu
+ * @version $Revision$
  */
-
 public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       implements IServant {
    final IMultithreadedChannel channel;
@@ -136,16 +123,18 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       CGroupsManagerSessionData sessionData = ((CGroupsManager) channel).getSessionData(uid);
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
-      Object[] results = null;
       IGroupsManagerCommand cmd = GroupsManagerCommandFactory.instance().get("Done");
       try{
          cmd.execute(sessionData);
       }
       catch(Exception e){
-         LogService.instance().log(LogService.ERROR,e);
+         LogService.log(LogService.ERROR,e);
          sessionData.feedback = "Error executing command Done: "+e.getMessage();
       }
-      results = (Object[])staticData.get("princResults");
+      Object[] results = (Object[])staticData.get("princResults");
+      if (results == null){
+        results = new IGroupMember[0]; 
+      }
       Utility.logMessage("DEBUG", "CGroupsManagerservant.getResults()");
       return  results;
    }

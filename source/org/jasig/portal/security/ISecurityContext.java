@@ -36,7 +36,6 @@
 package org.jasig.portal.security;
 
 import java.util.Enumeration;
-import org.jasig.portal.security.*;
 
 /**
  * <p>This is the main interface for the JASIG portal effort's security
@@ -49,7 +48,7 @@ import org.jasig.portal.security.*;
  * Added getSubContextNames() to support principal and credential tokens
   */
 
-public interface ISecurityContext {
+public interface ISecurityContext extends java.io.Serializable {
 
   /**
    * Returns the canonical authentication type for this flavor of

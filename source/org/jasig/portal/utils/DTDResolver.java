@@ -35,10 +35,9 @@
 
 package org.jasig.portal.utils;
 
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.services.LogService;
-import java.io.File;
 import java.io.InputStream;
+
+import org.jasig.portal.PortalSessionManager;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 

@@ -38,8 +38,7 @@
 
 package  org.jasig.portal.groups;
 
-import  java.sql.SQLException;
-import  org.jasig.portal.services.LogService;
+import org.jasig.portal.services.LogService;
 
 
 /**

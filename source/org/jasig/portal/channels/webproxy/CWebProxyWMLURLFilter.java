@@ -35,11 +35,9 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.SAX2FilterImpl;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**

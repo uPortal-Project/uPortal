@@ -36,12 +36,11 @@
 
 package  org.jasig.portal;
 
-import  org.jasig.portal.security.IPerson;
-import  org.w3c.dom.*;
-import  javax.servlet.http.*;
-import  java.util.*;
-import org.jasig.portal.layout.IUserLayoutManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
+
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.security.IPerson;
 
 /**
  * Interface to user preferences management class.

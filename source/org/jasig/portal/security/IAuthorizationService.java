@@ -35,9 +35,11 @@ package org.jasig.portal.security;
  *
  */
 
-import java.util.*;
-import org.jasig.portal.groups.*;
+import java.util.Vector;
+
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IGroupMember;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

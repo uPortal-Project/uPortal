@@ -37,12 +37,12 @@
 
 package org.jasig.portal;
 
+import java.util.Enumeration;
+import java.util.HashSet;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import org.jasig.portal.services.LogService;
 
 /**
  * Object managing user preferences.
@@ -97,11 +97,11 @@ public class UserPreferences {
                 String channelSubscribeId=el.getAttribute("ID");
                 if(!fsup.hasChannel(channelSubscribeId)) {
                     fsup.addChannel(channelSubscribeId);
-                    //		    LogService.instance().log(LogService.DEBUG,"UserPrefenreces::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+channelSubscribeId);
+                    //		    LogService.log(LogService.DEBUG,"UserPrefenreces::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+channelSubscribeId);
                 }
                 if(!ssup.hasChannel(channelSubscribeId)) {
                     ssup.addChannel(channelSubscribeId);
-                    //		    LogService.instance().log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+channelSubscribeId);
+                    //		    LogService.log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+channelSubscribeId);
                 }
                 channelSet.add(channelSubscribeId);
             }
@@ -117,7 +117,7 @@ public class UserPreferences {
                 String caID=el.getAttribute("ID");
                 if(!fsup.hasFolder(caID)) {
                     fsup.addFolder(caID);
-                    //		    LogService.instance().log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a folder="+caID);
+                    //		    LogService.log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a folder="+caID);
                 }
                 folderSet.add(caID);
             }
@@ -128,7 +128,7 @@ public class UserPreferences {
             String chID=(String)e.nextElement();
             if(!channelSet.contains(chID)) {
                 fsup.removeChannel(chID);
-                //		LogService.instance().log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent channel="+chID);
+                //		LogService.log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent channel="+chID);
             }
         }
 
@@ -136,7 +136,7 @@ public class UserPreferences {
             String caID=(String)e.nextElement();
             if(!folderSet.contains(caID)) {
                 fsup.removeFolder(caID);
-                //		LogService.instance().log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent folder="+caID);
+                //		LogService.log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent folder="+caID);
             }
         }
 
@@ -144,7 +144,7 @@ public class UserPreferences {
             String chID=(String)e.nextElement();
             if(!channelSet.contains(chID)) {
                 ssup.removeChannel(chID);
-                //		LogService.instance().log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences had a non-existent channel="+chID);
+                //		LogService.log(LogService.DEBUG,"UserPreferences::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences had a non-existent channel="+chID);
             }
         }
 

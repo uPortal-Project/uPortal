@@ -36,26 +36,20 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.jndi.PortalNamingException;
-import org.jasig.portal.utils.XML;
-import org.jasig.portal.utils.PropsMatcher;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import javax.servlet.http.HttpServletRequest;
-
-import java.net.URL;
+import java.io.InputStream;
 import java.io.IOException;
-import java.util.StringTokenizer;
+import java.net.URL;
 
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.UserLayoutManagerFactory;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
+
+import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.PropsMatcher;
 
 
 /**
@@ -99,6 +93,9 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
+            if(userAgent==null || userAgent.equals("")) { 
+                userAgent=MediaManager.NULL_USER_AGENT; 
+            }
             UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
             if (upl == null) {
                 upl = ulsdb.getSystemProfile(userAgent);
@@ -112,10 +109,14 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     try {
                         url = this.getClass().getResource("/properties/browser.mappings");
                         if (url != null) {
-                            uaMatcher = new PropsMatcher(url.openStream());
-                        }
+                          InputStream in = url.openStream();
+                          try {
+                            uaMatcher = new PropsMatcher(in);
+                          } finally {
+                            in.close();
+                          }                        }
                     } catch (IOException ioe) {
-                        LogService.instance().log(LogService.ERROR, "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
+                        LogService.log(LogService.ERROR, "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
                     }
                 }
 
@@ -137,7 +138,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 try {
                     complete_up=ulsdb.getUserPreferences(m_person, upl);
                 } catch (Exception e) {
-                    LogService.instance().log(LogService.ERROR, "UserPreferencesManager(): caught an exception trying to retreive user preferences for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".", e);
+                    LogService.log(LogService.ERROR, "UserPreferencesManager(): caught an exception trying to retreive user preferences for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".", e);
                     complete_up=new UserPreferences(upl);
                 }
 
@@ -145,18 +146,18 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     // Initialize the JNDI context for this user
                     JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),ulm.getUserLayoutDOM());
                 } catch(PortalException ipe) {
-                  LogService.instance().log(LogService.ERROR, "UserPreferencesManager(): Could not properly initialize user context", ipe);
+                  LogService.log(LogService.ERROR, "UserPreferencesManager(): Could not properly initialize user context", ipe);
                 }
             } else {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 unmapped_user_agent = true;
-                LogService.instance().log(LogService.DEBUG, "UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
+                LogService.log(LogService.DEBUG, "UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
             }
         } catch (PortalException pe) {
             throw pe;
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 
@@ -189,10 +190,10 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     ulm.saveUserLayout();
 
                 }
-                LogService.instance().log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
+                LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
 
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
+                LogService.log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
             }
         }
 
@@ -209,7 +210,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             if(root!=null) {
                 complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", root);
             } else {
-                LogService.instance().log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
+                LogService.log(LogService.ERROR, "UserPreferencesManager::processUserPreferencesParameters() : unable to extract channel ID. servletPath=\""+req.getServletPath()+"\".");
             }
         }
         // other params
@@ -218,7 +219,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             for (int i = 0; i < sparams.length; i++) {
                 String pValue = req.getParameter(sparams[i]);
                 complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i], pValue);
-                LogService.instance().log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i] + "\"=\"" + pValue + "\".");
+                LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i] + "\"=\"" + pValue + "\".");
             }
         }
         String[] tparams = req.getParameterValues("uP_tparam");
@@ -226,7 +227,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             for (int i = 0; i < tparams.length; i++) {
                 String pValue = req.getParameter(tparams[i]);
                 complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i], pValue);
-                LogService.instance().log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]+ "\"=\"" + pValue + "\".");
+                LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]+ "\"=\"" + pValue + "\".");
             }
         }
         // attribute processing
@@ -240,7 +241,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting sfattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting sfattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -254,7 +255,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting scattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting scattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -269,7 +270,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        LogService.instance().log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
+                        LogService.log(LogService.DEBUG, "UserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
             }
@@ -326,7 +327,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
         }
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, e);
         throw  new GeneralRenderingException(e.getMessage());
       }
     }
@@ -340,7 +341,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         try {
             ulm.saveUserLayout();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"UserPreferencesManager::finishedSession() : unable to persist layout upon session termination !", e);
+            LogService.log(LogService.ERROR,"UserPreferencesManager::finishedSession() : unable to persist layout upon session termination !", e);
         }
     }
 

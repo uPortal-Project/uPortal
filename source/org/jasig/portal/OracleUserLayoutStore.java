@@ -38,14 +38,11 @@
 
 
 package  org.jasig.portal;
-import  org.jasig.portal.services.LogService;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-import  java.sql.Connection;
-import  java.sql.ResultSet;
-import  java.sql.Statement;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -83,7 +80,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT " + tableName + "_SEQ.NEXTVAL FROM DUAL";
-        LogService.instance().log(LogService.DEBUG, "OracleUserLayoutStore::getIncrementInteger(): " + sQuery);
+        LogService.log(LogService.DEBUG, "OracleUserLayoutStore::getIncrementInteger(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           rs.next();            // If this doesn't work then the database is munged up
@@ -121,7 +118,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
       Statement stmt = con.createStatement();
       try {
         String sInsert = "CREATE SEQUENCE " + tableName + "_SEQ INCREMENT BY 1 START WITH " + startAt + " NOMAXVALUE NOCYCLE";
-        LogService.instance().log(LogService.DEBUG, "OracleUserLayoutStore::createCounter(): " + sInsert);
+        LogService.log(LogService.DEBUG, "OracleUserLayoutStore::createCounter(): " + sInsert);
         stmt.executeUpdate(sInsert);
       } finally {
         stmt.close();
@@ -145,7 +142,7 @@ public final class OracleUserLayoutStore extends RDBMUserLayoutStore
 
         /* This is dangerous */
         String sUpdate = "DROP SEQUENCE " + tableName + "_SEQ";
-        LogService.instance().log(LogService.DEBUG, "OracleUserLayoutStore::setCounter(): " + sUpdate);
+        LogService.log(LogService.DEBUG, "OracleUserLayoutStore::setCounter(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
         createCounter(tableName, value);
       } finally {

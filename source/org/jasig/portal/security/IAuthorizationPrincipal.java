@@ -35,8 +35,8 @@
 package org.jasig.portal.security;
 
 import java.util.Vector;
+
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.GroupsException;
 
 /**
  * An <code>IAuthorizationPrincipal</code> represents a portal entity to which

@@ -35,9 +35,9 @@
 
 package org.jasig.portal.services.stats;
 
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.UserProfile;
 
 /**
  * Records the updating of a folder in a user's layout

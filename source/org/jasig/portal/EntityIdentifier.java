@@ -41,7 +41,7 @@ package org.jasig.portal;
  * @version $Revision$
  * @see IBasicEntity
  */
-public class EntityIdentifier {
+public class EntityIdentifier implements java.io.Serializable {
     protected String key;
     protected Class type;
 /**

@@ -38,16 +38,16 @@
 
 package  org.jasig.portal.security.provider;
 
-import  org.jasig.portal.security.PermissionManager;
-import  org.jasig.portal.security.Permission;
-import  org.jasig.portal.RDBMServices;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.AuthorizationException;
-import  org.jasig.portal.PropertiesManager;
-import  java.sql.Connection;
-import  java.sql.Statement;
-import  java.sql.ResultSet;
-import  java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.RDBMServices;
+import org.jasig.portal.security.Permission;
+import org.jasig.portal.security.PermissionManager;
+import org.jasig.portal.services.LogService;
 
 
 /**

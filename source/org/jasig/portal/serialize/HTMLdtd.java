@@ -64,10 +64,12 @@
 package org.jasig.portal.serialize;
 
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -113,23 +115,23 @@ public final class HTMLdtd
      * Table of reverse character reference mapping. Character codes are held
      * as single-character strings, mapped to their reference name.
      */
-    private static Hashtable        _byChar;
+    private static Map        _byChar;
 
 
     /**
      * Table of entity name to value mapping. Entities are held as strings,
      * character references as <TT>Character</TT> objects.
      */
-    private static Hashtable        _byName;
+    private static Map        _byName;
 
 
-    private static Hashtable        _boolAttrs;
+    private static Map        _boolAttrs;
 
 
     /**
      * Holds element definitions.
      */
-    private static Hashtable        _elemDefs;
+    private static Map        _elemDefs;
 
 
     /**
@@ -407,8 +409,8 @@ public final class HTMLdtd
         if ( _byName != null )
             return;
         try {
-            _byName = new Hashtable();
-            _byChar = new Hashtable();
+            _byName = new HashMap();
+            _byChar = new HashMap();
             is = HTMLdtd.class.getResourceAsStream( ENTITIES_RESOURCE );
             if ( is == null )
                 throw new RuntimeException( "SER003 The resource [" + ENTITIES_RESOURCE + "] could not be found.\n" + ENTITIES_RESOURCE);
@@ -445,6 +447,9 @@ public final class HTMLdtd
                 } catch ( Exception except ) { }
             }
         }
+        // save only the unmodifiable map to the member variable.
+		_byName = Collections.unmodifiableMap(_byName);
+		_byChar = Collections.unmodifiableMap(_byChar);
     }
 
 
@@ -501,7 +506,7 @@ public final class HTMLdtd
 
     static
     {
-        _elemDefs = new Hashtable();
+        _elemDefs = new HashMap();
         defineElement( "ADDRESS", CLOSE_P );
         defineElement( "AREA", EMPTY );
         defineElement( "BASE",  EMPTY | ALLOWED_HEAD );
@@ -554,8 +559,9 @@ public final class HTMLdtd
         defineElement( "TITLE", ALLOWED_HEAD );
         defineElement( "TR", ELEM_CONTENT | OPT_CLOSING | CLOSE_TABLE );
         defineElement( "UL", ELEM_CONTENT | CLOSE_P );
+		_elemDefs = Collections.unmodifiableMap(_elemDefs);;
 
-        _boolAttrs = new Hashtable();
+		_boolAttrs = new HashMap();
         defineBoolean( "AREA", "href" );
         defineBoolean( "BUTTON", "disabled" );
         defineBoolean( "DIR", "compact" );
@@ -577,6 +583,7 @@ public final class HTMLdtd
         defineBoolean( "TH", "nowrap" );
         defineBoolean( "TEXTAREA", new String[] { "disabled", "readonly" } );
         defineBoolean( "UL", "compact" );
+		_boolAttrs = Collections.unmodifiableMap(_boolAttrs);
 
         initialize();
     }

@@ -35,8 +35,8 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.HashMap;
-import  java.util.Set;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * A class designed to decouple a request for the creation of xml for an object

@@ -4274,6 +4274,11 @@
         <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.groups.IEntity</value></column>
         <column><name>DESCRIPTIVE_NAME</name><value>Grouped Entity</value></column>
       </row>
+      <row>
+        <column><name>ENTITY_TYPE_ID</name><value>6</value></column>
+        <column><name>ENTITY_TYPE_NAME</name><value>org.jasig.portal.services.entityproperties.EntityProperties</value></column>
+        <column><name>DESCRIPTIVE_NAME</name><value>Property Lookup Results</value></column>
+      </row>
     </rows>
   </table>
 
@@ -4941,61 +4946,6 @@
       </row>
       <row>
         <column><name>IPERMISSIBLE_CLASS</name><value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value></column>
-      </row>
-    </rows>
-  </table>
-
-  <!-- A table that is used by CGroupsManager -->
-  <table>
-    <name>UPC_GROUP_MGR</name>
-    <rows>
-      <row>
-        <column><name>OWNER_ID</name><value>0</value></column>
-        <column><name>OWNER_TYPE</name><value>g</value></column>
-        <column><name>GROUP_ID</name><value>0</value></column>
-        <column><name>ORDINAL</name><value>1</value></column>
-        <column><name>EXPANDED</name><value>y</value></column>
-        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
-      </row>
-      <row>
-        <column><name>OWNER_ID</name><value>0</value></column>
-        <column><name>OWNER_TYPE</name><value>g</value></column>
-        <column><name>GROUP_ID</name><value>1</value></column>
-        <column><name>ORDINAL</name><value>1</value></column>
-        <column><name>EXPANDED</name><value>y</value></column>
-        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
-      </row>
-      <row>
-        <column><name>OWNER_ID</name><value>0</value></column>
-        <column><name>OWNER_TYPE</name><value>g</value></column>
-        <column><name>GROUP_ID</name><value>2</value></column>
-        <column><name>ORDINAL</name><value>1</value></column>
-        <column><name>EXPANDED</name><value>y</value></column>
-        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
-      </row>
-      <row>
-        <column><name>OWNER_ID</name><value>0</value></column>
-        <column><name>OWNER_TYPE</name><value>g</value></column>
-        <column><name>GROUP_ID</name><value>3</value></column>
-        <column><name>ORDINAL</name><value>1</value></column>
-        <column><name>EXPANDED</name><value>y</value></column>
-        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
-      </row>
-      <row>
-        <column><name>OWNER_ID</name><value>4</value></column>
-        <column><name>OWNER_TYPE</name><value>g</value></column>
-        <column><name>GROUP_ID</name><value>4</value></column>
-        <column><name>ORDINAL</name><value>1</value></column>
-        <column><name>EXPANDED</name><value>y</value></column>
-        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
-      </row>
-      <row>
-        <column><name>OWNER_ID</name><value>14</value></column>
-        <column><name>OWNER_TYPE</name><value>g</value></column>
-        <column><name>GROUP_ID</name><value>50</value></column>
-        <column><name>ORDINAL</name><value>1</value></column>
-        <column><name>EXPANDED</name><value>y</value></column>
-        <column><name>DATE_CREATED</name><value>SYSDATE</value></column>
       </row>
     </rows>
   </table>

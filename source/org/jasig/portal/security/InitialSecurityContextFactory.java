@@ -35,14 +35,11 @@
 
 package org.jasig.portal.security;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.PortalSessionManager;
-import java.util.Hashtable;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+
+import org.jasig.portal.services.LogService;
 
 /**
  * This class provides a static "factory" method that returns a security context
@@ -82,7 +79,7 @@ public class InitialSecurityContextFactory {
 
     if (ctx.indexOf('.') != -1) {
       PortalSecurityException ep = new PortalSecurityException("Initial Context can't be compound");
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
       }
 
@@ -93,10 +90,11 @@ public class InitialSecurityContextFactory {
     pr = new Properties();
     try {
       pr.load(secprops);
+		secprops.close();
     }
     catch (IOException e) {
       PortalSecurityException ep = new PortalSecurityException(e.getMessage());
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
     }
 
@@ -105,7 +103,7 @@ public class InitialSecurityContextFactory {
 
     if ((factoryname = pr.getProperty(ctx)) == null) {
       PortalSecurityException ep = new PortalSecurityException("No such security context " + ctx);
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
     }
     try {
@@ -114,7 +112,7 @@ public class InitialSecurityContextFactory {
     }
     catch (Exception e) {
       PortalSecurityException ep = new PortalSecurityException("Failed to instantiate " + factoryname);
-      LogService.instance().log(LogService.ERROR,ep);
+      LogService.log(LogService.ERROR,ep);
       throw(ep);
     }
 
@@ -144,7 +142,7 @@ public class InitialSecurityContextFactory {
           PortalSecurityException ep =
               new PortalSecurityException("(Subcontext)Failed to instantiate " +
                 sfactoryname);
-          LogService.instance().log(LogService.ERROR,ep);
+          LogService.log(LogService.ERROR,ep);
           throw(ep);
         }
       }

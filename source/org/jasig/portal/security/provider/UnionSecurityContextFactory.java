@@ -42,7 +42,8 @@ package org.jasig.portal.security.provider;
  * @author susan Bramhall susan.bramhall@yale.edu
  */
 
-import org.jasig.portal.security.*;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.ISecurityContextFactory;
 
 public class UnionSecurityContextFactory implements ISecurityContextFactory {
 

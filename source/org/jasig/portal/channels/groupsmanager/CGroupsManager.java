@@ -35,25 +35,31 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.*;
-import  java.io.*;
-import  org.jasig.portal.services.*;
-import  org.apache.log4j.Priority;
-import  org.jasig.portal.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.*;
-import  org.jasig.portal.utils.*;
-import  org.jasig.portal.channels.permissionsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
-import  org.w3c.dom.Document;
-import  org.apache.xml.serialize.XMLSerializer;
-import  org.apache.xml.serialize.OutputFormat;
-import  org.xml.sax.ContentHandler;
-import  org.xml.sax.InputSource;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IMultithreadedCacheable;
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.xml.sax.ContentHandler;
 
 /**
  * CGroupsManager allows users to graphically administer all groups for which
@@ -82,13 +88,13 @@ public class CGroupsManager
       if (activities == null) {
          activities = new HashMap();
          try {
-            activities.put("CREATE", "Create a group in this context");
-            activities.put("VIEW", "View this group");
-            activities.put("UPDATE", "Rename this group");
-            activities.put("DELETE", "Delete this group");
-            activities.put("SELECT", "Select this group");
-            activities.put("ADD/REMOVE", "Manage this group's members");
-            activities.put("ASSIGNPERMISSIONS", "Assign Permissions for this group");
+            activities.put(CREATE_PERMISSION, "Create a group in this context");
+            activities.put(VIEW_PERMISSION, "View this group");
+            activities.put(UPDATE_PERMISSION, "Rename this group");
+            activities.put(DELETE_PERMISSION, "Delete this group");
+            activities.put(SELECT_PERMISSION, "Select this group");
+            activities.put(ADD_REMOVE_PERMISSION, "Manage this group's members");
+            activities.put(ASSIGN_PERMISSION, "Assign Permissions for this group");
          } catch (Exception e) {
             Utility.logMessage("ERROR", "CGroupsManager.init():: unable to set activities"
                   + e);
@@ -159,7 +165,20 @@ public class CGroupsManager
    //public void receiveEvent(LayoutEvent ev)
    {
       if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
-        sessionsMap.remove(uid); // Clean up
+         try{
+            CGroupsManagerSessionData sd = getSessionData(uid);
+            if (sd.lockedGroup != null){
+               sd.lockedGroup.getLock().release();
+               sd.lockedGroup = null;
+               //GroupsManagerCommandFactory.get("Unlock").execute(sd);
+            }
+            if (sd.servantChannel != null){
+               sd.servantChannel.receiveEvent(ev);  
+            }
+            sessionsMap.remove(uid); // Clean up
+         } catch (Exception e){
+            Utility.logMessage("ERROR", this.getClass().getName() + "::receiveEvent(): Exception = " + e);
+         }
       }
    }
 
@@ -189,9 +208,7 @@ public class CGroupsManager
             xslt.setXML(viewDoc);
             xslt.setTarget(out);
             xslt.setStylesheetParameter("baseActionURL", sessionData.runtimeData.getBaseActionURL());
-            IEntityGroup admin = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
-            IGroupMember currUser = AuthorizationService.instance().getGroupMember(sessionData.staticData.getAuthorizationPrincipal());
-            if (admin.deepContains(currUser)) {
+           if (sessionData.isAdminUser) {
                xslt.setStylesheetParameter("ignorePermissions", "true");
             }
             if (sessionData.customMessage !=null) {
@@ -204,6 +221,9 @@ public class CGroupsManager
             }
             if (sessionData.rootViewGroupID != null) {
                xslt.setStylesheetParameter("rootViewGroupID", sessionData.rootViewGroupID);
+            }
+            else if (sessionData.defaultRootViewGroupID != null){
+              xslt.setStylesheetParameter("rootViewGroupID", sessionData.defaultRootViewGroupID);
             }
             if (sessionData.feedback != null) {
                xslt.setStylesheetParameter("feedback", sessionData.feedback);
@@ -225,24 +245,21 @@ public class CGroupsManager
                xslt.transform();
             }
             catch (PortalException pe){
-               LogService.instance().log(LogService.ERROR, pe);
+               LogService.log(LogService.ERROR, pe);
                if (pe.getRecordedException()!=null){
-                LogService.instance().log(LogService.ERROR, pe.getRecordedException());
+                LogService.log(LogService.ERROR, pe.getRecordedException());
                }
             }
             catch (Exception e) {
-               LogService.instance().log(LogService.ERROR, e);
+               LogService.log(LogService.ERROR, e);
             }
-            //StringWriter sw = new StringWriter();
-            //XMLSerializer serial = new XMLSerializer(sw, new org.apache.xml.serialize.OutputFormat(viewDoc,"UTF-8", true));
-            //serial.serialize(viewDoc);
-            //Utility.logMessage("DEBUG", "viewXMl ready:\n"+sw.toString());
+            //Utility.printDoc(viewDoc, "viewXMl ready:\n");
 
             Utility.logMessage("DEBUG","CGroupsManager::renderXML(): Servant services complete");
             //Utility.printDoc(viewDoc, "CGroupsManager::renderXML(): Final document state:");
          }
       } catch (Exception e) {
-         LogService.instance().log(LogService.ERROR, e);
+         LogService.log(LogService.ERROR, e);
       }
       //Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): Finished with Groups Management");
       //Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): =-+_=-+_=-+_=-+_=-+_=-+_=-+_=-+_ XXXXXXXXXXXXXX _=-+_=-+_=-+_=-+_=-+_=-+_=-+_=-+_");
@@ -284,7 +301,7 @@ public class CGroupsManager
                 c.execute(sessionData);
                }
                catch(Exception e){
-                  LogService.instance().log(LogService.ERROR,e);
+                  LogService.log(LogService.ERROR,e);
                   sessionData.feedback = "Error executing command "+theCommand+": "+e.getMessage();
                }
             }
@@ -331,22 +348,28 @@ public class CGroupsManager
     * @param uid
     */
    public void setStaticData (ChannelStaticData sd, String uid) {
-      CGroupsManagerSessionData sessionData = getSessionData(uid);
-      Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): this = " + this);
-      Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): session Data = " + sessionData);
-      Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): sd = " + sd);
-      Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): uid = " + uid);
-      sessionData.staticData = sd;
-      sessionData.model = GroupsManagerXML.getGroupsManagerXml(sd);
-      //ChannelStaticData staticData = sessionData.staticData;
-      sessionData.user = sessionData.staticData.getPerson();
-      Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): staticData Person ID = "
-            + sessionData.user.getID());
-      Iterator i = sessionData.staticData.entrySet().iterator();
-      while (i.hasNext()) {
-         Map.Entry m = (Map.Entry)i.next();
-         Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): staticData "
-               + m.getKey() + " = " + m.getValue());
+      try{
+         CGroupsManagerSessionData sessionData = getSessionData(uid);
+         Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): this = " + this);
+         Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): session Data = " + sessionData);
+         Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): sd = " + sd);
+         Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): uid = " + uid);
+         sessionData.staticData = sd;
+         IEntityGroup admin = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
+         IGroupMember currUser = AuthorizationService.instance().getGroupMember(sessionData.staticData.getAuthorizationPrincipal());
+         sessionData.isAdminUser = (admin.deepContains(currUser));
+         sessionData.model = GroupsManagerXML.getGroupsManagerXml(sessionData);
+         sessionData.user = sessionData.staticData.getPerson();
+         Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): staticData Person ID = "
+               + sessionData.user.getID());
+         Iterator i = sessionData.staticData.entrySet().iterator();
+         while (i.hasNext()) {
+            Map.Entry m = (Map.Entry)i.next();
+            Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): staticData "
+                  + m.getKey() + " = " + m.getValue());
+         }
+      } catch (Exception e) {
+         LogService.log(LogService.ERROR, e);
       }
    }
 
@@ -399,7 +422,16 @@ public class CGroupsManager
     * @return String
     */
    public String getTargetName (String token) {
-      return  (String)targets.get(token);
+      String r = (String) targets.get(token);
+      if (r ==null){
+        try{
+          r= EntityNameFinderService.instance().getNameFinder(IEntityGroup.class).getName(token);
+        }
+        catch (Exception e){
+          LogService.log(LogService.ERROR,e);
+        }
+      }
+      return  r;
    }
 
    /**
@@ -514,6 +546,7 @@ public class CGroupsManager
       if (sd == null) {
          sd =  new CGroupsManagerSessionData();
          sd.uid = uid;
+         sd.permissible = this;
          sessionsMap.put(uid, sd);
       }
       Utility.logMessage("DEBUG", this.getClass().getName() + "::getSessionData(): sd = " + sd);

@@ -36,7 +36,6 @@ package org.jasig.portal.security;
  */
  
  import org.jasig.portal.AuthorizationException;
- import org.jasig.portal.security.*;
 
  /**
  * An interface for updating <code>Permissions</code> on behalf of a 

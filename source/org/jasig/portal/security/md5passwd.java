@@ -35,11 +35,19 @@
 
 package org.jasig.portal.security;
 
-import org.jasig.portal.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
-import java.security.*;
-import java.sql.*;
+
+import org.jasig.portal.RDBMServices;
 
 /**
  * <p>A utility class that demonstrates changing and locking md5 passwords in

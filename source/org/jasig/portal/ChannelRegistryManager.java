@@ -35,34 +35,34 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.StatsRecorder;
-import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.XML;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IUpdatingPermissionManager;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.groups.IEntity;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.IEntityGroup;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
-import org.w3c.dom.Text;
-import java.util.Set;
 import java.util.Date;
 import java.util.Iterator;
-import java.sql.SQLException;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xpath.XPathAPI;
+
 import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xpath.XPathAPI;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.utils.XML;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * Manages the channel registry which is a listing of published channels
@@ -113,7 +113,7 @@ public class ChannelRegistryManager {
 
       if (channelRegistry != null) {
         channelRegistryCache.put(CHANNEL_REGISTRY_CACHE_KEY, channelRegistry);
-        LogService.instance().log(LogService.INFO, "Caching channel registry.");
+        LogService.log(LogService.INFO, "Caching channel registry.");
       }
     }
 
@@ -135,7 +135,7 @@ public class ChannelRegistryManager {
 
     // Cycle through all the channels, looking for restricted channels
     NodeList nl = channelRegistry.getElementsByTagName("channel");
-    for (int i = 0; i < nl.getLength(); i++) {
+    for (int i = (nl.getLength()-1); i >=0; i--) {
       Element channel = (Element)nl.item(i);
       String channelPublishId = channel.getAttribute("chanID");
       channelPublishId = channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId;
@@ -293,6 +293,7 @@ public class ChannelRegistryManager {
     channelDef.setHasAbout(chanHasAbout != null && chanHasAbout.equals("true") ? true : false);
 
     // Now set the channel parameters
+    channelDef.clearParameters();
     NodeList channelChildren = channelE.getChildNodes();
     if (channelChildren != null) {
       for (int i = 0; i < channelChildren.getLength(); i++) {
@@ -436,12 +437,12 @@ public class ChannelRegistryManager {
       newChannel = false;
       ID = Integer.parseInt(channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId);
       channelDef = crs.getChannelDefinition(ID);
-      LogService.instance().log(LogService.DEBUG, "Attempting to modify channel " + ID + "...");
+      LogService.log(LogService.DEBUG, "Attempting to modify channel " + ID + "...");
     }
     else {
       channelDef = crs.newChannelDefinition();
       ID = channelDef.getId();
-      LogService.instance().log(LogService.DEBUG, "Attempting to publish new channel " + ID + "...");
+      LogService.log(LogService.DEBUG, "Attempting to publish new channel " + ID + "...");
     }
 
     // Add channel
@@ -502,7 +503,7 @@ public class ChannelRegistryManager {
     // Approve channel - this can be removed when there is a mechanism to approve channels
     crs.approveChannelDefinition(channelDef, publisher, new Date(System.currentTimeMillis()));
 
-    LogService.instance().log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
+    LogService.log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
 
     // Record that a channel has been published or modified
     if (newChannel)
@@ -548,7 +549,7 @@ public class ChannelRegistryManager {
       if (channelTypes != null)
       {
         channelTypesCache.put(CHANNEL_TYPES_CACHE_KEY, channelTypes);
-        LogService.instance().log(LogService.INFO, "Caching channel types.");
+        LogService.log(LogService.INFO, "Caching channel types.");
       }
     }
 
@@ -610,7 +611,7 @@ public class ChannelRegistryManager {
 
       if (cpd != null) {
         cpdCache.put(CPD_CACHE_KEY + chanTypeID, cpd);
-        LogService.instance().log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
+        LogService.log(LogService.INFO, "Caching CPD for channel type " + chanTypeID);
       }
     }
 

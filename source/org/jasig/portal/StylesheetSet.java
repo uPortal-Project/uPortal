@@ -36,28 +36,27 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.services.LogService;
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import java.net.URL;
-import java.net.MalformedURLException;
-
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 /**
  * A tool for managing a collection of stylesheets.
@@ -310,7 +309,7 @@ public class StylesheetSet extends SAX2FilterImpl {
       if (media_table == null) {
         return  null;
       }
-      LogService.instance().log(LogService.DEBUG, "media=\"" + media + "\"");
+      LogService.log(LogService.DEBUG, "media=\"" + media + "\"");
       StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
       if (sd == null) {
         Enumeration sls = media_table.elements();
@@ -330,7 +329,7 @@ public class StylesheetSet extends SAX2FilterImpl {
 
   protected StylesheetDescription getStylesheetDescription(String media) throws GeneralRenderingException {
     if (media == null) {
-        LogService.instance().log(LogService.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
+        LogService.log(LogService.ERROR, "StylesheetSet::getStylesheetDescription() : media argument is null");
         throw  (new GeneralRenderingException("StylesheetSet.getStylesheetDescription(): Null media argument passed in"));
     }
     // search for a non-alternate stylesheet for a particular media
@@ -366,7 +365,7 @@ public class StylesheetSet extends SAX2FilterImpl {
      * @exception PortalException if an error occurs
      */
     public Source getStylesheet(String title, HttpServletRequest req) throws PortalException {
-        //	LogService.instance().log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+        //	LogService.log(LogService.DEBUG,"getStylesheet(title,req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
         return  getStylesheet(title, getMedia(req));
     }
 
@@ -396,7 +395,7 @@ public class StylesheetSet extends SAX2FilterImpl {
      * @exception GeneralRenderingException if an error occurs
      */
   public Source getStylesheetByMedia(String media) throws GeneralRenderingException {
-    //	LogService.instance().log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
+    //	LogService.log(LogService.DEBUG,"getStylesheet(req) : Looking up the media name for "+req.getHeader("User-Agent")+" : media=\""+getMedia(req)+"\"");
     StylesheetDescription sd = getStylesheetDescription(media);
     if (sd != null) {
       return  new StreamSource(sd.getURI());
@@ -491,7 +490,12 @@ public class StylesheetSet extends SAX2FilterImpl {
       if (url != null)
       {
         // Put the loaded media properties in the cache
-        m_mediaPropsCache.put(uri, new OrderedProps(url.openStream()));
+        InputStream in = url.openStream();
+        try {
+          m_mediaPropsCache.put(uri, new OrderedProps(in));
+        } finally {
+          in.close();
+        }
       }
       else
       {
@@ -555,6 +559,7 @@ public class StylesheetSet extends SAX2FilterImpl {
           attVec.addElement(temp);
         }
       }
+      input.close();
     }
 
     /**

@@ -43,7 +43,8 @@ package org.jasig.portal.security.provider;
  * @version $Revision$
  */
 
-import org.jasig.portal.security.*;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.ISecurityContextFactory;
 
 public class SimpleSecurityContextFactory implements ISecurityContextFactory {
 

@@ -34,7 +34,7 @@
 
 package org.jasig.portal.groups;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * A data holder for configuration information about a specific component group service.  

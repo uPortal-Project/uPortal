@@ -35,11 +35,12 @@
 
 package org.jasig.portal;
 
+import java.util.Map;
+
 import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.services.LogService;
-import java.util.Map;
 
 /**
  * A factory class that produces <code>IChannel</code> instances.
@@ -78,7 +79,7 @@ public class ChannelFactory {
             try {
                 return instantiateChannel(channelSubscribeId,channelPublishId, className,timeOut,channel.getParameterMap(),sessionId);
             } catch (Exception ex) {
-                LogService.instance().log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
+                LogService.log(LogService.ERROR,"ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
                 return null;
             }
         } else return null;
@@ -110,23 +111,27 @@ public class ChannelFactory {
      * @return an <code>IChannel</code> object
      */
     public static IChannel instantiateChannel(String className, String uid) throws PortalException {
-        IChannel ch=null;
-
-        boolean exists=false;
-        // this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
-        // channel more then once, but it's difficult to implement "instanceof" operation on
-        // the java.lang.Class. So, I just look into the staticChannels table.
-        Object cobj=staticChannels.get(className);
-        if(cobj!=null) {
-            exists=true;
+        IChannel ch = null;
+        boolean exists = false;
+        // Avoid instantiating a multithreaded channel more than once
+        // by storing it in a staticChannels table.
+        Object cobj = staticChannels.get(className);
+        if (cobj != null) {
+            exists = true;
         } else {
+            Class channelClass = null;
             try {
-                // now load the class using the car class loader which uses
+                // Load the class using the CAR class loader which uses
                 // the default class loader before looking into the CARs
-                cobj =  classLoader.loadClass(className).newInstance();
+                channelClass = classLoader.loadClass(className);                
             } catch (Exception e) {
-                throw new PortalException("Unable to instantiate class \""+className+"\"",e);
+                throw new PortalException("Unable to load class '" + className + "'", e);
             }
+            try {
+                cobj =  channelClass.newInstance();
+            } catch (Throwable t) {
+                throw new PortalException("Unable to instantiate class '" + className + "'", new Exception(t.getMessage()));
+            }            
         }
 
         // determine what kind of a channel it is.

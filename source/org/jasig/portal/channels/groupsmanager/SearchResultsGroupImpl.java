@@ -1,11 +1,15 @@
 package org.jasig.portal.channels.groupsmanager;
 
-import org.jasig.portal.groups.EntityGroupImpl;
 import java.util.ArrayList;
-import org.jasig.portal.groups.*;
-import javax.naming.Name;
 import java.util.Iterator;
+
+import javax.naming.Name;
+
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.IIndividualGroupService;
 
 /**
  * <p>Title: </p>

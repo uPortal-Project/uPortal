@@ -34,9 +34,10 @@
  */
 
 package org.jasig.portal;
-import org.w3c.dom.ProcessingInstruction;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
+import org.w3c.dom.ProcessingInstruction;
 
 /**
  * Combines all of the information required to describe

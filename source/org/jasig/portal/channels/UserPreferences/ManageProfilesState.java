@@ -36,17 +36,29 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
-import org.jasig.portal.*;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.services.LogService;
-import org.xml.sax.ContentHandler;
-import java.util.*;
-import javax.servlet.http.*;
-import org.w3c.dom.*;
 import java.io.StringWriter;
-import java.net.URL;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.ThemeStylesheetDescription;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 
 
 /** 
@@ -293,9 +305,9 @@ class ManageProfilesState extends BaseState {
       }
       edEl.appendChild(sEl);
       /*  try {
-       LogService.instance().log(LogService.DEBUG,org.jasig.portal.utils.XML.serializeNode(doc));
+       LogService.log(LogService.DEBUG,org.jasig.portal.utils.XML.serializeNode(doc));
        } catch (Exception e) {
-       LogService.instance().log(LogService.ERROR,e);
+       LogService.log(LogService.ERROR,e);
        }
        */
       // debug printout of the document sent to the XSLT
@@ -306,9 +318,9 @@ class ManageProfilesState extends BaseState {
       org.apache.xml.serialize.XMLSerializer dbser1 = new org.apache.xml.serialize.XMLSerializer(dbwr1, outputFormat);
       try {
           dbser1.serialize(doc);
-      LogService.instance().log(LogService.DEBUG, "ManageProfilesState::renderXML() : XML incoming to the XSLT :\n\n" + dbwr1.toString() + "\n\n");
+      LogService.log(LogService.DEBUG, "ManageProfilesState::renderXML() : XML incoming to the XSLT :\n\n" + dbwr1.toString() + "\n\n");
       } catch (Exception e) {
-          LogService.instance().log(LogService.DEBUG, "ManageProfilesState::renderXML() : problems serializing incoming XML");
+          LogService.log(LogService.DEBUG, "ManageProfilesState::renderXML() : problems serializing incoming XML");
       }
       */
 
@@ -366,7 +378,7 @@ class ManageProfilesState extends BaseState {
         mimeImagesProps.load(in);
         in.close();
       } catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at " + mimeImagesPropsFile);
+        LogService.log(LogService.ERROR, "UserPreferences:ManagerProfileState:CEditProfile::CEditProfile() : unable to load mime type images properties file located at " + mimeImagesPropsFile);
       }
       this.context = context;
     }
@@ -637,9 +649,9 @@ class ManageProfilesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        LogService.instance().log(LogService.DEBUG, outString.toString());
+        LogService.log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        LogService.instance().log(LogService.DEBUG, e);
+        LogService.log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)

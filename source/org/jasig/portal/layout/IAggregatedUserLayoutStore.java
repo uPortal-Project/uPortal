@@ -35,12 +35,12 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Hashtable;
+
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
-
-import java.util.Hashtable;
 
 /**
  * <p>Title: The IAggregatedUserLayoutStore interface </p>

@@ -34,18 +34,21 @@
 
 package org.jasig.portal.groups;
 
-import java.io.*;
-import java.util.*;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.PropertiesManager;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityLock;
+import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.groups.local.*;
-import org.jasig.portal.groups.local.searchers.*;
-import org.jasig.portal.services.*;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 
 /**
  * Reference individual, or leaf, group service.
@@ -79,13 +82,6 @@ public ReferenceIndividualGroupService() throws GroupsException
         serviceDescriptor = svcDescriptor;
         initialize();
     }
-/**
- *
- */
-protected void addGroupToCache(IEntityGroup group) throws CachingException
-{
-    EntityCachingService.instance().add(group);
-}
     /**
      * Answers if <code>IGroupMembers</code> are being cached.
      */
@@ -100,17 +96,71 @@ protected void addGroupToCache(IEntityGroup group) throws CachingException
 public void deleteGroup(IEntityGroup group) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
-    if ( cacheInUse() )
-    {
-        try
-            { removeGroupFromCache(group); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem deleting group " + group.getKey() + " : " + ce.getMessage()); }
-    }
+    synchronizeGroupMembersOnDelete(group);
     getGroupStore().delete(group);
+    if ( cacheInUse() )
+        { cacheRemove(group); }
 }
 /**
- * Removes the <code>ILockableEntityGroup</code> from the cache and the store.
+ * Removes the <code>ILockableEntityGroup</code> from its containing groups.
+ * The <code>finally</code> block tries to release any groups that are still
+ * locked, which can occur if an attempt to remove the group from one of
+ * its containing groups fails and throws a GroupsException.  In this event,
+ * we do not try to roll back any successful removes, since that would probably
+ * fail anyway.
+ * @param group ILockableEntityGroup
+ */
+private void removeDeletedGroupFromContainingGroups(ILockableEntityGroup group)
+throws GroupsException
+{
+    Iterator itr;
+    IEntityGroup containingGroup = null;
+    ILockableEntityGroup lockableGroup = null;
+    IEntityLock lock = null;
+    List lockableGroups = new ArrayList();
+    try
+    {
+        String lockOwner = group.getLock().getLockOwner();
+        for ( itr=group.getContainingGroups(); itr.hasNext(); )
+        {
+            containingGroup = (IEntityGroup) itr.next();
+            lockableGroup=
+                GroupService.findLockableGroup(containingGroup.getKey(), lockOwner);
+                if ( lockableGroup != null )
+                     { lockableGroups.add(lockableGroup); }
+        }
+        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
+        {
+            lockableGroup = (ILockableEntityGroup) itr.next();
+            lockableGroup.removeMember(group);
+            lockableGroup.updateMembers();
+        }
+    }
+    catch (GroupsException ge)
+        { throw new GroupsException("Could not remove deleted group " + group.getKey() +
+                " from parent : " + ge.getMessage()); }
+    finally
+    {
+        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
+        {
+            lock = ((ILockableEntityGroup) itr.next()).getLock();
+            try
+            {
+                if ( lock.isValid() )
+                    { lock.release(); }
+            }
+            catch (LockingException le)
+            {
+                LogService.log(LogService.ERROR,
+                    "ReferenceIndividualGroupService.removeDeletedGroupFromContainingGroups(): " +
+                    "Problem unlocking parent group: " + le.getMessage());
+            }
+        }
+    }
+}
+/**
+ * Removes the <code>ILockableEntityGroup</code> from the cache and the store,
+ * including both parent and child memberships.
  * @param group ILockableEntityGroup
  */
 public void deleteGroup(ILockableEntityGroup group) throws GroupsException
@@ -120,8 +170,8 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
     {
         if ( group.getLock().isValid() )
         {
+            removeDeletedGroupFromContainingGroups(group);
             deleteGroup( (IEntityGroup)group );
-            group.getLock().release();
         }
         else
             { throw new GroupsException("Could not delete group " + group.getKey() +
@@ -130,6 +180,11 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
     catch (LockingException le)
         { throw new GroupsException("Could not delete group " + group.getKey() +
                 " : " + le.getMessage()); }
+    finally
+    {
+        try { group.getLock().release(); }
+        catch ( LockingException le ) {}
+    }
 }
   private EntityIdentifier[] filterEntities(EntityIdentifier[] entities, IEntityGroup ancestor) throws GroupsException{
     ArrayList ar = new ArrayList(entities.length);
@@ -159,7 +214,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
             try
             {
                 if ( getGroupFromCache(group.getEntityIdentifier().getKey()) == null )
-                    { addGroupToCache(group); }
+                    { cacheAdd(group); }
             }
             catch (CachingException ce)
                 { throw new GroupsException("Problem finding containing groups: " + ce.getMessage()); }
@@ -206,7 +261,7 @@ protected IEntityGroup findGroupWithCache(CompositeEntityIdentifier ent) throws 
         {
             group = primFindGroup(ent.getLocalKey());
             if (group != null)
-                { addGroupToCache(group); }
+                { cacheAdd(group); }
         }
     return group;
     }
@@ -274,7 +329,7 @@ protected Iterator findLocalMemberGroups(IEntityGroup eg) throws GroupsException
             try
             {
                 if ( getGroupFromCache(group.getEntityIdentifier().getKey()) == null )
-                    { addGroupToCache(group); }
+                    { cacheAdd(group); }
             }
             catch (CachingException ce)
                 { throw new GroupsException("Problem finding member groups: " + ce.getMessage()); }
@@ -335,14 +390,30 @@ public Iterator findMembers(IEntityGroup eg) throws GroupsException
 
     return members.iterator();
 }
-    /**
-     * Returns an <code>IEntity</code> representing a portal entity.  This does
-     * not guarantee that the entity actually exists.
-     */
-    public IEntity getEntity(String key, Class type) throws GroupsException
+/**
+ * Returns an <code>IEntity</code> representing a portal entity.  This does
+ * not guarantee that the underlying entity actually exists.
+ */
+public IEntity getEntity(String key, Class type) throws GroupsException
+{
+    IEntity ent = primGetEntity(key, type);
+
+    if ( cacheInUse() )
     {
-      return entityFactory.newInstance(key, type);
+        try
+        {
+            IEntity cachedEnt = getEntityFromCache(ent.getEntityIdentifier().getKey());
+            if ( cachedEnt == null )
+                { cacheAdd(ent); }
+            else
+                { ent = cachedEnt; }
+        }
+        catch (CachingException ce)
+            { throw new GroupsException("Problem retrieving group member " + type + "(" + key + ") : " + ce.getMessage());}
     }
+    return ent;
+}
+
 /**
  * Returns an <code>IEntity</code> representing a portal entity.  This does
  * not guarantee that the entity actually exists.
@@ -425,7 +496,7 @@ private void initialize() throws GroupsException
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate group store " + e;
+            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate group store " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
@@ -433,7 +504,7 @@ private void initialize() throws GroupsException
 
     if ( entityStoreFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): No Entity Store Factory specified in service descriptor.";
+        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Store Factory specified in service descriptor.";
         LogService.log(LogService.INFO, eMsg);
     }
 
@@ -446,7 +517,7 @@ private void initialize() throws GroupsException
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate entity store " + e;
+            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity store " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
@@ -454,7 +525,7 @@ private void initialize() throws GroupsException
 
     if ( entitySearcherFactoryName == null )
     {
-        eMsg = "ReferenceGroupService.initialize(): No Entity Searcher Factory specified in service descriptor.";
+        eMsg = "ReferenceIndividualGroupService.initialize(): No Entity Searcher Factory specified in service descriptor.";
         LogService.log(LogService.INFO, eMsg);
     }
 
@@ -467,12 +538,12 @@ private void initialize() throws GroupsException
         }
         catch (Exception e)
         {
-            eMsg = "ReferenceGroupService.initialize(): Failed to instantiate entity searcher " + e;
+            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity searcher " + e;
             LogService.log(LogService.ERROR, eMsg);
             throw new GroupsException(eMsg);
         }
     }
- 
+
 }
 /**
  * Answers if the group can be updated or deleted in the store.
@@ -497,24 +568,24 @@ public boolean isLeafService() {
     return true;
 }
 /**
+ * Answers if this service is updateable by the portal.
+ */
+public boolean isEditable()
+{
+    return isInternallyManaged();
+}
+/**
  * Returns a new <code>IEntityGroup</code> for the given Class with an unused
  * key.
  */
 public IEntityGroup newGroup(Class type) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
-    try
-    {
-        IEntityGroup group = groupFactory. newInstance(type);
-        group.setLocalGroupService(this);
-        if ( cacheInUse() )
-            { addGroupToCache(group); }
-        return group;
-    }
-    catch (Exception e)
-    {
-        throw new GroupsException("ReferenceGroupService.newGroup(): " + e.getMessage());
-    }
+    IEntityGroup group = groupFactory.newInstance(type);
+    group.setLocalGroupService(this);
+    if ( cacheInUse() )
+        { cacheAdd(group); }
+    return group;
 }
 /**
  * Returns a pre-existing <code>IEntityGroup</code> or null if it
@@ -536,13 +607,6 @@ protected IEntityGroup primFindGroup(String localKey) throws GroupsException
     }
     return (EntityIdentifier[]) ar.toArray(new EntityIdentifier[0]);
   }
-/**
- *
- */
-protected void removeGroupFromCache(IEntityGroup group) throws CachingException
-{
-    EntityCachingService.instance().remove(group.getEntityIdentifier());
-}
   public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
     return removeDuplicates(entitySearcher.searchForEntities(query,method,type));
   }
@@ -566,21 +630,16 @@ throws GroupsException
 
 }
 /**
- * Updates the cache and the store with the new <code>IEntityGroup</code>.
+ * Update the store and the updated members.
  * @param group IEntityGroup
  */
 public void updateGroup(IEntityGroup group) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
-
-    if ( cacheInUse() )
-    {
-        try
-            { updateGroupInCache(group); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating group " + group.getKey() + " : " + ce.getMessage()); }
-    }
     getGroupStore().update(group);
+    if ( cacheInUse())
+        { cacheUpdate(group); }
+    synchronizeGroupMembersOnUpdate(group);
 }
 /**
  * Updates the <code>ILockableEntityGroup</code> in the cache and the store.
@@ -606,49 +665,32 @@ throws GroupsException
            { throw new GroupsException("Could not update group " + group.getKey() +
                 " has invalid lock."); }
 
-        if ( ! renewLock )
-        {
-            updateGroup((IEntityGroup)group);
-            group.getLock().release();
-        }
+//      updateGroup((IEntityGroup)group);
+        getGroupStore().update(group);
+        if ( cacheInUse())
+            { cacheRemove(group); }
+        synchronizeGroupMembersOnUpdate(group);
+
+        if ( renewLock )
+            { group.getLock().renew(); }
         else
-        {
-            getGroupStore().update(group);
-            if ( cacheInUse())
-                { removeGroupFromCache(group); }
-            group.getLock().renew();
-        }
+            { group.getLock().release(); }
+
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
                 " : " + le.getMessage()); }
-    catch (CachingException ce)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + ce.getMessage()); }
 }
 /**
- *
- */
-protected void updateGroupInCache(IEntityGroup group) throws CachingException
-{
-    EntityCachingService.instance().update(group);
-}
-/**
- * Updates the cache and the store with the updated <code>IEntityGroup</code>.
+ * Update the store and the updated members.
  * @param group IEntityGroup
  */
-public void updateGroupMembers(IEntityGroup group) throws GroupsException
-{
+public void updateGroupMembers(IEntityGroup group) throws GroupsException {
     throwExceptionIfNotInternallyManaged();
-
-    if ( cacheInUse() )
-    {
-        try
-            { EntityCachingService.instance().update(group); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating members for group " + group.getKey() + " : " + ce.getMessage()); }
-    }
     getGroupStore().updateMembers(group);
+    if ( cacheInUse())
+        { cacheUpdate(group); }
+    synchronizeGroupMembersOnUpdate(group);
 }
 /**
  * Updates the <code>ILockableEntityGroup</code> in the cache and the store.
@@ -674,24 +716,78 @@ throws GroupsException
            { throw new GroupsException("Could not update group " + group.getKey() +
                 " has invalid lock."); }
 
-        if ( ! renewLock )
-        {
-            updateGroupMembers((IEntityGroup)group);
-            group.getLock().release();
-        }
+//      updateGroupMembers((IEntityGroup)group);
+        getGroupStore().updateMembers(group);
+        if ( cacheInUse())
+            { cacheRemove(group); }
+        synchronizeGroupMembersOnUpdate(group);
+
+        if ( renewLock )
+            { group.getLock().renew(); }
         else
-        {
-            getGroupStore().updateMembers(group);
-            if ( cacheInUse())
-                { removeGroupFromCache(group); }
-            group.getLock().renew();
-        }
+            { group.getLock().release(); }
+
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
                 " : " + le.getMessage()); }
-    catch (CachingException ce)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + ce.getMessage()); }
+}
+
+/**
+ * Returns an <code>IEntity</code> representing a portal entity.  This does
+ * not guarantee that the underlying entity actually exists.
+ */
+protected IEntity primGetEntity(String key, Class type) throws GroupsException
+{
+    return entityFactory.newInstance(key, type);
+}
+
+/**
+ * Remove the back pointers of the group members of the deleted group.  Then
+ * update the cache to invalidate copies on peer servers.
+ *
+ * @param group ILockableEntityGroup
+ */
+protected void synchronizeGroupMembersOnDelete(IEntityGroup group)
+throws GroupsException
+{
+    GroupMemberImpl gmi = null;
+
+    for (Iterator it=group.getMembers(); it.hasNext();)
+    {
+        gmi = (GroupMemberImpl) it.next();
+        gmi.removeGroup(group);
+        if ( cacheInUse() )
+           { cacheUpdate(gmi); }
+    }
+}
+
+/**
+ * Adjust the back pointers of the updated group members to either add or remove
+ * the parent group.  Then update the cache to invalidate copies on peer servers.
+ *
+ * @param group ILockableEntityGroup
+ */
+protected void synchronizeGroupMembersOnUpdate(IEntityGroup group)
+throws GroupsException
+{
+    EntityGroupImpl egi = (EntityGroupImpl) group;
+    GroupMemberImpl gmi = null;
+
+    for (Iterator it=egi.getAddedMembers().values().iterator(); it.hasNext();)
+    {
+        gmi = (GroupMemberImpl) it.next();
+        gmi.addGroup(egi);
+        if ( cacheInUse() )
+           { cacheUpdate(gmi); }
+    }
+
+    for (Iterator it=egi.getRemovedMembers().values().iterator(); it.hasNext();)
+    {
+        gmi = (GroupMemberImpl) it.next();
+        gmi.removeGroup(egi);
+        if ( cacheInUse() )
+           { cacheUpdate(gmi); }
+    }
 }
 }

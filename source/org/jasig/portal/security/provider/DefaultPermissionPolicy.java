@@ -37,10 +37,14 @@ package org.jasig.portal.security.provider;
 
 import java.util.Date;
 import java.util.Iterator;
+
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.security.*;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionPolicy;
 
 /**
  * Implements a strategy for answering the basic authorization question: does the
@@ -115,7 +119,7 @@ private boolean permissionIsGranted(IPermission p)
     Date now = new Date();
     return
         (p.getType().equals(IPermission.PERMISSION_TYPE_GRANT)) &&
-        (p.getEffective() == null || p.getEffective().after(now)) &&
+        (p.getEffective() == null || ! p.getEffective().after(now)) &&
         (p.getExpires() == null || p.getExpires().after(now));
 }
 /**

@@ -35,8 +35,10 @@
 
 package org.jasig.portal.security.provider;
 
-import org.jasig.portal.security.*;
-import java.util.*;
+import java.util.Enumeration;
+
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * <p>A simple extension of ChainingSecurityContext that acts merely as a placeholder

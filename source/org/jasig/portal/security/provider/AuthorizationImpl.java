@@ -35,20 +35,29 @@
 
 package org.jasig.portal.security.provider;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
+
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.security.*;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IPermissionPolicy;
+import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SmartCache;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -59,8 +68,7 @@ public class AuthorizationImpl implements IAuthorizationService {
 
     protected IPermissionStore permissionStore;
     protected IPermissionPolicy defaultPermissionPolicy;
-    // Clear the caches every 5 minutes
-    protected SmartCache groupMembersCache = new SmartCache(300);
+    // Clear the cache every 5 minutes.
     protected SmartCache permissionsCache = new SmartCache(300);
     protected Object permissionsCacheLock = new Object();
 
@@ -69,7 +77,7 @@ public class AuthorizationImpl implements IAuthorizationService {
   /**
    *
    */
-public AuthorizationImpl () throws AuthorizationException
+private AuthorizationImpl () throws AuthorizationException
 {
     super();
     initialize();
@@ -284,20 +292,10 @@ private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principa
 throws GroupsException
 {
     LogService.log (LogService.DEBUG,
-       "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " + principal.toString());
+       "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " +
+       principal.toString());
 
-    IGroupMember gm = (IGroupMember)groupMembersCache.get(principal);
-    if ( gm == null )
-    {
-        String key = principal.getKey();
-        Class type = principal.getType();
-        if ( type == EntityTypes.GROUP_ENTITY_TYPE )
-            { gm = GroupService.findGroup(key); }
-        else
-            { gm = GroupService.getEntity(key, type); }
-
-        groupMembersCache.put(principal, gm);
-    }
+    IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
     LogService.log (LogService.DEBUG,
        "AuthorizationImpl.getGroupMemberForPrincipal(): got group member " + gm);
@@ -482,14 +480,14 @@ private void initialize() throws AuthorizationException
     if ( factoryName == null )
     {
         eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 
     if ( policyName == null )
     {
         eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 
@@ -500,7 +498,7 @@ private void initialize() throws AuthorizationException
     catch (Exception e)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 
@@ -511,7 +509,7 @@ private void initialize() throws AuthorizationException
     catch (Exception e)
     {
         eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new AuthorizationException(eMsg);
     }
 

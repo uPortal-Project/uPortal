@@ -36,24 +36,36 @@
 
 package org.jasig.portal.channels.UserPreferences;
 
-import org.jasig.portal.*;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.services.LogService;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.ContentHandler;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.net.URL;
 
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.StructureStylesheetDescription;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.ThemeStylesheetDescription;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.layout.UserLayoutNodeDescription;
-import org.jasig.portal.layout.UserLayoutFolderDescription;
-import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 
 /** <p>Manages User Layout and user stylesheet preferences </p>
  * This is a general UserPreference component. A structure/theme
@@ -268,7 +280,7 @@ class GPreferencesState extends BaseState {
           this.internalState.renderXML(out);
       }
       else {
-          LogService.instance().log(LogService.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
+          LogService.log(LogService.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
       }
   }
 
@@ -450,9 +462,9 @@ class GPreferencesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        LogService.instance().log(LogService.DEBUG, outString.toString());
+        LogService.log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        LogService.instance().log(LogService.DEBUG, e);
+        LogService.log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null) {
@@ -558,9 +570,9 @@ class GPreferencesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        LogService.instance().log(LogService.DEBUG, outString.toString());
+        LogService.log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        LogService.instance().log(LogService.DEBUG, e);
+        LogService.log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null) {
@@ -588,7 +600,7 @@ class GPreferencesState extends BaseState {
           ssup.putParameterValue(parName, context.getStructureStylesheetDescription().getStylesheetParameterDefaultValue(parName));
         } else {
           ssup.putParameterValue(parName, value);
-          //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
+          //		    LogService.log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
         }
       }
       ThemeStylesheetUserPreferences tsup = context.getUserPreferences().getThemeStylesheetUserPreferences();
@@ -599,7 +611,7 @@ class GPreferencesState extends BaseState {
           tsup.putParameterValue(parName, context.getThemeStylesheetDescription().getStylesheetParameterDefaultValue(parName));
         } else {
           tsup.putParameterValue(parName, value);
-          //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
+          //		    LogService.log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
         }
       }
       context.setModified(true);

@@ -36,8 +36,7 @@
 
 package  org.jasig.portal.security;
 
-import  java.util.Date;
-import  org.jasig.portal.AuthorizationException;
+import java.util.Date;
 
 
 /**

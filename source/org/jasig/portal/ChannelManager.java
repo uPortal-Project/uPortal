@@ -35,51 +35,44 @@
  
 package org.jasig.portal;
 
-import org.jasig.portal.channels.CError;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.utils.SetCheckInSemaphore;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.StatsRecorder;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.WeakHashMap;
-import org.jasig.portal.utils.SoftHashMap;
-import java.util.Collections;
-import org.xml.sax.ContentHandler;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPerson;
-
+import org.jasig.portal.channels.CError;
+import org.jasig.portal.layout.LayoutEvent;
+import org.jasig.portal.layout.LayoutEventListener;
+import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.layout.UserLayoutNodeDescription;
-import org.jasig.portal.layout.LayoutEventListener;
-import org.jasig.portal.layout.LayoutEvent;
-import org.jasig.portal.layout.LayoutMoveEvent;
-
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.serialize.CachingSerializer;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SetCheckInSemaphore;
+import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
-
+import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
-import org.jasig.portal.serialize.CachingSerializer;
 
 /**
  * This class shall have the burden of squeezing content
@@ -268,14 +261,16 @@ public class ChannelManager implements LayoutEventListener {
 
         // send SESSION_DONE event to all the channels
         PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
-        for(Enumeration e=channelTable.elements();e.hasMoreElements();) {
-            ((IChannel)e.nextElement()).receiveEvent(ev);
+        for(Enumeration enum=channelTable.elements();enum.hasMoreElements();) {
+            IChannel ch = (IChannel)enum.nextElement();
+            if (ch != null) {
+                try {
+                    ch.receiveEvent(ev);
+                } catch (Exception e) {
+                    LogService.log(LogService.ERROR, e);
+                }
+            }
         }
-
-        // we dont' really need to clean anything here,
-        // since the entire session will be destroyed
-        //channelCacheTable.clear();
-        //channelTable.clear()
     }
 
     /**
@@ -344,7 +339,7 @@ public class ChannelManager implements LayoutEventListener {
                                     LogService.log(LogService.ERROR,"ChannelManager::outputChannel() :IO exception occurred while compiling character cache for channel \""+channelSubscribeId+"\" !",ioe);
                                 }
                             } else {
-                                LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannel() : unable to reset cache state while compiling character cache for channel \""+channelSubscribeId+"\" ! Serializer was not caching when it should've been ! Partial output possible!");
+                                LogService.log(LogService.ERROR,"ChannelManager::outputChannel() : unable to reset cache state while compiling character cache for channel \""+channelSubscribeId+"\" ! Serializer was not caching when it should've been ! Partial output possible!");
                                 return;
                             }
                         } catch (IOException ioe) {
@@ -642,9 +637,13 @@ public class ChannelManager implements LayoutEventListener {
         IChannel ch= (IChannel) channelTable.get(channelSubscribeId);
 
         if (ch != null) {
-            ch.receiveEvent(le);
+            try {
+                ch.receiveEvent(le);
+            } catch (Exception e) {
+                LogService.log(LogService.ERROR, e);
+            }
         } else {
-            LogService.instance().log(LogService.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
+            LogService.log(LogService.ERROR, "ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
         }
     }
 
@@ -666,7 +665,7 @@ public class ChannelManager implements LayoutEventListener {
             // determine target channel id
             UPFileSpec upfs=new UPFileSpec(req);
             channelTarget=upfs.getTargetNodeId();
-            LogService.instance().log(LogService.DEBUG,"ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
+            LogService.log(LogService.DEBUG,"ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
         }
 
         if(channelTarget!=null) {
@@ -708,8 +707,8 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Throwable e) {
-                    LogService.instance().log(LogService.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
-                    LogService.instance().log(LogService.ERROR,e);
+                    LogService.log(LogService.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+                    LogService.log(LogService.ERROR,e);
                     chObj=replaceWithErrorChannel(channelTarget,CError.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
@@ -730,7 +729,7 @@ public class ChannelManager implements LayoutEventListener {
                         StringWriter sw=new StringWriter();
                         e2.printStackTrace(new PrintWriter(sw));
                         sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                        LogService.log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
 
                 }
@@ -745,6 +744,12 @@ public class ChannelManager implements LayoutEventListener {
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelTarget);
                 rd.setUPFile(up);
+
+                // Check if channel is rendering as the root element of the layout
+                String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+                if (userLayoutRoot != null && !userLayoutRoot.equals("root")) {
+                    rd.setRenderingAsRoot(true);
+                }
 
                 try {
                     chObj.setRuntimeData(rd);
@@ -784,7 +789,11 @@ public class ChannelManager implements LayoutEventListener {
         IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
         if(ch!=null) {
             channelCacheTable.remove(ch);
-            ch.receiveEvent(new PortalEvent(PortalEvent.UNSUBSCRIBE));
+            try {
+                ch.receiveEvent(new PortalEvent(PortalEvent.UNSUBSCRIBE));
+            } catch (Exception e) {
+                LogService.log(LogService.ERROR, e);
+            }
             channelTable.remove(ch);
             LogService.log(LogService.DEBUG,"ChannelManager::removeChannel(): removed channel with subscribe id="+channelSubscribeId);
         }
@@ -810,7 +819,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 portalContext=getPortalContext();
             } catch (NamingException ne) {
-                LogService.instance().log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain initial JNDI context : "+ne);
+                LogService.log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain initial JNDI context : "+ne);
             }
         }
         // construct a channel context
@@ -818,7 +827,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 channelContext=getChannelJndiContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()),Integer.toString(this.pcs.getUserPreferencesManager().getCurrentProfile().getLayoutId()));
             } catch (NamingException ne) {
-                LogService.instance().log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : "+ne);
+                LogService.log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : "+ne);
             }
         }
     }
@@ -924,7 +933,7 @@ public class ChannelManager implements LayoutEventListener {
                         StringWriter sw=new StringWriter();
                         e2.printStackTrace(new PrintWriter(sw));
                         sw.flush();
-                        LogService.instance().log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+                        LogService.log(LogService.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
                     }
                 }
             }

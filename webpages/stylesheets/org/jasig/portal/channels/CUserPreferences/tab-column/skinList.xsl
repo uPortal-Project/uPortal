@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="skinsPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:param>
   <xsl:param name="currentSkin">java</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
 
@@ -21,20 +22,20 @@
                 <tr class="uportal-channel-table-header">
                   <td>Option</td>
                   <td>
-                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="16" height="8"/>
+                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
                   <td>Thumbnail</td>
                   <td>
-                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="16" height="8"/>
+                    <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"/>
                   </td>
-                  <td width="100%"><img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/></td>
+                  <td width="100%"><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
                 </tr>
                 <tr class="uportal-channel-table-header">
                   <td colspan="5">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="2" height="2"/>
+                          <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="2" height="2"/>
                         </td>
                       </tr>
                     </table>
@@ -70,11 +71,11 @@
           </xsl:otherwise>
         </xsl:choose>
       </td>
-      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td>
-        <img height="90" alt="{skin-name} thumbnail" src="{$mediaPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
+        <img height="90" alt="{skin-name} thumbnail" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
       </td>
-      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/></td>
+      <td><img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/></td>
       <td class="uportal-channel-table-header">
         <table width="100%" border="0" cellspacing="0" cellpadding="2">
           <tr valign="top">
@@ -86,7 +87,7 @@
             </td>
           </tr>
           <tr valign="top">
-            <td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="4" height="4"/></td>
+            <td nowrap="nowrap" class="uportal-channel-table-header">Description:<img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="4" height="4"/></td>
             <td class="uportal-channel-text">
               <xsl:value-of select="skin-description"/>
             </td>
@@ -99,7 +100,7 @@
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
           <tr>
             <td>
-              <img alt="interface image" src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"/>
+              <img alt="interface image" src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"/>
             </td>
           </tr>
         </table>
@@ -107,5 +108,3 @@
     </tr>
   </xsl:template>
 </xsl:stylesheet>
-
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->

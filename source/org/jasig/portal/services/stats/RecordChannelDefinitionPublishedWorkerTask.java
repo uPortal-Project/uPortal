@@ -35,8 +35,8 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.security.IPerson;
 import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.security.IPerson;
 
 /**
  * Records the publishing of a channel in a separate thread.

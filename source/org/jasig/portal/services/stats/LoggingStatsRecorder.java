@@ -35,8 +35,8 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.services.LogService;
 import org.apache.log4j.Priority;
+import org.jasig.portal.services.LogService;
 
 /**
  * Logs portal statistics to the portal's log.  Contains
@@ -72,7 +72,7 @@ public class LoggingStatsRecorder extends MessageStatsRecorder {
    * @param message, the message to print
    */   
   protected void outputMessage(String message) {
-    LogService.instance().log(priority, message);
+    LogService.log(priority, message);
   }
      
 }

@@ -36,9 +36,8 @@
 package org.jasig.portal.utils;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -89,6 +88,16 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
   }
 
   /**
+   * Sets the base URL.
+   * @param url the new base URL 
+   */
+  protected void setBaseUrl(String url)
+  {
+    if (url != null)
+      this.baseUrl = url;
+  }
+
+  /**
    * A helper method for derivitive classes to easily fix an attribute
    * that has a relative URL value
    * @param elementName the element name containing an attribute of name attName
@@ -132,7 +141,12 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
           else
           {
             if (i2 != -1)
-              attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
+            {
+              if (baseUrl.indexOf("?") != -1)
+                attValue = baseUrl.substring(0, baseUrl.substring(0, baseUrl.indexOf( "?" )).lastIndexOf("/")+1).concat(attValue);
+              else
+                attValue = baseUrl.substring(0, baseUrl.lastIndexOf("/")+1).concat(attValue);
+            }
             else
               attValue = baseUrl.concat("/").concat(attValue);
           }

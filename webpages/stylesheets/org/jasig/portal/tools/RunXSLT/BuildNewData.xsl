@@ -125,7 +125,7 @@ Version $Revision$
 				<xsl:copy-of select="document(concat($uripath,'UP_SS_MAP_20.XML'))//table"/>
 			</xsl:when>
 			<xsl:when test="name='UP_SS_STRUCT'">
-				<xsl:copy-of select="document(concat($uripath,'Up_ss_struct_20.XML'))//table"/>
+				<xsl:copy-of select="document(concat($uripath,'UP_SS_STRUCT_20.XML'))//table"/>
 			</xsl:when>
 			<xsl:when test="name='UP_SS_STRUCT_PAR'">
 				<xsl:copy-of select="document(concat($uripath,'UP_SS_STRUCT_PAR_20.XML'))//table"/>

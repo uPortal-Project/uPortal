@@ -649,17 +649,17 @@
     <columns>
       <column> <name>ENTITY_TYPE_ID</name>    <type>INTEGER</type>
         <desc>Entity type ID is an unique identifying sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>ENTITY_TYPE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
         <desc>Class name of entity (ex. org.jasig.portal.security.IPerson)</desc>
+        <key>PK</key>
       </column>
       <column> <name>DESCRIPTIVE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
         <desc>A name for display to end users (ex. Person)</desc>
       </column>
     </columns>
-    <primary-key>ENTITY_TYPE_ID</primary-key>
-    <not-null>ENTITY_TYPE_NAME</not-null>
+    <primary-key>ENTITY_TYPE_NAME</primary-key>
+    <not-null>ENTITY_TYPE_ID</not-null>
   </table>
 
  <table>
@@ -698,36 +698,6 @@
       </column>
     </columns>
     <not-null>IPERMISSIBLE_CLASS</not-null>
-  </table>
-
-  <!-- A table that is used by CGroupsManager, distributed from the JA-SIG Clearinghouse -->
-  <table>
-    <name>UPC_GROUP_MGR</name>
-    <desc>A table that is used by CGroupsManager, distributed from the JA-SIG Clearinghouse</desc>
-    <columns>
-      <column> <name>OWNER_ID</name> <type>VARCHAR</type>     <param>255</param>
-        <desc>The entity who owns the context. Owner id may be a group, person, system, etc.</desc>
-      </column>
-      <column> <name>OWNER_TYPE</name> <type>CHAR</type>     <param>1</param>
-        <desc>The type of owner - (ex. g group)</desc>
-      </column>
-      <column> <name>GROUP_ID</name> <type>VARCHAR</type>     <param>255</param>
-        <desc>Unique group id number, key to GROUP_ID in UP_GROUP</desc>
-        <key>CK</key>
-      </column>
-      <column> <name>ORDINAL</name> <type>INTEGER</type>
-        <desc>A numeric counting sequence - integer sequence without gaps - used for placement of the group context within the groups management channel</desc>
-      </column>
-      <column> <name>EXPANDED</name> <type>CHAR</type>     <param>1</param>
-        <desc>Y, for yes, if the group should be expanded the first time the channel is displayed, y or n</desc>
-      </column>
-      <column> <name>DATE_CREATED</name>     <type>TIMESTAMP</type>
-        <desc>The date the context entry was created</desc>
-      </column>
-    </columns>
-    <not-null>OWNER_ID</not-null>
-    <not-null>OWNER_TYPE</not-null>
-    <not-null>GROUP_ID</not-null>
   </table>
 
   <!-- Used by the EntityCachingService to synchronize caches on multiple servers. -->

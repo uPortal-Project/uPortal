@@ -37,7 +37,6 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
-import java.security.MessageDigest;
 
 /**
  * Create a security context and store the value of remote user.  If not null,
@@ -47,57 +46,56 @@ import java.security.MessageDigest;
  *@version    $Revision$
  */
 class RemoteUserSecurityContext extends ChainingSecurityContext
-         implements ISecurityContext {
-        private final static int REMOTEUSERSECURITYAUTHTYPE = 0xFF31;
-        private String remoteUser;
+	 implements ISecurityContext {
+	private final static int REMOTEUSERSECURITYAUTHTYPE = 0xFF31;
+	private String remoteUser;
 
-        /**
-         *Constructor for the RemoteUserSecurityContext object. Store the
-         * value of user for authentication.
-         *
-         *@param  user  Description of the Parameter
-         */
-        RemoteUserSecurityContext() {
-                this(null);
-        }
+	/**
+	 *Constructor for the RemoteUserSecurityContext object. Store the
+	 * value of user for authentication.
+	 *
+	 *@param  user  Description of the Parameter
+	 */
+	RemoteUserSecurityContext() {
+		this(null);
+	}
 
-        /**
-         *Constructor for the RemoteUserSecurityContext object. Store the
-         * value of user for authentication.
-         *
-         *@param  user  Description of the Parameter
-         */
-        RemoteUserSecurityContext(String user) {
-                super();
-                remoteUser = user;
-        }
+	/**
+	 *Constructor for the RemoteUserSecurityContext object. Store the
+	 * value of user for authentication.
+	 *
+	 *@param  user  Description of the Parameter
+	 */
+	RemoteUserSecurityContext(String user) {
+		super();
+		remoteUser = user;
+	}
 
-        /**
-         *  Gets the authType attribute of the RemoteUserSecurityContext object
-         *
-         *@return    The authType value
-         */
-        public int getAuthType() {
-                return REMOTEUSERSECURITYAUTHTYPE;
-        }
+	/**
+	 *  Gets the authType attribute of the RemoteUserSecurityContext object
+	 *
+	 *@return    The authType value
+	 */
+	public int getAuthType() {
+		return REMOTEUSERSECURITYAUTHTYPE;
+	}
 
-        /**
-         * Verify that remoteUser is not null and set the principal's UID to this value.
-         *
-         *@exception  PortalSecurityException
-         */
-        public synchronized void authenticate()
-                throws PortalSecurityException {
-                remoteUser = "demo";
-                isauth = remoteUser != null;
-                if (isauth) {
-                        myPrincipal.setUID(remoteUser);
-                        super.authenticate();
-                } else {
-                        LogService.log(LogService.INFO, "Authentication failed. REMOTE_USER not set");
-                }
-                return;
-        }
+	/**
+	 * Verify that remoteUser is not null and set the principal's UID to this value.
+	 *
+	 *@exception  PortalSecurityException
+	 */
+	public synchronized void authenticate()
+		throws PortalSecurityException {
+		isauth = remoteUser != null;
+		if (isauth) {
+			myPrincipal.setUID(remoteUser);
+			super.authenticate();
+		} else {
+			LogService.log(LogService.INFO, "Authentication failed. REMOTE_USER not set");
+		}
+		return;
+	}
 }
 
 

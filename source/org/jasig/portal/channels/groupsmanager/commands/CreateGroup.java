@@ -36,24 +36,27 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  java.util.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.security.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Document;
-import  javax.xml.parsers.*;
+import java.util.Iterator;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.services.GroupService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * We will only be creating groups. We do not create entities. Once we create
  * the new group, it will be added to a parent and default permissions will
- * be assigned.
- * All of the xml  nodes for the parent group
- * will be found and if the node is expanded, the new child node will be added.
+ * be assigned if the user is not in the portal adminstrators groups that automatically
+ * has full access.
+ * All of the xml  nodes for the parent group will be found and if the node is
+ * expanded, the new child node will be added.
  * @author Don Fracapane
  * @version $Revision$
  */
@@ -123,35 +126,11 @@ import  javax.xml.parsers.*;
          ((Element)parentNode).setAttribute("hasMembers", "true");
       }
 
-      /** Grant all permissions for the new group to the creator */
-      /** @todo need to catch following exceptions for next block of code
-       *  org.jasig.portal.AuthorizationException
-       *  java.lang.IllegalAccessException
-       *  java.lang.InstantiationException */
-      ArrayList perms = new ArrayList();
-      IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
-      IAuthorizationPrincipal ap = staticData.getAuthorizationPrincipal();
-      Utility.logMessage("DEBUG", "CreateGroup::execute(): The IAuthorizationPrincipal: " + ap);
-      String[] activities = ((IPermissible)Class.forName(OWNER).newInstance()).getActivityTokens();
-      IPermission prm;
-      for (int a = 0; a < activities.length; a++) {
-         prm = upm.newPermission(ap);
-         prm.setActivity(activities[a]);
-         prm.setTarget(childEntGrp.getKey());
-         prm.setType("GRANT");
-         perms.add(prm);
-      }
-      upm.addPermissions((IPermission[])perms.toArray(new IPermission[perms.size()]));
-
-      // create permission elements
-      /** @todo should make sure there is one and only one principal element */
-      NodeList principals = model.getDocumentElement().getElementsByTagName("principal");
-      Element princElem = (Element)principals.item(0);
-      for (int p = 0; p < perms.size(); p++) {
-         prm = (IPermission)perms.get(p);
-         Element permElem = GroupsManagerXML.getPermissionXml(model, prm.getPrincipal(), prm.getActivity(), prm.getType(), prm.getTarget());
-         /** @todo should we check if element already exists??? */
-         princElem.appendChild(permElem);
+      /** Grant all permissions for the new group to the creator only if the user is
+       *  not in the portal administrators group
+       */
+      if (!sessionData.isAdminUser){
+         GroupsManagerXML.createPermissions(sessionData, childEntGrp);
       }
       // Parent was locked so no other thread or process could have changed it, but
       // child members could have changed.

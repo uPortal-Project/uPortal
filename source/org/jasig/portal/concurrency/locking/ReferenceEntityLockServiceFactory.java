@@ -35,7 +35,9 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import org.jasig.portal.concurrency.*;
+import org.jasig.portal.concurrency.IEntityLockService;
+import org.jasig.portal.concurrency.IEntityLockServiceFactory;
+import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.LogService;
 
 /**

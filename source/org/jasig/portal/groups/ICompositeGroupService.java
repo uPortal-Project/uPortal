@@ -35,7 +35,9 @@
 package org.jasig.portal.groups;
 
 import java.util.Iterator;
+
 import javax.naming.Name;
+
 import org.jasig.portal.EntityIdentifier;
 
 /**

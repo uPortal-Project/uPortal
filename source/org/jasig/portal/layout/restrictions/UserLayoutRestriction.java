@@ -37,7 +37,6 @@
 package org.jasig.portal.layout.restrictions;
 
 import org.jasig.portal.PortalException;
-import java.util.StringTokenizer;
 import org.jasig.portal.layout.UserLayoutNode;
 
 /**

@@ -35,7 +35,9 @@
 
 package org.jasig.portal.serialize;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 
 public class CachingWriter extends Writer implements CharacterCachingWriter { 
 

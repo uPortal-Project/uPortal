@@ -64,7 +64,7 @@ Version $Revision$
 				<!-- get the value of the current group_id -->
 				<xsl:variable name="currentGroup" select="./column[name='GROUP_ID']/value"/>
 				<!-- pick up the corresponding row in UP_GROUP table-->
-				<xsl:variable name="groupRow" select="document(concat($uripath,'UP_GROUP_20.xml'))       /data/table/rows/row[column[name='GROUP_ID' and value=$currentGroup]]"/>
+				<xsl:variable name="groupRow" select="document(concat($uripath,'UP_GROUP_20.XML'))       /data/table/rows/row[column[name='GROUP_ID' and value=$currentGroup]]"/>
 				<!-- get the entity_id for person object -->
 				<xsl:variable name="personEntityType" select="document(concat($uripath,'UP_GROUP_ENTITY_TYPE_20.XML'))       //row[column[name='ENTITY_TYPE_NAME' and value='org.jasig.portal.security.IPerson']]       /column[name='ENTITY_TYPE_ID']/value"/>
 				<xsl:variable name="oldKey" select="column[name='MEMBER_KEY']/value"/>
@@ -74,7 +74,7 @@ Version $Revision$
 						<!-- when this member is not a group and entity type is person 
 						substitute the user_name value instead of the user_id -->
 						<xsl:when test="$groupRow/column[name='ENTITY_TYPE_ID' and value=$personEntityType]            and column[name='MEMBER_IS_GROUP' and value='F']">
-							<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.xml'))           //row[column[name='USER_ID' and value=$oldKey]]"/>
+							<xsl:variable name="userRow" select="document(concat($uripath,'UP_USER_20.XML'))           //row[column[name='USER_ID' and value=$oldKey]]"/>
 							<xsl:value-of select="$userRow/column[name='USER_NAME']/value"/>
 						</xsl:when>
 						<!-- otherwise use the old key value -->

@@ -36,9 +36,10 @@
 package org.jasig.portal.concurrency.caching;
 
 import java.util.Date;
+
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.concurrency.*;
+import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.LogService;
 /**
  * Reference implementation of <code>IEntityCache</code> that is meant
@@ -93,6 +94,7 @@ public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
  * ReferenceInvalidatingEntityCache constructor comment.
  */
 public ReferenceInvalidatingEntityCache(Class type, int maxSize, int maxUnusedTime, int sweepInterval )
+throws CachingException
 {
     super(type, maxSize, maxUnusedTime, sweepInterval);
 }
@@ -147,6 +149,7 @@ public IBasicEntity get(String key) {
  * @return org.jasig.portal.concurrency.caching.RDBMCachedEntityInvalidationStore
  */
 private static synchronized RDBMCachedEntityInvalidationStore getInvalidationStore()
+throws CachingException
 {
     if ( invalidationStore == null )
         { invalidationStore = new RDBMCachedEntityInvalidationStore(); }
@@ -226,7 +229,7 @@ public void removeInvalidEntities()
     }
     catch (CachingException ce)
     {
-        LogService.instance().log(LogService.ERROR,
+        LogService.log(LogService.ERROR,
             "ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + ce.getMessage());
     }
 

@@ -36,12 +36,10 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Collections;
-import java.util.StringTokenizer;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.CommonUtils;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 
 
@@ -163,8 +161,8 @@ public class UserLayoutNode {
      * Sets the tree depth for this node.
      * @param depth a <code>int</code> depth value
      */
-     public void setDepth ( int priority ) {
-       this.priority = priority;
+     public void setDepth ( int depth ) {
+       this.depth = depth;
      }
 
      /**

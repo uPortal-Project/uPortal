@@ -77,7 +77,7 @@ public class ThreadPoolWorker extends Thread {
     public synchronized ThreadPoolReceipt process(Runnable target) throws InterruptedException {
         // construct a receipt
         if(currentReceipt!=null)
-          LogService.instance().log(LogService.ERROR,"ThreadPoolWorker::process() : trying to use a working worker !!! This should never happen.");
+          LogService.log(LogService.ERROR,"ThreadPoolWorker::process() : trying to use a working worker !!! This should never happen.");
         ThreadPoolReceipt returnReceipt=currentReceipt=new ThreadPoolReceipt(this);
 	taskQueue.enqueue(target);
         return returnReceipt;

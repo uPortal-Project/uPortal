@@ -35,8 +35,7 @@
 
 package org.jasig.portal.concurrency.caching;
 
-import  java.util.HashMap;
-import  java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * A rewrite of SmartCache that uses a moderate LRU algorithm:  entries
@@ -157,25 +156,34 @@ public LRUCache(int size, int maxUnusedAge)
   public synchronized Object remove(Object key) {
     return super.remove(key);
   }
-/**
- * Sweep the cache until it gets back under <code>maxSize</code>.
- */
-public void sweepCache()
-{
+
+  /**
+   * Sweep the cache until it gets back under <code>maxSize</code>.
+   */
+  public void sweepCache() {
     long now = System.currentTimeMillis();
     long maxAge = maxUnusedTimeMillis;
-    Iterator keyIterator = null;
     while ( size() > maxSize )
     {
-        long cutOff = now - maxAge;
-        Object[] keys = keySet().toArray(new Object[size()]);
-        for (int i=0; i<keys.length; i++)
+      long cutOff = now - maxAge;
+      Object[] keys = getKeySetArray();
+      for (int i=0; i<keys.length; i++)
+      {
+        ValueWrapper valueWrapper = (ValueWrapper)super.get(keys[i]);
+        if ( valueWrapper != null )
         {
-            ValueWrapper valueWrapper = (ValueWrapper)super.get(keys[i]);
-            if ( valueWrapper.getLastReferenceTime() < cutOff )
-                { remove(keys[i]); }
+          if (valueWrapper.getLastReferenceTime() < cutOff )
+          {
+            remove(keys[i]);
+          }
         }
-        maxAge = maxAge * 3 / 4;
+      }
+      maxAge = maxAge * 3 / 4;
     }
-}
+  }
+
+  private synchronized Object[] getKeySetArray() 
+  { 
+    return keySet().toArray(new Object[size()]); 
+  } 
 }

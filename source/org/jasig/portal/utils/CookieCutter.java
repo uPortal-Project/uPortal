@@ -35,15 +35,17 @@
 
 package org.jasig.portal.utils;
 
-import java.util.Vector;
+import java.net.HttpURLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
-import java.net.HttpURLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.text.ParseException;
+import java.util.Vector;
+
 import javax.servlet.http.Cookie;
+
 import org.jasig.portal.services.LogService;
 
 /**
@@ -199,7 +201,7 @@ public class CookieCutter
            }
            catch(ParseException e)
            {
-             LogService.instance().log(LogService.WARN, "CookieCutter: Cannot process Set Cookie header: " + e.getMessage());
+             LogService.log(LogService.WARN, "CookieCutter: Cannot process Set Cookie header: " + e.getMessage());
            }
          }
        }
@@ -232,7 +234,7 @@ public class CookieCutter
        }
        else
        {
-          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
+          LogService.log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie2:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie
@@ -250,20 +252,19 @@ public class CookieCutter
                cookie.setMaxAge(Integer.parseInt(token.substring(token.indexOf("=")+1).trim()) );
                ageSet = true;
             }
-            if ( (!domainSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("domain") )
+            else if ( (!domainSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("domain") )
             {
                cookie.setDomain(token.substring(token.indexOf("=")+1).trim());
                domainSet = true;
                cookie.domainIsSet();
             }
-            if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
+            else if ( (!pathSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("path") )
             {
                cookie.setPath(token.substring(token.indexOf("=")+1).trim());
                pathSet = true;
                cookie.pathIsSet();
             }
-            if ( !portSet && ((token.indexOf("Port") != -1 || token.indexOf("PORT") != -1)
-                                                           || token.indexOf("port") != -1) )
+            else if ( !portSet && token.toLowerCase().indexOf("port")!=-1)
             {
                if (token.indexOf("=")==-1)
                  cookie.setPort(port);
@@ -348,7 +349,7 @@ public class CookieCutter
        }
        else
        {
-          LogService.instance().log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
+          LogService.log(LogService.DEBUG, "CWebProxy: Invalid Header: \"Set-Cookie:"+headerVal+"\"");
           cookie = null;
        }
        // set max-age, path and domain of cookie

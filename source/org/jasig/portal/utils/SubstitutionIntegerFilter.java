@@ -35,10 +35,7 @@
 
 package org.jasig.portal.utils;
 
-import java.io.OutputStream;
-import java.io.Writer;
 import java.io.IOException;
-import org.jasig.portal.services.LogService;
 
 /**
  * Performs substitution operation on a stream of integer write requests.

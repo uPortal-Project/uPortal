@@ -37,14 +37,17 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.IServant;
-import  org.jasig.portal.security.IAuthorizationPrincipal;
-import  org.jasig.portal.IPermissible;
-import  java.util.HashMap;
-import  java.util.Calendar;
-import  java.util.Enumeration;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashMap;
+
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.IServant;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -136,7 +139,7 @@ public class CPermissionsManagerServantFactory {
             throw  (new PortalException("CPermissionsServantFactory.getPermissionsServant():: unable to properly initialize servant, check that mast staticData is being properly passed to this method"));
         }
         long time2 = Calendar.getInstance().getTime().getTime();
-        LogService.instance().log(LogService.INFO, "CPermissionsManagerFactory took  "
+        LogService.log(LogService.INFO, "CPermissionsManagerFactory took  "
                 + String.valueOf((time2 - time1)) + " ms to instantiate");
         return  servant;
     }
@@ -154,14 +157,14 @@ public class CPermissionsManagerServantFactory {
                         + name);
                 servantClasses.put(name, cserv);
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
         }
         if (servantClasses.get(name) != null) {
             try {
                 rs = (IServant)((Class)servantClasses.get(name)).newInstance();
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
         }
         return  rs;

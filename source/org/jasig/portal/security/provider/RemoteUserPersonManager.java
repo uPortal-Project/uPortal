@@ -38,12 +38,11 @@
 package org.jasig.portal.security.provider;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.security.IPersonManager;
+
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 /**
  When retrieving a new person, the value of the REMOTEUSER environment variable
@@ -53,45 +52,50 @@ import org.jasig.portal.security.PortalSecurityException;
  *@created    November 16, 2002
  */
 public class RemoteUserPersonManager
-         implements IPersonManager {
-        /**
-         *  Description of the Field
-         */
-        public final static String REMOTE_USER = "remote_user";
+	 implements IPersonManager {
+	/**
+	 *  Description of the Field
+	 */
+	public final static String REMOTE_USER = "remote_user";
 
-        /**
-         * Retrieve an IPerson object for the incoming request
-         *
-         *@param  request
-         *@return                              IPerson object for the incoming request
-         *@exception  PortalSecurityException  Description of the Exception
-         */
-        public IPerson getPerson(HttpServletRequest request)
-                throws PortalSecurityException {
-                // Return the person object if it exists in the user's session
-                IPerson person = (IPerson) request.getSession(false).getAttribute(PERSON_SESSION_KEY);
-                if (person != null) {
-                        return person;
-                }
-                // Create a new instance of a person
-                person = new PersonImpl();
-                try {
-                        // If the user has authenticated with the server which has implemented web authentication,
-                        // the REMOTEUSER environment variable will be set.
-                        RemoteUserSecurityContext context = new RemoteUserSecurityContext(request.getRemoteUser());
-                        person.setSecurityContext(context);
-                }
-                catch (Exception e) {
-                        // Log the exception
-                        LogService.log(LogService.ERROR, e);
-                }
-                // By default new user's have the UID of 1
-                person.setID(1);
-                // Add this person object to the user's session
-                request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
-                // Return the new person object
-                return (person);
-        }
+	/**
+	 * Retrieve an IPerson object for the incoming request
+	 *
+	 *@param  request
+	 *@return                              IPerson object for the incoming request
+	 *@exception  PortalSecurityException  Description of the Exception
+	 */
+	public IPerson getPerson(HttpServletRequest request)
+		throws PortalSecurityException {
+		// Return the person object if it exists in the user's session
+		IPerson person = (IPerson) request.getSession(false).getAttribute(PERSON_SESSION_KEY);
+		if (person != null) {
+			return person;
+		}
+		// Create a new instance of a person
+		person = new PersonImpl();
+        String user = "guest";
+		try {
+			// If the user has authenticated with the server which has implemented web authentication,
+			// the REMOTEUSER environment variable will be set.
+            String remoteUser = request.getRemoteUser();
+			RemoteUserSecurityContext context = new RemoteUserSecurityContext(remoteUser);
+			person.setSecurityContext(context);
+            if (remoteUser != null)
+                user = remoteUser;
+		}
+		catch (Exception e) {
+			// Log the exception
+			LogService.log(LogService.ERROR, e);
+		}
+		// By default new user's have the UID of 1
+		person.setID(1);
+        person.setAttribute(person.USERNAME, user);
+		// Add this person object to the user's session
+		request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
+		// Return the new person object
+		return (person);
+	}
 }
 
 

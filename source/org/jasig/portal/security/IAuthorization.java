@@ -35,10 +35,7 @@
 
 package org.jasig.portal.security;
 
-import java.util.Vector;
 import java.util.Date;
-
-import org.jasig.portal.security.IPerson;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

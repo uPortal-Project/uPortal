@@ -38,10 +38,11 @@
 
 package  org.jasig.portal.groups;
 
-import  java.util.HashMap;
-import  java.util.Map;
-import  org.jasig.portal.services.GroupService;
-import  org.jasig.portal.services.LogService;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -58,7 +59,7 @@ public class EntityGroupNameFinder
         try {
             type = Class.forName("org.jasig.portal.groups.IEntityGroup");
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 

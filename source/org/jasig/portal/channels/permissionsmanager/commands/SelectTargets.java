@@ -33,16 +33,15 @@
  *
  */
 package org.jasig.portal.channels.permissionsmanager.commands;
-import org.jasig.portal.channels.permissionsmanager.*;
-import org.jasig.portal.*;
-import org.jasig.portal.services.*;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
-import  java.util.Enumeration;
-import  java.util.HashMap;
-import  java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+
+import org.jasig.portal.channels.permissionsmanager.IPermissionCommand;
+import org.jasig.portal.channels.permissionsmanager.PermissionsSessionData;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * An IPermissionCommand implementation that processes target selection
@@ -59,7 +58,7 @@ public class SelectTargets implements IPermissionCommand {
     }
 
     public void execute(PermissionsSessionData session) throws Exception{
-            LogService.instance().log(LogService.DEBUG,"PermissionsManager->Selecttargets processing");
+            LogService.log(LogService.DEBUG,"PermissionsManager->Selecttargets processing");
             boolean foundOne = false;
             Element root = session.XML.getDocumentElement();
             Enumeration formkeys = session.runtimeData.getParameterNames();

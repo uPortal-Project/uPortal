@@ -34,8 +34,10 @@
 
 package org.jasig.portal.groups.ldap;
 
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntityGroupStore;
+import org.jasig.portal.groups.IEntityGroupStoreFactory;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.groups.*;
 
 /**
  * Returns an instance of the ldap <code>IEntityGroupStore</code>.

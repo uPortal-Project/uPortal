@@ -35,47 +35,41 @@
 
 package  org.jasig.portal.utils;
 
-import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.BrowserInfo;
-import org.jasig.portal.services.LogService;
-
-import java.io.File;
-import java.io.StringReader;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Hashtable;
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Enumeration;
-import java.net.URL;
 
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.Source;
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
-import javax.xml.transform.TransformerException;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TemplatesHandler;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.jasig.portal.BrowserInfo;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.w3c.dom.Node;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * <p>This utility provides methods for transforming XML documents
@@ -137,7 +131,7 @@ public class XSLT {
       }
     }
     if (saxTFactory == null) {
-      LogService.instance().log(LogService.ERROR, "XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
+      LogService.log(LogService.ERROR, "XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
     }
     return saxTFactory;
   }
@@ -263,13 +257,11 @@ public class XSLT {
    */
   public void transform() throws PortalException {
     try {
-      try {
-        Transformer trans = getTransformer(this.xslURI);
-        setStylesheetParams(trans, stylesheetParams);
-        trans.transform(xmlSource, xmlResult);
-      } catch (PortalException pe) {
-        throw pe;
-      }
+      Transformer trans = getTransformer(this.xslURI);
+      setStylesheetParams(trans, stylesheetParams);
+      trans.transform(xmlSource, xmlResult);
+    } catch (PortalException pe) {
+      throw pe;
     } catch (Exception e) {
       throw new PortalException(e);
     }
@@ -287,13 +279,11 @@ public class XSLT {
    */
   public static void transform(Source xmlSource, Result xmlResult, Hashtable stylesheetParams, String xslURI) throws PortalException {
     try {
-      try {
-        Transformer trans = getTransformer(xslURI);
-        setStylesheetParams(trans, stylesheetParams);
-        trans.transform(xmlSource,xmlResult);
-      } catch (PortalException pe) {
-        throw pe;
-      }
+      Transformer trans = getTransformer(xslURI);
+      setStylesheetParams(trans, stylesheetParams);
+      trans.transform(xmlSource,xmlResult);
+    } catch (PortalException pe) {
+      throw pe;
     } catch (Exception e) {
       throw new PortalException(e);
     }
@@ -353,12 +343,12 @@ public class XSLT {
         temp = thand.getTemplates();
         if (stylesheetRootCacheEnabled) {
           stylesheetRootCache.put(stylesheetURI, temp);
-          LogService.instance().log(LogService.INFO, "Caching templates for: " + stylesheetURI);
+          LogService.log(LogService.INFO, "Caching templates for: " + stylesheetURI);
         }
       } catch (IOException ioe) {
         throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
       } catch (TransformerConfigurationException tce) {
-        LogService.instance().log(LogService.ERROR, "XSLT::getTemplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
+        LogService.log(LogService.ERROR, "XSLT::getTemplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
         throw new GeneralRenderingException("XSLT: current TRAX configuration does not allow for TemplateHandlers. Please reconfigure/reinstall your TRAX implementation.");
       } catch (SAXParseException px) {
         throw new GeneralRenderingException("XSLT:getTemplates(): SAXParseExeption: " +
@@ -387,7 +377,7 @@ public class XSLT {
     try {
       t = getTemplates(stylesheetURI).newTransformer();
     } catch (TransformerConfigurationException tce) {
-      LogService.instance().log(LogService.ERROR,"XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
+      LogService.log(LogService.ERROR,"XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
     }
     return t;
   }
@@ -403,7 +393,7 @@ public class XSLT {
       try {
         th = getSAXTFactory().newTransformerHandler(getTemplates(stylesheetURI));
       } catch (TransformerConfigurationException tce) {
-        LogService.instance().log(LogService.ERROR,"XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
+        LogService.log(LogService.ERROR,"XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
       }
       return th;
   }
@@ -422,7 +412,7 @@ public class XSLT {
       stylesheetSet = new StylesheetSet(stylesheetListURI);
       if (stylesheetSetCacheEnabled) {
         stylesheetSetCache.put(stylesheetListURI, stylesheetSet);
-        LogService.instance().log(LogService.INFO, "Caching StylesheetSet for: " + stylesheetListURI);
+        LogService.log(LogService.INFO, "Caching StylesheetSet for: " + stylesheetListURI);
       }
     }
     return stylesheetSet;

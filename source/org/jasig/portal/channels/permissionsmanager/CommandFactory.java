@@ -38,8 +38,9 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.services.*;
-import  java.util.*;
+import java.util.HashMap;
+
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -62,7 +63,7 @@ public class CommandFactory {
             commands.put("SelectTargets", Class.forName(commandBase + "SelectTargets").newInstance());
             commands.put("Cancel", Class.forName(commandBase + "Cancel").newInstance());
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 

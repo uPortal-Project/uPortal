@@ -35,8 +35,8 @@
 
 package org.jasig.portal.security;
 
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
 
 /**
  * <p>LocalConnectionContext allows channels to tailor backend connections

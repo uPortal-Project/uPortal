@@ -1,6 +1,9 @@
 package org.jasig.portal.serialize;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 public class CachingOutputStream extends OutputStream implements CharacterCachingWriter { 
 

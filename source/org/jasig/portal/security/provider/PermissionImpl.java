@@ -35,9 +35,9 @@ package org.jasig.portal.security.provider;
  *
  */
 
-import  org.jasig.portal.security.*;
-import  java.util.Date;
-import  org.jasig.portal.EntityTypes;
+import java.util.Date;
+
+import org.jasig.portal.security.IPermission;
 
 
 /**

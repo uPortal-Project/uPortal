@@ -35,22 +35,22 @@
 
 package org.jasig.portal.layout.restrictions;
 
-import java.io.*;
-import java.util.*;
-import org.jasig.portal.PropertiesManager;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.groups.IGroupService;
+import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IEntityStore;
-import org.jasig.portal.groups.IEntityGroupStore;
-import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IEntityGroupStore;
+import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.RDBMEntityStore;
-import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.services.LogService;
 
 /**
  * The UserLayout node group service.

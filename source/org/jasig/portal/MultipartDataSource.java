@@ -51,12 +51,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-
+import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import javax.activation.DataSource;
 import com.oreilly.servlet.multipart.FilePart;
+import org.jasig.portal.services.LogService;
 
 public class MultipartDataSource implements DataSource {
+  java.io.File tempfile;
   ByteArrayOutputStream buff = null;
   String contentType = null;
   String filename = null;
@@ -64,16 +68,42 @@ public class MultipartDataSource implements DataSource {
   public MultipartDataSource(FilePart filePart) throws IOException {
     contentType = filePart.getContentType();
     filename = filePart.getFileName();
-    buff = new ByteArrayOutputStream();
-    filePart.writeTo(buff);
+    try{
+        tempfile = java.io.File.createTempFile("uPdata",null);
+        tempfile.deleteOnExit();
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(tempfile));
+        filePart.writeTo(out);
+        out.close();
+    }
+    catch(IOException ioe){
+        LogService.log(LogService.ERROR,"MultipartDataSource unable to create temp file: "+ioe.getMessage());
+        if(tempfile!=null){
+            try{
+                tempfile.delete();
+            }
+            catch(Exception e){}
+            tempfile = null;
+        }
+        buff = new ByteArrayOutputStream();
+        filePart.writeTo(buff);
+    }
   }
 
   public void finalize() {
     buff = null;
+    if(tempfile!=null){
+        tempfile.delete();
+        tempfile = null;
+    }
   }
 
   public InputStream getInputStream() throws IOException {
-    return new ByteArrayInputStream(buff.toByteArray());
+    if(tempfile!=null){
+        return new BufferedInputStream(new FileInputStream(tempfile));
+    }
+    else{
+        return new ByteArrayInputStream(buff.toByteArray());
+    }
   }
 
   public OutputStream getOutputStream() throws IOException {

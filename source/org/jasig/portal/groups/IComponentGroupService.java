@@ -35,6 +35,7 @@
 package org.jasig.portal.groups;
 
 import java.util.Map;
+
 import javax.naming.Name;
 
 /**

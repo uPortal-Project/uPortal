@@ -36,20 +36,21 @@
 
 package org.jasig.portal.car;
 
-import java.util.Enumeration;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLDecoder;
+import java.util.Enumeration;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.jasig.portal.IWorkerRequestProcessor;
 import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.PortalSessionManager;
 
 /**
    Class to handle incoming portal requests with specified worker of

@@ -35,15 +35,14 @@
 
 package org.jasig.portal.security.provider;
 
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.security.IPersonManager;
+import javax.servlet.http.HttpSession;
+
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.InitialSecurityContextFactory;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
 
 /**
  * Manages the storage of an IPerson object in a user's session.
@@ -56,8 +55,11 @@ public class SimplePersonManager implements IPersonManager {
    * @return person, IPerson object for the incoming request
    */
   public IPerson getPerson (HttpServletRequest request) throws PortalSecurityException {
+    HttpSession session = request.getSession(false);
+    IPerson person = null;
     // Return the person object if it exists in the user's session
-    IPerson person = (IPerson)request.getSession(false).getAttribute(PERSON_SESSION_KEY);
+    if (session != null)
+      person = (IPerson)session.getAttribute(PERSON_SESSION_KEY);
     if (person == null) {
       // Create a new instance of a person
       person = new PersonImpl();
@@ -73,11 +75,13 @@ public class SimplePersonManager implements IPersonManager {
       person.setID(1);
       person.setAttribute(person.USERNAME,"guest");
       // Add this person object to the user's session
-      request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
+      if (session != null)
+        session.setAttribute(PERSON_SESSION_KEY, person);
     }
     return person;
   }
 }
+
 
 
 

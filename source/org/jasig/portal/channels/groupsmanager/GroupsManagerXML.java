@@ -35,20 +35,33 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.*;
-import  java.io.*;
-import  org.jasig.portal.EntityTypes;  /** @todo remove when groups/EntityTypes is removed */
-import  org.jasig.portal.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.ChannelStaticData;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
-import  javax.xml.parsers.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.EntityTypes;
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.EntityNameFinderService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
  /**
  * Contains a groups of static methods used to centralize the generation and
@@ -62,10 +75,11 @@ public class GroupsManagerXML
 
    /**
     * Returns a Document with an element for each IEntityType that has a root group.
-    * @param sd
+    * @param sessionData CGroupsManagerSessionData
     * @return Document
     */
-   public static Document getGroupsManagerXml (ChannelStaticData sd) {
+   public static Document getGroupsManagerXml (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData sd = sessionData.staticData;
       String rkey = null;
       IEntityGroup entGrp = null;
       IGroupMember aGroupMember = null;
@@ -73,8 +87,12 @@ public class GroupsManagerXML
       Document viewDoc = getNewDocument();
       Element viewRoot = viewDoc.createElement("CGroupsManager");
       viewDoc.appendChild(viewRoot);
-      Element apRoot = getAuthorizationXml(sd, null, viewDoc);
-      viewRoot.appendChild(apRoot);
+      //don't create permission elements for an admin user
+      Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): sessionData.isAdminUser = " + sessionData.isAdminUser);
+      if (!sessionData.isAdminUser){
+         Element apRoot = getAuthorizationXml(sd, null, viewDoc);
+         viewRoot.appendChild(apRoot);
+      }
       Element etRoot = getEntityTypesXml(viewDoc);
       viewRoot.appendChild(etRoot);
       Element rootGroupsElem = GroupsManagerXML.createElement(GROUP_TAGNAME, viewDoc, true);
@@ -176,6 +194,42 @@ public class GroupsManagerXML
       Utility.logMessage("DEBUG", "GroupsManagerXML::createRdfElement(): APPENDING TO RDF");
       rdfElem.appendChild(rdfDesc);
       return  rdfElem;
+   }
+
+   /**
+    * Creates permissions to a group for the current user and generates permission elements
+    * @param sessionData CGroupsManagerSessionData
+    * @param childEntGrp IEntityGroup
+    * @throws Exception
+    */
+   public static void createPermissions (CGroupsManagerSessionData sessionData, IEntityGroup childEntGrp) throws Exception {
+      /** Grant all permissions for a group to the current user
+       */
+      ChannelStaticData staticData = sessionData.staticData;
+      Document model = sessionData.model;
+      ArrayList perms = new ArrayList();
+      IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
+      IAuthorizationPrincipal ap = staticData.getAuthorizationPrincipal();
+      Utility.logMessage("DEBUG", "GroupManagerXML::createPermissions(): The IAuthorizationPrincipal: " + ap);
+      String[] activities = ((IPermissible)Class.forName(OWNER).newInstance()).getActivityTokens();
+      IPermission prm;
+      for (int a = 0; a < activities.length; a++) {
+         prm = upm.newPermission(ap);
+         prm.setActivity(activities[a]);
+         prm.setTarget(childEntGrp.getKey());
+         prm.setType("GRANT");
+         perms.add(prm);
+      }
+      upm.addPermissions((IPermission[])perms.toArray(new IPermission[perms.size()]));
+
+      // create permission elements
+      NodeList principals = model.getDocumentElement().getElementsByTagName("principal");
+      Element princElem = (Element)principals.item(0);
+      for (int p = 0; p < perms.size(); p++) {
+         prm = (IPermission)perms.get(p);
+         Element permElem = GroupsManagerXML.getPermissionXml(model, prm.getPrincipal(), prm.getActivity(), prm.getType(), prm.getTarget());
+         princElem.appendChild(permElem);
+      }
    }
 
    /**
@@ -625,8 +679,11 @@ public class GroupsManagerXML
          /** @todo this should be an error */
          Utility.logMessage("INFO", "GroupsManagerXML::isPersistentGroup(): anElem is null");
       }
+      // Elements referencing non-groups (i.e. IEntities), search results, and the
+      // document's root element are consider to hold information about non-persistent groups
       if (!Utility.areEqual(anElem.getNodeName(), GROUP_TAGNAME)
-              || Utility.areEqual(anElem.getAttribute("searchResults"), "true")) {
+              || Utility.areEqual(anElem.getAttribute("searchResults"), "true")
+              || anElem.getAttribute("id").equals("0")) {
          rval= false;
       }
       return rval;

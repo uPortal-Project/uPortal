@@ -36,7 +36,7 @@
 package org.jasig.portal.utils;
 
 
-import java.io.*;
+import java.io.IOException;
 
 
 /**

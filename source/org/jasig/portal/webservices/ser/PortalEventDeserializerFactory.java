@@ -35,8 +35,9 @@
  
 package org.jasig.portal.webservices.ser;
 
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import javax.xml.namespace.QName;
+
+import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 
 /**
  * DeserializerFactory for PortalEventDeserializer

@@ -35,18 +35,15 @@
 
 package org.jasig.portal;
 
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+
 import org.jasig.portal.services.LogService;
-
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-
-import java.io.*;
-import java.util.*;
-import java.sql.*;
-
-import javax.naming.*;
-import javax.naming.directory.*;
 
 /**
  * Provides LDAP access in a way similar to a relational DBMS.
@@ -83,18 +80,18 @@ public class LdapServices
         sLdapManagerPW    = ldapProps.getProperty ("ldap.managerPW",    "");
         sLdapManagerProto = ldapProps.getProperty ("ldap.protocol",     "");
 
-        LogService.instance().log(LogService.DEBUG, "ldap.host = "         + sLdapHost);
-        LogService.instance().log(LogService.DEBUG, "ldap.port = "         + sLdapPort);
-        LogService.instance().log(LogService.DEBUG, "ldap.baseDN = "       + sLdapBaseDN);
-        LogService.instance().log(LogService.DEBUG, "ldap.uidAttribute = " + sLdapUidAttribute);
-        LogService.instance().log(LogService.DEBUG, "ldap.managerDN = "    + sLdapManagerDN);
-        LogService.instance().log(LogService.DEBUG, "ldap.managerPW = "    + sLdapManagerPW);
-	LogService.instance().log(LogService.DEBUG, "ldap.protocol = "     + sLdapManagerProto);
+        LogService.log(LogService.DEBUG, "ldap.host = "         + sLdapHost);
+        LogService.log(LogService.DEBUG, "ldap.port = "         + sLdapPort);
+        LogService.log(LogService.DEBUG, "ldap.baseDN = "       + sLdapBaseDN);
+        LogService.log(LogService.DEBUG, "ldap.uidAttribute = " + sLdapUidAttribute);
+        LogService.log(LogService.DEBUG, "ldap.managerDN = "    + sLdapManagerDN);
+        LogService.log(LogService.DEBUG, "ldap.managerPW = "    + sLdapManagerPW);
+	LogService.log(LogService.DEBUG, "ldap.protocol = "     + sLdapManagerProto);
         bPropsLoaded = true;
       }
     }
     catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
+      LogService.log(LogService.ERROR, e);
     }
   }
 
@@ -119,7 +116,7 @@ public class LdapServices
       conn = new InitialDirContext(env);
     }
     catch ( Exception e ) {
-      LogService.instance().log(LogService.ERROR, e);
+      LogService.log(LogService.ERROR, e);
     }
 
     return conn;
@@ -152,7 +149,7 @@ public class LdapServices
       conn.close();
     }
     catch (Exception e) {
-      LogService.instance().log(LogService.DEBUG, e);
+      LogService.log(LogService.DEBUG, e);
     }
   }
 }
