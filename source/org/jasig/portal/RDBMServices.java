@@ -239,9 +239,10 @@ public class RDBMServices {
    * Loads the JDBC properties from rdbm.properties file.
    */
   protected static void loadProps () throws Exception {
+  	InputStream inStream = null;
   try {
       if (!bPropsLoaded) {
-        InputStream inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
+        inStream = RDBMServices.class.getResourceAsStream("/properties/rdbm.properties");
         Properties jdbcProps = new Properties();
         jdbcProps.load(inStream);
         sJdbcDriver = jdbcProps.getProperty("jdbcDriver");
@@ -257,7 +258,10 @@ public class RDBMServices {
         // let caller handle situation where no proerties file is found.
         // When getting datasource from jndi properties file is optional
         // and would be used as a dallback only
-        return;
+        throw new RuntimeException(e);
+        } finally {
+        	if(inStream != null)
+        		inStream.close();        	
         }
   }
 
