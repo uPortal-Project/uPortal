@@ -34,74 +34,68 @@
  */
 
 package org.jasig.portal.channels;
-import java.io.*;
-import java.util.*;
-import java.net.URL;
+
 import org.jasig.portal.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.net.URL;
+import java.net.MalformedURLException;
 import org.xml.sax.DocumentHandler;
+import org.xml.sax.SAXException;
 import org.jasig.portal.utils.XSLT;
 
 /**
- * This channel renders an InlineFrame with the content provided by a URL.
- * For Browsers without support for Inline Frames the channel just presents
- * a link to open in a separate window.
+ * This channel renders content identified by a URL within an inline browser
+ * frame. For Browsers without support for IFRAMEs, the channel
+ * just presents a link to open the URL in a separate window.  See
+ * <a href="http://www.htmlhelp.com/reference/html40/special/iframe.html">
+ * http://www.htmlhelp.com/reference/html40/special/iframe.html</a> for more
+ * information on inline frames.
  *
  * @author Susan Bramhall
  * @version $Revision$
  */
 public class CInlineFrame extends BaseChannel
 {
-  /**
-   *  The URL for the IFrame content
-   */
-  protected String srcUrl = null;
-  protected String frameHeight = null;
-  protected String channelName = null;
+  protected String srcUrl; // the url for the IFrame content
+  protected String frameHeight; // the height of the IFrame in pixels
 
   private static final String fs = File.separator;
   private static final String portalBaseDir = UtilitiesBean.getPortalBaseDir ();
   private static final String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CInlineFrame";
   private static final String sslLocation = stylesheetDir + fs + "CInlineFrame.ssl";
 
-  private StylesheetSet set = null;
   private String media;
 
   /**
    * Constructs CInlineFrame
-   *  Locate and stylesheet set CInlineFrame.ssl
+   * Locate stylesheet set CInlineFrame.ssl
    */
   public CInlineFrame()
   {
     this.staticData = new ChannelStaticData ();
     this.runtimeData = new ChannelRuntimeData ();
-    this.set = new StylesheetSet (stylesheetDir + fs + "CInlineFrame.ssl");
-    //this.set.setMediaProps (portalBaseDir + fs + "properties" + fs + "media.properties");
   }
 
   /**
-   * discover browser via mediaManager and save for render time
+   * Discover browser via MediaManager and save for render time
    */
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     this.runtimeData = rd;
-
-    // The media will soon be passed to the channel I think.
-    // This code can then be replaced with runtimeData.getMedia()
-    MediaManager mm = new MediaManager();
-    mm.setMediaProps(portalBaseDir + "properties" + fs + "media.properties");
     media = runtimeData.getMedia();
   }
 
   /**
-   *    Get channel parameters: URL, Height and Name
+   * Get channel parameters: url, height and name
    */
   public void setStaticData (ChannelStaticData sd)
   {
     try
     {
-      this.srcUrl = sd.getParameter ("URL");
-      this.frameHeight = sd.getParameter ("Height");
-      this.channelName = sd.getParameter ("Name");
+      this.srcUrl = sd.getParameter ("url");
+      this.frameHeight = sd.getParameter ("height");
     }
     catch (Exception e)
     {
@@ -111,25 +105,23 @@ public class CInlineFrame extends BaseChannel
 
   /**
    * Build an XML string and transform for display using org.jasig.portal.util.XSLT
-   * Create IFrame or link depending on Browser.
+   * Creates IFrame or link depending on browser capability.
    */
-  public void renderXML (DocumentHandler out)
+  public void renderXML (DocumentHandler out) throws PortalException
   {
     try
     {
-
-    if (set != null) {
-      String  sXML = "<IFrame><url>"+srcUrl+"</url><height>"+frameHeight+"</height></IFrame>";
-      Hashtable ssParams = new Hashtable();
-      ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
-      Logger.log(Logger.DEBUG, "sXML is "+sXML);
-      XSLT.transform(sXML, new URL(sslLocation), out, ssParams, "main", media);
-
-         }
+      StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
+      sbXML.append("<iframe>");
+      sbXML.append("  <url>").append(srcUrl).append("</url>");
+      sbXML.append("  <height>").append(frameHeight).append("</height>");
+      sbXML.append("</iframe>");
+      XSLT.transform(sbXML.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, media);
     }
     catch (Exception e)
     {
-    Logger.log (Logger.ERROR, e);
+      Logger.log(Logger.ERROR, e);
+      throw new GeneralRenderingException(e.getMessage());
     }
   }
 }
