@@ -117,6 +117,7 @@
       <xsl:call-template name="stackTrace"/>
     </xsl:if>
   </xsl:template>
+  
   <xsl:template match="exception">
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
@@ -173,6 +174,7 @@
       </td>
     </tr>
   </xsl:template>
+  
   <xsl:template name="stackTrace">
     <br/>
     <table border="0" width="100%" cellspacing="0" cellpadding="4">
@@ -190,7 +192,7 @@
       <tr>
         <td valign="top" align="left" class="uportal-channel-code">
           <span class="uportal-channel-code">
-            <xsl:value-of select="exception/stack/innerException"/>
+            <pre><xsl:value-of select="exception/stack/innerException"/></pre>
           </span>
         </td>
       </tr>
@@ -204,7 +206,7 @@
       <tr>
         <td valign="top" align="left" class="uportal-channel-code">
           <span class="uportal-channel-code">
-            <xsl:value-of select="exception/stack/outerException"/>
+            <pre><xsl:value-of select="exception/stack/outerException"/></pre>
           </span>
         </td>
       </tr>
@@ -216,4 +218,5 @@
       </tr>
     </table>
   </xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+  
+</xsl:stylesheet>
