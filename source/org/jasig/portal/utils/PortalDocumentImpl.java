@@ -152,7 +152,19 @@ public class PortalDocumentImpl implements IPortalDocument {
     }
 
     private String getElementKey(String serializedNode) {
-        return (String) keys.get(serializedNode);
+        String key = (String) keys.get(serializedNode);
+        if ( key == null ) {
+         Iterator itr = identifiers.keySet().iterator();   
+         while (itr.hasNext()) {
+            key = (String)itr.next();
+            Element element = (Element)identifiers.get(key);
+            if ( serializedNode.equals(XML.serializeNode(element) ) ) {
+             keys.put(serializedNode,key);
+             break;
+            }
+         }   
+        }
+          return key;
     }
 
     // decorator methods
