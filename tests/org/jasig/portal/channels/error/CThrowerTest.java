@@ -40,7 +40,7 @@ public class CThrowerTest extends TestCase {
     }
 
     public void testReceiveEvent() {
-        this.cThrower.receiveEvent(new PortalEvent(PortalEvent.RENDERING_DONE));
+        this.cThrower.receiveEvent(PortalEvent.SESSION_DONE_EVENT);
     }
 
     public void testSetStaticData() {
