@@ -35,6 +35,7 @@
 
 package org.jasig.portal.container.services.information;
 
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -428,7 +429,9 @@ public class PortletStateManager {
 			Object value = params.get(name);
             String[] values = (value instanceof String[]) ? (String[]) value : new String[] {value.toString()};
 			for ( int i = 0; i < values.length; i++ ) {
-				 url.append(name).append("=").append(values[i]);
+				 url.append(URLEncoder.encode(name));
+                 url.append("=");
+                 url.append(URLEncoder.encode(values[i]));
 				 url.append("&");
 			} 
 		}
