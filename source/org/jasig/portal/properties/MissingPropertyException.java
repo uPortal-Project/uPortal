@@ -14,12 +14,12 @@ package org.jasig.portal.properties;
 public class MissingPropertyException extends RuntimeException {
 
     /** The name of the missing property.*/
-    private String propertyName;
+    private final String propertyName;
     
     /** True if a prior MissingPropertyException has been thrown for this 
      * missing property by the throwing object if it keeps track.  False otherwise.
      */
-    private boolean alreadyReported = false;
+    private final boolean alreadyReported;
     
 	/**
 	 * Instantiate a MissingPropertyException for a particular missing property.
@@ -27,16 +27,34 @@ public class MissingPropertyException extends RuntimeException {
 	 */
 	public MissingPropertyException(String propertyName){
 		this.propertyName = propertyName;
+        this.alreadyReported = false;
 	}
     
     /**
      * Instantiate a MissingPropertyException for a particular missing property,
      * indicating whether the throwing object has already thrown a MissingPropertyException for this 
      * property.
-     * @param propertyName
-     * @param alreadyReported
+     * @param propertyName name of missing property
+     * @param alreadyReported true if already reported
      */
-    public MissingPropertyException(String propertyName, boolean alreadyReported){
+    public MissingPropertyException(String propertyName, 
+            boolean alreadyReported){
+        this.propertyName = propertyName;
+        this.alreadyReported = alreadyReported;
+    }
+    
+    /**
+     * Instantiate a MissingPropertyException for a particular missing property,
+     * indicating whether the throwing object has already thrown a MissingPropertyException for this 
+     * property, and supplying an underlying cause.
+     * @param propertyName name of missing property
+     * @param alreadyReported true if already reported
+     * @param cause underlying cause
+     */
+    public MissingPropertyException(String propertyName, 
+            boolean alreadyReported,
+            Throwable cause){
+        super(cause);
         this.propertyName = propertyName;
         this.alreadyReported = alreadyReported;
     }
