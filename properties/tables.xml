@@ -173,5 +173,14 @@
     <primary-key>ID</primary-key>
   </table>
 
+  <table>
+    <name>UP_MIME_TYPES</name>
+    <columns>
+     <column><name>MIME_TYPE</name><type>VARCHAR</type><param>30</param></column>
+     <column><name>MIME_TYPE_DESCRIPTION</name><type>LONGVARCHAR</type></column>
+    </columns>
+    <primary-key>MIME_TYPE</primary-key>
+  </table>
+
 </tables>
 

@@ -625,6 +625,20 @@
   </table>
 
   <table>
+    <name>UP_MIME_TYPES</name>
+    <rows>
+      <row>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+        <column><name>MIME_TYPE_DESCRIPTION</name><value>HTML mime type is the one that most desktop browsers use</value></column>
+      </row>
+      <row>
+        <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
+        <column><name>MIME_TYPE_DESCRIPTION</name><value>WML mime type is mostly used by the cell phone WAP browsers.</value></column>
+      </row>
+    </rows>
+  </table>  
+
+  <table>
     <name>UPC_BOOKMARKS</name>
     <rows>
       <row>
