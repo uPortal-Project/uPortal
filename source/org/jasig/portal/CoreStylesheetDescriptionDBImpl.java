@@ -166,7 +166,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
                 sssd.setStylesheetURI(dbURI);
                 sssd.setStylesheetDescriptionURI(dbDescriptionURI);
                 sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-                sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimetype"));
+                sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML,"mimeType"));
                 Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting mimetype=\""+sssd.getMimeType()+"\"");
                 sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML,"serializer"));
                 Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getThemeStylesheetDescription() : setting serializerName=\""+sssd.getSerializerName()+"\"");
@@ -278,7 +278,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         }
         if(name!=null) {
             return this.getTextChildNodeValue(name);;
-        } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getName() : no \"name\" element was found udner the \"stylesheetdescription\" node!"); return null; }
+        } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!"); return null; }
     }
 
     private String getRootElementTextValue(Document descr,String elementName) {
@@ -291,7 +291,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         }
         if(name!=null) {
             return this.getTextChildNodeValue(name);;
-        } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getRootElementTextValue() : no \""+elementName+"\" element was found udner the \"stylesheetdescription\" node!"); return null; }
+        } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getRootElementTextValue() : no \""+elementName+"\" element was found under the \"stylesheetdescription\" node!"); return null; }
     }
 
 
@@ -306,7 +306,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         }
         if(description!=null) {
             return this.getTextChildNodeValue(description);
-        } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getName() : no \"description\" element was found udner the \"stylesheetdescription\" node!"); return null; }
+        } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getName() : no \"description\" element was found under the \"stylesheetdescription\" node!"); return null; }
     }
 
     private void populateParameterTable(Document descr,CoreStylesheetDescription csd) {
