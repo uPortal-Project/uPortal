@@ -45,9 +45,12 @@ import org.jasig.portal.layout.IAggregatedLayout;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+
 import java.util.Vector;
 import java.util.Set;
 import java.util.Iterator;
@@ -63,6 +66,7 @@ import javax.xml.transform.TransformerException;
    */
 public class CContentSubscriber extends FragmentManager {
 
+    private static final Log log = LogFactory.getLog(CContentSubscriber.class);
 	private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
 	private Document channelRegistry;
 	private Document registry;
@@ -203,6 +207,7 @@ public class CContentSubscriber extends FragmentManager {
 			searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
 			searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"),"false");
 			searchQuery = runtimeData.getParameter("search-query");
+			String escapedSearchQuery = escapeQuotesForXpath(searchQuery);
 			// Clear all the previous state
 			if ( searchQuery != null ) {
 				NodeList nodeList = XPathAPI.selectNodeList(registry,"//*");
@@ -215,13 +220,14 @@ public class CContentSubscriber extends FragmentManager {
 			if ( CommonUtils.nvl(searchQuery).length() > 0 ) {
 			  String[] xPathQueries = new String[3];
 			  if ( searchChannel.equals("true") )	
-			   xPathQueries[0] = "//channel[contains(@name,'"+searchQuery+"') or contains(@description,'"+searchQuery+"')]";
+			   xPathQueries[0] = "//channel[contains(@name,"+escapedSearchQuery+") or contains(@description,"+escapedSearchQuery+")]";
 			  if ( searchCategory.equals("true") )
-			   xPathQueries[1] = "//category[contains(@name,'"+searchQuery+"') or contains(@description,'"+searchQuery+"')]"; 
+			   xPathQueries[1] = "//category[contains(@name,"+escapedSearchQuery+") or contains(@description,"+escapedSearchQuery+")]"; 
 			  if ( searchFragment.equals("true") )
-			   xPathQueries[2] = "//fragment[contains(name,'"+searchQuery+"') or contains(description,'"+searchQuery+"')]";
+			   xPathQueries[2] = "//fragment[contains(name,"+escapedSearchQuery+") or contains(description,"+escapedSearchQuery+")]";
 			  for ( int i = 0; i < xPathQueries.length; i++) {  
-			   if ( xPathQueries[i] != null ) {	 	
+			   if ( xPathQueries[i] != null ) {
+			    log.debug("xPathQueries["+i+"]: "+xPathQueries[i]);
 			    NodeList nodeList =  XPathAPI.selectNodeList(registry,xPathQueries[i]);
 			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				 Element node = (Element) nodeList.item(k);
@@ -345,6 +351,28 @@ public class CContentSubscriber extends FragmentManager {
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       xslt.transform();
       
+    }
+    
+    /**
+     * Prepares a string literal to be placed in an xpath expression.
+     * Uses concat() to allow double quotes and single quotes in the same
+     * literal value. If the string doesn't have any single quotes the new
+     * string will be the string that is passed in but will have single quotes
+     * around it.
+     * 
+     * @param s String to escape 
+     * @return  
+     */
+    private String escapeQuotesForXpath(String s)
+    {
+        if (s.indexOf("'") >= 0){
+            s = s.replaceAll("'","',\"'\",'");
+            s= "concat('"+s+"','')";
+        }else
+        {
+            s = "'"+s+"'";
+        }
+        return s;
     }
 
   }
