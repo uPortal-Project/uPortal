@@ -446,6 +446,7 @@ private void primAdd(IPermission perm, RdbmServices.PreparedStatement ps) throws
     java.sql.Date date = null;
 
     // NON-NULL COLUMNS:
+    ps.clearParameters();
     ps.setString(1, perm.getOwner());
     ps.setString(2, perm.getPrincipal());
     ps.setString(3, perm.getActivity());
