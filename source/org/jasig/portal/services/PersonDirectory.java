@@ -384,6 +384,8 @@ public class PersonDirectory {
       if (pdi.ResRefName!=null && pdi.ResRefName.length()>0) {
           RDBMServices rdbmServices = new RDBMServices();
           conn = rdbmServices.getConnection(pdi.ResRefName);
+          LogService.instance().log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.ResRefName+
+            " for person attributes of "+username);
         }
 
       // if no resource reference found use URL to get jdbc connection
@@ -405,13 +407,16 @@ public class PersonDirectory {
           }
         }
       conn = DriverManager.getConnection(pdi.url,pdi.logonid,pdi.logonpassword);
+      LogService.instance().log(LogService.DEBUG,"PersonDirectory::processJdbcDir(): Looking in "+pdi.url+
+        " for person attributes of "+username);
       }
 
       // Execute query substituting Username for parameter
       stmt = conn.prepareStatement(pdi.uidquery);
       stmt.setString(1,username);
       rs = stmt.executeQuery();
-      rs.next(); // get the first (only) row of result
+      if (rs.next()) {
+      // get the first (only) row of result
 
       // Foreach attribute, put its value and alias in the hashtable
       for (int i=0;i<pdi.attributenames.length;i++) {
@@ -427,6 +432,7 @@ public class PersonDirectory {
           ; // Don't let error in a field prevent processing of others.
           LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
         }
+      }
       }
 
     } catch (Exception e) {
