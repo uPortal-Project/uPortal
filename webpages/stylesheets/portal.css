@@ -6,13 +6,49 @@ body
   font-family: Helvetica, Arial, sans-serif;
 }
 
-A:link	{ color: #0000ff; }
-A:visited	{ color: #555555; }
-A:active	{ color: #cccccc; }
+A:link
+{
+  color: #0000ff;
+}
 
-.PortalTitleText     { text-decoration:none; color: #000000;
-                       font-weight:bold; font-family:arial,helvetica,times,courier;}
+A:visited
+{
+  color: #555555;
+}
 
-.PortalText          { text-decoration:none; color: #000000;
-                       font-weight:plain; font-family:arial,helvetica,times,courier;}
+A:active
+{
+  color: #cccccc;
+}
 
+.PortalText
+{
+  font-size:100%;
+  text-decoration:none;
+  font-weight:normal;
+  font-family:times, arial, helvetica, courier;
+}
+
+.PortalTitleText
+{
+  font-size:120%;
+  text-decoration:none;
+  font-weight:normal;
+  font-family:times, arial, helvetica, courier;
+}
+
+.PortalHeaderText
+{
+  font-size:85%;
+  text-decoration:none;
+  font-weight:normal;
+  font-family:times, arial, helvetica, courier;
+}
+
+.PortalChannelText
+{
+  font-size:100%;
+  text-decoration:none;
+  font-weight:normal;
+  font-family:times, arial, helvetica, courier;
+}
