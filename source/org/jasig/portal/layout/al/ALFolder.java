@@ -23,10 +23,6 @@ public class ALFolder extends ALNode {
 
     protected String firstChildNodeId;
 
-    public ALFolder() {
-        super();
-    }
-
     public ALFolder ( IALFolderDescription nd ) {
         super (nd);
     }
@@ -57,8 +53,8 @@ public class ALFolder extends ALNode {
 
 
     public static ALFolder createLostFolder() {
-        ALFolder lostFolder = new ALFolder();
-        ALFolderDescription folderDesc = new ALFolderDescription();
+    	ALFolderDescription folderDesc = new ALFolderDescription();
+        ALFolder lostFolder = new ALFolder(folderDesc);
         lostFolder.setId(IALFolderDescription.LOST_FOLDER_ID);
         folderDesc.setHidden(true);
         folderDesc.setImmutable(false);
@@ -71,8 +67,8 @@ public class ALFolder extends ALNode {
     }
 
     public static ALFolder createRootFolder() {
-        ALFolder rootFolder = new ALFolder();
-        ALFolderDescription folderDesc = new ALFolderDescription();
+    	ALFolderDescription folderDesc = new ALFolderDescription();
+        ALFolder rootFolder = new ALFolder(folderDesc);
         rootFolder.setId(IALFolderDescription.ROOT_FOLDER_ID);
         folderDesc.setHidden(false);
         folderDesc.setImmutable(false);

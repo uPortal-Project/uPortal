@@ -21,10 +21,6 @@ import org.jasig.portal.layout.al.common.node.NodeType;
 
 public class ALChannel extends ALNode {
 
-    public ALChannel() {
-        super();
-    }
-
     public ALChannel ( IALChannelDescription nd ) {
         super (nd);
     }

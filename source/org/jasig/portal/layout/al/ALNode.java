@@ -6,6 +6,8 @@
 package org.jasig.portal.layout.al;
 
 
+
+import java.util.Collection;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INodeDescription;
@@ -13,6 +15,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
 import org.jasig.portal.layout.al.common.node.INode;
 import org.jasig.portal.layout.al.common.node.NodeType;
 import org.jasig.portal.layout.al.common.restrictions.IUserLayoutRestriction;
+import org.jasig.portal.layout.al.common.restrictions.RestrictionPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,7 +27,7 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 
-public abstract class ALNode extends ALNodeProperties implements IALNode {
+public abstract class ALNode implements IALNode {
     
     
     protected IALNodeDescription nodeDescription;
@@ -36,9 +39,6 @@ public abstract class ALNode extends ALNodeProperties implements IALNode {
     
     protected int priority = 0;
     
-    
-    public ALNode() {
-    }
     public ALNode(IALNodeDescription nd) {
         nodeDescription = nd;
     }
@@ -124,7 +124,22 @@ public abstract class ALNode extends ALNodeProperties implements IALNode {
     public int getPriority() {
         return priority;
     }
-    
+    /**
+     * Gets a restriction by the type.
+     * @param restrictionName a <code>String</code>  name of the restriction
+     * @return a IUserLayoutRestriction
+     */
+    public IUserLayoutRestriction getRestriction(String restrictionName) {
+            return nodeDescription.getRestriction(restrictionName);
+    }
+    /**
+     * Gets a restrictions list by a restriction path.
+     * @param restrictionPath a <code>RestrictionPath</code> restriction path
+     * @return a IUserLayoutRestriction
+     */
+    public Collection getRestrictionsByPath(RestrictionPath restrictionPath) {
+            return nodeDescription.getRestrictionsByPath(restrictionPath);
+    }
     /**
      * Add all of common node attributes to the <code>Element</code>.
      * @param node an <code>Element</code> value
@@ -176,14 +191,24 @@ public abstract class ALNode extends ALNodeProperties implements IALNode {
     public void addRestrictionChildren(Element node, Document root) {
         nodeDescription.addRestrictionChildren(node, root);
     }
-   
+    /**
+     * @return
+     */
+    public String getGroup() {
+        return nodeDescription.getGroup();
+    }
     /**
      * @return
      */
     public String getName() {
         return nodeDescription.getName();
     }
-    
+    /**
+     * @return
+     */
+    public Collection getRestrictions() {
+        return nodeDescription.getRestrictions();
+    }
     /**
      * @return
      */
@@ -269,7 +294,12 @@ public abstract class ALNode extends ALNodeProperties implements IALNode {
     public void setName(String name) {
         nodeDescription.setName(name);
     }
-   
+    /**
+     * @param restrictions
+     */
+    public void setRestrictions(Collection restrictions) {
+        nodeDescription.setRestrictions(restrictions);
+    }
     /**
      * @param setting
      */
