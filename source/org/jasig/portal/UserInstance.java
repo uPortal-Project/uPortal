@@ -722,21 +722,21 @@ public class UserInstance implements HttpSessionBindingListener {
         UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
         ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
 		StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
-        if ( person.getSecurityContext().isAuthenticated() ) {
-          themePrefs.putParameterValue("authenticated","true");
-          String userName = person.getFullName();
-          if ( userName != null && userName.trim().length() > 0 )
-           themePrefs.putParameterValue("userName",userName);
-          try {
-            if ( ChannelStaticData.getAuthorizationPrincipal(person).canPublish() ) {
-             themePrefs.putParameterValue("authorizedFragmentPublisher","true");
-			 themePrefs.putParameterValue("authorizedChannelPublisher","true");
-            } 
-          } catch ( Exception e ) {
-              LogService.log(LogService.ERROR, e);
+        
+        String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
+        themePrefs.putParameterValue("authenticated", authenticated);
+        String userName = person.getFullName();
+        if (userName != null && userName.trim().length() > 0)
+            themePrefs.putParameterValue("userName", userName);
+        try {
+            if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
+                themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
+                themePrefs.putParameterValue("authorizedChannelPublisher", "true");
             }
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, e);
         }
-
+        
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
