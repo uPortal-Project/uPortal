@@ -3,6 +3,7 @@
 	<description>
    	This is a channel for rendering local or remote RSS files
 	</description>
+	<class>org.jasig.portal.channels.CGenericXSLT</class>
 	<params>
 		<step>
 			<ID>1</ID>
@@ -47,13 +48,6 @@
 				<type base="string" input="text" display="hidden">
 				</type>
 				<defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</defaultValue>
-			</parameter>
-			<parameter modify="publish">
-				<name>class</name>
-				<label/>
-				<type base="string" input="text" display="hidden">
-				</type>
-				<defaultValue>org.jasig.portal.channels.CGenericXSLT</defaultValue>
 			</parameter>
 		</step>
 		<step>

@@ -3,6 +3,7 @@
 	<description>
    	This is a channel for rendering local or remote RSS files
 	</description>
+	<class>org.jasig.portal.channels.CGenericXSLT</class>
 	<params>
 		<step>
 			<ID>1</ID>
