@@ -9,16 +9,13 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.layout.*;
 
 import java.io.*;
 import java.util.Enumeration;
-import java.util.List;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
  
-import org.jasig.portal.utils.XML;
 
 
 public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEventListener {
@@ -51,7 +48,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         parser.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
         this.sampleUserLayout=parser.parse (new org.xml.sax.InputSource(this.getClass().getResourceAsStream(SAMPLE_LAYOUT_FILENAME)));
 
-        p=new PersonFactory.createPerson();
+        p = PersonFactory.createPerson();
 
         assertTrue(sampleUserLayout!=null);
         uls=new SingleDocumentUserLayoutStoreMock(sampleUserLayout);
@@ -335,7 +332,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         fold.setHidden(true);
         fold.setFolderType(UserLayoutFolderDescription.REGULAR_TYPE);
         // get child list
-        List ochildren=man.getChildIds(folderId);
+        Enumeration ochildren=man.getChildIds(folderId);
 
         man.updateNode(fold);
         //        System.out.println("Layout\n"+XML.serializeNode(man.getUserLayoutDOM()));
@@ -343,7 +340,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         UserLayoutFolderDescription rfold=(UserLayoutFolderDescription) man.getNode(folderId);
         assertEquals("Comparing node used to update with the update result: ",fold,rfold);
 
-        List nchildren=man.getChildIds(folderId);
+        Enumeration nchildren=man.getChildIds(folderId);
         assertEquals("Comparing child Ids of an updated folder: ",ochildren,nchildren);
 
         assertTrue("nodeUpdated event received",nodeUpdated);
