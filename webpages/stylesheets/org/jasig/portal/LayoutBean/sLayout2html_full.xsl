@@ -10,6 +10,35 @@
 
    <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tabColumn</xsl:variable>
 
+   <!-- This template is supposed to render a fragment of the layout. For example, during
+	a detach mode, only <channel> element that's detached is passed along to the structure
+	transformation.
+	In general, it should render a fragment that contains not just a single channel, but 
+	an entire column or a tab, perhaps :) But I am lazy, so I'll just flatten out all of 
+	the channels into one big column.
+	-peter.
+    -->
+   <xsl:template match="layout_fragment">
+      <html>
+         <head>
+            <title>uPortal 2.0</title>
+
+            <link type="text/css" rel="stylesheet" href="{$mediaPath}/theme_{$theme}/{$theme}.css" />
+
+<script language="JavaScript">
+function openBrWindow(theURL,winName,features) {
+ window.open(theURL,winName,features);
+}
+</script>
+         </head>
+         <body>
+	   <xsl:for-each select="content//channel">
+             <xsl:apply-templates select="." />
+	   </xsl:for-each>
+         </body>
+      </html>
+   </xsl:template>
+
    <xsl:template match="layout">
       <html>
          <head>

@@ -2,12 +2,24 @@
 
 <xsl:param name="activeTab">t01</xsl:param>
 
-<xsl:template match="layout"><layout>
-<xsl:call-template name="tabList"/>
-<content>
-<xsl:apply-templates/>
-</content>
-</layout></xsl:template>
+<!-- document fragment template. See structure stylesheet for more comments -->
+<xsl:template match="layout_fragment">
+   <layout_fragment>
+    <xsl:call-template name="tabList"/>
+    <content>
+      <xsl:apply-templates/>
+    </content>
+   </layout_fragment>    
+</xsl:template>
+
+<xsl:template match="layout">
+   <layout>
+    <xsl:call-template name="tabList"/>
+    <content>
+     <xsl:apply-templates/>
+    </content>
+   </layout>    
+</xsl:template>
 
 <xsl:template name="tabList"><navigation>
 <xsl:for-each select="/layout/folder">
