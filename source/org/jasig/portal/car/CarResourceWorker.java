@@ -201,7 +201,7 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
         }
         try
         {
-            resourceName = URLDecoder.decode( resourceName );
+            resourceName = URLDecoder.decode( resourceName,"UTF-8" );
         }
         catch( Exception ex )
         {

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -129,7 +130,11 @@ public class ResourceLoader {
    * @throws org.jasig.portal.ResourceMissingException
    */
   public static String getResourceAsFileString(Class requestingClass, String resource) throws ResourceMissingException {
-    return URLDecoder.decode(getResourceAsURL(requestingClass, resource).getFile());
+    try {
+        return URLDecoder.decode(getResourceAsURL(requestingClass, resource).getFile(),"UTF-8");
+    } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+    }
   }
 
   /**
