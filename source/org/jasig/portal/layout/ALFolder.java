@@ -78,12 +78,11 @@ public class ALFolder extends ALNode {
     }
 
 
-    /**
-     * Gets the node type
-     * @return a node type
-     */
-    public String getNodeType() {
-        return "folder";
+	/* 
+	 * @see org.jasig.portal.layout.ALNode#getNodeType()
+	 */
+    public int getNodeType() {
+        return FOLDER_TYPE;
     }
 
     public static ALFolder createLostFolder() {
@@ -98,5 +97,10 @@ public class ALFolder extends ALNode {
         lostFolder.setParentNodeId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
         return lostFolder;
     }
+
+	/*
+	 * Constant indicating the type of ALNode
+	 */
+	public static final int FOLDER_TYPE = 2;
 
 }
