@@ -136,161 +136,6 @@
           <column><name>CHAN_ID</name><value>99</value></column>
           <column><name>PRIORITY</name><value>0</value></column>
         </row>
-
-      <!-- Demo Layout -->
-      <!-- Demo tab -->
-      <row>
-        <column><name>NODE_ID</name><value>1</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>NAME</name><value>Demo</value></column>
-        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-        <column><name>CHLD_NODE_ID</name><value>2</value></column>
-        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PRIORITY</name><value>0</value></column>
-      </row>
-        <row>
-          <column><name>NODE_ID</name><value>2</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-          <column><name>NAME</name><value>Column 1</value></column>
-          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-          <column><name>CHLD_NODE_ID</name><value>3</value></column>
-          <column><name>PRNT_NODE_ID</name><value>1</value></column>
-          <column><name>PRIORITY</name><value>0</value></column>
-        </row>
-          <!-- Word of the Day -->
-          <row>
-            <column><name>NODE_ID</name><value>3</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
-            <column><name>PRNT_NODE_ID</name><value>2</value></column>
-            <column><name>CHAN_ID</name><value>11</value></column>
-            <column><name>PRIORITY</name><value>0</value></column>
-          </row>
-
-      <!-- Admin Layout -->
-      <!-- Admin tab -->
-      <row>
-        <column><name>NODE_ID</name><value>1</value></column><column><name>USER_ID</name><value>7</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>NAME</name><value>Admin</value></column>
-        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-        <column><name>CHLD_NODE_ID</name><value>2</value></column>
-        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PRIORITY</name><value>0</value></column>
-      </row>
-        <row>
-          <column><name>NODE_ID</name><value>2</value></column><column><name>USER_ID</name><value>7</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-          <column><name>NAME</name><value>Column 1</value></column>
-          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-          <column><name>CHLD_NODE_ID</name><value>3</value></column>
-          <column><name>PRNT_NODE_ID</name><value>1</value></column>
-          <column><name>PRIORITY</name><value>0</value></column>
-        </row>
-          <!-- Groups Manager -->
-          <row>
-            <column><name>NODE_ID</name><value>3</value></column><column><name>USER_ID</name><value>7</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
-            <column><name>PRNT_NODE_ID</name><value>2</value></column>
-            <column><name>CHAN_ID</name><value>94</value></column>
-            <column><name>PRIORITY</name><value>0</value></column>
-          </row>
-
-      <!-- Staff Layout -->
-      <!-- Staff tab -->
-      <row>
-        <column><name>NODE_ID</name><value>1</value></column><column><name>USER_ID</name><value>11</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>NAME</name><value>Staff</value></column>
-        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-        <column><name>CHLD_NODE_ID</name><value>2</value></column>
-        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PRIORITY</name><value>0</value></column>
-      </row>
-        <row>
-          <column><name>NODE_ID</name><value>2</value></column><column><name>USER_ID</name><value>11</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-          <column><name>NAME</name><value>Column 1</value></column>
-          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-          <column><name>CHLD_NODE_ID</name><value>3</value></column>
-          <column><name>PRNT_NODE_ID</name><value>1</value></column>
-          <column><name>PRIORITY</name><value>0</value></column>
-        </row>
-          <!-- Salon.com -->
-          <row>
-            <column><name>NODE_ID</name><value>3</value></column><column><name>USER_ID</name><value>11</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
-            <column><name>PRNT_NODE_ID</name><value>2</value></column>
-            <column><name>CHAN_ID</name><value>12</value></column>
-            <column><name>PRIORITY</name><value>0</value></column>
-          </row>
-
-      <!-- Faculty Layout -->
-      <!-- Faculty tab -->
-      <row>
-        <column><name>NODE_ID</name><value>1</value></column><column><name>USER_ID</name><value>12</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>NAME</name><value>Faculty</value></column>
-        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-        <column><name>CHLD_NODE_ID</name><value>2</value></column>
-        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PRIORITY</name><value>0</value></column>
-      </row>
-        <row>
-          <column><name>NODE_ID</name><value>2</value></column><column><name>USER_ID</name><value>12</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-          <column><name>NAME</name><value>Column 1</value></column>
-          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-          <column><name>CHLD_NODE_ID</name><value>3</value></column>
-          <column><name>PRNT_NODE_ID</name><value>1</value></column>
-          <column><name>PRIORITY</name><value>0</value></column>
-        </row>
-          <!-- Salon.com -->
-          <row>
-            <column><name>NODE_ID</name><value>3</value></column><column><name>USER_ID</name><value>12</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
-            <column><name>PRNT_NODE_ID</name><value>2</value></column>
-            <column><name>CHAN_ID</name><value>12</value></column>
-            <column><name>PRIORITY</name><value>0</value></column>
-          </row>
-
-      <!-- Student Layout -->
-      <!-- Student tab -->
-      <row>
-        <column><name>NODE_ID</name><value>1</value></column><column><name>USER_ID</name><value>13</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>NAME</name><value>Student</value></column>
-        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-        <column><name>CHLD_NODE_ID</name><value>2</value></column>
-        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
-        <column><name>PRIORITY</name><value>0</value></column>
-      </row>
-        <row>
-          <column><name>NODE_ID</name><value>2</value></column><column><name>USER_ID</name><value>13</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-          <column><name>NAME</name><value>Column 1</value></column>
-          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-          <column><name>CHLD_NODE_ID</name><value>3</value></column>
-          <column><name>PRNT_NODE_ID</name><value>1</value></column>
-          <column><name>PRIORITY</name><value>0</value></column>
-        </row>
-          <!-- Salon.com -->
-          <row>
-            <column><name>NODE_ID</name><value>3</value></column><column><name>USER_ID</name><value>13</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
-            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
-            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
-            <column><name>PRNT_NODE_ID</name><value>2</value></column>
-            <column><name>CHAN_ID</name><value>12</value></column>
-            <column><name>PRIORITY</name><value>0</value></column>
-          </row>
       </rows>
    </table>
 
@@ -773,9 +618,9 @@
       </row>
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>UNICON News</value></column>
+        <column><name>CHAN_NAME</name><value>UNICON News</value></column>
+        <column><name>CHAN_DESC</name><value>UNICON News channel</value></column>
         <column><name>CHAN_PUBL_ID</name><value>0</value></column>
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
@@ -785,7 +630,7 @@
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_FNAME</name><value>ibs-news</value></column>
+        <column><name>CHAN_FNAME</name><value>unicon-news</value></column>
         <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
@@ -1298,7 +1143,7 @@
         <column><name>CHAN_ID</name><value>5</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.interactivebusiness.com/publish/jasigPortalDemos.rss</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.unicon.net/publish/jasigPortalDemos.rss</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -1309,12 +1154,12 @@
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
-      <!-- IBS News -->
+      <!-- UNICON News -->
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.interactivebusiness.com/publish/ibs.rss</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.unicon.net/publish/ibs.rss</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -1653,7 +1498,7 @@
         <column><name>CHAN_ID</name><value>20</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.interactivebusiness.com/publish/uPortalDevBooks/uPortalDevBooks.xml</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.unicon.net/publish/uPortalDevBooks/uPortalDevBooks.xml</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -1872,7 +1717,7 @@
           <column><name>CHLD_STRUCT_ID</name><value>18</value></column>
           <column><name>UNREMOVABLE</name><value>N</value></column>
         </row>
-          <!-- IBS News -->
+          <!-- UNICON News -->
           <row>
             <column><name>STRUCT_ID</name><value>18</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
             <column><name>NEXT_STRUCT_ID</name><value>19</value></column>
