@@ -192,11 +192,6 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     }
 
     public boolean isCacheValid(Object validity) {
-	if(validity instanceof Long) {
-	    // set timeout to 15 minutes
-	    return (System.currentTimeMillis()-((Long)validity).longValue()<15*60*1000);
-	} else {
-	    return false;
-	}
+	return true;
     }
 }
