@@ -43,10 +43,11 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import javax.servlet.http.Cookie;
 import org.w3c.tidy.*;
+import org.w3c.dom.Document;
 import org.jasig.portal.*;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.*;
 import org.jasig.portal.services.LogService;
+import javax.xml.parsers.*;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.</p>
@@ -122,7 +123,13 @@ public class CWebProxy implements org.jasig.portal.IChannel
     this.buttonxmlUri = null;
   }
 
-  // Get channel parameters.
+  /**
+   * Passes ChannelStaticData to the channel.
+   * This is done during channel instantiation time.
+   * see org.jasig.portal.ChannelStaticData
+   * @param sd channel static data
+   * @see ChannelStaticData
+   */
   public void setStaticData (ChannelStaticData sd)
   {
     try
@@ -143,6 +150,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
   }
 
+  /**
+   * Passes ChannelRuntimeData to the channel.
+   * This function is called prior to the renderXML() call.
+   * @param rd channel runtime data
+   * @see ChannelRuntimeData
+   */
   public void setRuntimeData (ChannelRuntimeData rd)
   {
     runtimeData = rd;
@@ -213,7 +226,7 @@ public class CWebProxy implements org.jasig.portal.IChannel
       LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + this.xmlUri);
 
       StringBuffer newXML = new StringBuffer().append(this.xmlUri);
-      String appendchar = "?";
+      String appendchar = (this.xmlUri.indexOf('?') == -1) ? "?" : "&";
 
       // want all runtime parameters not specific to WebProxy
       Enumeration e=runtimeData.getParameterNames ();
@@ -263,19 +276,30 @@ public class CWebProxy implements org.jasig.portal.IChannel
       //   break;
   }
 
-  // Access channel runtime properties.
+  /**
+   * Acquires ChannelRuntimeProperites from the channel.
+   * This function may be called by the portal framework throughout the session.   * @see ChannelRuntimeProperties
+   */
   public ChannelRuntimeProperties getRuntimeProperties ()
   {
     return new ChannelRuntimeProperties ();
   }
 
+  /**
+   * Ask channel to render its content.
+   * @param out the SAX ContentHandler to output content to
+   */
   public void renderXML (ContentHandler out) throws PortalException
   {
-    String xml;
+    String xml = null;
+    Document xmlDoc = null;
 
     try
     {
-      xml = getXmlString (fullxmlUri);
+      if (tidy != null && tidy.equals("on"))
+        xml = getXmlString (fullxmlUri);
+      else
+        xmlDoc = getXmlDocument (fullxmlUri);
     }
     catch (Exception e)
     {
@@ -307,7 +331,10 @@ public class CWebProxy implements org.jasig.portal.IChannel
       runtimeData.put("cw_edit", editUri);
 
     XSLT xslt = new XSLT(this);
-    xslt.setXML(xml);
+    if (xmlDoc != null)
+      xslt.setXML(xmlDoc);
+    else
+      xslt.setXML(xml);
     if (xslUri != null)
       xslt.setXSL(xslUri);
     else
@@ -318,10 +345,49 @@ public class CWebProxy implements org.jasig.portal.IChannel
   }
 
   /**
+   * Get the contents of a URI as a Document object.  This is used if tidy
+   * is not set or equals 'off'.
+   * Also includes support for cookies.
+   * @param uri the URI
+   * @return the data pointed to by a URI as a Document object
+   */
+  private Document getXmlDocument(String uri) throws Exception
+  {
+    URL url = ResourceLoader.getResourceAsURL(this.getClass(), uri);
+    String domain = url.getHost().trim();
+    String path = url.getPath();
+    if ( path.indexOf("/") != -1 )
+    {
+      if (path.lastIndexOf("/") != 0)
+        path = path.substring(0, path.lastIndexOf("/"));
+    }
+    String port = Integer.toString(url.getPort());
+
+    URLConnection urlConnect = url.openConnection();
+    String protocol = url.getProtocol();
+
+    if (protocol.equals("http"))
+    {
+      HttpURLConnection httpUrlConnect = (HttpURLConnection) urlConnect;
+      httpUrlConnect.setInstanceFollowRedirects(true);
+      if (domain != null && path != null)
+        sendAndStoreCookies(httpUrlConnect, domain, path, port);
+    }
+
+    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+    docBuilderFactory.setNamespaceAware(false);
+    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+    DTDResolver dtdResolver = new DTDResolver();
+    docBuilder.setEntityResolver(dtdResolver);
+
+    return  docBuilder.parse(urlConnect.getInputStream());
+  }
+
+  /**
    * Get the contents of a URI as a String but send it through tidy first.
    * Also includes support for cookies.
    * @param uri the URI
-   * @return the data pointed to by a URI
+   * @return the data pointed to by a URI as a String
    */
   private String getXmlString (String uri) throws Exception
   {
@@ -383,9 +449,16 @@ public class CWebProxy implements org.jasig.portal.IChannel
 
   }
 
-  // Sends any cookies in the cookie vector as a request header and stores
-  // any incoming cookies in the cookie vector (according to rfc 2109,
-  // 2965 & netscape)
+  /**
+   * Sends any cookies in the cookie vector as a request header and stores
+   * any incoming cookies in the cookie vector (according to rfc 2109,
+   * 2965 &amp; netscape)
+   *
+   * @param httpUrlConnect The HttpURLConnection handling the URL connection
+   * @param domain The domain value for the Cookie to be sent
+   * @param path The path value for the Cookie to be sent
+   * @param port The port value for the Cookie to be sent
+   */
   private void sendAndStoreCookies(HttpURLConnection httpUrlConnect, String domain, String path, String port) throws Exception
   {
     // send appropriate cookies to origin server from cookie vector
@@ -442,8 +515,15 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
   }
 
-  // Sends a cookie header to origin server according to the netscape
-  // specification
+  /**
+   * Sends a cookie header to origin server according to the Netscape
+   * specification.
+   *
+   * @param httpUrlConnect The HttpURLConnection handling this URL connection
+   * @param domain The domain value of the cookie
+   * @param path The path value of the cookie
+   * @param port The port value of the cookie
+   */
   private void sendCookieHeader(HttpURLConnection httpUrlConnect, String domain, String path, String port)
   {
      Vector cookiesToSend = new Vector();
@@ -525,6 +605,14 @@ public class CWebProxy implements org.jasig.portal.IChannel
      }
   }
 
+  /**
+   * Processes the Cookie2 header.
+   *
+   * @param headerVal The value of the header
+   * @param domain The domain value of the cookie
+   * @param path The path value of the cookie
+   * @param port The port value of the cookie
+   */
   private void processSetCookie2Header (String headerVal, String domain, String path, String port)
   {
      StringTokenizer headerValue = new StringTokenizer(headerVal, ",");
@@ -631,6 +719,14 @@ public class CWebProxy implements org.jasig.portal.IChannel
     }
   }
 
+  /**
+   * Processes the Cookie header.
+   *
+   * @param headerVal The value of the header
+   * @param domain The domain value of the cookie
+   * @param path The path value of the cookie
+   * @param port The port value of the cookie
+   */
   private void processSetCookieHeader (String headerVal, String domain, String path, String port)
   throws ParseException
   {
@@ -747,6 +843,12 @@ public class CWebProxy implements org.jasig.portal.IChannel
      }
   }
 
+  /**
+   * This class is used by CWebProxy to store cookie information.  
+   * WebProxyCookie extends javax.servlet.http.Cookie
+   * and contains methods to query the cookie's attribute status.
+   *
+   */
   private class WebProxyCookie extends Cookie
   {
 
