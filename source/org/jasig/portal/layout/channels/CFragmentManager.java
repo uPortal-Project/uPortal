@@ -73,8 +73,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	private IUserLayoutManager ulm;
 	private ThemeStylesheetUserPreferences themePrefs;
 	private static IAggregatedUserLayoutStore layoutStore;
-	private static Map fragmentMap;
-	private static ALFragment fragments[];
+	private Map fragmentMap;
+	private ALFragment fragments[];
 	private String newName;
 
 	public CFragmentManager() throws PortalException {

@@ -155,11 +155,10 @@ public class PortletStateManager {
 	}
 	
 	public void setParameters(Map parameters) {	
-	  /*for ( Iterator names = parameters.keySet().iterator(); names.hasNext();){
+	 for ( Iterator names = parameters.keySet().iterator(); names.hasNext();){
 		 Object name = names.next();
 		 params.put(name,parameters.get(name));
-	  }*/
-	  params = parameters; 
+	 }
 	}
 
     public boolean isAction() {
