@@ -301,6 +301,7 @@ public class CGroupsManagerServantFactory {
         servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
       }
       catch (Exception e){
+        LogService.instance().log(LogService.ERROR,e);
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
         long time2 = Calendar.getInstance().getTime().getTime();
