@@ -85,7 +85,7 @@ public class RemoteUserPersonManager implements IPersonManager {
 		}
 		catch (Exception e) {
 			// Log the exception
-			log.error( e);
+			log.error("Exception creating person for request " + request, e);
 		}
 		// Add this person object to the user's session
 		request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);

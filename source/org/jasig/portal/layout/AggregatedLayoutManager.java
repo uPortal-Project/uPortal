@@ -1097,8 +1097,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
                 updateCacheKey();
             }
         } catch ( Exception e ) {
-            log.error( e);
-            throw new PortalException(e.getMessage());
+            log.error("Exception loading user layout", e);
+            throw new PortalException("Exception loading user layout: " + e.getMessage(), e);
         }
     }
     

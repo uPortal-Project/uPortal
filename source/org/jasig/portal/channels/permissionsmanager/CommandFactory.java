@@ -65,7 +65,7 @@ public class CommandFactory {
             commands.put("SelectTargets", Class.forName(commandBase + "SelectTargets").newInstance());
             commands.put("Cancel", Class.forName(commandBase + "Cancel").newInstance());
         } catch (Exception e) {
-            log.error( e);
+            log.error(e, e);
         }
     }
 

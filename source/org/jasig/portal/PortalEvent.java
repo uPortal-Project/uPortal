@@ -43,7 +43,6 @@ package org.jasig.portal;
  *  <li> helpButtonEvent - occurs when a help button on the channel frame has been hit </li>
  *  <li> aboutButtonEvent - occurs when an about button on the channel frame has been hit </li>
  *  <li> detachButtonEvent - occurs when a detach button on the channel frame has been hit </li>
- *  <li> renderingDone - occurs at the end of each rendering cycle </li>
  *  <li> sessionDone - signlas channel that current session is beign terminated </li>
  *  <li> unsubscribe - signlas channel that the user has unsubscribed the channel </li>
  * </ul>
@@ -53,6 +52,11 @@ package org.jasig.portal;
 public class PortalEvent
 {
     // framework-generated events
+    
+  /**
+   * Warning: the framework never sends this event.  Listening for it is pointless.
+   * @deprecated this event will be removed in uPortal 2.5
+   */
   public static final int RENDERING_DONE = 0;
   public static final int SESSION_DONE = 1;
   public static final int UNSUBSCRIBE = 2;

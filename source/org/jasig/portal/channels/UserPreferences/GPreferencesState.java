@@ -466,7 +466,7 @@ class GPreferencesState extends BaseState {
         xsl.serialize(doc);
         log.debug(outString.toString());
       } catch (Exception e) {
-        log.debug(e);
+        log.debug(e, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null) {
@@ -574,7 +574,7 @@ class GPreferencesState extends BaseState {
         xsl.serialize(doc);
         log.debug(outString.toString());
       } catch (Exception e) {
-        log.debug(e);
+        log.debug(e, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null) {

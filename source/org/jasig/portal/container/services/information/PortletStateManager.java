@@ -81,6 +81,8 @@ public class PortletStateManager {
     public static String PREV_STATE = "pstate";
     public static final String STATE = "state";
 	
+    public static final String UP_PARAM_PREFIX = "uP_";
+    
 	public static final String UP_ROOT = "uP_root";
 	public static final String UP_TCATTR = "uP_tcattr";
 	public static final String UP_HELP_TARGET = "uP_help_target";
@@ -549,26 +551,36 @@ public class PortletStateManager {
 		return strURL;
 	} 
 	
-	public String getActionURL() {
-		String baseActionURL;
-		if ( nextState != null && nextState.equals(PortalContextProviderImpl.EXCLUSIVE) ) {
-		    baseActionURL = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
-		}        
-		else {
-		    baseActionURL = runtimeData.getBaseActionURL();
-		}
+    public String getActionURL() {
+        final StringBuffer actionUrl = new StringBuffer();
         
-		String encodedURLParams = encodeURLParameters(this.toString());
-        StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
-				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+
-                  java.net.URLEncoder.encode(encodedURLParams)+
-				  UPFileSpec.PORTLET_PARAMS_DELIM_END+
-				  UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
+        final String encodedUrlParams = encodeURLParameters(this.toString());
         
-        if (ChannelManager.isUseAnchors()) {
-            url.append("#").append(windowOfAction.getId());
+        if (encodedUrlParams.length() > 0) {
+            actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_BEG);
+            
+            final String urlEncodedUrlParams = URLEncoder.encode(encodedUrlParams);
+            actionUrl.append(urlEncodedUrlParams);
+            
+            actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_END);
         }
         
-		return url.toString();
-	}
+        if (PortalContextProviderImpl.EXCLUSIVE.equals(this.nextState)) {
+            final String urlBase = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
+            actionUrl.insert(0, UPFileSpec.PORTAL_URL_SEPARATOR);
+            actionUrl.insert(0, urlBase);
+        }
+        else {
+            final String urlBase = runtimeData.getBaseActionURL();
+            actionUrl.append(UPFileSpec.PORTAL_URL_SEPARATOR);
+            actionUrl.append(urlBase);
+        }
+        
+        if (ChannelManager.isUseAnchors()) {
+            actionUrl.append("#");
+            actionUrl.append(windowOfAction.getId());
+        }
+        
+        return actionUrl.toString();
+    }
 }

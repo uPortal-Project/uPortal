@@ -1,5 +1,5 @@
 /**
- * Copyright ? 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -417,7 +417,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
       updateThemeStylesheetDescription(sssd);
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Exception updating theme stylesheet description=" +
+            "[" + stylesheetDescriptionURI + "] stylesheetUri=["+ stylesheetURI + 
+            "] stylesheetId=["+ stylesheetId + "]", e);
       return  false;
     }
     return  true;
@@ -451,7 +453,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       updateStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Exception updating structure stylesheet description " +
+            "stylesheetDescriptionUri=[" + stylesheetDescriptionURI + "]" +
+                    " stylesheetUri=[" + stylesheetURI + 
+                    "] stylesheetId=" + stylesheetId , e);
       return  false;
     }
     return  true;
@@ -487,7 +492,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  addStructureStylesheetDescription(fssd);
 
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Error adding stylesheet: " +
+            "description Uri=[" + stylesheetDescriptionURI + "] " +
+                    "stylesheetUri=[" + stylesheetURI + "]", e);
     }
     return  null;
   }
@@ -540,7 +547,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return  addThemeStylesheetDescription(sssd);
 
     } catch (Exception e) {
-      log.debug(e);
+      log.debug("Exception adding theme stylesheet description " + 
+              "description uri=[" + stylesheetDescriptionURI + "] " +
+              "stylesheet uri=[" + stylesheetURI + "]", e);
     }
     return  null;
   }
@@ -1948,8 +1957,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             if (rs.wasNull()) {
               themeSsId = 0;
             }
-            return new UserProfile(profileId, temp3,temp4, layoutId,
-                structSsId, themeSsId);
+            UserProfile userProfile = new UserProfile(profileId, temp3,temp4, layoutId, structSsId, themeSsId);
+            userProfile.setLocaleManager(new LocaleManager(person));
+            return userProfile;
           }
           else {
             throw new Exception("Unable to find User Profile for user " + userId + " and profile " + profileId);
@@ -2598,192 +2608,249 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   }
 
   /**
-   * Save the user layout
+   * Save the user layout.
    * @param person
    * @param profile
    * @param layoutXML
    * @throws Exception
    */
-  public void setUserLayout (IPerson person, UserProfile profile, Document layoutXML, boolean channelsAdded) throws Exception {
-    int userId = person.getID();
-    int profileId=profile.getProfileId();
-    int layoutId=0;
-   ResultSet rs;
-   Connection con = RDBMServices.getConnection();
-    try {
-      RDBMServices.setAutoCommit(con, false);                // Need an atomic update here
-      Statement stmt = con.createStatement();
+  public void setUserLayout(IPerson person, UserProfile profile, Document layoutXML, boolean channelsAdded) throws Exception {
+      long startTime = System.currentTimeMillis();
+      int userId = person.getID();
+      int profileId = profile.getProfileId();
+      int layoutId = 0;
+      ResultSet rs;
+      Connection con = RDBMServices.getConnection();
       try {
-        long startTime = System.currentTimeMillis();
-
-        // eventually we want to be able to just get layoutId from the profile, but because of the
-        // template user layouts we have to do this for now ...
-        layoutId = this.getLayoutID(userId, profileId);
-
-        boolean firstLayout = false;
-        if (layoutId == 0) { // First personal layout for this user/profile
-          layoutId = 1;
-          firstLayout = true;
-        }
-
-        String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
-        String sSql = "DELETE FROM UP_LAYOUT_PARAM WHERE " + selectString;
-        log.debug("RDBMUserLayoutStore::setUserLayout(): " + sSql);
-        stmt.executeUpdate(sSql);
-        sSql = "DELETE FROM UP_LAYOUT_STRUCT WHERE " + selectString;
-        log.debug("RDBMUserLayoutStore::setUserLayout(): " + sSql);
-        stmt.executeUpdate(sSql);
-        if (DEBUG > 1) {
-          System.err.println("--> saving document");
-          dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
-          System.err.println("<--");
-        }
-
-        RDBMServices.PreparedStatement structStmt = new RDBMServices.PreparedStatement(con,
-                                                        "INSERT INTO UP_LAYOUT_STRUCT " +
-                                                        "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
-                                                        "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
-        try {
-          RDBMServices.PreparedStatement parmStmt = new RDBMServices.PreparedStatement(con,
-            "INSERT INTO UP_LAYOUT_PARAM " +
-            "(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) " +
-            "VALUES ("+ userId + "," + layoutId + ",?,?,?)");
+          RDBMServices.setAutoCommit(con, false); // Need an atomic update here
+         
+          // Eventually we want to be able to just get layoutId from the
+          // profile, but because of the template user layouts we have to do this for now ...
+          layoutId = this.getLayoutID(userId, profileId);
+          
+          boolean firstLayout = false;
+          if (layoutId == 0) { 
+              // First personal layout for this user/profile
+              layoutId = 1;
+              firstLayout = true;
+          }
+          
+          String sql = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID=? AND LAYOUT_ID=?";
+          RDBMServices.PreparedStatement pstmt = new RDBMServices.PreparedStatement(con, sql);
           try {
-            int firstStructId = saveStructure(layoutXML.getFirstChild().getFirstChild(), structStmt, parmStmt);
-            
-            //Check to see if the user has a matching layout
-            sSql = "SELECT * FROM UP_USER_LAYOUT WHERE " + selectString;
-            log.debug("RDBMUserLayoutStore::setUserLayout(): " + sSql);
-            rs = stmt.executeQuery(sSql);
-
-            try {
-                //If not the default user is found and the layout rows from the
-                //default user are copied for the current user.
-                if (!rs.next()) {
-                    int defaultUserId;
-
-                    String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
-                    log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-
-                    ResultSet rs2 = stmt.executeQuery(sQuery);
-                    try {
-                        rs2.next();
-                        defaultUserId = rs2.getInt(1);
-                    }
-                    finally {
-                        rs2.close();
-                    }
-
-                    // Add to UP_USER_LAYOUT
-                    sQuery =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + defaultUserId;
-                    log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-
-                    rs2 = stmt.executeQuery(sQuery);
-
-                    try {
-                        while (rs2.next()) {
-                            sQuery =
-                                "INSERT INTO UP_USER_LAYOUT " +
-                                "(USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID) " +
-                                "VALUES(" +
-                                    userId + "," +
-                                    rs2.getInt("LAYOUT_ID") + "," +
-                                    "'" + rs2.getString("LAYOUT_TITLE") + "'," +
-                                    rs2.getInt("INIT_STRUCT_ID") + ")";
-
-                            log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-                            stmt.executeUpdate(sQuery);
-                        }
-                    }
-                    finally {
-                        rs2.close();
-                    }
-                }
-            }
-            finally {
-                rs.close();
-            }
-
-            //Update the users layout with the correct inital structure ID
-            sSql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID=" + firstStructId + " WHERE " + selectString;
-            log.debug("RDBMUserLayoutStore::setUserLayout(): " + sSql);
-            stmt.executeUpdate(sSql);
-
-            // Update the last time the user saw the list of available channels
-            if (channelsAdded) {
-              sSql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT=" + RDBMServices.sqlTimeStamp() +
-                " WHERE USER_ID=" + userId;
-              log.debug("RDBMUserLayoutStore::setUserLayout(): " + sSql);
-              stmt.executeUpdate(sSql);
-            }
-
-            if (firstLayout) {
-
+              pstmt.clearParameters();
+              pstmt.setInt(1, userId);
+              pstmt.setInt(2, layoutId);
+              log.debug(sql);
+              pstmt.executeUpdate();
+          } finally {
+              pstmt.close();
+          }
+          
+          sql = "DELETE FROM UP_LAYOUT_STRUCT WHERE USER_ID=? AND LAYOUT_ID=?";
+          pstmt = new RDBMServices.PreparedStatement(con, sql);
+          try {
+              pstmt.clearParameters();
+              pstmt.setInt(1, userId);
+              pstmt.setInt(2, layoutId);
+              log.debug(sql);
+              pstmt.executeUpdate();
+          } finally {
+              pstmt.close();
+          }
+          
+          RDBMServices.PreparedStatement structStmt = new RDBMServices.PreparedStatement(con, "INSERT INTO UP_LAYOUT_STRUCT "
+                  + "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) "
+                  + "VALUES (" + userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
+          
+          RDBMServices.PreparedStatement parmStmt = new RDBMServices.PreparedStatement(con, "INSERT INTO UP_LAYOUT_PARAM "
+                  + "(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) " + "VALUES (" + userId + "," + layoutId + ",?,?,?)");
+          
+          int firstStructId;
+          try {
+              firstStructId = saveStructure(layoutXML.getFirstChild().getFirstChild(), structStmt, parmStmt);
+          } finally {
+              structStmt.close();
+              parmStmt.close();
+          }
+          
+          //Check to see if the user has a matching layout
+          sql = "SELECT * FROM UP_USER_LAYOUT WHERE USER_ID=? AND LAYOUT_ID=?";
+          pstmt = new RDBMServices.PreparedStatement(con, sql);
+          try {
+              pstmt.clearParameters();
+              pstmt.setInt(1, userId);
+              pstmt.setInt(2, layoutId);
+              log.debug(sql);
+              rs = pstmt.executeQuery();
+              
+              try {
+                  if (!rs.next()) {
+                      // If not, the default user is found and the layout rows from the default user are copied for the current user.
+                      int defaultUserId;
+                      
+                      sql = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=?";
+                      RDBMServices.PreparedStatement pstmt2 = new RDBMServices.PreparedStatement(con, sql);
+                      try {
+                          pstmt2.clearParameters();
+                          pstmt2.setInt(1, userId);
+                          log.debug(sql);
+                          ResultSet rs2 = null;
+                          try {
+                              rs2 = pstmt2.executeQuery();
+                              rs2.next();
+                              defaultUserId = rs2.getInt(1);
+                          } finally {
+                              rs2.close();
+                          }
+                      } finally {
+                          pstmt2.close();
+                      }
+                      
+                      // Add to UP_USER_LAYOUT
+                      sql = "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=?";
+                      pstmt2 = new RDBMServices.PreparedStatement(con, sql);
+                      try {
+                          pstmt2.clearParameters();
+                          pstmt2.setInt(1, defaultUserId);
+                          log.debug(sql);
+                          ResultSet rs2 = pstmt2.executeQuery();
+                          try {
+                              while (rs2.next()) {
+                                  sql = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID) VALUES (?,?,?,?)";
+                                  RDBMServices.PreparedStatement pstmt3 = new RDBMServices.PreparedStatement(con, sql);
+                                  try {
+                                      pstmt3.clearParameters();
+                                      pstmt3.setInt(1, userId);
+                                      pstmt3.setInt(2, rs2.getInt("LAYOUT_ID"));
+                                      pstmt3.setString(3, rs2.getString("LAYOUT_TITLE"));
+                                      pstmt3.setInt(4, rs2.getInt("INIT_STRUCT_ID"));
+                                      log.debug(sql);
+                                      pstmt3.executeUpdate();
+                                  } finally {
+                                      pstmt3.close();
+                                  }
+                              }
+                          } finally {
+                              rs2.close();
+                          }
+                      } finally {
+                          pstmt2.close();
+                      }
+                      
+                  }
+              } finally {
+                  rs.close();
+              }
+          } finally {
+              pstmt.close();
+          }
+          
+          //Update the users layout with the correct inital structure ID                      
+          sql = "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID=? WHERE USER_ID=? AND LAYOUT_ID=?";
+          pstmt = new RDBMServices.PreparedStatement(con, sql);
+          try {
+              pstmt.clearParameters();
+              pstmt.setInt(1, firstStructId);
+              pstmt.setInt(2, userId);
+              pstmt.setInt(3, layoutId);
+              log.debug(sql);
+              pstmt.executeUpdate();
+          } finally {
+              pstmt.close();
+          }
+          
+          // Update the last time the user saw the list of available channels
+          if (channelsAdded) {
+              sql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT=? WHERE USER_ID=?";
+              pstmt = new RDBMServices.PreparedStatement(con, sql);
+              try {
+                  pstmt.clearParameters();
+                  pstmt.setDate(1, new java.sql.Date(System.currentTimeMillis()));
+                  pstmt.setInt(2, userId);
+                  log.debug(sql);
+                  pstmt.executeUpdate();
+              } finally {
+                  pstmt.close();
+              }
+          }
+          
+          if (firstLayout) {                          
               int defaultUserId;
               int defaultLayoutId;
-              // Have to copy some of data over from the default user
-              String sQuery = "SELECT USER_DFLT_USR_ID,USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-              log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-              rs = stmt.executeQuery(sQuery);
+              // Have to copy some of data over from the default user                          
+              sql = "SELECT USER_DFLT_USR_ID,USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=?";
+              pstmt = new RDBMServices.PreparedStatement(con, sql);
               try {
-                rs.next();
-                defaultUserId = rs.getInt(1);
-                defaultLayoutId = rs.getInt(2);
-              } finally {
-                rs.close();
-              }
-
-              sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-              log.debug("RDBMUserLayoutStore::setUserLayout(): " + sQuery);
-              stmt.executeUpdate(sQuery);
-              
-              /* insert row(s) into up_ss_user_parm */
-              sQuery = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
-                " FROM UP_SS_USER_PARM WHERE USER_ID="+defaultUserId;
-              log.debug("RDBMUserIdentityStore::getPortalUID(): " + sQuery);
-              if (DEBUG>0) System.err.println(sQuery);
-              rs.close();
-              rs = stmt.executeQuery(sQuery);
-              Statement insertStmt = con.createStatement();
-              try {
-                  while (rs.next()) {
-                     String insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
-                     "VALUES("+
-                     userId+","+
-                     rs.getInt("PROFILE_ID")+","+
-                     rs.getInt("SS_ID")+","+
-                     rs.getInt("SS_TYPE")+","+
-                     "'"+rs.getString("PARAM_NAME")+"',"+
-                     "'"+rs.getString("PARAM_VAL")+"')";
-    
-                     log.debug("RDBMUserLayoutStore::setUserLayout(): " + insert);
-                     if (DEBUG>0) System.err.println(insert);
-                     insertStmt.executeUpdate(insert);
+                  pstmt.clearParameters();
+                  pstmt.setInt(1, userId);
+                  log.debug(sql);
+                  rs = pstmt.executeQuery();
+                  try {
+                      rs.next();
+                      defaultUserId = rs.getInt(1);
+                      defaultLayoutId = rs.getInt(2);
+                  } finally {
+                      rs.close();
                   }
+              } finally {
+                  pstmt.close();
               }
-              finally {
-                  insertStmt.close();
+              
+              sql = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=? AND PROFILE_ID=?";
+              pstmt = new RDBMServices.PreparedStatement(con, sql);
+              try {
+                  pstmt.clearParameters();
+                  pstmt.setInt(1, userId);
+                  pstmt.setInt(2, profileId);
+                  log.debug(sql);
+                  pstmt.executeUpdate();
+              } finally {
+                  pstmt.close();
               }
-            }
-            long stopTime = System.currentTimeMillis();
-            log.debug("RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " +
-                (stopTime - startTime) + " milliseconds to save");
-          } finally {
-            parmStmt.close();
+              
+              // Insert row(s) into up_ss_user_parm
+              sql = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=?";
+              pstmt = new RDBMServices.PreparedStatement(con, sql);
+              try {
+                  pstmt.clearParameters();
+                  pstmt.setInt(1, defaultUserId);
+                  log.debug(sql);
+                  rs = pstmt.executeQuery();
+                  try {
+                      while (rs.next()) {
+                          sql = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) VALUES(?,?,?,?,?,?)";
+                          RDBMServices.PreparedStatement pstmt2 = new RDBMServices.PreparedStatement(con, sql);
+                          try {
+                              pstmt2.clearParameters();
+                              pstmt2.setInt(1, userId);
+                              pstmt2.setInt(2, rs.getInt("PROFILE_ID"));
+                              pstmt2.setInt(3, rs.getInt("SS_ID"));
+                              pstmt2.setInt(4, rs.getInt("SS_TYPE"));
+                              pstmt2.setString(5, rs.getString("PARAM_NAME"));
+                              pstmt2.setString(6, rs.getString("PARAM_VAL"));
+                              log.debug(sql);
+                              pstmt2.executeUpdate();
+                          } finally {
+                              pstmt2.close();
+                          }
+                      }
+                  } finally {
+                      rs.close();
+                  }
+              } finally {
+                  pstmt.close();
+              }
           }
-        } finally {
-          structStmt.close();
-        }
-       } finally {
-        stmt.close();
+          RDBMServices.commit(con);
+      } catch (Exception e) {
+          RDBMServices.rollback(con);
+          throw e;
+      } finally {
+          RDBMServices.releaseConnection(con);
       }
-      RDBMServices.commit(con);
-    } catch (Exception e) {
-      RDBMServices.rollback(con);
-      throw  e;
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
+      long stopTime = System.currentTimeMillis();
+      log.debug("RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to save");
   }
 
   /**

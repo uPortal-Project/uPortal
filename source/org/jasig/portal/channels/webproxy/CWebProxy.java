@@ -1042,7 +1042,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       state.connHolder= getConnection(state.fullxmlUri, state);
     }
     catch (Exception e){
-      log.error(e);
+      log.error(e, e);
     }
     Map rhdrs = new HashMap();
     int i = 0;

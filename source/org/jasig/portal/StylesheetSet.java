@@ -114,7 +114,7 @@ public class StylesheetSet extends SAX2FilterImpl {
             }
         } catch (SAXException se) {
             // Log the exception
-            log.error( se);
+            log.error("Error constructing StylesheetSet from uri[" + uri + "]", se);
             throw new GeneralRenderingException("StylesheetSet(uri) : Unable to instantiate SAX Reader. Please check your library installation.");
         }
     }

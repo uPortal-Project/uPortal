@@ -35,18 +35,22 @@
 
 package org.jasig.portal;
 
+import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A factory class that produces <code>IChannel</code> instances.
+ * This class maintains a lazily-loaded, but permanent
+ * cache of channels that implement one of uPortal's 
+ * multithreaded interfaces, IMultithreadedChannel or one of its variants.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
  * @version $Revision$
  */
 public class ChannelFactory {
@@ -54,7 +58,7 @@ public class ChannelFactory {
     private static final Log log = LogFactory.getLog(ChannelFactory.class);
     
     // table of multithreaded channels
-    public static final java.util.Hashtable staticChannels=new java.util.Hashtable();
+    private static final Hashtable staticChannels = new Hashtable();
     
     // create a CAR class loader object for loading channel classes from CARs
     // Note that the current class loader is passed as the parent and is
@@ -114,7 +118,7 @@ public class ChannelFactory {
      * @param uid a unique ID for use with multithreaded channels
      * @return an <code>IChannel</code> object
      */
-    public static IChannel instantiateChannel(String className, String uid) throws PortalException {
+    public static synchronized IChannel instantiateChannel(String className, String uid) throws PortalException {
         IChannel ch = null;
         boolean exists = false;
         // Avoid instantiating a multithreaded channel more than once

@@ -167,7 +167,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         } catch (PortalException pe) {
             throw pe;
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception constructing UserPreferencesManager on request " 
+                    + req + " for user " + person, e);
         }
     }
 
@@ -253,7 +254,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         } catch (PortalException pe) {
             throw pe;
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception constructing UserPreferencesManager on request " + 
+                    req + " for user " + person, e);
         }
     }
 
@@ -459,7 +461,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
         }
       } catch (Exception e) {
-        log.error( e);
+        log.error("Exception setting new user layout manager " + newUlm + 
+                " and/or new prefererences " + newPreferences, e);
         throw  new GeneralRenderingException(e.getMessage());
       }
     }

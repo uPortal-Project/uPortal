@@ -884,7 +884,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                 // does it contain either an "href" or "action" attribute
                 if (attributeName.equalsIgnoreCase("href") || attributeName.equalsIgnoreCase("action")) {
                     // found the attribute, now lets make sure it points back to a channel
-                    if (attributeValue.indexOf(".render.") != -1) {
+                    if (attributeValue.indexOf(".render.") != -1 && attributeValue.indexOf("javascript:") == -1) {
                         // this link points back to a channel, so let's
                         // rewrite it and place back into the Attribute Object
                         attributeValue += "#" + anchorId;
