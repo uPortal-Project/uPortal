@@ -30,6 +30,12 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
     private static int sizeLimit = -1;
 
     /**
+     * Default value for the upload size limit.
+     * This value will be used when we are unable to load the corresponding property.
+     */
+    private static final int DEFAULT_SIZE_LIMIT = 3000000;
+    
+    /**
      * Creates a new <code>RequestParamWrapper</code> instance.
      *
      * @param source an <code>HttpServletRequest</code> value that's being wrapped.
@@ -183,7 +189,8 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
             try {
                 sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.RequestParamWrapper.file_upload_max_size");
             } catch (Exception e) {
-                sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
+                // if the old property name also isn't set, fall back on the default value.
+                sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size", DEFAULT_SIZE_LIMIT);
             }
         }
     }
