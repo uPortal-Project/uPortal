@@ -47,13 +47,12 @@ import  javax.naming.CompositeName;
 import  javax.servlet.http.HttpSession;
 import  javax.servlet.http.HttpSessionBindingListener;
 import  javax.servlet.http.HttpSessionBindingEvent;
+import  org.jasig.portal.InternalPortalException;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.services.LogService;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Node;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.services.LogService;
 
 
 /**
@@ -86,6 +85,45 @@ public class JNDIManager {
       context.createSubcontext("sessions");
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Create a new subcontext for the given sessionID under /sessions
+   * @param sessionID
+   */
+  public static void initializeSessionContext (HttpSession session) throws InternalPortalException {
+    // Get the ID of the session
+    String sessionID = session.getId();
+    Context sessionsContext = null;
+    try {
+      // Retrieve the subcontext for user sessions
+      sessionsContext = (Context)getContext().lookup("/sessions");
+    } catch (NamingException ne) {
+      LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Could not find /sessions context - "
+          + ne.getMessage());
+      throw  new InternalPortalException(ne);
+    }
+    Context userSessionContext = null;
+    try {
+      // Create a subcontext for the new session
+      userSessionContext = sessionsContext.createSubcontext(sessionID);
+    } catch (NamingException ne) {
+      LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Could not create /sessions/ "
+          + sessionID + " context - " + ne.getMessage());
+      throw  new InternalPortalException(ne);
+    }
+    // Create a guest IPerson object, this should be retrieved from a factory
+    IPerson person = new org.jasig.portal.security.provider.PersonImpl();
+    person.setID(1);
+    person.setFullName("Guest");
+    try {
+      // Bind a guest IPerson object to this new subcontext
+      userSessionContext.bind("iperson", person);
+    } catch (NamingException ne) {
+      LogService.instance().log(LogService.ERROR, "JNDIManager.initializeSessionContext(): Could not bind IPerson to /sessions/ "
+          + sessionID + " context - " + ne.getMessage());
+      throw  new InternalPortalException(ne);
     }
   }
 
