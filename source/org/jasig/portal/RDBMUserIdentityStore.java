@@ -91,7 +91,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
      Connection con = rdbmService.getConnection();
     try {
       Statement stmt = con.createStatement();
-      if (con.getMetaData().supportsTransactions())  con.setAutoCommit(false);
+      if (RDBMServices.supportsTransactions)  
+        con.setAutoCommit(false);
 
       try {
         String SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = '" + uPortalUID + "'";
@@ -149,7 +150,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         }
 
 
-        if (con.getMetaData().supportsTransactions())  con.commit();
+        if (RDBMServices.supportsTransactions)  
+          con.commit();
 
       } finally {
         stmt.close();
@@ -157,9 +159,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
     catch (SQLException se) {
       try {
-        if (con.getMetaData().supportsTransactions())  con.rollback();
-        }
-        catch (SQLException e) {}
+        if (RDBMServices.supportsTransactions)  
+          con.rollback();
+      }
+      catch (SQLException e) {
+      }
         if (DEBUG>0){
         System.err.println("SQLException: " + se.getMessage());
         System.err.println("SQLState:  " + se.getSQLState());
@@ -320,7 +324,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         try
         {
           // Turn off autocommit if the database supports it
-          if (con.getMetaData().supportsTransactions())
+          if (RDBMServices.supportsTransactions)
           {
             con.setAutoCommit(false);
           }
@@ -450,14 +454,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         // end of changes for MySQL support
 
         // Check to see if the database supports transactions
-        boolean supportsTransactions = false;
-        try
-        {
-           supportsTransactions = con.getMetaData().supportsTransactions();
-        }
-        catch(Exception e)  {}
-
-        if(supportsTransactions)
+        if(RDBMServices.supportsTransactions)
         {
           // Commit the transaction
           con.commit();
@@ -478,7 +475,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       // Rollback the transaction
       try
       {
-        if (con.getMetaData().supportsTransactions())
+        if (RDBMServices.supportsTransactions)
         {
           con.rollback();
         }
@@ -508,7 +505,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   static final protected void commit (Connection connection) {
     try {
-      if (connection.getMetaData().supportsTransactions())
+      if (RDBMServices.supportsTransactions)
         connection.commit();
     } catch (Exception e) {
       LogService.log(LogService.ERROR, "RDBMUserIdentityStore::commit(): " + e);
@@ -517,7 +514,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   static final protected void rollback (Connection connection) {
     try {
-      if (connection.getMetaData().supportsTransactions())
+      if (RDBMServices.supportsTransactions)
         connection.rollback();
     } catch (Exception e) {
       LogService.log(LogService.ERROR, "RDBMUserIdentityStore::rollback(): " + e);
