@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">customSettings</xsl:param>
+  <xsl:param name="action">channelDef</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -98,6 +98,7 @@
     <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="none"/>
       <input type="hidden" name="uPCM_capture" value="selectChannelType"/>
+      <input type="hidden" name="uPCM_step" value="changeMe"/>
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
@@ -317,6 +318,7 @@
       <tr class="uportal-channel-text">
         <form name="formRecordsDisplayed" method="post" action="{$baseActionURL}">
           <input type="hidden" name="uPCM_action" value="changeRecordsPerPage"/>
+          <input type="hidden" name="uPCM_step" value="changeMe"/>
           <td nowrap="nowrap" valign="top">
             <xsl:call-template name="pagingWidget">
               <xsl:with-param name="i" select="1"/>
@@ -388,7 +390,7 @@
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td class="uportal-channel-table-header" nowrap="nowrap">Workflow:<img alt="interface image" src="{$mediaPath}/transparent.gif" width="10" height="10"/></td>
-                    <xsl:apply-templates select="manageChannels/*"/>
+                    <xsl:apply-templates select="manageChannels//step" mode="workflow"/>
                   </tr>
                 </table>
               </td>
@@ -404,8 +406,10 @@
     </table>
     <br/>
   </xsl:template>
-  <xsl:template match="manageChannels/*">
-    <xsl:if test="name(.)=$action and ./params/step/ID = $stepID">
+
+<xsl:template match="manageChannels//step" mode="workflow">
+
+    <xsl:if test="name(../../.)=$action and ID = $stepID">
       <xsl:for-each select="preceding::step">
         <xsl:if test="position() != 1">
           <td width="{round(100 div count(//step))}%">
@@ -462,8 +466,8 @@
                   <td class="uportal-text-small" align="center">
                       <a href="#"><xsl:attribute name="onclick">document.workflow.uPCM_action.value='<xsl:value-of select="name(.)"/>';<xsl:if test="name(.) = 'channelDef'">document.workflow.uPCM_step.value='<xsl:value-of select=".//step/ID"/>';</xsl:if>document.workflow.submit()</xsl:attribute>
                         <xsl:choose>
-                        <xsl:when test=".//step/name != ''">
-                        <xsl:value-of select=".//step/name"/>
+                        <xsl:when test="name != ''">
+                        <xsl:value-of select="name"/>
                         </xsl:when><xsl:otherwise>Channel Parameters</xsl:otherwise></xsl:choose>
                     </a> </td>
                 </tr>
@@ -512,6 +516,7 @@
     <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="none"/>
       <input type="hidden" name="uPCM_capture" value="selectGeneralSettings"/>
+      <input type="hidden" name="uPCM_step" value="changeMe"/>
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
           <td>
@@ -606,9 +611,17 @@
         <tr class="uportal-channel-text">
           <td>
             <strong>
-              <xsl:value-of select="params/step/name"/>:</strong>
+            <xsl:choose>
+            <xsl:when test="params/step[position()=$stepID]/name != ''">
+              <xsl:value-of select="params/step[position()=$stepID]/name"/>
+            </xsl:when>
+            <xsl:otherwise>Step Name</xsl:otherwise></xsl:choose>:</strong>
             <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
-            <xsl:value-of select="params/step/description"/>
+                        <xsl:choose>
+            <xsl:when test="params/step[position()=$stepID]/description != ''">
+              <xsl:value-of select="params/step[position()=$stepID]/description"/>
+            </xsl:when>
+            <xsl:otherwise>Description</xsl:otherwise></xsl:choose>
           </td>
         </tr>
         <tr>
@@ -683,6 +696,17 @@
           </xsl:when>
         </xsl:choose>
       </tr>
+      <tr class="uportal-channel-table-header">
+                <td align="center" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
     </xsl:if>
   </xsl:template>
   <!-- displays checkbox for publisher to allow subscribe time modification-->
@@ -698,7 +722,7 @@
           </input>
         </xsl:when>
         <xsl:otherwise>
-          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8"/>
+          <img alt="interface image" src="{$mediaPath}/nocheck.gif" width="16" height="16"/>
         </xsl:otherwise>
       </xsl:choose>
     </td>
@@ -926,6 +950,7 @@
     <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="changeMe"/>
       <input type="hidden" name="uPCM_capture" value="selectControls"/>
+      <input type="hidden" name="uPCM_step" value="changeMe"/>
 
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
         <tr class="uportal-channel-text">
@@ -1306,6 +1331,7 @@
                               <form name="selectCategory" method="post" action="{$baseActionURL}">
                                 <input type="hidden" name="uPCM_action" value="selectCategories"/>
                                 <input type="hidden" name="uPCM_capture" value="selectCategories"/>
+                                <input type="hidden" name="uPCM_step" value="changeMe"/>
 
                               <table width="100%" border="0">
                                   <tr>
@@ -1345,6 +1371,7 @@
                                   <form name="selectCategory" method="post" action="{$baseActionURL}">
                                     <input type="hidden" name="uPCM_action" value="selectCategories"/>
                                     <input type="hidden" name="uPCM_capture" value="selectCategories"/>
+                                    <input type="hidden" name="uPCM_step" value="changeMe"/>
 
                                   <table width="100%" border="0">
                                       <tr>
@@ -1397,6 +1424,7 @@
                                   <form name="selectCategory" method="post" action="{$baseActionURL}">
                                     <input type="hidden" name="uPCM_action" value="selectCategories"/>
                                     <input type="hidden" name="uPCM_capture" value="selectCategories"/>
+                                    <input type="hidden" name="uPCM_step" value="changeMe"/>
                                   <table width="100%" border="0">
                                       <tr>
                                         <td nowrap="nowrap" align="left" valign="top">
@@ -1645,6 +1673,7 @@
       <form name="workflow" method="post" action="{$baseActionURL}">
         <input type="hidden" name="uPCM_action" value="changeMe"/>
         <input type="hidden" name="uPCM_capture" value="selectCategories"/>
+        <input type="hidden" name="uPCM_step" value="changeMe"/>
 
       <tr>
         <td>
@@ -1668,6 +1697,7 @@
     <form name="workflow" method="post" action="{$baseActionURL}">
       <input type="hidden" name="uPCM_action" value="changeMe"/>
       <input type="hidden" name="uPCM_capture" value="channelDef"/>
+      <input type="hidden" name="uPCM_step" value="changeMe"/>
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 
       <tr class="uportal-channel-text">
@@ -2289,5 +2319,6 @@
     </table>
 </xsl:template>
 </xsl:stylesheet>
+
 
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
