@@ -671,10 +671,7 @@ public class RDBMServices {
     }
 
     public void addQuery(String key, String value) throws SQLException {
-      if (queryStrings.containsKey(key)) {
-        throw new SQLException("Trying to add duplicate query");
-      }
-      queryStrings.put(key, value);
+       queryStrings.put(key, value);
     }
 
   }
