@@ -250,7 +250,7 @@
   wsrp4j-shared.jar    WSRP4J shared classes mostly derived from OASIS WSRP WSDL.
                        Comes with WSRP4J.
                        Use the version that comes with WSRP4J.
-                       Version: (from ws-wsrp4j CVS on July 9, 2004)
+                       Version: (from ws-wsrp4j CVS on September 30, 2004)
                        URL: http://ws.apache.org/wsrp4j/
 
   wsrp4j-consumer.jar  WSRP4J consumer classes.
@@ -272,6 +272,14 @@
                            
                           IS: protected Producer getProducer(String producerID) throws WSRPException
                          WAS: private Producer getProducer(String producerID) throws WSRPException
+                         
+                          IS: personName.setGiven(userInfo.get("name.given").toString());
+                         WAS: personName.setPrefix((String)userInfo.get("user.name.prefix"));
+                              personName.setGiven((String)userInfo.get("user.name.given"));
+                              personName.setFamily((String)userInfo.get("user.name.family"));
+                              personName.setMiddle((String)userInfo.get("user.name.middle"));
+                              personName.setSuffix((String)userInfo.get("user.name.suffix"));
+                              personName.setNickname((String)userInfo.get("user.name.nickName"));            
                        
                          Added new method
                              protected ConsumerEnvironment getConsumerEnvironment() 
@@ -286,7 +294,33 @@
 
                           IS: <value>org.jasig.portal.wsrp.consumer.portlet.ConsumerEnvironmentImpl</value>
                          WAS: <value>org.apache.wsrp4j.consumer.portlet.impl.ConsumerEnvironmentImpl</value>
-                                                       
+                                            
+                         Added user attributes section:
+                              <user-attribute>
+                                  <description>User Prefix</description>
+                                  <name>user.name.prefix</name>
+                              </user-attribute>
+                              <user-attribute>
+                                  <description>User Given Name</description>
+                                  <name>user.name.given</name>
+                              </user-attribute>
+                              <user-attribute>
+                                  <description>User Family Name</description>
+                                  <name>user.name.family</name>
+                              </user-attribute>
+                              <user-attribute>
+                                  <description>User Middle Name</description>
+                                  <name>user.name.middle</name>
+                              </user-attribute>
+                              <user-attribute>
+                                  <description>User Suffix</description>
+                                  <name>user.name.suffix</name>
+                              </user-attribute>
+                              <user-attribute>
+                                  <description>User Nickname</description>
+                                  <name>user.name.nickName</name>
+                              </user-attribute>
+        
                        - wsrp4j-logger.properties
                        
                           IS: log4j.appender.A1.File=wsrp4j-consumer.log
