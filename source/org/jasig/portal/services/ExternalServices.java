@@ -36,6 +36,7 @@
 
 package  org.jasig.portal.services;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -111,12 +112,18 @@ public class ExternalServices {
       if ( svcDescriptor != null )
       {
           try {
-      SAXParser parser = svcMgr.createParser();
+              SAXParser parser = svcMgr.createParser();
               parser.parse(svcDescriptor, svcMgr.svcHandler);
           } catch (Exception ex) {
               throw new PortalException ("Failed to start external portal " +
                                          "services defined in services.xml.",
                                          ex);
+          } finally {
+            try{
+               svcDescriptor.close(); //do not need to check for null.
+          } catch(IOException exception) {
+               LogService.log(LogService.ERROR, "ExternalServices:startServices()::could not close InputStream "+ exception);   
+            }
           }
       }
     }
