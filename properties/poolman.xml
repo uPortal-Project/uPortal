@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<poolman>
+
+  <management-mode>local</management-mode>
+
+  <!-- ========================================================== -->
+  <!-- These entries are an example of JDBC Connection pooling.   -->
+  <!-- Many of the parameters are optional. Consult the           -->
+  <!-- UsersGuide.html doument and the poolman.xml.template file  -->
+  <!-- for guidance and element definitions.                      -->
+  <!-- ========================================================== -->
+
+  <datasource>
+
+    <!-- ============================== -->
+    <!-- Physical Connection Attributes -->
+    <!-- ============================== -->
+
+    <!-- Standard JDBC Driver info -->
+
+    <dbname>uportal</dbname>
+    <jndiName>jndi-uportal</jndiName>
+    <driver>oracle.jdbc.driver.OracleDriver</driver>
+    <url>jdbc:oracle:thin:@hostname.something.com:1526:dbname</url>
+
+    <username>youruser</username>
+    <password>yourpasswd</password>
+
+    <minimumSize>5</minimumSize>
+    <maximumSize>40</maximumSize>
+    <connectionTimeout>600</connectionTimeout>
+    <userTimeout>12</userTimeout>
+    <shrinkBy>10</shrinkBy>
+
+    <logFile>/change/to/point/at/your/base/logs/poolman.log</logFile>
+    <debugging>false</debugging>
+
+    <!-- Query Cache Attributes-->
+
+    <cacheEnabled>true</cacheEnabled>
+    <cacheSize>20</cacheSize>
+    <cacheRefreshInterval>120</cacheRefreshInterval>
+
+  </datasource>
+
+  <!-- DISABLED FOR PRODUCTION
+  <admin-agent>
+    <class>com.sun.jdmk.comm.HtmlAdaptorServer</class>
+    <name>Adaptor:name=html</name>
+    <maxClients>10</maxClients>
+    <port>8082</port>
+  </admin-agent>
+  -->
+
+</poolman>
+
+
+
+
