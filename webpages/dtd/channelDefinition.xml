@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="H:\cvs_co\portal\webpages\stylesheets\org\jasig\portal\channels\CPublisher\publish.xsl"?>
+<?xml-stylesheet type="text/xsl" href="H:\cvs_co\portal\webpages\stylesheets\org\jasig\portal\channels\CPublisher\CPublisher.xsl"?>
 <channelDef>
 	<description>
    	This is a channel for rendering local or remote RSS files
@@ -9,9 +9,8 @@
 			<ID>1</ID>
 			<name>Provide RSS URL.</name>
 			<description/>
-			<parameter>
+			<parameter modify="publish-only">
 				<name>prot</name>
-				<modify>publish-only</modify>
 				<label>Protocol</label>
 				<type>
 					<data>string</data>
@@ -25,9 +24,8 @@
 				</type>
 				<defaultValue>http://</defaultValue>
 			</parameter>
-			<parameter>
+			<parameter modify="subscribe">
 				<name>xml</name>
-				<modify>subscribe</modify>
 				<label>RSS</label>
 				<type>
 					<data>string</data>
@@ -47,9 +45,8 @@
 			<ID>2</ID>
 			<name>How many healines do you want displayed?</name>
 			<description>user sets limit on number of displayed headlines</description>
-			<parameter>
+			<parameter modify="subscribe">
 				<name>hlNum</name>
-				<modify>subscribe</modify>
 				<label>Number of headlines:</label>
 				<type>
 					<data>integer</data>
