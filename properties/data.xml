@@ -408,6 +408,24 @@
       </row>
 
       <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_TITLE</name><value>WebMail</value></column>
+        <column><name>CHAN_DESC</name><value>WebMail channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CIMAPMail</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>90000</value></column>
+        <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_DETACHABLE</name><value>N</value></column>
+        <column><name>CHAN_NAME</name><value>WebMail</value></column>
+        <column><name>CHAN_FNAME</name><value>WebMail</value></column>
+      </row>
+      <row>
         <column><name>CHAN_ID</name><value>90</value></column>
         <column><name>CHAN_TITLE</name><value>Subscribe</value></column>
         <column><name>CHAN_DESC</name><value>Subscribe channel</value></column>
@@ -841,6 +859,91 @@
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
+      <!-- WebMail -->
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>name</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>uPortal WEB Mail 2.0 beta</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>host</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>imap host</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>imap.your.domain</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>port</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>imap port</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>143</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>smtphost</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>MTA host</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>mail.your.domain</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>smtpport</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>MTA port</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>25</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>caption</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>client tag</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>WebMail (beta)</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>organization</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>Organization header</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>your organization</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>domain</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>email domain</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>your.domain</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sentName</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>folder for Sent messages</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>Sent</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>trashName</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>Name of Trash folder</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>Wastebasket</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>folderDir</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>user folder where imap folders live</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>mail</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CHAN_PARM_NM</name><value>loginText</value></column>
+        <column><name>CHAN_PARM_DESC</name><value>Login help</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>Mail server account/password</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
       <!-- Subscriber -->
       <row>
         <column><name>CHAN_ID</name><value>90</value></column>
@@ -867,6 +970,8 @@
         <column><name>CHAN_PARM_VAL</name><value>portal/userpreferences/general</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
+
+
     </rows>
   </table>
 
@@ -1037,6 +1142,12 @@
       <row>
         <column><name>ROLE_ID</name><value>0</value></column>
         <column><name>CHAN_ID</name><value>91</value></column>
+        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
+        <column><name>APPROVAL_FLG</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>ROLE_ID</name><value>0</value></column>
+        <column><name>CHAN_ID</name><value>89</value></column>
         <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
         <column><name>APPROVAL_FLG</name><value>Y</value></column>
       </row>
@@ -1569,6 +1680,10 @@
         <column><name>CAT_ID</name><value>2</value></column>
         <column><name>CHAN_ID</name><value>18</value></column>
       </row>
+      <row>
+        <column><name>CAT_ID</name><value>2</value></column>
+        <column><name>CHAN_ID</name><value>89</value></column>
+      </row>
     </rows>
   </table>
 
@@ -1673,7 +1788,7 @@
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
         <column><name>PARAM_VAL</name><value>imm</value></column>
-      </row>      
+      </row>
     </rows>
   </table>
 
@@ -1892,7 +2007,7 @@
         <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/deck-of-cards/sample_icon.gif</value></column>
         <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/tab-column/deck-of-cards/sample_full.gif</value></column>
         <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
-        <column><name>DEVICE_TYPE</name><value>cellphone</value></column>
+        <column><name>DEVICE_TYPE</name><value>mobile phone</value></column>
         <column><name>SERIALIZER_NAME</name><value>WML</value></column>
 <!-- Cell phone doesn't use tab-column structure stylesheet ! -->
 <!--        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column> -->
