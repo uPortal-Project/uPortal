@@ -685,6 +685,7 @@
         <pathelement path="${xalan.jar}"/>
         <pathelement path="${xercesImpl.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
+        <pathelement path="${oro.jar}"/>
         <pathelement path="${log4j.jar}"/>
         <pathelement path="${jdbcDriver.jar}"/>
       </classpath>
