@@ -245,6 +245,12 @@ public class Logger extends GenericPortalBean
     }
   }
 
+  public static void log(int iLogLevel, String sMessage, Throwable ex)
+  {
+    log(iLogLevel, sMessage);
+    log(iLogLevel, ex);
+  }
+
   public static void log(int iLogLevel, String sMessage)
   {
     try
@@ -297,55 +303,14 @@ public class Logger extends GenericPortalBean
 
   public static void log(int iLogLevel, Throwable ex)
   {
-    try
+    if(!bInitialized)
     {
-      if(!bInitialized)
-      {
-        initialize();
-      }
-
-      StringWriter stackTrace = new StringWriter();
-      ex.printStackTrace(new PrintWriter(stackTrace));
-
-      switch(iLogLevel)
-      {
-        case NONE:
-          return ;
-
-        case SEVERE:
-          m_catFramework.fatal(stackTrace.toString());
-          return ;
-
-        case ERROR:
-          m_catFramework.error(stackTrace.toString());
-          return ;
-
-        case WARN:
-          m_catFramework.warn(stackTrace.toString());
-          return ;
-
-        case INFO:
-          m_catFramework.info(stackTrace.toString());
-          return ;
-
-        case DEBUG:
-          m_catFramework.debug(stackTrace.toString());
-          return ;
-
-        default:
-          throw new IllegalArgumentException();
-      }
+      initialize();
     }
-    catch(Exception e)
-    {
-      System.err.println("Problem writing to log.");
-      e.printStackTrace();
-    }
-    catch(Error er)
-    {
-      System.err.println("Problem writing to log.");
-      er.printStackTrace();
-    }
+
+    StringWriter stackTrace = new StringWriter();
+    ex.printStackTrace(new PrintWriter(stackTrace));
+    log(iLogLevel, stackTrace.toString());
   }
 
   /**
