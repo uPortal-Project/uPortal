@@ -59,6 +59,8 @@ import org.jasig.portal.layout.IALFolderDescription;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.IAggregatedUserLayoutManager;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
@@ -832,28 +834,23 @@ public class UserInstance implements HttpSessionBindingListener {
            newNodeDescription = null;
         }
         
-		/*param = req.getParameter("uP_fragment_action");
+		param = req.getParameter("uPcFM_action");
 		if ( param != null ) { 
 		  if ( ulm instanceof TransientUserLayoutManagerWrapper )
 		    ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
 		  if ( ulm instanceof IAggregatedUserLayoutManager ) {		
 			IAggregatedUserLayoutManager alm = (IAggregatedUserLayoutManager) ulm;
-			String fragmentId = req.getParameter("uP_fragment_ID"); 
-			if ( param.equals("new") ) {
-			   String fragmentName = req.getParameter("uP_fragment_name");
-			   String fragmentDesc = req.getParameter("uP_fragment_desc");
-			   String defaultValue = IAggregatedUserLayoutManager.NEW_FRAGMENT;
-		       fragmentId = alm.createFragment(CommonUtils.envl(fragmentName,defaultValue),CommonUtils.envl(fragmentDesc,"The fragment"));
-			} else if ( param.equals("edit") && fragmentId != null ) {
-		         if ( CommonUtils.parseInt(fragmentId) > 0 ) alm.loadFragment(fragmentId); else alm.loadUserLayout();
+			String fragmentId = req.getParameter("uP_fragmentID"); 
+			if ( param.equals("edit") && fragmentId != null ) {
+		         if ( CommonUtils.parseInt(fragmentId) > 0 ) 
+		           alm.loadFragment(fragmentId); 
+		         else 
+		           alm.loadUserLayout();
 		    } else if ( param.equals("save") ) {
-			     alm.saveFragment();
-			} else if ( param.equals("delete") ) {
-			     alm.deleteFragment();
-			}     
-		   themePrefs.putParameterValue("currentFragmentID",CommonUtils.envl(fragmentId,"default_layout")); 
+			       alm.saveFragment();
+			}
 		  }	  
-		}*/
+		}
 
 
       } catch ( Exception e ) {

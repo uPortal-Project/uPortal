@@ -47,6 +47,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.layout.ALFolder;
+import org.jasig.portal.layout.ALNode;
 import org.jasig.portal.layout.ALFragment;
 import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.ILayoutFragment;
@@ -84,8 +85,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 
 	private String analyzeParameters( XSLT xslt ) throws PortalException {
 		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
-		String action = runtimeData.getParameter("uPcFM_action");
-		if (action != null) {
+		String action = CommonUtils.nvl(runtimeData.getParameter("uPcFM_action"));
+		
 				if (action.equals("new")) {
 					String fragmentName = runtimeData.getParameter("fragment_name");
 					String funcName = runtimeData.getParameter("fragment_fname");
@@ -111,14 +112,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					  	alm.saveFragment();
 					  }
 					}     
-				} else if (action.equals("edit") ) {
-					if (CommonUtils.parseInt(fragmentId) > 0) {
-					  alm.loadFragment(fragmentId);
-					  themePrefs.putParameterValue("selectedID",CommonUtils.nvl(getFragmentRootId(fragmentId))); 
-					  themePrefs.putParameterValue("mode","preferences"); 	
-					} else
-					   new PortalException ( "Invalid fragment ID="+fragmentId);
 				} else if (action.equals("save")) {
+					String funcName = runtimeData.getParameter("fragment_fname");
 					String fragmentName = runtimeData.getParameter("fragment_name");
 					String fragmentDesc = runtimeData.getParameter("fragment_desc");
 					String fragmentType = runtimeData.getParameter("fragment_type");
@@ -129,8 +124,11 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					     fragment.setPushedFragment(); 
 					   else
 					     fragment.setPulledFragment();
-					   fragment.setName(CommonUtils.nvl(fragmentName));
+					   fragment.setFunctionalName(CommonUtils.nvl(funcName));
 					   fragment.setDescription(CommonUtils.nvl(fragmentDesc));  
+					   String fragmentRootId = getFragmentRootId(fragmentId);
+					   ALNode fragmentRoot = fragment.getNode(fragmentRootId);
+					   fragmentRoot.getNodeDescription().setName(fragmentName);
 					   // Saving the changes in the database  
 					   alm.saveFragment(fragment);							
 					}     
@@ -140,12 +138,14 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 					  // Updating the fragments map
 					  fragments.remove(fragmentId);  
 					  fragmentId = (fragments != null && fragments.isEmpty())?(String) fragments.keySet().toArray()[0]:"";
-					}
+					} else
+					   new PortalException ( "Invalid fragment ID="+fragmentId);
 				} else if (action.equals("properties")) {
-				  
+					 
 				}
+				
 				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
-		}
+			    xslt.setStylesheetParameter("uPcFM_action",action);	
 		
 		return fragmentId;
 	}
@@ -170,8 +170,7 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		  ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
 	    if (ulm instanceof IAggregatedUserLayoutManager)
 		  alm = (IAggregatedUserLayoutManager) ulm;
-		themePrefs = pcs.getUserPreferencesManager().getUserPreferences().getThemeStylesheetUserPreferences();
-		
+		themePrefs = pcs.getUserPreferencesManager().getUserPreferences().getThemeStylesheetUserPreferences();	
 		// Refresh the fragment list
 		refreshFragments();
 	}
@@ -188,15 +187,15 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 			for ( Iterator ids = fragments.keySet().iterator(); ids.hasNext(); ) {
 				String fragmentId = (String) ids.next();
 				ALFragment fragment = (ALFragment) fragments.get(fragmentId);
-				ALFolder rootFolder =
-					(ALFolder) fragment.getLayoutData().get(
-						fragment.getRootId());
-				String fragmentRootId = rootFolder.getFirstChildNodeId();
+				String fragmentRootId = getFragmentRootId(fragmentId);
 				Element fragmentNode = document.createElement("fragment");
 				category.appendChild(fragmentNode);
 				Element id = document.createElement("ID");
 				id.appendChild(document.createTextNode(fragmentId));
 				fragmentNode.appendChild(id);
+				Element rootId = document.createElement("rootNodeID");
+				rootId.appendChild(document.createTextNode(fragmentRootId));
+				fragmentNode.appendChild(rootId);
 				Element type = document.createElement("type");
 				type.appendChild(
 					document.createTextNode(
@@ -210,16 +209,11 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 				name.appendChild(
 					document.createTextNode(
 						fragmentRootId != null
-							? ((ALFolder) fragment
-								.getLayoutData()
-								.get(fragmentRootId))
-								.getNodeDescription()
-								.getName()
-							: fragment.getFunctionalName()));
+						? ((ALNode) fragment.getNode(fragmentRootId)).getNodeDescription().getName()
+						: fragment.getFunctionalName()));
 				fragmentNode.appendChild(name);
 				Element desc = document.createElement("description");
-				desc.appendChild(
-					document.createTextNode(fragment.getDescription()));
+				desc.appendChild(document.createTextNode(fragment.getDescription()));
 				fragmentNode.appendChild(desc);
 			}
 		}
