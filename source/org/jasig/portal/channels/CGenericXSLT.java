@@ -90,7 +90,7 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   protected String media;
   protected MediaManager mm;
   protected static String fs = File.separator;
-  protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
+  protected static String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "CGenericXSLT" + fs;
   protected static String sMediaProps = GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties";
 
   // Cache transformed content in this smartcache - should be moved out of the channel
