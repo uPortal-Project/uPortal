@@ -1,10 +1,32 @@
+DROP TABLE PORTAL_CATS;
+
+CREATE TABLE PORTAL_CATS(
+	CATID INTEGER IDENTITY,
+	NAME VARCHAR(100) not null
+	);
+
+INSERT INTO PORTAL_CATS (name)
+VALUES ('News') ;
+
+INSERT INTO PORTAL_CATS (name)
+VALUES ('Sports') ;
+
+INSERT INTO PORTAL_CATS (name)
+VALUES ('Weather') ;
+
+INSERT INTO PORTAL_CATS (name)
+VALUES ('Financial') ;
+
+INSERT INTO PORTAL_CATS (name)
+VALUES ('Just4Fun') ;
+
 DROP TABLE PORTAL_CHANNELS;
 
 CREATE TABLE PORTAL_CHANNELS (
-	ID INTEGER IDENTITY,
+	CHAN_ID INTEGER IDENTITY,
 	TITLE VARCHAR(256) null,
+	PUB_EMAIL VARCHAR(100) null,
 	APPROVED INTEGER null,
-	CAT_ID INTEGER null,
 	CHANNEL_XML LONGVARCHAR not null
 	);
 
@@ -67,6 +89,6 @@ VALUES ('Funky Clock', '<channel minimized="false" class="org.jasig.portal.chann
 
 INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('UD Homepage', '<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
-        <parameter value="Yahoo" name="name"/>
+        <parameter value="UDel" name="name"/>
         <parameter value="http://www.udel.edu" name="url"/>
       </channel>');
