@@ -888,7 +888,7 @@ Version $Revision$
     <a href="#">
       <img src="{$mediaPathIcons}/contentlanguages.gif" width="26" height="23" alt="�?ャ�?ル�?�言語を変更" title="�?ャ�?ル�?�言語を変更" border="0"/>
     </a>
-    <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
+    <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this channel?')">
       <img src="{$mediaPathIcons}/contentcan.gif" width="26" height="23" alt="�?ャ�?ルを削除" title="�?ャ�?ルを削除" border="0"/>
     </a>
   </xsl:template>
@@ -1380,7 +1380,7 @@ Version $Revision$
                           <img alt="�?��?�タブ�?�言語を変更" title="�?��?�タブ�?�言語を変更" src="{$mediaPathIcons}/languagesG.gif" width="22" height="18" border="0"/>
                         </a>
                         <xsl:if test="@unremovable='false'">
-                          <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
+                          <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this tab?')">
                             <img alt="タブを削除" title="タブを削除" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
                           </a>
                         </xsl:if>
@@ -2593,7 +2593,7 @@ Version $Revision$
                     </td>
 
                     <td>
-                      <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}">
+                      <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to delete this column?')">
                         <img src="{$mediaPathIcons}/columncan.gif" width="28" height="25" alt="カラムを削除" title="カラムを削除" border="0"/>
                       </a>
                     </td>
