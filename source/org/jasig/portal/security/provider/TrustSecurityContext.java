@@ -80,7 +80,7 @@ class TrustSecurityContext extends ChainingSecurityContext
    */
   public synchronized void authenticate () throws PortalSecurityException {
     this.isauth = true;
-/*    if (this.myPrincipal.UID != null) {
+    if (this.myPrincipal.UID != null) {
       try {
         String first_name, last_name;
         String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
@@ -88,20 +88,20 @@ class TrustSecurityContext extends ChainingSecurityContext
           first_name = acct[1];
           last_name = acct[2];
           this.myPrincipal.FullName = first_name + " " + last_name;
-          Logger.log(Logger.INFO, "User " + this.myPrincipal.UID + " is authenticated");
+          LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
           this.isauth = true;
         }
         else
-          Logger.log(Logger.INFO, "No such user: " + this.myPrincipal.UID);
+          LogService.log(LogService.INFO, "No such user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        Logger.log(Logger.ERROR, ep);
+        LogService.log(LogService.ERROR, ep);
         throw  (ep);
       }
     }
     else
-      Logger.log(Logger.ERROR, "Principal not initialized prior to authenticate");
-    // Ok...we are now ready to authenticate all of our subcontexts. */
+      LogService.log(LogService.ERROR, "Principal not initialized prior to authenticate");
+    // Ok...we are now ready to authenticate all of our subcontexts.
     super.authenticate();
     return;
   }
