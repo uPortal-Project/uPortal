@@ -28,7 +28,7 @@
             </folder>
             <folder ID="t01" priority="1" name="Main">
               <folder ID="col01" priority="0" name="Column 1">
-                <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login"/>
+                <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="false" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login"/>
                 <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
                   <parameter value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
                   <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
@@ -434,35 +434,57 @@
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>netscape</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
         <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
-        <column><name>DESCRIPTION</name><value>a sample profile for netscape browsers</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
+      </row>
+      
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>2</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Internet Explorer Profile</value></column>
+        <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>1</value></column>
-        <column><name>PROFILE_ID</name><value>2</value></column>
-        <column><name>PROFILE_NAME</name><value>explorer</value></column>
-        <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
-        <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+        <column><name>PROFILE_NAME</name><value>Guest Cell Phone Profile</value></column>
+        <column><name>STRUCTURE_SS_NAME</name><value>Nested categories</value></column>
+        <column><name>THEME_SS_NAME</name><value>Deck of cards</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Nokia cell phone browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>netscape</value></column>
+        <column><name>PROFILE_NAME</name><value>My Netscape Profile</value></column>
         <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
       </row>
 
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
-        <column><name>PROFILE_NAME</name><value>explorer</value></column>
+        <column><name>PROFILE_NAME</name><value>My Internet Explorer Profile</value></column>
         <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
       </row>
+
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+        <column><name>PROFILE_NAME</name><value>My Cell Phone Profile</value></column>
+        <column><name>STRUCTURE_SS_NAME</name><value>Nested categories</value></column>
+        <column><name>THEME_SS_NAME</name><value>Deck of cards</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for Nokia cell phone browsers</value></column>
+      </row>
+      
     </rows>
   </table>
 
@@ -566,6 +588,12 @@
         <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns.</value></column>
       </row>
+      <row>
+        <column><name>STYLESHEET_NAME</name><value>Nested categories</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/nested-categories.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/nested-categories.sdf</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
+      </row>      
     </rows>
   </table>
 
@@ -578,6 +606,12 @@
         <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Renders tabs and columns as nested tables</value></column>
       </row>
+      <row>
+        <column><name>STYLESHEET_NAME</name><value>Deck of cards</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/deck-of-cards/deck-of-cards.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/deck-of-cards/deck-of-cards.sdf</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Renders tabs and columns as deck of cards</value></column>
+      </row>      
     </rows>
   </table>
 
@@ -588,6 +622,28 @@
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
         <column><name>STRUCT_SS_NAME</name><value>Tab and Column layout</value></column>
         <column><name>MIME_TYPE</name><value>text/html</value></column>
+      </row>
+      <row>
+        <column><name>THEME_SS_NAME</name><value>Deck of cards</value></column>
+        <column><name>STRUCT_SS_NAME</name><value>Nested categories</value></column>
+        <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <!-- Temporary until portal can deal with unrecognized browsers -->
+  <table>
+    <name>UP_USER_UA_MAP</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_AGENT</name><value>UP.Browser/3.1-SH UP.Link/3.2</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>USER_AGENT</name><value>Nokia-WAP-Toolkit/2.0</value></column>
+        <column><name>PROFILE_ID</name><value>3</value></column>
       </row>
     </rows>
   </table>
