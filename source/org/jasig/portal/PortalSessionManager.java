@@ -83,6 +83,7 @@ public class PortalSessionManager extends HttpServlet {
 
   //public static final String SESSION_TAG_VARIABLE="uP_session_tag";
   public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
+  public static final String IDEMPOTENT_URL_TAG="idempotent";
 
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
@@ -195,7 +196,7 @@ public class PortalSessionManager extends HttpServlet {
             // see if the tag was registered
             boolean request_verified=false;
             if(tag!=null) {
-                request_verified=requestTags.remove(tag);
+                request_verified=(tag.equals(IDEMPOTENT_URL_TAG) || requestTags.remove(tag));
             }
 
             LogService.instance().log(LogService.DEBUG, "PortalSessionManager::doGet() : request verified: "+request_verified);
