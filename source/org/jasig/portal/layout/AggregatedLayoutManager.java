@@ -353,19 +353,21 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        }
       }
 
-        if ( isFolder ) {
-            ++depth;
-            ALFolder folder = (ALFolder) node;
-            String id = getLastSiblingNode(folder.getFirstChildNodeId()).getId();
-            while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
-			  String lastNodeId = getLastSiblingNode(id).getId();
-			  id = getLayoutNode(lastNodeId).getPreviousNodeId();
-			  moveNodeToLostFolder(lastNodeId);
-            }  
-            for ( String nextId = folder.getFirstChildNodeId(); nextId != null; 
-                  nextId = getLayoutNode(nextId).getNextNodeId() )
-              moveWrongNodesToLostFolder(nextId,depth);
-        }
+      if ( isFolder ) {
+          ++depth;
+          ALFolder folder = (ALFolder) node;
+          String firstChildId = folder.getFirstChildNodeId();
+          if ( firstChildId != null ) {
+              String id = getLastSiblingNode(firstChildId).getId();
+              while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
+	          String lastNodeId = getLastSiblingNode(id).getId();
+	          id = getLayoutNode(lastNodeId).getPreviousNodeId();
+                  moveNodeToLostFolder(lastNodeId);
+              }  
+              for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
+                  moveWrongNodesToLostFolder(nextId,depth);
+          }
+      }
 
   }
 
@@ -972,9 +974,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
            Node paramValueNode = attributes.getNamedItem("value");
            String paramValue = (paramValueNode!=null)?paramValueNode.getFirstChild().getNodeValue():null;
            Node overParamNode = attributes.getNamedItem("override");
-           String overParam = (overParamNode!=null)?overParamNode.getFirstChild().getNodeValue():null;
+           String overParam = (overParamNode!=null)?overParamNode.getFirstChild().getNodeValue():"yes";
 
-           if ( paramName != null ) {
+           if ( paramName != null && paramValue != null ) {
             channelDesc.setParameterValue(paramName, paramValue);
             channelDesc.setParameterOverride(paramName, "yes".equalsIgnoreCase(overParam)?true:false);
            }
@@ -1058,8 +1060,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID"));
       layoutData.put(rootId,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
+
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootId, layoutData );
+
       layout.setLayoutData(layoutData);
       updateCacheKey();
     }
