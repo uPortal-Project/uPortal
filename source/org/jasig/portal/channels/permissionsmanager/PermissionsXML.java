@@ -49,13 +49,10 @@ import  org.w3c.dom.Element;
 import  org.w3c.dom.Text;
 import  java.util.*;
 import  java.sql.*;
-import  org.apache.xml.serialize.XMLSerializer;
-import  org.apache.xml.serialize.OutputFormat;
 import  java.io.StringReader;
 import  java.io.StringWriter;
-import  org.apache.xerces.parsers.DOMParser;
-import  org.apache.xerces.parsers.SAXParser;
-import  org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.*;
+import java.lang.NullPointerException;
 
 
 /**
@@ -76,8 +73,15 @@ public class PermissionsXML {
      * @param session
      * @return
      */
-    public static Document getViewDoc (PermissionsSessionData session) {
-        return  getViewDoc(session, false);
+    public static Document getViewDoc (PermissionsSessionData session){
+        Document doc = null;
+        try{
+         doc = getViewDoc(session, false);
+        }
+        catch(ParserConfigurationException pce){
+          throw new NullPointerException("Unable to initialize permissions session XML document");
+        }
+        return  doc;
     }
 
     /**
@@ -86,10 +90,10 @@ public class PermissionsXML {
      * @param sd
      * @return
      */
-    public static Document getViewDoc (PermissionsSessionData session, boolean forceRefresh) {
+    public static Document getViewDoc (PermissionsSessionData session, boolean forceRefresh) throws ParserConfigurationException{
         synchronized (session) {
             if (session.XML == null || forceRefresh) {
-                DocumentImpl rDoc = new DocumentImpl();
+                Document rDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
                 session.XML = rDoc;
                 IPermissible[] owners = new IPermissible[0];
                 IAuthorizationPrincipal[] principals;
@@ -122,17 +126,6 @@ public class PermissionsXML {
                         }
                         root.appendChild(owner);
                     }
-
-                    //LogService.instance().log(LogService.DEBUG,"PermissionsManager:: checking for principals");
-                   // if (session.principals != null) {
-                    //  populatePrincipals(session);
-                    //}
-                    /*
-                     StringWriter sw = new java.io.StringWriter();
-                     XMLSerializer serial = new XMLSerializer(sw, new OutputFormat(rDoc,"UTF-8",true));
-                     serial.serialize(rDoc);
-                     LogService.instance().log(LogService.DEBUG,"Permissions viewXMl ready:\n"+sw.toString());
-                     */
 
                 } catch (Exception e) {
                     LogService.instance().log(LogService.ERROR, e);
@@ -233,7 +226,7 @@ public class PermissionsXML {
      * @param session
      * @param tagname
      */
-    public static void autoSelectSingleChoice (PermissionsSessionData session, String tagname) {
+    public static void autoSelectSingleChoice (PermissionsSessionData session, String tagname){
         boolean allsingle = true;
         Element docRoot = PermissionsXML.getViewDoc(session).getDocumentElement();
         NodeList nl = docRoot.getElementsByTagName("owner");
@@ -260,7 +253,7 @@ public class PermissionsXML {
         }
     }
 
-    public static String[] getSelectedTargets(PermissionsSessionData session, String owner) {
+    public static String[] getSelectedTargets(PermissionsSessionData session, String owner){
       LogService.instance().log(LogService.DEBUG,"PermissionsXML.getSelectedTargets(): processing for "+owner);
       ArrayList targets = new ArrayList();
       Element o = getOwner(session,owner);
@@ -277,7 +270,7 @@ public class PermissionsXML {
       return (String[])targets.toArray(new String[0]);
     }
 
-    public static String[] getSelectedActivities(PermissionsSessionData session, String owner) {
+    public static String[] getSelectedActivities(PermissionsSessionData session, String owner){
       LogService.instance().log(LogService.DEBUG,"PermissionsXML.getSelectedActivities(): processing for "+owner);
       ArrayList activities = new ArrayList();
       Element o = getOwner(session,owner);
