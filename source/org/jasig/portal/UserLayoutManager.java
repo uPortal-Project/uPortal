@@ -98,6 +98,7 @@ public class UserLayoutManager implements IUserLayoutManager {
             UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
             if (upl == null) {
                 upl = ulsdb.getSystemProfile(userAgent);
+                upl.setLayoutId(0); // LayoutId is set by defaultTemplateUser, not the system account
             }
             if(upl==null) {
                 // try guessing the profile through pattern matching
@@ -187,7 +188,7 @@ public class UserLayoutManager implements IUserLayoutManager {
                     synchronized(layout_write_lock) {
                         layout_write_lock.setValue(true);
                         ulsdb.setUserLayout(m_person, complete_up.getProfile(), uLayoutXML, false);
-                    }                
+                    }
                 } else if(saveWhat.equals("all")) {
                     ulsdb.putUserPreferences(m_person, complete_up);
                     synchronized(layout_write_lock) {
