@@ -99,7 +99,18 @@ public class ReferencePermissionManager extends PermissionManager {
       else {
         updateStatement.append("'*',");
       }
-      updateStatement.append("null, null");
+
+      if (newPermission.getEffective() != null) {
+        updateStatement.append(RdbmServices.sqlTimeStamp(newPermission.getEffective()) + ",");
+      } else {
+        updateStatement.append("null,");
+      }
+
+      if (newPermission.getExpires() != null) {
+        updateStatement.append(RdbmServices.sqlTimeStamp(newPermission.getExpires()) + ",");
+      } else {
+        updateStatement.append("null");
+      }
       updateStatement.append(")");
       Statement statement = connection.createStatement();
       try {
