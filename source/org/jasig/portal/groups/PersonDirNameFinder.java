@@ -153,7 +153,7 @@ public class PersonDirNameFinder
             Hashtable userInfo = pd.getUserDirectoryInformation(name);
             String displayName = (String)userInfo.get("displayName");
             if ((displayName != null)&& !(displayName.trim().equals(""))) {
-                name = displayName;
+                name = displayName+" ("+name+")";
             }
         }
         return  name;
