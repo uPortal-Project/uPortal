@@ -57,6 +57,8 @@ import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
 
+import org.jasig.portal.services.LogService;
+
 public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
 {
     protected ThemeStylesheetUserPreferences ssup;
@@ -81,7 +83,7 @@ public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
             for(Enumeration ca=ssup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
                 String attrName=(String) ca.nextElement();
                 attsImpl.addAttribute("",attrName,attrName,"CDATA",ssup.getChannelAttributeValue(channelID,attrName));
-                //		Logger.log(Logger.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
+                //		LogService.instance().log(LogService.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
             }
             super.startElement(uri,localName,qName,attsImpl);
         } else {

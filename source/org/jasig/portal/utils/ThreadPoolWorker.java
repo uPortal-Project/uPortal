@@ -36,7 +36,8 @@
 
 package  org.jasig.portal.utils;
 
-import org.jasig.portal.Logger;
+import org.jasig.portal.services.LogService;
+
 
 /**
  * An internal worker thread for the ThreadPool
@@ -76,7 +77,7 @@ public class ThreadPoolWorker extends Thread {
     public synchronized ThreadPoolReceipt process(Runnable target) throws InterruptedException {
         // construct a receipt
         if(currentReceipt!=null)
-          Logger.log(Logger.ERROR,"ThreadPoolWorker::process() : trying to use a working worker !!! This should never happen.");
+          LogService.instance().log(LogService.ERROR,"ThreadPoolWorker::process() : trying to use a working worker !!! This should never happen.");
         ThreadPoolReceipt returnReceipt=currentReceipt=new ThreadPoolReceipt(this);
 	taskQueue.enqueue(target);
         return returnReceipt;
