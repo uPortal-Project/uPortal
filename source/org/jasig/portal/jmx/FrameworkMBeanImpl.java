@@ -14,7 +14,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.ProblemsTable;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.rdbm.IDatabaseServer;
+import org.jasig.portal.utils.MovingAverage;
+import org.jasig.portal.utils.MovingAverage.Sample;
 
 /**
  *
@@ -30,8 +31,8 @@ import org.jasig.portal.rdbm.IDatabaseServer;
  * @version 1.0
  */
 public class FrameworkMBeanImpl implements FrameworkMBean {
-
-  private static long lastRender;
+  private static MovingAverage renderTimes = new MovingAverage(100);
+  private static Sample lastRender = new Sample();
   private static String database;
 
   public FrameworkMBeanImpl() {
@@ -45,12 +46,27 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     return PortalSessionManager.startedAt;
   }
 
-  public long getLastRender() {
-    return lastRender;
+  public long getRenderAverage() {
+    return lastRender.average;
+  }
+  public long getRenderHighMax() {
+    return lastRender.highMax;
+  }
+  public long getRenderLast() {
+    return lastRender.lastSample;
+  }
+  public long getRenderMin() {
+    return lastRender.min;
+  }
+  public long getRenderMax() {
+    return lastRender.max;
+  }
+  public long getRenderTotalRenders() {
+    return lastRender.totalSamples;
   }
 
   public static void setLastRender(final long time) {
-    lastRender = time;
+    lastRender = renderTimes.add(time);
   }
 
   public String[] getRecentProblems() {

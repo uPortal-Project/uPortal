@@ -14,7 +14,12 @@ import org.jasig.portal.PortalException;
 public interface FrameworkMBean {
   public Date getStartedAt();
 
-  public long getLastRender();
+  public long getRenderAverage();
+  public long getRenderHighMax();
+  public long getRenderLast();
+  public long getRenderMin();
+  public long getRenderMax();
+  public long getRenderTotalRenders();
 
   public String[] getRecentProblems();
 
