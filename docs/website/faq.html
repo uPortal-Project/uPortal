@@ -44,7 +44,8 @@
 <dl> <br/>
 <dt><a href="#1_1">What is this document? </a> 
 <dt><a href="#1_2">Who maintains this FAQ list?</a> 
-<dt><a href="#1_3">Where can I find this FAQ on the World-Wide Web?</a> 
+<dt><a href="#1_3">How can I contribute to this FAQ</a>
+<dt><a href="#1_4">Where can I find this FAQ on the World-Wide Web?</a> 
 </dl>
 <br/>
 <dt><a href="#2_0">General Questions about uPortal</a>
@@ -117,18 +118,18 @@ to the source code repository.
 </ol>
 <h4>General Questions about uPortal<a name="2_0"></a> </h4>
 <ol>
-<li><b>What exactly is uPortal? </b> 
+<li><b>What exactly is uPortal?<a name="2_1"></a></b> 
 <p>Simply put, uPortal is a framework for producing a campus portal. We don't 
 intend it to be an out-of-the-box or "turn key" portal "solution". Instead, uPortal 
 is a set of Java classes and XML/XSL documents that you can use to produce a portal 
 for use on your campus. </p>
-<li><b>Who is developing uPortal? </b> 
+<li><b>Who is developing uPortal?<a name="2_2"></a></b> 
 <p>JA-SIG, the Java in Administration Special Interest Group. Several JA-SIG member 
 institutions are collaborating on the development of uPortal, and they make the 
 code itself available as a reference implementation to any member institution 
 of higher education at no cost. </p>
 <li><b>What level of Java knowledge is required to use JA-SIG's uPortal framework? 
-</b> 
+<a name="2_3"></a></b> 
 <p>This is really three different questions rolled into one, because there are 
 three different "levels" that we can use to discuss what you have to understand 
 in order to "use" the uPortal framework. These levels aren't totally distinct 
@@ -150,13 +151,13 @@ the uPortal developers call channels) that will work within the portal to actual
 deliver the content and services. I'll call that the "content development" level. 
 See the section called "Developing content and applications for use with uPortal 
 ", below. </p>
-<li><b>Will uPortal run on all platforms?</b> 
+<li><b>Will uPortal run on all platforms?<a name="2_4"></a></b> 
 <p> uPortal will run on any platform that has a Java 2 implementation available 
 for it. JA-SIG members are running uPortal for development and deployment purposes 
 on a number of different platforms, including Microsoft Windows, Solaris, Linux 
 on 3 different architectures and MacOS X. </p>
 </li>
-<li> <b>What differentiates uPortal from other portal solutions? </b>
+<li> <b>What differentiates uPortal from other portal solutions?<a name="2_5"></a></b>
 <p>The primary differentiator is that uPortal is focused on the requirements of 
 higher education institutions, whereas other products are mostly focused on the 
 requirements of large corporations, even if the product is marketed to higher 
@@ -178,7 +179,7 @@ per year for a typical campus' license.</p>
 </ol>
 <h4>Deploying, administering and maintaining your portal<a name="3_0"></a></h4>
 <ol>
-<li><b>What kind of Java expertise would I need to have in order to successfully deploy and keep my campus instance of the portal running? </b> 
+<li><b>What kind of Java expertise would I need to have in order to successfully deploy and keep my campus instance of the portal running?<a name="3_1"></a></b> 
 <p>In general, over and above a working knowledge of and substantial experience 
 with your chosen application server, you really have to understand the issues 
 related to server-side application deployment and support in a modern, web-based 
@@ -188,7 +189,7 @@ application, then you know enough to administer a uPortal instance. Your applica
 server vendor will be able to help you on this front with training and documentation 
 if you don't. </p>
 <li><b>What application server should I use for my campus' uPortal instance? 
-</b>
+<a name="3_2"></a></b>
 <p>uPortal will run in conjunction with any application server that complies with 
 the Java Servlet 2.2 and Java Server Pages 1.1 specifications. There are members 
 of JA-SIG currently operating uPortal instances with BEA's WebLogic, IBM's Websphere, 
@@ -199,7 +200,7 @@ project that ships with the existing "monterey" distribution and soon-to-be-rele
 or application server, and if you want commercial quality tech support, formal 
 training or documentation, then a commercial application server is something to 
 consider. </p>
-<li><b>Does uPortal support single-sign on? </b>
+<li><b>Does uPortal support single-sign on?<a name="3_3"></a></b>
 <p>A qualified "Yes". The uPortal framework does provide an authentication system that
 explicitly supports the notion of single sign-on, but as of this writing there 
 are few
@@ -208,7 +209,7 @@ campus that wants to write their own channels that will use the uPortal single
 sign-on
 capabilities are certainly able to do so. <br>
 </p>
-<li><b>Does uPortal support LDAP authentication? </b>
+<li><b>Does uPortal support LDAP authentication?<a name="3_4"></a></b>
 <p> Yes. The problem, however, is that there are dozens of possible ways to do 
 an LDAP
 authentication for uPortal and hence what is available now may not be useful for 
@@ -218,7 +219,7 @@ with<br>
 an LDAP server to authenticate users. There is a reference implementation available<br>
 now for uPortal which handles authentication of users to the portal from information<br>
 stored in an LDAP server.</p>
-<li><b>Why doesn't uPortal use JAAS for authentication and/or authorization?</b>
+<li><b>Why doesn't uPortal use JAAS for authentication and/or authorization?<a name="3_5"></a></b>
 <p> JAAS enables services to authenticate and enforce access controls upon users, 
 but as currently specified by Sun, it makes many assumptions about how the services 
 which use it will operate for effective use in a portal. JAAS allows authentication 
@@ -238,7 +239,7 @@ have the flexibility nor the functionality to be incorporated well into uPortal.
 </ol>
 <h4>Developing your campus portal<a name="4_0"></a> </h4>
 <ol>
-<li><b>What kind of Java expertise is necessary to develop a campus portal using uPortal?</b>
+<li><b>What kind of Java expertise is necessary to develop a campus portal using uPortal?<a name="4_1"></a></b>
 <p>In general, to use the uPortal framework to develop a campus portal (the &quot;instance&quot; 
 of the portal for use with your application server), over and above the level 
 of expertise necessary to administer your application server (see above), you 
@@ -280,7 +281,7 @@ coverage of the SQL standard. I say these are minimums because if you want to
 deliver something over and above the minimum functionality (for example authenticating 
 via an LDAP server) then you'll have to be familiar with other J2EE technologies 
 and/or APIs (for example, JNDI). </p>
-<li><b>You keep writing that uPortal is a framework. Isn't that just an empty yuppie marketing word?</b>
+<li><b>You keep writing that uPortal is a framework. Isn't that just an empty yuppie marketing word?<a name="4_2"></a></b>
 <p>No. I'm using the word 'framework' in it's widely-accepted, Software Engineering 
 sense[Wirfs-Brock1991]. A framework is a reusable design, expressed as a set of 
 classes, that can serve as a solution to a family of related problems and support 
@@ -302,7 +303,7 @@ that are important and specific to your campus.
 <h4>Developing content and applications for use with uPortal<a name="5_0"></a> 
 </h4>
 <ol>
-<li><b>What kind of expertise is necessary to develop content and/or applications for use with uPortal?</b> 
+<li><b>What kind of expertise is necessary to develop content and/or applications for use with uPortal?<a name="5_1"></a></b> 
 <p> It depends upon what kind of content you want to deliver through the portal. 
 For simplest content provision, you only have to know how to produce an html document. 
 One of the defined kinds of channels for use with uPortal is an RSS (RichSite 
@@ -330,7 +331,7 @@ idea of what you're in for when you begin developing channnels, carefully read
 Michael Oltz' tutorial . 
 </p>
 <li><b>My university has a large number of legacy applications that we want 
-to provide access to from the portal. Can I do this?</b>
+to provide access to from the portal. Can I do this?<a name="5_2"></a></b>
 <p> 
 Maybe. It depends upon the application. Did you write the application (and have 
 the source code) or did you purchase a binary package from a vendor? If you have the
