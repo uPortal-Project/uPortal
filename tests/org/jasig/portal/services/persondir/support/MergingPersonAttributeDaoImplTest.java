@@ -201,33 +201,52 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
      */
     private class ThrowingPersonAttributeDao implements IPersonAttributeDao {
 
+    	/**
+    	 * @throws RuntimeException always
+    	 */
         public Map getUserAttributes(String uid) {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
         }
         
+        /**
+         * @throws RuntimeException always
+         */
         public Map getUserAttributes(Map queryMap) {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
         }
 
+        /**
+         * @throws RuntimeException always
+         */
         public Set getPossibleUserAttributeNames() {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
         }
     }
     
     /**
-     * A mock, test implementation of ThrowingPersonAttributeDao which always
-     * throws a RuntimeException.
+     * A mock, test implementation of IPersonAttributeDao which throws a 
+     * RuntimeExcedption for the attribute getting methods and returns null
+     * for the getPossibleUserAttributeNames() method.
      */
     private class NullAttribNamesPersonAttributeDao implements IPersonAttributeDao {
 
+    	/**
+    	 * @throws RuntimeException Always.
+    	 */
         public Map getUserAttributes(String uid) {
             throw new RuntimeException("NullAttribNamesPersonAttributeDao always throws");
         }
         
+        /**
+         * @throws RuntimeException always
+         */
         public Map getUserAttributes(Map queryMap) {
             throw new RuntimeException("NullAttribNamesPersonAttributeDao always throws");
         }
         
+        /**
+         * @return null
+         */
         public Set getPossibleUserAttributeNames() {
             return null;
         }
