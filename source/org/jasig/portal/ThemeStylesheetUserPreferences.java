@@ -71,12 +71,13 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         String value=null;
         List l=(List) channelAttributeValues.get(channelID);
         if(l==null) {
-            Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain an attribute for a non-existing channel \""+channelID+"\".");
-            return null;
+	    //            Logger.log(Logger.DEBUG,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain an attribute for a non-existing channel \""+channelID+"\".");
+	    // return null;
+	    return (String) defaultChannelAttributeValues.get(attributeNumber.intValue());
         } else {
-            try {
+            if(attributeNumber.intValue()<l.size()) {
                 value=(String) l.get(attributeNumber.intValue());
-            } catch (IndexOutOfBoundsException e) {}
+            } 
             if(value==null) {
                 try {
                     value=(String) defaultChannelAttributeValues.get(attributeNumber.intValue());
@@ -89,6 +90,29 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         return value;
     }
 
+    /**
+     * Returns channel attribute value only if it has been assigned specifically. 
+     * @channelID channel id
+     * @attributeName name of the attribute
+     * @return attribute value or null if the value is determined by the attribute default
+     */
+    String getDefinedChannelAttributeValue(String channelID,String attributeName) {
+        Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+        if(attributeNumber==null) {
+            Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::hasDefinedChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
+            return null;
+        }
+        List l=(List) channelAttributeValues.get(channelID);
+        if(l==null) {
+	    return null;
+	} else {
+	    if(attributeNumber.intValue()<l.size()) 
+		return (String) l.get(attributeNumber.intValue());
+	    else 
+		return null;
+	}
+    }
+    
     // this should be modified to throw exceptions
     public void setChannelAttributeValue(String channelID,String attributeName,String attributeValue) {
         Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
@@ -109,6 +133,7 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
             l.add(attributeValue);
         }
     }
+
 
     public void addChannelAttribute(String attributeName, String defaultValue) {
         if(channelAttributeNumbers.get(attributeName)!=null) {
@@ -160,19 +185,6 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
 
     public boolean hasChannel(String channelID) {
         return channelAttributeValues.containsKey(channelID);
-    }
-
-    public void synchronizeWithDescription(ThemeStylesheetDescription sd) {
-        super.synchronizeWithDescription(sd);
-        // check if all of the channel attributes in the preferences occur in the description
-        for(Enumeration e=channelAttributeNumbers.keys(); e.hasMoreElements(); ) {
-            String pname=(String) e.nextElement();
-            if(!sd.containsChannelAttribute(pname)) {
-                this.removeChannelAttribute(pname);
-                Logger.log(Logger.DEBUG,"ThemeStylesheetUserPreferences::synchronizeWithDescription() : removing channel attribute "+pname);
-            }
-        }
-        // need to do the reverse synch. here
     }
 
     private ArrayList createChannel(String channelID) {

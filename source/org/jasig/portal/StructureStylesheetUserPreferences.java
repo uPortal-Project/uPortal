@@ -74,12 +74,13 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         String value=null;
         List l=(List) folderAttributeValues.get(folderID);
         if(l==null) {
-            Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain an attribute for a non-existing folder \""+folderID+"\".");
-            return null;
+	    //            Logger.log(Logger.ERROR,"StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain an attribute for a non-existing folder \""+folderID+"\".");
+	    //            return null;
+	    return (String) defaultFolderAttributeValues.get(attributeNumber.intValue());
         } else {
-            try {
+            if(attributeNumber.intValue()<l.size()) {
                 value=(String) l.get(attributeNumber.intValue());
-            } catch (IndexOutOfBoundsException e) {}
+            } 
             if(value==null) {
                 try {
                     value=(String) defaultFolderAttributeValues.get(attributeNumber.intValue());
@@ -90,6 +91,29 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
             }
         }
         return value;
+    }
+
+    /**
+     * Returns folder attribute value only if it has been assigned specifically. 
+     * @folderID folder id
+     * @attributeName name of the attribute
+     * @return attribute value or null if the value is determined by the attribute default
+     */
+    String getDefinedFolderAttributeValue(String folderID,String attributeName) {
+        Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
+        if(attributeNumber==null) {
+            Logger.log(Logger.ERROR,"ThemeStylesheetUserPreferences::hasDefinedFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
+            return null;
+        }
+        List l=(List) folderAttributeValues.get(folderID);
+        if(l==null) {
+	    return null;
+	} else {
+	    if(attributeNumber.intValue()<l.size()) 
+		return (String) l.get(attributeNumber.intValue());
+	    else 
+		return null;
+	}
     }
 
     // this should be modified to throw exceptions
@@ -174,19 +198,6 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
 
     private Hashtable copyFolderAttributeNames() {
         return folderAttributeNumbers;
-    }
-
-    public void synchronizeWithDescription(StructureStylesheetDescription sd) {
-        super.synchronizeWithDescription(sd);
-        // check if all of the folder attributes in the preferences occur in the description
-        for(Enumeration e=folderAttributeNumbers.keys(); e.hasMoreElements(); ) {
-            String pname=(String) e.nextElement();
-            if(!sd.containsFolderAttribute(pname)) {
-                this.removeFolderAttribute(pname);
-                Logger.log(Logger.DEBUG,"StructureStylesheetUserPreferences::synchronizeWithDescription() : removing folder attribute "+pname);
-            }
-        }
-        // need to do the reverse synch. here
     }
 
 }
