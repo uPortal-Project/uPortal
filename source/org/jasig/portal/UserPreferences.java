@@ -22,6 +22,7 @@ public class UserPreferences {
 	fsup=new StructureStylesheetUserPreferences(up.getStructureStylesheetUserPreferences());
  	ssup=new ThemeStylesheetUserPreferences(up.getThemeStylesheetUserPreferences());
  	cssup=new CoreCSSStylesheetUserPreferences(up.getCoreCSSStylesheetUserPreferences());
+	media=up.getMedia();
     }
 
     
