@@ -115,6 +115,8 @@ public IEntity newInstance(String key) throws GroupsException
  */
 public IEntity newInstance(String key, Class type) throws GroupsException
 {
+    if ( EntityTypes.getEntityTypeID(type) == null )
+        { throw new GroupsException("Invalid group type: " + type); }
     return new EntityImpl(key, type);
 }
 /**
