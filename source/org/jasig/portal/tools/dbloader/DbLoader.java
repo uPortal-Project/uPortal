@@ -718,7 +718,7 @@ public class DbLoader
               // ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
               Perl5Util perl5Util = new Perl5Util();
               ret = perl5Util.substitute("s/\\.xml/_" + admin_locale + ".xml" + "/g", ret);
-              System.out.println("locale-aware datafile=" + ret);
+              System.out.println("Getting locale-aware data from: " + ret);
           }
           return ret;
       }
