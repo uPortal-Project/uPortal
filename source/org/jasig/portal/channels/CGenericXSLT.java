@@ -68,7 +68,6 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
 {
   protected String sXML;
   protected String sSSL;
-  protected String sChannelTitle;
   protected StylesheetSet stylesheetSet;
   protected ChannelRuntimeData runtimeData;
 
@@ -85,7 +84,6 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   {
     try
     {
-      this.sChannelTitle = sd.getParameter ("name");
       this.sXML = UtilitiesBean.fixURI (sd.getParameter ("xml"));
       this.sSSL = UtilitiesBean.fixURI (sd.getParameter ("ssl"));
       
@@ -118,31 +116,43 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   public ChannelSubscriptionProperties getSubscriptionProperties ()
   {
     ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    csb.setName (sChannelTitle);
     csb.setDefaultDetachWidth ("550");
     csb.setDefaultDetachHeight ("450");
     return csb;
   }
-  
-  public void renderXML (DocumentHandler out)
-  {
-    try
-    {
-      if (stylesheetSet != null)
-      {
-        XSLTInputSource stylesheet = stylesheetSet.getStylesheet (runtimeData.getHttpRequest ());
-        
-        if (stylesheet != null)
-        {
-          XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
-          processor.process (new XSLTInputSource (sXML), stylesheet, new XSLTResultTarget (out));
-        }
-      }
-    }
+    
+ public void renderXML (DocumentHandler out) throws PortalException     {
+   if (stylesheetSet != null) {
+       XSLTInputSource stylesheet = stylesheetSet.getStylesheet (runtimeData.getHttpRequest ());
+       
+       if (stylesheet != null) {
+	   try {
+	       XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
+	       
+	       processor.setStylesheetParam ("baseActionURL",processor.createXString (runtimeData.getBaseActionURL ()));
+	       for(Enumeration pen=runtimeData.keys(); pen.hasMoreElements() ;) {
+		   String key=(String) pen.nextElement();
+		   processor.setStylesheetParam (key,processor.createXString ((String)runtimeData.get(key)));
+	       }
+	       try {
+		   processor.process (new XSLTInputSource (sXML), stylesheet, new XSLTResultTarget (out));
+	       } catch (org.xml.sax.SAXException se) {
+		   throw new GeneralRenderingException("XSLT processing error");
+	       }
+	   } catch (org.xml.sax.SAXException se) {
+	       throw new GeneralRenderingException("unable to instantiate an XSLT processor");
+	   }
+
+       } else throw new GeneralRenderingException("unable to find a stylesheet for this platform");
+   }
+   
+
+
+      /*    }
     catch (Exception e)
     {
       Logger.log (Logger.ERROR, "Problem transforming " + sXML);
       Logger.log (Logger.ERROR, e);
-    }
-  }
+      }*/
+ }
 }
