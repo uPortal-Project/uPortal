@@ -39,7 +39,7 @@ package org.jasig.portal.layout;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Enumeration;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
@@ -158,7 +158,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     stylesheetParams.put("targetId",markingNode);
                 }
                 XSLT xslt=new XSLT(this);
-                xslt.setXML(n); xslt.setTarget(ch); 
+                xslt.setXML(n); xslt.setTarget(ch);
                 xslt.setStylesheetParameters(stylesheetParams);
                 xslt.setXSL(MARKING_XSLT_URI);
                 xslt.transform();
@@ -315,7 +315,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         markingMode=null;
         markingNode=null;
     }
-    
+
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException  {
 
         IUserLayoutNodeDescription parent=this.getNode(parentId);
@@ -636,7 +636,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         }
     }
 
-    public List getChildIds(String nodeId) throws PortalException {
+    public Enumeration getChildIds(String nodeId) throws PortalException {
         Vector v=new Vector();
         IUserLayoutNodeDescription node=getNode(nodeId);
         if(node instanceof IUserLayoutFolderDescription) {
@@ -651,7 +651,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 }
             }
         }
-        return v;
+        return v.elements();
     }
 
     public String getCacheKey() {
@@ -688,7 +688,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
      * @param fname  the functional name to lookup.
      * @return a <code>String</code> subscription id.
      */
-    public String getSubscribeId(String fname){
+    public String getSubscribeId(String fname) throws PortalException {
         try {
             Element fnameNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//channel[@fname=\'"+fname+"\']");
             if(fnameNode!=null) {

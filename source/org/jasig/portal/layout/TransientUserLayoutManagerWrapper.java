@@ -37,7 +37,7 @@ package org.jasig.portal.layout;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Enumeration;
 import java.util.Map;
 
 import javax.xml.transform.Transformer;
@@ -228,7 +228,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         String nodeId=node.getId();
         if(nodeId!=null && (!mSubIdMap.containsKey(nodeId)) && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
             return man.canUpdateNode(node);
-        } else { 
+        } else {
             return false;
         }
     }
@@ -245,7 +245,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getParentId(nodeId);
     }
 
-    public List getChildIds(String nodeId) throws PortalException {
+    public Enumeration getChildIds(String nodeId) throws PortalException {
         return man.getChildIds(nodeId);
     }
 
@@ -338,8 +338,8 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      * @param fname  the functional name to lookup
      * @return the fname's subscribe id.
      **/
-    public String getSubscribeId(String fname)
-    {
+    public String getSubscribeId(String fname) throws PortalException {
+
         // see if a given subscribe id is already in the map
         String subId=(String)mFnameMap.get(fname);
         if(subId==null) {
@@ -347,7 +347,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             subId = man.getSubscribeId(fname);
         }
 
-        // obtain a description of the transient channel and 
+        // obtain a description of the transient channel and
         // assign a new transient channel id
         if ( subId == null ) {
             try {
@@ -522,7 +522,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                         subscribeId = getFocusedId();
                         // append channel element iff subscribeId describes
                         // a transient channel, and not a regular layout channel
-                        
+
                         if ( null != subscribeId && !subscribeId.equals("") && mSubIdMap.containsKey(subscribeId))
                         {
                             ChannelDefinition chanDef = getChannelDefinition(subscribeId);

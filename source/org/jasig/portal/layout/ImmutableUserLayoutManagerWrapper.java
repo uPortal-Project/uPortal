@@ -35,7 +35,7 @@
 
 package org.jasig.portal.layout;
 
-import java.util.List;
+import java.util.Enumeration;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
@@ -127,7 +127,7 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getParentId(nodeId);
     }
 
-    public List getChildIds(String nodeId) throws PortalException {
+    public Enumeration getChildIds(String nodeId) throws PortalException {
         return man.getChildIds(nodeId);
     }
 
@@ -171,7 +171,7 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
      * @param fname  the functional name to lookup.
      * @return a <code>String</code> subscription id.
      */
-    public String getSubscribeId(String fname){
+    public String getSubscribeId(String fname) throws PortalException {
         return man.getSubscribeId(fname);
     }
 

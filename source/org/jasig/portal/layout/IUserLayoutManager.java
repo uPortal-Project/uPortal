@@ -37,7 +37,7 @@
 
 package org.jasig.portal.layout;
 
-import java.util.List;
+import java.util.Enumeration;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
@@ -220,7 +220,7 @@ public interface IUserLayoutManager {
      * @return a <code>List</code> of <code>String</code> child node Ids.
      * @exception PortalException if an error occurs
      */
-    public List getChildIds(String nodeId) throws PortalException;
+    public Enumeration getChildIds(String nodeId) throws PortalException;
 
     /**
      * Determine an Id of a next sibling node.
@@ -284,7 +284,7 @@ public interface IUserLayoutManager {
      * @param fname  the functional name to lookup
      * @return a <code>String</code> subscription id
      */
-    public String getSubscribeId(String fname);
+    public String getSubscribeId(String fname) throws PortalException;
 
     /**
      * Returns an id of the root folder.
