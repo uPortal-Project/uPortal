@@ -74,6 +74,9 @@
   build.home           The directory into which the "prepare" and
                        "compile" targets will generate their output.
                        Defaults to "build".
+                       
+  server.home          The root directory of the application server
+                       or servlet container such as Tomcat.
 
   deploy.home          The name of the directory into which the
                        deployment hierarchy will be created, and into
@@ -89,6 +92,7 @@
   <property name="app.name"      value="(set this in build.properties!)"/>
   <property name="app.version"   value="(set this in build.properties!)"/>
   <property name="build.home"    value="build"/>
+  <property name="server.home"   value="(set this in build.properties!)"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
 
@@ -231,11 +235,17 @@
                        for Axis. Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://jakarta.apache.org/commons/logging.html
-
-  servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
-                       by your servlet container.
-                       Version: 2.2, 2.3, or 2.4
-                       URL: http://jakarta.apache.org/tomcat/
+                       
+  portlet-api.jar      Portlet API based on JSR-168.
+                       Version: 1.0
+                       URL: http://www.jcp.org/en/jsr/detail?id=168
+  
+  pluto.jar            Reference Implementation of the Java Portlet Specfication.
+                       This Portlet container provides a runtime environment for 
+                       portlets implemented according to the Portlet API.
+                       The project is still in the Apache Incubator.
+                       Version: (from jakarta CVS on January 29, 2004)
+                       URL: http://jakarta.apache.org/pluto/
 
   jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of
                        javax.sql.* package. This is only needed for JDK's less than 1.4.
@@ -254,6 +264,11 @@
                        to implement unit tests in Java.
                        Version: 3.8.1
                        URL: http://www.junit.org/
+                       
+  servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
+                       by your servlet container.
+                       Version: 2.2, 2.3, or 2.4
+                       URL: http://jakarta.apache.org/tomcat/
 
 -->
 
@@ -273,10 +288,12 @@
   <property name="wsdl4j.jar" value="(set this in build.properties!)"/>
   <property name="commons-discovery.jar" value="(set this in build.properties!)"/>
   <property name="commons-logging.jar" value="(set this in build.properties!)"/>
-  <property name="servlet.jar" value="(set this in build.properties!)"/>
+  <property name="portlet-api.jar" value="(set this in build.properties!)"/>
+  <property name="pluto.jar" value="(set this in build.properties!)"/>
   <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
   <property name="junit.jar" value="(set this in build.properties!)"/>
+  <property name="servlet.jar" value="(set this in build.properties!)"/>
 
 
 
@@ -312,9 +329,11 @@
     <pathelement location="${wsdl4j.jar}"/>
     <pathelement location="${commons-discovery.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
-    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${portlet-api.jar}"/>
+    <pathelement location="${pluto.jar}"/>
     <pathelement location="${jdbc2_0-stdext.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
+    <pathelement location="${servlet.jar}"/>
 
   </path>
 
@@ -453,6 +472,8 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${wsdl4j.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-discovery.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
+    <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
+    <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
 
