@@ -99,9 +99,9 @@ public class DbTest {
     int getMaxUserNameLength = dbMetaData.getMaxUserNameLength();
  
     String getSearchStringEscape = dbMetaData.getSearchStringEscape();
-    String getStringFunctions = dbMetaData.getStringFunctions();
-    String getSystemFunctions = dbMetaData.getSystemFunctions();
-    String getTimeDateFunctions = dbMetaData.getTimeDateFunctions();
+    //String getStringFunctions = dbMetaData.getStringFunctions();
+    //String getSystemFunctions = dbMetaData.getSystemFunctions();
+    //String getTimeDateFunctions = dbMetaData.getTimeDateFunctions();
 
     ResultSet getTableTypes = null;
     ResultSet getTypeInfo = null;
@@ -171,7 +171,6 @@ public class DbTest {
     Statement stmt = null;
     String tabletypes = "";
     String typeinfo = "";
-    int lastcomma = 0;
     try {
        stmt = conn.createStatement();
        getTableTypes = dbMetaData.getTableTypes();

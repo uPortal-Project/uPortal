@@ -58,7 +58,6 @@ public class URLUtil
         String targetNodeId, boolean asRoot, String[] ignoreParams,
         String charset)
     throws PortalException {
-        String httpMethod     = req.getMethod();
         String extras = new UPFileSpec(req).getUPFileExtras();
         UPFileSpec uPFileSpec = buildUPFileSpec(targetNodeId, extras, asRoot); 
 
@@ -88,10 +87,8 @@ public class URLUtil
      */
     private static String buildRequestParams (HttpServletRequest req,
         String[] ignoreParams) {
-        String   queryString     = "";
         String   parameterName   = null;
         String[] parameterValues = null;
-        String   parameterValue  = null;
     
         StringBuffer sb = new StringBuffer(REDIRECT_URL_LIMIT);
         
@@ -213,7 +210,6 @@ public class URLUtil
 
     private static void buildHeader(HttpServletRequest req,
         HttpURLConnection uconn) {
-        StringBuffer header = new StringBuffer(512);
         String name;
         String value;
         String currentValue;
@@ -288,8 +284,6 @@ public class URLUtil
             
             // now let's get the results
             conn.connect(); // throws IOException
-            int responseCode = conn.getResponseCode();  // 200, 404, etc
-            String responseMsg = conn.getResponseMessage(); // OK, Forbidden,etc
             br = new BufferedReader(
                 new InputStreamReader(conn.getInputStream(), charset));
             StringBuffer results = new StringBuffer(512);

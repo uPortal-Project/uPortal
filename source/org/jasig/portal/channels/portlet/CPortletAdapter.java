@@ -141,8 +141,6 @@ public class CPortletAdapter
     }
     
     protected void initPortletContainer(String uid) throws PortalException {
-        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        PortalControlStructures pcs = channelState.getPortalControlStructures();
 
         try {
             PortletContainerEnvironmentImpl environment = new PortletContainerEnvironmentImpl();        
@@ -656,7 +654,6 @@ public class CPortletAdapter
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelStaticData staticData = channelState.getStaticData();
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
-        PortalControlStructures pcs = channelState.getPortalControlStructures();
         ChannelData cd = channelState.getChannelData();
         
         PortletWindow pw = cd.getPortletWindow();

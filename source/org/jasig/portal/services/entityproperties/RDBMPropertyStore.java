@@ -85,8 +85,7 @@ public class RDBMPropertyStore
          ps.setString(3, name);
          ps.setString(4, value);
          ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-         int i = ps.executeUpdate();
-         //System.out.println(i+" "+ps.toString());
+         ps.executeUpdate();
          ps.close();
          clearCache(entityID);
       } catch (Exception e) {
@@ -107,8 +106,7 @@ public class RDBMPropertyStore
          ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
          ps.setString(2, entityID.getKey());
          ps.setString(3, name);
-         int i = ps.executeUpdate();
-         //System.out.println(i+" "+ps.toString());
+         ps.executeUpdate();
          ps.close();
          clearCache(entityID);
       } catch (Exception e) {
