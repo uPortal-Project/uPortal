@@ -526,7 +526,10 @@
 						</xsl:choose>
 					</td>
 					<td width="100%" class="uportal-channel-table-row-even">
-					  <xsl:choose>
+						<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg={@id}"> <span class="uportal-channel-table-row-even"><strong>
+							  <xsl:value-of select="RDF/Description/title" /></strong>
+							</span> </a>
+					  <!--<xsl:choose>
 						<xsl:when test="not($grpServantMode='true')">
 						  <a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg={@id}"> <span class="uportal-channel-table-row-even"><strong>
 							  <xsl:value-of select="RDF/Description/title" /></strong>
@@ -535,7 +538,7 @@
 						<xsl:otherwise>
 						  <xsl:value-of select="RDF/Description/title" />
 						</xsl:otherwise>
-					  </xsl:choose>
+					  </xsl:choose>-->
 					</td>
 					<td align="right" valign="top" class="uportal-channel-table-row-even" nowrap="nowrap">
 					  <xsl:if test="$mode='edit' and ($ignorePermissions or key('can',concat('ADD/REMOVE','|',$grpKey)) or ($grpServantMode='true'))">
@@ -713,11 +716,6 @@
   	</tr>
   </xsl:template>
 
-  <xsl:template name="AddAndCreateRows">
-    <xsl:param name="grpKey">null </xsl:param>
-    
-    
-  </xsl:template>
   
   <xsl:template name="tree">
         <form action="{$baseActionURL}" method="POST">
