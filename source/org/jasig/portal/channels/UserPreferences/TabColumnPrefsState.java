@@ -50,6 +50,7 @@ import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.RDBMUserPreferencesStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.xml.sax.DocumentHandler;
 import java.util.Hashtable;
@@ -77,6 +78,7 @@ class TabColumnPrefsState extends BaseState
   private static final String errorMessageMoveTab = "Problem trying to move the active tab";
   private static final String errorMessageAddTab = "Problem trying to add a new tab";
   private static final String errorMessageDeleteTab = "Problem trying to delete tab";
+  private static final String errorMessageMoveColumn = "Problem trying to move column";
   private static final String errorMessageDeleteColumn = "Problem trying to delete column";
 
   public TabColumnPrefsState(CUserPreferences context)
@@ -212,11 +214,91 @@ class TabColumnPrefsState extends BaseState
     saveLayout();
   }
 
-  private void deleteElement(String elementId) throws Exception
+  private void moveColumn(String sourceId, String method, String destinationId) throws Exception
   {
     Element layout = userLayout.getDocumentElement();
+    Document doc = layout.getOwnerDocument();
+
+    Element source = userLayout.getElementById(sourceId);
+    Element destination = userLayout.getElementById(destinationId);
+    Element sourceColumn = source;
+    Element destinationColumn = destination;
+
+    // Check if source is a tab (its parent is the layout element)
+    boolean sourceIsATab = source.getParentNode().getNodeName().equals("layout");
+
+    // If source is a tab, create a column, move the tab's children channels to this column,
+    // and use this new column as the source
+    if (sourceIsATab)
+    {
+      sourceColumn = doc.createElement("folder");
+      sourceColumn.setAttribute("name", "");
+      sourceColumn.setAttribute("ID", String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID())));
+      sourceColumn.setAttribute("type", "regular");
+      sourceColumn.setAttribute("hidden", "false");
+      sourceColumn.setAttribute("unremovable", "false");
+      sourceColumn.setAttribute("immutable", "false");
+
+      NodeList channels = source.getElementsByTagName("channel");
+      int numChannels = channels.getLength();
+      for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
+      {
+        Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
+        boolean moveSuccessful = context.getUserLayoutManager().moveNode(channel, sourceColumn, null);
+        // Need to deal with case when move isn't successful!!!
+      }
+
+      source.appendChild(sourceColumn);
+    }
+
+    // Check if destination is a tab (its parent is the layout element)
+    boolean destinationIsATab = destination.getParentNode().getNodeName().equals("layout");
+
+    // If destination is a tab, create a column, move the tab's children channels to this column,
+    // and use this new column as the destination
+    if (destinationIsATab)
+    {
+      destinationColumn = doc.createElement("folder");
+      destinationColumn.setAttribute("name", "");
+      destinationColumn.setAttribute("ID", String.valueOf(GenericPortalBean.getUserLayoutStore().getNextStructFolderId(staticData.getPerson().getID())));
+      destinationColumn.setAttribute("type", "regular");
+      destinationColumn.setAttribute("hidden", "false");
+      destinationColumn.setAttribute("unremovable", "false");
+      destinationColumn.setAttribute("immutable", "false");
+
+      NodeList channels = destination.getElementsByTagName("channel");
+      int numChannels = channels.getLength();
+      for (int nodeIndex = 0; nodeIndex < numChannels; nodeIndex++)
+      {
+        Node channel = channels.item(0); // The index is 0 because after each move, the channel positions move up a notch
+        boolean moveSuccessful = context.getUserLayoutManager().moveNode(channel, destinationColumn, null);
+        // Need to deal with case when move isn't successful!!!
+      }
+
+      destination.appendChild(destinationColumn);
+    }
+
+    // Move the source column before the destination column or at the end
+    Node targetTab = destinationColumn.getParentNode();
+    Node siblingColumn = method.equals("insertBefore") ? destinationColumn : null;
+    context.getUserLayoutManager().moveNode(sourceColumn, targetTab, siblingColumn);
+
+    // Delete the source column from its tab
+    //sourceColumn.getParentNode().removeChild(sourceColumn);
+
+    // And insert before the destination column or at the end
+    //if (method.equals("insertBefore"))
+    //  destinationColumn.getParentNode().insertBefore(sourceColumn, destinationColumn);
+    //else // method equals "appendAfter"
+    //  destinationColumn.getParentNode().appendChild(sourceColumn);
+
+    saveLayout();
+  }
+
+  private void deleteElement(String elementId) throws Exception
+  {
     Element element = userLayout.getElementById(elementId);
-    layout.removeChild(element);
+    element.getParentNode().removeChild(element);
     saveLayout();
   }
 
@@ -237,7 +319,6 @@ class TabColumnPrefsState extends BaseState
 
     private String action = "none";
     private String activeTab = "none";
-
     private String elementID = "none";
 
     public DefaultState(TabColumnPrefsState context)
@@ -363,6 +444,19 @@ class TabColumnPrefsState extends BaseState
         // Move column here
         else if (action.equals("moveColumnHere"))
         {
+          String method = runtimeData.getParameter("method");
+          String destinationId = runtimeData.getParameter("elementID");
+
+          try
+          {
+            moveColumn(elementID, method, destinationId);
+          }
+          catch (Exception e)
+          {
+            Logger.log(Logger.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageMoveColumn;
+          }
         }
         // Delete column
         else if (action.equals("deleteColumn"))
