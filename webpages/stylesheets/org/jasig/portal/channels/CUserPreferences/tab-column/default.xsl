@@ -640,8 +640,8 @@ $Revision$
                 </xsl:choose>
               </td>
               <td colspan="5">
-                <a href="#mod01">
-                  <img src="{$mediaPath}/channel/chan10.gif" width="116" height="26" border="0" alt="select"/>
+                <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}">
+                  <img src="{$mediaPath}/channel/chan10.gif" width="116" height="26" border="0" alt="Click to select this channel"/>
                 </a>
               </td>
               <td>
@@ -671,7 +671,7 @@ $Revision$
                 <img alt="" src="{$mediaPath}/channel/chan12.gif" width="24" height="36"/>
               </td>
               <td colspan="5">
-                <a href="#mod02">
+                <a href="{$baseActionURL}?action=selectChannel&amp;elementID={@ID}">
                   <img src="{$mediaPath}/channel/chan13.gif" width="116" height="36" border="0" alt="Click to select this channel"/>
                 </a>
               </td>
@@ -1404,4 +1404,5 @@ $Revision$
       </tr>
     </table>
   </xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+</xsl:stylesheet>
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
