@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">channelDef</xsl:param>
+  <xsl:param name="action">selectRoles</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -1879,6 +1879,33 @@
                       </td>
                     </tr>
                   </xsl:for-each>
+
+<xsl:if test="not(//selectedCategory)">
+<tr class="uportal-channel-text" valign="top">
+                            <td colspan="2">
+                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                            </td>
+                            <td colspan="3">
+                              No categories have been selected
+                            </td>
+                          </tr>
+<tr class="uportal-channel-text" valign="top">
+
+                      <td colspan="5" align="center">
+
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                          <tr>
+
+                            <td>
+                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    </xsl:if>
+
                 </table>
               </td>
             </tr>
@@ -1920,7 +1947,7 @@
       <tr class="uportal-channel-text">
 
         <td>
-          <strong>Roles:</strong> Select roles which are allowed access to this channel</td>
+          <strong>Roles:</strong> Select roles which are allowed access to this channel. <em>**If no roles are checked all roles will have access to this channel.</em></td>
       </tr>
 
 
@@ -2352,7 +2379,7 @@ Detachable<br/>
                               <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>::<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
 
                             <xsl:otherwise>
-                              <strong><xsl:value-of select="@name"/></strong>
+                              <xsl:value-of select="@name"/>
                             </xsl:otherwise>
                           </xsl:choose>
                         </xsl:for-each><br/>
@@ -2405,8 +2432,10 @@ Detachable<br/>
 
 
         <td><a href="{$baseActionURL}?uPCM_action=selectRoles&amp;uPCM_capture=reviewChannel">
+        <xsl:choose><xsl:when test="//selectedRole">
         <xsl:for-each select="/manageChannels/selectRoles/params/step/userSettings/selectedRoles/selectedRole">
-        <xsl:value-of select="."/><br/></xsl:for-each>
+        <img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/><xsl:value-of select="."/><br/></xsl:for-each></xsl:when>
+        <xsl:otherwise><img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>All roles have access to this channel</xsl:otherwise></xsl:choose>
         </a></td>
 
       </tr>
