@@ -423,14 +423,20 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
 
   /**
    * Get a channel from the cache (it better be there)
+   * Only return channel if it is approved
    */
   public Element getChannelXML(int chanId, Document doc, String idTag) {
+    Element channelXML = null;
     ChannelDefinition channel = getChannel(chanId);
     if (channel != null) {
-      return channel.getDocument(doc, idTag);
-    } else {
-      return null;
+      Date approvalDate = channel.getApprovalDate();
+      Date rightNow = new Date();
+      boolean channelApproved = approvalDate != null && !approvalDate.after(rightNow);
+      if (channelApproved) {
+        channelXML = channel.getDocument(doc, idTag);
+      }
     }
+    return channelXML;
   }
 
   /**
