@@ -155,7 +155,7 @@ public class LayoutBean extends GenericPortalBean
       con = rdbmService.getConnection ();
       Statement stmt = con.createStatement();
             
-      String sQuery = "SELECT LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
+      String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
       Logger.log (Logger.DEBUG, sQuery);
         
       ResultSet rs = stmt.executeQuery (sQuery);
@@ -209,7 +209,7 @@ public class LayoutBean extends GenericPortalBean
       int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
       sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
           
-      String sUpdate = "UPDATE USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
+      String sUpdate = "UPDATE PORTAL_USERS SET LAYOUT_XML='" + sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
       int iUpdated = stmt.executeUpdate (sUpdate);
       Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
       stmt.close ();
@@ -242,7 +242,7 @@ public class LayoutBean extends GenericPortalBean
       con = rdbmService.getConnection ();
       Statement stmt = con.createStatement();
           
-      String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM USERS WHERE USER_NAME='" + sUserName + "'";
+      String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
       Logger.log (Logger.DEBUG, sQuery);
       
       ResultSet rs = stmt.executeQuery (sQuery);
@@ -1410,5 +1410,6 @@ public class LayoutBean extends GenericPortalBean
       Logger.log (Logger.ERROR, e);
     }
   }
+}
 
 

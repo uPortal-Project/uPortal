@@ -29,7 +29,7 @@ public class AuthorizationBean extends GenericPortalBean
       con = rdbmService.getConnection ();
       Statement stmt = con.createStatement();
       
-      String sQuery = "SELECT PASSWORD FROM USERS WHERE USER_NAME='" + sUserName + "'";
+      String sQuery = "SELECT PASSWORD FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
       ResultSet rs = stmt.executeQuery (sQuery);
       
       if (rs.next ())
@@ -52,7 +52,7 @@ public class AuthorizationBean extends GenericPortalBean
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      Logger.log (Logger.ERROR, e);
     }
     finally
     {
