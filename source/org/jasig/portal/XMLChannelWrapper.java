@@ -134,23 +134,33 @@ public class XMLChannelWrapper implements IChannel
   public void render(HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
     ChannelRuntimeData rd = new ChannelRuntimeData();
+    HttpSession session   = req.getSession();
+
+    // Add the request object to the runtime data
     rd.setHttpRequest(req);
 
-    // Since only the render method will be called we need to check for
-    //  method=(edit, help, ...) in the parameter string
-    //processMethod(req, res, out);
+    // Create the baseAction URL
+    String baseActionURL = new String(getJSP(req) + "&" + "channelTarget=" + chanID + "&");
 
-    // Determine BaseActionURL
-    // Here it is of the form "file.jsp?channelTarget=channelID&..."
-    // so we need to determine what jsp file is being used
-    // the same jsp is used for forwarding when LayoutEvents occurs
-    rd.setBaseActionURL(getJSP(req) + "&" + "channelTarget=" + chanID + "&");
+    // method=render must appear in the URL for this to be 1.0 compatable
+    if(baseActionURL.indexOf("&method=") == -1)
+    {
+      baseActionURL += "method=render&";
+    }
 
-    // Put the person object into the runtime data for the channel to use
-    HttpSession session = req.getSession();
+    // channelID=(channelID) must be in the URL for this to be 1.0 compatable
+    if(baseActionURL.indexOf("&channelID=&") == -1)
+    {
+      baseActionURL += "channelID=" + chanID + "&";
+    }
+
+    // Add the baseActionURL to the runtime data
+    rd.setBaseActionURL(baseActionURL);
+
+    // Add the Person object to the runtime data
     rd.setPerson((IPerson)session.getAttribute("Person"));
 
-    // get the action parameters passed to the channel
+    // Get the action parameters passed to the channel
     String channelTarget = null;
 
     String parameterName = null;
@@ -174,45 +184,30 @@ public class XMLChannelWrapper implements IChannel
       }
     }
 
+    // Send the runtime data to the channel
     ch.setRuntimeData(rd);
 
     HTMLSerializer htmlSerializer= new HTMLSerializer(out,new OutputFormat("HTML","UTF-8",true));
+
+    // Render the channel into the HTML stream
     ch.renderXML(htmlSerializer);
   }
 
-  /*
-  private void processMethod(HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {
-    String method = null;
-
-    if((method = req.getParameter("method")) != null)
-    {
-      if(method.equals("edit"))
-      {
-        edit(req, res, out);
-        return;
-      }
-      else
-      if(method.equals("help"))
-      {
-        help(req, res, out);
-        return;
-      }
-    }
-
-    return;
-  }
-  */
-
   public void edit(HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
+    // Send and edit event to the channel
     ch.receiveEvent(new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
+
+    // Render the channel
     render(req, res, out);
   }
 
   public void help(HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
+    // Send a help event to the channel
     ch.receiveEvent(new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
+
+    // Render the channel
     render(req, res, out);
   }
 
@@ -243,22 +238,15 @@ public class XMLChannelWrapper implements IChannel
     else
     if(jspfile.equals("dispatch.jsp"))
     {
-      // dispatch.jsp needs to carry two parameters : method and channelID
-      //jspfile += "?method=" + req.getParameter("method") + "&channelID=" + req.getParameter("channelID") + "&";
-      String sMethod = req.getParameter("method");
-      if(sMethod == null)
-      {
-        sMethod = "render";
-      }
-
+      // Append the channel ID and method=render to be uPortal 1.0 compatable
       if(req.getParameter("channelID") != null)
       {
-        jspfile += "?channelID=" + req.getParameter("channelID") + "&method=render"; // + sMethod;
+        jspfile += "?channelID=" + chanID + "&method=render";
       }
       else
       if(req.getParameter("globalChannelID") != null)
       {
-        jspfile += "?globalChannelID=" + req.getParameter("globalChannelID") + "&method=render"; // + sMethod;
+        jspfile += "?globalChannelID=" + chanID + "&method=render";
       }
     }
     else
