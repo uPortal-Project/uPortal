@@ -91,8 +91,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     }
 
     public String toString() {
-        // TODO: Implement this!
-        return null;
+        return provider.getRequestedPortalURL();
     }
 
 }
