@@ -1,3 +1,40 @@
+/**
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the JA-SIG Collaborative
+ *    (http://www.jasig.org/)."
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
+ */
+
 package org.jasig.portal;
 
 import  org.w3c.dom.Document;
@@ -5,11 +42,19 @@ import  org.w3c.dom.Node;
 import  org.w3c.dom.NamedNodeMap;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.*;
+import  org.apache.xerces.dom.DocumentImpl;
 import  org.apache.xerces.parsers.DOMParser;
-import  java.io.*;
-import  java.sql.*;
-import  java.util.*;
+import  java.io.StringWriter;
+import  java.sql.Connection;
+import  java.sql.ResultSet;
+import  java.sql.Statement;
+import  java.sql.SQLException;
+import  java.util.ArrayList;
+import  java.util.Date;
+import  java.util.Enumeration;
+import  java.util.HashMap;
+import  java.util.HashSet;
+import  java.util.Hashtable;
 import  org.xml.sax.EntityResolver;
 import  org.xml.sax.InputSource;
 import  org.jasig.portal.utils.DTDResolver;
@@ -32,14 +77,9 @@ public class RDBMUserLayoutStore
     implements IUserLayoutStore {
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
   static int DEBUG = 0;
-  protected static RdbmServices rdbmService = null;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
-  protected static boolean supportsPreparedStatements = false;
   protected static boolean supportsOuterJoins = false;
-  protected static boolean supportsTransactions = false;
-  protected static String tsStart = "";
-  protected static String tsEnd = "";
 
   static class DbStrings {
     String testJoin;
@@ -81,32 +121,8 @@ public class RDBMUserLayoutStore
   static DbStrings dbStrings;
   static {
       String sql;
-      rdbmService = new RdbmServices();
-      Connection con = rdbmService.getConnection();
-
+      Connection con = RdbmServices.getConnection();
       try {
-        supportsTransactions = con.getMetaData().supportsTransactions();
-      } catch (SQLException sqle) {}
-
-      try {
-        setAutoCommit(con, false);
-      } catch (SQLException e) {}
-
-      try {
-        sql = "SELECT USER_ID FROM UP_USER WHERE USER_ID=?";
-        try {
-          PreparedStatement pstmt = con.prepareStatement(sql);
-          try {
-            pstmt.clearParameters ();
-            pstmt.setInt(1, 0);
-            pstmt.executeQuery();
-            supportsPreparedStatements = true;
-          } finally {
-            pstmt.close();
-          }
-        } catch (SQLException sqle) {
-        }
-
         try {
           if (con.getMetaData().supportsOuterJoins()) {
             Statement stmt = con.createStatement();
@@ -128,23 +144,9 @@ public class RDBMUserLayoutStore
         } catch (SQLException sqle) {
         }
 
-        try {
-          sql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} WHERE USER_ID=0";
-          Statement stmt = con.createStatement();
-          try {
-            stmt.executeUpdate(sql);
-            tsStart = "{ts ";
-            tsEnd = "}";
-          } finally {
-            stmt.close();
-          }
-        } catch (SQLException sqle) {
-        }
-
-        LogService.instance().log(LogService.INFO, "Database supports: Outer Joins=" + supportsOuterJoins +", Prepared statements=" +
-          supportsPreparedStatements + ", Transactions=" + supportsTransactions + ", {ts ...} syntax=" + tsEnd.equals("}"));
+        LogService.instance().log(LogService.INFO, "Database supports: Outer Joins=" + supportsOuterJoins);
       } finally {
-        rdbmService.releaseConnection(con);
+        RdbmServices.releaseConnection(con);
       }
   }
 
@@ -159,8 +161,8 @@ public class RDBMUserLayoutStore
     int chanTypeId;
     int chanPupblUsrId;
     int chanApvlId;
-    Timestamp chanPublDt;
-    Timestamp chanApvlDt;
+    java.sql.Timestamp chanPublDt;
+    java.sql.Timestamp chanApvlDt;
     int chanTimeout;
     boolean chanEditable;
     boolean chanHasHelp;
@@ -175,7 +177,7 @@ public class RDBMUserLayoutStore
       boolean override;
 
       public ChannelParameter(String name, String value, String override) {
-        this(name, value, override != null && override.equals("Y"));
+        this(name, value, RdbmServices.dbFlag(override));
       }
       public ChannelParameter(String name, String value, boolean override) {
         this.name = name;
@@ -184,7 +186,7 @@ public class RDBMUserLayoutStore
       }
     }
 
-    public Timestamp getchanApvlDt() { return chanApvlDt;}
+    public java.sql.Timestamp getchanApvlDt() { return chanApvlDt;}
 
     public ChannelDefinition(int chanId, String chanTitle) {
       this.chanId = chanId;
@@ -192,17 +194,16 @@ public class RDBMUserLayoutStore
     }
 
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-      Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
+      java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
       String chanHasAbout, String chanName, String chanFName) {
         this(chanId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
-              chanEditable!= null && chanEditable.equalsIgnoreCase("Y"),
-              chanHasHelp!= null && chanHasHelp.equalsIgnoreCase("Y"),
-              chanHasAbout!= null && chanHasAbout.equalsIgnoreCase("Y"),
+              RdbmServices.dbFlag(chanEditable), RdbmServices.dbFlag(chanHasHelp),
+              RdbmServices.dbFlag(chanHasAbout),
               chanName, chanFName);
     }
 
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-      Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, boolean chanEditable, boolean chanHasHelp,
+      java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, boolean chanEditable, boolean chanHasHelp,
       boolean chanHasAbout, String chanName, String chanFName) {
 
       this.chanId = chanId;
@@ -307,117 +308,6 @@ public class RDBMUserLayoutStore
   }
 
   /**
-   * Wrapper for/Emulator of PreparedStatement class
-   */
-  protected static class MyPreparedStatement {
-    Connection con;
-    String query;
-    String activeQuery;
-    PreparedStatement pstmt;
-    Statement stmt;
-    int lastIndex;
-
-    public MyPreparedStatement(Connection con, String query) throws SQLException {
-      this.con = con;
-      this.query = query;
-      activeQuery = this.query;
-      if (supportsPreparedStatements) {
-        pstmt = con.prepareStatement(query);
-      } else {
-        stmt = con.createStatement();
-      }
-    }
-
-    public void clearParameters() throws SQLException {
-      if (supportsPreparedStatements) {
-        pstmt.clearParameters();
-      } else {
-        lastIndex = 0;
-        activeQuery = query;
-      }
-    }
-    public void setInt(int index, int value) throws SQLException {
-      if (supportsPreparedStatements) {
-        pstmt.setInt(index, value);
-      } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
-        } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
-          }
-          activeQuery = activeQuery.substring(0, pos) + value + activeQuery.substring(pos+1);
-          lastIndex = index;
-        }
-      }
-    }
-    public void setNull(int index, int sqlType) throws SQLException {
-      if (supportsPreparedStatements) {
-        pstmt.setNull(index, sqlType);
-      } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
-        } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
-          }
-          activeQuery = activeQuery.substring(0, pos) + "NULL" + activeQuery.substring(pos+1);
-          lastIndex = index;
-        }
-      }
-    }
-    public void setString(int index, String value) throws SQLException {
-      if (supportsPreparedStatements) {
-        pstmt.setString(index, value);
-      } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
-        } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
-          }
-          activeQuery = activeQuery.substring(0, pos) + "'" + value + "'" + activeQuery.substring(pos+1);
-          lastIndex = index;
-        }
-       }
-    }
-    public ResultSet executeQuery() throws SQLException {
-      if (supportsPreparedStatements) {
-        return pstmt.executeQuery();
-      } else {
-        return stmt.executeQuery(activeQuery);
-      }
-    }
-
-    public int executeUpdate() throws SQLException {
-      if (supportsPreparedStatements) {
-        return pstmt.executeUpdate();
-      } else {
-        return stmt.executeUpdate(activeQuery);
-      }
-    }
-
-    public String toString() {
-      if (supportsPreparedStatements) {
-        return query;
-      } else {
-        return activeQuery;
-      }
-    }
-
-    public void close() throws SQLException {
-      if (supportsPreparedStatements) {
-        pstmt.close();
-      } else {
-        stmt.close();
-      }
-    }
-  }
-
-  /**
    * LayoutStructure
    * Encapsulate the layout structure
    */
@@ -450,9 +340,9 @@ public class RDBMUserLayoutStore
       this.childId = childId;
       this.chanId = chanId;
       this.structId = structId;
-      this.hidden = hidden != null && hidden.equals("Y");
-      this.immutable = immutable != null && immutable.equals("Y");
-      this.unremovable = unremovable != null && unremovable.equals("Y");
+      this.hidden = RdbmServices.dbFlag(hidden);
+      this.immutable = RdbmServices.dbFlag(immutable);
+      this.unremovable = RdbmServices.dbFlag(unremovable);
 
       if (DEBUG > 1) {
         System.err.println("New layout: id=" + structId + ", next=" + nextId + ", child=" + childId +", chan=" +chanId);
@@ -554,11 +444,11 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
   public void addChannel (int id, IPerson publisher, Document chanXML) throws SQLException {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       addChannel(id, publisher, chanXML, con);
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -572,11 +462,11 @@ public class RDBMUserLayoutStore
    *
    */
   public void addChannel (int id, IPerson publisher, Document chanXML, String catID[]) throws SQLException {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       addChannel(id, publisher, chanXML, con);
       // Set autocommit false for the connection
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         // First delete existing categories for this channel
@@ -593,17 +483,17 @@ public class RDBMUserLayoutStore
           stmt.executeUpdate(sInsert);
         }
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
       } catch (SQLException sqle) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw sqle;
       } finally {
         if (stmt != null)
           stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -617,22 +507,22 @@ public class RDBMUserLayoutStore
   protected void addChannel (int id, IPerson publisher, Document doc, Connection con) throws SQLException {
     Element channel = (Element)doc.getFirstChild();
     // Set autocommit false for the connection
-    setAutoCommit(con, false);
+    RdbmServices.setAutoCommit(con, false);
     Statement stmt = con.createStatement();
     try {
       String sqlTitle = sqlEscape(channel.getAttribute("title"));
       String sqlDescription = sqlEscape(channel.getAttribute("description"));
       String sqlClass = channel.getAttribute("class");
       String sqlTypeID = channel.getAttribute("typeID");
-      String sysdate = tsStart + " '" + new java.sql.Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
+      String sysdate = RdbmServices.sqlTimeStamp();
       String sqlTimeout = channel.getAttribute("timeout");
       String timeout = "0";
       if (sqlTimeout != null && sqlTimeout.trim().length() != 0) {
         timeout  = sqlTimeout;
       }
-      String sqlEditable = dbBool(channel.getAttribute("editable"));
-      String sqlHasHelp = dbBool(channel.getAttribute("hasHelp"));
-      String sqlHasAbout = dbBool(channel.getAttribute("hasAbout"));
+      String sqlEditable = RdbmServices.dbFlag(xmlBool(channel.getAttribute("editable")));
+      String sqlHasHelp = RdbmServices.dbFlag(xmlBool(channel.getAttribute("hasHelp")));
+      String sqlHasAbout = RdbmServices.dbFlag(xmlBool(channel.getAttribute("hasAbout")));
       String sqlName = sqlEscape(channel.getAttribute("name"));
       String sqlFName = sqlEscape(channel.getAttribute("fname"));
 
@@ -711,7 +601,7 @@ public class RDBMUserLayoutStore
         }
       }
       // Commit the transaction
-      commit(con);
+      RdbmServices.commit(con);
       synchronized (channelLock) {
         if (channelCache.remove(new Integer(id)) != null) {
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): flushed channel "
@@ -719,7 +609,7 @@ public class RDBMUserLayoutStore
         }
       }
     } catch (SQLException sqle) {
-      rollback(con);
+      RdbmServices.rollback(con);
       throw  sqle;
     } finally {
       stmt.close();
@@ -730,10 +620,10 @@ public class RDBMUserLayoutStore
    * @param tsd Stylesheet description object
    */
   public Integer addStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         // we assume that this is a new stylesheet.
@@ -772,17 +662,17 @@ public class RDBMUserLayoutStore
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
         return  new Integer(id);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -790,10 +680,10 @@ public class RDBMUserLayoutStore
    * @param tsd Stylesheet description object
    */
   public Integer addThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         // we assume that this is a new stylesheet.
@@ -825,17 +715,17 @@ public class RDBMUserLayoutStore
           stmt.executeUpdate(sQuery);
         }
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
         return  new Integer(id);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -848,7 +738,7 @@ public class RDBMUserLayoutStore
   public UserProfile addUserProfile (IPerson person, UserProfile profile) throws Exception {
     int userId = person.getID();
     // generate an id for this profile
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       int id = getIncrementIntegerId("UP_USER_PROFILE");
       profile.setProfileId(id);
@@ -863,11 +753,11 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  profile;
   }
-  protected void appendChildCategoriesAndChannels (Connection con, IAuthorizationPrincipal ap, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException, AuthorizationException {
+  protected void appendChildCategoriesAndChannels (Connection con, IAuthorizationPrincipal ap, RdbmServices.PreparedStatement chanStmt, Element category, int catId) throws SQLException, AuthorizationException {
     Document doc = category.getOwnerDocument();
     Statement stmt = null;
     ResultSet rs = null;
@@ -925,12 +815,12 @@ public class RDBMUserLayoutStore
    * @exception Exception
    */
   public void approveChannel(int chanId, IPerson approver, java.util.Date approveDate) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
-        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() + ", CHAN_APVL_DT = " +
-        tsStart + " '" + new java.sql.Timestamp(approveDate.getTime()).toString() + "'" + tsEnd +
+        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
+        ", CHAN_APVL_DT = " + RdbmServices.sqlTimeStamp(approveDate) +
         " WHERE CHAN_ID = " + chanId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
@@ -938,7 +828,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -956,22 +846,14 @@ public class RDBMUserLayoutStore
   protected boolean channelCached(int chanId) {
     return channelCache.containsKey(new Integer(chanId));
   }
-  /**
-   * put your documentation comment here
-   * @param connection
-   */
-  static final protected void commit (Connection connection) throws SQLException {
-    if (supportsTransactions) {
-      connection.commit();
-    }
-  }
+
   /**
    * put your documentation comment here
    * @param tableName
    * @exception Exception
    */
   public synchronized void createCounter (String tableName) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -982,7 +864,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
 
@@ -1016,10 +898,10 @@ public class RDBMUserLayoutStore
   /**
    * convert true/false into Y/N for database
    * @param value to check
-   * @result Y/N
+   * @result boolean
    */
-  protected static final String dbBool (String value) {
-      return (value != null && value.equals("true") ? "Y" : "N");
+  protected static final boolean xmlBool (String value) {
+      return (value != null && value.equals("true") ? true : false);
   }
   /**
    * put your documentation comment here
@@ -1029,7 +911,7 @@ public class RDBMUserLayoutStore
    */
   public void deleteUserProfile (IPerson person, int profileId) throws Exception {
     int userId = person.getID();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1040,7 +922,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -1099,7 +981,7 @@ public class RDBMUserLayoutStore
   /**
    * Get a channel from the cache or the store
    */
-  protected ChannelDefinition getChannel(int chanId, boolean cacheChannel, MyPreparedStatement pstmtChannel, MyPreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+  protected ChannelDefinition getChannel(int chanId, boolean cacheChannel, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
     Integer chanID = new Integer(chanId);
     boolean inCache = true;
     ChannelDefinition channel = (ChannelDefinition)channelCache.get(chanID);
@@ -1129,7 +1011,7 @@ public class RDBMUserLayoutStore
   /**
    * Read a channel definition from the data store
    */
-  protected ChannelDefinition getChannelDefinition (int chanId, MyPreparedStatement pstmtChannel, MyPreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+  protected ChannelDefinition getChannelDefinition (int chanId, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
     ChannelDefinition channel = null;
 
     pstmtChannel.clearParameters();
@@ -1182,9 +1064,9 @@ public class RDBMUserLayoutStore
    */
 
   protected Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException {
-    MyPreparedStatement pstmtChannel = getChannelPstmt(con);
+    RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
     try {
-      MyPreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
+      RdbmServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
       try {
         ChannelDefinition cd = getChannel(chanId, false, pstmtChannel, pstmtChannelParm);
         if (cd != null) {
@@ -1201,14 +1083,14 @@ public class RDBMUserLayoutStore
       pstmtChannel.close();
     }
   }
-  protected static final MyPreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
+  protected static final RdbmServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
     if (supportsOuterJoins) {
       return null;
     } else {
-      return new MyPreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
+      return new RdbmServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
     }
   }
-   protected static final MyPreparedStatement getChannelPstmt(Connection con) throws SQLException {
+   protected static final RdbmServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
     String sql;
     sql = "SELECT UC.CHAN_TITLE,UC.CHAN_DESC,UC.CHAN_CLASS,UC.CHAN_TYPE_ID,UC.CHAN_PUBL_ID,UC.CHAN_APVL_ID,UC.CHAN_PUBL_DT,UC.CHAN_APVL_DT,"+
       "UC.CHAN_TIMEOUT,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_NAME,UC.CHAN_FNAME";
@@ -1218,18 +1100,17 @@ public class RDBMUserLayoutStore
     } else {
       sql += " FROM UP_CHANNEL UC WHERE";
     }
-    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + tsStart + "'" +
-      new java.sql.Timestamp(System.currentTimeMillis()).toString() + "'" + tsEnd;
+    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RdbmServices.sqlTimeStamp();
 
-    return new MyPreparedStatement(con, sql);
+    return new RdbmServices.PreparedStatement(con, sql);
   }
   public Document getChannelRegistryXML (IPerson person) throws SQLException, AuthorizationException {
     Document doc = new org.apache.xerces.dom.DocumentImpl();
     Element registry = doc.createElement("registry");
     doc.appendChild(registry);
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
-      MyPreparedStatement chanStmt = new MyPreparedStatement(con, "SELECT CHAN_ID FROM UP_CAT_CHAN WHERE CAT_ID=?");
+      RdbmServices.PreparedStatement chanStmt = new RdbmServices.PreparedStatement(con, "SELECT CHAN_ID FROM UP_CAT_CHAN WHERE CAT_ID=?");
       try {
         Statement stmt = con.createStatement();
         try {
@@ -1270,7 +1151,7 @@ public class RDBMUserLayoutStore
         chanStmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return doc;
   }
@@ -1304,7 +1185,7 @@ public class RDBMUserLayoutStore
     Document doc = new org.apache.xerces.dom.DocumentImpl();
     Element root = doc.createElement("channelTypes");
     doc.appendChild(root);
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1354,7 +1235,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return doc;
   }
@@ -1363,7 +1244,7 @@ public class RDBMUserLayoutStore
    * get&increment method.
    */
   public synchronized int getIncrementIntegerId (String tableName) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1402,7 +1283,7 @@ public class RDBMUserLayoutStore
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     throw new Exception("Unable to increment counter for " + tableName);
   }
@@ -1412,7 +1293,7 @@ public class RDBMUserLayoutStore
    *
    */
   public void getMimeTypeList (Hashtable list) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1430,7 +1311,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -1459,7 +1340,7 @@ public class RDBMUserLayoutStore
    */
   protected String getNextStructId (IPerson person, String prefix) throws Exception {
     int userId = person.getID();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1482,7 +1363,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -1505,7 +1386,7 @@ public class RDBMUserLayoutStore
    */
   public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception {
     StructureStylesheetDescription ssd = null;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     Statement stmt = con.createStatement();
     try {
       int dbOffset = 0;
@@ -1573,7 +1454,7 @@ public class RDBMUserLayoutStore
       }
     } finally {
       stmt.close();
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  ssd;
   }
@@ -1584,9 +1465,9 @@ public class RDBMUserLayoutStore
    */
   public Integer getStructureStylesheetId (String ssName) throws Exception {
     Integer id = null;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT WHERE SS_NAME='" + ssName + "'";
@@ -1598,7 +1479,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  id;
   }
@@ -1609,7 +1490,7 @@ public class RDBMUserLayoutStore
    * @return a mapping from stylesheet names to structure stylesheet description objects
    */
   public Hashtable getStructureStylesheetList (String mimeType) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     Hashtable list = new Hashtable();
     try {
       Statement stmt = con.createStatement();
@@ -1630,7 +1511,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  list;
   }
@@ -1645,7 +1526,7 @@ public class RDBMUserLayoutStore
   public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
     int userId = person.getID();
     StructureStylesheetUserPreferences ssup;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1742,7 +1623,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  ssup;
   }
@@ -1753,7 +1634,7 @@ public class RDBMUserLayoutStore
    */
   public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) throws Exception {
     ThemeStylesheetDescription tsd = null;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     Statement stmt = con.createStatement();
     try {
       int dbOffset = 0;
@@ -1825,7 +1706,7 @@ public class RDBMUserLayoutStore
       }
     } finally {
       stmt.close();
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  tsd;
   }
@@ -1836,7 +1717,7 @@ public class RDBMUserLayoutStore
    */
   public Integer getThemeStylesheetId (String tsName) throws Exception {
     Integer id = null;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1849,7 +1730,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  id;
   }
@@ -1860,7 +1741,7 @@ public class RDBMUserLayoutStore
    * @exception Exception
    */
   public Hashtable getThemeStylesheetList (int structureStylesheetId) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     Hashtable list = new Hashtable();
     try {
       Statement stmt = con.createStatement();
@@ -1881,7 +1762,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  list;
   }
@@ -1896,7 +1777,7 @@ public class RDBMUserLayoutStore
   public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
     int userId = person.getID();
     ThemeStylesheetUserPreferences tsup;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -1966,7 +1847,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  tsup;
   }
@@ -1979,7 +1860,7 @@ public class RDBMUserLayoutStore
     String[] acct = new String[] {
       null, null, null, null
     };
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2000,7 +1881,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  acct;
   }
@@ -2010,7 +1891,7 @@ public class RDBMUserLayoutStore
   public int getUserBrowserMapping (IPerson person, String userAgent) throws Exception {
     int userId = person.getID();
     int profileId = 0;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2032,7 +1913,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  profileId;
   }
@@ -2047,7 +1928,7 @@ public class RDBMUserLayoutStore
     String[] acct = new String[] {
       null, null, null
     };
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2068,15 +1949,15 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  acct;
   }
   public Document getUserLayout (IPerson person, int profileId) throws Exception {
     int userId = person.getID();
     int realUserId = userId;
-    Connection con = rdbmService.getConnection();
-    setAutoCommit(con, false);          // May speed things up, can't hurt
+    Connection con = RdbmServices.getConnection();
+    RdbmServices.setAutoCommit(con, false);          // May speed things up, can't hurt
 
     try {
       DocumentImpl doc = new DocumentImpl();
@@ -2134,7 +2015,7 @@ public class RDBMUserLayoutStore
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
           stmt.executeUpdate(Insert);
 
-          commit(con); // Make sure it appears in the store
+          RdbmServices.commit(con); // Make sure it appears in the store
         }
 
         int firstStructId = -1;
@@ -2213,9 +2094,9 @@ public class RDBMUserLayoutStore
         * layout structure ResultSet (in other words, Oracle is a pain to program for)
         */
         if (chanIds.size() > 0) {
-          MyPreparedStatement pstmtChannel = getChannelPstmt(con);
+          RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
           try {
-            MyPreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
+            RdbmServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
             try {
               // Pre-prime the channel pump
               for (int i = 0; i < chanIds.size(); i++) {
@@ -2289,7 +2170,7 @@ public class RDBMUserLayoutStore
       }
       return  doc;
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2302,7 +2183,7 @@ public class RDBMUserLayoutStore
   public UserProfile getUserProfileById (IPerson person, int profileId) throws Exception {
     int userId = person.getID();
     UserProfile upl = null;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2325,7 +2206,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  upl;
   }
@@ -2339,7 +2220,7 @@ public class RDBMUserLayoutStore
     int userId = person.getID();
 
     Hashtable pv = new Hashtable();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2360,7 +2241,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
     return  pv;
   }
@@ -2372,10 +2253,10 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
   public void removeChannel (String chanID) throws SQLException {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         chanID = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
@@ -2396,17 +2277,17 @@ public class RDBMUserLayoutStore
         stmt.executeUpdate(sUpdate);
 
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
       } catch (SQLException sqle) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw sqle;
       } finally {
         if (stmt != null)
           stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2459,7 +2340,7 @@ public class RDBMUserLayoutStore
    * @exception Exception
    */
   public void removeStructureStylesheetDescription (int stylesheetId) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2483,16 +2364,16 @@ public class RDBMUserLayoutStore
         stmt.executeUpdate(sQuery);
         // clean up user preferences
         // should we do something about profiles ?
-        commit(con);
+        RdbmServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2545,7 +2426,7 @@ public class RDBMUserLayoutStore
    * @exception Exception
    */
   public void removeThemeStylesheetDescription (int stylesheetId) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2564,16 +2445,16 @@ public class RDBMUserLayoutStore
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
         stmt.executeUpdate(sQuery);
         // nuke the profiles as well ?
-        commit(con);
+        RdbmServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2598,18 +2479,7 @@ public class RDBMUserLayoutStore
       stmt.close();
     }
   }
-  /**
-   * put your documentation comment here
-   * @param connection
-   */
-  static final protected void rollback (Connection connection) throws SQLException {
-    if (supportsTransactions) {
-        connection.rollback();
-    } else {
-      LogService.instance().log(LogService.SEVERE, "RDBMUserLayout::rollback() called, but JDBC/DB does not support transactions. User data most likely corrupted");
-      throw new SQLException("Unable to rollback user data");
-    }
-  }
+
   /**
    * put your documentation comment here
    * @param person
@@ -2621,7 +2491,7 @@ public class RDBMUserLayoutStore
     StringWriter outString = new StringWriter();
     XMLSerializer xsl = new XMLSerializer(outString, new OutputFormat(doc));
     xsl.serialize(doc);
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement statem = con.createStatement();
       try {
@@ -2633,7 +2503,7 @@ public class RDBMUserLayoutStore
         statem.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2646,7 +2516,7 @@ public class RDBMUserLayoutStore
    * @return
    * @exception java.sql.SQLException
    */
-  protected final int saveStructure (Node node, MyPreparedStatement structStmt, MyPreparedStatement parmStmt) throws java.sql.SQLException {
+  protected final int saveStructure (Node node, RdbmServices.PreparedStatement structStmt, RdbmServices.PreparedStatement parmStmt) throws java.sql.SQLException {
     if (node == null || node.getNodeName().equals("parameter")) { // No more or parameter node
       return  0;
     }
@@ -2689,9 +2559,9 @@ public class RDBMUserLayoutStore
     } else {
       structStmt.setNull(7,java.sql.Types.VARCHAR);
     }
-    structStmt.setString(8, dbBool(structure.getAttribute("hidden")));
-    structStmt.setString(9, dbBool(structure.getAttribute("immutable")));
-    structStmt.setString(10, dbBool(structure.getAttribute("unremovable")));
+    structStmt.setString(8, RdbmServices.dbFlag(xmlBool(structure.getAttribute("hidden"))));
+    structStmt.setString(9, RdbmServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
+    structStmt.setString(10, RdbmServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
     LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + structStmt);
     structStmt.executeUpdate();
 
@@ -2725,16 +2595,7 @@ public class RDBMUserLayoutStore
     }
     return  saveStructId;
   }
-  /**
-   * put your documentation comment here
-   * @param connection
-   * @param autocommit
-   */
-  static final protected void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
-    if (supportsTransactions) {
-      connection.setAutoCommit(autocommit);
-    }
-  }
+
   /**
    * put your documentation comment here
    * @param tableName
@@ -2742,7 +2603,7 @@ public class RDBMUserLayoutStore
    * @exception Exception
    */
   public synchronized void setCounter (String tableName, int value) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -2753,7 +2614,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2765,11 +2626,11 @@ public class RDBMUserLayoutStore
    */
   public void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences ssup) throws Exception {
     int userId = person.getID();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
       int stylesheetId = ssup.getStylesheetId();
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         // write out params
@@ -2855,16 +2716,16 @@ public class RDBMUserLayoutStore
           }
         }
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2876,11 +2737,11 @@ public class RDBMUserLayoutStore
    */
   public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
     int userId = person.getID();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
       int stylesheetId = tsup.getStylesheetId();
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         // write out params
@@ -2936,16 +2797,16 @@ public class RDBMUserLayoutStore
           }
         }
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2957,10 +2818,10 @@ public class RDBMUserLayoutStore
    */
   public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) throws Exception {
     int userId = person.getID();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       // remove the old mapping and add the new one
       Statement stmt = con.createStatement();
       try {
@@ -2972,16 +2833,16 @@ public class RDBMUserLayoutStore
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
         stmt.executeUpdate(sQuery);
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -2994,9 +2855,9 @@ public class RDBMUserLayoutStore
   public void setUserLayout (IPerson person, int profileId, Document layoutXML, boolean channelsAdded) throws Exception {
     int userId = person.getID();
     int layoutId = 0;
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
-      setAutoCommit(con, false);                // Need an atomic update here
+      RdbmServices.setAutoCommit(con, false);                // Need an atomic update here
       Statement stmt = con.createStatement();
       try {
         long startTime = System.currentTimeMillis();
@@ -3028,12 +2889,12 @@ public class RDBMUserLayoutStore
           dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
           System.err.println("<--");
         }
-        MyPreparedStatement structStmt = new MyPreparedStatement(con,
+        RdbmServices.PreparedStatement structStmt = new RdbmServices.PreparedStatement(con,
           "INSERT INTO UP_LAYOUT_STRUCT " +
           "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
           "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
         try {
-          MyPreparedStatement parmStmt = new MyPreparedStatement(con,
+          RdbmServices.PreparedStatement parmStmt = new RdbmServices.PreparedStatement(con,
             "INSERT INTO UP_LAYOUT_PARAM " +
             "(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) " +
             "VALUES ("+ userId + "," + layoutId + ",?,?,?)");
@@ -3045,8 +2906,7 @@ public class RDBMUserLayoutStore
 
             // Update the last time the user saw the list of available channels
             if (channelsAdded) {
-              sSql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT=" + tsStart + "'" +
-                new java.sql.Timestamp(System.currentTimeMillis()).toString()+"'" + tsEnd +
+              sSql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT=" + RdbmServices.sqlTimeStamp() +
                 " WHERE USER_ID=" + userId;
               LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
               stmt.executeUpdate(sSql);
@@ -3087,12 +2947,12 @@ public class RDBMUserLayoutStore
        } finally {
         stmt.close();
       }
-      commit(con);
+      RdbmServices.commit(con);
     } catch (Exception e) {
-      rollback(con);
+      RdbmServices.rollback(con);
       throw  e;
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -3103,7 +2963,7 @@ public class RDBMUserLayoutStore
    */
   public void setUserProfile (IPerson person, UserProfile profile) throws Exception {
     int userId = person.getID();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -3132,7 +2992,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -3169,10 +3029,10 @@ public class RDBMUserLayoutStore
    * @param ssd new stylesheet description
    */
   public void updateStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         int stylesheetId = ssd.getId();
@@ -3288,16 +3148,16 @@ public class RDBMUserLayoutStore
           }
         }
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -3306,10 +3166,10 @@ public class RDBMUserLayoutStore
    * @param ssd new stylesheet description
    */
   public void updateThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       // Set autocommit false for the connection
-      setAutoCommit(con, false);
+      RdbmServices.setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
         int stylesheetId = tsd.getId();
@@ -3401,16 +3261,16 @@ public class RDBMUserLayoutStore
           }
         }
         // Commit the transaction
-        commit(con);
+        RdbmServices.commit(con);
       } catch (Exception e) {
         // Roll back the transaction
-        rollback(con);
+        RdbmServices.rollback(con);
         throw  e;
       } finally {
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
   /**
@@ -3421,7 +3281,7 @@ public class RDBMUserLayoutStore
    */
   public void updateUserProfile (IPerson person, UserProfile profile) throws Exception {
     int userId = person.getID();
-    Connection con = rdbmService.getConnection();
+    Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
       try {
@@ -3434,7 +3294,7 @@ public class RDBMUserLayoutStore
         stmt.close();
       }
     } finally {
-      rdbmService.releaseConnection(con);
+      RdbmServices.releaseConnection(con);
     }
   }
 }

@@ -37,8 +37,11 @@ package  org.jasig.portal;
 
 import  org.jasig.portal.services.LogService;
 import  java.io.InputStream;
+import  java.util.Date;
 import  java.util.Properties;
 import  java.sql.Connection;
+import  java.sql.ResultSet;
+import  java.sql.Statement;
 import  java.sql.SQLException;
 import  java.sql.DriverManager;
 
@@ -55,15 +58,78 @@ public class RdbmServices {
   private static String sJdbcPassword = null;
   public static int RETRY_COUNT = 5;
   private static String prevErrorMsg = "";      // reduce noise in log file
+
+  protected static boolean supportsPreparedStatements = false;
+  public static boolean supportsOuterJoins = false;
+  public static boolean supportsTransactions = false;
+  private static String tsStart = "";
+  private static String tsEnd = "";
+
   static {
-    loadProps();
+    try {
+      loadProps();
+
+      /** See what the database allows us to do
+       *
+       */
+      Connection con = getConnection();
+      try {
+        String sql;
+
+        /**
+         * Transaction support
+         */
+        try {
+          supportsTransactions = con.getMetaData().supportsTransactions();
+        } catch (SQLException sqle) {}
+
+        /**
+         * Prepared statements
+         */
+        try {
+          sql = "SELECT USER_ID FROM UP_USER WHERE USER_ID=?";
+          java.sql.PreparedStatement pstmt = con.prepareStatement(sql);
+          try {
+            pstmt.clearParameters ();
+            pstmt.setInt(1, 0);
+            pstmt.executeQuery();
+            supportsPreparedStatements = true;
+          } finally {
+            pstmt.close();
+          }
+        } catch (SQLException sqle) {
+        }
+
+        /**
+         * Does the JDBC driver support the '{ts' (TimeStamp) metasyntax
+         */
+        try {
+          sql = "UPDATE UP_USER SET LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} WHERE USER_ID=0";
+          Statement stmt = con.createStatement();
+          try {
+            stmt.executeUpdate(sql);
+            tsStart = "{ts ";
+            tsEnd = "}";
+          } finally {
+            stmt.close();
+          }
+        } catch (SQLException sqle) {
+        }
+
+        LogService.instance().log(LogService.INFO, "Database supports: Prepared statements=" +
+          supportsPreparedStatements + ", Transactions=" + supportsTransactions + ", {ts ...} syntax=" + tsEnd.equals("}"));
+      } finally {
+        releaseConnection(con);
+      }
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
+    }
   }
 
   /**
    * Loads the JDBC properties from rdbm.properties file.
    */
-  protected static void loadProps () {
-    try {
+  protected static void loadProps () throws Exception {
       if (!bPropsLoaded) {
         InputStream inStream = RdbmServices.class.getResourceAsStream("/properties/rdbm.properties");
         Properties jdbcProps = new Properties();
@@ -74,9 +140,6 @@ public class RdbmServices {
         sJdbcPassword = jdbcProps.getProperty("jdbcPassword");
         bPropsLoaded = true;
       }
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-    }
   }
 
   /**
@@ -147,6 +210,199 @@ public class RdbmServices {
   public static String getJdbcUser () {
     return  sJdbcUser;
   }
+
+  /**
+   * Service routines
+   */
+
+  /**
+   * Commit pending transactions
+   * @param connection
+   */
+  static final protected void commit (Connection connection) throws SQLException {
+    if (supportsTransactions) {
+      connection.commit();
+    }
+  }
+
+  /**
+   * Set auto commit state for the connection
+   * @param connection
+   * @param autocommit
+   */
+  static final protected void setAutoCommit (Connection connection, boolean autocommit) throws SQLException {
+    if (supportsTransactions) {
+      connection.setAutoCommit(autocommit);
+    }
+  }
+
+  /**
+   * rollback unwanted changes to the database
+   * @param connection
+   */
+  static final protected void rollback (Connection connection) throws SQLException {
+    if (supportsTransactions) {
+        connection.rollback();
+    } else {
+      LogService.instance().log(LogService.SEVERE, "RDBMUserLayout::rollback() called, but JDBC/DB does not support transactions. User data most likely corrupted");
+      throw new SQLException("Unable to rollback user data");
+    }
+  }
+
+  /**
+   * return DB format of a boolean
+   * @param boolean
+   * @result String
+   */
+  public static String dbFlag(boolean flag) {
+    return (flag ? "Y" : "N");
+  }
+
+  /**
+   * return boolean value of DB flag
+   * @param String
+   * @result boolean
+   */
+  public static boolean dbFlag(String flag) {
+    return (flag != null && (flag.equalsIgnoreCase("Y") || flag.equalsIgnoreCase("T")) ? true : false);
+  }
+
+  /**
+   * SQL format of current time
+   * @result SQL TimeStamp
+   */
+  public static String sqlTimeStamp() {
+    return sqlTimeStamp(System.currentTimeMillis());
+  }
+  /**
+   * SQL format a long timestamp
+   * @param date
+   * @result SQL TimeStamp
+   */
+  public static String sqlTimeStamp(long date) {
+    return tsStart + "'" + new java.sql.Timestamp(date).toString() + "'" + tsEnd;
+  }
+  /**
+   * SQL format a Date
+   * @param date
+   * @result SQL TimeStamp
+   */
+  public static String sqlTimeStamp(Date date) {
+    return sqlTimeStamp(date.getTime());
+  }
+
+  /**
+   * Wrapper for/Emulator of PreparedStatement class
+   */
+  public final static class PreparedStatement {
+    Connection con;
+    String query;
+    String activeQuery;
+    java.sql.PreparedStatement pstmt;
+    Statement stmt;
+    int lastIndex;
+
+    public PreparedStatement(Connection con, String query) throws SQLException {
+      this.con = con;
+      this.query = query;
+      activeQuery = this.query;
+      if (RdbmServices.supportsPreparedStatements) {
+        pstmt = con.prepareStatement(query);
+      } else {
+        stmt = con.createStatement();
+      }
+    }
+
+    public void clearParameters() throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        pstmt.clearParameters();
+      } else {
+        lastIndex = 0;
+        activeQuery = query;
+      }
+    }
+    public void setInt(int index, int value) throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        pstmt.setInt(index, value);
+      } else {
+        if (index != lastIndex+1) {
+          throw new SQLException("Out of order index");
+        } else {
+          int pos = activeQuery.indexOf("?");
+          if (pos == -1) {
+            throw new SQLException("Missing '?'");
+          }
+          activeQuery = activeQuery.substring(0, pos) + value + activeQuery.substring(pos+1);
+          lastIndex = index;
+        }
+      }
+    }
+    public void setNull(int index, int sqlType) throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        pstmt.setNull(index, sqlType);
+      } else {
+        if (index != lastIndex+1) {
+          throw new SQLException("Out of order index");
+        } else {
+          int pos = activeQuery.indexOf("?");
+          if (pos == -1) {
+            throw new SQLException("Missing '?'");
+          }
+          activeQuery = activeQuery.substring(0, pos) + "NULL" + activeQuery.substring(pos+1);
+          lastIndex = index;
+        }
+      }
+    }
+    public void setString(int index, String value) throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        pstmt.setString(index, value);
+      } else {
+        if (index != lastIndex+1) {
+          throw new SQLException("Out of order index");
+        } else {
+          int pos = activeQuery.indexOf("?");
+          if (pos == -1) {
+            throw new SQLException("Missing '?'");
+          }
+          activeQuery = activeQuery.substring(0, pos) + "'" + value + "'" + activeQuery.substring(pos+1);
+          lastIndex = index;
+        }
+       }
+    }
+    public ResultSet executeQuery() throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        return pstmt.executeQuery();
+      } else {
+        return stmt.executeQuery(activeQuery);
+      }
+    }
+
+    public int executeUpdate() throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        return pstmt.executeUpdate();
+      } else {
+        return stmt.executeUpdate(activeQuery);
+      }
+    }
+
+    public String toString() {
+      if (RdbmServices.supportsPreparedStatements) {
+        return query;
+      } else {
+        return activeQuery;
+      }
+    }
+
+    public void close() throws SQLException {
+      if (RdbmServices.supportsPreparedStatements) {
+        pstmt.close();
+      } else {
+        stmt.close();
+      }
+    }
+  }
+
+
 }
 
 
