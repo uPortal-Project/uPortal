@@ -40,6 +40,7 @@ package  org.jasig.portal.channels.UserPreferences;
 
 import  org.jasig.portal.*;
 import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.services.LogService;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
@@ -157,7 +158,7 @@ class GPreferencesState extends BaseState {
         userLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(context.getUserLayoutManager().getPerson(),
             context.getCurrentUserPreferences().getProfile().getProfileId());
       } catch (Exception e) {
-        Logger.log(Logger.ERROR, e);
+        LogService.instance().log(LogService.ERROR, e);
         throw  new GeneralRenderingException(e.getMessage());
       }
     }
@@ -220,7 +221,7 @@ class GPreferencesState extends BaseState {
       ThemeStylesheetUserPreferences ssup = up.getThemeStylesheetUserPreferences();
       tsd = this.getCoreStylesheetDescriptionStore().getThemeStylesheetDescription(ssup.getStylesheetId());
       if (tsd == null) {
-        Logger.log(Logger.ERROR, "CUserPreferences::setRuntimeData() : theme stylesheet description for a stylesheet \""
+        LogService.instance().log(LogService.ERROR, "CUserPreferences::setRuntimeData() : theme stylesheet description for a stylesheet \""
             + ssup.getStylesheetId() + "\" is null");
       }
     }
@@ -238,7 +239,7 @@ class GPreferencesState extends BaseState {
       StructureStylesheetUserPreferences fsup = this.getUserPreferences().getStructureStylesheetUserPreferences();
       ssd = this.getCoreStylesheetDescriptionStore().getStructureStylesheetDescription(fsup.getStylesheetId());
       if (ssd == null) {
-        Logger.log(Logger.ERROR, "CUserPreferences::setRuntimeData() : structure stylesheet description for a stylesheet \""
+        LogService.instance().log(LogService.ERROR, "CUserPreferences::setRuntimeData() : structure stylesheet description for a stylesheet \""
             + fsup.getStylesheetId() + "\" is null");
       }
     }
@@ -313,7 +314,7 @@ class GPreferencesState extends BaseState {
     if (this.internalState != null)
       this.internalState.renderXML(out);
     else
-      Logger.log(Logger.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
+      LogService.instance().log(LogService.ERROR, "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
   }
 
   protected class GEditLayoutItemState extends BaseState {
@@ -500,23 +501,21 @@ class GPreferencesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        Logger.log(Logger.DEBUG, outString.toString());
+        LogService.instance().log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        Logger.log(Logger.DEBUG, e);
+        LogService.instance().log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
-      String xslURI = null;
-      xslURI = set.getStylesheetURI("editItem", runtimeData.getBrowserInfo());
-      Hashtable params = new Hashtable();
-      params.put("baseActionURL", runtimeData.getBaseActionURL());
+      String xslURI = set.getStylesheetURI("editItem", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        try {
-          org.jasig.portal.utils.XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (java.io.IOException i) {
-          throw  new GeneralRenderingException("IOException has been encountered");
-        }
+        XSLT xslt = new XSLT();
+        xslt.setXML(doc);
+        xslt.setXSL(xslURI);
+        xslt.setTarget(out);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        xslt.transform();
       }
       else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
@@ -621,23 +620,21 @@ class GPreferencesState extends BaseState {
         format.setIndenting(true);
         org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
         xsl.serialize(doc);
-        Logger.log(Logger.DEBUG, outString.toString());
+        LogService.instance().log(LogService.DEBUG, outString.toString());
       } catch (Exception e) {
-        Logger.log(Logger.DEBUG, e);
+        LogService.instance().log(LogService.DEBUG, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
-      String xslURI = null;
-      xslURI = set.getStylesheetURI("editGPrefs", runtimeData.getBrowserInfo());
-      Hashtable params = new Hashtable();
-      params.put("baseActionURL", runtimeData.getBaseActionURL());
+      String xslURI = set.getStylesheetURI("editGPrefs", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        try {
-          XSLT.transform(doc, new URL(xslURI), out, params);
-        } catch (java.io.IOException i) {
-          throw  new GeneralRenderingException("IOException has been encountered");
-        }
+        XSLT xslt = new XSLT();
+        xslt.setXML(doc);
+        xslt.setXSL(xslURI);
+        xslt.setTarget(out);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        xslt.transform();
       }
       else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
@@ -657,7 +654,7 @@ class GPreferencesState extends BaseState {
         }
         else {
           ssup.putParameterValue(parName, value);
-          //		    Logger.log(Logger.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
+          //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting sparameter "+parName+"=\""+value+"\".");
         }
       }
       ThemeStylesheetUserPreferences tsup = context.getUserPreferences().getThemeStylesheetUserPreferences();
@@ -669,7 +666,7 @@ class GPreferencesState extends BaseState {
         }
         else {
           tsup.putParameterValue(parName, value);
-          //		    Logger.log(Logger.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
+          //		    LogService.instance().log(LogService.DEBUG,"CUserPreferences.GGlobalPrefsState::prepareSaveEditGPrefs() : setting tparameter "+parName+"=\""+value+"\".");
         }
       }
       context.setModified(true);
@@ -745,11 +742,12 @@ class GPreferencesState extends BaseState {
       else
         params.put("profileType", "user");
       if (xslURI != null) {
-        try {
-          XSLT.transform(context.getUserLayoutXML(), new URL(xslURI), out, params);
-        } catch (java.io.IOException i) {
-          throw  new GeneralRenderingException("IOException has been encountered");
-        }
+        XSLT xslt = new XSLT();
+        xslt.setXML(context.getUserLayoutXML());
+        xslt.setXSL(xslURI);
+        xslt.setTarget(out);
+        xslt.setStylesheetParameters(params);
+        xslt.transform();
       }
       else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
@@ -844,16 +842,14 @@ class GPreferencesState extends BaseState {
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");
-      String xslURI = null;
-      xslURI = set.getStylesheetURI("moveTo", runtimeData.getBrowserInfo());
-      Hashtable params = new Hashtable();
-      params.put("baseActionURL", runtimeData.getBaseActionURL());
+      String xslURI = set.getStylesheetURI("moveTo", runtimeData.getBrowserInfo());
       if (xslURI != null) {
-        try {
-          XSLT.transform(context.getUserLayoutXML(), new URL(xslURI), out, params);
-        } catch (java.io.IOException i) {
-          throw  new GeneralRenderingException("IOException has been encountered");
-        }
+        XSLT xslt = new XSLT();
+        xslt.setXML(context.getUserLayoutXML());
+        xslt.setXSL(xslURI);
+        xslt.setTarget(out);
+        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+        xslt.transform();
       }
       else
         throw  new ResourceMissingException("", "stylesheet", "Unable to find stylesheet to display content for this media");
@@ -876,7 +872,7 @@ class GPreferencesState extends BaseState {
       String destinationID = runtimeData.getParameter("destination");
       Node destination = null;
       if (destinationID == null) {
-        Logger.log(Logger.ERROR, "CUserPreferences::prepareMove() : received a null destinationID !");
+        LogService.instance().log(LogService.ERROR, "CUserPreferences::prepareMove() : received a null destinationID !");
       }
       else {
         if (destinationID.equals(context.getLayoutRootID()))
@@ -884,7 +880,7 @@ class GPreferencesState extends BaseState {
         else
           destination = context.getUserLayoutXML().getElementById(destinationID);
         if (destination == null) {
-          Logger.log(Logger.ERROR, "CUserPreferences::prepareMove() : destinationID=\"" + destinationID + "\" results in an empty node !");
+          LogService.instance().log(LogService.ERROR, "CUserPreferences::prepareMove() : destinationID=\"" + destinationID + "\" results in an empty node !");
         }
         else {
           for (int i = 0; i < moveIDs.length; i++) {
