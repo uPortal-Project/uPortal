@@ -58,6 +58,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private UPFileSpec channelUPFile;
     private String baseActionURL = null;
     private String httpRequestMethod=null;
+    private String remoteAddress=null;
     private String keywords=null;
     private boolean renderingAsRoot=false;
     private boolean targeted = false;
@@ -501,4 +502,16 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     {
       return keywords;
     }
+	/**
+	 * @return
+	 */
+	public String getRemoteAddress() {
+		return remoteAddress;
+	}
+	/**
+	 * @param string
+	 */
+	public void setRemoteAddress(String string) {
+		remoteAddress = string;
+	}	
 }

@@ -528,6 +528,7 @@ public class ChannelManager implements LayoutEventListener {
             if (lm != null)  {
                 rd.setLocales(lm.getLocales());
             }
+			rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
@@ -826,6 +827,7 @@ public class ChannelManager implements LayoutEventListener {
                     rd.setLocales(lm.getLocales());
                 }
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
+				rd.setRemoteAddress(req.getRemoteAddr());
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelTarget);
                 rd.setUPFile(up);
@@ -1045,6 +1047,7 @@ public class ChannelManager implements LayoutEventListener {
                 rd.setLocales(lm.getLocales());
             }
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
+			rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());
 
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
