@@ -251,12 +251,6 @@
 
                        URL: http://ws.apache.org/wsrp4j/
 
-  jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of
-                       javax.sql.* package. This is only needed for JDK's less than 1.4.
-                       It is included with JDK 1.4.
-                       Version: 2.0
-                       URL: http://java.sun.com/products/jdbc/
-
   jdbcDriver.jar       This should contain the JDBC driver for whatever relational
                        database you plan to use.  For development, HypersonicSQL is
                        a nice choice.  For production, you probably want something
@@ -318,7 +312,6 @@
   <property name="wsrp4j-shared.jar" value="(set this in build.properties!)"/>
   <property name="wsrp4j-consumer.jar" value="(set this in build.properties!)"/>
   <property name="proxyportlet.jar" value="(set this in build.properties!)"/>
-  <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
   <property name="junit.jar" value="(set this in build.properties!)"/>
   <property name="commons-collection.jar" value="(set this in build.properties!)"/>
@@ -361,7 +354,6 @@
     <pathelement location="${wsrp4j-shared.jar}"/>
     <pathelement location="${wsrp4j-consumer.jar}"/>
     <pathelement location="${proxyportlet.jar}"/>
-    <pathelement location="${jdbc2_0-stdext.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
     <pathelement location="${commons-collection.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
@@ -568,7 +560,6 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-collection.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbc2_0-stdext.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
   	<copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
 
