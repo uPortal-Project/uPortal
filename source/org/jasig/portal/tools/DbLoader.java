@@ -947,7 +947,7 @@ public class DbLoader
       charBuff.append(ch, start, length);
     }
 
-    private String prepareInsertStatement (String tableName, Row row, boolean preparedStatement)
+    private String prepareInsertStatement (Row row, boolean preparedStatement)
     {
       StringBuffer sb = new StringBuffer("INSERT INTO ");
       sb.append(table.getName()).append(" (");
@@ -984,6 +984,9 @@ public class DbLoader
               sb.append(value);
             else if (value.equals("NULL"))
               sb.append(value);
+            else if (getJavaSqlDataTypeOfColumn(tablesDocGeneric, table.getName(), column.getName()) == Types.INTEGER)
+              // this column is an integer, so don't put quotes (Sybase cares about this)
+              sb.append(value);
             else
             {
               sb.append("'");
@@ -1012,7 +1015,7 @@ public class DbLoader
       System.out.print("...");
 
       if (createScript)
-        scriptOut.println(prepareInsertStatement(table.getName(), row, false) + PropertiesHandler.properties.getStatementTerminator());
+        scriptOut.println(prepareInsertStatement(row, false) + PropertiesHandler.properties.getStatementTerminator());
 
 
       if (supportsPreparedStatements)
@@ -1020,7 +1023,7 @@ public class DbLoader
         String preparedStatement = "";
         try
         {
-          preparedStatement = prepareInsertStatement(table.getName(), row, true);
+          preparedStatement = prepareInsertStatement(row, true);
           //System.out.println(preparedStatement);
           pstmt = con.prepareStatement(preparedStatement);
           pstmt.clearParameters ();
@@ -1110,7 +1113,7 @@ public class DbLoader
       else
       {
         // If prepared statements aren't supported, try a normal insert statement
-        String insertStatement = prepareInsertStatement(table.getName(), row, false);
+        String insertStatement = prepareInsertStatement(row, false);
         //System.out.println(insertStatement);
 
         try
