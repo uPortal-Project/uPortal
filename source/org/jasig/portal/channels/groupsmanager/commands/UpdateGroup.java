@@ -101,7 +101,7 @@ public class UpdateGroup extends GroupsManagerCommand {
          return;
       }
       //IEntityGroup updGroup = GroupsManagerXML.retrieveGroup(updKey);
-      IEntityGroup updGroup = sessionData.lockedGroup;
+      ILockableEntityGroup updGroup = sessionData.lockedGroup;
       if (updGroup == null) {
          retMsg = "Unable to retrieve Group!";
          sessionData.feedback = retMsg;
@@ -111,7 +111,7 @@ public class UpdateGroup extends GroupsManagerCommand {
             curName);
       updGroup.setName(newName);
       updGroup.setDescription(newDescription);
-      updGroup.update();
+      updGroup.updateAndRenewLock();
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
             + curName);
       // update all xml nodes for this group

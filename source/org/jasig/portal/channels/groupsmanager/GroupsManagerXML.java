@@ -493,28 +493,17 @@ public class GroupsManagerXML
          Element anElem, Document aDoc) {
       // search elements are nonPersistent and come in as a null group member.
       if (gm == null) {return null;}
-      Element rootElem = null;
-      GroupsManagerWrapperFactory wf = GroupsManagerWrapperFactory.instance();
-      if (gm.isEntity()) {
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): About to get entity wrapper");
-         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(ENTITY_TAGNAME);
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): Got entity wrapper");
-         if (rap != null) {
-            rootElem = rap.getXml(gm, anElem, aDoc);
-         }
-      }
-      else {
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): element parm is null = "
-               + (anElem == null));
-         rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(GROUP_TAGNAME,
+      Element rootElem = anElem;
+      String tagname = ENTITY_TAGNAME;
+      if (gm.isGroup()) {
+         tagname = GROUP_TAGNAME;
+         rootElem = (rootElem != null ? rootElem : GroupsManagerXML.createElement(GROUP_TAGNAME,
                aDoc, false));
          rootElem.setAttribute("expanded", String.valueOf(isContextExpanded));
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): About to get group wrapper");
-         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(GROUP_TAGNAME);
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): Got group wrapper");
-         if (rap != null) {
-            rootElem = rap.getXml(gm, rootElem, aDoc);
-         }
+      }
+      IGroupsManagerWrapper rap = getWrapper(tagname);
+      if (rap != null) {
+         rootElem = rap.getXml(gm, rootElem, aDoc);
       }
       return  rootElem;
    }
@@ -636,6 +625,19 @@ public class GroupsManagerXML
    }
 
    /**
+    * Returns a group member wrapper.
+    * @param type
+    * @return IGroupsManagerWrapper
+    */
+   public static IGroupsManagerWrapper getWrapper (String type) {
+      GroupsManagerWrapperFactory wf = GroupsManagerWrapperFactory.instance();
+      String tagname =  (type.equals(ENTITY_TAGNAME) || type.equals(ENTITY_CLASSNAME)) ?
+         ENTITY_TAGNAME : GROUP_TAGNAME;
+      IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(tagname);
+      return rap;
+   }
+
+   /**
     * Group elements that hold search results are non-persistent and should be treated differently.
     * For example, they do not have a "key" attribute so code that attempts to retreive
     * a GroupMember should not be attempted.
@@ -720,32 +722,30 @@ public class GroupsManagerXML
       if (parentElem == null){
          /** @todo this should be an error */
          Utility.logMessage("INFO", "GroupsManagerXML::refreshAllNodesRecursivelyIfRequired(): parentElem is null");
+         return;
       }
       Element childElem;
       Node childNode;
       NodeList childNodes;
       String childType;
+      boolean isParentElementExpanded = (Utility.areEqual(parentElem.getAttribute("expanded"), "true") ? true : false);
       refreshAllNodesIfRequired(model, parentElem);
-      String parentType = parentElem.getAttribute("type");
-      Node parentNode = (Node)parentElem;
-      childNodes = parentNode.getChildNodes();
-      for (int i = 0; i < childNodes.getLength(); i++) {
-         childNode = (org.w3c.dom.Node)childNodes.item(i);
-         childElem = (Element)childNode;
-         childType = childElem.getAttribute("type");
-         if (Utility.notEmpty(childType)){
-            refreshAllNodesIfRequired(model, childElem);
+      if (isParentElementExpanded){
+         //String parentType = parentElem.getAttribute("type");
+         Node parentNode = (Node)parentElem;
+         childNodes = parentNode.getChildNodes();
+         for (int i = 0; i < childNodes.getLength(); i++) {
+            childNode = (org.w3c.dom.Node)childNodes.item(i);
+            childElem = (Element)childNode;
+            childType = childElem.getAttribute("type");
+            if (Utility.notEmpty(childType)){
+               refreshAllNodesIfRequired(model, childElem);
+            }
          }
-         // Does parent have any new children
-         // The wrapper will automatically add new children if expanded attribute is set to "true"
-         // but we have to set it back to the original value.
-         String saveExpand = parentElem.getAttribute("expanded");
+         // Parent may have had children added or removed
+         // The wrapper will do this for us.
          // Have to check for non persistent search element before doing retrieval
-         IGroupMember parentGM = ((!isPersistentGroup(parentElem) ?
-            null :
-            (IGroupMember)retrieveGroup(parentElem.getAttribute("key"))));
-         getGroupMemberXml (parentGM , true, parentElem, model);
-         parentElem.setAttribute("expanded", saveExpand);
+         expandGroupElementXML(parentElem, model);
       }
       return;
    }

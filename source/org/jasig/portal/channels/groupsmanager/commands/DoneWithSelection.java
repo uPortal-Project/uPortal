@@ -176,7 +176,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
       Element parentElem, Document model) throws Exception {
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Element parent;
-      IEntityGroup parentGroup = null;
+      ILockableEntityGroup parentGroup = null;
       IGroupMember childGm = null;
       Element childElem;
       String parentName = parentElem.getAttribute("key");
@@ -192,7 +192,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
          // add to parent group
          parentGroup.addMember(childGm);
          // update parent group
-         parentGroup.updateMembers();
+         parentGroup.updateMembersAndRenewLock();
          // get parent element(s) and add element for child group member
          Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
                parentElem.getAttribute("key"));

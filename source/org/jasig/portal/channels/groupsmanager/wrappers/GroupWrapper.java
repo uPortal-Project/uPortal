@@ -135,61 +135,55 @@ public class GroupWrapper extends GroupMemberWrapper {
     */
    private Element expandElement (IGroupMember gm, Element anElem, Document aDoc) {
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): START");
+      Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): Group Member: " + gm);
+      Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): Element: " + anElem);
+      //We only want to expand the element if the attribute is set to "true"
+      if (!Utility.areEqual(anElem.getAttribute("expanded"), "true")) {return anElem;}
+
+      Utility.printDoc(aDoc, "GroupsWrapper::expandElement(): model at start:");
       java.util.Iterator gmItr = null;
       IGroupMember aChildGm = null;
       Element tempElem = null;
       try {
-         boolean isGroupExpanded = (Boolean.valueOf(anElem.getAttribute("expanded")).booleanValue());
-         if (isGroupExpanded) {
-            Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  HERE COME THE KIDS");
-            try {
-               gmItr = gm.getMembers();
-            } catch (Exception e) {
-               Utility.logMessage("ERROR", "GroupWrapper::expandElement():  \n" + e.toString());
+         Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  HERE COME THE KIDS");
+         gmItr = gm.getMembers();
+         String aKey = gm.getKey();
+         // add new elements for new group members
+         while (gmItr.hasNext()) {
+            aChildGm = (IGroupMember)gmItr.next();
+            String childKey = aChildGm.getKey();
+            Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  " + aChildGm);
+            boolean memberElementFound = false;
+            String tagname = (aChildGm.isGroup() ? GROUP_TAGNAME : ENTITY_TAGNAME);
+            memberElementFound = GroupsManagerXML.getNodesByTagNameAndKey(anElem, tagname,
+                  childKey).hasNext();
+            if (!memberElementFound) {
+               tempElem = GroupsManagerXML.getGroupMemberXml(aChildGm,false, null, aDoc);
+               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING "
+                     + tempElem.getNodeName());
+               anElem.appendChild(tempElem);
+               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING ACCOMPLISHED");
             }
-            String aKey = gm.getKey();
-            // add new elements for new group members
-            while (gmItr.hasNext()) {
-               aChildGm = (IGroupMember)gmItr.next();
-               String childKey = aChildGm.getKey();
-               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  " + aChildGm);
-               boolean isPresent = false;
-               if (aChildGm.isGroup()){
-                isPresent = GroupsManagerXML.getNodesByTagNameAndKey(anElem, GROUP_TAGNAME,
-                     childKey).hasNext();
-               }
-               else {
-                  isPresent = GroupsManagerXML.getNodesByTagNameAndKey(anElem, ENTITY_TAGNAME,
-                     childKey).hasNext();
-               }
-               if (!isPresent) {
-                  tempElem = GroupsManagerXML.getGroupMemberXml(aChildGm,false, null, aDoc);
-                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING "
-                        + tempElem.getNodeName());
-                  anElem.appendChild(tempElem);
-                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING ACCOMPLISHED");
-               }
-            }
-            // remove elements for new groups that are no longer members
-            // Remember that getChildNodes does not only return IGroupMember elements
-            NodeList nList = anElem.getChildNodes();
-            for (int i = 0; i < nList.getLength(); i++) {
-               tempElem = (Element)nList.item(i);
-               if (Utility.notEmpty(tempElem.getAttribute("entityType"))){
-                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  Checking if child element (id = " + tempElem.getAttribute("id") + ") still a member");
-                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  child element (key = " + tempElem.getAttribute("key") + ")");
-                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  child element (entityType = " + tempElem.getAttribute("entityType") + ")");
-                  aChildGm = GroupsManagerXML.retrieveGroupMemberForElementId (aDoc, tempElem.getAttribute("id"));
-                  if (!gm.contains(aChildGm)){
-                     Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  About to remove child element");
-                     anElem.removeChild((Node)tempElem);
-                  }
+         }
+         // Remove elements for groups that are no longer members
+         // Remember that getChildNodes does not only return IGroupMember elements
+         NodeList nList = anElem.getChildNodes();
+         for (int i = 0; i < nList.getLength(); i++) {
+            tempElem = (Element)nList.item(i);
+            if (Utility.notEmpty(tempElem.getAttribute("entityType"))){
+               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  Checking if child element (id = " + tempElem.getAttribute("id") + ") still a member");
+               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  child element (key = " + tempElem.getAttribute("key") + ")");
+               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  child element (entityType = " + tempElem.getAttribute("entityType") + ")");
+               aChildGm = GroupsManagerXML.retrieveGroupMemberForElementId (aDoc, tempElem.getAttribute("id"));
+               if (!gm.contains(aChildGm)){
+                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  About to remove child element");
+                  anElem.removeChild((Node)tempElem);
                }
             }
          }
       } catch (Exception e) {
-         Utility.logMessage("ERROR", "GroupWrapper::expandElement(): ERROR retrieving entity "
-               + e.toString());
+         Utility.logMessage("ERROR", "GroupWrapper::expandElement(): ERROR expanding \nElement: "
+            + anElem + "\nFor group member: " + gm + "\n" + e.toString());
          //throw new ChainedException("Exception from GroupsWrapper::expandElement", e);
       }
       return  anElem;

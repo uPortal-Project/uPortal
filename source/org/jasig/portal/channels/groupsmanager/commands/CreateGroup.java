@@ -79,7 +79,7 @@ import  javax.xml.parsers.*;
       String newGrpName = runtimeData.getParameter("grpNewName");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): New grp: " + newGrpName +
             " will be added to parent element = " + parentID);
-      IEntityGroup parentGroup = null;
+      ILockableEntityGroup parentGroup = null;
       Class parentEntityType;
       Element parentElem = GroupsManagerXML.getElementByTagNameAndId(model, GROUP_TAGNAME, parentID);
       String parentKey = parentElem.getAttribute("key");
@@ -112,7 +112,7 @@ import  javax.xml.parsers.*;
       Utility.logMessage("DEBUG", "CreateGroup::execute(): About to add new group: "
          + newGrpName);
       parentGroup.addMember((IGroupMember)childEntGrp);
-      parentGroup.updateMembers();
+      parentGroup.updateMembersAndRenewLock();
       parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME, parentKey);
       // add new group to all parent group xml nodes
       while (parentNodes.hasNext()) {

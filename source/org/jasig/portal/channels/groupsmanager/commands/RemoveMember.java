@@ -129,7 +129,7 @@ public class RemoveMember extends GroupsManagerCommand {
       if (parentGroup != null && childGm != null) {
          try {
             ((IEntityGroup)parentGroup).removeMember(childGm);
-            ((IEntityGroup)parentGroup).updateMembers();
+            ((ILockableEntityGroup)parentGroup).updateMembersAndRenewLock();
          } catch (GroupsException ge) {
             String aMsg = "Unable to remove child from parent/n" + ge;
             Utility.logMessage("ERROR", aMsg);
