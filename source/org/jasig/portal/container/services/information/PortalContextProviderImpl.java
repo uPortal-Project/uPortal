@@ -23,7 +23,7 @@ import org.jasig.portal.Version;
  */
 public class PortalContextProviderImpl implements PortalContextProvider {
     
-    protected static final WindowState EXCLUSIVE = new WindowState("exclusive");
+    public static final WindowState EXCLUSIVE = new WindowState("exclusive");
     
     private Map properties = null;
     private PortletMode[] supportedPortletModes = null;

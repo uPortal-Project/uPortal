@@ -538,7 +538,7 @@ public class PortletStateManager {
 	
     public String getActionURL() {
         final StringBuffer actionUrl = new StringBuffer();
-        
+        final WindowState curState = getState(windowOfAction);
         final String encodedUrlParams = encodeURLParameters(this.toString());
         
         if (encodedUrlParams.length() > 0) {
@@ -555,7 +555,7 @@ public class PortletStateManager {
             actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_END);
         }
         
-        if (PortalContextProviderImpl.EXCLUSIVE.equals(this.nextState)) {
+        if (PortalContextProviderImpl.EXCLUSIVE.equals(this.nextState) || (this.nextState == null && PortalContextProviderImpl.EXCLUSIVE.equals(curState))) {
             final String urlBase = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
             actionUrl.insert(0, UPFileSpec.PORTAL_URL_SEPARATOR);
             actionUrl.insert(0, urlBase);
@@ -571,6 +571,10 @@ public class PortletStateManager {
             actionUrl.append(windowOfAction.getId());
         }
         
+        if (PortalContextProviderImpl.EXCLUSIVE.equals(curState)) {
+            actionUrl.insert(0, "../../");
+        }
+
         return actionUrl.toString();
     }
 }
