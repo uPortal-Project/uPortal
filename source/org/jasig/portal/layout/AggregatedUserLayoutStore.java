@@ -2047,7 +2047,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           chanIds.clear();
         }
 
-        if (!RDBMServices.supportsOuterJoins) { // Pick up structure parameters
+        if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
           String sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
