@@ -1437,7 +1437,7 @@
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>PROFILE_NAME</name><value>Guest Netscape Profile</value></column>
-        <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
       </row>
@@ -1446,7 +1446,7 @@
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
         <column><name>PROFILE_NAME</name><value>Guest Internet Explorer Profile</value></column>
-        <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
       </row>
@@ -1464,7 +1464,7 @@
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>PROFILE_NAME</name><value>My Netscape Profile</value></column>
-        <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for Netscape browsers</value></column>
       </row>
@@ -1473,7 +1473,7 @@
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>2</value></column>
         <column><name>PROFILE_NAME</name><value>My Internet Explorer Profile</value></column>
-        <column><name>STRUCTURE_SS_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>STRUCTURE_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for Internet Explorer browsers</value></column>
       </row>
@@ -1496,7 +1496,7 @@
       <row>
         <column><name>USER_ID</name><value>1</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>STYLESHEET_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>STYLESHEET_NAME</name><value>Tabs and columns</value></column>
         <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
           <structurestylesheetuserpreferences>
             <parameters/>
@@ -1540,7 +1540,7 @@
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>STYLESHEET_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>STYLESHEET_NAME</name><value>Tabs and columns</value></column>
         <column><name>USER_PREFERENCES_XML</name><value><![CDATA[
           <structurestylesheetuserpreferences>
             <parameters/>
@@ -1585,15 +1585,15 @@
     <name>UP_STRUCT_SS</name>
     <rows>
       <row>
-        <column><name>STYLESHEET_NAME</name><value>Tab and Column layout</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.xsl</value></column>
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.sdf</value></column>
+        <column><name>STYLESHEET_NAME</name><value>Tabs and columns</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/tab-column.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns.</value></column>
       </row>
       <row>
         <column><name>STYLESHEET_NAME</name><value>Nested categories</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/nested-categories.xsl</value></column>
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/nested-categories.sdf</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/nested-categories.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Presents the layout in terms of nested categories.</value></column>
       </row>
     </rows>
@@ -1604,14 +1604,14 @@
     <rows>
       <row>
         <column><name>STYLESHEET_NAME</name><value>Nested tables</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.xsl</value></column>
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.sdf</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Renders tabs and columns as nested tables</value></column>
       </row>
       <row>
         <column><name>STYLESHEET_NAME</name><value>Deck of cards</value></column>
-        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/deck-of-cards/deck-of-cards.xsl</value></column>
-        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/LayoutBean/nested-categories/deck-of-cards/deck-of-cards.sdf</value></column>
+        <column><name>STYLESHEET_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/deck-of-cards/deck-of-cards.xsl</value></column>
+        <column><name>STYLESHEET_DESCRIPTION_URI</name><value>webpages/stylesheets/org/jasig/portal/layout/nested-categories/deck-of-cards/deck-of-cards.sdf</value></column>
         <column><name>STYLESHEET_DESCRIPTION_TEXT</name><value>Renders tabs and columns as deck of cards</value></column>
       </row>
     </rows>
@@ -1622,7 +1622,7 @@
     <rows>
       <row>
         <column><name>THEME_SS_NAME</name><value>Nested tables</value></column>
-        <column><name>STRUCT_SS_NAME</name><value>Tab and Column layout</value></column>
+        <column><name>STRUCT_SS_NAME</name><value>Tabs and columns</value></column>
         <column><name>MIME_TYPE</name><value>text/html</value></column>
       </row>
       <row>
