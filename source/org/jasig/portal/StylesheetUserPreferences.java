@@ -18,6 +18,7 @@ public class StylesheetUserPreferences {
     }
     
     public StylesheetUserPreferences(StylesheetUserPreferences sup) {
+	this.name=sup.name;
 	this.parameters=new Hashtable(sup.parameters);
     }
 
