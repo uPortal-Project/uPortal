@@ -99,7 +99,7 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
             IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(expandedElem.getAttribute("key"));
             GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, true, expandedElem,
                   xmlDoc);
-            Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
+            //Utility.printDoc(xmlDoc, "renderXML: +++++++++ After children are retrieved +++++++++");
             //}
          }
       }

@@ -316,29 +316,7 @@ public class CGroupsManager
             Enumeration srd = slaveRD.keys();
             while (srd.hasMoreElements()) {
                slaveRD.remove(srd.nextElement());
-            }            /*
-             ChannelStaticData slaveSD = (ChannelStaticData)staticData.clone();
-             Enumeration sdkeys = slaveSD.keys();
-             while (sdkeys.hasMoreElements()){
-             Object tk = sdkeys.nextElement();
-             //LogService.instance().log(LogService.DEBUG, "CGroupsManager.setRuntimeData() : removing sd element " +tk);
-             slaveSD.remove(tk);
-             }
-             IPermissible[] owners = new IPermissible[1];
-             owners[0] = (IPermissible) Class.forName(OWNER).newInstance();
-             String[] tgts = new String[1];
-             tgts[0] = (runtimeData.getParameter("grpViewKey"));
-             runtimeData.remove("grpViewKey");
-             HashMap targets = new HashMap(1);
-             targets.put(getOwnerToken(), tgts);
-             HashMap acts = new HashMap(1);
-             acts.put(getOwnerToken(), this.getActivityTokens());
-             slaveSD.put("prmOwners", owners);
-             slaveSD.put("prmActivities", acts);
-             slaveSD.put("prmTargets", targets);
-             slaveSD.put("prmView", "Assign By Owner");
-             ((IChannel)servantChannel).setStaticData(slaveSD);
-             */
+            }
 
          } catch (Exception e) {
             LogService.instance().log(LogService.ERROR, e);
@@ -452,6 +430,26 @@ public class CGroupsManager
             else {
                runtimeData.put("commandResponse", "Unable to locate requested group.");
             }
+         }
+         if (hasValue(staticData.get("grpPreSelectForMember"))){
+            DocumentImpl viewDoc = getViewDoc();
+            Element rootElem = viewDoc.getDocumentElement();
+            Element parentElem;
+            try{
+              IGroupMember gm = (IGroupMember) staticData.get("grpPreSelectForMember");
+              Iterator parents = gm.getContainingGroups();
+              IEntityGroup parent;
+              while (parents.hasNext()){
+                 parent = (IEntityGroup) parents.next();
+                 parentElem = GroupsManagerXML.getGroupMemberXml(parent,false,null,viewDoc);
+                 parentElem.setAttribute("selected","true");
+                 rootElem.appendChild(parentElem);
+              }
+            }
+            catch (Exception e){
+              LogService.instance().log(LogService.ERROR,e);
+            }
+            staticData.remove("grpPreSelectForMember");
          }
          if (!hasValue(runtimeData.getParameter("grpViewId"))) {
             if (hasValue(staticData.get("grpViewId"))) {
