@@ -266,6 +266,7 @@ public class CChannelManager extends BaseChannel {
       if (action.equals("selectChannelType")) {
         state = CHANNEL_TYPE_STATE;
         Workflow workflow = new Workflow();
+
         // Add channel types and channel def
         WorkflowSection chanTypeSection = new WorkflowSection("selectChannelType");
         WorkflowStep step = new WorkflowStep("1", "Channel Type");
@@ -273,20 +274,6 @@ public class CChannelManager extends BaseChannel {
         step.addDataElement(channelDef.toXML());
         chanTypeSection.addStep(step);
         workflow.setChannelTypesSection(chanTypeSection);
-
-        // Add CPD document if channel is "generic", otherwise custom settings
-        String channelTypeID = channelDef.getTypeID();
-        if (channelTypeID != null) {
-          if (channelTypeID.equals("-1")) {
-            WorkflowSection csSection = new WorkflowSection("customSettings");
-            step = new WorkflowStep("1", "Channel Parameters");
-            csSection.addStep(step);
-            workflow.setChannelParamsSection(csSection);
-          } else {
-            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-            workflow.setChannelParamsSection(cpdSection);
-          }
-        }
 
         channelManagerDoc = workflow.toXML();
 
@@ -301,20 +288,6 @@ public class CChannelManager extends BaseChannel {
         WorkflowStep step = new WorkflowStep("1", "General Settings");
         step.addDataElement(channelDef.toXML());
         gsSection.addStep(step);
-
-        // Add CPD document if channel is "generic", otherwise custom settings
-        String channelTypeID = channelDef.getTypeID();
-        if (channelTypeID != null) {
-          if (channelTypeID.equals("-1")) {
-            WorkflowSection csSection = new WorkflowSection("customSettings");
-            step = new WorkflowStep("1", "Channel Parameters");
-            csSection.addStep(step);
-            workflow.setChannelParamsSection(csSection);
-          } else {
-            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-            workflow.setChannelParamsSection(cpdSection);
-          }
-        }
 
         channelManagerDoc = workflow.toXML();
 
@@ -344,20 +317,6 @@ public class CChannelManager extends BaseChannel {
         state = CHANNEL_CONTROLS_STATE;
         Workflow workflow = new Workflow();
 
-        // Add CPD document if channel is "generic", otherwise custom settings
-        String channelTypeID = channelDef.getTypeID();
-        if (channelTypeID != null) {
-          if (channelTypeID.equals("-1")) {
-            WorkflowSection csSection = new WorkflowSection("customSettings");
-            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
-            csSection.addStep(step);
-            workflow.setChannelParamsSection(csSection);
-          } else {
-            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-            workflow.setChannelParamsSection(cpdSection);
-          }
-        }
-
         // Add controlsSection
         WorkflowSection controlsSection = new WorkflowSection("selectControls");
         if (channelDef.getMinimizable() == null) // if one is null, they are all null
@@ -373,20 +332,6 @@ public class CChannelManager extends BaseChannel {
 
         state = CHANNEL_CATEGORIES_STATE;
         Workflow workflow = new Workflow();
-
-        // Add CPD document if channel is "generic", otherwise custom settings
-        String channelTypeID = channelDef.getTypeID();
-        if (channelTypeID != null) {
-          if (channelTypeID.equals("-1")) {
-            WorkflowSection csSection = new WorkflowSection("customSettings");
-            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
-            csSection.addStep(step);
-            workflow.setChannelParamsSection(csSection);
-          } else {
-            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-            workflow.setChannelParamsSection(cpdSection);
-          }
-        }
 
         // Add channel registry
         WorkflowSection catSection = new WorkflowSection("selectCategories");
@@ -404,20 +349,6 @@ public class CChannelManager extends BaseChannel {
         state = CHANNEL_ROLES_STATE;
         Workflow workflow = new Workflow();
 
-        // Add CPD document if channel is "generic", otherwise custom settings
-        String channelTypeID = channelDef.getTypeID();
-        if (channelTypeID != null) {
-          if (channelTypeID.equals("-1")) {
-            WorkflowSection csSection = new WorkflowSection("customSettings");
-            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
-            csSection.addStep(step);
-            workflow.setChannelParamsSection(csSection);
-          } else {
-            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-            workflow.setChannelParamsSection(cpdSection);
-          }
-        }
-
         // Add roles
         WorkflowSection roleSection = new WorkflowSection("selectRoles");
         workflow.setRolesSection(roleSection);
@@ -433,20 +364,6 @@ public class CChannelManager extends BaseChannel {
 
         state = CHANNEL_REVIEW_STATE;
         Workflow workflow = new Workflow();
-
-        // Add CPD document if channel is "generic", otherwise custom settings
-        String channelTypeID = channelDef.getTypeID();
-        if (channelTypeID != null) {
-          if (channelTypeID.equals("-1")) {
-            WorkflowSection csSection = new WorkflowSection("customSettings");
-            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
-            csSection.addStep(step);
-            workflow.setChannelParamsSection(csSection);
-          } else {
-            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
-            workflow.setChannelParamsSection(cpdSection);
-          }
-        }
 
         WorkflowSection reviewSection = new WorkflowSection("reviewChannel");
         workflow.setReviewSection(reviewSection);
@@ -464,6 +381,7 @@ public class CChannelManager extends BaseChannel {
 
         reviewSection.addStep(step);
         channelManagerDoc = workflow.toXML();
+
       } else if (action.equals("selectModifyChannel")) {
 
         state = MODIFY_CHANNEL_STATE;
@@ -660,7 +578,9 @@ public class CChannelManager extends BaseChannel {
    * <p>This Workflow class represents the collection of workflow sections and can
    * produce an XML version of itself for passing to the XSLT stylesheets. When a
    * particular section is not explicitly set, a minimal XML fragment will still
-   * be included so that the channel can render the workflow sections at the top.</p>
+   * be included so that the channel can render the workflow sections at the top.
+   * The channel parameters section is included every time except when the channel
+   * type is not known.</p>
    */
   protected class Workflow {
     protected WorkflowSection channelTypesSection;
@@ -679,7 +599,7 @@ public class CChannelManager extends BaseChannel {
     protected void setRolesSection(WorkflowSection rolesSection) { this.rolesSection = rolesSection; }
     protected void setReviewSection(WorkflowSection reviewSection) { this.reviewSection = reviewSection; }
 
-    protected Document toXML() {
+    protected Document toXML() throws PortalException {
       Document doc = DocumentFactory.getNewDocument();
 
       // Add the top level <manageChannels> to the document
@@ -689,11 +609,7 @@ public class CChannelManager extends BaseChannel {
       // Add all the sections
       addSection(channelTypesSection, "selectChannelType", "Channel Type", channelManagerE);
       addSection(generalSettingsSection, "selectGeneralSettings", "General Settings", channelManagerE);
-
-      // This should only happen in the first state during the publishing of a new channel
-      if (channelParamsSection != null)
-        channelManagerE.appendChild(channelParamsSection.toXML(doc));
-
+      addChannelParamsSection(channelManagerE);
       addSection(controlsSection, "selectControls", "Channel Controls", channelManagerE);
       addSection(categoriesSection, "selectCategories", "Categories", channelManagerE);
       addSection(rolesSection, "selectRoles", "Roles", channelManagerE);
@@ -709,6 +625,27 @@ public class CChannelManager extends BaseChannel {
         section.addStep(new WorkflowStep("1", stepTitle));
       }
       e.appendChild(section.toXML(e.getOwnerDocument()));
+    }
+
+    private void addChannelParamsSection(Element e) throws PortalException {
+      if (channelParamsSection == null) {
+        // Add CPD document if channel is "generic", otherwise custom settings
+        String channelTypeID = channelDef.getTypeID();
+        if (channelTypeID != null) {
+          if (channelTypeID.equals("-1")) {
+            WorkflowSection csSection = new WorkflowSection("customSettings");
+            WorkflowStep step = new WorkflowStep("1", "Channel Parameters");
+            csSection.addStep(step);
+            setChannelParamsSection(csSection);
+          } else {
+            CPDWorkflowSection cpdSection = new CPDWorkflowSection(channelDef.getTypeID());
+            setChannelParamsSection(cpdSection);
+          }
+        } else {
+          return;
+        }
+      }
+      e.appendChild(channelParamsSection.toXML(e.getOwnerDocument()));
     }
   }
 
