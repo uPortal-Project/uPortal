@@ -83,7 +83,7 @@ public class CPublisher implements IPrivilegedChannel
   private static final int PREVIEW  = 8;
 
   //number of extra steps
-  private static final int EXTRA = 2;
+  private static final int EXTRA = 3;
 
   private int mode = NONE;
   private Document channelTypes = null;
@@ -93,12 +93,15 @@ public class CPublisher implements IPrivilegedChannel
   private String currentStep = "1";
   private String specialStep = "";
   private int numSteps = 0;
-  private int newNumSteps = 0;
+  private int totSteps = 0;
   private String declURI;
   private String catID[] = null;
   private boolean modified = false; // modification flag
   public static Vector vReservedParams = getReservedParams();
   private Hashtable hParams = null;
+  private Vector vRoles = null;
+  private Vector vCats = null;
+  private String chanName = "New Channel";
 
 
   /** Construct a CPublisher.
@@ -180,6 +183,10 @@ public class CPublisher implements IPrivilegedChannel
         preparePublish ();
       else if (action.equals ("publishCats"))
         preparePublishCats ();
+      else if (action.equals ("publishRoles"))
+        preparePublishRoles ();
+      else if (action.equals ("publishName"))
+        preparePublishName ();
       else if (action.equals ("saveChanges"))
         prepareSaveChanges ();
       else if (action.equals("cancel"))
@@ -199,14 +206,17 @@ public class CPublisher implements IPrivilegedChannel
     {
       switch (mode)
       {
-        case CHOOSE:
-          processXML ("main",channelDecl, out);
-          break;
         case PUBLISH:
           processXML ("main",channelDecl, out);
           break;
         case CATS:
           processXML("main", chanReg.getCategoryXML(null), out);
+          break;
+        case NAME:
+          processXML("main", getNameDoc(), out);
+          break;
+        case ROLES:
+          processXML("main", getRoles(), out);
           break;
         default:
           processXML ("main",channelTypes, out);
@@ -230,7 +240,7 @@ public class CPublisher implements IPrivilegedChannel
       ssParams.put("baseActionURL", runtimeData.getBaseActionURL());
       ssParams.put("currentStep", currentStep);
       ssParams.put("specialStep", specialStep);
-      ssParams.put("numSteps", Integer.toString(newNumSteps));
+      ssParams.put("totSteps", Integer.toString(totSteps));
       ssParams.put("modified", new Boolean(modified));
       XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
     }
@@ -244,7 +254,7 @@ public class CPublisher implements IPrivilegedChannel
 
   private void prepareChoose ()
   {
-    mode = CHOOSE;
+    mode = PUBLISH;
     currentStep = "1";
     catID = null;
     String runtimeURI = runtimeData.getParameter ("channel");
@@ -267,7 +277,7 @@ public class CPublisher implements IPrivilegedChannel
     if (hParams==null) hParams = new Hashtable();
     currentStep = runtimeData.getParameter("currentStep");
     if(numSteps==0) numSteps = Integer.parseInt(runtimeData.getParameter("numSteps"));
-    if(newNumSteps==0) newNumSteps = numSteps + EXTRA;
+    if(totSteps==0) totSteps = numSteps + EXTRA;
     Enumeration e = runtimeData.getParameterNames();
 
     if(!currentStep.equals("end")) {
@@ -283,13 +293,13 @@ public class CPublisher implements IPrivilegedChannel
         }
         else if(i == numSteps+1){
             mode = NAME;
-            specialStep = "name";
+            //specialStep = "name";
             currentStep = Integer.toString(i+1);
         }
-       // else if(i == numSteps + 1) {
-       //     mode = ROLES;
-       //     currentStep = Integer.toString(i+1);
-       // }
+        else if(i == numSteps + 2) {
+            mode = ROLES;
+            currentStep = Integer.toString(i+1);
+        }
         else {
             publishChannel();
             specialStep = "end";
@@ -325,10 +335,7 @@ public class CPublisher implements IPrivilegedChannel
         chan.setAttribute("detachable", "true");
         chan.setAttribute("class", (String)hParams.get("class"));
 
-        String cName = (String)hParams.get("chanName");
-        if(cName == null) cName = "new channel";
-
-        chan.setAttribute("name", cName);
+        chan.setAttribute("name", chanName);
 
         chan.setAttribute("ID", "chan"+nextID);
 
@@ -346,7 +353,8 @@ public class CPublisher implements IPrivilegedChannel
         }
         doc.appendChild(chan);
 
-        chanReg.addChannel(nextID, cName, doc, catID);
+        chanReg.addChannel(nextID, chanName, doc, catID);
+        storeChanRoles(nextID);
     }
 
 
@@ -355,7 +363,19 @@ public class CPublisher implements IPrivilegedChannel
     mode = PUBLISH;
     catID = runtimeData.getParameterValues("cat");
   }
+  
+  private void preparePublishRoles ()
+  {
+    mode = PUBLISH;
+    vRoles = new Vector(Arrays.asList(runtimeData.getParameterValues("role")));
+  }
 
+  private void preparePublishName ()
+  {
+    mode = PUBLISH;
+    chanName = runtimeData.getParameter("chanName");
+  }
+  
   private void prepareSaveChanges ()
   {
     // save layout copy
@@ -427,4 +447,52 @@ public class CPublisher implements IPrivilegedChannel
     return roleDoc;
   }
 
+    /**
+   * Saves channel roles
+   * @param the servlet request object
+   */
+  public boolean storeChanRoles(int id)
+  {
+    try
+    {
+      Authorization authorization = new Authorization();
+
+      // Check for an unrestricted channel
+      if(vRoles == null)
+      {
+        return true;
+      }
+
+      // Have the authorization bean store the channel roles
+      int rolesSet = authorization.setChannelRoles(id, vRoles);
+
+      // Make sure all of the roles have been stored
+      if(rolesSet == vRoles.size())
+      {
+        return(true);
+      }
+      else
+      {
+        return(false);
+      }
+    }
+    catch(Exception e)
+    {
+      Logger.log(Logger.ERROR, e);
+      return(false);
+    }
+  }
+  
+  private Document getNameDoc()
+  {
+    Document nameDoc = null;
+    nameDoc = new DocumentImpl();
+    Element root = nameDoc.createElement("name");
+    Element field  = nameDoc.createElement("field");
+    root.appendChild(field);
+    nameDoc.appendChild(root);
+    
+    return nameDoc;
+  }
+  
 }
