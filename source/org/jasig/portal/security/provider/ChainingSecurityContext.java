@@ -290,7 +290,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   }
 
 
-  protected class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
+  public class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
   }
 
 // entries in our subcontext list
