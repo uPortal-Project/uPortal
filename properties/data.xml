@@ -1886,7 +1886,8 @@
         <column><name>MIME_TYPE</name><value>text/vnd.wap.wml</value></column>
         <column><name>DEVICE_TYPE</name><value>mobile phone</value></column>
         <column><name>SERIALIZER_NAME</name><value>WML</value></column>
-        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column>
+<!-- Cell phone doesn't use tab-column structure stylesheet ! -->
+<!--        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column> -->
       </row>
     </rows>
   </table>
@@ -1894,6 +1895,13 @@
   <table>
     <name>UP_THEME_PARAMS</name>
      <rows>
+       <row>
+         <column><name>SS_ID</name><value>1</value></column>
+         <column><name>PARAM_NAME</name><value>skin</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>java</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Design skin name</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
        <row>
          <column><name>SS_ID</name><value>1</value></column>
          <column><name>PARAM_NAME</name><value>minimized</value></column>
