@@ -945,8 +945,7 @@ public class RDBMUserLayoutStore
           }
 
           // Make sure the next struct id is set in case the user adds a channel
-          sQuery = "SELECT MAX(STRUCT_ID) FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
-            " AND LAYOUT_ID=" + layoutId;
+          sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           int nextStructId;
           rs = stmt.executeQuery(sQuery);
