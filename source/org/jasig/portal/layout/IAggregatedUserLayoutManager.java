@@ -47,6 +47,8 @@ import org.jasig.portal.PortalException;
  */
 public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 
+    public static final String NEW_FRAGMENT = "new_fragment";
+
     /**
      * Sets a restriction mask that logically multiplies one of the types from <code>RestrictionTypes</code> and
      * is responsible for filtering restrictions for the layout output to ContentHandler or DOM

@@ -455,7 +455,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
           int publishId = CommonUtils.parseInt(channelDesc.getChannelPublishId());
           if ( publishId > 0 ) {
-           System.out.println ( "we are here!!!" );
            rs = stmt.executeQuery("SELECT CHAN_NAME FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
            try {
             if ( rs.next() ) {
@@ -609,7 +608,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          psAddNode.setNull(6,Types.INTEGER);
 
         String parentId = node.getParentNodeId();
-        if ( !AggregatedUserLayoutImpl.ROOT_FOLDER_ID.equals(parentId) )
+        if ( !IALFolderDescription.ROOT_FOLDER_ID.equals(parentId) )
          psAddNode.setInt(7,CommonUtils.parseInt(parentId,LOST_FOLDER_ID));
         else
          psAddNode.setNull(7,Types.INTEGER);
@@ -983,7 +982,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          psUpdateNode.setNull(3,Types.INTEGER);
 
         String parentId = node.getParentNodeId();
-        if ( !AggregatedUserLayoutImpl.ROOT_FOLDER_ID.equals(parentId) )
+        if ( !IALFolderDescription.ROOT_FOLDER_ID.equals(parentId) )
          psUpdateNode.setInt(4,CommonUtils.parseInt(parentId,LOST_FOLDER_ID));
         else
          psUpdateNode.setNull(4,Types.INTEGER);
@@ -1430,7 +1429,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
         String strNodeId = nodeIds.nextElement().toString();
 
-        if ( !strNodeId.equals(AggregatedUserLayoutImpl.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
+        if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
 
          ALNode node = (ALNode) layout.get(strNodeId);
          int nodeId = CommonUtils.parseInt(node.getId());
@@ -1609,7 +1608,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
         String strNodeId = nodeIds.nextElement().toString();
 
-       if ( !strNodeId.equals(AggregatedUserLayoutImpl.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
+       if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
 
          ALNode node = (ALNode) layout.get(strNodeId);
          int nodeId = CommonUtils.parseInt(node.getId());
@@ -1843,11 +1842,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         //Assigning the root folder!!
         ALFolderDescription rootDescription=new ALFolderDescription();
-        rootDescription.setId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
+        rootDescription.setId(IALFolderDescription.ROOT_FOLDER_ID);
         rootDescription.setName("root");
         rootNode.setNodeDescription(rootDescription);
         // Putting the root node
-        layout.put(AggregatedUserLayoutImpl.ROOT_FOLDER_ID,rootNode);
+        layout.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
          // Putting the lost folder
         layout.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
 
@@ -1996,7 +1995,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               String parentId;
               switch ( prntId ) {
                case 0:
-                               parentId = AggregatedUserLayoutImpl.ROOT_FOLDER_ID;
+                               parentId = IALFolderDescription.ROOT_FOLDER_ID;
                                break;
                case LOST_FOLDER_ID:
                                parentId = IALFolderDescription.LOST_FOLDER_ID;
@@ -2288,7 +2287,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     }
                 }
 
-                node.setParentNodeId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
+                node.setParentNodeId(IALFolderDescription.ROOT_FOLDER_ID);
                 lastNode = node;
             }
         } // end for
@@ -2377,11 +2376,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         //Assigning the root folder!!
         ALFolderDescription rootDescription=new ALFolderDescription();
-        rootDescription.setId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
+        rootDescription.setId(IALFolderDescription.ROOT_FOLDER_ID);
         rootDescription.setName("root");
         rootNode.setNodeDescription(rootDescription);
         // Putting the root node
-        layout.put(AggregatedUserLayoutImpl.ROOT_FOLDER_ID,rootNode);
+        layout.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
          // Putting the lost folder
         layout.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
 
@@ -2497,7 +2496,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               switch ( prntId ) {
 
                case 0:
-                               parentId = AggregatedUserLayoutImpl.ROOT_FOLDER_ID;
+                               parentId = IALFolderDescription.ROOT_FOLDER_ID;
                                break;
                case LOST_FOLDER_ID:
                                parentId = IALFolderDescription.LOST_FOLDER_ID;

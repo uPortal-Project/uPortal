@@ -94,7 +94,7 @@ public class ALFolder extends ALNode {
         folderDesc.setUnremovable(true);
         folderDesc.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
         lostFolder.setNodeDescription(folderDesc);
-        lostFolder.setParentNodeId(AggregatedUserLayoutImpl.ROOT_FOLDER_ID);
+        lostFolder.setParentNodeId(IALFolderDescription.ROOT_FOLDER_ID);
         return lostFolder;
     }
 

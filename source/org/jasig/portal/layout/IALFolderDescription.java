@@ -38,9 +38,12 @@ package org.jasig.portal.layout;
 /**
  * An interface describing an Aggregated Layout folder descriptions
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.0
  */
 public interface IALFolderDescription extends IUserLayoutFolderDescription, IALNodeDescription {
+    // lost folder id
     public static final String LOST_FOLDER_ID="lost_folder";
+    // root folder id
+    public static final String ROOT_FOLDER_ID="userLayoutRootNode";
 }

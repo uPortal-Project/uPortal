@@ -78,7 +78,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
   private IAggregatedUserLayoutStore layoutStore;
   private Hashtable layout;
   private UserProfile userProfile;
-  private String lostFolderId = IALFolderDescription.LOST_FOLDER_ID;
+  private static final String lostFolderId = IALFolderDescription.LOST_FOLDER_ID;
+  private static final String rootNodeId= IALFolderDescription.ROOT_FOLDER_ID;
   private IPerson person;
 
   // Boolean flags for marking nodes
@@ -114,9 +115,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
   // The priority coefficient for changing priority values through an user interface
   public final int PRIORITY_COEFF = 100;
 
-  // root folder id
-  public static final String ROOT_FOLDER_ID="userLayoutRootNode";
-  private String rootNodeId=ROOT_FOLDER_ID;
+
 
 
   public AggregatedUserLayoutImpl( IPerson person, UserProfile userProfile ) {
@@ -1341,7 +1340,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
       Element rootNode = (Element) domLayout.getDocumentElement().getFirstChild();
       ALFolder rootFolder = new ALFolder((IALFolderDescription)ALNode.createUserLayoutNodeDescription(rootNode));
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID"));
-      layout.put(ROOT_FOLDER_ID,rootFolder);
+      layout.put(rootNodeId,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootNodeId );
@@ -1384,13 +1383,20 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     public void loadFragment( String fragmentId ) throws PortalException {
       try {
-        layout = (Hashtable) layoutStore.getFragment(person,fragmentId);
+
+        if ( fragmentId.equals(NEW_FRAGMENT) ) {
+         // Creating an empty layout with root and lost folders
+         layout.clear();
+         ALNode rootFolder = getLayoutNode(rootNodeId);
+         layout.put(rootNodeId,rootFolder);
+        } else
+           layout = (Hashtable) layoutStore.getFragment(person,fragmentId);
+
         fragments = (Hashtable) layoutStore.getFragments(person);
         this.fragmentId = fragmentId;
         // Checking restrictions and move "wrong" nodes to the lost folder
         moveWrongNodesToLostFolder();
       } catch ( Exception e ) {
-        e.printStackTrace();
         throw new PortalException(e.getMessage());
       }
     }
@@ -1833,7 +1839,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      * @return a <code>String</code> value
      */
     public String getRootFolderId() {
-        return ROOT_FOLDER_ID;
+        return rootNodeId;
     }
 
     /**
