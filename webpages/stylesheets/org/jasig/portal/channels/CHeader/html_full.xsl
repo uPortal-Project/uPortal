@@ -14,10 +14,10 @@
           Welcome to uPortal 2.0 Please sign in...
         </xsl:when>
         <xsl:otherwise>
-          <a href="{$baseActionURL}?uP_root=root&amp;please-fix-these-links!">Home</a> |
-          <a href="{$baseActionURL}?uP_root=chan91&amp;uP_sparam=activeTab&amp;activeTab=none&amp;please-fix-these-links!">Publish</a> |
-          <a href="{$baseActionURL}?uP_root=chan90&amp;uP_sparam=activeTab&amp;activeTab=none&amp;please-fix-these-links!">Subscribe</a> |
-          <a href="{$baseActionURL}?uP_root=chan92&amp;uP_sparam=activeTab&amp;activeTab=none&amp;please-fix-these-links!">User Preferences</a>
+          <a href="{$baseActionURL}?uP_root=root">Home</a> |
+          <a href="{$baseActionURL}?uP_root={publish-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Publish</a> |
+          <a href="{$baseActionURL}?uP_root={subscribe-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">Subscribe</a> |
+          <a href="{$baseActionURL}?uP_root={preferences-chanid}&amp;uP_sparam=activeTab&amp;activeTab=none">User Preferences</a>
         </xsl:otherwise>        
         </xsl:choose>
       </td>
