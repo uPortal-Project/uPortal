@@ -65,7 +65,6 @@ public class CInlineFrame extends BaseChannel {
   protected String frameHeight; // the height of the IFrame in pixels
   
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CInlineFrame/CInlineFrame.ssl");
-  private static URL m_sslURL = null;
 
   /**
    * Get channel parameters: url, height and name
@@ -79,32 +78,18 @@ public class CInlineFrame extends BaseChannel {
    * Build an XML string and transform for display using org.jasig.portal.util.XSLT
    * Creates IFrame or link depending on browser capability.
    */
-  public void renderXML (DocumentHandler out) throws PortalException {
-    if (m_sslURL == null) {
-      try {
-        // Create a URL out of the stylesheet list url
-        m_sslURL = new URL(sslLocation);
-      } catch (MalformedURLException mue) {
-        LogService.instance().log(LogService.ERROR, "CInlineFrame().renderXML(): Stylesheet location not valid - " + sslLocation);
-        throw  new GeneralRenderingException("CInlineFrame().renderXML(): Stylesheet location not valid - " + sslLocation);
-      }
-    }
-
-    // Get the title of the stylesheet
-    String ssTitle = getStylesheetTitle();
-    
+  public void renderXML (DocumentHandler out) throws PortalException {   
     StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
     sbXML.append("<iframe>");
     sbXML.append("  <url>").append(srcUrl).append("</url>");
     sbXML.append("  <height>").append(frameHeight).append("</height>");
     sbXML.append("</iframe>");
-    try {
-      // Perform the XLST transformation
-      XSLT.transform(sbXML.toString(), m_sslURL, out, ssTitle, runtimeData.getBrowserInfo());
-    } catch (Exception e) {
-      LogService.instance().log(LogService.ERROR, e);
-      throw  new GeneralRenderingException("CInlineFrame.renderXML(): XSLT.transform() threw exception - " + e.getMessage());
-    }
+    
+    XSLT xslt = new XSLT();
+    xslt.setXML(sbXML.toString());
+    xslt.setSSL(sslLocation, getStylesheetTitle(), runtimeData.getBrowserInfo());
+    xslt.setTarget(out);
+    xslt.transform();
   }
 
   /**
