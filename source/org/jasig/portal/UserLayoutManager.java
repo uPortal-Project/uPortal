@@ -63,7 +63,6 @@ import  java.net.*;
  */
 public class UserLayoutManager {
   private Document uLayoutXML;
-  //  private UserPreferences up;
   private UserPreferences complete_up;
   // caching of stylesheet descriptions is recommended
   // if they'll take up too much space, we can take them
@@ -88,27 +87,23 @@ public class UserLayoutManager {
     uLayoutXML = null;
     try {
       this.person = person;
-      // read uLayoutXML
-      if (this.person == null) {
-        // determine the default user
-        this.person = new org.jasig.portal.security.provider.PersonImpl();
-        this.person.setID(guestId);
-        this.person.setFullName("Guest");
-      }
+
       // load user preferences
       // Should obtain implementation in a different way!!
       IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
       // determine user profile
       String userAgent = req.getHeader("User-Agent");
       UserProfile upl = updb.getUserProfile(this.person.getID(), userAgent);
+      if(upl==null) upl=updb.getSystemProfile(userAgent);
       if (upl != null) {
-        uLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(this.person.getID(), upl.getProfileId());
-        if (uLayoutXML == null)
-          Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
-              this.person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
-        this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(), upl));
-        // Initialize the JNDI context for this user
-        JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), this.person);
+	  // read uLayoutXML
+	  uLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(this.person.getID(), upl.getProfileId());
+	  if (uLayoutXML == null)
+	      Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" + 
+			 this.person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
+	  this.setCurrentUserPreferences(updb.getUserPreferences(this.person.getID(), upl));
+	  // Initialize the JNDI context for this user
+	  JNDIManager.initializeUserContext(uLayoutXML, req.getSession().getId(), this.person);
       } 
       else {
         // there is no user-defined mapping for this particular browser.
@@ -232,71 +227,6 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @param someup
-   */
-  public void synchUserPreferencesWithLayout (UserPreferences someup) {
-    StructureStylesheetUserPreferences fsup = someup.getStructureStylesheetUserPreferences();
-    ThemeStylesheetUserPreferences ssup = someup.getThemeStylesheetUserPreferences();
-    // make a list of channels in the XML Layout
-    NodeList channelNodes = uLayoutXML.getElementsByTagName("channel");
-    HashSet channelSet = new HashSet();
-    for (int i = 0; i < channelNodes.getLength(); i++) {
-      Element el = (Element)channelNodes.item(i);
-      if (el != null) {
-        String chID = el.getAttribute("ID");
-        if (!fsup.hasChannel(chID)) {
-          fsup.addChannel(chID);
-          //		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a channel="+chID);
-        }
-        if (!ssup.hasChannel(chID)) {
-          ssup.addChannel(chID);
-          //		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences were missing a channel="+chID);
-        }
-        channelSet.add(chID);
-      }
-    }
-    // make a list of categories in the XML Layout
-    NodeList folderNodes = uLayoutXML.getElementsByTagName("folder");
-    HashSet folderSet = new HashSet();
-    for (int i = 0; i < folderNodes.getLength(); i++) {
-      Element el = (Element)folderNodes.item(i);
-      if (el != null) {
-        String caID = el.getAttribute("ID");
-        if (!fsup.hasFolder(caID)) {
-          fsup.addFolder(caID);
-          //		    Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences were missing a folder="+caID);
-        }
-        folderSet.add(caID);
-      }
-    }
-    // cross check
-    for (Enumeration e = fsup.getChannels(); e.hasMoreElements();) {
-      String chID = (String)e.nextElement();
-      if (!channelSet.contains(chID)) {
-        fsup.removeChannel(chID);
-        //		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent channel="+chID);
-      }
-    }
-    for (Enumeration e = fsup.getFolders(); e.hasMoreElements();) {
-      String caID = (String)e.nextElement();
-      if (!folderSet.contains(caID)) {
-        fsup.removeFolder(caID);
-        //		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : StructureStylesheetUserPreferences had a non-existent folder="+caID);
-      }
-    }
-    for (Enumeration e = ssup.getChannels(); e.hasMoreElements();) {
-      String chID = (String)e.nextElement();
-      if (!channelSet.contains(chID)) {
-        ssup.removeChannel(chID);
-        //		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences had a non-existent channel="+chID);
-      }
-    }
-    someup.setStructureStylesheetUserPreferences(fsup);
-    someup.setThemeStylesheetUserPreferences(ssup);
-  }
-
-  /**
-   * put your documentation comment here
    * @return
    */
   public UserPreferences getCompleteCurrentUserPreferences () {
@@ -312,8 +242,6 @@ public class UserLayoutManager {
       complete_up = current_up;
     // load stylesheet description files and fix user preferences
     ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
-    // syncronize up with layout
-    synchUserPreferencesWithLayout(complete_up);
   }
 
   /*
@@ -440,7 +368,7 @@ public class UserLayoutManager {
 
   /**
    * put your documentation comment here
-   * @return
+   * @return root node of the user layout
    */
   public Node getRoot () {
     return  uLayoutXML;
