@@ -69,7 +69,6 @@
 				</type>
 				<defaultValue>org.jasig.portal.channels.CGenericXSLT</defaultValue>
 			</parameter>
-
 		</step>
 		<step>
 			<ID>2</ID>
@@ -89,4 +88,5 @@
 			</parameter>
 		</step>
 	</params>
+	<controls />
 </channelDef>

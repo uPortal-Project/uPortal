@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by JTL (UD) -->
 <!ELEMENT channelDef (description, params)>
 <!ELEMENT description (#PCDATA)>
 <!ELEMENT params (step+)>
 <!ELEMENT step (ID, name, description, parameter+)>
 <!ELEMENT ID (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
-<!ELEMENT parameter (name, label,  type, defaultValue?)>
+<!ELEMENT parameter (name, label, type, defaultValue?)>
 <!ATTLIST parameter
 	modify (subscribe | publish | subscribe-only | publish-only) #REQUIRED
 >
@@ -27,4 +26,12 @@
 <!ELEMENT value (#PCDATA)>
 <!ATTLIST value
 	default (true | false) #IMPLIED
+>
+<!ELEMENT controls EMPTY>
+<!ATTLIST controls
+	minimized (true | false) "true"
+	detachable (true | false) "true"
+	editable (true | false) "true"
+	hasHelp (true | false) "true"
+	removable (true | false) "true"
 >
