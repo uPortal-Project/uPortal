@@ -40,10 +40,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import org.apache.pluto.services.log.LogService;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
@@ -70,7 +70,7 @@ public class ALMigrationUtil {
      	if(is!=null)
      	 is.close();
      	else
-     	 org.jasig.portal.services.LogService.log(org.jasig.portal.services.LogService.ERROR, "ALMigrationUtil::line 73 Can not close InputStream");
+     		LogService.log(LogService.ERROR, "ALMigrationUtil::line 73 Can not close InputStream");
      }
   }
 
