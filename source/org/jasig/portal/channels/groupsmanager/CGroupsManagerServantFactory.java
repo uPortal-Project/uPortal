@@ -59,7 +59,7 @@ import org.w3c.dom.*;
  * @version $Revision$
  */
 
-public class CGroupsManagerServantFactory {
+public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     private static CGroupsManagerServantFactory _instance;
     private static int UID = 0;
     private HashMap servantClasses = new HashMap();
@@ -295,10 +295,10 @@ public class CGroupsManagerServantFactory {
         ChannelStaticData slaveSD = cloneStaticData(staticData);
 
         ((IChannel)servant).setStaticData(slaveSD);
-        servant.getSessionData().mode = "edit";
+        servant.getSessionData().mode = MEMBERS_ONLY_MODE;
         servant.getSessionData().lockedGroup = lockedGroup;
         servant.getSessionData().highlightedGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
-        servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
+        servant.getSessionData().defaultRootViewGroupID = Utility.translateKeytoID(groupKey,servant.getSessionData().model);
       }
       catch (Exception e){
         LogService.instance().log(LogService.ERROR,e);
