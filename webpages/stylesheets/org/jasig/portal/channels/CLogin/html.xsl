@@ -46,7 +46,6 @@ $Revision$
         <xsl:when test="$unauthenticated='true'">
           <form action="Authentication" method="post">
             <input type="hidden" name="action" value="login"/>
-            <input type="hidden" name="baseActionURL" value="{$baseActionURL}"/>
             <xsl:call-template name="buildTable"/>
           </form>
         </xsl:when>
