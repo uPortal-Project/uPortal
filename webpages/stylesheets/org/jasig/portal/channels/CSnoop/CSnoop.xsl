@@ -16,21 +16,37 @@
 
   <xsl:template match="request-info">
     <tr>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request Protocol: </p></td>
+      <td class="uportal-channel-table-row-odd"><xsl:value-of select="request-protocol"/></td>
+    </tr>  
+    <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request Method: </p></td>
       <td width="100%" class="uportal-channel-table-row-odd"><xsl:value-of select="request-method"/></td>
     </tr>
+    <tr>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Server Name: </p></td>
+      <td class="uportal-channel-table-row-even"><xsl:value-of select="server-name"/></td>
+    </tr>
+    <tr>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Server Port: </p></td>
+      <td class="uportal-channel-table-row-odd"><xsl:value-of select="server-port"/></td>
+    </tr>    
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request URI: </p></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="request-uri"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request Protocol: </p></td>
-      <td class="uportal-channel-table-row-odd"><xsl:value-of select="request-protocol"/></td>
-    </tr>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Context Path: </p></td>
+      <td class="uportal-channel-table-row-even"><xsl:value-of select="context-path"/></td>
+    </tr>        
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Servlet Path: </p></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="servlet-path"/></td>
     </tr>
+    <tr>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Query String: </p></td>
+      <td class="uportal-channel-table-row-odd"><xsl:value-of select="query-string"/></td>
+    </tr>    
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Path Info: </p></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="path-info"/></td>
@@ -38,10 +54,6 @@
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Path Translated: </p></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="path-translated"/></td>
-    </tr>
-    <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Query String: </p></td>
-      <td class="uportal-channel-table-row-odd"><xsl:value-of select="query-string"/></td>
     </tr>
     <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Content Length: </p></td>
@@ -52,19 +64,11 @@
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="content-type"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Server Name: </p></td>
-      <td class="uportal-channel-table-row-even"><xsl:value-of select="server-name"/></td>
-    </tr>
-    <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Server Port: </p></td>
-      <td class="uportal-channel-table-row-odd"><xsl:value-of select="server-port"/></td>
-    </tr>
-    <tr>
       <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Remote User: </p></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="remote-user"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Request Address: </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even">Remote Address: </p></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="remote-address"/></td>
     </tr>
     <tr>

@@ -135,17 +135,18 @@ public class CSnoop implements IPrivilegedChannel
     sb.append("<?xml version='1.0'?>");
 
     sb.append("<request-info>");
-    sb.append("  <request-method>").append(XMLEscaper.escape(request.getMethod())).append("</request-method>");
-    sb.append("  <request-uri>").append(XMLEscaper.escape(request.getRequestURI())).append("</request-uri>");
     sb.append("  <request-protocol>").append(XMLEscaper.escape(request.getProtocol())).append("</request-protocol>");
-    sb.append("  <servlet-path>").append(XMLEscaper.escape(request.getServletPath())).append("</servlet-path>");
-    sb.append("  <path-info>").append(XMLEscaper.escape(request.getPathInfo())).append("</path-info> ");
-    sb.append("  <path-translated>").append(XMLEscaper.escape(request.getPathTranslated())).append("</path-translated>");
-    sb.append("  <query-string>").append(XMLEscaper.escape(request.getQueryString())).append("</query-string>");
-    sb.append("  <content-length>").append(XMLEscaper.escape(String.valueOf(request.getContentLength()))).append("</content-length>");
-    sb.append("  <content-type>").append(XMLEscaper.escape(request.getContentType())).append("</content-type>");
+    sb.append("  <request-method>").append(XMLEscaper.escape(request.getMethod())).append("</request-method>");
     sb.append("  <server-name>").append(XMLEscaper.escape(request.getServerName())).append("</server-name>");
     sb.append("  <server-port>").append(XMLEscaper.escape(String.valueOf(request.getServerPort()))).append("</server-port>");
+    sb.append("  <request-uri>").append(XMLEscaper.escape(request.getRequestURI())).append("</request-uri>");
+    sb.append("  <context-path>").append(XMLEscaper.escape(request.getContextPath())).append("</context-path>");
+    sb.append("  <servlet-path>").append(XMLEscaper.escape(request.getServletPath())).append("</servlet-path>");
+    sb.append("  <query-string>").append(XMLEscaper.escape(request.getQueryString())).append("</query-string>");
+    sb.append("  <path-info>").append(XMLEscaper.escape(request.getPathInfo())).append("</path-info> ");
+    sb.append("  <path-translated>").append(XMLEscaper.escape(request.getPathTranslated())).append("</path-translated>");
+    sb.append("  <content-length>").append(XMLEscaper.escape(String.valueOf(request.getContentLength()))).append("</content-length>");
+    sb.append("  <content-type>").append(XMLEscaper.escape(request.getContentType())).append("</content-type>");
     sb.append("  <remote-user>").append(XMLEscaper.escape(request.getRemoteUser())).append("</remote-user>");
     sb.append("  <remote-address>").append(XMLEscaper.escape(request.getRemoteAddr())).append("</remote-address>");
     sb.append("  <remote-host>").append(XMLEscaper.escape(request.getRemoteHost())).append("</remote-host>");
