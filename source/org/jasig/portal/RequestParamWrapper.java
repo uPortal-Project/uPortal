@@ -90,9 +90,6 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                             // check if this file has exceeded the maximum allowed upload size
                             if (noAttachments){
                                 fileUpload = new MultipartDataSource(filename, "Exceeded file size allowed");
-                                MultipartDataSource[] valueArray = new MultipartDataSource[1];
-                                valueArray[0] = fileUpload;
-                                parameters.put(partName, valueArray);
                             } else if (filename != null) {
                                 fileUpload = new MultipartDataSource(filePart);
                             }
