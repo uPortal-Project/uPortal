@@ -45,7 +45,6 @@ import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMPreparedStatement;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -307,8 +306,8 @@ throws SQLException, CachingException
 
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getAddSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getAddSql());
         try
         {
             ps.setInt(1, typeID.intValue()); // entity type
@@ -350,8 +349,8 @@ throws CachingException, SQLException
 
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getDeleteInvalidationsSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getDeleteInvalidationsSql());
         try
         {
             ps.setTimestamp(1, ts);
@@ -425,8 +424,8 @@ throws SQLException, CachingException
 
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getUpdateSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getUpdateSql());
         try
         {
             ps.setTimestamp(1, ts);           // new invalidation

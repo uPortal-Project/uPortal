@@ -2144,7 +2144,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  protected final int saveStructure (Node node, RDBMPreparedStatement structStmt, RDBMPreparedStatement parmStmt) throws java.sql.SQLException {
+  protected final int saveStructure (Node node, RDBMServices.PreparedStatement structStmt, RDBMServices.PreparedStatement parmStmt) throws java.sql.SQLException {
     if (node == null || node.getNodeName().equals("parameter")) { // No more or parameter node
       return  0;
     }
@@ -2484,12 +2484,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
           System.err.println("<--");
         }
-        RDBMPreparedStatement structStmt = new RDBMPreparedStatement(con,
+        RDBMServices.PreparedStatement structStmt = new RDBMServices.PreparedStatement(con,
           "INSERT INTO UP_LAYOUT_STRUCT " +
           "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
           "VALUES ("+ userId + "," + layoutId + ",?,?,?,?,?,?,?,?,?,?)");
         try {
-          RDBMPreparedStatement parmStmt = new RDBMPreparedStatement(con,
+          RDBMServices.PreparedStatement parmStmt = new RDBMServices.PreparedStatement(con,
             "INSERT INTO UP_LAYOUT_PARAM " +
             "(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) " +
             "VALUES ("+ userId + "," + layoutId + ",?,?,?)");

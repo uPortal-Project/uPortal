@@ -55,13 +55,13 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
   private static final String is_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME=? or CHAN_TITLE=?)";
   private static final String partial_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME like ? or CHAN_TITLE like ?)";
   private Class chanDef;
-
+  
   public RDBMChannelDefSearcher() {
     try{
       chanDef = Class.forName("org.jasig.portal.ChannelDefinition");
     }
     catch(Exception e){
-      LogService.instance().log(LogService.ERROR,e);
+      LogService.instance().log(LogService.ERROR,e); 
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -69,25 +69,25 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
     EntityIdentifier[] r = new EntityIdentifier[0];
     ArrayList ar = new ArrayList();
     Connection conn = null;
-    RDBMPreparedStatement ps = null;
+    RDBMServices.PreparedStatement ps = null;
 
         try {
             conn = RDBMServices.getConnection();
             switch(method){
               case IS:
-                ps = new RDBMPreparedStatement(conn,this.is_search);
+                ps = new RDBMServices.PreparedStatement(conn,this.is_search);
                 break;
               case STARTS_WITH:
                 query = query+"%";
-                ps = new RDBMPreparedStatement(conn,this.partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,this.partial_search);
                 break;
               case ENDS_WITH:
                 query = "%"+query;
-                ps = new RDBMPreparedStatement(conn,this.partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,this.partial_search);
                 break;
               case CONTAINS:
                 query = "%"+query+"%";
-                ps = new RDBMPreparedStatement(conn,this.partial_search);
+                ps = new RDBMServices.PreparedStatement(conn,this.partial_search);
                 break;
               default:
                 throw new GroupsException("Unknown search type");

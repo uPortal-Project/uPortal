@@ -45,7 +45,6 @@ import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMPreparedStatement;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -357,8 +356,8 @@ throws SQLException, LockingException
 
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getAddSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getAddSql());
         try
         {
             ps.setInt(1, typeID.intValue()); // entity type
@@ -401,8 +400,8 @@ private void primDelete(IEntityLock lock, Connection conn) throws LockingExcepti
 
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getDeleteLockSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getDeleteLockSql());
         try
         {
             ps.setInt(1, typeID.intValue());  // entity type
@@ -538,8 +537,8 @@ throws SQLException, LockingException
 
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getUpdateSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getUpdateSql());
         try
         {
             ps.setTimestamp(1, newTs);  // new expiration
