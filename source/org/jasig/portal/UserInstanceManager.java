@@ -42,7 +42,7 @@ public class UserInstanceManager {
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
     } catch (Exception e) {
       log.error( "UserInstanceManager: Unable to retrieve IPerson!", e);
-      throw  (new PortalSecurityException("Could not retrieve IPerson"));
+      throw  (new PortalSecurityException("Could not retrieve IPerson", e));
     }
     // Return the UserInstance object if it's in the session
     UserInstance userInstance = (UserInstance)request.getSession(false).getAttribute("org.jasig.portal.UserInstance");
