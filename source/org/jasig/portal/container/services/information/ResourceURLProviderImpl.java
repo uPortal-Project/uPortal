@@ -38,8 +38,11 @@ package org.jasig.portal.container.services.information;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.ResourceURLProvider;
+import org.jasig.portal.container.om.window.PortletWindowImpl;
 
 /**
  * Implementation of Apache Pluto object model.
@@ -54,8 +57,7 @@ public class ResourceURLProviderImpl implements ResourceURLProvider {
 
     public ResourceURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow) {
         this.portletWindow = portletWindow;
-        this.base = "http://localhost:8080";
-        //this.base = PortalURL.getBaseURLexcludeContext();
+        this.base = getBaseUrl(((PortletWindowImpl)portletWindow).getHttpServletRequest());
     }
 
     // ResourceURLProvider methods
@@ -81,5 +83,14 @@ public class ResourceURLProviderImpl implements ResourceURLProvider {
 
         return ((url == null) ? "" : url.toString());
     }
-
+    
+    // Additional methods
+    
+    private String getBaseUrl(HttpServletRequest request) {
+        String protocol = request.getProtocol();
+        protocol = protocol.substring(0, protocol.indexOf("/")).toLowerCase();
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+        return protocol + "://" + serverName + ":" + serverPort;
+    }
 }
