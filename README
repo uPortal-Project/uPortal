@@ -1,5 +1,7 @@
 README for basic uPortal usage
 
+For further help please refer to the uPortal home page http://www.uportal.org or
+the uPortal Confluence site http://jasigch.princeton.edu:9000/display/UPC/Home
 
 Manifest
 ----------------------------------------
@@ -15,12 +17,7 @@ uPortal uses the JAXP 1.3 compatability libraries for its XML APIs. The JAXP
 libraries need to be copied into the endorsed library locations for the JRE
 and Tomcat.
 
-The libraries are included with uPortal in the lib/jaxp directory.
-    Copy them to the lib/endorsed directory of the JRE
-    Copy them to the common/endorsed directory of Tomcat
-
-There is a target in the ant build file named 'JAXP-Install' which will
-copy the files into these locations for you.
+Please refer to the README file in lib/jaxp
 
 
 Initial Configuration
