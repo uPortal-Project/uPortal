@@ -326,7 +326,10 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return a <code>boolean</code> value
      */
     public boolean getParameterOverrideValue(String parameterName) {
-        return ((Boolean)override.get(parameterName)).booleanValue();
+        Boolean boolValue = (Boolean)override.get(parameterName);
+        if ( boolValue != null )
+         return boolValue.booleanValue();
+         return true;
     }
 
     /**
@@ -451,7 +454,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
             Element pElement=root.createElement("parameter");
             String pName=(String)enum.nextElement();
             pElement.setAttribute("name",pName);
-            pElement.setAttribute("value",getParameterValue(pName));            
+            pElement.setAttribute("value",getParameterValue(pName));
             pElement.setAttribute("override",getParameterOverrideValue(pName) ? "yes" : "no");
             node.appendChild(pElement);
         }

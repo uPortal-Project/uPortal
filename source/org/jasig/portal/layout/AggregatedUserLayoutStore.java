@@ -76,14 +76,14 @@ import org.jasig.portal.utils.CommonUtils;
  * AggregatedUserLayoutStore implementation using the relational database with SQL 92.
  * <p>
  * Company: Instructional Media &amp; Magic
- * 
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
 
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
 
-  private static final int LOST_NODE_ID = -1;
+  private static final int LOST_FOLDER_ID = -1;
 
 
   protected static final String FRAGMENT_UPDATE_SQL = "UPDATE up_fragments SET next_node_id=?,prev_node_id=?,chld_node_id=?,prnt_node_id=?,"+
@@ -111,7 +111,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                                                " VALUES (?,?,?,?,?)";
   protected static final String LAYOUT_RESTRICTION_ADD_SQL = "INSERT INTO up_layout_restrictions (restriction_type,layout_id,user_id,node_id,restriction_value,restriction_tree_path)"+
                                                                " VALUES (?,?,?,?,?,?)";
-  protected static final String CHANNEL_PARAM_ADD_SQL = "INSERT INTO up_channel_param (chan_id,chan_parm_nm,chan_parm_desc,chan_parm_val,chan_parm_ovrd"+
+  protected static final String CHANNEL_PARAM_ADD_SQL = "INSERT INTO up_channel_param (chan_id,chan_parm_nm,chan_parm_desc,chan_parm_val,chan_parm_ovrd)"+
                                                         " VALUES (?,?,?,?,?)";
   protected static final String CHANNEL_ADD_SQL = "INSERT INTO up_channel (chan_id,chan_title,chan_name,chan_desc,chan_class,chan_type_id,chan_publ_id,"+
                                   "chan_publ_dt,chan_apvl_id,chan_apvl_dt,chan_timeout,chan_editable,chan_has_help,chan_has_about,"+
@@ -209,21 +209,23 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        // Setting the node ID
        nodeDesc.setId(nodeId+"");
 
-      if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
+      if ( fragmentId > 0 && fragmentNodeId <= 0 )
          psAddNode = con.prepareStatement(FRAGMENT_ADD_SQL);
-         psAddRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
-      } else {
+      else
          psAddNode = con.prepareStatement(LAYOUT_ADD_SQL);
+
+      if ( fragmentId > 0 )
+         psAddRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
+      else
          psAddRestriction = con.prepareStatement(LAYOUT_RESTRICTION_ADD_SQL);
-        }
 
 
         PreparedStatement  psAddChannelParam = null, psAddChannel = null;
 
         if ( node.getNodeType() == ALNodeTypes.CHANNEL ) {
-          int subscribeId = CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelSubscribeId());
-          if ( subscribeId > 0 ) {
-           rs = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + subscribeId);
+          int publishId = CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelPublishId());
+          if ( publishId > 0 ) {
+           rs = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
            try {
             if ( !rs.next() ) {
                psAddChannelParam = con.prepareStatement(CHANNEL_PARAM_ADD_SQL);
@@ -304,16 +306,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         else
          psAddNode.setNull(5,Types.INTEGER);
 
-        tmpValue = CommonUtils.parseInt(node.getParentNodeId());
-        if ( tmpValue > 0 )
-         psAddNode.setInt(6,tmpValue);
-        else
-         psAddNode.setNull(6,Types.INTEGER);
-
+         psAddNode.setInt(6,CommonUtils.parseInt(node.getParentNodeId(),LOST_FOLDER_ID));
 
         psAddNode.setNull(7,Types.VARCHAR);
 
-        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelSubscribeId()):-1;
+        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelPublishId()):-1;
         if ( tmpValue > 0 )
          psAddNode.setInt(8,tmpValue);
         else
@@ -375,15 +372,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         else
          psAddNode.setNull(6,Types.INTEGER);
 
-        tmpValue = CommonUtils.parseInt(node.getParentNodeId());
-        if ( tmpValue > 0 )
-         psAddNode.setInt(7,tmpValue);
-        else
-         psAddNode.setNull(7,Types.INTEGER);
+        psAddNode.setInt(7,CommonUtils.parseInt(node.getParentNodeId(),LOST_FOLDER_ID));
 
         psAddNode.setNull(8,Types.VARCHAR);
 
-        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelSubscribeId()):-1;
+        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelPublishId()):-1;
         if ( tmpValue > 0 )
          psAddNode.setInt(9,tmpValue);
         else
@@ -445,7 +438,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
              IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
 
              psAddRestriction.setInt(1,restriction.getRestrictionType());
-             psAddRestriction.setInt(2,nodeId);
+             psAddRestriction.setInt(2,(fragmentNodeId>0)?fragmentNodeId:nodeId);
              psAddRestriction.setInt(3,fragmentId);
              psAddRestriction.setString(4,restriction.getRestrictionExpression());
 
@@ -495,14 +488,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
          IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
 
-         int subscribeId = CommonUtils.parseInt(channelDesc.getChannelSubscribeId());
-         if ( subscribeId > 0 ) {
+         int publishId = CommonUtils.parseInt(channelDesc.getChannelPublishId());
+         if ( publishId > 0 ) {
 
           for ( Enumeration paramNames = channelDesc.getParameterNames(); paramNames.hasMoreElements(); ) {
             String paramName = (String) paramNames.nextElement();
             String paramValue = channelDesc.getParameterValue(paramName);
 
-            psAddChannelParam.setInt(1,subscribeId);
+            psAddChannelParam.setInt(1,publishId);
 
             psAddChannelParam.setString(2,paramName);
             if ( channelDesc.getDescription() != null )
@@ -517,7 +510,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           }
 
              // Inserting channel attributes
-            psAddChannel.setInt(1,subscribeId);
+            psAddChannel.setInt(1,publishId);
 
              psAddChannel.setString(2,channelDesc.getTitle());
              psAddChannel.setString(3,channelDesc.getName());
@@ -607,13 +600,15 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
 
-      if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
+      if ( fragmentId > 0 && fragmentNodeId <= 0 )
          psUpdateNode = con.prepareStatement(FRAGMENT_UPDATE_SQL);
-         psUpdateRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
-      } else {
+      else
          psUpdateNode = con.prepareStatement(LAYOUT_UPDATE_SQL);
-         psUpdateRestriction = con.prepareStatement(LAYOUT_RESTRICTION_UPDATE_SQL);
-        }
+
+      if ( fragmentId > 0 )
+       psUpdateRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
+      else
+       psUpdateRestriction = con.prepareStatement(LAYOUT_RESTRICTION_UPDATE_SQL);
 
       PreparedStatement  psUpdateChannelParam = con.prepareStatement(CHANNEL_PARAM_UPDATE_SQL);
       PreparedStatement  psUpdateChannel = con.prepareStatement(CHANNEL_UPDATE_SQL);
@@ -687,15 +682,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         else
          psUpdateNode.setNull(3,Types.INTEGER);
 
-        tmpValue = CommonUtils.parseInt(node.getParentNodeId());
-        if ( tmpValue > 0 )
-         psUpdateNode.setInt(4,tmpValue);
-        else
-         psUpdateNode.setNull(4,Types.INTEGER);
+        psUpdateNode.setInt(4,CommonUtils.parseInt(node.getParentNodeId(),LOST_FOLDER_ID));
 
         psUpdateNode.setNull(5,Types.VARCHAR);
 
-        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelSubscribeId()):-1;
+        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelPublishId()):-1;
         if ( tmpValue > 0 )
          psUpdateNode.setInt(6,tmpValue);
         else
@@ -752,16 +743,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         else
          psUpdateNode.setNull(3,Types.INTEGER);
 
-        tmpValue = CommonUtils.parseInt(node.getParentNodeId());
-        if ( tmpValue > 0 )
-         psUpdateNode.setInt(4,tmpValue);
-        else
-         psUpdateNode.setNull(4,Types.INTEGER);
+        psUpdateNode.setInt(4,CommonUtils.parseInt(node.getParentNodeId(),LOST_FOLDER_ID));
 
 
         psUpdateNode.setNull(5,Types.VARCHAR);
 
-        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelSubscribeId()):-1;
+        tmpValue = (!isFolder)?CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelPublishId()):-1;
         if ( tmpValue > 0 )
          psUpdateNode.setInt(6,tmpValue);
         else
@@ -827,7 +814,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
             psUpdateRestriction.setString(1,restriction.getRestrictionExpression());
             psUpdateRestriction.setInt(2,fragmentId);
-            psUpdateRestriction.setInt(3,nodeId);
+            psUpdateRestriction.setInt(3,(fragmentNodeId>0)?fragmentNodeId:nodeId);
             psUpdateRestriction.setInt(4,restriction.getRestrictionType());
 
             String path = restriction.getRestrictionPath();
@@ -870,8 +857,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         if ( !isFolder ) {
          IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
-         int subscribeId = CommonUtils.parseInt(channelDesc.getChannelSubscribeId());
-         if ( subscribeId > 0 ) {
+         int publishId = CommonUtils.parseInt(channelDesc.getChannelPublishId());
+         if ( publishId > 0 ) {
 
           for ( Enumeration paramNames = channelDesc.getParameterNames(); paramNames.hasMoreElements(); ) {
             String paramName = (String) paramNames.nextElement();
@@ -884,7 +871,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             psUpdateChannelParam.setString(2,paramValue);
             psUpdateChannelParam.setString(3,(channelDesc.canOverrideParameter(paramName))?"Y":"N");
 
-             psUpdateChannelParam.setInt(4,subscribeId);
+             psUpdateChannelParam.setInt(4,publishId);
 
              psUpdateChannelParam.setString(5,paramName);
 
@@ -923,7 +910,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
              psUpdateChannel.setString(13,(channelDesc.hasAbout())?"Y":"N");
              psUpdateChannel.setString(14,channelDesc.getFunctionalName());
 
-             psUpdateChannel.setInt(15,subscribeId);
+             psUpdateChannel.setInt(15,publishId);
 
              //execute update parameters
              count += psUpdateChannel.executeUpdate();
@@ -991,7 +978,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
           PreparedStatement  psParam =
              con.prepareStatement("DELETE FROM up_channel_param WHERE chan_id=?,chan_parm_nm=?");
-          tmpValue = CommonUtils.parseInt(channelDesc.getChannelSubscribeId());
+          tmpValue = CommonUtils.parseInt(channelDesc.getChannelPublishId());
           for ( Enumeration paramNames = channelDesc.getParameterNames(); paramNames.hasMoreElements(); ) {
             String paramName = (String) paramNames.nextElement();
 
@@ -1174,21 +1161,17 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
       // Clear the previous data related to the user layout
-      PreparedStatement psDeleteLayout = con.prepareStatement("DELETE FROM up_layout_struct_aggr WHERE user_id=? AND layout_id=?");
-      psDeleteLayout.setInt(1,userId);
-      psDeleteLayout.setInt(2,layoutId);
-      psDeleteLayout.executeUpdate();
-      // Deleting restrictions
-      psDeleteLayout = con.prepareStatement("DELETE FROM up_layout_restrictions WHERE user_id=? AND layout_id=?");
-      psDeleteLayout.setInt(1,userId);
-      psDeleteLayout.setInt(2,layoutId);
-      psDeleteLayout.executeUpdate();
-      psDeleteLayout.close();
+      PreparedStatement psDeleteLayoutNode = con.prepareStatement("DELETE FROM up_layout_struct_aggr WHERE user_id=? AND layout_id=? AND node_id=?");
 
+      // Deleting restrictions for regular nodes
+      PreparedStatement psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM up_layout_restrictions WHERE user_id=? AND layout_id=? AND node_id=?");
+
+       // Deleting restrictions for "pseudo" fragment nodes that exist in the user layout
+      PreparedStatement psDeleteFragmentRestriction = con.prepareStatement("DELETE FROM up_fragment_restrictions WHERE fragment_id=? AND node_id=?");
 
       // Update prepared statements
       //PreparedStatement  psUpdateFragmentNode = con.prepareStatement(FRAGMENT_UPDATE_SQL);
-      //PreparedStatement  psUpdateFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
+      PreparedStatement  psUpdateFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
       PreparedStatement  psUpdateLayoutNode = con.prepareStatement(LAYOUT_UPDATE_SQL);
       PreparedStatement  psUpdateLayoutRestriction = con.prepareStatement(LAYOUT_RESTRICTION_UPDATE_SQL);
       PreparedStatement  psUpdateChannelParam = con.prepareStatement(CHANNEL_PARAM_UPDATE_SQL);
@@ -1210,13 +1193,18 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         String strNodeId = nodeIds.nextElement().toString();
 
         if ( !strNodeId.equals(AggregatedUserLayoutImpl.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
-         //int nodeId = CommonUtils.parseInt(strNodeId);
+
          ALNode node = (ALNode) layout.get(strNodeId);
          int nodeId = CommonUtils.parseInt(node.getId());
 
          int fragmentId = CommonUtils.parseInt(node.getFragmentId());
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
-         PreparedStatement ps;
+
+          // Deleting the node from the user layout
+          psDeleteLayoutNode.setInt(1,userId);
+          psDeleteLayoutNode.setInt(2,layoutId);
+          psDeleteLayoutNode.setInt(3,nodeId);
+          psDeleteLayoutNode.executeUpdate();
 
          if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
            /*ps = psFragment;
@@ -1229,21 +1217,33 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                addUserLayoutNode(userId,layoutId,node,psAddFragmentNode,psAddFragmentRestriction,psAddChannel,psAddChannelParam);
            rs.close();*/
          } else {
+             // Setting psLayout parameters
+             psLayout.setInt(1,nodeId);
+             psLayout.setInt(2,userId);
+             psLayout.setInt(3,layoutId);
+             rs = psLayout.executeQuery();
+             if ( rs.next() )
+               updateUserLayoutNode(userId,layoutId,node,psUpdateLayoutNode,(fragmentNodeId>0)?psUpdateFragmentRestriction:psUpdateLayoutRestriction,psUpdateChannel,psUpdateChannelParam);
+             else {
 
-             ps = psLayout;
-             ps.setInt(1,nodeId);
-             ps.setInt(2,userId);
-             ps.setInt(3,layoutId);
-             rs = ps.executeQuery();
-            if ( rs.next() )
-               updateUserLayoutNode(userId,layoutId,node,psUpdateLayoutNode,psUpdateLayoutRestriction,psUpdateChannel,psUpdateChannelParam);
-            else {
+              // Deleting "pseudo" fragment node restrictions
+              if ( fragmentNodeId > 0 && fragmentId > 0 ) {
+               psDeleteFragmentRestriction.setInt(1,fragmentId);
+               psDeleteFragmentRestriction.setInt(2,fragmentNodeId);
+               psDeleteFragmentRestriction.executeUpdate();
+              } else {
+                  // Deleting restrictions for the node
+                  psDeleteLayoutRestriction.setInt(1,userId);
+                  psDeleteLayoutRestriction.setInt(2,layoutId);
+                  psDeleteLayoutRestriction.setInt(3,nodeId);
+                  psDeleteLayoutRestriction.executeUpdate();
+                }
 
                boolean channelParamsExist = false;
 
                if ( node.getNodeType() == ALNodeTypes.CHANNEL ) {
-                int subscribeId = CommonUtils.parseInt(((IALChannelDescription)node.getNodeDescription()).getChannelSubscribeId());
-                  ResultSet rsChan = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + subscribeId);
+                int publishId = CommonUtils.parseInt(((IALChannelDescription)node.getNodeDescription()).getChannelPublishId());
+                  ResultSet rsChan = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
                   try {
                    if ( rsChan.next() )
                      channelParamsExist = true;
@@ -1253,9 +1253,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                }
 
                if ( channelParamsExist )
-                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,psAddLayoutRestriction,null,null);
+                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,null,null);
                else
-                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,psAddLayoutRestriction,psAddChannel,psAddChannelParam);
+                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,(fragmentNodeId>0)?psAddFragmentRestriction:psAddLayoutRestriction,psAddChannel,psAddChannelParam);
             }
 
              rs.close();
@@ -1275,8 +1275,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       if ( psUpdateLayoutNode != null ) psUpdateLayoutNode.close();
       if ( psUpdateLayoutRestriction != null ) psUpdateLayoutRestriction.close();
 
+      if ( psDeleteLayoutNode != null ) psDeleteLayoutNode.close();
+      if ( psDeleteLayoutRestriction != null ) psDeleteLayoutRestriction.close();
+
       //if ( psAddFragmentNode != null ) psAddFragmentNode.close();
       //if ( psAddFragmentRestriction != null ) psAddFragmentRestriction.close();
+      if ( psDeleteFragmentRestriction != null ) psDeleteFragmentRestriction.close();
       if ( psAddLayoutNode != null ) psAddLayoutNode.close();
       if ( psAddLayoutRestriction != null ) psAddLayoutRestriction.close();
 
@@ -1623,7 +1627,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               if ( fragmentId > 0 && fragmentNodeId <= 0 )
                nodeDesc.setId(fragmentId+":"+structId);
               else
-               nodeDesc.setId((structId!=LOST_NODE_ID)?(structId+""):IALFolderDescription.LOST_FOLDER_ID);
+               nodeDesc.setId((structId!=LOST_FOLDER_ID)?(structId+""):IALFolderDescription.LOST_FOLDER_ID);
 
               // Setting the next node id
               if ( nextId != 0 ) {
@@ -1637,7 +1641,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                case 0:
                                parentId = AggregatedUserLayoutImpl.ROOT_FOLDER_ID;
                                break;
-               case LOST_NODE_ID:
+               case LOST_FOLDER_ID:
                                parentId = IALFolderDescription.LOST_FOLDER_ID;
                                break;
                default:

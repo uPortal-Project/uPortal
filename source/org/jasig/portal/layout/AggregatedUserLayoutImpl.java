@@ -126,6 +126,16 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     this.layoutStore = (IAggregatedUserLayoutStore) layoutStore;
     this.loadUserLayout();
     System.out.println( layout );
+    System.out.println ( "datastore XML layout: \n" + org.jasig.portal.utils.XML.serializeNode(getUserLayoutDOM()));
+    ALNode node = getLayoutNode("38");
+    if ( node != null ) {
+       System.out.println( "NODE ID : " + node.getId() );
+       System.out.println( "NODE NEXT ID : " + node.getNextNodeId() );
+       System.out.println( "NODE PREVIOUS ID : " + node.getPreviousNodeId() );
+       System.out.println( "NODE PARENT ID : " + node.getParentNodeId() );
+    } else
+       System.out.println( "NODE IS NULL!!!!!!!!!!" );
+
   }
 
 
@@ -329,8 +339,8 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
                 ALNode tmpNode = getLayoutNode(nextId);
                 String tmpNodeId = tmpNode.getNextNodeId();
                 if ( nextId.equals(firstChildId) ) {
-                    if ( !changeSiblingNodesOrder(firstChildId) )
-                        moveNodeToLostFolder(firstChildId);
+                    while ( !changeSiblingNodesOrder(firstChildId) )
+                     moveNodeToLostFolder(getLastSiblingNode(firstChildId).getId());
                 }
                 moveWrongNodesToLostFolder(nextId,depth);
                 nextId = tmpNodeId;
@@ -543,6 +553,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
     lostFolder = ALFolder.createLostFolder();
    }
 
+    System.out.println ( "LOST FOLDER node id: " + nodeId );
+    System.out.println ( "LOST FOLDER parent id: " + getLayoutNode(nodeId).getParentNodeId() );
+    System.out.println ( "LOST FOLDER next id: " + getLayoutNode(nodeId).getNextNodeId() );
+    System.out.println ( "LOST FOLDER prev id: " + getLayoutNode(nodeId).getPreviousNodeId() );
     // Moving the node to the lost folder
     return moveNode(nodeId,lostFolder.getId(),null);
   }
@@ -584,6 +598,25 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
      return (PriorityRestriction) getRestriction(node,RestrictionTypes.PRIORITY_RESTRICTION,restrictionPath);
   }
 
+
+  /**
+     * Change if it's possible priority values for all the sibling nodes
+     * @param node a <code>String</code> a node from the sibling line
+     * @return a boolean value
+     * @exception PortalException if an error occurs
+     */
+  protected boolean changeSiblingNodesPriorities ( String nodeId ) throws PortalException {
+     ALNode firstNode = getFirstSiblingNode(nodeId);
+     String parentId = firstNode.getParentNodeId();
+     for ( String id = firstNode.getId(); id != null; ) {
+       ALNode node = getLayoutNode(id);
+       String nextId = node.getNextNodeId();
+       if ( !changeSiblingNodesPriorities(node,parentId,nextId,false) )
+            return false;
+        id = nextId;
+     }
+        return true;
+  }
 
 
   /**
@@ -784,19 +817,30 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
 
     if ( rightOrder ) return true;
 
-    // Trying to choose the more suitable order of the nodes in the sibling line
-    String lastNodeId = getLastSiblingNode(node.getId()).getId();
+    // Check if the current order is right
+    if ( changeSiblingNodesPriorities(firstNodeId) ) return true;
+
+    // Choosing more suitable order of the nodes in the sibling line
+    ALNode lastNode = getLastSiblingNode(node.getId());
+    String lastNodeId = lastNode.getId();
     for ( String prevNodeId = lastNodeId; prevNodeId != null; ) {
       for ( String nodeId = lastNodeId; nodeId != null; ) {
        if ( !nodeId.equals(prevNodeId) ) {
+        System.out.println ( "MOVVVEEEEEE: prevNodeId" + prevNodeId );
         if ( moveNode(prevNodeId,parentNodeId,nodeId) )
+          if ( changeSiblingNodesPriorities(firstNodeId) )
             return true;
        }
         nodeId = getLayoutNode(nodeId).getPreviousNodeId();
       }
+        // Checking the last place in the sibling line
+        if ( moveNode(prevNodeId,parentNodeId,null) )
+          if ( changeSiblingNodesPriorities(firstNodeId) )
+            return true;
+
         prevNodeId = getLayoutNode(prevNodeId).getPreviousNodeId();
     }
-       return false;
+        return false;
   }
 
 
@@ -1355,8 +1399,10 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
        if ( node == null ) return false;
 
        // Checking restrictions
-       if ( !canDeleteNode(nodeId) )
+       if ( !canDeleteNode(nodeId) ) {
+             System.out.println ( "The node with ID = '" + nodeId + "' cannot be deleted" );
              return false;
+       }
 
 
 
@@ -1377,7 +1423,7 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
        String prevSiblingId = node.getPreviousNodeId();
        String nextSiblingId = node.getNextNodeId();
 
-       System.out.println( "result1: " + result );
+
 
        if ( prevSiblingId != null ) {
         ALNode prevNode = getLayoutNode(prevSiblingId);
@@ -1396,7 +1442,9 @@ public class AggregatedUserLayoutImpl implements IAggregatedUserLayoutManager {
          result = layoutStore.deleteUserLayoutNode(person,userProfile,node);
 
        // Deleting the nodefrom the hashtable and returning the result value
-       return ( (layout.remove(nodeId)!=null) && ((autoCommit)?result:true) );
+       result = (layout.remove(nodeId)!=null) && ((autoCommit)?result:true);
+       System.out.println( "Deleting result: " + result );
+       return ( result );
 
     }
 
