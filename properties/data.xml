@@ -55,7 +55,7 @@
         <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
-      <!-- We need default layouts for student, faculty, staff, and developer and then
+      <!-- We need default layouts for student, faculty, staff, developer and admin and then
            we should add these
       <row>
         <column><name>USER_ID</name><value>3</value></column>
@@ -84,6 +84,14 @@
       <row>
         <column><name>USER_ID</name><value>6</value></column>
         <column><name>USER_NAME</name><value>developer</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>CURR_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>USER_NAME</name><value>admin</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
         <column><name>CURR_LAY_ID</name><value>1</value></column>
@@ -143,6 +151,13 @@
           <column><name>FIRST_NAME</name><value>Developer</value></column>
           <column><name>LAST_NAME</name><value>User</value></column>
           <column><name>EMAIL</name><value>developer.user@jasig.org</value></column>
+        </row>
+        <row>
+          <column><name>USER_NAME</name><value>admin</value></column>
+          <column><name>ENCRPTD_PSWD</name><value>(MD5)OP2Z89LDMIY6gHAwfoFPRSQWDl5Z16Vt</value></column>
+          <column><name>FIRST_NAME</name><value>Admin</value></column>
+          <column><name>LAST_NAME</name><value>User</value></column>
+          <column><name>EMAIL</name><value>admin.user@jasig.org</value></column>
         </row>
       </rows>
     </table>
@@ -2388,6 +2403,13 @@
         <column><name>GROUP_NAME</name><value>Associate Professors</value></column>
         <column><name>DESCRIPTION</name><value>All associate university faculty</value></column>
       </row>
+      <row>
+        <column><name>GROUP_ID</name><value>14</value></column>
+        <column><name>CREATOR_ID</name><value>0</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Portal Administrators</value></column>
+        <column><name>DESCRIPTION</name><value>A group of system administrators with superuser capabilities</value></column>
+      </row>
     </rows>
   </table>
 
@@ -2460,6 +2482,11 @@
         <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
      </row>
      <row>
+        <column><name>GROUP_ID</name><value>10</value></column>
+        <column><name>MEMBER_KEY</name><value>14</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
+     </row>
+     <row>
         <column><name>GROUP_ID</name><value>0</value></column>
         <column><name>MEMBER_KEY</name><value>1</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
@@ -2469,7 +2496,7 @@
         <column><name>MEMBER_KEY</name><value>2</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
-     <!-- We need default layouts for student, faculty, staff, and developer before we
+     <!-- We need default layouts for student, faculty, staff, developer and admin before we
           we can add these!
      <row>
         <column><name>GROUP_ID</name><value>1</value></column>
@@ -2487,10 +2514,16 @@
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
      <row>
+        <column><name>GROUP_ID</name><value>14</value></column>
+        <column><name>MEMBER_KEY</name><value>7</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
         <column><name>GROUP_ID</name><value>4</value></column>
         <column><name>MEMBER_KEY</name><value>6</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
+     
      -->
     </rows>
   </table>
