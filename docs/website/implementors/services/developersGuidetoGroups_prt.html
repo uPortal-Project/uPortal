@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
 <head>
   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
@@ -166,7 +166,7 @@ would have to perform their own translations.&nbsp; Regardless of
 whether it is necessary to do these translations, a groups client
 should see an entity as having a single, untranslated key.&nbsp; <br>
 </p>
-<p class="Code">&nbsp;In fact, an <code>IGroupMember</code> has 2 keys,
+<p class="Code">&nbsp;In fact, an <code>IEntity</code> has 2 keys,
 one for its underlying entity and one for itself as an <code>IBasicEntity</code>,
 which allows it<code></code> to be cached with other <code>IEntities</code>.&nbsp;
 This duality is reflected in the <code>IGroupMember</code> interface,
@@ -370,31 +370,28 @@ create it in the external source.&nbsp; <br>
 Once you get a group member from the service, you can use it to
 retrieve related group members:<br>
 </span></p>
-<p class="Code"><code>IGroupMember faculty =
-GroupService.getEntity("student");<br>
+Once you get a group member from the service, you can use it to
+retrieve related group members:<br>
+      </span></p>
+      <p class="Code"><code>IGroupMember student =
+GroupService.getEntity("student");</code></p>
+      <p class="Code"><code>// Find groups that the entity belongs to:<br>
+Iterator studentGroups = student.getContainingGroups();<br>
+...<br>
+      </code> </p>
+      <p class="Code"><code>// (Recursively) find groups the entity
+belongs to:<br>
+Iterator allStudentGroups = student.getAllContainingGroups();<br>
+...<br>
+      </code> </p>
+      <p class="Code"><code>// Find if an entity is a member of a group:<br>
+IGroupMember gradStudents = GroupService.findGroup("local.8");<br>
+if ( gradStudents != null &amp;&amp; student.isMemberOf(gradStudents) )<br>
 {<br>
-&nbsp;&nbsp;&nbsp; // Find groups an entity belongs to:<br>
-&nbsp;&nbsp;&nbsp; Iterator studentGroups =
-student.getContainingGroups();<br>
 &nbsp;&nbsp;&nbsp; ...<br>
-</code> </p>
-<p class="Code"><code>&nbsp;&nbsp;&nbsp; // (Recursively) find groups
-an entity belongs to:<br>
-&nbsp;&nbsp;&nbsp; Iterator allStudentGroups =
-student.getAllContainingGroups();<br>
-&nbsp;&nbsp;&nbsp; ...<br>
-</code> </p>
-<p class="Code"><code>&nbsp;&nbsp;&nbsp; // Find if an entity is a
-member of a group:<br>
-&nbsp;&nbsp;&nbsp; IGroupMember gradStudents =
-GroupService.findGroup("local.8");<br>
-&nbsp;&nbsp;&nbsp; if ( gradStudents != null &amp;&amp;
-student.isMemberOf(gradStudents) )<br>
-&nbsp;&nbsp;&nbsp; {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; }<br>
 }</code><span style="font-size: 11pt; font-family: Arial;"><code><br>
-</code></span></p>
+      </code></span></p>
+
 <p class="Code"><span style="font-size: 11pt; font-family: Arial;"><code>IEntities</code>
 are not updatable.&nbsp; An <code>IEntityGroup</code> may or may not be,
 depending on whether its component group service implements update
@@ -578,7 +575,7 @@ exclusive updates:<br>
 }</code><span style="font-size: 11pt; font-family: Arial;"><code><br>
 </code><br>
 <br>
-<i>de 9/12/2003</i><br>
+<i>de. last revised 10/14/2003</i><br>
 <br>
 <!-- end cut this section to put into jasig table cell format --> <br>
 <!-- end of main body table cell --> <img height="4" width="692"><br>

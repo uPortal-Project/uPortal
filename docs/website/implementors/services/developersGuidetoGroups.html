@@ -192,26 +192,26 @@ service would be "local.chem101".&nbsp; <br>
       </p>
       <p class="Code">An entity key is not compound.&nbsp; It has a
 single node containing the key that all component group services must
-use to identify the underlying entity.&nbsp; The assumption here is
-that in the portal, an entity key like a userid will transcend an
-individual source, service or application.&nbsp; The userid will be
-understood by ldap, ERP systems, the portal database, etc.&nbsp; In
-many, perhaps most installations, this will be the case.&nbsp; But
-suppose for a minute that it isn't.&nbsp; Assume that a person, say
-Mick Jagger, is known in ldap as "mjagger", in People Soft as "mj1" and
-in a third system as "J.J.Flash".&nbsp; In this portal, the deployer
-would have to select one system to be the <span
- style="font-style: italic;">base</span> source of person entities
-(perhaps ldap) and provide translations for the other sources.&nbsp;
-If&nbsp; ldap were chosen, then a request to find groups that contain
-"mjagger" would have to be understood by the People Soft component as
-meaning "find groups that contain "mj1", and other systems would have
-to perform their own translations.&nbsp; Regardless of whether it is
-necessary to do these translations, a groups client should see an
-entity as having a single, untranslated key.&nbsp; <br>
+use to identify the underlying entity.&nbsp; The assumption here is that
+in the portal, an entity key like a userid will transcend an individual
+source, service or application.&nbsp; The userid will be understood by
+ldap, ERP systems, the portal database, etc.&nbsp; In many, perhaps
+most installations, this will be the case.&nbsp; But suppose for a
+minute that it isn't.&nbsp; Assume that a person, say Mick Jagger, is
+known in ldap as "mjagger", in People Soft as "mj1" and in a third
+system as "J.J.Flash".&nbsp; In this portal, the deployer would have to
+select one system to be the <span style="font-style: italic;">base</span>
+source of person entities (perhaps ldap) and provide translations for
+the other sources.&nbsp; If&nbsp; ldap were chosen, then a request to
+find groups that contain "mjagger" would have to be understood by the
+People Soft component as meaning "find groups that contain "mj1", and
+other systems would have to perform their own translations.&nbsp;
+Regardless of whether it is necessary to do these translations, a
+groups client should see an entity as having a single, untranslated
+key.&nbsp; <br>
       </p>
-      <p class="Code">&nbsp;In fact, an <code>IGroupMember</code> has 2
-keys, one for its underlying entity and one for itself as an <code>IBasicEntity</code>,
+      <p class="Code">In fact, an <code>IEntity</code> has 2 keys, one
+for its underlying entity and one for itself as an <code>IBasicEntity</code>,
 which allows it<code></code> to be cached with other <code>IEntities</code>.&nbsp;
 This duality is reflected in the <code>IGroupMember</code> interface,
 which has getters for the basic <code>EntityIdentifier</code> (inherited
@@ -247,7 +247,7 @@ System.out.println(basicEI.getKey()); &nbsp; &nbsp;&nbsp;&nbsp; //
 5.guest<br>
 System.out.println(basicEI.getType());&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //
 interface org.jasig.portal.Groups.IEntity</code> </small></p>
-      <p class="Code"><big><code><small></small></code>F</big>or more
+      <p> For more
 information on keys in the group system, see the section on group and
 entity keys in <a
  href="compositeGroupService.html#Groups_Keys_and_Service_Names">The
@@ -363,8 +363,8 @@ match the query.&nbsp; The results are <code>EntityIdentifiers</code>
 for groups that already exist in the groups system.&nbsp; A search for
 entities, on the other hand, may be conducted to locate an entity that
 is not yet represented in the group system, for example, a new
-employee.&nbsp; Here, the search is conducted on one or more stores
-that constitute entity sources for the component service. <br>
+employee.&nbsp; Here, the search is conducted on one or more stores that
+constitute entity sources for the component service. <br>
       </p>
       <p class="Code"><code>// search for IPersons whose names start
 with "Khar"<br>
@@ -413,29 +413,22 @@ Members</h4>
 Once you get a group member from the service, you can use it to
 retrieve related group members:<br>
       </span></p>
-      <p class="Code"><code>IGroupMember faculty =
-GroupService.getEntity("student");<br>
+      <p class="Code"><code>IGroupMember student =
+GroupService.getEntity("student");</code></p>
+      <p class="Code"><code>// Find groups that the entity belongs to:<br>
+Iterator studentGroups = student.getContainingGroups();<br>
+...<br>
+      </code> </p>
+      <p class="Code"><code>// (Recursively) find groups the entity
+belongs to:<br>
+Iterator allStudentGroups = student.getAllContainingGroups();<br>
+...<br>
+      </code> </p>
+      <p class="Code"><code>// Find if an entity is a member of a group:<br>
+IGroupMember gradStudents = GroupService.findGroup("local.8");<br>
+if ( gradStudents != null &amp;&amp; student.isMemberOf(gradStudents) )<br>
 {<br>
-&nbsp;&nbsp;&nbsp; // Find groups an entity belongs to:<br>
-&nbsp;&nbsp;&nbsp; Iterator studentGroups =
-student.getContainingGroups();<br>
 &nbsp;&nbsp;&nbsp; ...<br>
-      </code> </p>
-      <p class="Code"><code>&nbsp;&nbsp;&nbsp; // (Recursively) find
-groups an entity belongs to:<br>
-&nbsp;&nbsp;&nbsp; Iterator allStudentGroups =
-student.getAllContainingGroups();<br>
-&nbsp;&nbsp;&nbsp; ...<br>
-      </code> </p>
-      <p class="Code"><code>&nbsp;&nbsp;&nbsp; // Find if an entity is
-a member of a group:<br>
-&nbsp;&nbsp;&nbsp; IGroupMember gradStudents =
-GroupService.findGroup("local.8");<br>
-&nbsp;&nbsp;&nbsp; if ( gradStudents != null &amp;&amp;
-student.isMemberOf(gradStudents) )<br>
-&nbsp;&nbsp;&nbsp; {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; }<br>
 }</code><span style="font-size: 11pt; font-family: Arial;"><code><br>
       </code></span></p>
       <p class="Code"><span style="font-size: 11pt; font-family: Arial;"><code>IEntities</code>
@@ -622,7 +615,7 @@ exclusive updates:<br>
 }</code><span style="font-size: 11pt; font-family: Arial;"><code><br>
       </code><br>
       <br>
-      <i>de 9/12/2003</i><br>
+      <i>de. last revised: 10/14/2003</i><br>
       <br>
       <br>
 <!-- end cut this section to put into jasig table cell format --> <br>
