@@ -53,7 +53,7 @@
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
         <column><name>CURR_LAY_ID</name><value>1</value></column>
-        <column><name>NEXT_STRUCT_ID</name><value>30</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
     </rows>
   </table>
