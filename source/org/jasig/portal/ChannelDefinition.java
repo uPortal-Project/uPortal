@@ -192,13 +192,14 @@ public class ChannelDefinition {
   }
 
   /**
-   * Describes a published channel's parameter.
+   * Describes a channel definition parameter
    * A channel can have zero or more parameters.
    */
   protected class ChannelParameter {
     String name;
     String value;
     boolean override;
+    String descr;
 
     public ChannelParameter(String name, String value, String override) {
       this(name, value, RDBMServices.dbFlag(override));
@@ -214,6 +215,13 @@ public class ChannelDefinition {
     public String getName() { return name; }
     public String getValue() { return value; }
     public boolean getOverride() { return override; }
+    public String getDescription() {return descr; }
+
+    // Setter methods
+    public void setName(String name) { this.name = name; }
+    public void setValue(String value) { this.value = value; }
+    public void setOverride(boolean override) { this.override = override; }
+    public void setDescription(String descr) { this.descr = descr; }
   }
 }
 
