@@ -95,12 +95,11 @@ public interface IChannelRegistryStore {
 
 
   /**
-   * put your documentation comment here
-   * @param catID[]
-   * @param chanID
-   * @param role[]
+   * Removes a channel from the channel registry.
+   * @param chanID, the ID of the channel to remove.
+   * @exception Exception
    */
-  public void removeChannel (String catID[], String chanID, String role[]);
+  public void removeChannel (String chanID) throws Exception;
 
 
 

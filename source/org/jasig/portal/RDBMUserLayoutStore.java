@@ -227,12 +227,11 @@ public class RDBMUserLayoutStore
       try {
         if (rs.next()) {
           if (!channelApproved(rs.getTimestamp("CHAN_APVL_DT"))) {
-          /* Channel hasn't been approved yet. Replace it with the error channel and a suitable message */
-
-          /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-          LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::createLayoutStructure(): Channel hasn't been approved for publishing yet (ignored at the moment) for channel "
-              + chanId);
-          // return new ErrorChannel()
+            // Channel hasn't been approved yet. Consider replacing the channel with
+            // an error channel giving a meaningful message to the user.
+            // For now, we are just skipping any unapproved channel.
+            LogService.instance().log(LogService.WARN, "Channel " + chanId + " cannot be added to user layout.  It is currently unapproved.");
+            return null;
           }
 
           channel = doc.createElement("channel");
@@ -305,23 +304,25 @@ public class RDBMUserLayoutStore
     } finally {
       rs.close();
     }
-    if (chanId != 0) {          // Channel
-      parameter = (Element)structure.getElementsByTagName("parameter").item(0);
-    }
-    sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID="
-        + structId;
-    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
-    rs = stmt.executeQuery(sQuery);
-    try {
-      while (rs.next()) {
-        createLayoutStructureParameter(chanId, rs, structure, parameter);
+    if (structure != null) {
+      if (chanId != 0) {          // Channel
+        parameter = (Element)structure.getElementsByTagName("parameter").item(0);
       }
-    } finally {
-      rs.close();
-    }
-    root.appendChild(structure);
-    if (chanId == 0) {          // Folder
-      createLayout(con, doc, stmt, structure, userId, profileId, layoutId, chldStructId);
+      sQuery = "SELECT * FROM UP_STRUCT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId + " AND STRUCT_ID="
+          + structId;
+      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createLayout(): " + sQuery);
+      rs = stmt.executeQuery(sQuery);
+      try {
+        while (rs.next()) {
+          createLayoutStructureParameter(chanId, rs, structure, parameter);
+        }
+      } finally {
+        rs.close();
+      }
+      root.appendChild(structure);
+      if (chanId == 0) {          // Folder
+        createLayout(con, doc, stmt, structure, userId, profileId, layoutId, chldStructId);
+      }
     }
     createLayout(con, doc, stmt, root, userId, profileId, layoutId, nextStructId);
   }
@@ -714,10 +715,55 @@ public class RDBMUserLayoutStore
    * @exception java.sql.SQLException
    */
   public void addChannel (int id, int publisherId, String title, Document doc) throws SQLException {
-    //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
     Connection con = rdbmService.getConnection();
     try {
       addChannel(id, publisherId, title, doc, con);
+    } finally {
+      rdbmService.releaseConnection(con);
+    }
+  }
+
+  /**
+   * Removes a channel from the channel registry.  The channel
+   * is not actually deleted.  Rather its status as an "approved"
+   * channel is revoked.
+   * @param chanID, the ID of the channel to delete
+   * @exception java.sql.SQLException
+   */
+  public void removeChannel (String chanID) throws SQLException {
+    Connection con = rdbmService.getConnection();
+    try {
+      // Set autocommit false for the connection
+      setAutoCommit(con, false);
+      Statement stmt = con.createStatement();
+      try {
+        chanID = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
+
+        // Delete channel/category associations
+        //String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + chanID;
+        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sDelete);
+        //stmt.executeUpdate(sDelete);
+
+        // Delete channel/role associations
+        //sDelete = "DELETE FROM UP_ROLE_CHAN WHERE CHAN_ID=" + chanID;
+        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sDelete);
+        //stmt.executeUpdate(sDelete);
+
+        // Delete channel.
+        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + chanID;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sUpdate);
+        stmt.executeUpdate(sUpdate);
+
+        // Commit the transaction
+        commit(con);
+      } catch (SQLException sqle) {
+        // Roll back the transaction
+        rollback(con);
+        throw sqle;
+      } finally {
+        if (stmt != null)
+          stmt.close();
+      }
     } finally {
       rdbmService.releaseConnection(con);
     }
@@ -992,11 +1038,11 @@ public class RDBMUserLayoutStore
       rs = stmt.executeQuery(query);
       if (rs.next()) {
         if (!channelApproved(rs.getTimestamp("CHAN_APVL_DT"))) {
-          /* Channel hasn't been approved yet. Replace it with the error channel and a suitable message */
-
-          /* !!!!!!!   Add code here someday !!!!!!!!!!!*/
-          LogService.instance().log(LogService.INFO, "RDBMUserLayoutStore::createLayoutStructure(): Channel " + chanId + "hasn't been approved for publishing yet (ignored at the moment)");
-          // return new ErrorChannel()
+          // Channel hasn't been approved yet. Consider replacing the channel with
+          // an error channel giving a meaningful message to the user.
+          // For now, we are just skipping any unapproved channel.
+          LogService.instance().log(LogService.WARN, "Channel " + chanId + " cannot be added to channel registry.  It is currently unapproved.");
+          return;
         }
 
         channel = doc.createElement("channel");

@@ -139,16 +139,23 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     return  nextID;
   }
 
-  /** A method for removing a channel from the registry.
-   * This could be used by an admin channel to unpublish a channel from
-   * certain categories, roles, or just remove it altogether.
-   * @param catID an array of category IDs
+  /**
+   * A method for removing a channel from the registry.
+   * This could be used by an admin channel to unpublish a channel.
    * @param chanID a channel ID
-   * @param role an array of roles
+   * @throws java.lang.Exception
    */
-  public void removeChannel (String catID[], String chanID, String role[]) {}
+  public void removeChannel (String chanID) throws Exception {
+    try {
+      GenericPortalBean.getUserLayoutStore().removeChannel(chanID);
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, e);
+      throw  new GeneralRenderingException("Unable to remove channel " + chanID);
+    }
+  }
 
-  /** A method for persiting the channel registry to a file or database.
+  /**
+   * A method for persiting the channel registry to a file or database.
    * @param registryXML an XML description of the channel registry
    */
   public void setRegistryXML (String registryXML) {}

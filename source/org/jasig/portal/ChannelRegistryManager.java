@@ -134,13 +134,13 @@ public class ChannelRegistryManager {
    * @throws java.lang.Exception
    */
   public static void publishChannel (Element channel, Set categoryIDs, Set roles, int publisherID) throws Exception {
-    // Wipe out the channel registry
+    // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
 
     // Use current channel ID if modifying previously published channel, otherwise get a new ID
     int ID = 0;
     String chanID = channel.getAttribute("ID");
-    if (chanID != null) {
+    if (chanID != null && chanID.trim().length() > 0) {
       ID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
       LogService.instance().log(LogService.INFO, "Attempting to modify channel " + ID + "...");
     }
@@ -163,6 +163,18 @@ public class ChannelRegistryManager {
     chanRegStore.approveChannel(ID, publisherID, new java.sql.Timestamp(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
+  }
+
+  /**
+   * Removes a channel from the channel registry.
+   * @param channel ID, the channel ID
+   * @throws java.lang.Exception
+   */
+  public static void removeChannel (String channelID) throws Exception {
+    // Reset the channel registry cache
+    channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
+    // Remove the channel
+    chanRegStore.removeChannel(channelID);
   }
 
   /**
