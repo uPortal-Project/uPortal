@@ -19,3 +19,8 @@ uPortal.jpx.local.old
 upgrade21.xml
 webpages.war
 sourceca
+classes
+lib
+tests
+uPortal threadpool.jpx
+uPortal threadpool.library
