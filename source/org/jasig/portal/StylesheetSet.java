@@ -39,7 +39,7 @@
 package  org.jasig.portal;
 
 import org.jasig.portal.services.LogService;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
