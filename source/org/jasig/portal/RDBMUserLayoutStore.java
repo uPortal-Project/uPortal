@@ -462,7 +462,6 @@ public class RDBMUserLayoutStore
   public Document getUserLayout (int userId, int profileId) throws Exception {
     Connection con = rdbmService.getConnection();
     String str_uLayoutXML = null;
-    con = rdbmService.getConnection();
     try {
       DocumentImpl doc = new DocumentImpl();
       Element root = doc.createElement("layout");
