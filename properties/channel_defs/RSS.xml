@@ -47,7 +47,7 @@
 				<label/>
 				<type base="string" input="text" display="hidden">
 				</type>
-				<defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl</defaultValue>
+				<defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS-0_91/RSS.ssl</defaultValue>
 			</parameter>
 		</step>
 		<step>
