@@ -45,9 +45,11 @@
 <%@ page import="org.apache.xml.serialize.HTMLSerializer" %>
 <%@ page import="org.apache.xml.serialize.OutputFormat" %>
 
-<%@ include file="checkinit.jsp" %>
-
 <jsp:useBean id="dispatchBean" class="org.jasig.portal.DispatchBean" scope="session" />
+
+<%
+org.jasig.portal.GenericPortalBean.initialize(application);
+%>
 
 <%
   // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!

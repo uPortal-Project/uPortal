@@ -40,7 +40,6 @@
 <%@ page import = "java.sql.*" %>
 <%@ page import="org.jasig.portal.Logger" %>
 <%@ page errorPage="error.jsp" %>
-<%@ include file="checkinit.jsp" %>
 <%@ include file="checkGuest.jsp" %>
 
 <%

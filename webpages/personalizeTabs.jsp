@@ -39,7 +39,6 @@
 <%@ page import="org.jasig.portal.layout.*" %>
 <%@ page import="com.objectspace.xml.*" %>
 <%@ page errorPage="error.jsp" %>
-<%@ include file="checkinit.jsp" %>
 <%@ include file="checkGuest.jsp" %>
 
 

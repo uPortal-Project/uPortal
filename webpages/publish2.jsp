@@ -38,7 +38,6 @@
 <%@ page import="org.jasig.portal.*" %>
 <%@ page errorPage="error.jsp" %>
 
-<%@ include file="checkinit.jsp" %>
 <%@ include file="checkGuest.jsp" %>
 
 <%

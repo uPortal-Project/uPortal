@@ -36,10 +36,14 @@
 <%@ page errorPage="error.jsp" %>
 <%@ page import="org.jasig.portal.*" %>
 <%@ page import="org.jasig.portal.security.IPerson" %>
-<%@ include file="checkinit.jsp" %>
 
 <jsp:useBean id="authBean" class="org.jasig.portal.AuthenticationBean"
                            type="org.jasig.portal.IAuthenticationBean" />
+
+<%
+org.jasig.portal.GenericPortalBean.initialize(application);
+%>
+
 
 <%
 String sUserName = request.getParameter ("userName");

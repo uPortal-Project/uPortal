@@ -36,7 +36,6 @@
 <%@ page errorPage="error.jsp" %>
 <%@ page import="org.jasig.portal.layout.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
-<%@ include file="checkinit.jsp" %>
 
 
 <%
