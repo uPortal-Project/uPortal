@@ -257,20 +257,22 @@ protected Iterator findContainingGroups(IEntity ent) throws GroupsException
 
     List groups = new ArrayList();
     File root = getFileRoot(ent.getType());
-    File[] files = getAllFilesBelow(root);
-
-    try
+    if ( root != null )
     {
-        for (int i=0; i<files.length; i++)
-        {
-            Collection ids = getEntityIdsFromFile(files[i]);
-            if ( ids.contains(ent.getKey()) )
-                { groups.add(find(files[i])); }
-        }
-    }
-    catch (Exception ex)
-        { throw new GroupsException("Problem reading group files: " + ex.getMessage()); }
+        File[] files = getAllFilesBelow(root);
 
+       try
+        {
+            for (int i=0; i<files.length; i++)
+            {
+                Collection ids = getEntityIdsFromFile(files[i]);
+                if ( ids.contains(ent.getKey()) )
+                    { groups.add(find(files[i])); }
+            }
+        }
+        catch (Exception ex)
+            { throw new GroupsException("Problem reading group files: " + ex.getMessage()); }
+    }
 
     return groups.iterator();
 }
