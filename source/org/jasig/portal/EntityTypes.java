@@ -37,6 +37,7 @@ package org.jasig.portal;
 import java.sql.*;
 import java.util.*;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.SequenceGenerator;
 
 /**
  * This class provides access to the entity types used by <code>IBasicEntities</code>
@@ -99,19 +100,13 @@ public EntityTypes()
 /**
  * @return java.util.Iterator
  */
-public synchronized void addEntityType(Class newType, String description) throws SQLException
+public synchronized void addEntityType(Class newType, String description) throws java.lang.Exception
 {
     refresh();
     if ( getEntityTypesByType().get(newType) == null )
     {
-        int highest = 0;
-        for ( Iterator it = entityTypesByID.keySet().iterator(); it.hasNext(); )
-        {
-            int id = ((Integer) it.next()).intValue();
-            if ( id > highest ) { highest = id; }
-        }
-        highest++;
-        EntityType et = new EntityType(newType, new Integer(highest), description);
+        int nextKey = getNextKey();
+        EntityType et = new EntityType(newType, new Integer(nextKey), description);
         insertEntityType(et);
         primAddEntityType(et);
     }
@@ -277,6 +272,14 @@ private static java.lang.String getInsertEntityTypeSql()
     return "INSERT INTO " + ENTITY_TYPE_TABLE + " (" + getAllColumnNames() + ") VALUES (?, ?, ?)";
 }
 /**
+ * @return int
+ * @exception java.lang.Exception
+ */
+private int getNextKey() throws java.lang.Exception
+{
+    return SequenceGenerator.instance().getNextInt(ENTITY_TYPE_TABLE);
+}
+/**
  * @return java.lang.String
  */
 private static java.lang.String getSelectEntityTypesSql()
@@ -417,7 +420,7 @@ public static synchronized EntityTypes singleton()
 /**
  * @return java.util.Iterator
  */
-public synchronized void updateEntityType(Class type, String newDescription) throws SQLException
+public synchronized void updateEntityType(Class type, String newDescription) throws Exception
 {
     refresh();
     EntityType et = (EntityType)getEntityTypesByType().get(type);

@@ -33,6 +33,10 @@
         <column><name>SEQUENCE_NAME</name><value>UP_GROUP</value></column>
         <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
+      <row>
+        <column><name>SEQUENCE_NAME</name><value>UP_ENTITY_TYPE</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>20</value></column> <!-- Reserve some IDs for internal use, just in case -->
+      </row>
     </rows>
   </table>
 
@@ -149,7 +153,7 @@
         <!-- YOU SHOULD CHANGE THE PASSWORD BEFORE INSERTING THE ROW BELOW! If you don't anyone can log  -->
         <!-- into your demo as 'guest' and change the guest layout that everyone will see.               -->
         <!-- Without this row inserted the guest user will not be able to log on.                        -->
-        <!--
+        <!--          
         <row>
           <column><name>USER_NAME</name><value>guest</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value></column>
