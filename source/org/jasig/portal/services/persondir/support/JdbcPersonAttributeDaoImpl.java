@@ -66,14 +66,20 @@ public class JdbcPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
      * @param sql The SQL query to run.
      */
     public JdbcPersonAttributeDaoImpl(final DataSource ds, final List attrList, final String sql) {
-        if (attrList == null)
+        if (super.log.isTraceEnabled()) {
+        	log.trace("entering JdbcPersonAttributeDaoImpl(" + ds + ", " + attrList + ", " + sql + ")");
+        }
+    	if (attrList == null)
             throw new IllegalArgumentException("attrList cannot be null");
         
         //Defensive copy of the query attribute list
-        this.queryAttributes = new ArrayList(attrList);
-        this.queryAttributes = Collections.unmodifiableList(this.queryAttributes);
+        List defensiveCopy = new ArrayList(attrList);
+        this.queryAttributes = Collections.unmodifiableList(defensiveCopy);
         
         this.query = new PersonAttributeMappingQuery(ds, sql);
+        if (log.isTraceEnabled()) {
+        	log.trace("Constructed " + this);
+        }
     }
 
 
@@ -152,11 +158,20 @@ public class JdbcPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
             this.userAttributes = Collections.EMPTY_SET;
         }
     }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("JdbcPersonAttributeDaoImpl ");
+    	sb.append("query=").append(this.query);
+    	sb.append(" queryAttributes=").append(this.queryAttributes);
+    	sb.append(" attributeMappings=").append(this.attributeMappings);
+    	return sb.toString();
+    }
 
     /**
-     * 
-     * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
-     * @version $Revision $
+     * An object which will execute a SQL query with the expectation
+     * of yielding a ResultSet with zero or one rows, which it maps
+     * to null or to a Map from uPortal attribute names to values.
      */
     private class PersonAttributeMappingQuery extends MappingSqlQuery {
         /**
@@ -186,7 +201,7 @@ public class JdbcPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
         /**
          * How attribute name mapping works:
          * If the column is mapped use the mapped name(s)<br>
-         * If the column is listed and not mapped the column name<br>
+         * If the column is listed and not mapped use the column name<br>
          * 
          * @see org.springframework.jdbc.object.MappingSqlQuery#mapRow(java.sql.ResultSet, int)
          */
@@ -242,6 +257,14 @@ public class JdbcPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
 
                 MultivaluedPersonAttributeUtils.addResult(rowResults, attributeName, attributeValue);
             }
+        }
+        
+        
+        public String toString() {
+        	StringBuffer sb = new StringBuffer();
+        	sb.append(this.getClass().getName());
+        	sb.append(" SQL=[").append(super.getSql()).append("]");
+        	return sb.toString();
         }
     }
 }
