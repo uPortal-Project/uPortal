@@ -161,8 +161,8 @@ public class UserLayoutNode {
      * Sets the tree depth for this node.
      * @param depth a <code>int</code> depth value
      */
-     public void setDepth ( int priority ) {
-       this.priority = priority;
+     public void setDepth ( int depth ) {
+       this.depth = depth;
      }
 
      /**
