@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright � 2001 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -178,7 +178,6 @@ public class PortalSessionManager extends HttpServlet {
      * @exception IOException if an error occurs
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
-    	CommonUtils.setNoCache(res);
         // Send the uPortal version in a header
         res.setHeader("uPortal-version", "uPortal_rel-2-3+");
         
