@@ -222,7 +222,7 @@
                        Use the version that comes with Axis.
                        Version: (depends on Axis version)
                        URL: http://oss.software.ibm.com/developerworks/projects/wsdl4j/
-
+                       
   commons-discovery.jar
                        The Discovery component, from the Apache Commons project,
                        is about discovering, or finding, implementations for
@@ -246,6 +246,54 @@
                        The project is still in the Apache Incubator.
                        Version: (from jakarta-pluto CVS on June 29, 2004)
                        URL: http://portals.apache.org/pluto/
+
+  wsrp4j-shared.jar    WSRP4J shared classes mostly derived from OASIS WSRP WSDL.
+                       Comes with WSRP4J.
+                       Use the version that comes with WSRP4J.
+                       Version: (from ws-wsrp4j CVS on July 9, 2004)
+                       URL: http://ws.apache.org/wsrp4j/
+
+  wsrp4j-consumer.jar  WSRP4J consumer classes.
+                       Comes with WSRP4J.
+                       Version: (same as wsrp4j-shared.jar version)
+                       URL: http://ws.apache.org/wsrp4j/
+
+  proxyportlet.jar     WSRP4J Consumer Proxy Portlet.
+                       Comes with WSRP4J.
+                       Version: (same as wsrp4j-shared.jar version)
+                       
+                       The following modifications were made to the
+                       WSRP4J proxy portlet source:
+                       
+                       - org.apache.wsrp4j.consumer.portlet.impl.ProxyPortlet:
+                       
+                          IS: protected PortletKey getPortletKey(Map preferences)
+                         WAS: private PortletKey getPortletKey(Map preferences)
+                           
+                          IS: protected Producer getProducer(String producerID) throws WSRPException
+                         WAS: private Producer getProducer(String producerID) throws WSRPException
+                       
+                         Added new method
+                             protected ConsumerEnvironment getConsumerEnvironment() 
+                             {
+                                 return consumerEnv;
+                             }
+                             
+                       - portlet.xml
+                       
+                          IS: <portlet-class>org.jasig.portal.wsrp.consumer.portlet.ProxyPortlet</portlet-class>
+                         WAS: <portlet-class>org.apache.wsrp4j.consumer.portlet.impl.ProxyPortlet</portlet-class>
+
+                          IS: <value>org.jasig.portal.wsrp.consumer.portlet.ConsumerEnvironmentImpl</value>
+                         WAS: <value>org.apache.wsrp4j.consumer.portlet.impl.ConsumerEnvironmentImpl</value>
+                                                       
+                       - wsrp4j-logger.properties
+                       
+                          IS: log4j.appender.A1.File=wsrp4j-consumer.log
+                         WAS: log4j.appender.A1.File=@HOME@/logs/wsrp4j-consumer.log
+
+                       
+                       URL: http://ws.apache.org/wsrp4j/
 
   jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of
                        javax.sql.* package. This is only needed for JDK's less than 1.4.
@@ -290,6 +338,9 @@
   <property name="commons-logging.jar" value="(set this in build.properties!)"/>
   <property name="portlet-api.jar" value="(set this in build.properties!)"/>
   <property name="pluto.jar" value="(set this in build.properties!)"/>
+  <property name="wsrp-shared.jar" value="(set this in build.properties!)"/>
+  <property name="wsrp-consumer.jar" value="(set this in build.properties!)"/>
+  <property name="proxyportlet.jar" value="(set this in build.properties!)"/>
   <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
   <property name="junit.jar" value="(set this in build.properties!)"/>
@@ -331,6 +382,9 @@
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${portlet-api.jar}"/>
     <pathelement location="${pluto.jar}"/>
+    <pathelement location="${wsrp4j-shared.jar}"/>
+    <pathelement location="${wsrp4j-consumer.jar}"/>
+    <pathelement location="${proxyportlet.jar}"/>
     <pathelement location="${jdbc2_0-stdext.jar}"/>
     <pathelement location="${jdbcDriver.jar}"/>
     <pathelement location="${servlet.jar}"/>
@@ -493,6 +547,15 @@
          behavior in all servlet containers.
     -->
     <copy todir="${server.home}/conf/Catalina/localhost" file="properties/uPortal.xml"/>
+    <copy todir="${server.home}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
+  	
+  	<!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
+  	     Consider making these classes part of the proxyportlet.war distribution.
+  	-->
+    <mkdir     dir="${deploy.home}/../proxyportlet/WEB-INF/classes/org/jasig/portal/wsrp/consumer/portlet"/>
+    <copy    todir="${deploy.home}/../proxyportlet/WEB-INF/classes/org/jasig/portal/wsrp/consumer/portlet">
+      <fileset dir="${build.home}/WEB-INF/classes/org/jasig/portal/wsrp/consumer/portlet"/>
+    </copy>
 
   </target>
 
