@@ -682,7 +682,7 @@
               <!-- Channel fname -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Functional Name\n\nExample: stock-charts\n\nDescription: This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identiy this channel definition.')">
+                  <a href="javascript:alert('Name: Channel Functional Name\n\nExample: stock-charts\n\nDescription: This is the functional name of the channel used for identification for JNDI lookups and web services.  The channel functional name should uniquely identify this channel definition.')">
                   <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
                   </a></td>
                 <td>
@@ -710,7 +710,7 @@
               <!-- Channel Description -->
               <tr>
                 <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Description\n\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel. Used when it is helpful to provide additional information to a user about a channel ')">
+                  <a href="javascript:alert('Name: Channel Description\n\nExample: StockCharts is a financial services channel offering services such as charting a stocks performance over time.\n\nDescription: This is the description of the channel that is used when it is helpful to provide additional information to a user about a channel.')">
                   <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
                   </a></td>
                 <td>
@@ -743,7 +743,7 @@
                   <input type="checkbox" name="modifyTimeout" value="checkbox"/>
                 </td>-->
                  <td align="center" valign="top">
-                  <a href="javascript:alert('Name: Channel Timeout\n\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will attempt to render itself before the portal terminates that channels rendering.')">
+                  <a href="javascript:alert('Name: Channel Timeout\n\nExample: 10000\n\nDescription: This is the number of milliseconds a channel will be given to render itself before the portal terminates that channels rendering.')">
                   <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
                   </a></td>
                 <td>
