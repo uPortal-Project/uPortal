@@ -180,19 +180,19 @@ public class CPublisher implements IPrivilegedChannel {
       currentStep = runtimeData.getParameter("currentStep");
     if (action != null) {
       if (action.equals("choose"))
-        prepareChoose(); 
+        prepareChoose();
       else if (action.equals("publish"))
-        preparePublish(); 
+        preparePublish();
       else if (action.equals("publishCats"))
-        preparePublishCats(); 
+        preparePublishCats();
       else if (action.equals("publishRoles"))
-        preparePublishRoles(); 
+        preparePublishRoles();
       else if (action.equals("publishControls"))
-        preparePublishControls(); 
+        preparePublishControls();
       else if (action.equals("publishName"))
-        preparePublishName(); 
+        preparePublishName();
       else if (action.equals("saveChanges"))
-        prepareSaveChanges(); 
+        prepareSaveChanges();
       else if (action.equals("cancel"))
         mode = NONE;
     }
@@ -236,7 +236,7 @@ public class CPublisher implements IPrivilegedChannel {
    * @param out
    * @exception org.xml.sax.SAXException
    */
-  private void processXML (String stylesheetName, Document xmlSource, ContentHandler out) throws org.xml.sax.SAXException, 
+  private void processXML (String stylesheetName, Document xmlSource, ContentHandler out) throws org.xml.sax.SAXException,
       PortalException {
     String xsl = set.getStylesheetURI(stylesheetName, runtimeData.getBrowserInfo());
     try {
@@ -249,8 +249,8 @@ public class CPublisher implements IPrivilegedChannel {
         ssParams.put("extraSteps", Integer.toString(EXTRA));
         ssParams.put("modified", new Boolean(modified));
         XSLT.transform(xmlSource, new URL(xsl), out, ssParams);
-      } 
-      else 
+      }
+      else
         LogService.instance().log(LogService.ERROR, "org.jasig.portal.channels.CSubscriber: unable to find a stylesheet for rendering");
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
@@ -294,11 +294,11 @@ public class CPublisher implements IPrivilegedChannel {
       int i = Integer.parseInt(currentStep);
       if (i < numSteps) {
         currentStep = Integer.toString(i + 1);
-      } 
+      }
       else if (i == numSteps) {
         mode = CATS;
         currentStep = Integer.toString(i + 1);
-      } 
+      }
       else {
         publishChannel();
         currentStep = "end";
@@ -343,9 +343,9 @@ public class CPublisher implements IPrivilegedChannel {
       }
     }
     doc.appendChild(chan);
-    chanReg.addChannel(nextID, staticData.getPerson().getID(), chanName, doc, catID);
-    storeChanRoles(nextID);
     try {
+      chanReg.addChannel(nextID, staticData.getPerson().getID(), chanName, doc, catID);
+      storeChanRoles(nextID);
       chanReg.approveChannel(nextID, staticData.getPerson().getID(), new java.sql.Timestamp(System.currentTimeMillis()));
     } catch (Exception exc) {
       LogService.instance().log(LogService.ERROR, exc);
@@ -485,7 +485,7 @@ public class CPublisher implements IPrivilegedChannel {
       // Make sure all of the roles have been stored
       if (rolesSet == vRoles.size()) {
         return  (true);
-      } 
+      }
       else {
         return  (false);
       }
