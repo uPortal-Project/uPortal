@@ -7,6 +7,7 @@ package org.jasig.portal.services.persondir.support;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +72,24 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         Map result = impl.attributesForUser("awp9");
         assertEquals(this.oneAndTwo, result);
     }
+    
+    /**
+     * Test basic merging of attribute names.
+     */
+    public void testAttributeNames() {
+        
+        List attributeSources = new ArrayList();
+        
+        attributeSources.add(this.sourceOne);
+        attributeSources.add(this.sourceTwo);
+        
+        MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
+        impl.setPersonAttributeDaos(attributeSources);
+        
+        Set attributeNames = impl.getAttributeNames();
+        
+        assertEquals(this.oneAndTwo.keySet(), attributeNames);
+    }
 
     /**
      * Test the default attribute collision handling.
@@ -106,6 +125,31 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         
         Map result = impl.attributesForUser("awp9");
         assertEquals(this.twoAndThree, result);
+    }
+    
+    /**
+     * Test handling of underlying sources which return null on 
+     * getAttributeNames().
+     */
+    public void testNullAttribNames() {
+        List attributeSources = new ArrayList();
+        
+        attributeSources.add(this.sourceOne);
+        attributeSources.add(this.sourceTwo);
+        attributeSources.add(new NullAttribNamesPersonAttributeDao());
+        attributeSources.add(this.collidesWithOne);
+        
+        MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
+        impl.setPersonAttributeDaos(attributeSources);
+        
+        Set attribNames = impl.getAttributeNames();
+        
+        Set expectedAttribNames = new HashSet();
+        expectedAttribNames.addAll(this.sourceOne.getAttributeNames());
+        expectedAttribNames.addAll(this.sourceTwo.getAttributeNames());
+        expectedAttribNames.addAll(this.collidesWithOne.getAttributeNames());
+        
+        assertEquals(expectedAttribNames, attribNames);
     }
     
     /**
@@ -166,6 +210,24 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         
         public Set getAttributeNames() {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
+        }
+        
+    }
+    
+    /**
+     * A mock, test implementation of ThrowingPersonAttributeDao which always
+     * throws a RuntimeException.
+     * @author andrew.petro@yale.edu
+     * @version $Revision$ $Date$
+     */
+    private class NullAttribNamesPersonAttributeDao implements PersonAttributeDao {
+
+        public Map attributesForUser(String uid) {
+            throw new RuntimeException("ThrowingPersonAttributeDao always throws");
+        }
+        
+        public Set getAttributeNames() {
+            return null;
         }
         
     }
