@@ -32,7 +32,7 @@ function xml(nodelist){
 			<select name="channel">
 				<option value="">select one...</option>
 				<xsl:for-each select="channelType">
-					<option value="{definition}">
+					<option value="{cpd-uri}">
 						<xsl:value-of select="name"/>
 					</option>
 				</xsl:for-each>
