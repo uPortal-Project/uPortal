@@ -54,3 +54,7 @@ lib
 uPortal.jpx
 uPortal.oif
 webpages.war
+tests
+.#build.properties.1.27
+.#build.properties.1.28
+server.xml

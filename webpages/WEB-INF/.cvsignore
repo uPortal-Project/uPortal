@@ -1,2 +1,5 @@
 classes
 lib
+tld
+context.xml
+server-config.wsdd
