@@ -37,9 +37,11 @@ package org.jasig.portal.layout.channels;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IPrivileged;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
@@ -73,8 +75,8 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 	private IUserLayoutManager ulm;
 	private ThemeStylesheetUserPreferences themePrefs;
 	private static IAggregatedUserLayoutStore layoutStore;
-	private Map fragmentMap;
-	private ALFragment fragments[];
+	private IPerson person;
+	private Map fragments;
 	private String newName;
 
 	public CFragmentManager() throws PortalException {
@@ -151,9 +153,9 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 		category.setAttribute("expanded", "true");
 		fragmentsNode.appendChild(category);
 		if (fragments != null) {
-			for (int i = 0; i < fragments.length; i++) {
-				ALFragment fragment = fragments[i];
-				String fragmentId = fragment.getId();
+			for ( Iterator ids = fragments.keySet().iterator(); ids.hasNext(); ) {
+				String fragmentId = (String) ids.next();
+				ALFragment fragment = (ALFragment) fragments.get(fragmentId);
 				ALFolder rootFolder =
 					(ALFolder) fragment.getLayoutData().get(
 						fragment.getRootId());
@@ -194,28 +196,22 @@ public class CFragmentManager extends BaseChannel implements IPrivileged {
 
 	public void setStaticData(ChannelStaticData sd) throws PortalException {
 		staticData = sd;
+		person = staticData.getPerson();
 		refreshFragments();
 	}
 
 	public void refreshFragments() throws PortalException {
 		//if (fragmentMap == null)
-			fragmentMap = layoutStore.getFragments(staticData.getPerson());
+			Map fragmentIdsMap = layoutStore.getFragments(person);
 		//if (fragments == null) {
-			fragments = new ALFragment[fragmentMap.size()];
-			int i = 0;
-			for (Iterator ids = fragmentMap.keySet().iterator();
-				ids.hasNext();
-				i++) {
+			fragments = new HashMap();
+			for (Iterator ids = fragmentIdsMap.keySet().iterator(); ids.hasNext(); ) {
 				String fragmentId = (String) ids.next();
 				ILayoutFragment layoutFragment =
-					layoutStore.getFragment(staticData.getPerson(), fragmentId);
-				if (layoutFragment == null
-					|| !(layoutFragment instanceof ALFragment))
-					throw new PortalException(
-						"The fragment must be "
-							+ ALFragment.class.getName()
-							+ " type!");
-				fragments[i] = (ALFragment) layoutFragment;
+					layoutStore.getFragment(person, fragmentId);
+				if (layoutFragment == null || !(layoutFragment instanceof ALFragment))
+					throw new PortalException("The fragment must be "+ALFragment.class.getName()+" type!");
+				fragments.put(fragmentId,layoutFragment);
 			}
 		//}
 	}

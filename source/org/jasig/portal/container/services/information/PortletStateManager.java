@@ -138,7 +138,7 @@ public class PortletStateManager {
                     setState(windowOfAction, WindowState.NORMAL);
             } else if (UP_TCATTR.equals(paramName)) {
                 if (MINIMIZED.equals(values[0])) {
-                    String state = runtimeData.getParameter(MINIMIZED + "_" + getKey(windowOfAction) + "_value");
+                    String state = runtimeData.getParameter(MINIMIZED + "_" + windowId + "_value");
                     if ("true".equals(state))
                         setState(windowOfAction, WindowState.MINIMIZED);
                     else
