@@ -64,11 +64,6 @@ public class RemoteChannelServiceLocator extends Service implements RemoteChanne
     "      serializer=\"org.jasig.portal.webservices.ser.CookieSerializerFactory\"" +
     "      deserializer=\"org.jasig.portal.webservices.ser.CookieDeserializerFactory\"" +    
     "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +
-    "    <typeMapping xmlns:ns=\"urn:RemoteChannel\" qname=\"ns:ArrayOf_tns3_Cookie\"" +
-    "      type=\"java:javax.servlet.http.Cookie[]\"" +
-    "      serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"" +
-    "      deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"" +    
-    "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +    
     "    <typeMapping xmlns:ns=\"urn:RemoteChannel\" qname=\"ns:ChannelRuntimeData\"" +
     "      type=\"java:org.jasig.portal.ChannelRuntimeData\"" +
     "      serializer=\"org.jasig.portal.webservices.ser.ChannelRuntimeDataSerializerFactory\"" +
@@ -78,6 +73,11 @@ public class RemoteChannelServiceLocator extends Service implements RemoteChanne
     "      type=\"java:org.jasig.portal.BrowserInfo\"" +
     "      serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"" +
     "      deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"" +    
+    "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +
+    "    <typeMapping xmlns:ns=\"urn:RemoteChannel\" qname=\"ns:Locale\"" +
+    "      type=\"java:java.util.Locale\"" +
+    "      serializer=\"org.jasig.portal.webservices.ser.LocaleSerializerFactory\"" +
+    "      deserializer=\"org.jasig.portal.webservices.ser.LocaleDeserializerFactory\"" +    
     "      encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"/>" +
     "    <typeMapping xmlns:ns=\"urn:RemoteChannel\" qname=\"ns:UPFileSpec\"" +
     "      type=\"java:org.jasig.portal.UPFileSpec\"" +
