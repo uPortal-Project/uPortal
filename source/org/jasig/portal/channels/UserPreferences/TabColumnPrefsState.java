@@ -594,14 +594,20 @@ final class TabColumnPrefsState extends BaseState
   private final List getOverridableChannelParams(String selectedChannelId) throws PortalException {
     Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
     Element channel = (Element)channelRegistry.getElementById(selectedChannelId);
-    List overridableParams = new ArrayList();
+    List overridableParams = null;
 
-    NodeList params = channel.getElementsByTagName("parameter");
-    for (int i = 0; i < params.getLength(); i++) {
-      Element param = (Element)params.item(i);
-      String override = param.getAttribute("override");
-      if (override != null && override.equals("yes"))
-        overridableParams.add(param);
+    if (channel != null) {
+      overridableParams = new ArrayList();
+
+      NodeList params = channel.getElementsByTagName("parameter");
+      for (int i = 0; i < params.getLength(); i++) {
+        Element param = (Element)params.item(i);
+        String override = param.getAttribute("override");
+        if (override != null && override.equals("yes"))
+          overridableParams.add(param);
+      }
+    } else {
+      throw new PortalException("Channel " + selectedChannelId + " is missing from the channel registry");
     }
     return overridableParams;
   }
@@ -890,6 +896,19 @@ final class TabColumnPrefsState extends BaseState
         else if (action.equals("selectChannel"))
         {
           elementID = runtimeData.getParameter("elementID");
+
+          // Modify channel parameters
+          String subAction = runtimeData.getParameter("subAction");
+          if (subAction != null && subAction.equals("modifyChannelParams"))
+          {
+            Element layoutChannel = userLayout.getElementById(elementID);
+            String channelId = "chan" + layoutChannel.getAttribute("chanID");
+            Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
+            Element channel = (Element)channelRegistry.getElementById(channelId);
+            List overridableChanParams = getOverridableChannelParams(channelId);
+            context.internalState = new ParametersState(context, this, overridableChanParams, channel);
+            context.internalState.setStaticData(staticData);
+          }
         }
         // Move channel
         else if (action.equals("moveChannel"))
@@ -977,7 +996,7 @@ final class TabColumnPrefsState extends BaseState
           }
 
           //if (action.equals("moveChannelHere"))
-          //  System.out.println(org.jasig.portal.utils.XML.serializeNode(userLayout));
+          //System.out.println(org.jasig.portal.utils.XML.serializeNode(userLayout));
 
           // Begin SAX chain
           emptytr.transform(new DOMSource(userLayout), new SAXResult(saif));
@@ -1183,19 +1202,23 @@ final class TabColumnPrefsState extends BaseState
   protected class ParametersState extends BaseState
   {
     protected TabColumnPrefsState context;
-    protected NewChannelState previousState;
+    protected BaseState previousState;
     private List overridableChanParams;
-    private Element channel;
+    private Element registryChannel;
     private String position;
     private String destinationElementId;
 
     private boolean error = false;
 
-    public ParametersState(TabColumnPrefsState context, NewChannelState previousState, List overridableChanParams, Element channel, String position, String destinationElementId) {
+    public ParametersState(TabColumnPrefsState context, BaseState previousState, List overridableChanParams, Element registryChannel) {
       this.context = context;
       this.previousState = previousState;
       this.overridableChanParams = overridableChanParams;
-      this.channel = channel;
+      this.registryChannel = registryChannel;
+    }
+
+    public ParametersState(TabColumnPrefsState context, BaseState previousState, List overridableChanParams, Element registryChannel, String position, String destinationElementId) {
+      this(context, previousState, overridableChanParams, registryChannel);
       this.position = position;
       this.destinationElementId = destinationElementId;
     }
@@ -1207,7 +1230,7 @@ final class TabColumnPrefsState extends BaseState
         if (action.equals("back")) {
           context.setState(previousState);
         } else if (action.equals("finished")) {
-          processParams(); // And add the channel
+          applyChanges(); // Add or modify the channel
           returnToDefaultState();
         } else if (action.equals("cancel")) {
           returnToDefaultState();
@@ -1229,16 +1252,35 @@ final class TabColumnPrefsState extends BaseState
 
     private void returnToDefaultState() throws PortalException {
       // Reset global variables
-      elementID = "none";
-      position = "none";
-      action = "none";
+        elementID = "none";
+        position = "none";
+        action = "none";
 
       BaseState defaultState = new DefaultState(context);
       defaultState.setStaticData(staticData);
       context.setState(defaultState);
     }
 
-    private void processParams() {
+    private void applyChanges() {
+      // Finally, add the channel to the layout or modify it if it is already there
+      try {
+        if (previousState instanceof NewChannelState) {
+          processParams(registryChannel);
+          context.addChannel(registryChannel, position, destinationElementId);
+        }
+        else if (previousState instanceof DefaultState) {
+          Element layoutChannel = userLayout.getElementById(elementID);
+          processParams(layoutChannel);
+          context.saveLayout(false);
+        }
+
+      } catch (Exception e) {
+        error = true;
+        errorMessage = errorMessageModChannelParams;
+      }
+    }
+
+    private void processParams(Element channel) {
       // Process params
       Iterator iter = overridableChanParams.iterator();
       while (iter.hasNext()) {
@@ -1256,14 +1298,6 @@ final class TabColumnPrefsState extends BaseState
           }
         }
       }
-
-      // Finally, add the channel to the layout
-      try {
-        context.addChannel(channel, position, destinationElementId);
-      } catch (Exception e) {
-        error = true;
-        errorMessage = errorMessageModChannelParams;
-      }
     }
 
     private Document getParametersDoc() throws PortalException {
@@ -1272,21 +1306,15 @@ final class TabColumnPrefsState extends BaseState
       // Top-level element
       Element userPrefParamsE = doc.createElement("userPrefParams");
 
-      // List of parameter names
-      Element paramNamesE = doc.createElement("paramNames");
-      Iterator iter = overridableChanParams.iterator();
-      while (iter.hasNext()) {
-        Element param = (Element)iter.next();
-        String paramName = param.getAttribute("name");
-
-        Element paramNameE = doc.createElement("paramName");
-        paramNameE.appendChild(doc.createTextNode(paramName));
-        paramNamesE.appendChild(paramNameE);
+      if (previousState instanceof NewChannelState)
+        userPrefParamsE.appendChild(doc.importNode(registryChannel, true));
+      else if (previousState instanceof DefaultState) {
+        Element layoutChannel = userLayout.getElementById(elementID);
+        userPrefParamsE.appendChild(doc.importNode(layoutChannel, true));
       }
-      userPrefParamsE.appendChild(paramNamesE);
 
       // CPD
-      Document cpd = ChannelRegistryManager.getCPD(channel.getAttribute("typeID"));
+      Document cpd = ChannelRegistryManager.getCPD(registryChannel.getAttribute("typeID"));
       if (cpd != null)
         userPrefParamsE.appendChild(doc.importNode(cpd.getDocumentElement(), true));
 
