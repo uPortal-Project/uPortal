@@ -46,7 +46,7 @@ import org.xml.sax.ContentHandler;
  * An interface representing the user layout.
  *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version $Revision$
  */
 public interface IUserLayout {
 
