@@ -2217,12 +2217,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               System.err.println("Not saving channel defined parameter value " + nodeName);
           }
           else {
-            parmStmt.clearParameters();
-            parmStmt.setInt(1, saveStructId);
-            parmStmt.setString(2, nodeName);
-            parmStmt.setString(3, nodeValue);
-            LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + parmStmt);
-            parmStmt.executeUpdate();
+            if( nodeValue != null && nodeValue.length() > 0 ) {
+              parmStmt.clearParameters();
+              parmStmt.setInt(1, saveStructId);
+              parmStmt.setString(2, nodeName);
+              parmStmt.setString(3, nodeValue);
+              LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + parmStmt);
+              parmStmt.executeUpdate();
+            }
           }
         }
       }
