@@ -291,7 +291,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-content">
                         <tr>
                             <td class="uportal-channel-strong" align="left" valign="top">
-                                <form name="frag_prop_form" action="{$baseActionURL}" method="post">
+                                <form name="fragment_form" action="{$baseActionURL}" method="post">
                                     <!-- Open Contents of info table -->
                                     <table cellspacing="0" cellpadding="5" width="100%" border="0" class="uportal-background-content">
                                         <tr align="left" valign="top">
@@ -349,7 +349,7 @@ Version $Revision$
                                             </td>
                                             <td>
                                                 <!-- The Name of the Fragment will go here -->
-                                                <input name="frag_prop_name" type="text" class="uportal-input-text" value="{//fragment[ID=$uPcFM_selectedID]/name}" size="30" maxlength="1000"/>
+                                                <input name="fragment_name" type="text" class="uportal-input-text" value="{//fragment[ID=$uPcFM_selectedID]/name}" size="30" maxlength="1000"/>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
@@ -371,7 +371,7 @@ Version $Revision$
                                             </td>
                                             <td>
                                                 <!-- The Name of the Fragment will go here -->
-                                                <input name="frag_prop_fname" type="text" class="uportal-input-text" value="{//fragment[ID=$uPcFM_selectedID]/fname}" size="30" maxlength="1000"/>
+                                                <input name="fragment_fname" type="text" class="uportal-input-text" value="{//fragment[ID=$uPcFM_selectedID]/fname}" size="30" maxlength="1000"/>
                                             </td>
                                             <td width="100%" align="left" valign="top" nowrap="nowrap">
                                                 <img height="10" width="1" src="{$mediaPath}/transparent.gif" alt=""/>
@@ -393,7 +393,7 @@ Version $Revision$
                                             </td>
                                             <td>
                                                 <!-- A Description of the Fragment will go here -->
-                                                <textarea name="frag_prop_desc" cols="30" rows="4" wrap="on" class="uportal-input-text">
+                                                <textarea name="fragment_desc" cols="30" rows="4" wrap="on" class="uportal-input-text">
                                                     <xsl:value-of select="//fragment[ID=$uPcFM_selectedID]/description"/>
                                                 </textarea>
                                             </td>
@@ -409,7 +409,7 @@ Version $Revision$
                                         <tr align="left" valign="top">
                                             <td colspan="3">
                                                 <input type="hidden" name="uPcFM_action" value="save"/>
-                                                <input name="frag_prop_submit" type="submit" class="uportal-button" value="Submit properties"/>
+                                                <input name="fragment_submit" type="submit" class="uportal-button" value="Submit properties"/>
                                             </td>
                                         </tr>
                                     </table>
@@ -450,7 +450,7 @@ Version $Revision$
                     <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-content">
                         <tr>
                             <td class="uportal-channel-strong" align="left" valign="top">
-                                <form name="frag_prop_new_form" action="{$baseActionURL}" method="post">
+                                <form name="fragment_new_form" action="{$baseActionURL}" method="post">
                                     <!-- Closed Contents of info table -->
                                     <table width="100%" border="0" cellspacing="0" cellpadding="5" class="uportal-background-content">
                                         <tr>
@@ -586,7 +586,8 @@ Version $Revision$
                                         <tr align="left" valign="top">
                                             <td colspan="3">
                                                 <input type="hidden" name="uPcFM_action" value="save"/>
-                                                <input name="frag_prop_submit" type="submit" class="uportal-button" value="Submit properties"/>
+                                                <input type="hidden" name="uPcFM_selectedID" value="{$selectedID}"/>
+                                                <input name="fragment_submit" type="submit" class="uportal-button" value="Submit properties"/>
                                             </td>
                                         </tr>
                                     </table>
