@@ -85,10 +85,14 @@ public class UserLayoutStoreFactory {
    */
   protected static IUserLayoutStore getUserLayoutStoreImpl( String className ) throws PortalException {
     try {
-      if (userLayoutStoreImpl == null) {
-        userLayoutStoreImpl = (IUserLayoutStore) Class.forName(className).newInstance();
-      }
-      return userLayoutStoreImpl;
+        if (userLayoutStoreImpl == null) {
+            synchronized (UserLayoutStoreFactory.class) {
+                if (userLayoutStoreImpl == null) {
+                    userLayoutStoreImpl = (IUserLayoutStore) Class.forName(className).newInstance();
+                }
+            }
+        }
+        return userLayoutStoreImpl;
     } catch (Exception e) {
       LogService.log(LogService.ERROR, "UserLayoutStoreFactory: Could not instantiate " + className, e);
       throw new PortalException(e.getMessage());
