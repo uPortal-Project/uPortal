@@ -66,7 +66,6 @@ public class LocaleManager  {
      * @param person the user
      */
     public LocaleManager(IPerson person) {
-        System.out.println("Making new LocaleManager for user: " + person.getID() + " " + new java.util.Date());
         this.person = person;
         if (localeAware) {
             jvmLocale = Locale.getDefault();
