@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-	<xsl:template match="cssviewer">
+	<xsl:template match="document">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
 			<tr align="center">
 				<td class="uportal-channel-title">Current Elements</td>
