@@ -37,22 +37,32 @@ package org.jasig.portal.services;
 
 import org.jasig.portal.services.stats.IStatsRecorderFactory;
 import org.jasig.portal.services.stats.IStatsRecorder;
+import org.jasig.portal.services.stats.StatsRecorderWorkerTask;
+import org.jasig.portal.services.stats.RecordLoginWorkerTask;
+import org.jasig.portal.services.stats.RecordLogoutWorkerTask;
+import org.jasig.portal.services.stats.RecordSessionCreatedWorkerTask;
+import org.jasig.portal.services.stats.RecordSessionDestroyedWorkerTask;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.threading.ThreadPool;
+import org.jasig.portal.utils.threading.BoundedThreadPool;
+import org.jasig.portal.utils.threading.WorkTracker;
 import org.jasig.portal.PropertiesManager;
 
 /**
  * Stats recorder service. Various parts of the portal call
  * the methods in this service to record events such as 
  * when a user logs in, logs out, and subscribes to a channel.
- * The information is handed to an IStatsRecorder implementation
- * that is determined by the IStatsRecorderFactory implementation
- * that can be configured in portal.properties.
+ * The information is handed off in a separate thread
+ * to an IStatsRecorder implementation that is determined
+ * by the IStatsRecorderFactory implementation that can be
+ * configured in portal.properties.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class StatsRecorder {
   protected static StatsRecorder statsRecorderInstance;
   protected IStatsRecorder statsRecorder;
+  protected ThreadPool threadPool;
   
   /**
    * Constructor with private access so that the StatsRecorder
@@ -64,10 +74,13 @@ public class StatsRecorder {
       String statsRecorderFactoryName = PropertiesManager.getProperty("org.jasig.portal.services.stats.StatsRecorderFactory.implementation");      
 			IStatsRecorderFactory statsRecorderFactory = (IStatsRecorderFactory)Class.forName(statsRecorderFactoryName).newInstance();
       statsRecorder = statsRecorderFactory.getStatsRecorder();	
+      
+      // Create a thread pool
+      threadPool = new BoundedThreadPool(5, 15, 5);
 		} catch (Exception e) {
 			LogService.log(LogService.ERROR, e);
 		}
-  }
+  }  
   
   /**
    * Creates an instance of this stats recorder service.
@@ -85,7 +98,9 @@ public class StatsRecorder {
    * @param person, the person who is logging in
    */
   public static void recordLogin(IPerson person) {
-    instance().statsRecorder.recordLogin(person);
+    StatsRecorderWorkerTask task = new RecordLoginWorkerTask(person);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
   }
 
   /**
@@ -93,7 +108,9 @@ public class StatsRecorder {
    * @param person, the person who is logging out
    */
   public static void recordLogout(IPerson person) {
-    instance().statsRecorder.recordLogout(person);
+    StatsRecorderWorkerTask task = new RecordLogoutWorkerTask(person);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
   }
   
   /**
@@ -101,7 +118,9 @@ public class StatsRecorder {
    * @param person, the person whose session is being created
    */
   public static void recordSessionCreated(IPerson person) {
-    instance().statsRecorder.recordSessionCreated(person);
+    StatsRecorderWorkerTask task = new RecordSessionCreatedWorkerTask(person);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
   }
   
   /**
@@ -111,6 +130,8 @@ public class StatsRecorder {
    * @param person, the person whose session is ending
    */
   public static void recordSessionDestroyed(IPerson person) {
-    instance().statsRecorder.recordSessionDestroyed(person);
+    StatsRecorderWorkerTask task = new RecordSessionDestroyedWorkerTask(person);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
   }
 }
