@@ -52,7 +52,7 @@ import org.jasig.portal.container.om.common.PreferenceSetImpl;
  * persist the data.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net </a>
- * @version $Revision $
+ * @version $Revision$ 
  */
 public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
     private static final String READ_ONLY_TRUE = "Y";

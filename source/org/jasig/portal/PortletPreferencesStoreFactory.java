@@ -42,7 +42,7 @@ import org.jasig.portal.services.LogService;
  * portal.properties
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ 
  */
 public class PortletPreferencesStoreFactory {
 

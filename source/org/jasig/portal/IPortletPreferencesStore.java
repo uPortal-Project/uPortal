@@ -42,7 +42,7 @@ import org.apache.pluto.om.common.PreferenceSet;
  * channel. Entity level preferences are specific for on a per user per instance basis.
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ 
  */
 public interface IPortletPreferencesStore {
     /**
