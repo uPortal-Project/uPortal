@@ -61,6 +61,7 @@ import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IChannelRenderer;
 import org.jasig.portal.IChannelRendererFactory;
 import org.jasig.portal.MediaManager;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -70,6 +71,7 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.AbsoluteURLFilter;
 import org.jasig.portal.wsrp.types.AccessDeniedFault;
+import org.jasig.portal.wsrp.types.Fault;
 import org.jasig.portal.wsrp.types.InteractionParams;
 import org.jasig.portal.wsrp.types.InvalidHandleFault;
 import org.jasig.portal.wsrp.types.MarkupParams;
@@ -152,6 +154,16 @@ public class ChannelInstanceManager {
         if (runtimeData == null) {
             setChannelRuntimeData(runtimeContext, markupParams, (InteractionParams)null);
         }
+        
+        // Set mode
+        String mode = markupParams.getMode();
+        if (mode.equals(Constants.WSRP_HELP)) {
+            channel.receiveEvent(new PortalEvent(PortalEvent.HELP_BUTTON_EVENT));
+        } else if (mode.equals(Constants.WSRP_EDIT)) {
+            channel.receiveEvent(new PortalEvent(PortalEvent.EDIT_BUTTON_EVENT));
+        } else if (mode.equals(Constants.UP_ABOUT)) {
+            channel.receiveEvent(new PortalEvent(PortalEvent.ABOUT_BUTTON_EVENT));
+        }
            
         // Start rendering
         IChannelRenderer cr = channelRendererFactory.newInstance(channel, runtimeData);
@@ -216,8 +228,11 @@ public class ChannelInstanceManager {
         int channelPublishId = channelDef.getId();
         boolean authorized = ap.canSubscribe(channelPublishId);
         if (!authorized) {
-            LogService.log(LogService.DEBUG, "User '" + person.getAttribute(IPerson.USERNAME) + "' is not authorized to access channel with functional name '" + channelDef.getFName() + "'");
-            throw new AccessDeniedFault();
+            String message = "User [" + person.getAttribute(IPerson.USERNAME) + "] is not authorized to access channel with functional name [" + channelDef.getFName() + "]";
+            LogService.log(LogService.DEBUG, message);
+            Fault accessDeniedFault = new AccessDeniedFault();
+            accessDeniedFault.setFaultString(message);
+            throw accessDeniedFault;
         }
         
         // Instantiate channel

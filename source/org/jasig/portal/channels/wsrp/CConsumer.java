@@ -41,6 +41,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
@@ -58,6 +59,7 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
 import org.jasig.portal.wsrp.Constants;
 import org.jasig.portal.wsrp.MarkupService;
+import org.jasig.portal.wsrp.ServiceDescriptionService;
 import org.jasig.portal.wsrp.types.CacheControl;
 import org.jasig.portal.wsrp.types.ClientData;
 import org.jasig.portal.wsrp.types.InteractionParams;
@@ -69,6 +71,7 @@ import org.jasig.portal.wsrp.types.PersonName;
 import org.jasig.portal.wsrp.types.PortletContext;
 import org.jasig.portal.wsrp.types.RegistrationContext;
 import org.jasig.portal.wsrp.types.RuntimeContext;
+import org.jasig.portal.wsrp.types.ServiceDescription;
 import org.jasig.portal.wsrp.types.SessionContext;
 import org.jasig.portal.wsrp.types.StateChange;
 import org.jasig.portal.wsrp.types.Templates;
@@ -88,7 +91,6 @@ import org.xml.sax.ContentHandler;
 public class CConsumer implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable {
 
     protected static Map channelStateMap;
-    protected static RegistrationContext registrationContext;
     protected static Map serviceDescriptionMap;
 
     /**
@@ -104,14 +106,14 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
 
         public ChannelStaticData getStaticData() { return this.staticData; }
         public ChannelRuntimeData getRuntimeData() { return this.runtimeData; }
-        public PortalControlStructures getPortalControlStructures() { return this.pcs; }
         public PortalEvent getPortalEvent() { return this.portalEvent; }
+        public PortalControlStructures getPortalControlStructures() { return this.pcs; }
         public ChannelData getChannelData() { return this.channelData; }
 
         public void setStaticData(ChannelStaticData sd) { this.staticData = sd; }
         public void setRuntimeData(ChannelRuntimeData rd) { this.runtimeData = rd; }
-        public void setPortalControlStructures(PortalControlStructures pcs) { this.pcs = pcs; }
         public void setPortalEvent(PortalEvent ev) { this.portalEvent = ev; }
+        public void setPortalControlStructures(PortalControlStructures pcs) { this.pcs = pcs; }
         public void setChannelData(ChannelData cd) { this.channelData = cd; }
     }
 
@@ -122,7 +124,10 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         private String sessionId = null;
         private boolean receivedEvent = false;
         private boolean focused = false;
+        private String mode = null;
+        private ServiceDescriptionService serviceDescriptionService = null;
         private MarkupService markupService = null;
+        private RegistrationContext registrationContext = null;
         private PortletContext portletContext = null;
         private MarkupParams markupParams = null;
         private InteractionParams interactionParams = null;
@@ -130,13 +135,18 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         private MarkupCache markupCache = null;
         
         public ChannelData() {
+            this.mode = Constants.WSRP_VIEW;
             this.markupCache = new MarkupCache();
         }
         
+        // Getters
         public String getSessionId() { return this.sessionId; }
         public boolean getReceivedEvent() { return this.receivedEvent; }
         public boolean getFocused() { return this.focused; }
+        public String getMode() { return this.mode; }
+        public ServiceDescriptionService getServiceDescriptionService() { return this.serviceDescriptionService; }
         public MarkupService getMarkupService() { return this.markupService; }
+        public RegistrationContext getRegistrationContext() { return this.registrationContext; }
         public PortletContext getPortletContext() { return this.portletContext; }
         public MarkupParams getMarkupParams() { return this.markupParams; }
         public InteractionParams getInteractionParams() { return this.interactionParams; }
@@ -151,10 +161,14 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
             return validateTag;
         }
         
+        // Setters
         public void setSessionId(String sessionId) { this.sessionId = sessionId; }
         public void setReceivedEvent(boolean receivedEvent) { this.receivedEvent = receivedEvent; }
         public void setFocused(boolean focused) { this.focused = focused; }
+        public void setMode(String mode) { this.mode = mode; }
+        public void setServiceDescriptionService(ServiceDescriptionService serviceDescriptionService) { this.serviceDescriptionService = serviceDescriptionService; }
         public void setMarkupService(MarkupService markupService) { this.markupService = markupService; }
+        public void setRegistrationContext(RegistrationContext registrationContext) { this.registrationContext = registrationContext; }
         public void setPortletContext(PortletContext portletContext) { this.portletContext = portletContext; }
         public void setMarkupParams(MarkupParams markupParams) { this.markupParams = markupParams; }
         public void setInteractionParams(InteractionParams interactionParams) { this.interactionParams = interactionParams; }
@@ -164,11 +178,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
 
     static {
         channelStateMap = Collections.synchronizedMap(new HashMap());
-        
-        // Setup registration context
-        // The registration context would be normally be produced when the consumer
-        // registers with the producer - right now we are skipping this optional step
-        registrationContext = new RegistrationContext(); 
+        serviceDescriptionMap = new WeakHashMap();
     }
 
     /**
@@ -190,12 +200,35 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelData cd = channelState.getChannelData();
         
+        cd.setReceivedEvent(true);
+        
+        // Help or Edit button clicked
+        if (ev.getEventNumber() == PortalEvent.HELP_BUTTON_EVENT) {
+            cd.setMode(Constants.WSRP_EDIT);
+        } else if (ev.getEventNumber() == PortalEvent.EDIT_BUTTON_EVENT) {
+            cd.setMode(Constants.WSRP_HELP);
+        }
+        
+        switch (ev.getEventNumber()) {
+            case PortalEvent.HELP_BUTTON_EVENT:
+                cd.setMode(Constants.WSRP_HELP);
+                break;
+            case PortalEvent.EDIT_BUTTON_EVENT:
+                cd.setMode(Constants.WSRP_EDIT);
+                break;
+            case PortalEvent.ABOUT_BUTTON_EVENT:
+                cd.setMode(Constants.UP_ABOUT);
+                break;
+            default:
+                break;
+        }
+                
         // For session done and unsubscribe events, 
         // release session resources in remote portal
         try {
             if (ev.getEventNumber() == PortalEvent.SESSION_DONE ||
                 ev.getEventNumber() == PortalEvent.UNSUBSCRIBE) {
-                cd.getMarkupService().releaseSessions(registrationContext, new String[] { cd.getSessionId() });
+                cd.getMarkupService().releaseSessions(cd.getRegistrationContext(), new String[] { cd.getSessionId() });
             }
         } catch (Exception e) {
             e.printStackTrace(); // TODO: Take out printStackTrace for release
@@ -231,6 +264,27 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
             throw new PortalException("Missing publish parameter 'baseEndpoint'");
         if (portletHandle == null)
             throw new PortalException("Missing publish parameter 'portletHandle'");
+
+        // Get service description service
+        ServiceDescriptionService serviceDescriptionService = null;
+        try {
+            serviceDescriptionService = ServiceDescriptionService.getService(baseEndpoint);
+            cd.setServiceDescriptionService(serviceDescriptionService);
+            
+            ServiceDescription serviceDescription = (ServiceDescription)serviceDescriptionMap.get(baseEndpoint);
+            if (serviceDescription == null) {
+                serviceDescription = serviceDescriptionService.getServiceDescription(null, null);
+                serviceDescriptionMap.put(baseEndpoint, serviceDescription);
+            }
+            boolean requiresRegistration = serviceDescription.isRequiresRegistration();
+            if (requiresRegistration) {
+                //RegistrationContext registrationContext = new RegistrationContext();
+                //cd.setRegistrationContext(registrationContext);
+                throw new PortalException("Remote potlet '" + portletHandle + "' requires registration which is not yet supported.");
+            }
+        } catch (Exception e) {
+            throw new PortalException(e);
+        }
                     
         // Get markup service
         MarkupService markupService = null;
@@ -240,7 +294,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         } catch (Exception e) {
             throw new PortalException(e);
         }
-        
+                
         // Portlet context
         PortletContext portletContext = new PortletContext();
         portletContext.setPortletHandle(portletHandle);
@@ -259,6 +313,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         channelState.setRuntimeData(rd);
         
         ChannelData cd = channelState.getChannelData();
+        RegistrationContext registrationContext = cd.getRegistrationContext();
         MarkupService markupService = cd.getMarkupService();
         PortletContext portletContext = cd.getPortletContext();
         
@@ -409,7 +464,7 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
      * @return the portlet markup
      * @throws PortalException
      */
-    private String getMarkup(String uid) throws PortalException {
+    private String getMarkup(String uid) throws Exception {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelStaticData staticData = channelState.getStaticData();
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
@@ -479,29 +534,25 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
      * @param uid a unique ID used to identify the state of the channel
      * @return the markup response
      */
-    private MarkupResponse getMarkupFromProducer(String uid) {
+    private MarkupResponse getMarkupFromProducer(String uid) throws Exception {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelStaticData staticData = channelState.getStaticData();
         ChannelRuntimeData runtimeData = channelState.getRuntimeData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         ChannelData cd = channelState.getChannelData();
         
-        MarkupResponse markupResponse = null;
-        try {
-            PortletContext portletContext = cd.getPortletContext();            
-            RuntimeContext runtimeContext = getRuntimeContext(uid);                  
-            UserContext userContext = getUserContext(uid);          
-            MarkupParams markupParams = getMarkupParams(uid);
-                        
-            MarkupService markupService = cd.getMarkupService();
-            markupResponse = markupService.getMarkup(registrationContext, 
-                                                     portletContext, 
-                                                     runtimeContext, 
-                                                     userContext, 
-                                                     markupParams);                                                               
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
+        RegistrationContext registrationContext = cd.getRegistrationContext();            
+        PortletContext portletContext = cd.getPortletContext();            
+        RuntimeContext runtimeContext = getRuntimeContext(uid);                  
+        UserContext userContext = getUserContext(uid);          
+        MarkupParams markupParams = getMarkupParams(uid);
+                    
+        MarkupService markupService = cd.getMarkupService();
+        MarkupResponse markupResponse = markupService.getMarkup(registrationContext, 
+                                                 portletContext, 
+                                                 runtimeContext, 
+                                                 userContext, 
+                                                 markupParams);                                                               
         
         return markupResponse;   
     }
@@ -564,8 +615,8 @@ public class CConsumer implements IMultithreadedCharacterChannel, IMultithreaded
         markupParams.setLocales(getLocalesAsStringArray(runtimeData.getLocales()));
         MediaManager mediaManager = new MediaManager();
         markupParams.setMimeTypes(new String[] { mediaManager.getReturnMimeType(mediaManager.getMedia(runtimeData.getBrowserInfo())) });
-        markupParams.setMode(Constants.WSRP_VIEW); // can be a different mode
-        markupParams.setWindowState(Constants.WSRP_NORMAL);
+        markupParams.setMode(cd.getMode());
+        markupParams.setWindowState(cd.getFocused() ? Constants.WSRP_SOLO : Constants.WSRP_NORMAL);
         //markupParams.setNavigationalState(""); // ???
         markupParams.setMarkupCharacterSets(new String[] {"UTF-8"});
         markupParams.setValidateTag(cd.getValidateTag());
