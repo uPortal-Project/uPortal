@@ -53,6 +53,9 @@ import org.apache.pluto.services.information.PortletActionProvider;
 import org.apache.pluto.services.information.PortletURLProvider;
 import org.apache.pluto.services.information.ResourceURLProvider;
 
+import org.jasig.portal.container.servlet.ServletRequestImpl;
+import org.jasig.portal.ChannelRuntimeData;
+
 /**
  * Implementation of Apache Pluto DynamicInformationProvider.
  * @author Michael Ivanov, mvi@immagic.com
@@ -126,7 +129,8 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     
 	public String getRequestedPortalURL() {
 	      // TO GET requested portal URL from HttpServletRequest !!!!!
-	      return null;
+		ChannelRuntimeData rd = ((ServletRequestImpl) request).getChannelRuntimeData();
+		return rd.getBaseActionURL();
 	}
 
 }
