@@ -43,6 +43,12 @@ public class AuthorizationImpl implements IAuthorizationService {
 
     private static final Log log = LogFactory.getLog(AuthorizationImpl.class);
 
+    /**
+     * Default value to which cachePermissions will be set if
+     * the corresponding property cannot be loaded.
+     */
+    private static final boolean DEFAULT_CACHE_PERMISSIONS = false;
+    
     protected IPermissionStore permissionStore;
     protected IPermissionPolicy defaultPermissionPolicy;
     protected Map principalCache = new HashMap(100);
@@ -499,11 +505,11 @@ private void initialize() throws AuthorizationException
 {
     String eMsg = null;
     String factoryName =
-      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionStore.implementation");
+      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionStore.implementation", null);
     String policyName =
-      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionPolicy.defaultImplementation");
+      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionPolicy.defaultImplementation", null);
     cachePermissions =
-      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.IAuthorizationService.cachePermissions");
+      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.IAuthorizationService.cachePermissions", DEFAULT_CACHE_PERMISSIONS);
 
 
     if ( factoryName == null )
