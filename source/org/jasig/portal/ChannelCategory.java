@@ -45,7 +45,7 @@ public class ChannelCategory {
   String id;
   String name;
   String descr;
-  int creatorId;
+  String creatorId;
 
   /**
    * Constructs a ChannelCategory
@@ -58,12 +58,12 @@ public class ChannelCategory {
   public String getId() { return id; }
   public String getName() { return name; }
   public String getDescription() { return descr; }
-  public int getCreatorId() { return creatorId; }
+  public String getCreatorId() { return creatorId; }
 
   // Setter methods
   public void setName(String name) { this.name = name; }
   public void setDescription(String descr) { this.descr = descr; }
-  public void setCreatorId(int creatorId) { this.creatorId = creatorId; }
+  public void setCreatorId(String creatorId) { this.creatorId = creatorId; }
 
   public String toString() {
     return "ChannelCategory: id=" + id + ", name=" + name + ", description=" + descr + ", creatorId=" + creatorId;

@@ -750,7 +750,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     ChannelCategory category = new ChannelCategory(channelCategoryId);
     category.setName(categoryGroup.getName());
     category.setDescription(categoryGroup.getDescription());
-    category.setCreatorId(Integer.parseInt(categoryGroup.getCreatorID()));
+    category.setCreatorId(categoryGroup.getCreatorID());
     return category;
   }
 
