@@ -1589,8 +1589,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     try {
       DocumentImpl doc = new DocumentImpl();
       Element root = doc.createElement("layout");
-      root.setAttribute("ID","root");
-      doc.putIdentifier("root",root);
       Statement stmt = con.createStatement();
       // A separate statement is needed so as not to interfere with ResultSet
       // of statements used for queries
