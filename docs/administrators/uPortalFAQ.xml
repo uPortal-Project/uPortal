@@ -55,27 +55,27 @@
              of the most common questions relating to
              <productname>uPortal</productname>.  Although this
              <acronym>FAQ</acronym> contains some technical
-             information, it is best used as an introduction to
+             information, you should use it only as a source for
+             answers to as-yet-unanswered questions about
              <productname>uPortal</productname> and not a
-             comprehensive reference document.  See the references
+             comprehensive reference document.  See the Appendix
              section, below, for a comprehensive list of
-             <productname>uPortal</productname> resources.</para>
+             <productname>uPortal</productname>-related
+             resources.</para>
           </answer>
        </qandaentry>
        <qandaentry>
           <question>
-             <para>Who maintains this FAQ?</para>
+             <para>Who maintains this FAQ list?</para>
           </question>
           <answer>
-             <para>This <acronym>FAQ</acronym> is maintained by Bill
-             Brooks &#60;wbrooks@calpoly.edu&#62; with help from other
-             active participants in the
+             <para>Bill Brooks &#60;wbrooks at calpoly.edu&#62; with help
+             from other active participants in the
              <productname>uPortal</productname> development
              effort. Questions (and answers), comments, corrections
              and contributions are highly encouraged!</para>
           </answer>
        </qandaentry>
-
        <qandaentry>
           <question>
              <para>How can I contribute to this FAQ?</para>
@@ -83,26 +83,61 @@
           <answer>
              <para>You can send your contributions, suggestions for
              improvement, etc to Bill via e-mail (see above) and he'll
-             incorporate them. We're discouraging people from
-             modifying the <acronym>FAQ</acronym> directly, because we
-             want the document to have a single "voice".</para>
+             incorporate them. </para>
+          </answer>
+       </qandaentry>
+       <qandaentry>
+          <question>
+             <para>Where can I find this <acronym>FAQ</acronym> on
+             the World-Wide Web?</para>
+          </question>
+          <answer>
+             <para>On the JA-SIG website, located at <ulink
+             url="http://www.mis2.udel.edu/ja-sig/portal.html">http://www.ja-sig.org/</ulink>
+             You can always find the latest version in the
+             <filename>docs/</filename> directory of the
+             <productname>uPortal</productname> source code
+             repository. See the <productname>uPortal</productname>
+             web site for details about participant access to the
+             source code repository. </para>
+          </answer>
+       </qandaentry>
+
+    </qandaset> 
+
+  </sect1>
+
+  <sect1>
+    <title>General Questions about <productname>uPortal</productname></title>
+
+    <qandaset>
+
+       <qandaentry>
+          <question>
+             <para>What exactly is <productname>uPortal</productname>?</para>
+          </question>
+          <answer>
+             <para>Simply put, <productname>uPortal</productname> is a
+             framework for producing a campus portal. We don't intend
+             it to be an out-of-the-box or "turn key" portal
+             solution. Instead, uPortal is a set of Java classes and
+             XML documents that you can use to produce a portal for
+             use on your campus.
+             </para>
           </answer>
        </qandaentry>
 
        <qandaentry>
           <question>
-             <para>Where can this <acronym>FAQ</acronym> be found on
-             the World-Wide Web?</para>
+             <para>Who is developing <productname>uPortal</productname>?</para>
           </question>
           <answer>
-             <para>It isn't available now, but this
-             <acronym>FAQ</acronym> will eventually be posted on the
-             JA-SIG website, located at <ulink
-             url="http://www.ja-sig.org/">http://www.ja-sig.org/</ulink>
-             The latest version can always be found in the docs/
-             directory of the <productname>uPortal</productname>
-             <acronym>CVS</acronym> repository. See the JA-SIG web
-             site for details. </para>
+             <para>JA-SIG, the Java in Administration Special Interest
+             Group. Several JA-SIG member institutions are
+             collaborating on the development of uPortal, and they
+             make the code itself available as a reference
+             implementation to any member institution of higher
+             education at no cost.</para>
           </answer>
        </qandaentry>
 
@@ -126,7 +161,7 @@
              the standard Java Development Kit (JDK) tools, and a
              fundamental understanding of distributed and
              client/server computing, you'll need to be familiar with
-             several of the <ulink
+             a few of the <ulink
              url="http://www.javasoft.com/j2ee/overview.html">J2EE</ulink>
              technologies for enterprise applications. At a
              <emphasis>minimum</emphasis>, you'll have to be
@@ -144,20 +179,30 @@
                 <listitem>
                    <para>Servlets. You'll have to be familiar with
                    issues associated with server-side java
-                   applications, mostly because you have to deploy the
+                   applications, because you have to deploy the
                    framework for use in the application server you're
                    using on your campus. If you have experience
                    configuring and deploying servlets, you'll know
                    enough to deploy
                    <productname>uPortal</productname>. </para>
                 </listitem>
+                <listitem>
+                   <para>JSP. If you want to change the look and feel
+                   of the portal significantly, you'll have to edit
+                   Java Server Pages, so you should understand how to
+                   use JSP syntax correctly.</para>
+                </listitem>
+                <listitem>
+                   <para>JNDI. if you want to use a directory service,
+                   such as LDAP for authentication and/or
+                   authorization of users to the portal, and you want
+                   to use the reference implementation that the
+                   <productname>uPortal</productname> framework
+                   provides for that purpose, you'll have to be
+                   familiar with Java Naming and Directory
+                   Interface.</para>
+                </listitem>
              </itemizedlist>
-             In addition, if you want to use a directory service for
-             authentication and/or authorization of users to the
-             portal, and you want to use the reference implementation
-             that the <productname>uPortal</productname> framework
-             provides for that purpose, you'll have to be familiar
-             with <acronym>JNDI</acronym>.
              </para>
           </answer>
        </qandaentry>
