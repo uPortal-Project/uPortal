@@ -35,8 +35,7 @@
 
 package org.jasig.portal.container.services.information;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,8 +43,7 @@ import java.util.Map;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -54,10 +52,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.UPFileSpec;
 
-import com.oreilly.servlet.Base64Decoder;
-import com.oreilly.servlet.Base64Encoder;
+//import com.oreilly.servlet.Base64Decoder;
+//import com.oreilly.servlet.Base64Encoder;
 
 
 /**
@@ -228,11 +226,31 @@ public class PortletStateManager {
 	   return values;  
 	}
 	
+	
+	private static String encodeQueryString ( String text ) {
+		String result = text.replaceAll("&","-and-");
+		result = result.replaceAll("=","-eq-");
+		if ( UPFileSpec.PORTAL_URL_SEPARATOR.equals(".") )
+		 result = result.replaceAll("\\.","__");
+		else
+		 result = result.replaceAll(UPFileSpec.PORTAL_URL_SEPARATOR,"__"); 
+		return result;
+	}
+
+
+	private static String decodeQueryString ( String text ) {
+		String result = text.replaceAll("-and-","&");
+		result = result.replaceAll("-eq-","=");
+		result = result.replaceAll("__",UPFileSpec.PORTAL_URL_SEPARATOR);
+		return result;
+	}		
+	
+	
 	public static Hashtable decodeURLParameters ( String encodedParameters ) {
 	  Hashtable params = new Hashtable();		
 	  if ( encodedParameters == null || encodedParameters.length() <= 0 )
 	    return params;	
-	  StringTokenizer tokenizer = new StringTokenizer(Base64Decoder.decode(encodedParameters),"&");
+	  StringTokenizer tokenizer = new StringTokenizer(decodeQueryString(encodedParameters),"&");
 	  while ( tokenizer.hasMoreTokens() ) {
 	  	String param = tokenizer.nextToken();
 	  	String paramName = param.substring(0,param.indexOf('='));
@@ -262,7 +280,7 @@ public class PortletStateManager {
 	public static String encodeURLParameters ( String urlParameters ) {
 		if ( urlParameters == null || urlParameters.length() <= 0 )
 		  return "";
-		return Base64Encoder.encode(urlParameters);
+		return encodeQueryString(urlParameters);
 	}	
 		
 	

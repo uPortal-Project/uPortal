@@ -103,7 +103,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         String encodedURLParams = PortletStateManager.encodeURLParameters(urlManager.toString());
   
 		StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
-		  (UPFileSpec.ENCODED_PARAM+"@"+java.net.URLEncoder.encode(encodedURLParams)+"@"+UPFileSpec.ENCODED_PARAM+
+		  (UPFileSpec.PORTLET_PARAMS+"@"+java.net.URLEncoder.encode(encodedURLParams)+"@"+UPFileSpec.PORTLET_PARAMS+
 		   UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
 		
         return url.toString();

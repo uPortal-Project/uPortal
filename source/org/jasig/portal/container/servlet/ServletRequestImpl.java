@@ -58,8 +58,10 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     public ServletRequestImpl(HttpServletRequest request) {
         super(request);
         String url = getRequestURL().toString();
-        if ( url.indexOf(UPFileSpec.ENCODED_PARAM+"@") > 0 ) {
-          String encodedParams = url.substring(url.indexOf(UPFileSpec.ENCODED_PARAM+"@")+6,url.indexOf("@"+UPFileSpec.ENCODED_PARAM));	
+        if ( url.indexOf(UPFileSpec.PORTLET_PARAMS+"@") > 0 ) {
+          int offset = UPFileSpec.PORTLET_PARAMS.length() + 1;	
+          String encodedParams = url.substring(url.indexOf(UPFileSpec.PORTLET_PARAMS+"@")+offset,
+                                 url.indexOf("@"+UPFileSpec.PORTLET_PARAMS));	
           parameters = PortletStateManager.decodeURLParameters(java.net.URLDecoder.decode(encodedParams));
         } 
         if ( parameters != null )
