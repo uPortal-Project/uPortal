@@ -2,6 +2,8 @@ package org.jasig.portal;
 
 import junit.framework.*;
 import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -174,38 +176,41 @@ protected void tearDown()
  */
 public void testConcurrentAccess() throws Exception
 {
-    ReferenceSequenceGenerator g1 = new ReferenceSequenceGenerator();
-    ReferenceSequenceGenerator g2 = new ReferenceSequenceGenerator();
-    int numTests = 100;
+    ReferenceSequenceGenerator gen = new ReferenceSequenceGenerator();
+
+    int numTests = 50;
+    int numThreads = 5;
     String msg = null;
 
     print("Setting up testing Threads.");
-    Tester tester1 = new Tester(g1, numTests);
-    Tester tester2 = new Tester(g2, numTests);
-    Thread thread1 = new Thread(tester1);
-    Thread thread2 = new Thread(tester2);
+    Tester[] testers = new Tester[numThreads];
+    for (int i=0; i<numThreads; i++)
+    {
+    	testers[i] = new Tester(gen, numTests);
+    	Thread thread = new Thread(testers[i]);
+    	thread.start(); 
+    }
    
-    print("Starting testing Threads.");
-    thread1.start();
-    thread2.start();
 
-    long millis = numTests * 200;    
-    print("Now sleeping for " + millis + " milliseconds.");
+    long millis = numTests * numThreads * 100;    
+    print("Now sleeping for " + (millis/1000) + " seconds.");
     Thread.sleep(millis);
     
     msg = "Checking counter values for uniqueness.";
     print(msg);
 
-    String tester1Value, tester2Value;
+    String testValue;
+    Set testValues = new HashSet();
+    boolean testResult = false;
      
-    for (int idx1=0; idx1<numTests; idx1++)
-    {
-        tester1Value = tester1.counterValues[idx1];
-        assertNotNull( msg, tester1Value );
-        for (int idx2=0; idx2<numTests; idx2++)
+    for (int testerIdx=0; testerIdx<numThreads; testerIdx++)
+    { 
+    	for ( int valueIdx = 0; valueIdx <numTests; valueIdx++ )
         {
-	        tester2Value = tester2.counterValues[idx2];
-            assertTrue( msg, (! tester1Value.equals(tester2Value)) );
+        	testValue = testers[testerIdx].counterValues[valueIdx]; 
+            assertNotNull( msg, testValue );
+            assertTrue( msg, ! testValues.contains(testValue));
+            testValues.add(testValue);
         }
     }
         
