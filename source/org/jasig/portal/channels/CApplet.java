@@ -6,6 +6,7 @@ import javax.servlet.http.*;
 
 import java.io.*;
 import java.util.*;
+import org.jasig.portal.*;
 import org.jasig.portal.layout.*;
 
 import java.net.*;
@@ -13,8 +14,14 @@ import java.net.*;
 
 /**
  * Displays and applet. You have to pass in the appropriate parameters.
+ * Applet parameters are currently passed in as a concatenated string with
+ * format: name1>value1^name2>value2^name3>value3 ...
+ * It is possible that '>' and '^' are characters that may actually appear
+ * in applet parameters.  If this is true, this method will have to be
+ * rewritten.
  * 
  * @author Ken Weiner
+ * @version $Revision$
  */
 public class CApplet implements org.jasig.portal.IChannel                   
 {
@@ -44,11 +51,22 @@ public class CApplet implements org.jasig.portal.IChannel
   	  String sParams = (String) params.get ("params");
   	  StringTokenizer stParams = new StringTokenizer (sParams, "^");
   	   
-  	  // For each "param" string, parse to get name and value 
+  	  // For each "param" string, parse to get name and value
+  	  String sParamName, sParamValue;
+  	  
   	  while (stParams.hasMoreTokens()) 
   	  {
+  	    sParamName="";
+  	    sParamValue="";
   	    StringTokenizer stNameValue = new StringTokenizer (stParams.nextToken (), ">");
-        out.println ("<param name=\"" + stNameValue.nextToken () + "\" value=\"" + stNameValue.nextToken () + "\">");
+  	    
+  	    if (stNameValue.hasMoreTokens ())
+  	      sParamName = stNameValue.nextToken ();
+  	    
+  	    if (stNameValue.hasMoreTokens ())
+  	      sParamValue = stNameValue.nextToken ();
+        
+        out.println ("<param name=\"" + sParamName + "\" value=\"" + sParamValue + "\">");
       }
 
       out.println ("</applet>");
@@ -56,7 +74,7 @@ public class CApplet implements org.jasig.portal.IChannel
     }
     catch (Exception e)
     {
-      System.out.println ("\nERROR: \n" + e);
+      Logger.log (Logger.ERROR, e);
     }
   }
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
