@@ -154,6 +154,22 @@ public class PersonDirXmlParserTest extends TestCase {
     }
     
     /**
+     * Test that invoking PersonDirXmlParser on a file having
+     * nothing to do with PersonDirInfo results in empty list of PDIs.
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws ResourceMissingException
+     */
+    public void testBadXml() throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
+    	 Document doc = 
+            ResourceLoader.getResourceAsDocument(this.getClass(), "bogus.xml");
+        List personDirInfos = PersonDirXmlParser.getPersonDirInfos(doc);
+        assertTrue(personDirInfos.isEmpty());
+
+    }
+    
+    /**
      * Get a PersonDirInfo representing a query against a directly-configured
      * JDBC attribute source.
      * @return Returns the jdbcPersonDirInfo.
