@@ -66,7 +66,7 @@ public class SecurityRoleSetImpl extends HashSet implements SecurityRoleSet, Ser
     // Additional methods
     
     public void add(SecurityRole securityRole) {
-        this.add(securityRole);
+        super.add(securityRole);
     }
 
 }
