@@ -79,9 +79,9 @@ Version $Revision$
   </params>
 
   <controls>
-    <control type="edit" include="no" override="no"/>
-    <control type="about" include="no" override="no"/>
-    <control type="help" include="no" override="no"/>
+    <control type="edit" include="no" override="yes"/>
+    <control type="about" include="no" override="yes"/>
+    <control type="help" include="no" override="yes"/>
   </controls>
 
 </channelDef>
