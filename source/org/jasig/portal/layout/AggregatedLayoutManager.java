@@ -43,14 +43,9 @@ package org.jasig.portal.layout;
  * @version 1.0
  */
 
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Vector;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
@@ -63,16 +58,14 @@ import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
-import org.jasig.portal.utils.GuidGenerator;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.GuidGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 
 
