@@ -490,31 +490,9 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    * @exception java.sql.SQLException
    */
   public void removeChannel (String chanID) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    try {
-      // Set autocommit false for the connection
-      RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        chanID = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
-
-        // Delete channel.
-        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + chanID;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.removeChannel(): " + sUpdate);
-        stmt.executeUpdate(sUpdate);
-
-        // Commit the transaction
-        RDBMServices.commit(con);
-      } catch (SQLException sqle) {
-        // Roll back the transaction
-        RDBMServices.rollback(con);
-        throw sqle;
-      } finally {
-          stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
+    String channelPublishId = chanID.startsWith("chan") ? chanID.substring(4) : chanID;
+    crs.disapproveChannelDefinition(channelPublishId);
+    flushChannelEntry(Integer.parseInt(channelPublishId));
   }
 
   /**
@@ -582,7 +560,13 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    * Get a channel from the cache (it better be there)
    */
   public ChannelDefinition getChannel(int chanId) {
-    return (ChannelDefinition)channelCache.get(new Integer(chanId));
+    ChannelDefinition channelDef = null;
+    try {
+      channelDef = crs.getChannelDefinition(chanId);
+    } catch (Exception e) {
+      LogService.log(LogService.ERROR, e);
+    }
+    return channelDef;
   }
 
 
@@ -634,69 +618,12 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    * Read a channel definition from the data store
    */
   protected ChannelDefinition getChannelDefinition (int chanId, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
-    ChannelDefinition channel = null;
-
-    pstmtChannel.clearParameters();
-    pstmtChannel.setInt(1, chanId);
-    LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannel(): " + pstmtChannel);
-    ResultSet rs = pstmtChannel.executeQuery();
-
     try {
-      if (rs.next()) {
-        int chanType = rs.getInt(4);
-        if (rs.wasNull()) {
-          chanType = 0;
-        }
-        int publisherId = rs.getInt(5);
-        if (rs.wasNull()) {
-           publisherId = 0;
-        }
-        int approverId = rs.getInt(6);
-        if (rs.wasNull()) {
-          approverId = 0;
-        }
-        int timeout = rs.getInt(9);
-        if (rs.wasNull()) {
-          timeout = 0;
-        }
-        channel = new ChannelDefinition(chanId, rs.getString(1), rs.getString(2), rs.getString(3),
-        chanType, publisherId, approverId, rs.getTimestamp(7), rs.getTimestamp(8), timeout,
-          rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
-          rs.getString(14));
-
-        int dbOffset = 0;
-        if (pstmtChannelParm == null) { // we are using a join statement so no need for a new query
-          dbOffset = 14;
-        } else {
-          rs.close();
-          pstmtChannelParm.clearParameters();
-          pstmtChannelParm.setInt(1, chanId);
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannel(): " + pstmtChannelParm);
-          rs = pstmtChannelParm.executeQuery();
-        }
-        while (true) {
-          if (pstmtChannelParm != null && !rs.next()) {
-            break;
-          }
-          String name = rs.getString(dbOffset + 1);
-          String value = rs.getString(dbOffset + 2);
-          String override = rs.getString(dbOffset + 3);
-          if (name != null) {
-            channel.addParameter(name, value, override);
-          }
-          if (pstmtChannelParm == null && !rs.next()) {
-            break;
-          }
-        }
-      }
-    } finally {
-      rs.close();
+      return crs.getChannelDefinition(chanId);
+    } catch (Exception e) {
+      LogService.log(LogService.ERROR, e);
+      throw new SQLException(e.getMessage());
     }
-
-    LogService.instance().log(LogService.DEBUG,
-      "RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + chanId + " from the store");
-
-    return  channel;
   }
 
   /**
@@ -730,25 +657,10 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
   }
 
   public final RDBMServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
-    if (RDBMServices.supportsOuterJoins) {
-      return null;
-    } else {
-      return new RDBMServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
-    }
+    return RDBMChannelRegistryStore.getChannelParamPstmt();
   }
 
   public final RDBMServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
-    String sql;
-    sql = "SELECT UC.CHAN_TITLE,UC.CHAN_DESC,UC.CHAN_CLASS,UC.CHAN_TYPE_ID,UC.CHAN_PUBL_ID,UC.CHAN_APVL_ID,UC.CHAN_PUBL_DT,UC.CHAN_APVL_DT,"+
-      "UC.CHAN_TIMEOUT,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_NAME,UC.CHAN_FNAME";
-
-    if (RDBMServices.supportsOuterJoins) {
-      sql += ",CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM " + RDBMServices.joinQuery.getQuery("channel");
-    } else {
-      sql += " FROM UP_CHANNEL UC WHERE";
-    }
-
-    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RDBMServices.sqlTimeStamp();
-    return new RDBMServices.PreparedStatement(con, sql);
+    return RDBMChannelRegistryStore.getChannelPstmt();
   }
 }
