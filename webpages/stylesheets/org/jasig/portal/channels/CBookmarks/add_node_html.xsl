@@ -67,7 +67,7 @@
 							<tr>
 							  <td class="uportal-label">Description:</td></tr>
 							<tr>	
-							  <td><textarea rows="5" cols="20" name="BookmarkDescription" class="uportal-input-text">Add description here</textarea></td>
+							  <td><textarea rows="5" cols="20" name="BookmarkDescription" class="uportal-input-text"></textarea></td>
 							</tr>
 							<tr>
 							  <td>
