@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
+
+<channel-definition>
+
+    <title>Google Portlet</title>
+    <name>Google Portlet</name>
+    <fname>google-portlet</fname>
+    <desc>Google Portlet from Portlet Open Source Trading site</desc>
+    <type>Portlet</type>
+    <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+    <timeout>60000</timeout>
+    
+    <hasedit>N</hasedit>
+    <hashelp>N</hashelp>
+    <hasabout>N</hasabout>
+
+    <secure>N</secure>
+    <locale>en_US</locale>
+    
+    <categories>
+        <category>Development</category>
+    </categories>
+    
+    <groups>
+        <group>Everyone</group>
+    </groups>
+    
+    <parameters>
+
+        <!-- The syntax of the ID is [portlet-context-name].[portlet-name] -->
+        <parameter>
+            <name>portletDefinitionId</name>
+            <value>GooglePortlet.GooglePortlet</value>
+            <description>Identifies the portlet deployed within the portlet container</description>
+            <ovrd>N</ovrd>
+        </parameter>
+
+    </parameters>
+    
+</channel-definition>
