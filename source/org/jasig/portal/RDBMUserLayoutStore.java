@@ -332,6 +332,22 @@ public class RDBMUserLayoutStore
         }
       }
     }
+    public void setNull(int index, int sqlType) throws SQLException {
+      if (supportsPreparedStatements) {
+        pstmt.setNull(index, sqlType);
+      } else {
+        if (index != lastIndex+1) {
+          throw new SQLException("Out of order index");
+        } else {
+          int pos = activeQuery.indexOf("?");
+          if (pos == -1) {
+            throw new SQLException("Missing '?'");
+          }
+          activeQuery = activeQuery.substring(0, pos) + "NULL" + activeQuery.substring(pos+1);
+          lastIndex = index;
+        }
+      }
+    }
     public void setString(int index, String value) throws SQLException {
       if (supportsPreparedStatements) {
         pstmt.setString(index, value);
@@ -343,7 +359,7 @@ public class RDBMUserLayoutStore
           if (pos == -1) {
             throw new SQLException("Missing '?'");
           }
-          activeQuery = activeQuery.substring(0, pos) + value + activeQuery.substring(pos+1);
+          activeQuery = activeQuery.substring(0, pos) + "'" + value + "'" + activeQuery.substring(pos+1);
           lastIndex = index;
         }
        }
@@ -353,6 +369,14 @@ public class RDBMUserLayoutStore
         return pstmt.executeQuery();
       } else {
         return stmt.executeQuery(activeQuery);
+      }
+    }
+
+    public int executeUpdate() throws SQLException {
+      if (supportsPreparedStatements) {
+        return pstmt.executeUpdate();
+      } else {
+        return stmt.executeUpdate(activeQuery);
       }
     }
 
@@ -910,6 +934,8 @@ public class RDBMUserLayoutStore
       setAutoCommit(con, false);                // Need an atomic update here
       Statement stmt = con.createStatement();
       try {
+        long startTime = System.currentTimeMillis();
+
         String query = "SELECT LAYOUT_ID FROM UP_USER_PROFILES WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
         ResultSet rs = stmt.executeQuery(query);
@@ -932,8 +958,27 @@ public class RDBMUserLayoutStore
           dumpDoc(layoutXML.getFirstChild().getFirstChild(), "");
           System.err.println("<--");
         }
-        saveStructure(layoutXML.getFirstChild().getFirstChild(), stmt, userId, profileId);
-      } finally {
+        MyPreparedStatement structStmt = new MyPreparedStatement(con,
+          "INSERT INTO UP_LAYOUT_STRUCT " +
+          "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) " +
+          "VALUES ("+ userId + "," + profileId + ",?,?,?,?,?,?,?,?,?,?)");
+        try {
+          MyPreparedStatement parmStmt = new MyPreparedStatement(con,
+            "INSERT INTO UP_STRUCT_PARAM " +
+            "(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) " +
+            "VALUES ("+ userId + "," + profileId + ",?,?,?)");
+          try {
+            saveStructure(layoutXML.getFirstChild().getFirstChild(), structStmt, parmStmt);
+            long stopTime = System.currentTimeMillis();
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " +
+                (stopTime - startTime) + " milliseconds to save");
+          } finally {
+            parmStmt.close();
+          }
+        } finally {
+          structStmt.close();
+        }
+       } finally {
         stmt.close();
       }
       commit(con);
@@ -943,10 +988,6 @@ public class RDBMUserLayoutStore
     } finally {
       rdbmService.releaseConnection(con);
     }
-  }
-
-  protected class StructId {
-    public int id = 1;
   }
 
   /**
@@ -973,7 +1014,7 @@ public class RDBMUserLayoutStore
    * @return
    * @exception java.sql.SQLException
    */
-  protected int saveStructure (Node node, Statement stmt, int userId, int layoutId) throws java.sql.SQLException {
+  protected int saveStructure (Node node, MyPreparedStatement structStmt, MyPreparedStatement parmStmt) throws java.sql.SQLException {
     if (node == null) {
       return  0;
     }
@@ -989,30 +1030,40 @@ public class RDBMUserLayoutStore
       LogService.instance().log(LogService.DEBUG, "-->" + node.getNodeName() + "@" + saveStructId);
     }
     if (node.hasChildNodes()) {
-      childStructId = saveStructure(node.getFirstChild(), stmt, userId, layoutId);
+      childStructId = saveStructure(node.getFirstChild(), structStmt, parmStmt);
     }
-    nextStructId = saveStructure(node.getNextSibling(), stmt, userId, layoutId);
-    String chanId = "NULL";
-    String structName = "NULL";
-    if (node.getNodeName().equals("channel")) {
-      chanId = node.getAttributes().getNamedItem("chanID").getNodeValue();
-    }
-    else {
-      structName = "'" + sqlEscape(structure.getAttribute("name")) + "'";
-    }
+    nextStructId = saveStructure(node.getNextSibling(), structStmt, parmStmt);
+    structStmt.clearParameters();
+    structStmt.setInt(1, saveStructId);
+    structStmt.setInt(2, nextStructId);
+    structStmt.setInt(3, childStructId);
+
     String externalId = structure.getAttribute("external_id");
     if (externalId != null && externalId.trim().length() > 0) {
-      externalId = "'" + externalId + "'";
+      structStmt.setString(4, externalId.trim());
     } else {
-      externalId = "NULL";
+      structStmt.setNull(4, java.sql.Types.VARCHAR);
+
     }
-    sQuery = "INSERT INTO UP_LAYOUT_STRUCT " + "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) VALUES ("
-        + userId + "," + layoutId + "," + saveStructId + "," + nextStructId + "," + childStructId + "," + externalId + ","
-        + chanId + "," + structName + ",'" + structure.getAttribute("type") + "'," + "'" + dbBool(structure.getAttribute("hidden"))
-        + "','" + dbBool(structure.getAttribute("immutable")) + "'," + "'" + dbBool(structure.getAttribute("unremovable"))
-        + "')";
-    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
-    stmt.executeUpdate(sQuery);
+    if (node.getNodeName().equals("channel")) {
+      structStmt.setInt(5, Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue()));
+      structStmt.setNull(6,java.sql.Types.VARCHAR);
+    }
+    else {
+      structStmt.setNull(5,java.sql.Types.NUMERIC);
+      structStmt.setString(6, sqlEscape(structure.getAttribute("name")));
+    }
+    String structType = structure.getAttribute("type");
+    if (structType.length() > 0) {
+      structStmt.setString(7, structType);
+    } else {
+      structStmt.setNull(7,java.sql.Types.VARCHAR);
+    }
+    structStmt.setString(8, dbBool(structure.getAttribute("hidden")));
+    structStmt.setString(9, dbBool(structure.getAttribute("immutable")));
+    structStmt.setString(10, dbBool(structure.getAttribute("unremovable")));
+    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + structStmt);
+    structStmt.executeUpdate();
 
     NodeList parameters = node.getChildNodes();
     if (parameters != null) {
@@ -1032,10 +1083,12 @@ public class RDBMUserLayoutStore
               System.err.println("Not saving channel defined parameter value " + nodeName);
           }
           else {
-            sQuery = "INSERT INTO UP_STRUCT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) VALUES ("
-                + userId + "," + layoutId + "," + saveStructId + ",'" + nodeName + "','" + nodeValue + "')";
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + sQuery);
-            stmt.executeUpdate(sQuery);
+            parmStmt.clearParameters();
+            parmStmt.setInt(1, saveStructId);
+            parmStmt.setString(2, nodeName);
+            parmStmt.setString(3, nodeValue);
+            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::saveStructure(): " + parmStmt);
+            parmStmt.executeUpdate();
           }
         }
       }
