@@ -111,14 +111,14 @@
       <td width="100%" valign="top" align="left" class="uportal-channel-error">
         <xsl:choose>
           <xsl:when test="@code='-1'">Runtime exception (code -1)</xsl:when>
-          <xsl:when test="@code='0'">General rendering problem (code 0)</xsl:when>
-          <xsl:when test="@code='1'">Internal timeout (code 1)</xsl:when>
-          <xsl:when test="@code='2'">Authorization problem (code 2)</xsl:when>
-          <xsl:when test="@code='3'">Missing resource (code 3)</xsl:when>
+          <xsl:when test="@code='1'">General rendering problem (code 1)</xsl:when>
+          <xsl:when test="@code='2'">Internal timeout (code 2)</xsl:when>
+          <xsl:when test="@code='3'">Authorization problem (code 3)</xsl:when>
+          <xsl:when test="@code='4'">Missing resource (code 4)</xsl:when>
         </xsl:choose>
       </td>
     </tr>
-    <xsl:if test="@code='1'">
+    <xsl:if test="@code='2'">
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
           <p class="uportal-channel-error">Timeout limit</p>
@@ -129,7 +129,7 @@
         </td>
       </tr>
     </xsl:if>
-    <xsl:if test="@code='3'">
+    <xsl:if test="@code='4'">
       <tr>
         <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light">
           <p class="uportal-channel-error">Resource description</p>
