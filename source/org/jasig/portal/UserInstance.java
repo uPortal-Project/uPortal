@@ -884,7 +884,7 @@ public class UserInstance implements HttpSessionBindingListener {
 		structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
 		// Sending the parameter indicating whether the layout or the fragment is loaded in the preferences mode
 		if ( alm != null )
-		  structPrefs.putParameterValue("edit_mode",alm.isFragmentLoaded()?"fragment":"layout");
+		  structPrefs.putParameterValue("current_structure",alm.isFragmentLoaded()?"fragment":"layout");
 
 
       } catch ( Exception e ) {
