@@ -1349,6 +1349,7 @@ Version $Revision$
           </tr>
         </table>
         <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
+          <form name="subscribe_channel_form" action="{$baseActionURL}" method="post">
           <tr>
             <td>
               <table cellpadding="5" cellspacing="0" border="0" width="100%" class="uportal-background-content">
@@ -1419,6 +1420,7 @@ Version $Revision$
               </table>
             </td>
           </tr>
+          </form>
         </table>
         <table class="uportal-background-content" cellpadding="3" cellspacing="0" border="0" width="100%">
           <tr>
@@ -1475,7 +1477,7 @@ Version $Revision$
   <!--~-->
   <xsl:template match="fragments">
     <xsl:choose>
-      <xsl:when test="@view='expanded'">
+      <xsl:when test="category/@view='expanded'">
         <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
           <tr class="uportal-channel-text" valign="top" align="left">
             <td class="uportal-navigation-category">
