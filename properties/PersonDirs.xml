@@ -17,8 +17,13 @@
 
      The <PersonDirs> element should contain one or more <PersonDirInfo>
      elements.  Each <PersonDirInfo> element represents a source for
-     obtaining person attributes and should contain settings for
-     either JDBC or LDAP and a set of attribute alias/name pairs.
+     obtaining person attributes and should contain a set of attribute
+     alias/name pairs in addition to settings for obtaining the data
+     from either
+     
+       1) LDAP
+       2) JDBC
+       3) Container-managed JDBC DataSource 
 
      This means that it is possible to obtain person attributes from more
      than one source.
@@ -35,10 +40,11 @@
 
   <PersonDirInfo>
 
-    <!-- Within this <PersonDirInfo> element, set either the LDAP properties
-         or the JDBC properties.  If you want to obtain person attributes from
-         both a relational database AND an LDAP directory, add an additional
-         <PersonDirInfo> element.
+    <!-- Within this <PersonDirInfo> element, set either the LDAP properties,
+         the JDBC properties, or a container-defined JDBC resource.  
+         If you want to obtain person attributes from
+         more relational databases AND/OR LDAP directories, add additional
+         <PersonDirInfo> elements under <PersonDirs>.
     -->
 
     <!-- LDAP Properties -->
@@ -50,19 +56,6 @@
     <usercontext>cn=Users</usercontext>
     -->
 
-    <!-- DataSource from container -->
-    <!-- The PersonDirInfo may come from a container supplied DataSource by
-	 supplying a res-ref-name element.
-	 The name should not include the jdbc/ portion of the reference.  The resource 
-	 must correspond the container's DataSource configuration.
-    <PersonDirInfo >
-	<res-ref-name>PersonDb</res-ref-name>
-	<attributes>
-		...
-	</attributes>
-    </PersonDirInfo>
-    -->
-
     <!-- JDBC Properties -->
     <driver>org.hsql.jdbcDriver</driver>
     <url>jdbc:HypersonicSQL:hsql://localhost:8887</url>
@@ -70,6 +63,12 @@
     <logonpassword></logonpassword>
     <uidquery>SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
 
+    <!-- DataSource from container -->
+    <!--
+    <res-ref-name>PersonDb</res-ref-name>
+    <uidquery>SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>    
+    -->
+    
     <attributes>
 
       <!-- uPortal channels refer to user attributes using standard
