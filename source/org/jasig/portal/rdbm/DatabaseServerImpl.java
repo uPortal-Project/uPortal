@@ -369,7 +369,9 @@ public class DatabaseServerImpl implements IDatabaseServer {
                         }
                         catch (SQLException sqle) {
                             if (LOG.isInfoEnabled())
-                                LOG.info("Join test failed: " + joinTests[index], sqle);
+                                LOG.info("Join test failed: " + joinTests[index].getClass().getName() + 
+                                        " with sql error: '" + sqle.getLocalizedMessage() + "' on statement: '" +
+                                        joinTestQuery + "'");
                         }
                     }
                 }
