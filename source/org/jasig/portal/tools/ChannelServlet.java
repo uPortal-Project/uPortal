@@ -36,38 +36,38 @@
 
 package  org.jasig.portal.tools;
 
-import java.io.*;
-import java.util.*;
-import java.lang.SecurityManager;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.security.AccessController;
-import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.MediaManager;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Enumeration;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.TransformerHandler;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelSAXStreamFilter;
+import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivilegedChannel;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.BrowserInfo;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.security.IPerson;
-import org.xml.sax.*;
-import org.jasig.portal.serialize.*;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.XSLT;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  * A servlet that allows one to render an IChannel outside of the portal.

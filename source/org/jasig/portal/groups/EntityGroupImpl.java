@@ -34,11 +34,16 @@
 
 package org.jasig.portal.groups;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.naming.Name;
-import org.jasig.portal.*;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.services.EntityCachingService;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
 
 /**
@@ -106,21 +111,6 @@ public void addMember(IGroupMember gm) throws GroupsException
         { getAddedMembers().put(cacheKey, gm); }
 
     primAddMember(gm);
-}
-/**
- * Add <code>this</code> to the containing groups of the added members.
- */
-protected void addToAddedMembers() throws GroupsException
-{
-    for (Iterator it=getAddedMembers().values().iterator(); it.hasNext();)
-    {
-        GroupMemberImpl gmi = (GroupMemberImpl) it.next();
-        gmi.addGroup(this);
-        try
-            { EntityCachingService.instance().update(gmi); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating group member " + gmi.getKey() + " : " + ce.getMessage()); }
-    }
 }
 /**
  * @return boolean
@@ -644,31 +634,6 @@ public void primSetName(java.lang.String newName)
     name = newName;
 }
 /**
- * Add or remove <code>this</code> from updated members.
- */
-protected void primUpdateMembers() throws GroupsException
-{
-    if ( hasAdds() )
-        { addToAddedMembers(); }
-    if ( hasDeletes() )
-        { removeFromRemovedMembers(); }
-}
-/**
- * Remove <code>this</code> from the containing groups of the removed members.
- */
-protected void removeFromRemovedMembers() throws GroupsException
-{
-    for (Iterator it=getRemovedMembers().values().iterator(); it.hasNext();)
-    {
-        GroupMemberImpl gmi = (GroupMemberImpl) it.next();
-        gmi.removeGroup(this);
-        try
-            { EntityCachingService.instance().update(gmi); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating group member " + gmi.getKey() + " : " + ce.getMessage()); }
-    }
-}
-/**
  * Removes <code>IGroupMember</code> gm from our member <code>Map</code> and,
  * conversely, remove this from gm's group <code>Map</code>.  Remember that we
  * have removed it so we can update the database, if necessary.
@@ -764,7 +729,6 @@ public String toString()
 public void update() throws GroupsException
 {
     getLocalGroupService().updateGroup(this);
-    primUpdateMembers();
     clearPendingUpdates();
 }
 /**
@@ -773,7 +737,6 @@ public void update() throws GroupsException
 public void updateMembers() throws GroupsException
 {
     getLocalGroupService().updateGroupMembers(this);
-    primUpdateMembers();
     clearPendingUpdates();
 }
 }

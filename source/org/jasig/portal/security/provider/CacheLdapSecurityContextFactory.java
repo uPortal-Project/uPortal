@@ -36,8 +36,8 @@
 
 package  org.jasig.portal.security.provider;
 
-import  org.jasig.portal.security.ISecurityContextFactory;
-import  org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.ISecurityContextFactory;
 
 
 /**

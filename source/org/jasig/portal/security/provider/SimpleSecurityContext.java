@@ -36,11 +36,11 @@
 
 package org.jasig.portal.security.provider;
 
+import java.security.MessageDigest;
+
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.LogService;
-import java.security.MessageDigest;
-import java.util.Enumeration;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's

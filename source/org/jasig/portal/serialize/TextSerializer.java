@@ -66,13 +66,9 @@ package org.jasig.portal.serialize;
 
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.io.OutputStream;
-import java.io.Writer;
 
-import org.w3c.dom.*;
-import org.xml.sax.DocumentHandler;
-import org.xml.sax.ContentHandler;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.AttributeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

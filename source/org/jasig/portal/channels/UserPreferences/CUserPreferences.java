@@ -36,12 +36,25 @@
 
 package  org.jasig.portal.channels.UserPreferences;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.LogService;
-import  org.w3c.dom.Document;
-import  org.xml.sax.ContentHandler;
-import  java.io.File;
+import java.io.File;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.ThemeStylesheetDescription;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.services.LogService;
+import org.xml.sax.ContentHandler;
 
 /** <p>Manages User Layout, user preferences and profiles </p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
@@ -134,11 +147,11 @@ public class CUserPreferences implements IPrivilegedChannel {
                 managePreferences = (IPrivilegedChannel)Class.forName(cupmClass).newInstance();
                 ((BaseState)managePreferences).setContext(this);
             } else {
-                LogService.instance().log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
+                LogService.log(LogService.ERROR,"CUserPreferences::instantiateManagePreferencesState() : unable to retrieve theme stylesheet description. stylesheetId="+profile.getThemeStylesheetId());
                 managePreferences = new GPreferencesState(this);
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
             managePreferences = new GPreferencesState(this);
         }
     }
@@ -156,7 +169,9 @@ public class CUserPreferences implements IPrivilegedChannel {
    */
   public void receiveEvent(PortalEvent ev) {
     // no events for this channel
-    internalState.receiveEvent(ev);
+    if (internalState != null) {
+      internalState.receiveEvent(ev);
+    }
   }
 
   /** Receive static channel data from the portal

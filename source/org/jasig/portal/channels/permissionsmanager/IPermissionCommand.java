@@ -38,7 +38,6 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  org.jasig.portal.*;
 
 
 /**

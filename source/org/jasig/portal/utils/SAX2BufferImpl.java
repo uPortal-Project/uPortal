@@ -35,24 +35,20 @@
 
 package org.jasig.portal.utils;
 
+import java.util.Enumeration;
+import java.util.Vector;
+
 import org.jasig.portal.PropertiesManager;
-import org.xml.sax.XMLReader;
-import org.xml.sax.XMLFilter;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.DTDHandler;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.io.IOException;
 
 /**
  * A basic XML buffer implementation.

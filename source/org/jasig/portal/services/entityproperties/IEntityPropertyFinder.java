@@ -36,7 +36,7 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.*;
+import org.jasig.portal.EntityIdentifier;
 
 /**
  * An interface describing entity property finders that can be

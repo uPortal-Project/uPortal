@@ -36,11 +36,12 @@
 
 package org.jasig.portal.utils;
 
-import org.jasig.portal.RDBMServices;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.LogService;
 
 /**
@@ -60,7 +61,7 @@ public class RDBMCounterStore implements ICounterStore {
             Statement stmt = con.createStatement();
             try {
                 String sInsert = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME,SEQUENCE_VALUE/*/) VALUES ('" + counterName + "',0)";
-                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
+                LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::createCounter(): " + sInsert);
                 stmt.executeUpdate(sInsert);
                 RDBMServices.commit(con);
             } catch (Exception e) {
@@ -82,7 +83,7 @@ public class RDBMCounterStore implements ICounterStore {
             Statement stmt = con.createStatement();
             try {
                 String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + value + "WHERE SEQUENCE_NAME='" + counterName + "'";
-                LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
+                LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setCounter(): " + sUpdate);
                 stmt.executeUpdate(sUpdate);
                 RDBMServices.commit(con);
             } catch (Exception e) {
@@ -108,7 +109,7 @@ public class RDBMCounterStore implements ICounterStore {
                 String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='" + counterName + "'";
                 for (int i = 0; i < 25; i++) {
                     try {
-                        LogService.instance().log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sQuery);
+                        LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sQuery);
                         ResultSet rs = stmt.executeQuery(sQuery);
                         int origId;
                         int nextId;
@@ -123,7 +124,7 @@ public class RDBMCounterStore implements ICounterStore {
                         }
                         String sInsert = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=" + nextId + " WHERE SEQUENCE_NAME='" + counterName + "'" +
                             " AND SEQUENCE_VALUE=" + origId;
-                        LogService.instance().log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sInsert);
+                        LogService.log(LogService.DEBUG, "RDBMCounterStore::getIncrementInteger(): " + sInsert);
                         stmt.executeUpdate(sInsert);
                         RDBMServices.commit(con);
                         return  nextId;
@@ -139,7 +140,7 @@ public class RDBMCounterStore implements ICounterStore {
                 stmt.close();
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         } finally {
             RDBMServices.releaseConnection(con);
         }

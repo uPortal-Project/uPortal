@@ -522,7 +522,7 @@
 				  <td>
 				  	<xsl:choose>
 				  		<xsl:when test="$mode='select'">
-						   <xsl:if test="($ignorePermissions or key('can',concat('SELECT','|',parent::group/@key))) and not($blockEntitySelect)">
+						   <xsl:if test="(($group/@searchResults='true') or $ignorePermissions or key('can',concat('SELECT','|',parent::group/@key))) and not($blockEntitySelect)">
 							<xsl:choose>
 							  <xsl:when test="(@selected='true') or key('selectedEntity',@key)">
 								<span class="uportal-channel-warning">

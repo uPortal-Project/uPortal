@@ -35,11 +35,15 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  java.util.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
+import java.util.Iterator;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * SelectMembers sets the "selected" attribute for each elements that was

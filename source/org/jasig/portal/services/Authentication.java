@@ -35,19 +35,21 @@
 
 package  org.jasig.portal.services;
 
-import org.jasig.portal.security.*;
-import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.services.StatsRecorder;
-import org.jasig.portal.UserIdentityStoreFactory;
-import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.PropertiesManager;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Map;
+
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.security.IAdditionalDescriptor;
+import org.jasig.portal.security.IOpaqueCredentials;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPrincipal;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -135,7 +137,7 @@ public class Authentication {
                }
             }
             else {
-               LogService.instance().log(LogService.WARN, "Authentication Service recieved unknown additional descriptor");
+               LogService.log(LogService.WARN, "Authentication Service recieved unknown additional descriptor");
             }
          }
          // Populate the person object using the PersonDirectory if applicable
@@ -183,7 +185,7 @@ public class Authentication {
                   autocreate);
             person.setID(newUID);
          } catch (AuthorizationException ae) {
-            LogService.instance().log(LogService.ERROR, ae);
+            LogService.log(LogService.ERROR, ae);
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
@@ -232,7 +234,7 @@ public class Authentication {
       // set in security properties. We will then use the value for root.
       username = (username != null ? username : (String)principals.get("root"));
       credential = (credential != null ? credential : (String)credentials.get("root"));
-      LogService.instance().log(LogService.DEBUG, "Authentication::setContextParameters() username: " + username);
+      LogService.log(LogService.DEBUG, "Authentication::setContextParameters() username: " + username);
       // Retrieve and populate an instance of the principal object
       IPrincipal principalInstance = securityContext.getPrincipalInstance();
       if (username != null && !username.equals("")) {

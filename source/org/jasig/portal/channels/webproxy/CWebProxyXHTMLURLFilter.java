@@ -36,11 +36,11 @@
 package org.jasig.portal.channels.webproxy;
 
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.utils.SAX2BufferImpl;
+import org.jasig.portal.utils.SAX2FilterImpl;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -141,7 +141,7 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
       }
       catch (Exception e)
       {
-        LogService.instance().log(LogService.DEBUG, "CWebProxyXHTMLFilter:: Exception: " + e);
+        LogService.log(LogService.DEBUG, "CWebProxyXHTMLFilter:: Exception: " + e);
       }
     }
     else if (insideForm)
@@ -214,7 +214,7 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
     }
     catch (SAXException e)
     {
-      LogService.instance().log("CWebProxyXHTMLURLFilter::cannot add input element to buffer: " + e);
+      LogService.log("CWebProxyXHTMLURLFilter::cannot add input element to buffer: " + e);
     }
   }
 

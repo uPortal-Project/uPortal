@@ -35,55 +35,52 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Enumeration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
-import java.text.ParseException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.tidy.Tidy;
-import org.w3c.dom.Document;
-import org.xml.sax.ContentHandler;
 
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.MediaManager;
-import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.PortalEvent;
-import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IMultithreadedMimeResponse;
+import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.IMultithreadedChannel;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.DTDResolver;
-import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.AbsoluteURLFilter;
-import org.jasig.portal.utils.CookieCutter;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.IMultithreadedMimeResponse;
+import org.jasig.portal.MediaManager;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.LocalConnectionContext;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.AbsoluteURLFilter;
+import org.jasig.portal.utils.CookieCutter;
+import org.jasig.portal.utils.DTDResolver;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
+import org.w3c.tidy.Tidy;
+import org.xml.sax.ContentHandler;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.
@@ -276,6 +273,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     state.xmlUri = sd.getParameter ("cw_xml");
     state.sslUri = sd.getParameter ("cw_ssl");
+    state.xslTitle = sd.getParameter ("cw_xslTitle");
+    state.xslUri = sd.getParameter ("cw_xsl");
     state.fullxmlUri = sd.getParameter ("cw_xml");
     state.passThrough = sd.getParameter ("cw_passThrough");
     state.tidy = sd.getParameter ("cw_tidy");
@@ -313,7 +312,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       }
       catch (Exception e)
       {
-        LogService.instance().log(LogService.ERROR, "CWebProxy: Cannot initialize LocalConnectionContext: " + e);
+        LogService.log(LogService.ERROR, "CWebProxy: Cannot initialize LocalConnectionContext: " + e);
       }
     }
 
@@ -330,7 +329,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
      ChannelState state = (ChannelState)stateTable.get(uid);
      if (state == null)
-       LogService.instance().log(LogService.ERROR,"CWebProxy:setRuntimeData() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+       LogService.log(LogService.ERROR,"CWebProxy:setRuntimeData() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
      else
      {
        state.runtimeData = rd;
@@ -424,102 +423,118 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
        if ( state.buttonxmlUri != null )  // shouldn't happen here, but...
            state.fullxmlUri = state.buttonxmlUri;
-       else {
+       else 
+       {
+         //LogService.log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
+
+         // pass IPerson atts independent of the value of cw_passThrough
+         StringBuffer newXML = new StringBuffer();
+         String appendchar = "";
+
+         // here add in attributes according to cw_person
+         if (state.person != null && state.personAllow_set != null) 
+         {
+           StringTokenizer st = new StringTokenizer(state.person,",");
+           if (st != null)
+           {
+             while (st.hasMoreElements ())
+             {
+               String pName = st.nextToken();
+               if ((pName!=null)&&(!pName.trim().equals("")))
+               {
+                 if ( state.personAllow.trim().equals("*") ||
+                      state.personAllow_set.contains(pName) )
+                 {
+                   newXML.append(appendchar);
+                   appendchar = "&";
+                   newXML.append(pName);
+                   newXML.append("=");
+                   // note, this only gets the first one if it's a
+                   // java.util.Vector.  Should check
+                   String pVal = (String)state.iperson.getAttribute(pName);
+                   if (pVal != null)
+                     newXML.append(URLEncoder.encode(pVal));
+                 } 
+                 else {
+                   LogService.log(LogService.INFO,
+                   "CWebProxy: request to pass " + pName + " denied.");
+                 }
+               }
+             }
+           }
+         }
+         // end cw_person code
+
          // Is this a case where we need to pass request parameters to the xmlURI?
          if ( state.passThrough != null &&
             !state.passThrough.equalsIgnoreCase("none") &&
               ( state.passThrough.equalsIgnoreCase("all") ||
                 state.passThrough.equalsIgnoreCase("application") ||
                 rd.getParameter("cw_inChannelLink") != null ) )
-           {
-             //LogService.instance().log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
-
-             StringBuffer newXML = new StringBuffer();
-             String appendchar = "";
-
-	     // here add in attributes according to cw_person
-	     
-	     if (person != null && state.personAllow_set != null) {
-               StringTokenizer st = new StringTokenizer(person,",");
-               if (st != null)
-                 {
-                   while (st.hasMoreElements ())
-                     {
-                       String pName = st.nextToken();
-                       if ((pName!=null)&&(!pName.trim().equals("")))
-		       {
-			 if ( state.personAllow.trim().equals("*") ||
-			   state.personAllow_set.contains(pName) )
-			 {
-                           newXML.append(appendchar);
-                           appendchar = "&";
-                           newXML.append(pName);
-                           newXML.append("=");
-                           // note, this only gets the first one if it's a
-                           // java.util.Vector.  Should check
-                           String pVal = (String)state.iperson.getAttribute(pName);
-                           if (pVal != null)
-                             newXML.append(URLEncoder.encode(pVal));
-			 } else {
-			   LogService.instance().log(LogService.INFO,
-			     "CWebProxy: request to pass " + pName + " denied.");
-			 }
-                       }
-                     }
-                 }
-	       }
-	     // end cw_person code
-
-             // keyword and parameter processing
-             // NOTE: if both exist, only keywords are appended
-	     String keywords = rd.getKeywords();
-	     if (keywords != null)
-	     {
-	       if (appendchar.equals("&"))
-	         newXML.append("&keywords=" + keywords);
-	       else
-	         newXML.append(keywords);   
-	     }
+         {
+           // keyword and parameter processing
+           // NOTE: if both exist, only keywords are appended
+	   String keywords = rd.getKeywords();
+	   if (keywords != null)
+	   {
+	     if (appendchar.equals("&"))
+	       newXML.append("&keywords=" + keywords);
 	     else
-	     {
-               // want all runtime parameters not specific to WebProxy
-               Enumeration e=rd.getParameterNames ();
-               if (e!=null)
+	       newXML.append(keywords);   
+	   }
+	   else
+	   {
+             // want all runtime parameters not specific to WebProxy
+             Enumeration e=rd.getParameterNames ();
+             if (e!=null)
+             {
+               while (e.hasMoreElements ())
                {
-                 while (e.hasMoreElements ())
+                 String pName = (String) e.nextElement ();
+                 if ( !pName.startsWith("cw_") && !pName.startsWith("upc_")
+                                               && !pName.trim().equals("")) 
+                 {
+                   String[] value_array = rd.getParameterValues(pName);
+                   int i = 0;
+                   while ( i < value_array.length ) 
                    {
-                     String pName = (String) e.nextElement ();
-                     if ( !pName.startsWith("cw_") && !pName.startsWith("upc_")
-                                                   && !pName.trim().equals("")) {
-                       String[] value_array = rd.getParameterValues(pName);
-                       int i = 0;
-                       while ( i < value_array.length ) {
-                         newXML.append(appendchar);
-                         appendchar = "&";
-                         newXML.append(pName);
-                         newXML.append("=");
-                         newXML.append(URLEncoder.encode(value_array[i++]));
-                       }
-                     }
+                     newXML.append(appendchar);
+                     appendchar = "&";
+                     newXML.append(pName);
+                     newXML.append("=");
+                     newXML.append(URLEncoder.encode(value_array[i++]));
                    }
+                 }
                }
              }
+           }
+         }
 
-             state.reqParameters = newXML.toString();
-             state.fullxmlUri = state.xmlUri;
-             if (!state.runtimeData.getHttpRequestMethod().equals("POST")){
-                if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals(""))){
-                  appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
-                  state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
-                }
-                state.reqParameters = null;
-             }
-             //LogService.instance().log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
-          }
+         state.reqParameters = newXML.toString();
+         state.fullxmlUri = state.xmlUri;
+         if (!state.runtimeData.getHttpRequestMethod().equals("POST")) 
+         {
+           if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals("")))
+           {
+             appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
+             state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
+           }
+           state.reqParameters = null;
+         }
+
+         //LogService.log(LogService.DEBUG, "CWebProxy: fullxmlUri now: " + state.fullxmlUri);
        }
-       state.key = state.fullxmlUri;
-     }
-     }
+
+       // set key for cache based on request parameters
+       // NOTE: POST requests are not idempotent and therefore are not
+       // retrievable from the cache
+       if (!state.runtimeData.getHttpRequestMethod().equals("POST"))
+         state.key = state.fullxmlUri;
+       else //generate a unique string as key
+         state.key = String.valueOf((new Date()).getTime());
+
+      }
+    }
   }
 
   /**
@@ -534,7 +549,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
     ChannelState state = (ChannelState)stateTable.get(uid);
     if (state == null)
-       LogService.instance().log(LogService.ERROR,"CWebProxy:receiveEvent() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+       LogService.log(LogService.ERROR,"CWebProxy:receiveEvent() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
     else {
       int evnum = ev.getEventNumber();
 
@@ -575,7 +590,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
-      LogService.instance().log(LogService.ERROR,"CWebProxy:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
     }
     return rp;
   }
@@ -588,18 +603,13 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
     ChannelState state=(ChannelState)stateTable.get(uid);
     if (state == null)
-      LogService.instance().log(LogService.ERROR,"CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
     else
       {
-      String xml = null;
-      Document xmlDoc = null;
-
+      Document xml = null;
       try
       {
-        if (state.tidy != null && state.tidy.equals("on"))
-          xml = getXmlString (state.fullxmlUri, state);
-	else
-	  xmlDoc = getXmlDocument (state.fullxmlUri, state);
+	xml = getXml(state.fullxmlUri, state);
       }
       catch (Exception e)
       {
@@ -637,11 +647,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
       XSLT xslt = new XSLT(this);
-      if (xmlDoc != null)
-        xslt.setXML(xmlDoc);
-      else
+      if (xml != null)
         xslt.setXML(xml);
-      if (state.xslUri != null)
+      if (state.xslUri != null && (!state.xslUri.trim().equals("")))
         xslt.setXSL(state.xslUri);
       else
         xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
@@ -668,30 +676,23 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * @param uri the URI
    * @return the data pointed to by a URI as a Document object
    */
-  private Document getXmlDocument(String uri, ChannelState state) throws Exception
+  private Document getXml(String uri, ChannelState state) throws Exception
   {
     URLConnection urlConnect = getConnection(uri, state);
 
-    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-    docBuilderFactory.setNamespaceAware(false);
-    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-    DTDResolver dtdResolver = new DTDResolver();
-    docBuilder.setEntityResolver(dtdResolver);
-
-    return  docBuilder.parse(urlConnect.getInputStream());
-  }
-
-  /**
-   * Get the contents of a URI as a String but send it through tidy first.
-   * Also includes support for cookies.
-   * @param uri the URI
-   * @return the data pointed to by a URI as a String
-   */
-  private String getXmlString (String uri, ChannelState state) throws Exception
-  {
-    URLConnection urlConnect = getConnection(uri, state);
-
-    String xml;
+    // get character encoding from Content-Type header
+    String encoding = null;
+    String ct = urlConnect.getContentType();
+    int i;
+    if (ct!=null && (i=ct.indexOf("charset="))!=-1)
+    {
+      encoding = ct.substring(i+8).trim();
+      if ((i=encoding.indexOf(";"))!=-1)
+        encoding = encoding.substring(0,i).trim();
+      if (encoding.indexOf("\"")!=-1)
+        encoding = encoding.substring(1,encoding.length()+1);
+    }
+  
     if ( (state.tidy != null) && (state.tidy.equalsIgnoreCase("on")) )
     {
       Tidy tidy = new Tidy ();
@@ -701,34 +702,71 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       tidy.setShowWarnings(false);
       tidy.setNumEntities(true);
       tidy.setWord2000(true);
+
+      // If charset is specified in header, set JTidy's
+      // character encoding  to either UTF-8, ISO-8859-1
+      // or ISO-2022 accordingly (NOTE that these are
+      // the only character encoding sets that are supported in
+      // JTidy).  If character encoding is not specified,
+      // UTF-8 is the default.
+      if (encoding != null)
+      {
+        if (encoding.toLowerCase().equals("iso-8859-1"))
+          tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
+        else if (encoding.toLowerCase().equals("iso-2022-jp"))
+          tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
+        else 
+          tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
+      }
+      else
+      {
+        tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
+      }
+
       if ( System.getProperty("os.name").indexOf("Windows") != -1 )
          tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
       else
          tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
       ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
 
-      tidy.parse (urlConnect.getInputStream(), new BufferedOutputStream (stream));
+      Document doc = tidy.parseDOM (urlConnect.getInputStream(), null);
       if ( tidy.getParseErrors() > 0 )
         throw new GeneralRenderingException("Unable to convert input document to XHTML");
-      xml = stream.toString();
+      return doc;
     }
     else
     {
-      String line = null;
-      BufferedReader in = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
-      StringBuffer sbText = new StringBuffer (1024);
-
-      while ((line = in.readLine()) != null)
-        sbText.append (line).append ("\n");
-
-      xml = sbText.toString ();
+      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      docBuilderFactory.setNamespaceAware(false);
+      DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+      DTDResolver dtdResolver = new DTDResolver();
+      docBuilder.setEntityResolver(dtdResolver);
+      return  docBuilder.parse(urlConnect.getInputStream());
     }
-
-    return xml;
   }
-  
+
   private URLConnection getConnection(String uri, ChannelState state) throws Exception
   {
+      // before making the connection, ensure all spaces in the URI are encoded
+      // not sure if any other characters will need to be re-encoded; will check it out
+      uri = uri.trim();
+      if (uri.indexOf(" ") != -1)
+      {
+        StringBuffer sbuff = new StringBuffer();
+        int i;
+        while( (i= uri.indexOf(" ")) != -1)
+        {
+          sbuff.append(uri.substring(0, i));
+          sbuff.append("%20");
+          uri = uri.substring(i+1);
+        }
+        sbuff.append(uri);
+        uri = sbuff.toString();
+      }
+
+      // String.replaceAll(String,String) - since jdk 1.4
+      //uri = uri.replaceAll(" ", "%20");
+
       URL url;
       if (state.localConnContext != null)
         url = ResourceLoader.getResourceAsURL(this.getClass(), state.localConnContext.getDescriptor(uri, state.runtimeData));
@@ -781,7 +819,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             }
             catch (Exception e)
             {
-              LogService.instance().log(LogService.ERROR, "CWebProxy: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+              LogService.log(LogService.ERROR, "CWebProxy: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
             }
           }
 
@@ -866,7 +904,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      LogService.instance().log(LogService.ERROR,"CWebProxy:generateKey() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:generateKey() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
       return null;
     }
 
@@ -907,7 +945,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     sbKey.append("person:").append(state.person);
     k.setKey(sbKey.toString());
     k.setKeyValidity(new Long(System.currentTimeMillis()));
-    //LogService.instance().log(LogService.DEBUG,"CWebProxy:generateKey("
+    //LogService.log(LogService.DEBUG,"CWebProxy:generateKey("
     //		+ uid + ") : cachekey=\"" + sbKey.toString() + "\"");
     return k;
   }
@@ -921,7 +959,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      LogService.instance().log(LogService.ERROR,"CWebProxy:isCacheValid() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      LogService.log(LogService.ERROR,"CWebProxy:isCacheValid() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
       return false;
     }
     else
@@ -955,7 +993,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       state.connHolder= getConnection(state.fullxmlUri, state);
     }
     catch (Exception e){
-      LogService.instance().log(LogService.ERROR,e);
+      LogService.log(LogService.ERROR,e);
     }
     Map rhdrs = new HashMap();
     int i = 0;

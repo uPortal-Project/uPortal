@@ -35,16 +35,17 @@
 
 package org.jasig.portal;
 
-import java.util.Hashtable;
+import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.jasig.portal.services.LogService;
-import java.io.IOException;
 
 /**
  * Provides file download capability for the portal.
@@ -145,13 +146,13 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                         throw new PortalException(ioe);
                     }
                 } else {
-                    LogService.instance().log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
+                    LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
                 }
             } else {
-                LogService.instance().log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to obtain instance a channel. instanceId=\""+channelTarget+"\".");
+                LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to obtain instance a channel. instanceId=\""+channelTarget+"\".");
             }
         } else {
-            LogService.instance().log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to determine instance Id of the target channel. requestURL=\""+pcs.getHttpServletRequest().getRequestURI()+"\".");
+            LogService.log(LogService.ERROR, "DownloadDispatchWorker::processWorkerDispatch(): unable to determine instance Id of the target channel. requestURL=\""+pcs.getHttpServletRequest().getRequestURI()+"\".");
         }
     }
 }

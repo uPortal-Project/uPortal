@@ -35,18 +35,19 @@
 
 package org.jasig.portal;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;
-import javax.servlet.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.net.*;
-import org.w3c.dom.*;
 
 /**
  * A multithreaded version of a UserInstance.
@@ -97,7 +98,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     public void unbindSession(String sessionId) {
         IState state=(IState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.log(LogService.ERROR,"GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return;
         }
         state.channelManager.finishedSession();
@@ -113,7 +114,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
         this.unbindSession(bindingEvent.getSession().getId());
-        LogService.instance().log(LogService.DEBUG,"GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
+        LogService.log(LogService.DEBUG,"GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
 
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
@@ -125,7 +126,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
      */
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
-        LogService.instance().log(LogService.DEBUG,"GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
+        LogService.log(LogService.DEBUG,"GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
 
         // Record the creation of the session
         StatsRecorder.recordSessionCreated(person);
@@ -141,7 +142,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
         String sessionId=req.getSession(false).getId();
         IState state=(IState)stateTable.get(sessionId);
         if(state==null) {
-            LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.log(LogService.ERROR,"GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return;
         }
         // instantiate user layout manager and check to see if the profile mapping has been established
@@ -172,7 +173,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                 throw pe;
             } catch (Throwable t) {
                 // something went wrong trying to show CSelectSystemProfileChannel
-                LogService.instance().log(LogService.ERROR,"GuestUserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
+                LogService.log(LogService.ERROR,"GuestUserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
                 throw new PortalException("CSelectSystemProfileChannel.render() threw: "+t);
             }
             // don't go any further!

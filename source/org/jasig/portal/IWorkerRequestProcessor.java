@@ -35,8 +35,6 @@
 
 package org.jasig.portal;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
 
 /**
  * An interface for worker request processors.

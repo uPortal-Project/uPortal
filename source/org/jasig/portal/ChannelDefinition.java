@@ -35,10 +35,11 @@
 
 package org.jasig.portal;
 
-import java.util.Map;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Date;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,7 +48,7 @@ import org.w3c.dom.Element;
  * @author George Lindholm, ITServices, UBC
  * @version $Revision$
  */
-public class ChannelDefinition {
+public class ChannelDefinition implements IBasicEntity {
   private int id;
   private String chanFName;
   private String chanName;
@@ -114,6 +115,14 @@ public class ChannelDefinition {
     for (int i = 0; i < parameters.length; i++) {
       this.parameters.put(parameters[i].getName(), parameters[i]);
     }
+  }
+  
+  /**
+   * Implementation required by IBasicEntity interface.
+   * @return EntityIdentifier
+   */
+  public EntityIdentifier getEntityIdentifier() {
+    return new EntityIdentifier(String.valueOf(id), ChannelDefinition.class);
   }
 
   /**

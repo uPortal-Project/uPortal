@@ -35,9 +35,6 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.*;
-import  java.io.*;
-import  org.jasig.portal.ChannelStaticData;
 
 /**
  * Defines the interface for a command object to be used by CGroupssManager

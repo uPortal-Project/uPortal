@@ -35,17 +35,14 @@
 
 package org.jasig.portal;
 
+import java.util.Enumeration;
+
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
-import java.util.Enumeration;
-
 import org.xml.sax.helpers.AttributesImpl;
-
-import org.jasig.portal.services.LogService;
 
 /**
  * Filter incorporating channel and folder attributes for the structure transformation
@@ -78,7 +75,7 @@ public class StructureAttributesIncorporationFilter extends SAX2FilterImpl
             for(Enumeration ca=fsup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
                 String attrName=(String) ca.nextElement();
                 attsImpl.addAttribute("",attrName,attrName,"CDATA",fsup.getChannelAttributeValue(channelSubscribeId,attrName));
-                //		LogService.instance().log(LogService.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
+                //		LogService.log(LogService.DEBUG,"adding attribute to channel="+channelID+" "+attrName+"="+fsup.getChannelAttributeValue(channelID,attrName));
             }
             super.startElement(uri,localName,qName,attsImpl);
         } else 	if (qName.equals("folder")) {
@@ -87,7 +84,7 @@ public class StructureAttributesIncorporationFilter extends SAX2FilterImpl
             for(Enumeration fe=fsup.getFolderAttributeNames(); fe.hasMoreElements();) {
                 String attrName=(String) fe.nextElement();
                 attsImpl.addAttribute("",attrName,attrName,"CDATA",fsup.getFolderAttributeValue(folderID,attrName));
-                //		LogService.instance().log(LogService.DEBUG,"adding attribute to folder="+folderID+" "+attrName+"="+fsup.getFolderAttributeValue(folderID,attrName));
+                //		LogService.log(LogService.DEBUG,"adding attribute to folder="+folderID+" "+attrName+"="+fsup.getFolderAttributeValue(folderID,attrName));
             }
             super.startElement(uri,localName,qName,attsImpl);
         } else

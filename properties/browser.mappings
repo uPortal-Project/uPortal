@@ -34,11 +34,13 @@ Opera/5.*=1
 # Opera 6.x browsers
 Opera/6.*=1
 
-# UP browser
-UP.Browser/3.1-(UPG1|SH) UP.Link/3.2=2
+# UP WAP browsers
+UP.Browser.*=2
 
-# Noka WAP toolkits
-Nokia-WAP-Toolkit/2.*=2
+# Nokia WAP browsers
+Nokia.*=2
 
-# Nokia 7110 browsers
-Nokia7110.*=2
+# Motorola phones
+MOT-.*=2
+
+

@@ -35,12 +35,14 @@
 
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.Document;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Returns an xml element for a given IEntityGroup or IEntityGroup key.

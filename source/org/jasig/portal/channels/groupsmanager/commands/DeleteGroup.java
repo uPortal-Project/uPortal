@@ -35,14 +35,19 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-import  java.util.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
-import  org.w3c.dom.Document;
+import java.util.Iterator;
+
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.jasig.portal.channels.groupsmanager.Utility;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This command deletes an IEntityGroup and removes all of it's associations.
@@ -111,10 +116,23 @@ public class DeleteGroup extends GroupsManagerCommand {
             parentNode = deletedNode.getParentNode();
             String nodeKey = ((Element)parentNode).getAttribute("key");
             if (parentEntGrp == null || !parentEntGrp.getKey().equals(nodeKey)) {
-               parentEntGrp = GroupsManagerXML.retrieveGroup(nodeKey);
-               hasMbrs = String.valueOf(parentEntGrp.hasMembers());
+               if (!Utility.areEqual(nodeKey, "")){
+                  parentEntGrp = GroupsManagerXML.retrieveGroup(nodeKey);
+                  hasMbrs = String.valueOf(parentEntGrp.hasMembers());
+                  parentNode.removeChild(deletedNode);
+               }
+               else{
+                  //Search elements have a null "key"
+                  parentNode.removeChild(deletedNode);
+                  NodeList nl = parentNode.getChildNodes();
+                  if (nl.getLength() > 0){
+                     hasMbrs = "true";
+                  }
+                  else{
+                     hasMbrs = "false";
+                  }
+               }
             }
-            parentNode.removeChild(deletedNode);
             ((Element)parentNode).setAttribute("hasMembers", hasMbrs);
          }
 

@@ -35,10 +35,9 @@
 
 package org.jasig.portal.utils;
 
-import org.jasig.portal.PortalException;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -61,7 +60,12 @@ public class XHTMLURLFilter extends AbsoluteURLFilter {
   public void startElement (String uri, String localName, String qName,  Attributes atts) throws SAXException {
     AttributesImpl attsImpl = new AttributesImpl(atts);
 
-    if (atts.getValue("src") != null)
+    if (qName.equals("base"))
+    {
+      super.setBaseUrl(atts.getValue("href"));
+      return;  // do not include base element in channel output
+    }
+    else if (atts.getValue("src") != null)
     {
       fixURL("img", "src", qName, atts, attsImpl);
       fixURL("input", "src", qName, atts, attsImpl);
@@ -83,7 +87,10 @@ public class XHTMLURLFilter extends AbsoluteURLFilter {
     super.startElement(uri, localName, qName, attsImpl);   
   }
 
-  //public void endElement (String uri, String localName, String qName) throws SAXException {
-  //  super.endElement(uri, localName, qName);
-  //}  
+  public void endElement (String uri, String localName, String qName) throws SAXException {
+    if (qName.equals("base"))
+      return; // do not include base element in channel output
+    else
+      super.endElement(uri, localName, qName);
+  }  
 }

@@ -35,19 +35,18 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  org.apache.log4j.Priority;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.security.*;
-import  java.lang.*;
-import  java.io.*;
-import  java.util.*;
-import  java.sql.Timestamp;
-import  org.apache.xml.serialize.XMLSerializer;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.Document;
-import  javax.xml.parsers.*;
+import java.io.StringWriter;
+import java.util.Calendar;
+import java.util.Iterator;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Priority;
+import org.apache.xml.serialize.XMLSerializer;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.services.LogService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A class holding utility functions used by the Groups Manager channel.
@@ -110,7 +109,7 @@ public class Utility
       if (msgTypeStr == null | msgTypeStr.equals(""))
          msgType = LogService.DEBUG;
       else
-         msgType = Priority.toPriority(msgTypeStr.toUpperCase());
+         msgType = Level.toLevel(msgTypeStr.toUpperCase());
 
       if (delay && msgTypeStr.toUpperCase().equals("DEBUG")) {
          long ts1 = Calendar.getInstance().getTime().getTime();
@@ -119,7 +118,7 @@ public class Utility
             ts2 = Calendar.getInstance().getTime().getTime();
          }
       }
-      LogService.instance().log(msgType, msg);
+      LogService.log(msgType, msg);
       return;
    }
 

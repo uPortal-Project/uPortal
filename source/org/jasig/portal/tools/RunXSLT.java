@@ -34,9 +34,12 @@
  */
 
 package org.jasig.portal.tools;
-import org.jasig.portal.utils.XSLT;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.jasig.portal.PortalException;
-import java.io.*;
+import org.jasig.portal.utils.XSLT;
 
 /**
  * Title:        Run XSLT
@@ -84,8 +87,8 @@ public class RunXSLT {
         xslt.setTarget(ostream);
         xslt.transform();
         } catch (PortalException pe) {
-          System.err.println("Error on transform");
-          pe.printStackTrace();
+          System.err.println("RunXSLT: Error on transform");
+          pe.getRecordedException().printStackTrace();
           }
 
   }

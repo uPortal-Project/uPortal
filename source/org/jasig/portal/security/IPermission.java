@@ -36,7 +36,6 @@
 package org.jasig.portal.security;
 
 import java.util.Date;
-import org.jasig.portal.AuthorizationException;
 
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)

@@ -38,8 +38,9 @@
 
 package  org.jasig.portal.security.provider;
 
-import  org.jasig.portal.security.Permission;
-import  java.util.Date;
+import java.util.Date;
+
+import org.jasig.portal.security.Permission;
 
 
 /**

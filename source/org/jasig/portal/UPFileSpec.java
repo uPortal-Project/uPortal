@@ -36,7 +36,7 @@
 package org.jasig.portal;
 
 import java.util.StringTokenizer;
-import java.util.Iterator;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

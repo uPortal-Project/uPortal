@@ -35,10 +35,13 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.security.IPerson;
-import  org.w3c.dom.Document;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IPermissible;
+import org.jasig.portal.IServant;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.security.IPerson;
+import org.w3c.dom.Document;
 
 /**
  * Session data for a cached thread stored in a Map in CGroupsManager
@@ -56,11 +59,15 @@ public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public String uid;
    public IPerson user;
    public long startRD;
-   public ILockableEntityGroup lockedGroup;
+   public ILockableEntityGroup lockedGroup = null;
    public String highlightedGroupID;
    public int currentPage = 1;
-   public String rootViewGroupID = "0";
+   public String rootViewGroupID;
+   public String defaultRootViewGroupID = "0";
    public String mode = BROWSE_MODE; //"browse", "edit" or "select"
+   public String returnToMode;
    public String feedback; // use to display info to user (eg. "Unable to lock...")
    public String customMessage;
+   public boolean isAdminUser;
+   public IPermissible permissible;
 }

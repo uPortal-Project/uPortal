@@ -37,8 +37,8 @@
 package  org.jasig.portal.utils;
 
 
-import java.util.Stack;
 import java.util.EmptyStackException;
+import java.util.Stack;
 
 /**
  * A simple FILO stack that has MIN/MAX capacity and

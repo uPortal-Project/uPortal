@@ -41,15 +41,10 @@
  * @version $Revision$
  */
 
-import org.w3c.dom.*;
-import java.sql.Connection;
 import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.List;
-import org.w3c.dom.Document;
+
 import org.jasig.portal.security.IPerson;
-import org.apache.xerces.dom.DocumentImpl;
+import org.w3c.dom.Document;
 
 public interface IUserLayoutStore {
 

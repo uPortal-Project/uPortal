@@ -34,12 +34,18 @@
 
 package org.jasig.portal.groups;
 
-import java.util.*;
-import javax.naming.*;
-import org.jasig.portal.concurrency.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.Name;
+
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.PropertiesManager;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 
@@ -64,19 +70,27 @@ public ReferenceCompositeGroupService() throws GroupsException
 //	initializeComponentServices();
 }
 /**
- * Returns groups from each component service that contain the <code>IGroupMember</code>.
+ * Returns groups that contain the <code>IGroupMember</code>.  Delegates to the
+ * component services, but only after checking that they might actually contain
+ * a membership for this member.
  * @param gm IGroupMember
  */
 public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
 {
     Collection allGroups = new ArrayList();
-    IGroupService service = null;
+    IIndividualGroupService service = null;
 
     for ( Iterator services = getComponentServices().values().iterator(); services.hasNext(); )
     {
-        service = (IGroupService) services.next();
-        for ( Iterator groups = service.findContainingGroups(gm); groups.hasNext(); )
-            { allGroups.add((IEntityGroup) groups.next()); }
+        service = (IIndividualGroupService) services.next();
+        if ( gm.isEntity() || service.isEditable() ||
+          getComponentService(((IEntityGroup)gm).getServiceName()) == service )
+        {
+            {
+                for ( Iterator groups = service.findContainingGroups(gm); groups.hasNext(); )
+                    { allGroups.add((IEntityGroup) groups.next()); }
+            }
+        }
     }
     return allGroups.iterator();
 }
@@ -131,7 +145,8 @@ protected IIndividualGroupService getDefaultService()
  * Returns an <code>IEntity</code> representing a portal entity.  This does
  * not guarantee that the entity actually exists.
  */
-public IEntity getEntity(String key, Class type) throws GroupsException {
+public IEntity getEntity(String key, Class type) throws GroupsException
+{
     return getDefaultService().getEntity(key, type);
 }
 /**
@@ -340,5 +355,46 @@ throws GroupsException
  */
 protected void setComponentServices(java.util.Map newComponentServices) {
     componentServices = newComponentServices;
+}
+
+ /**
+ *
+ */
+protected void cacheAdd(IGroupMember gm) throws GroupsException
+{
+    try
+        { EntityCachingService.instance().add(gm); }
+    catch (CachingException ce)
+        { throw new GroupsException("Problem adding group member " + gm.getKey() + " to cache: " + ce.getMessage() ); }
+}
+
+ /**
+ *
+ */
+protected void cacheRemove(IGroupMember gm) throws GroupsException
+{
+    try
+        { EntityCachingService.instance().remove(gm.getEntityIdentifier()); }
+    catch (CachingException ce)
+        { throw new GroupsException("Problem removing group member " + gm.getKey() + " from cache: " + ce.getMessage() ); }
+}
+
+ /**
+ *
+ */
+protected void cacheUpdate(IGroupMember gm) throws GroupsException
+{
+    try
+        { EntityCachingService.instance().update(gm); }
+    catch (CachingException ce)
+        { throw new GroupsException("Problem updating group member " + gm.getKey() + " in cache: " + ce.getMessage() ); }
+}
+
+/**
+ * Returns a cached <code>IEntity</code> or null if it has not been cached.
+ */
+protected IEntity getEntityFromCache(String key) throws CachingException
+{
+    return (IEntity) EntityCachingService.instance().get(org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE, key);
 }
 }

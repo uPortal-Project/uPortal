@@ -36,12 +36,10 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Collections;
-import java.util.StringTokenizer;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.CommonUtils;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 
 

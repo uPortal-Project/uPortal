@@ -35,11 +35,9 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import  java.util.*;
-import  java.io.*;
-import  org.w3c.dom.Element;
-import  org.w3c.dom.Document;
-import  org.jasig.portal.groups.*;
+import org.jasig.portal.groups.IGroupMember;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Defines the interface for a wrapper object to be used by CGroupssManager

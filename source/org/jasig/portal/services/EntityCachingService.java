@@ -35,8 +35,12 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.*;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityCachingService;
+import org.jasig.portal.concurrency.IEntityCachingServiceFactory;
 
 /**
   * This class presents a facade for the IEntityCachingService implementation
@@ -127,7 +131,7 @@ private void initialize() throws CachingException
     if ( factoryName == null )
     {
         eMsg = "EntityCachingService.initialize(): No entry for org.jasig.portal.concurrency.caching.IEntityCachingServiceFactory in portal.properties.";
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new CachingException(eMsg);
     }
 
@@ -140,7 +144,7 @@ private void initialize() throws CachingException
     catch (Exception e)
     {
         eMsg = "EntityCachingService.initialize(): Problem creating entity caching service... " + e.getMessage();
-        LogService.instance().log(LogService.ERROR, eMsg);
+        LogService.log(LogService.ERROR, eMsg);
         throw new CachingException(eMsg);
     }
 }
