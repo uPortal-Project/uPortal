@@ -110,7 +110,7 @@ public class CUserPreferences implements IPrivilegedChannel
     /** Processes layout-level events coming from the portal
      * @param ev a portal layout event
      */
-    public void receiveEvent (LayoutEvent ev)
+    public void receiveEvent (PortalEvent ev)
     {
         // no events for this channel
         internalState.receiveEvent(ev);

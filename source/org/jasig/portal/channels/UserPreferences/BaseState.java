@@ -76,7 +76,7 @@ class BaseState implements IPrivilegedChannel {
         // render header controls
     }
 
-    public void receiveEvent (LayoutEvent ev){}
+    public void receiveEvent (PortalEvent ev){}
 
     // these two functions are never really called
     public ChannelRuntimeProperties getRuntimeProperties () { return new ChannelRuntimeProperties(); }
