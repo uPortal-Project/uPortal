@@ -78,7 +78,7 @@
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>N</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>N</value></column>
         <column><name>CHAN_DETACHABLE</name><value>N</value></column>
         <column><name>CHAN_NAME</name><value>Login</value></column>
       </row>
@@ -95,7 +95,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Mozillazine</value></column>
       </row>
@@ -113,7 +113,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>StockCharts.com</value></column>
       </row>
@@ -131,7 +131,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>Y</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Bookmarks</value></column>
       </row>
@@ -149,7 +149,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>uPortal-Powered Sites</value></column>
       </row>
@@ -167,7 +167,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>IBS News</value></column>
       </row>
@@ -186,7 +186,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>uPortal Developers Reference</value></column>
       </row>
@@ -205,7 +205,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>uPortal Home Page</value></column>
       </row>
@@ -224,7 +224,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Minesweeper</value></column>
       </row>
@@ -243,7 +243,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>N</value></column>
         <column><name>CHAN_NAME</name><value>Header</value></column>
       </row>
@@ -262,7 +262,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Word of the Day</value></column>
       </row>
@@ -280,7 +280,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Salon.com</value></column>
       </row>
@@ -298,7 +298,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>The Motley Fool</value></column>
       </row>
@@ -316,7 +316,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Number Guessing Game</value></column>
       </row>
@@ -334,7 +334,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>CSS Viewer</value></column>
       </row>
@@ -352,7 +352,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>N</value></column>
         <column><name>CHAN_NAME</name><value>Snooper</value></column>
       </row>
@@ -371,7 +371,7 @@
         <column><name>CHAN_EDITABLE</name><value>Y</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Tomcat's NumGuess</value></column>
       </row>
@@ -390,7 +390,7 @@
         <column><name>CHAN_EDITABLE</name><value>Y</value></column>
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
         <column><name>CHAN_DETACHABLE</name><value>Y</value></column>
         <column><name>CHAN_NAME</name><value>Tomcat's Servlet Examples</value></column>
       </row>
@@ -408,7 +408,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>N</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>N</value></column>
         <column><name>CHAN_DETACHABLE</name><value>N</value></column>
         <column><name>CHAN_NAME</name><value>Subscribe</value></column>
       </row>
@@ -426,7 +426,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>N</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>N</value></column>
         <column><name>CHAN_DETACHABLE</name><value>N</value></column>
         <column><name>CHAN_NAME</name><value>Publish</value></column>
       </row>
@@ -444,7 +444,7 @@
         <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
-        <column><name>CHAN_REMOVABLE</name><value>N</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>N</value></column>
         <column><name>CHAN_DETACHABLE</name><value>N</value></column>
         <column><name>CHAN_NAME</name><value>User Preferences</value></column>
       </row>
