@@ -65,9 +65,11 @@ function openWin(url, title, width, height)
 
 //stop hiding-->
 </script>
-</head>
 
 <% layoutBean.writeBodyStyle (request, response, out); %>
+
+</head>
+
 
 <!-- Header -->
 <table border="0" cellpadding="0" cellspacing="1" width="100%">
