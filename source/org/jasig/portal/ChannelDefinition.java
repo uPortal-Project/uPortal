@@ -82,7 +82,7 @@ public class ChannelDefinition implements IBasicEntity {
   public boolean isSecure() { return chanIsSecure; }    
   public boolean isPortlet() {
       if (this.chanClass != null) {
-          final String portletClassName = PropertiesManager.getProperty("org.jasig.portal.portletAdapter");
+          final String portletClassName = PropertiesManager.getProperty("org.jasig.portal.portletAdapter", "org.jasig.portal.channels.portlet.CPortletAdapter");
           
           if (this.chanClass.equals(portletClassName)) {
               return true;
