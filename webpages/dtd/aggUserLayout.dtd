@@ -1,0 +1,96 @@
+<!--
+Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Mike Ivanov mvi@immagic.com
+$Revision$
+-->
+
+<!ELEMENT layout (folder|channel)*>
+
+<!ELEMENT folder (folder|channel|restriction|add_target|move_target)*>
+<!ATTLIST folder
+  ID ID #REQUIRED
+  fragmentID CDATA #IMPLIED
+  group CDATA #IMPLIED
+  type (header|footer|regular) "regular"
+  hidden (true|false) "false"
+  unremovable (true|false) "false"
+  immutable (true|false) "false"
+  priority CDATA "0"
+  name CDATA #IMPLIED>
+
+
+<!ELEMENT channel (restriction|parameter)*>
+<!ATTLIST channel
+  ID ID #REQUIRED
+  name CDATA #REQUIRED
+  description CDATA #REQUIRED
+  title CDATA #REQUIRED
+  class CDATA #REQUIRED
+  chanID CDATA #REQUIRED
+  typeID CDATA #REQUIRED
+  fragmentID CDATA #IMPLIED
+  group CDATA #IMPLIED
+  fname CDATA #IMPLIED
+  timeout CDATA "10000"
+  priority CDATA "0"
+  hidden (true|false) "false"
+  unremovable (true|false) "false"
+  immutable (true|false) "false"
+  hasHelp (true|false) "false"
+  hasAbout (true|false) "false">
+
+
+<!-- the restriction name/value will depend on an implementation -->
+<!ELEMENT restriction EMPTY>
+<!ATTLIST restriction
+  path CDATA #IMPLIED
+  value CDATA #REQUIRED
+  type CDATA #REQUIRED>
+
+<!-- marking nodes -->
+<!ELEMENT add_target EMPTY>
+<!ATTLIST add_target
+  nextID CDATA #REQUIRED
+  parentID CDATA #REQUIRED>
+
+<!ELEMENT move_target EMPTY>
+<!ATTLIST move_target
+  nextID CDATA #REQUIRED
+  parentID CDATA #REQUIRED>
+
+<!-- parameters -->
+<!ELEMENT parameter EMPTY>
+<!ATTLIST parameter
+  name CDATA #REQUIRED
+  value CDATA #REQUIRED
+  override (yes|no) "no">
