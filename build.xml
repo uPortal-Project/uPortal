@@ -563,15 +563,15 @@
 
   The "db" target can be invoked thusly:
 
-  To use /properties/mytables.xml instead of the tables file specified in
+  To use /properties/db/mytables.xml instead of the tables file specified in
   dbloader.xml:
 
-  ant db -Dusetable=-t -Dtablefile=/properties/mytables.xml
+  ant db -Dusetable=-t -Dtablefile=/properties/db/mytables.xml
 
-  To use /properties/mydata.xml instead of the data file specified in
+  To use /properties/db/mydata.xml instead of the data file specified in
   dbloader.xml:
 
-  ant db -Dusedata=-d -Ddatafile=/properties/mydata.xml
+  ant db -Dusedata=-d -Ddatafile=/properties/db/mydata.xml
 
   Note: the tables and data files can both be overridden by combining the
   arguments.  The usetable and tablefile must be used in tandem and
@@ -644,9 +644,9 @@
   <target name="i18n-db" depends="compile">
     <echo message="Invoking DbLoader for internationalized database setting"/>
     <property name="usetable" value="-t"/>
-    <property name="tablefile" value="/properties/tables-i18n.xml"/>
+    <property name="tablefile" value="/properties/db/tables-i18n.xml"/>
     <property name="usedata" value="-d"/>
-    <property name="datafile" value="/properties/data-i18n.xml"/>
+    <property name="datafile" value="/properties/db/data-i18n.xml"/>
     <property name="createscript" value=" "/>
     <property name="droptables" value=""/>
     <property name="createtables" value=" "/>
@@ -676,9 +676,9 @@
     <echo message="Invoking DbLoader for localizationed database setting"/>
     <property name="locale" value="en_US"/>
     <property name="usetable" value="-t"/>
-    <property name="tablefile" value="/properties/tables-l10n.xml"/>
+    <property name="tablefile" value="/properties/db/tables-l10n.xml"/>
     <property name="usedata" value="-d"/>
-    <property name="datafile" value="/properties/data-l10n.xml"/>
+    <property name="datafile" value="/properties/db/data-l10n.xml"/>
     <property name="createscript" value=" "/>
     <property name="droptables" value=" "/>
     <property name="createtables" value=""/>
@@ -1025,7 +1025,7 @@ Example:
 
 <!--
 
-  Peter, please comment here...
+  Runs all uPortal JUnit-based test code
 
 -->
 
@@ -1100,15 +1100,15 @@ Example:
 
 <!--
 
-  The "publish" target runs the ChannelPublisher tool
+  The "pubchan" target runs the ChannelPublisher tool
   Examples:
   
-  ant publish -Dchannel=all
-  ant publish -Dchannel=daily-business-cartoon.xml
+  ant pubchan -Dchannel=all
+  ant pubchan -Dchannel=daily-business-cartoon.xml
 
 -->
   
-  <target name="publish" description="Publish a channel" depends="compile">
+  <target name="pubchan" description="Publish a channel" depends="compile">
     <echo message="Invoking Channel Publisher Tool"/>
     
     <copy file="${basedir}/webpages/dtd/channelDefinition.dtd" todir="${build.home}/WEB-INF/classes/properties/chanpub/chandefs"/>

@@ -1518,7 +1518,7 @@
       <row>
         <column><name>CHAN_ID</name><value>22</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
-        <column><name>CHAN_PARM_VAL</name><value>/properties/tables.xml</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>/properties/db/tables.xml</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
     </rows>

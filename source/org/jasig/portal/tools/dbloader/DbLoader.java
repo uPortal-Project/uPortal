@@ -110,7 +110,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * </ol>
  * </p>
  *
- * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  * @see java.sql.Types
  * @since uPortal 2.0
@@ -140,7 +140,7 @@ public class DbLoader
     try
     {
       System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
-      propertiesURL = DbLoader.class.getResource("/properties/dbloader.xml");
+      propertiesURL = DbLoader.class.getResource("/properties/db/dbloader.xml");
       con = RDBMServices.getConnection ();
 
       if (con != null)
