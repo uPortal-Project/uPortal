@@ -55,25 +55,16 @@ public class JNDIManager
     }
   }
   
-  public static void initializeUserContext(HttpSession session)
+  public static void initializeUserContext(Document userLayout, String sessionID, IPerson person)
     throws PortalNamingException
   {
     try
-    {
-      // Get the person object from the session
-      IPerson person = (IPerson)session.getAttribute("up_person");
-      
+    {      
       // Throw an exception if the person object is not found
       if(person == null)
       {
         throw new PortalNamingException("JNDIManager.initializeUserContext() - Cannot find person object!");
       }
-      
-      // Get the portal wide context
-      Context context = getContext();
-      
-      // Get the user's layout
-      Document userLayout = new UserLayoutDBImpl().getUserLayout(person.getID(), null);
       
       // Throw an exception if the user's layout cannot be found
       if(userLayout == null)
@@ -81,6 +72,9 @@ public class JNDIManager
         throw new PortalNamingException("JNDIManager.initializeUserContext() - Cannot find user's layout!");
       }
       
+      // Get the portal wide context
+      Context context = getContext();
+
       // Get the list of channels in the user's layout
       NodeList channelNodes = userLayout.getElementsByTagName("channel");
       
