@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -194,6 +195,10 @@ public class LocaleManager  {
         String country = null;
         String variant = null;
         
+        // Sometimes people specify "en-US" instead of "en_US", so
+        // we'll try to clean that up.
+        localeString = CommonUtils.replaceText(localeString, "-", "_");
+        
         StringTokenizer st = new StringTokenizer(localeString, "_");
 
         if (st.hasMoreTokens()) {
@@ -216,6 +221,7 @@ public class LocaleManager  {
             // Uncomment the following line
             // when we can count on JDK 1.4!
             //locale = new Locale(language);
+            locale = new Locale(language, "");
         }
         
         return locale;
