@@ -149,7 +149,11 @@ import org.jasig.portal.security.LocalConnectionContext;
  *		    overridden by a runtime data cw_person.</i>
  *  <li>"cw_person_allow" - Restrict IPerson attribute passing to this list.
  *		    <i>A comma-separated list of IPerson attributes that
- *		    may be passed via cw_person.  Static data only.</i>
+ *		    may be passed via cw_person.  An empty or non-existent
+ *		    value means use the default value from the corresponding
+ *		    property.  The special value "*" means all attributes
+ *		    are allowed.  The value "!*" means none are allowed.
+ *		    Static data only.</i>
  *  <li>"upc_localConnContext" - LocalConnectionContext implementation class.
  *                  <i>The name of a class to use when data sent to the
  *                  backend application needs to be modified or added
@@ -260,10 +264,10 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     state.iperson = sd.getPerson();
     state.person = sd.getParameter("cw_person");
     String person_allow = sd.getParameter ("cw_person_allow");
-    if ( person_allow != null )
+    if ( person_allow != null && (!person_allow.trim().equals("")))
       state.person_allow = person_allow;
     // state.person_allow could have been set by a property or static data
-    if ( state.person_allow != null )
+    if ( state.person_allow != null && (!state.person_allow.trim().equals("!*")) )
     {
       state.person_allow_set = new HashSet();
       StringTokenizer st = new StringTokenizer(state.person_allow,",");
@@ -271,8 +275,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       {
         while ( st.hasMoreElements () ) {
           String pName = st.nextToken();
-          if ((pName!=null)&&(!pName.trim().equals("")))
-	    state.person_allow_set.add(pName);
+          if (pName!=null) {
+	    pName = pName.trim();
+	    if (!pName.equals(""))
+	      state.person_allow_set.add(pName);
+	  }
         }
       }
     }
@@ -414,24 +421,24 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
        } else
           state.cacheScope = state.cacheDefaultScope;
 
-       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode was " + state.cacheDefaultMode);
+       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode was " + state.cacheDefaultMode);
        String cacheDefaultMode = state.runtimeData.getParameter("cw_cacheDefaultMode");
-       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheDefaultMode is " + cacheDefaultMode);
+       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheDefaultMode is " + cacheDefaultMode);
        if (cacheDefaultMode != null) {
           // maybe don't allow if scope is system?
           state.cacheDefaultMode = cacheDefaultMode;
        }
-       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode is now " + state.cacheDefaultMode);
+       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheDefaultMode is now " + state.cacheDefaultMode);
 
-       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode was " + state.cacheMode);
+       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode was " + state.cacheMode);
        String cacheMode = state.runtimeData.getParameter("cw_cacheMode");
-       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheMode is " + cacheMode);
+       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): cw_cacheMode is " + cacheMode);
        if (cacheMode != null) {
           // maybe don't allow if scope is system?
           state.cacheMode = cacheMode;
        } else
           state.cacheMode = state.cacheDefaultMode;
-       LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode is now " + state.cacheMode);
+       //LogService.instance().log(LogService.DEBUG, "CWebProxy setRuntimeData(): state.cacheMode is now " + state.cacheMode);
 
        // reset is a one-time thing.
        String reset = state.runtimeData.getParameter("cw_reset");
@@ -462,9 +469,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
              StringBuffer newXML = new StringBuffer();
              String appendchar = "";
 
-
 	     // here add in attributes according to cw_person
-	     if (person != null) {
+	     
+	     if (person != null && state.person_allow_set != null) {
                StringTokenizer st = new StringTokenizer(person,",");
                if (st != null)
                  {
@@ -473,9 +480,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                        String pName = st.nextToken();
                        if ((pName!=null)&&(!pName.trim().equals("")))
 		       {
-			 LogService.instance().log(LogService.DEBUG, "CWebProxy: attempt to add person attribute: " + pName);
-
-			 if ( state.person_allow_set == null ||
+			 if ( state.person_allow.trim().equals("*") ||
 			   state.person_allow_set.contains(pName) )
 			 {
                            newXML.append(appendchar);
@@ -499,17 +504,16 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
              // keyword and parameter processing
              // NOTE: if both exist, only keywords are appended
-             String keywords = rd.getKeywords();
-             if (keywords != null)
-             {
-               LogService.instance().log(LogService.DEBUG, "CWebProxy: got keywords: " + keywords);
-               if (appendchar.equals("&"))
-                 newXML.append("&keywords=" + keywords);
-               else
-                 newXML.append(keywords);
-             }
-             else
-             {
+	     String keywords = rd.getKeywords();
+	     if (keywords != null)
+	     {
+	       if (appendchar.equals("&"))
+	         newXML.append("&keywords=" + keywords);
+	       else
+	         newXML.append(keywords);   
+	     }
+	     else
+	     {
                // want all runtime parameters not specific to WebProxy
                Enumeration e=rd.getParameterNames ();
                if (e!=null)
@@ -541,7 +545,6 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding runtime pa
                    }
                }
              }
-
 
              // to add: if not already set, make a copy of sd for
 	     // the "reset" command
