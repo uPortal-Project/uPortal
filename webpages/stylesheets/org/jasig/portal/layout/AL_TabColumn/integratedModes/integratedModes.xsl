@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Copyright (c) 2004 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ Version $Revision$
     <xsl:variable name="mediaPathIcons" select="concat($mediaPath,'/',$skin,'/icons')"/>
     <xsl:param name="errorMessage" select="'no errorMessage passed'"/>
     <!-- <xsl:param name="errorMessage"> newNodID= <xsl:value-of select="/layout/@newNodeID"/> focusedTabID=<xsl:value-of select="/layout/@focusedTabID"/></xsl:param> -->
-    <xsl:param name="authenticated" select="'true'"/>
+    <xsl:variable name="authenticated" select="/layout/@authenticated"/>
     <xsl:param name="authorizedChannelPublisher" select="'false'"/>
     <xsl:param name="authorizedFragmentPublisher" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
@@ -69,9 +69,9 @@ Version $Revision$
 	<xsl:variable name="unauthenticated" select="/layout/@unauthenticated"/>
 	-->
     <xsl:variable name="userLayoutRoot" select="/layout/@userLayoutRoot"/>
-    <xsl:param name="channelPublishID"  select="'no channelPublishID passed'"/>
+    <xsl:param name="channelPublishID" select="'no channelPublishID passed'"/>
     <!-- <xsl:param name="uP_fragmentPublishID" select="'no fragmentPublishID passed'"/> -->
-   <!--  <xsl:param name="uP_fragmentRootID" select="'no fragmentRootID passed'"/> -->
+    <!--  <xsl:param name="uP_fragmentRootID" select="'no fragmentRootID passed'"/> -->
     <!--  Used for detached content  -->
     <xsl:template match="layout_fragment">
         <html>
@@ -132,7 +132,7 @@ Version $Revision$
                     <img src="{$mediaPathSkin}/transparent.gif" width="1" height="1"/>
                 </td>
                 <!--BEGIN: Temporary Header Channel: Home,SiteMap,Prefs,Logout -->
-                <xsl:if test="not(/layout/login)">
+                <xsl:if test="$authenticated='true' ">
                     <td align="right" valign="top">
                         <table border="0" cellspacing="10" cellpadding="0">
                             <tr>
@@ -2184,7 +2184,9 @@ Version $Revision$
                         </td>
                     </xsl:when>
                     <xsl:otherwise>
-                        <img src="{$mediaPathIcons}/columnmovedisabled.gif" width="28" height="25" alt="Move column is disabled" title="Move column is disabled" border="0"/>
+                        <td>
+                            <img src="{$mediaPathIcons}/columnmovedisabled.gif" width="28" height="25" alt="Move column is disabled" title="Move column is disabled" border="0"/>
+                        </td>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
@@ -2204,7 +2206,9 @@ Version $Revision$
                 </td>
             </xsl:when>
             <xsl:otherwise>
-                <img src="{$mediaPathIcons}/columncandisabled.gif" width="28" height="25" alt="Delete column is disabled" title="Delete column is disabled" border="0"/>
+                <td>
+                    <img src="{$mediaPathIcons}/columncandisabled.gif" width="28" height="25" alt="Delete column is disabled" title="Delete column is disabled" border="0"/>
+                </td>
             </xsl:otherwise>
         </xsl:choose>
         <!-- The conditional below turns off any column width adjustments on immutable tabs -->
