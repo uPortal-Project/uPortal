@@ -67,14 +67,14 @@ public class CookieSerializer implements Serializer {
  
     context.startElement(name, attributes);
     context.startElement(new QName("", "cookie"), null);
-    context.serialize(new QName("", "name"), null, cookie.getName(), String.class);
-    context.serialize(new QName("", "value"), null, cookie.getValue(), String.class); 
-    context.serialize(new QName("", "comment"), null, cookie.getComment(), String.class); 
-    context.serialize(new QName("", "domain"), null, cookie.getDomain(), String.class); 
-    context.serialize(new QName("", "maxAge"), null, new Integer(cookie.getMaxAge()), Integer.class); 
-    context.serialize(new QName("", "path"), null, cookie.getPath(), String.class); 
-    context.serialize(new QName("", "secure"), null, new Boolean(cookie.getSecure()), Boolean.class); 
-    context.serialize(new QName("", "version"), null, new Integer(cookie.getVersion()), Integer.class);     
+    context.serialize(new QName("", "name"), null, cookie.getName());
+    context.serialize(new QName("", "value"), null, cookie.getValue()); 
+    context.serialize(new QName("", "comment"), null, cookie.getComment()); 
+    context.serialize(new QName("", "domain"), null, cookie.getDomain()); 
+    context.serialize(new QName("", "maxAge"), null, new Integer(cookie.getMaxAge())); 
+    context.serialize(new QName("", "path"), null, cookie.getPath()); 
+    context.serialize(new QName("", "secure"), null, new Boolean(cookie.getSecure())); 
+    context.serialize(new QName("", "version"), null, new Integer(cookie.getVersion()));     
     context.endElement();
     context.endElement();
   }
