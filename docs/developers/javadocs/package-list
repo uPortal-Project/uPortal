@@ -1,0 +1,5 @@
+org.jasig.portal
+org.jasig.portal.channels
+org.jasig.portal.channels.bookmarks
+org.jasig.portal.channels.rss
+org.jasig.portal.layout
