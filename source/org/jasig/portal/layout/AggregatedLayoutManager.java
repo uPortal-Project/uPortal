@@ -1087,21 +1087,33 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         throw new PortalException(e.getMessage());
       }
     }
+    
+	public void createFragment( String fragmentName, String fragmentDesc ) throws PortalException {
+	  try {
+			 // Creating an empty layout with a root folder
+			 layout = new ALFragment (NEW_FRAGMENT,this);
+			 ALNode rootFolder = ALFolder.createRootFolder();
+			 Hashtable layoutData = new Hashtable();
+			 layoutData.put(getRootFolderId(),rootFolder);
+			 layout.setLayoutData(layoutData);
+		
+		     // Getting the list of the fragments	
+			 fragments = (Hashtable) layoutStore.getFragments(person);
+			 this.fragmentId = NEW_FRAGMENT;
+			
+			 // Checking restrictions and move "wrong" nodes to the lost folder
+			 moveWrongNodesToLostFolder();
+			 updateCacheKey();
+		  } catch ( Exception e ) {
+			throw new PortalException(e.getMessage());
+		  }
+	}
 
     public void loadFragment( String fragmentId ) throws PortalException {
       try {
-
-        if ( fragmentId.equals(NEW_FRAGMENT) ) {
-         // Creating an empty layout with a root folder
-         layout = new AggregatedLayout(String.valueOf(getLayoutId()),this);
-         ALNode rootFolder = ALFolder.createRootFolder();
-         Hashtable layoutData = new Hashtable();
-         layoutData.put(getRootFolderId(),rootFolder);
-         layout.setLayoutData(layoutData);
-        } else {
-           layout = (AggregatedLayout) layoutStore.getFragment(person,fragmentId);
-           layout.setLayoutManager(this);
-          }
+      
+        layout = (ALFragment) layoutStore.getFragment(person,fragmentId);
+        layout.setLayoutManager(this);
 
         fragments = (Hashtable) layoutStore.getFragments(person);
         this.fragmentId = fragmentId;
@@ -1116,7 +1128,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     public void saveFragment() throws PortalException {
       try {
        if ( isLayoutFragment() ) {
-        layoutStore.setFragment(person,fragmentId,layout);
+        layoutStore.setFragment(person,(ILayoutFragment)layout);
        }
         updateCacheKey();
       } catch ( Exception e ) {
@@ -1125,7 +1137,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     }
 
     private boolean isLayoutFragment() {
-      return ( fragmentId != null && CommonUtils.parseInt(fragmentId) > 0 );
+      return ( fragmentId != null );
     }
 
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {

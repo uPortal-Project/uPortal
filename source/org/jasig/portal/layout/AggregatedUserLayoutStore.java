@@ -1585,13 +1585,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
  /**   Sets the fragment
      * @param person an <code>IPerson</code> object specifying the user
-     * @param fragmentId a fragment ID
-     * @param layoutImpl a <code>IAggregatedLayout</code> containing a fragment
+     * @param layoutImpl a <code>ILayoutFragment</code> containing a fragment
      * @exception Exception if an error occurs
      */
- public void setFragment (IPerson person, String fragmentId, IAggregatedLayout layoutImpl ) throws Exception {
+ public void setFragment (IPerson person, ILayoutFragment layoutImpl ) throws Exception {
 
     int userId = person.getID();
+    String fragmentId = layoutImpl.getId();
     Connection con = RDBMServices.getConnection();
 
      if ( !(layoutImpl instanceof AggregatedLayout) )
@@ -1605,17 +1605,23 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
        Statement stmt = con.createStatement();
 
-
-      boolean isOwner = false;
-      // Check if the user was an owner
-      ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-      if ( rs.next() )
-        if ( rs.getInt(1) == userId )
-         isOwner = true;
-      if ( rs != null ) rs.close();
-
-      if ( !isOwner )
-        throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
+      // Check if the fragment is new
+      if ( IAggregatedUserLayoutManager.NEW_FRAGMENT.equals( fragmentId )) {
+      	fragmentId = getNextFragmentId();
+		String sqlUpdate = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+	
+		"VALUES ("+fragmentId+",1"+userId+","+layoutImpl.getName()+","+layoutImpl.getDescription()+",'N'";
+     	stmt.executeUpdate(sqlUpdate);
+      } else {
+         boolean isOwner = false;
+         // Check if the user was an owner
+         ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+         if ( rs.next() )
+          if ( rs.getInt(1) == userId )
+           isOwner = true;
+         if ( rs != null ) rs.close();
+         if ( !isOwner )
+          throw new PortalException("The user "+userId+" is not an owner of the fragment"+fragmentId);
+        }  
 
       // Clear the previous data related to the user layout
       stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
@@ -2354,13 +2360,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
      * @exception PortalException if an error occurs
      */
- public IAggregatedLayout getFragment (IPerson person, String fragmentIdStr ) throws PortalException {
+ public ILayoutFragment getFragment (IPerson person, String fragmentIdStr ) throws PortalException {
     int userId = person.getID();
     int fragmentId = CommonUtils.parseInt(fragmentIdStr);
     int realUserId = userId;
     ResultSet rs;
 
-    AggregatedLayout layout = new AggregatedLayout ( fragmentIdStr );
+    ALFragment layout = new ALFragment ( fragmentIdStr );
 
     Connection con = null;
     Hashtable layoutData = null;

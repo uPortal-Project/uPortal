@@ -111,23 +111,22 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
     public void setAggregatedLayout (IPerson person, UserProfile  profile, IAggregatedLayout layout) throws Exception;
 
 
-    /**
-     * Persists the fragment.
+    /** 
+     * Persists the fragment
      * @param person an <code>IPerson</code> object specifying the user
-     * @param fragmentId a fragment ID
-     * @param fragment a <code>IAggregatedLayout</code> containing a fragment
+     * @param layoutImpl a <code>ILayoutFragment</code> object containing a fragment
      * @exception Exception if an error occurs
      */
-    public void setFragment (IPerson person, String fragmentId, IAggregatedLayout fragment) throws Exception;
+    public void setFragment (IPerson person, ILayoutFragment layoutImpl ) throws Exception;
 
     /**
      * Returns the layout fragment as a user layout.
      * @param person an <code>IPerson</code> object specifying the user
      * @param fragmentId a fragment ID
-     * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user fragment
+     * @return a <code>ILayoutFragment</code> object containing the internal representation of the user fragment
      * @exception PortalException if an error occurs
      */
-    public IAggregatedLayout getFragment (IPerson person, String fragmentId) throws Exception;
+    public ILayoutFragment getFragment (IPerson person, String fragmentId) throws Exception;
 
      /**
      * Returns the fragment IDs/names which the user is an owner of
