@@ -127,10 +127,13 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
 		return supportedStates.contains(state);
     }
     
-	public String getRequestedPortalURL() {
+	public String getRequestedPortalURL() throws ClassCastException {
 	      // TO GET requested portal URL from HttpServletRequest !!!!!
-		ChannelRuntimeData rd = ((ServletRequestImpl) request).getChannelRuntimeData();
+	  if ( request instanceof ServletRequestImpl ) {    
+		ChannelRuntimeData rd = ((ServletRequestImpl)request).getChannelRuntimeData();
 		return rd.getBaseActionURL();
+	  }
+	    throw new ClassCastException( "The HttpServletRequest object must be ServletRequestImpl type!!");	
 	}
 
 }
