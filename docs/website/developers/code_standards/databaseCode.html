@@ -16,19 +16,17 @@ It is much better to release the resources when done with them rather than letti
 the JVM do it.<br><br>
 
 <pre>
-Connection con = null;
+Connection con = rdbmService.getConnection();
 try {
-    con = rdbmService.getConnection();
-    RDBMPreparedStatement pstmt = null;
+    String query = "SELECT ...";
+    RDBMPreparedStatement pstmt = new RDBMServices.PreparedStatement(con, query);
     try {
-        String query = "SELECT ...";
-        pstmt = new RDBMServices.PreparedStatement(con, query);
+        pstmt.clearParameters();
         pstmt.setXXXXX(1, someValue);
         pstmt.setXXXXX(2, someValue); // etc
-        ResultSet rs = null;
+        LogService.log(LogService.DEBUG, query);
+        ResultSet rs = pstmt.executeQuery();
         try {
-            LogService.log(LogService.DEBUG, query);
-            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                ...
             }
