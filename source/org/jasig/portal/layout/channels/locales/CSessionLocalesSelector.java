@@ -38,8 +38,6 @@ package org.jasig.portal.layout.channels.locales;
 import java.util.Locale;
 
 import org.jasig.portal.Constants;
-import org.jasig.portal.IPrivileged;
-import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
