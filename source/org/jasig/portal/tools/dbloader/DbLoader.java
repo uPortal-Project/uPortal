@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -221,6 +221,12 @@ public class DbLoader
                 xslt.setXML(config.getTablesDoc());
                 xslt.setXSL(config.getTablesXslUri());
                 xslt.setTarget(new TableHandler(config));
+                
+                if (config.getUpgradeVersion() != null) {
+                    xslt.setStylesheetParameter("upgradeMajor", Integer.toString(config.getUpgradeMajor()));
+                    xslt.setStylesheetParameter("upgradeMinor", Integer.toString(config.getUpgradeMinor()));
+                }
+
                 xslt.transform();
             }
             else
@@ -245,7 +251,7 @@ public class DbLoader
             else
                 config.getLog().println("Populating tables...disabled.");
 
-            // cleanup and exit        
+            // cleanup and exit
             config.getConnection().commit();
             config.getLog().println("Done!");
             long endTime = System.currentTimeMillis();
@@ -281,9 +287,13 @@ public class DbLoader
         boolean usetable = false;
         boolean useDataUri  = false;
         boolean useDataFile  = false;
+        boolean useLocale = false;
+        boolean upgrade = false;
+
+        String adminLocale = null;
+        String upgradeVersion = null;
 
         for (int i = 0; i < args.length; i++) {
-           //System.out.println("args["+i+"]: "+args[i]);
            if (!args[i].startsWith("-")) {
               if (usetable) {
                  config.setTablesUri(args[i]);
@@ -293,11 +303,28 @@ public class DbLoader
                  config.setDataURL(DbLoader.class.getResource(config.getDataUri()));
                  useDataUri=false;
               } else if (useDataFile) {
-                  URL url = getDataFileUri(args[i]);
+                 URL url = getDataFileUri(args[i]);
                  config.setDataUri(url.toString());
                  config.setDataURL(url);
                  useDataFile=false;
+              } else if (useLocale) {
+                 adminLocale = args[i];
+                 config.setAdminLocale(adminLocale);                
+                 useLocale = false;
+              } else if (upgrade) {
+                 upgradeVersion = args[i];
+                 config.setUpgradeVersion(upgradeVersion);
+                 int index = upgradeVersion.indexOf('.');
+                 config.setUpgradeMajor(Integer.parseInt(upgradeVersion.substring(0, index)));
+                 if (upgradeVersion.indexOf('.', index+1) != -1) {
+                    config.setUpgradeMinor(Integer.parseInt(upgradeVersion.substring(index+1, upgradeVersion.indexOf('.', index+1))));
+                 } else {
+                    config.setUpgradeMinor(Integer.parseInt(upgradeVersion.substring(index+1)));
+                 }
+                 upgrade = false;
               }
+           } else if (args[i].equals("-u")) {
+               upgrade = true;
            } else if (args[i].equals("-t")) {
               usetable = true;
            } else if (args[i].equals("-d")) {
@@ -320,7 +347,9 @@ public class DbLoader
                config.setPopulateTables(true);
            } else if (args[i].equals("-nP")) {
                config.setPopulateTables(false);
-           } else {
+           } else if (args[i].equals("-l")) {
+              config.setLocaleAware(true);
+              useLocale = true;
            }
         }
    }
@@ -368,6 +397,7 @@ public class DbLoader
     config.getLog().println("Generating script file " + scriptFile.getAbsolutePath());
     config.setScriptWriter(new PrintWriter(new BufferedWriter(new FileWriter(scriptFileName, true))));
   }
+
 
   static void exit(Configuration config)
   {
