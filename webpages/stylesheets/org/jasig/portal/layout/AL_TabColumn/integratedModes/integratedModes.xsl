@@ -1878,8 +1878,7 @@
           <img src="{$mediaPathSkin}/transparent.gif" width="20" height="1"/>
         </td>
         <td nowrap="nowrap" class="uportal-background-selected">
-          <span class="uportal-channel-title">User 
-      Login</span>
+          <span class="uportal-channel-title">User Login</span>
         </td>
         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
           <img src="{$mediaPathSkin}/transparent.gif" width="19" height="1"/>
@@ -1992,8 +1991,7 @@
           <img src="{$mediaPathSkin}/transparent.gif" width="20" height="1"/>
         </td>
         <td nowrap="nowrap" class="uportal-background-selected">
-          <span class="uportal-channel-title">User 
-      Preferences Actions</span>
+          <span class="uportal-channel-title">User Preferences Actions</span>
         </td>
         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
           <img src="{$mediaPathSkin}/transparent.gif" width="19" height="1"/>
