@@ -239,7 +239,7 @@ public class CPageRenderer implements org.jasig.portal.IChannel
   // get rid of the contents of <script> tags
   protected String eliminateScript(String sHTML) {
     // uses the ORO regular-expression engine (Perl5-style regexes)
-    String r1 = "<script>.*?</script>";
+    String r1 = "<script.*?>.*?</script>";
     String t1 = "<script><!-- Eliminated by UPortal --></script>";
 
     Pattern p1 = null;
