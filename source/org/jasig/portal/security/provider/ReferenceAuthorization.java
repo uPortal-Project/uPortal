@@ -45,8 +45,6 @@ import  java.io.IOException;
 import  java.io.FileInputStream;
 import  org.jasig.portal.utils.SmartCache;
 import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.IRole;
-import  org.jasig.portal.security.provider.RoleImpl;
 import  org.jasig.portal.security.provider.PersonImpl;
 import  org.jasig.portal.security.IAuthorization;
 import  org.jasig.portal.security.PortalSecurityException;

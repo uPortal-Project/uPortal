@@ -61,7 +61,6 @@ import  org.jasig.portal.utils.DTDResolver;
 import  org.jasig.portal.services.LogService;
 import  org.apache.xml.serialize.OutputFormat;
 import  org.apache.xml.serialize.XMLSerializer;
-import  org.jasig.portal.security.IRole;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.channels.CError;
