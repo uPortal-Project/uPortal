@@ -1,0 +1,18 @@
+<!ELEMENT stylesheetdescription (name|description|media+|parameters?|categoryattributes?|channelattributes?)>
+
+<!ELEMENT parameters (parameter)*>
+
+
+<!ELEMENT categoryattributes (attribute)*>
+<!ELEMENT channelattributes (attribute)*>
+
+<!ELEMENT parameter (defaultvalue|description)>
+<!ATTLIST parameter
+  name CDATA #REQUIRED>
+
+<!ELEMENT attribute (defaultvalue|description)>
+<!ATTLIST attribute
+  name CDATA #REQUIRED>
+
+<!ELEMENT defaultvalue EMPTY>
+<!ELEMENT description EMPTY>
