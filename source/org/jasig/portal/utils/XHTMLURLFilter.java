@@ -60,11 +60,26 @@ public class XHTMLURLFilter extends AbsoluteURLFilter {
   
   public void startElement (String uri, String localName, String qName,  Attributes atts) throws SAXException {
     AttributesImpl attsImpl = new AttributesImpl(atts);
-    // This is an initial guess at what needs to be fixed...more may be needed!
-    fixURL("img", "src", qName, atts, attsImpl);
-    fixURL("input", "src", qName, atts, attsImpl);
-    fixURL("script", "src", qName, atts, attsImpl);
-    fixURL("a", "href", qName, atts, attsImpl);
+
+    if (atts.getValue("src") != null)
+    {
+      fixURL("img", "src", qName, atts, attsImpl);
+      fixURL("input", "src", qName, atts, attsImpl);
+      fixURL("script", "src", qName, atts, attsImpl);
+      fixURL("frame", "src", qName, atts, attsImpl);
+      fixURL("iframe", "src", qName, atts, attsImpl);
+    }
+    else if (atts.getValue("href") != null)
+    {
+      fixURL("a", "href", qName, atts, attsImpl);
+      fixURL("area", "href", qName, atts, attsImpl);
+      fixURL("map", "href", qName, atts, attsImpl);
+      fixURL("link", "href", qName, atts, attsImpl);
+    }
+    else if (atts.getValue("action") != null)
+    {
+      fixURL("form", "action", qName, atts, attsImpl);
+    }
     super.startElement(uri, localName, qName, attsImpl);   
   }
 
