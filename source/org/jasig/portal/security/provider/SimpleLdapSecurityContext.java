@@ -171,7 +171,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
                          "SimpleLdapSecurityContext: No such user: " +
                          this.myPrincipal.UID);
         }
-      } catch (javax.naming.AuthenticationException ae) {
+      } catch (AuthenticationException ae) {
         LogService.log(LogService.INFO,"SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         LogService.log(LogService.ERROR,
