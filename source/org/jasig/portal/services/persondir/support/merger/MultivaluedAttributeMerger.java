@@ -22,7 +22,7 @@ import java.util.Map;
  * </ul>
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public class MultivaluedAttributeMerger implements IAttributeMerger {
 
