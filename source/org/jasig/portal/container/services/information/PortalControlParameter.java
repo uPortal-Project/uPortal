@@ -77,12 +77,12 @@ public class PortalControlParameter {
 			if (isControlParameter(paramName)) {
 				if (isStatefulParameter(paramName))
 					statefulControlParameters.put(
-						decodeParameterName(paramName),
-						requestParameters.get(paramName));
+				     decodeParameterName(paramName),
+				     requestParameters.get(paramName));
 				else
 					statelessControlParameters.put(
-						decodeParameterName(paramName),
-						requestParameters.get(paramName));
+				     decodeParameterName(paramName),
+				     requestParameters.get(paramName));
 			}
 		}
 	}
@@ -385,7 +385,7 @@ public class PortalControlParameter {
 		Map parameters = statefulControlParameters;
 
 		boolean firstValue = true;
-		for (int i = 0; i < 1; parameters = statelessControlParameters) {
+		for (int i = 0; i < 1; parameters = statelessControlParameters, i++ ) {
 			if (parameters != null && !parameters.isEmpty()) {
 				Iterator names = parameters.keySet().iterator();
 				while (names.hasNext()) {
@@ -395,7 +395,8 @@ public class PortalControlParameter {
 					  url.append("&");
 					String name = (String) names.next();
 					Object value = parameters.get(name);
-					url.append(encodeParameter(name)).append("=").append(value.toString());
+					url.append(encodeParameter(name)).append("=").
+					append(value.toString());
 				}
 			}
 		}
