@@ -1,11 +1,9 @@
-DROP TABLE PORTAL_CATS;
-
 DROP TABLE PORTAL_CLASS;
 
 CREATE TABLE PORTAL_CLASS(
-	CLASS_ID INTEGER IDENTITY,
-	NAME VARCHAR(100) not null
-	);
+        CLASS_ID INTEGER IDENTITY,
+        NAME VARCHAR(100) not null
+        );
 
 INSERT INTO PORTAL_CLASS (NAME)
 VALUES ('News') ;
@@ -34,11 +32,11 @@ VALUES ('Applications') ;
 DROP TABLE PORTAL_CHAN_TYPES;
 
 CREATE TABLE PORTAL_CHAN_TYPES (
-	TYPE_ID INTEGER IDENTITY,
-	TYPE VARCHAR(50) NOT NULL,
-	NAME VARCHAR(70) NOT NULL,
-	DESCR VARCHAR(256) NOT NULL
-	);
+        TYPE_ID INTEGER IDENTITY,
+        TYPE VARCHAR(50) NOT NULL,
+        NAME VARCHAR(70) NOT NULL,
+        DESCR VARCHAR(256) NOT NULL
+        );
 
 INSERT INTO PORTAL_CHAN_TYPES (TYPE, NAME, DESCR)
 VALUES ('CRSSChannel', 'RSS Channel', 'RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.');
@@ -55,13 +53,12 @@ VALUES ('CApplet', 'Applet Channel', 'This channel uses program code located on 
 DROP TABLE PORTAL_CHANNELS;
 
 CREATE TABLE PORTAL_CHANNELS (
-	CHAN_ID INTEGER IDENTITY,
-	TITLE VARCHAR(256) null,
-	PUB_EMAIL VARCHAR(100) null,
-	APPROVED INTEGER null,
-	CHANNEL_XML LONGVARCHAR not null
-	);
-
+        CHAN_ID INTEGER IDENTITY,
+        TITLE VARCHAR(256) null,
+        PUB_EMAIL VARCHAR(100) null,
+        APPROVED INTEGER null,
+        CHANNEL_XML LONGVARCHAR not null
+        );
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
 VALUES ('Salon.com', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
@@ -81,18 +78,18 @@ VALUES ('ABC News', '<channel minimized="false" class="org.jasig.portal.channels
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('Search the Web', '<channel minimized="false" class="org.jasig.portal.channels.CSearch">
+VALUES ('Search', '<channel minimized="false" class="org.jasig.portal.channels.CSearch">
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('Local Weather', '<channel minimized="false" class="org.jasig.portal.channels.CWeather">
-        <parameter value="CA" name="state"/>
-        <parameter value="El Segundo" name="city"/>
+VALUES ('DE Weather', '<channel minimized="false" class="org.jasig.portal.channels.CWeather">
+        <parameter value="DE" name="state"/>
+        <parameter value="Newark" name="city"/>
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('JA-SIG Portal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
-        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
+VALUES ('JA-SIG uPortal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
@@ -144,51 +141,10 @@ VALUES ('Funky Clock', '<channel minimized="false" class="org.jasig.portal.chann
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('Yahoo', '<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
-        <parameter value="Yahoo" name="name"/>
-        <parameter value="http://www.yahoo.com" name="url"/>
+VALUES ('UD Homepage', '<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+        <parameter value="UDel" name="name"/>
+        <parameter value="http://www.udel.edu" name="url"/>
       </channel>');
-
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('Test XML Renderer', '<channel minimized="false" class="org.jasig.portal.channels.CXMLRenderer">
-        <parameter value="XML Renderer" name="name"/>
-        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
-      </channel>');
-
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('UBC Example', '<channel minimized="false" class="org.jasig.portal.channels.CUBCExample">
-        <parameter value="UBC Example" name="name"/>
-	    <parameter value="UBC Folks" name="myName"/>
-      </channel>');
-
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('Student Services Centre', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
-	    <parameter value="Student Services Centre" name="name"/>
-	    <parameter value="ubc.regi.ssc.SSCTreeApplet" name="code"/>
-	    <parameter value="https://regi2.adm.ubc.ca/ssc/" name="codeBase"/>
-	    <parameter value="ssc326.jar" name="archive"/>
-	    <parameter value="250" name="width"/>
-	    <parameter value="500" name="height"/>
-	    <parameter name="APPLET.cabbase" value="ssc326.cab"/>
-        <parameter name="APPLET.ini" value="PROD_SSCclient.properties"/>
-      </channel>');
-
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('Web Mail', '<channel minimized="false" class="org.jasig.portal.channels.CMail">
-	<parameter value="Mail Summary" name="name"/>
-	<parameter value="imap" name="protocol"/>
-	<parameter value="mail.interchange.ubc.ca" name="host"/>
-	<parameter value="142" name="port"/>
-	<parameter value="INBOX" name="mailbox"/>
-      </channel>');
-
-INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
-VALUES ('JA-SIG Development', '<channel class="org.jasig.portal.channels.CRSSChannel" instanceID="">
-  <parameter value="Next" name="Submit"/>
-  <parameter value="" name="pub_email"/>
-  <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="url"/>
-  <parameter value="CRSSChannel" name="chan_type"/>
-    </channel>');
 
 INSERT INTO PORTAL_CHANNELS (TITLE, CHANNEL_XML)
 VALUES ('Number Guessing Game', '<channel class="org.jasig.portal.xmlchannels.CNumberGuess" instanceID="">
@@ -199,9 +155,9 @@ VALUES ('Number Guessing Game', '<channel class="org.jasig.portal.xmlchannels.CN
 DROP TABLE PORTAL_CHAN_CLASS;
 
 CREATE TABLE PORTAL_CHAN_CLASS(
-	CLASS_ID INTEGER NOT NULL,
-	CHAN_ID INTEGER NOT NULL
-	)
+        CLASS_ID INTEGER NOT NULL,
+        CHAN_ID INTEGER NOT NULL
+        )
 
 INSERT INTO PORTAL_CHAN_CLASS VALUES(0, 0);
 
@@ -217,9 +173,8 @@ INSERT INTO PORTAL_CHAN_CLASS VALUES(5, 8);
 
 INSERT INTO PORTAL_CHAN_CLASS VALUES(6, 7);
 
-INSERT INTO PORTAL_CHAN_CLASS VALUES(6, 9);
-
 INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 2);
 
 INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 5);
 
+INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 9);
