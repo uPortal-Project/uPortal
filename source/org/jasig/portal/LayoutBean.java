@@ -31,6 +31,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
@@ -59,12 +61,12 @@ import  org.apache.xml.serialize.*;
  * @version $Revision$
  */
 public class LayoutBean {
-    // all channel content/parameters/caches/etc are managed here
-    ChannelManager channelManager;
-    UserLayoutManager uLayoutManager;
-    // contains information relating client names to media and mime types
-    private MediaManager mediaM;
-    private StandaloneChannelRenderer browserMapper=null;
+  // all channel content/parameters/caches/etc are managed here
+  ChannelManager channelManager;
+  UserLayoutManager uLayoutManager;
+  // contains information relating client names to media and mime types
+  private MediaManager mediaM;
+  private StandaloneChannelRenderer browserMapper = null;
 
   /**
    * Constructor initializes media manager and stylesheet sets.
@@ -88,10 +90,10 @@ public class LayoutBean {
     HttpSession session = req.getSession(false);
     IPerson person = (IPerson)session.getAttribute("up_person");
     if (person == null) {
-	int guestUserId = 1;
-	person = new org.jasig.portal.security.provider.PersonImpl();
-	person.setID(guestUserId);            
-	person.setFullName("Guest");
+      int guestUserId = 1;
+      person = new org.jasig.portal.security.provider.PersonImpl();
+      person.setID(guestUserId);
+      person.setFullName("Guest");
     }
     return  person;
   }
@@ -126,43 +128,39 @@ public class LayoutBean {
     //
     try {
       // get the layout manager
-	if(browserMapper!=null) {
-	    browserMapper.prepare(req);
-	}
-	
-	if (uLayoutManager == null || uLayoutManager.userAgentUnmapped()) {
-	    uLayoutManager = new UserLayoutManager(req, getPerson(req));
-	} else {
-	    browserMapper=null;
-	}
-
-	if (uLayoutManager.userAgentUnmapped()) {
-	    if(browserMapper==null) {
-		browserMapper=new org.jasig.portal.channels.CSelectSystemProfile();
-		browserMapper.initialize(new Hashtable(), "CSelectSystemProfile", true,true,false,10000,getPerson(req));
-	    }
-	    try {
-	      browserMapper.render(req,res);
-	      
-	    } catch (Exception e) {
-		// something went wrong trying to show CSelectSystemProfileChannel 
-		e.printStackTrace();
-	    }
-	    
-	    return;
-	  /*	  
-        // for debug purposes, we do the fake mapping to the "netscape" layout
-        // Should obtain implementation in a different way!!
-        IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
-        IPerson person = getPerson(req);
-
-        // establish mapping
-        updb.setUserBrowserMapping(person.getID(), req.getHeader("User-Agent"), 1);
-        Logger.log(Logger.DEBUG, "LayoutBean::writeContent() : establishing UA mapping for user=\"" + person.getID() + "\" and UA=\""
-            + req.getHeader("User-Agent") + "\".");
+      if (browserMapper != null) {
+        browserMapper.prepare(req);
+      }
+      if (uLayoutManager == null || uLayoutManager.userAgentUnmapped()) {
         uLayoutManager = new UserLayoutManager(req, getPerson(req));
-	  */
-	}
+      } 
+      else {
+        browserMapper = null;
+      }
+      if (uLayoutManager.userAgentUnmapped()) {
+        if (browserMapper == null) {
+          browserMapper = new org.jasig.portal.channels.CSelectSystemProfile();
+          browserMapper.initialize(new Hashtable(), "CSelectSystemProfile", true, true, false, 10000, getPerson(req));
+        }
+        try {
+          browserMapper.render(req, res);
+        } catch (Exception e) {
+          // something went wrong trying to show CSelectSystemProfileChannel 
+          e.printStackTrace();
+        }
+        return;        /*	  
+         // for debug purposes, we do the fake mapping to the "netscape" layout
+         // Should obtain implementation in a different way!!
+         IUserPreferencesStore updb = RdbmServices.getUserPreferencesStoreImpl();
+         IPerson person = getPerson(req);
+         // establish mapping
+         updb.setUserBrowserMapping(person.getID(), req.getHeader("User-Agent"), 1);
+         Logger.log(Logger.DEBUG, "LayoutBean::writeContent() : establishing UA mapping for user=\"" + person.getID() + "\" and UA=\""
+         + req.getHeader("User-Agent") + "\".");
+         uLayoutManager = new UserLayoutManager(req, getPerson(req));
+         */
+
+      }
       // determine rendering root -start
       // In general transformations will start at the userLayoutRoot node, unless
       // we are rendering something in a detach mode.
@@ -212,7 +210,11 @@ public class LayoutBean {
       // process events that have to be handed directly to the userLayoutManager.
       // (examples of such events are "remove channel", "minimize channel", etc.
       //  basically things that directly affect the userLayout structure)
-      processUserLayoutParameters(req, uLayoutManager);
+      try {
+        processUserLayoutParameters(req, uLayoutManager);
+      } catch (PortalException pe) {
+        Logger.log(Logger.ERROR, "LayoutBean.writeContent(): processUserLayoutParameters() threw exception - " + pe.getMessage());
+      }
       // call layout manager to process all user-preferences-related request parameters
       // this will update UserPreference object contained by UserLayoutManager, so that
       // appropriate attribute incorporation filters and parameter tables can be constructed.
@@ -311,7 +313,7 @@ public class LayoutBean {
    * @param the servlet request object
    * @param the userLayout manager object
    */
-  private void processUserLayoutParameters (HttpServletRequest req, UserLayoutManager man) {
+  private void processUserLayoutParameters (HttpServletRequest req, UserLayoutManager man) throws PortalException {
     String[] values;
     if ((values = req.getParameterValues("uP_help_target")) != null) {
       for (int i = 0; i < values.length; i++) {
