@@ -1061,9 +1061,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        fragmentId = null;
        layout = (AggregatedLayout) layoutStore.getAggregatedLayout(person,userProfile);
        layout.setLayoutManager(this);
-       fragments = (Hashtable) layoutStore.getFragments(person);
+       /*fragments = (Hashtable) layoutStore.getFragments(person);
        if ( fragments != null && fragments.size() > 0 ) 
-         layout.setFragments(fragments);
+         layout.setFragments(fragments);*/
        // Setting the first child node id for the root node to NULL if it does not exist in the layout
        ALFolder rootFolder = getLayoutFolder(getRootFolderId());
        String firstChildId = rootFolder.getFirstChildNodeId();
@@ -1196,9 +1196,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 layoutStore.setFragment(person,fragment);
 		
 		     // Getting the list of the fragments	
-			 fragments = (Hashtable) layoutStore.getFragments(person);
+			 /*fragments = (Hashtable) layoutStore.getFragments(person);
 		     if ( fragments != null && fragments.size() > 0 ) 
-			  fragment.setFragments(fragments);  
+			  fragment.setFragments(fragments); */ 
 			
 			 updateCacheKey();
 			 
@@ -1210,14 +1210,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		  }
 	}
 
+
     public void loadFragment( String fragmentId ) throws PortalException {
       try {
       
         layout = (ALFragment) layoutStore.getFragment(person,fragmentId);
         layout.setLayoutManager(this);
-        fragments = (Hashtable) layoutStore.getFragments(person);
+        /*fragments = (Hashtable) layoutStore.getFragments(person);
 		if ( fragments != null && fragments.size() > 0 ) 
-		  layout.setFragments(fragments);
+		  layout.setFragments(fragments);*/
         this.fragmentId = fragmentId;
         // Checking restrictions and move "wrong" nodes to the lost folder
         //moveWrongNodesToLostFolder();
@@ -1231,9 +1232,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       try {
        if ( isLayoutFragment() ) {
         layoutStore.setFragment(person,(ILayoutFragment)layout);
-		fragments = (Hashtable) layoutStore.getFragments(person);
+		/*fragments = (Hashtable) layoutStore.getFragments(person);
 		if ( fragments != null && fragments.size() > 0 ) 
-		  layout.setFragments(fragments);
+		  layout.setFragments(fragments);*/
        }
         updateCacheKey();
       } catch ( Exception e ) {

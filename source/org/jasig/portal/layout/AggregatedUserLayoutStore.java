@@ -2654,9 +2654,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               // Setting node description attributes
               if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER )
                  nodeDesc.setName(rs.getString(7));
-              nodeDesc.setHidden(("Y".equalsIgnoreCase(rs.getString(9))?true:false));
-              nodeDesc.setImmutable(("Y".equalsIgnoreCase(rs.getString(11))?true:false));
-              nodeDesc.setUnremovable(("Y".equalsIgnoreCase(rs.getString(10))?true:false));
+              //nodeDesc.setHidden(("Y".equalsIgnoreCase(rs.getString(9))?true:false));
+              //nodeDesc.setImmutable(("Y".equalsIgnoreCase(rs.getString(11))?true:false));
+              //nodeDesc.setUnremovable(("Y".equalsIgnoreCase(rs.getString(10))?true:false));
+              nodeDesc.setHidden(false);
+              nodeDesc.setImmutable(false);
+              nodeDesc.setUnremovable(false);
               node.setPriority(rs.getInt(12));
 
 

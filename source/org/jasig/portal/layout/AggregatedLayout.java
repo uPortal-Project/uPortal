@@ -37,11 +37,9 @@ package org.jasig.portal.layout;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
-import java.util.Iterator;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
@@ -73,9 +71,6 @@ public class AggregatedLayout implements IAggregatedLayout {
     // The restriction mask
     private int restrictionMask = 0;
 
-    // The IDs and names of the fragments which a user is owner of
-    private Map fragments = null;
-
     // The layout manager
     private IAggregatedUserLayoutManager layoutManager = null;
 
@@ -105,11 +100,6 @@ public class AggregatedLayout implements IAggregatedLayout {
     this.layoutManager = layoutManager;
   }
   
-
-  public void setFragments ( Map fragments ) {
-	this.fragments = fragments;
-  }
-
   public void setLayoutData ( Hashtable layout ) throws PortalException {
     this.layout = layout;
   }
@@ -198,7 +188,7 @@ public class AggregatedLayout implements IAggregatedLayout {
        }
   }
 
-   private void createFragmentList(Document document, Node rootNode) throws PortalException {
+   /*private void createFragmentList(Document document, Node rootNode) throws PortalException {
      try {
       Element alternateLayouts = document.createElement("fragments");
       if ( fragments != null ) {
@@ -233,7 +223,7 @@ public class AggregatedLayout implements IAggregatedLayout {
      } catch ( SAXException saxe ) {
          throw new PortalException(saxe.getMessage());
        }
-   }
+   }*/
 
    /**
      * Build the DOM consistent of folders and channels using the internal representation
@@ -397,7 +387,7 @@ public class AggregatedLayout implements IAggregatedLayout {
            if (nodeId.equals(getRootId())) {
               contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
               // Create a fragment list that the user owns
-              createFragmentList(contentHandler);
+              //createFragmentList(contentHandler);
            }
 
              ALFolder folder = (ALFolder) node;
@@ -538,8 +528,8 @@ public class AggregatedLayout implements IAggregatedLayout {
         Element layoutNode = document.createElement((nodeId.equals(getRootId()))?LAYOUT:FRAGMENT);
         document.appendChild(layoutNode);
         // Create a fragment list which the user owns
-        if (nodeId.equals(getRootId()))
-         createFragmentList(document,layoutNode);
+        /*if (nodeId.equals(getRootId()))
+         createFragmentList(document,layoutNode);*/
         // Build the DOM
         appendDescendants(document,layoutNode,nodeId);
       } catch ( Exception e ) {
