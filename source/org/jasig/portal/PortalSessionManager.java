@@ -226,7 +226,7 @@ public class PortalSessionManager extends HttpServlet
                 /* Assume they meant a multivalued tag, like a checkbox */
 
                 String[] oldValueArray = (String []) parameters.get(partName);
-                String[] valueArray = new String[oldValueArray.length];
+                String[] valueArray = new String[oldValueArray.length+1];
                 for (int i = 0; i < oldValueArray.length; i++) {
                   valueArray[i] = oldValueArray[i];
                 }
@@ -324,7 +324,7 @@ public class PortalSessionManager extends HttpServlet
 
   public String getHeader(String name){ return req.getHeader(name); }
   public Enumeration getHeaders(String name){ return req.getHeaders(name); }
-        public Enumeration getHeaderNames(){ return req.getHeaderNames(); }
+  public Enumeration getHeaderNames(){ return req.getHeaderNames(); }
   public int getIntHeader(String name){ return req.getIntHeader(name); }
 
   public String getMethod(){ return req.getMethod(); }
