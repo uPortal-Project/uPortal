@@ -603,6 +603,7 @@
     <antcall target="deploy"/>   
     <antcall target="db"/>   
     <antcall target="i18n-db"/>   
+    <antcall target="lprop"/>   
     <antcall target="pubchan">
       <param name="channel" value="all"/>
     </antcall>   
@@ -1253,4 +1254,21 @@
       <arg value="${portletApp}"/>
     </java>
   </target>  
+
+<!-- ==================== Lprop Target ================================= -->
+
+<!--
+
+  The "lprop" target runs Ant's Native2ascii to build Unicode-encoded
+  property files from UTF-8 encoded ones.
+
+-->
+
+  <target name="lprop" depends="compile"
+   description="Build locale-dependent property files">
+    <echo message="Building Unicode-encoded property files from UTF-8 encoded ones"/>
+    <native2ascii encoding="UTF-8" src="webpages/stylesheets" dest="${build.home}/WEB-INF/classes"
+      includes="**/*.properties.UTF-8" ext="" />
+  </target>
+
 </project>
