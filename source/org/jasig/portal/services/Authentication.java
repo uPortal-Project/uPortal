@@ -140,7 +140,7 @@ public class Authentication {
             else if (addInfo instanceof ChainingSecurityContext.ChainingAdditionalDescriptor) {
                 // do nothing 
             } else {
-               log.warn("Authentication Service recieved unknown additional descriptor");
+               log.warn("Authentication Service recieved unknown additional descriptor: " + addInfo );
             }
          }
          // Populate the person object using the PersonDirectory if applicable
