@@ -1,5 +1,5 @@
 /**
- * Copyright ‰© 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 
 package org.jasig.portal.i18n;
 
+import java.text.ParseException;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -56,6 +57,7 @@ public class LocaleManager  {
     private Locale   localeFromSessionParameter;
     private Locale[] localesFromBrowserSetting;
     private Locale   localeForAdmin;
+    private Locale[] userLocales;
 
     public LocaleManager() {
 
@@ -287,4 +289,57 @@ public class LocaleManager  {
         }
         return false;
     }
+    
+    /**
+     * Gets the user locale preferences, a sorted list of locales.
+     * @return the user locales.
+     */
+    public Locale[] getUserLocales() {
+        return this.userLocales;
+    }
+    
+    /**
+     * Sets the user locale preferences, a sorted list of locales.
+     * @param userLocales the user locales
+     */
+    public void setUserLocales(Locale[] userLocales) {
+        this.userLocales = userLocales;
+    }
+    
+    /**
+     * Helper method to produce a java.util.Locale object from
+     * a locale string, e.g. en_US or ja_JP
+     * @param localeString, a locale string such as en_US
+     * @return locale, a java.util.Locale object representing the locale string
+     * @throws ParseException
+     */
+    public static Locale parseLocale(String localeString) throws ParseException {
+        String language = null;
+        String country = null;
+        String variant = null;
+        
+        StringTokenizer st = new StringTokenizer(localeString, "_");
+
+        if (st.hasMoreTokens()) {
+            language = st.nextToken();
+        }
+        if (st.hasMoreTokens()) {
+            country = st.nextToken();
+        }
+        if (st.hasMoreTokens()) {
+            variant = st.nextToken();
+        }
+        
+        Locale locale = null;
+        
+        if (variant != null) {
+            locale = new Locale(language, country, variant);
+        } else if (country != null) {
+            locale = new Locale(language, country);
+        } else if (language != null) {
+            locale = new Locale(language);
+        }
+        
+        return locale;
+    }    
 }
