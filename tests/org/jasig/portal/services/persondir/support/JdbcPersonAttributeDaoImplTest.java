@@ -6,111 +6,245 @@
 package org.jasig.portal.services.persondir.support;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.jasig.portal.rdbm.TransientDatasource;
-
 import junit.framework.TestCase;
 
+import org.jasig.portal.rdbm.TransientDatasource;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+
 /**
- * Test the JdbcPersonAttributeDaoImpl against a dummy DataSource.
+ * Test the {@link JdbcPersonAttributeDaoImpl} against a dummy DataSource.
+ * 
  * @author andrew.petro@yale.edu
+ * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  */
 public class JdbcPersonAttributeDaoImplTest extends TestCase {
-
-    /**
-     * The JDBC person attribute dao implementation we are testing.
+    private DataSource testDataSource;
+    
+    /*
+     * @see TestCase#setUp()
      */
-    private JdbcPersonAttributeDaoImpl dao;
-    
-    private DataSource ds;
-    
-    protected void setUp() throws SQLException {
-        this.ds = new TransientDatasource();
+    protected void setUp() throws Exception {
+        super.setUp();
         
+        this.testDataSource = new TransientDatasource();
+        Connection con = testDataSource.getConnection();
         
+        con.prepareStatement("CREATE TABLE user_table " +
+                                  "(netid VARCHAR, " +
+                                  "name VARCHAR, " +
+                                  "email VARCHAR, " +
+                                  "shirt_color VARCHAR)").execute();
+
+        con.prepareStatement("INSERT INTO user_table " +
+                                  "(netid, name, email, shirt_color) " +
+                                  "VALUES ('awp9', 'Andrew', 'andrew.petro@yale.edu', 'blue')").execute();
+
+        con.prepareStatement("INSERT INTO user_table " +
+                                 "(netid, name, email, shirt_color) " +
+                                 "VALUES ('edalquist', 'Eric', 'edalquist@unicon.net', 'blue')").execute();
+
+        con.prepareStatement("INSERT INTO user_table " +
+                                 "(netid, name, email, shirt_color) " +
+                                 "VALUES ('atest', 'Andrew', 'andrew.test@test.net', 'red')").execute();
+        con.close();
+    }
+
+    /*
+     * @see TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        super.tearDown();
         
-        JdbcPersonAttributeDaoImpl impl = 
-            new JdbcPersonAttributeDaoImpl(this.ds, 
-                    "SELECT name, email, shirt_color FROM user_table WHERE netid = ?");
+        Connection con = testDataSource.getConnection();
         
-        Map columnsToAttributes = new HashMap();
-        columnsToAttributes.put("name", "firstName");
+        con.prepareStatement("DROP TABLE user_table").execute();
+        con.prepareStatement("SHUTDOWN").execute();
+
+        con.close();
         
-        Set emailAttributeNames = new HashSet();
-        emailAttributeNames.add("email");
-        emailAttributeNames.add("emailAddress");
-        columnsToAttributes.put("email", emailAttributeNames);
-        columnsToAttributes.put("shirt_color", "dressShirtColor");
-        impl.setColumnsToAttributes(columnsToAttributes);
-        
-        this.dao = impl;
+        this.testDataSource = null;
     }
     
-    protected void tearDown() throws SQLException {
-       
-    }
-    
-    /**
-     * Test that the implementation properly looks up attributes for a user.
-     * @throws SQLException
-     */
-   public void testAttributesForUser() throws SQLException {
-       
-       //  set up the datasource
-       Connection con = this.ds.getConnection();
-       
-       con.prepareStatement("CREATE TABLE user_table " +
-            "(netid VARCHAR, " +
-            "name VARCHAR, " +
-            "email VARCHAR, " +
-            "shirt_color VARCHAR)").execute();
-       
-       con.prepareStatement("INSERT INTO user_table " +
-            "(netid, name, email, shirt_color) " +
-            "VALUES ('awp9', 'Andrew', 'andrew.petro@yale.edu', 'blue')").execute();
-       
-       con.close();
-       
-       try {
-           Map attribs = this.dao.attributesForUser("awp9");
-           assertEquals("andrew.petro@yale.edu", attribs.get("email"));
-           assertEquals("andrew.petro@yale.edu", attribs.get("emailAddress"));
-           assertEquals("blue", attribs.get("dressShirtColor"));
-           assertNull(attribs.get("shirt_color"));
-           assertEquals("Andrew", attribs.get("firstName"));
-       } finally {
-           // reset the database
-           con = this.ds.getConnection();
-            
-            con.prepareStatement("DROP TABLE user_table").execute();
-            
-            
-            con.close();
-       }
 
-   }
-   
    /**
     * Test that the implementation properly reports the attribute names it
     * expects to map.
     */
-   public void testAttributeNames() {
+   public void testPossibleUserAttributeNames() {
+       final String queryAttr = "uid";
+       final List queryAttrList = new LinkedList();
+       queryAttrList.add(queryAttr);
+
+       JdbcPersonAttributeDaoImpl impl = 
+           new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
+               "SELECT name, email, shirt_color FROM user_table WHERE netid = ?");
+       
+       Map columnsToAttributes = new HashMap();
+       columnsToAttributes.put("name", "firstName");
+
+       Set emailAttributeNames = new HashSet();
+       emailAttributeNames.add("email");
+       emailAttributeNames.add("emailAddress");
+       columnsToAttributes.put("email", emailAttributeNames);
+       columnsToAttributes.put("shirt_color", "dressShirtColor");
+       impl.setColumnsToAttributes(columnsToAttributes);
+
        Set expectedAttributeNames = new HashSet();
        expectedAttributeNames.add("firstName");
        expectedAttributeNames.add("email");
        expectedAttributeNames.add("emailAddress");
        expectedAttributeNames.add("dressShirtColor");
        
-       Set attributeNames = this.dao.getAttributeNames();
+       Set attributeNames = impl.getPossibleUserAttributeNames();
        assertEquals(attributeNames, expectedAttributeNames);
    }
+
+    /**
+     * Test for a query with a single attribute
+     */
+    public void testSingleAttrQuery() {
+        final String queryAttr = "uid";
+        final List queryAttrList = new LinkedList();
+        queryAttrList.add(queryAttr);
+
+        JdbcPersonAttributeDaoImpl impl = 
+            new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
+                "SELECT name, email, shirt_color FROM user_table WHERE netid = ?");
+
+        impl.setDefaultAttributeName(queryAttr);
+        
+        Map columnsToAttributes = new HashMap();
+        columnsToAttributes.put("name", "firstName");
+
+        Set emailAttributeNames = new HashSet();
+        emailAttributeNames.add("email");
+        emailAttributeNames.add("emailAddress");
+        columnsToAttributes.put("email", emailAttributeNames);
+        columnsToAttributes.put("shirt_color", "dressShirtColor");
+        impl.setColumnsToAttributes(columnsToAttributes);
+
+        Map attribs = impl.getUserAttributes("awp9");
+        assertEquals("andrew.petro@yale.edu", attribs.get("email"));
+        assertEquals("andrew.petro@yale.edu", attribs.get("emailAddress"));
+        assertEquals("blue", attribs.get("dressShirtColor"));
+        assertNull(attribs.get("shirt_color"));
+        assertEquals("Andrew", attribs.get("firstName"));
+    }
+    
+    
+    /**
+     * Test case for a query that needs multiple attributes to complete and
+     * more attributes than are needed to complete are passed to it.
+     */
+    public void testMultiAttrQuery() {
+        final String queryAttr1 = "uid";
+        final String queryAttr2 = "shirtColor";
+        final List queryAttrList = new LinkedList();
+        queryAttrList.add(queryAttr1);
+        queryAttrList.add(queryAttr2);
+
+        JdbcPersonAttributeDaoImpl impl = 
+            new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
+                "SELECT name, email FROM user_table WHERE netid = ? AND shirt_color = ?");
+
+        Map columnsToAttributes = new HashMap();
+        columnsToAttributes.put("name", "firstName");
+
+        Set emailAttributeNames = new HashSet();
+        emailAttributeNames.add("email");
+        emailAttributeNames.add("emailAddress");
+        columnsToAttributes.put("email", emailAttributeNames);
+        impl.setColumnsToAttributes(columnsToAttributes);
+
+        Map queryMap = new HashMap();
+        queryMap.put(queryAttr1, "awp9");
+        queryMap.put(queryAttr2, "blue");
+        queryMap.put("Name", "John");
+
+        Map attribs = impl.getUserAttributes(queryMap);
+        assertEquals("andrew.petro@yale.edu", attribs.get("email"));
+        assertEquals("andrew.petro@yale.edu", attribs.get("emailAddress"));
+        assertEquals("Andrew", attribs.get("firstName"));
+    }
+
+    
+    /**
+     * A query that needs mulitple attributes to complete but the needed
+     * attributes aren't passed to it.
+     */
+    public void testInsufficientAttrQuery() {
+        final String queryAttr1 = "uid";
+        final String queryAttr2 = "shirtColor";
+        final List queryAttrList = new LinkedList();
+        queryAttrList.add(queryAttr1);
+        queryAttrList.add(queryAttr2);
+
+        JdbcPersonAttributeDaoImpl impl = 
+            new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
+                "SELECT name, email FROM user_table WHERE netid = ? AND shirt_color = ?");
+
+        Map columnsToAttributes = new HashMap();
+        columnsToAttributes.put("name", "firstName");
+
+        Set emailAttributeNames = new HashSet();
+        emailAttributeNames.add("email");
+        emailAttributeNames.add("emailAddress");
+        columnsToAttributes.put("email", emailAttributeNames);
+        impl.setColumnsToAttributes(columnsToAttributes);
+
+        Map queryMap = new HashMap();
+        queryMap.put(queryAttr1, "awp9");
+        queryMap.put("Name", "John");
+
+        Map attribs = impl.getUserAttributes(queryMap);
+        assertNull(attribs);
+    }
+    
+    /**
+     * Test for a query with a single attribute
+     */
+    public void testMultiPersonQuery() {
+        final String queryAttr = "shirt";
+        final List queryAttrList = new LinkedList();
+        queryAttrList.add(queryAttr);
+
+        JdbcPersonAttributeDaoImpl impl = 
+            new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
+                "SELECT netid, name, email FROM user_table WHERE shirt_color = ?");
+
+        Map columnsToAttributes = new HashMap();
+        columnsToAttributes.put("netid", "uid");
+        columnsToAttributes.put("name", "firstName");
+
+        Set emailAttributeNames = new HashSet();
+        emailAttributeNames.add("email");
+        emailAttributeNames.add("emailAddress");
+        columnsToAttributes.put("email", emailAttributeNames);
+        
+        impl.setColumnsToAttributes(columnsToAttributes);
+
+        Map queryMap = new HashMap();
+        queryMap.put(queryAttr, "blue");
+        
+        try {
+            Map attribs = impl.getUserAttributes(queryMap);
+        } 
+        catch (IncorrectResultSizeDataAccessException irsdae) {
+            // good, exception thrown for multiple results
+            return;
+        }
+        
+        fail("JdbcPersonAttributeDao should have thrown IncorrectResultSizeDataAccessException for multiple results");
+    }
 
 }

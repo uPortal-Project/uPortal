@@ -7,7 +7,9 @@ package  org.jasig.portal.security.provider;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
@@ -109,6 +111,21 @@ public class PersonImpl implements IPerson {
     m_Attributes.put(key, value);
     if (key.equals(IPerson.USERNAME)){
        m_eid = new EntityIdentifier(String.valueOf(value),IPerson.class);
+    }
+  }
+  
+  /**
+   * Sets the specified attributes. Uses {@link #setAttribute(String, Object)}
+   * to set each.
+   *  
+   * @see org.jasig.portal.security.IPerson#setAttributes(java.util.Map)
+   */
+  public void setAttributes (final Map attrs) {
+    for (final Iterator attrItr = attrs.keySet().iterator(); attrItr.hasNext();) {
+      final String key = (String)attrItr.next();
+      final Object val = attrs.get(key);
+      
+      this.setAttribute(key, val);
     }
   }
 

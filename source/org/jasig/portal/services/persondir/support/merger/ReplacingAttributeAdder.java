@@ -14,7 +14,7 @@ import java.util.Map;
  * @version $Revision$ $Date$
  */
 public class ReplacingAttributeAdder 
-    implements AttributeMerger {
+    implements IAttributeMerger {
 
     /**
      * Simply puts all the values in toConsider into toModify and returns toModify.

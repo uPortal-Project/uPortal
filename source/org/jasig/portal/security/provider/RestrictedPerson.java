@@ -6,6 +6,7 @@
 package org.jasig.portal.security.provider;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
@@ -56,6 +57,10 @@ public class RestrictedPerson implements IPerson {
 
     public void setAttribute(String key, Object value) {
         this.person.setAttribute(key, value);
+    }
+    
+    public void setAttributes(Map attrs) {
+        this.person.setAttributes(attrs);
     }
 
     public void setFullName(String sFullName) {

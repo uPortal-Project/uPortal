@@ -13,8 +13,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.services.persondir.IPersonDirectory;
+import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 import org.jasig.portal.utils.SoftHashMap;
 
 
@@ -31,11 +31,11 @@ public class PersonDirPropertyFinder
     private static final Log log = LogFactory.getLog(PersonDirPropertyFinder.class);
     
     private Class person = org.jasig.portal.security.IPerson.class;
-    private IPersonDirectory pd;
+    private IPersonAttributeDao pa;
     private SoftHashMap cache;
 
     public PersonDirPropertyFinder() {
-        pd = PersonDirectory.getInterfaceInstance();
+        pa = new SpringPersonAttributeDaoImpl();
         cache = new SoftHashMap(120);
     }
 
@@ -70,10 +70,10 @@ public class PersonDirPropertyFinder
     }
     protected Hashtable getPropertiesHash(EntityIdentifier entityID) {
         Map ht;
-        if ((ht = (Hashtable)cache.get(entityID.getKey())) == null) {
+        if ((ht = (Map)cache.get(entityID.getKey())) == null) {
             ht = new Hashtable(0);
             try {
-                ht = pd.getUserDirectoryInformation(entityID.getKey());
+                ht = pa.getUserAttributes(entityID.getKey());
             } catch (Exception e) {
                 log.error("Error getting properties hash for entityID [" + entityID + "]", e);
             }

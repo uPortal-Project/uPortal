@@ -12,7 +12,7 @@ import java.util.Map;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public interface AttributeMerger {
+public interface IAttributeMerger {
 
     /**
      * Modify the "toModify" argument in consideration of the "toConsider" 

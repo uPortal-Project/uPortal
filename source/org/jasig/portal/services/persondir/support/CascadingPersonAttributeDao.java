@@ -16,19 +16,24 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.persondir.support.merger.IAttributeMerger;
-import org.jasig.portal.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdder;
+
 
 /**
- * A {@link IPersonAttributeDao} implementation which iterates over children 
- * IPersonAttributeDaos and merges their reported attributes in a configurable
- * way. The default merger is {@link MultivaluedAttributeMerger}.
+ * This {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao}
+ * implementation iterates through an ordered {@link java.util.List} of
+ * {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao} impls,
+ * taking the resulting Map from each and passing it on as the query seed for
+ * the next dao. This may cause problems for multi-valued attributes since the
+ * current dao implementations do not understand values of type {@link java.util.List}.
+ * <br>
+ * The default merger is {@link ReplacingAttributeAdder}
  * 
- * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$ $Date$
+ * @version $Revision $
  */
-public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
-    private static final Log LOG = LogFactory.getLog(MergingPersonAttributeDaoImpl.class);
+public class CascadingPersonAttributeDao extends AbstractDefaultQueryPersonAttributeDao {
+    private static final Log LOG = LogFactory.getLog(CascadingPersonAttributeDao.class);
     
     /**
      * A List of child IPersonAttributeDao instances which we will poll in order.
@@ -38,7 +43,7 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
     /**
      * Strategy for merging together the results from successive PersonAttributeDaos.
      */
-    private IAttributeMerger attrMerger = new MultivaluedAttributeMerger();
+    private IAttributeMerger attrMerger = new ReplacingAttributeAdder();
     
     /**
      * True if we should catch, log, and ignore Throwables propogated by
@@ -62,7 +67,7 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
             throw new IllegalStateException("No IPersonAttributeDaos have been specified.");
         
         
-        Map resultAttributes = new HashMap();
+        Map resultAttributes = new HashMap(seed);
         
         //Iterate through the configured IPersonAttributeDaos, querying each.
         for (final Iterator iter = this.personAttributeDaos.iterator(); iter.hasNext();) {
@@ -70,7 +75,7 @@ public class MergingPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAtt
             
             Map currentAttributes = new HashMap();
             try {
-                currentAttributes = currentlyConsidering.getUserAttributes(seed);
+                currentAttributes = currentlyConsidering.getUserAttributes(resultAttributes);
             }
             catch (final RuntimeException rte) {
                 final String msg = "Exception thrown by DAO: " + currentlyConsidering;

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 
 /**
- * Abstract test for the AttributeMerger interface.
+ * Abstract test for the IAttributeMerger interface.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
@@ -44,6 +44,6 @@ public abstract class AttributeMergerAbstractTest extends TestCase {
         fail("Should have thrown IAE on null argument.");
     }
     
-    protected abstract AttributeMerger getAttributeMerger();
+    protected abstract IAttributeMerger getAttributeMerger();
     
 }

@@ -41,7 +41,7 @@ public class ReplacingAttributeAdderTest extends AttributeMergerAbstractTest {
     /* (non-Javadoc)
      * @see org.jasig.portal.services.persondir.support.merger.AttributeMergerAbstractTest#getAttributeMerger()
      */
-    protected AttributeMerger getAttributeMerger() {
+    protected IAttributeMerger getAttributeMerger() {
         return new ReplacingAttributeAdder();
     }
 

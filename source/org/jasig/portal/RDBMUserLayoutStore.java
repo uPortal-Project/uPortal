@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.xml.transform.Transformer;
@@ -22,13 +23,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
@@ -3282,6 +3283,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       public Object getAttribute (String key) {return null;}
       public Object[] getAttributeValues (String key) {return null;}
       public void setAttribute (String key, Object value) {}
+      public void setAttributes (Map attrs) {}
 
       public Enumeration getAttributes () {return null;}
       public Enumeration getAttributeNames () {return null;}

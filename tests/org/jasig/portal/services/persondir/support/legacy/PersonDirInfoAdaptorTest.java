@@ -10,7 +10,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 /**
- * Testcase for the adaptor from PersonDirInfo JavaBeans to PersonAttributeDao.
+ * Testcase for the adaptor from PersonDirInfo JavaBeans to IPersonAttributeDao.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
@@ -34,12 +34,11 @@ public class PersonDirInfoAdaptorTest extends TestCase {
 
         PersonDirInfoAdaptor pdiAdaptor = new PersonDirInfoAdaptor(pdi);
         
-        Map attributes = pdiAdaptor.attributesForUser("awp9");
+        Map attributes = pdiAdaptor.getUserAttributes("awp9");
         
         assertFalse(attributes.isEmpty());
         assertEquals("andrew.petro@yale.edu", attributes.get("emailfromldap"));
         
     }
-    
 }
 

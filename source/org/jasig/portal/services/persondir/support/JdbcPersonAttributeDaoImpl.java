@@ -8,10 +8,13 @@ package org.jasig.portal.services.persondir.support;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,204 +25,223 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.MappingSqlQuery;
 
 /**
- * PersonAttributeDao implementation that maps from column names in the
- * single-row result of a SQL query against a DataSource to attribute names. You
- * must set a Map from column names to attribute names and only column names
+ * A {@link org.jasig.portal.services.persondir.support.IPersonAttributeDao}
+ * implementation that maps from column names in the result of a SQL query
+ * to attribute names.<br>
+ * You must set a Map from column names to attribute names and only column names
  * appearing as keys in that map will be used.
+ * <br>
  * 
  * @author andrew.petro@yale.edu
+ * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  */
-public class JdbcPersonAttributeDaoImpl extends MappingSqlQuery implements
-        PersonAttributeDao {
+public class JdbcPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
+    /**
+     * {@link Map} from column names to attribute names.
+     */
+    private Map attributeMappings = Collections.EMPTY_MAP;
+    
+    /**
+     * {@link Set} of attributes that may be provided for a user.
+     */
+    private Set userAttributes = Collections.EMPTY_SET;
+    
+    /**
+     * {@link List} of attributes to use in the query.
+     */
+    private List queryAttributes = Collections.EMPTY_LIST;
+    
+    /**
+     * The {@link MappingSqlQuery} to use to get attributes.
+     */
+    private PersonAttributeMappingQuery query;
+        
 
     /**
-     * A Map from String column names to Sets of Strings 
-     * representing the names of the uPortal attributes which should be set to the
-     * value of the specified column.
+     * Create the DAO, configured with the needed query information.
+     * 
+     * @param ds The {@link DataSource} to run the queries against.
+     * @param attrList The list of arguments for the query.
+     * @param sql The SQL query to run.
      */
-    private Map columnsToAttributes = new HashMap();
-    
-    /** 
-     * The Set of uPortal attribute names this instance will map. 
-     * This lets us avoid creating the Set every time getAttributeNames is called. 
-     */
-    private Set attrNames;
-    
+    public JdbcPersonAttributeDaoImpl(final DataSource ds, final List attrList, final String sql) {
+        if (attrList == null)
+            throw new IllegalArgumentException("attrList cannot be null");
+        
+        //Defensive copy of the query attribute list
+        this.queryAttributes = new ArrayList(attrList);
+        this.queryAttributes = Collections.unmodifiableList(this.queryAttributes);
+        
+        this.query = new PersonAttributeMappingQuery(ds, sql);
+    }
+
 
     /**
-     * Instantiate the query, providing a DataSource against which the query
-     * will run and the SQL representing the query, which should take exactly
-     * one parameter: the unique ID of the user.
+     * Returned {@link Map} will have values of {@link String} or a
+     * {@link List} of {@link String}.
      * 
-     * @param ds
-     * @param sql
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
-    public JdbcPersonAttributeDaoImpl(DataSource ds, String sql) {
-        super(ds, sql);
-        declareParameter(new SqlParameter("uid", Types.VARCHAR));
-        compile();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
-     */
-    public Map attributesForUser(String uid) {
-        if (uid == null)
-            throw new IllegalArgumentException("Illegal to ask for attributes for the null user.");
-        Object uniqueResult = DataAccessUtils.uniqueResult(this.execute(uid));
-        if (uniqueResult == null)
-            return new HashMap();
-        return (Map) uniqueResult;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
-     */
-    public Set getAttributeNames() {
-        return Collections.unmodifiableSet(this.attrNames);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.jdbc.object.MappingSqlQuery#mapRow(java.sql.ResultSet,
-     *         int)
-     */
-    protected Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Map attributeNamesToValues = new HashMap();
-
-        for (Iterator cols = this.columnsToAttributes.keySet().iterator(); cols
-                .hasNext();) {
-            String columnName = (String) cols.next();
-
-            if (columnName != null && !"".equals(columnName)) {
-                String attributeValue = null;
-                try {
-                    attributeValue = rs.getString(columnName);
-                } catch (SQLException sqle) {
-                    super.logger.error("Was unable to read attribute for column ["
-                            + columnName + "]");
-                    throw sqle;
-                }
-
-                // exclude null attribute values
-                if (attributeValue != null) {
-                    /*
-                     * If the attribute has been mapped, add it under the mapped
-                     * name(s). If it was not mapped, add it under the column name.
-                     */
-                    
-                    Set attributeNames = (Set) this.columnsToAttributes
-                            .get(columnName);
-                    if (attributeNames == null)
-                        attributeNames = Collections.singleton(columnName);
-                    
-                    for (Iterator iter = attributeNames.iterator(); iter.hasNext();){
-                        String attributeName = (String) iter.next();
-                        attributeNamesToValues.put(attributeName, attributeValue);
-                    }
-
-                }
-            }
-
+    public Map getUserAttributes(final Map seed) {
+        if (seed == null)
+            throw new IllegalArgumentException("The query seed Map cannot be null.");
+        
+        //Ensure the data needed to run the query is avalable
+        if (!((queryAttributes != null && seed.keySet().containsAll(queryAttributes)) || (queryAttributes == null && seed.containsKey(this.getDefaultAttributeName())))) {
+            return null;
         }
-        return attributeNamesToValues;
+        
+        //Can't just to a toArray here since the order of the keys in the Map
+        //may not match the order of the keys in the List and it is important to
+        //the query.
+        Object[] args = new Object[this.queryAttributes.size()];
+        
+        for (int index = 0; index < args.length; index++) {
+            final String attrName = (String)this.queryAttributes.get(index);
+            args[index] = seed.get(attrName);
+        }
+            
+        final List queryResults = this.query.execute(args);
+        final Map uniqueResult = (Map)DataAccessUtils.uniqueResult(queryResults);
+
+        //If it's null no user was found, correct behavior is to return null
+        return uniqueResult;
+    }
+    
+    /* 
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
+     */
+    public Set getPossibleUserAttributeNames() {
+        return this.userAttributes;
     }
 
     /**
      * Get the Map from non-null String column names to Sets of non-null Strings
      * representing the names of the uPortal attributes to be initialized from
      * the specified column.
-     * @return Returns the columnsToAttributes mapping.
+     * @return Returns the attributeMappings mapping.
      */
     public Map getColumnsToAttributes() {
-        return this.columnsToAttributes;
+        return this.attributeMappings;
     }
 
     /**
-     * Set the Map from column names to Sets of Strings that are the names
-     * of the one or more uPortal attributes. Column names that do not appear
-     * as keys in this map will be mapped to attribute names of the same value as
-     * the column name. As a convenience, the Set received as an argument by
-     * this method may map to Strings representing the name of the single
-     * uPortal attribute to be set from the column name rather than to Sets containing
-     * that one String.  This method translates to the Map expected by internal
-     * consumers of this property.  
+     * Set the {@link Map} to use for mapping from a column name to a attribute
+     * name or {@link Set} of attribute names. Column names that are specified
+     * but have null mappings will use the column name for the attribute name.
+     * Column names that are not specified as keys in this {@link Map} will be
+     * ignored.
+     * <br>
+     * The passed {@link Map} must have keys of type {@link String} and values
+     * of type {@link String} or a {@link Set} of {@link String}.
      * 
-     * @param columnsToAttributesArg Map from non-null String column names 
-     * to non-null String uPortal attribute names or Lists of at least one such String.
-     * @throws IllegalArgumentException if the Map has non-Strings as keys or
-     * if it has entry values that are neither Strings nor Sets of one or more Strings.
+     * @param columnsToAttributesMap {@link Map} from column names to attribute names.
+     * @throws IllegalArgumentException If the {@link Map} doesn't follow the rules stated above.
+     * @see MultivaluedPersonAttributeUtils#parseAttributeToAttributeMapping(Map)
      */
-    public void setColumnsToAttributes(Map columnsToAttributesArg) {
-        /*
-         * This implementation validates and makes a defensive copy of the
-         * columnsToAttributes map argument.
+    public void setColumnsToAttributes(final Map columnsToAttributesMap) {
+        if (columnsToAttributesMap != null) {
+            this.attributeMappings = MultivaluedPersonAttributeUtils.parseAttributeToAttributeMapping(columnsToAttributesMap);
+            final Collection userAttributeCol = MultivaluedPersonAttributeUtils.flattenCollection(this.attributeMappings.values()); 
+            
+            this.userAttributes = Collections.unmodifiableSet(new HashSet(userAttributeCol));
+        }
+        else {
+            this.attributeMappings = null;
+            this.userAttributes = Collections.EMPTY_SET;
+        }
+    }
+
+    /**
+     * 
+     * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
+     * @version $Revision $
+     */
+    private class PersonAttributeMappingQuery extends MappingSqlQuery {
+        /**
+         * Instantiate the query, providing a DataSource against which the query
+         * will run and the SQL representing the query, which should take exactly
+         * one parameter: the unique ID of the user.
+         * 
+         * @param ds The data source to use for running the query against.
+         * @param sql The SQL to run against the data source.
          */
-        Map internalColumnsToAttributes = new HashMap();
-        if (columnsToAttributesArg == null)
-            throw new IllegalArgumentException("Cannot set the mapping from " +
-                    "column names to attributes to be null.");
-        for (Iterator iter = columnsToAttributesArg.keySet().iterator(); iter.hasNext();){
+        public PersonAttributeMappingQuery(final DataSource ds, final String sql) {
+            super(ds, sql);
             
-            // validate the key
-            Object key = iter.next();
-            if (key == null)
-                throw new IllegalArgumentException("The map from column names to" +
-                        " uPortal attributes must not have any null keys.");
-            if (! (key instanceof String))
-                throw new IllegalArgumentException("The map from column names to" +
-                        " uPortal attributes must not have any non-String keys.  The key ["
-                        + key + " is of type [" + key.getClass().getName() + "] which is not a String.");
-            
-            // validate the value
-            Object value = columnsToAttributesArg.get(key);
-            if (value == null)
-                throw new IllegalArgumentException("Null must not appear as the" +
-                        "value of any key-value pair in the columnsToAttributes map.  " +
-                        "However, null was the value for the key [" + key + "]");
-            if (value instanceof String) {
-                // translate to a Set containing the String
-                value = Collections.singleton(value);
-            } else if (value instanceof Set) {
-                Set valueAsSet = (Set) value;
-                if (valueAsSet.isEmpty()) {
-                    throw new IllegalArgumentException("columnsToAttributes mapping illegal: " +
-                            "Key [" + key + "] maps to empty set." +
-                            " Keys must map to either a non-null String or a " +
-                            "non-empty Set of non-null Strings.");
+            //Assume to parameters needed if the query attribute list is null
+            if (queryAttributes != null) {
+                //Configures the SQL parameters, everything is assumed to be VARCHAR
+                for (final Iterator attrNames = queryAttributes.iterator(); attrNames.hasNext(); ) {
+                    final String attrName = (String)attrNames.next();
+                    this.declareParameter(new SqlParameter(attrName, Types.VARCHAR));
                 }
-            } else {
-                throw new IllegalArgumentException("columnsToAttributes mapping illegal: " +
-                        "Key [" + key + "] maps to an object that is neither a String nor  Set:" +
-                                " it is of type [" + value.getClass().getName() + 
-                                "], with String representation " + value);
+            }
+
+            //One time compilation of the query
+            this.compile();
+        }
+        
+        /**
+         * How attribute name mapping works:
+         * If the column is mapped use the mapped name(s)<br>
+         * If the column is listed and not mapped the column name<br>
+         * 
+         * @see org.springframework.jdbc.object.MappingSqlQuery#mapRow(java.sql.ResultSet, int)
+         */
+        protected Object mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+            final Map rowResults = new HashMap();
+            
+            //Iterates through any mapped columns that did appear in the column list from the result set
+            //this will probably throw an exception every time since the column won't be found
+            for (final Iterator columnNameItr = attributeMappings.keySet().iterator(); columnNameItr.hasNext(); ) {
+                final String columnName = (String)columnNameItr.next();
+                
+                this.addMappedAttributes(rs, columnName, rowResults);
+            }
+
+            return rowResults;
+        }
+
+
+        /**
+         * Tries to get the attributes specified for the column, determin the
+         * mapping for the column and add it to the rowResults {@link Map}.
+         * 
+         * @param rs The {@link ResultSet} to get the attribute value from.
+         * @param columnName The name of the column to get the attribute value from.
+         * @param rowResults The {@link Map} to add the mapped attribute to.
+         * @throws SQLException If there is a problem retrieving the value from the {@link ResultSet}.
+         */
+        private void addMappedAttributes(final ResultSet rs, final String columnName, final Map rowResults) throws SQLException {
+            if (columnName == null || columnName.length() <= 0)
+                throw new IllegalArgumentException("columnName cannot be null and must have length >= 0");
+            
+            String attributeValue = null;
+            
+            //Get the database value
+            try {
+                attributeValue = rs.getString(columnName);
+            }
+            catch (SQLException sqle) {
+                super.logger.error("Was unable to read attribute for column [" + columnName + "]");
+                throw sqle;
             }
             
-            internalColumnsToAttributes.put(key, value);
-        }
-        
-        this.columnsToAttributes = internalColumnsToAttributes;
-        this.updateAttrNameSet();
-    }
-
-    /**
-     * Create and store a Set of the uPortal attribute names we will map.
-     * This allows us to avoid doing it for every getAttributeNames call.
-     */
-    private void updateAttrNameSet() {
-        Set attributeNames = new HashSet();
-        
-        for (final Iterator attrNameSets = this.columnsToAttributes.values().iterator(); attrNameSets.hasNext(); ) {
-            final Set attrNameSet = (Set)attrNameSets.next();
+            //See if the column is mapped
+            Set attributeNames = (Set)attributeMappings.get(columnName);
             
-            attributeNames.addAll(attrNameSet);
+            //No mapping was found, just use the column name
+            if (attributeNames == null)
+                attributeNames = Collections.singleton(columnName);
+            
+            //Run through the mapped attribute names
+            for (final Iterator attrNameItr = attributeNames.iterator(); attrNameItr.hasNext();){
+                final String attributeName = (String)attrNameItr.next();
+
+                MultivaluedPersonAttributeUtils.addResult(rowResults, attributeName, attributeValue);
+            }
         }
-        this.attrNames = attributeNames;
     }
 }

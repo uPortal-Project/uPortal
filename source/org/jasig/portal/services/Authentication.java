@@ -21,6 +21,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -111,7 +113,8 @@ public class Authentication {
          // Populate the person object using the PersonDirectory if applicable
          if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
             // Retrieve all of the attributes associated with the person logging in
-            Map attribs = PersonDirectory.getInterfaceInstance().getUserDirectoryInformation((String)person.getAttribute(IPerson.USERNAME));
+            IPersonAttributeDao pa = new SpringPersonAttributeDaoImpl();
+            Map attribs = pa.getUserAttributes((String)person.getAttribute(IPerson.USERNAME));
             // Add each of the attributes to the IPerson
             Iterator en = attribs.keySet().iterator();
             while (en.hasNext()) {
@@ -157,8 +160,7 @@ public class Authentication {
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
-         PersonDirectory.getInterfaceInstance().cachePerson(
-                 (String) person.getAttribute(IPerson.USERNAME), person);
+         //TODO add IPerson cache
          
          // Record the successful authentication
          StatsRecorder.recordLogin(person);

@@ -8,6 +8,7 @@ package org.jasig.portal.security;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.security.provider.RestrictedPerson;
 
 /**
  * Creates a person.
@@ -64,6 +65,16 @@ public class PersonFactory {
         person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person));
         person.setSecurityContext(InitialSecurityContextFactory.getInitialContext("root"));
         return person;
+    }
+    
+    /**
+     * Creates a <i>restricted</i> user.
+     * @return <i>restricted</i> user
+     */
+    public static RestrictedPerson createRestrictedPerson() {
+        IPerson person = createPerson();
+        
+        return new RestrictedPerson(person);
     }
     
 }

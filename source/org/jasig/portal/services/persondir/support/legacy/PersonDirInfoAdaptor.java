@@ -5,8 +5,10 @@
 
 package org.jasig.portal.services.persondir.support.legacy;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,187 +20,219 @@ import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.rdbm.RDBMServicesDataSource;
+import org.jasig.portal.services.persondir.support.AbstractDefaultQueryPersonAttributeDao;
+import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
-import org.jasig.portal.services.persondir.support.PersonAttributeDao;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
- * Adapts from a PersonDirInfo to a PersonAttributeDao.
+ * Adapts from a {@link PersonDirInfo} to a {@link IPersonAttributeDao}.
+ * 
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public class PersonDirInfoAdaptor implements PersonAttributeDao {
-
-    private Log log = LogFactory.getLog(getClass());
+public class PersonDirInfoAdaptor implements IPersonAttributeDao {
+    private static final Log LOG = LogFactory.getLog(PersonDirInfoAdaptor.class);
+    
+    //Needed since our Jdbc Dao needs an attribute to map queries with 
+    private static final String QUERY_ATTRIBUTE = "uid";
+    private static final List QUERY_ATTRIBUTE_LIST = Collections.singletonList(QUERY_ATTRIBUTE);
     
     /**
-     * Delegate PersonAttributeDao which we construct from the PersonDirInfo
+     * Delegate IPersonAttributeDao which we construct from the PersonDirInfo
      * provided at construction.
      */
-    private PersonAttributeDao delegate;
+    private IPersonAttributeDao delegate;
     
     /**
-     * Instantiate this class implementing the PersonAttributeDao defined
+     * Instantiate this class implementing the IPersonAttributeDao defined
      * by the given PersonDirInfo. Throws IllegalArgumentException if the
-     * given info doesn't define a valid PersonAttributeDao (and this class
+     * given info doesn't define a valid IPersonAttributeDao (and this class
      * succeeds in detecting the problem).
+     * 
      * @param info PersonDirInfo defining the attribute source we implement
      * @throws IllegalArgumentException
      */
-    public PersonDirInfoAdaptor(PersonDirInfo info){
-        if (this.log.isTraceEnabled())
-            this.log.trace("entering PersonDirInfoAdaptor(" + info + ")");
-        if (info == null)
-            throw new IllegalArgumentException("Cannot adapt a null PersonDirInfo.");
+    public PersonDirInfoAdaptor(final PersonDirInfo info) {
+        if (LOG.isTraceEnabled())
+            LOG.trace("entering PersonDirInfoAdaptor(" + info + ")");
         
-        String validityMessage = info.validate();
+        if (info == null)
+            throw new IllegalArgumentException("info cannot be null.");
+        
+        final String validityMessage = info.validate();
         if (validityMessage != null) {
-            throw new IllegalArgumentException("The PersonDirInfo to be adapted " +
-                    "had illegal state: " + validityMessage);
+            throw new IllegalArgumentException("The PersonDirInfo to be adapted has illegal state: " + validityMessage);
         }
         
         if (info.isJdbc()) {
-            this.delegate = jdbcDao(info);
-        } else if (info.isLdap()) {
-           this.delegate = ldapDao(info);
-        } else {
-            throw new IllegalArgumentException("Info received was neither a JDBC " +
-                    "nor an LDAP.  I can't adapt it:" + info);
+            this.delegate = this.jdbcDao(info);
         }
-        if (this.log.isTraceEnabled())
-            this.log.trace("constructed " + this);
+        else if (info.isLdap()) {
+            this.delegate = this.ldapDao(info);
+        }
+        else {
+            throw new IllegalArgumentException("Provided PersonDirInfo is not JDBC or LDAP, unable to adapat:" + info);
+        }
+        
+        if (this.delegate == null)
+            throw new IllegalStateException("There was an unknown problem creating the IPersonAttributeDao delegate.");
+        
+        if (this.delegate instanceof AbstractDefaultQueryPersonAttributeDao) {
+            ((AbstractDefaultQueryPersonAttributeDao)this.delegate).setDefaultAttributeName(QUERY_ATTRIBUTE);
+        }
+        
+        if (LOG.isTraceEnabled())
+            LOG.trace("constructed " + this);
+    }
+    
+    /*
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getDefaultAttributeName()
+     */
+    public String getDefaultAttributeName() {
+        return QUERY_ATTRIBUTE;
+    }
+    
+    /*
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
+     */
+    public Set getPossibleUserAttributeNames() {
+        return this.delegate.getPossibleUserAttributeNames();
+    }
+    
+    /*
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
+     */
+    public Map getUserAttributes(Map seed) {
+        return this.delegate.getUserAttributes(seed);
+    }
+    
+    /*
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.lang.String)
+     */
+    public Map getUserAttributes(String uid) {
+        return this.delegate.getUserAttributes(uid);
+    }
+    
+    /* 
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("PersonDirInfoAdaptor: delegate=[" + this.delegate + "]");
+        return sb.toString();
     }
     
     /**
-     * Obtain a JDBCPersonAttributeDaoImpl for the given PersonDirInfo.
-     * @param info - a JDBC persondirinfo
-     * @return - a JDBCPersonAttributeDaoImpl
+     * Obtain a {@link JdbcPersonAttributeDaoImpl} for the given {@link PersonDirInfo}.
+     * 
+     * @param info The {@link PersonDirInfo} to use as a basis for the DAO
+     * @return A fully configured {@link JdbcPersonAttributeDaoImpl}
      */
-    private PersonAttributeDao jdbcDao(PersonDirInfo info) {
-        
-        String sql = info.getUidquery();
+    private IPersonAttributeDao jdbcDao(final PersonDirInfo info) {
+        final String sql = info.getUidquery();
         
         // determine where to get our DataSource
         DataSource source = null;
-        String dsRef = info.getResRefName();
-        if (dsRef != null && !"".equals(dsRef)){
+        
+        final String dsRefName = info.getResRefName();
+        if (dsRefName != null && dsRefName.length() > 0) {
             // get a DataSource from RDBMServices
-            RDBMServicesDataSource ds = new RDBMServicesDataSource(dsRef);
-            source = ds;
-        } else {
+            source = new RDBMServicesDataSource(dsRefName);
+        }
+        else {
             // construct a DataSource adhoc
             DriverManagerDataSource ds = new DriverManagerDataSource();
             ds.setDriverClassName(info.getDriver());
             ds.setUsername(info.getLogonid());
             ds.setPassword(info.getLogonpassword());
             ds.setUrl(info.getUrl());
+            
             source = ds;
         }
         
-        JdbcPersonAttributeDaoImpl jdbcImpl = 
-            new JdbcPersonAttributeDaoImpl(source, sql);
+        final JdbcPersonAttributeDaoImpl jdbcImpl = new JdbcPersonAttributeDaoImpl(source, QUERY_ATTRIBUTE_LIST, sql);
         
-        /*
-         * Map from JDBC column names to Sets of Strings representing uPortal
-         * attribute names.
-         */
-        Map jdbcToPortalAttribs = new HashMap();
+        // Map from JDBC column names to Sets of Strings representing uPortal
+        // attribute names.
+        final Map jdbcToPortalAttribs = new HashMap();
         
-        String[] columnNames = info.getAttributenames();
-        String[] portalAttribNames = info.getAttributealiases();
+        final String[] columnNames = info.getAttributenames();
+        final String[] portalAttribNames = info.getAttributealiases();
+        
         for (int i = 0; i < columnNames.length; i++) {
-            String columnName = columnNames[i];
-            if (columnName != null && !"".equals(columnName)){
-                Set attributeNames = (Set) jdbcToPortalAttribs.get(columnName);
+            final String columnName = columnNames[i];
+            
+            if (columnName != null && columnName.length() > 0){
+                Set attributeNames = (Set)jdbcToPortalAttribs.get(columnName);
+                
                 if (attributeNames == null)
                     attributeNames = new HashSet();
+                
                 attributeNames.add(portalAttribNames[i]);
                 jdbcToPortalAttribs.put(columnName, attributeNames);
             }
         }
         
         jdbcImpl.setColumnsToAttributes(jdbcToPortalAttribs);
+        
         return jdbcImpl;
     }
 
     /**
-     * Obtain a PersonAttributeDao LDAP implementation from suitable info.
-     * @param info
-     * @return
+     * Obtain a {@link LdapPersonAttributeDaoImpl} for the given {@link PersonDirInfo}.
+     * 
+     * @param info The {@link PersonDirInfo} to use as a basis for the DAO
+     * @return A fully configured {@link LdapPersonAttributeDaoImpl}
      */
-    private PersonAttributeDao ldapDao(PersonDirInfo info) {
-        // configure a new LDAP source from this object
-           LdapPersonAttributeDaoImpl ldapImpl = new LdapPersonAttributeDaoImpl();
+    private IPersonAttributeDao ldapDao(final PersonDirInfo info) {
+        final LdapPersonAttributeDaoImpl ldapImpl = new LdapPersonAttributeDaoImpl();
            
-           ILdapServer ldapServer = null;
-           String ldapRefName = info.getLdapRefName();
+        ILdapServer ldapServer = null;
+        
+        final String ldapRefName = info.getLdapRefName();
+        if (ldapRefName != null) {
+            ldapServer = LdapServices.getLdapServer(ldapRefName);
+            
+            if (ldapServer == null)
+                throw new IllegalArgumentException("LdapServices does not have an LDAP server configured with name [" + ldapRefName + "]");
+        }
+        else {
+            // instantiate an LDAP server ad-hoc.
+       
+            // set the "usercontext" attribute of the PersonDirInfo as the baseDN
+            // of the LdapServerImpl we're instantiating because when 
+            ldapServer = new LdapServerImpl(info.getUrl(), info.getUrl(), info.getUsercontext(), null, info.getLogonid(), info.getLogonpassword(), null);
+        }
+       
+        ldapImpl.setLdapServer(ldapServer);
+        ldapImpl.setTimeLimit(info.getLdaptimelimit());
+        ldapImpl.setQuery(info.getUidquery());
+        ldapImpl.setQueryAttributes(QUERY_ATTRIBUTE_LIST);
+       
+       
+     
+        // Map from LDAP attribute names to Sets of Strings representing uPortal
+        // attribute names.
+        final Map ldapToPortalAttribs = new HashMap();
+       
+        final String[] ldapAttribNames = info.getAttributenames();
+        final String[] portalAttribNames = info.getAttributealiases();
+        for (int i = 0; i < ldapAttribNames.length; i++) {
+            final String ldapAttribName = ldapAttribNames[i];
            
-           if (ldapRefName != null) {
-               ldapServer = LdapServices.getLdapServer(ldapRefName);
-               if (ldapServer == null)
-                   throw new IllegalArgumentException("LdapServices does not have " +
-                        "an LDAP server configured with name [" + ldapRefName + "]");
-           
-           } else {
-               // instantiate an LDAP server ad-hoc.
-               
-               // set the "usercontext" attribute of the PersonDirInfo as the baseDN
-               // of the LdapServerImpl we're instantiating because when 
-               
-               ldapServer = new LdapServerImpl(info.getUrl(), 
-                       info.getUrl(), info.getUsercontext(), null, 
-                       info.getLogonid(), info.getLogonpassword(), null);
-               
-             
-           }
-           
-           ldapImpl.setLdapServer(ldapServer);
-           ldapImpl.setTimeLimit(info.getLdaptimelimit());
-           ldapImpl.setUidQuery(info.getUidquery());
-           
-           
-         
-           /*
-            * Map from LDAP attribute names to Sets of Strings representing uPortal
-            * attribute names.
-            */
-           Map ldapToPortalAttribs = new HashMap();
-           
-           String[] ldapAttribNames = info.getAttributenames();
-           String[] portalAttribNames = info.getAttributealiases();
-           for (int i = 0; i < ldapAttribNames.length; i++) {
-               String ldapAttribName = ldapAttribNames[i];
-               Set attributeNames = (Set) ldapToPortalAttribs.get(ldapAttribName);
-               if (attributeNames == null)
-                   attributeNames = new HashSet();
-               attributeNames.add(portalAttribNames[i]);
-               ldapToPortalAttribs.put(ldapAttribName, attributeNames);
-           }
-           
-           ldapImpl.setLdapAttributesToPortalAttributes(ldapToPortalAttribs);
-           return ldapImpl;
+            Set attributeNames = (Set)ldapToPortalAttribs.get(ldapAttribName);
+            if (attributeNames == null)
+                attributeNames = new HashSet();
+            
+            attributeNames.add(portalAttribNames[i]);
+            ldapToPortalAttribs.put(ldapAttribName, attributeNames);
+        }
+       
+        ldapImpl.setLdapAttributesToPortalAttributes(ldapToPortalAttribs);
+       
+        return ldapImpl;
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
-     */
-    public Map attributesForUser(String uid) {
-        return this.delegate.attributesForUser(uid);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
-     */
-    public Set getAttributeNames() {
-        return this.delegate.getAttributeNames();
-    }
-    
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("PersonDirInfoAdaptor: delegate=[" + this.delegate + "]");
-        return sb.toString();
-    }
-
 }
 

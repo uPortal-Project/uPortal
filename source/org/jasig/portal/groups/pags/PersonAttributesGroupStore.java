@@ -18,6 +18,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.EntityGroupImpl;
@@ -31,9 +33,10 @@ import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.security.provider.RestrictedPerson;
+import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 
 /**
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine
@@ -126,8 +129,14 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          if (member.getEntityType() != IPerson.class) 
              { return false; }
          IPerson person = null;
-         try 
-             { person = PersonDirectory.getInterfaceInstance().getRestrictedPerson(member.getKey()); }
+         try {
+             IPersonAttributeDao pa = new SpringPersonAttributeDaoImpl();
+             Map attrs = pa.getUserAttributes(member.getKey());
+             RestrictedPerson rp = PersonFactory.createRestrictedPerson();
+             rp.setAttributes(attrs);
+             
+             person = rp;
+         }
          catch (Exception ex)
              { return false; }
          return testRecursively(groupDef, person);

@@ -22,7 +22,8 @@ import org.jasig.portal.IMultithreadedMimeResponse;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -53,7 +54,8 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
 
     Element attributesE = doc.createElement("attributes");
     
-    Set possibleAttrs = PersonDirectory.getInterfaceInstance().getAttributeNames();
+    IPersonAttributeDao pa = new SpringPersonAttributeDaoImpl();
+    Set possibleAttrs = pa.getPossibleUserAttributeNames();
     
     if (possibleAttrs != null)
         possibleAttrs = new HashSet(possibleAttrs);

@@ -10,34 +10,52 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A mock PersonAttributeDao to be used for testing.
+ * A mock IPersonAttributeDao to be used for testing.
+ * 
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public class MockPersonAttributeDao 
-    implements PersonAttributeDao {
-
+public class MockPersonAttributeDao implements IPersonAttributeDao {
     private Map backingMap;
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
+    /**
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getDefaultAttributeName()
      */
-    public Map attributesForUser(String uid) {
+    public String getDefaultAttributeName() {
+        return null;
+    }
+    
+    /**
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
+     */
+    public Set getPossibleUserAttributeNames() {
+        if (this.backingMap == null) {
+            return null;
+        }
+        else {
+            return Collections.unmodifiableSet(this.backingMap.keySet());
+        }
+    }
+    
+    /**
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.util.Map)
+     */
+    public Map getUserAttributes(final Map seed) {
         return this.backingMap;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
+    /**
+     * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getUserAttributes(java.lang.String)
      */
-    public Set getAttributeNames() {
-        return Collections.unmodifiableSet(this.backingMap.keySet());
+    public Map getUserAttributes(final String uid) {
+        return this.backingMap;
     }
-
+    
+    
     /**
      * Get the Map which this mock object will return for all legal invocations of
      * attributesForUser()
+     * 
      * @return Returns the backingMap.
      */
     public Map getBackingMap() {
@@ -47,9 +65,10 @@ public class MockPersonAttributeDao
     /**
      * Set the Map which this mock object will return for all legal invocations of
      * attributesForUser().
+     * 
      * @param backingMap The backingMap to set.
      */
-    public void setBackingMap(Map backingMap) {
+    public void setBackingMap(final Map backingMap) {
         this.backingMap = backingMap;
     }
 }

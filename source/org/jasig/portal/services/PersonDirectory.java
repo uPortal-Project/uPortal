@@ -6,18 +6,19 @@
 package org.jasig.portal.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
-import org.jasig.portal.services.persondir.IPersonDirectory;
-import org.jasig.portal.services.persondir.support.SpringPersonDirectoryImpl;
+import org.jasig.portal.services.persondir.support.IPersonAttributeDao;
+import org.jasig.portal.services.persondir.support.SpringPersonAttributeDaoImpl;
 
 /**
  * PersonDirectory is a source for user attributes.  It is configurable via a
@@ -35,7 +36,12 @@ import org.jasig.portal.services.persondir.support.SpringPersonDirectoryImpl;
  * 
  * @author Howard Gilbert
  * @author andrew.petro@yale.edu
+ * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * 
+ * @deprecated Use Spring to get a {@link IPersonAttributeDao} instance via
+ * {@link org.jasig.portal.spring.PortalApplicationContextFacade} or use the
+ * {@link SpringPersonAttributeDaoImpl} class.
  */
 public class PersonDirectory {
 
@@ -45,6 +51,7 @@ public class PersonDirectory {
      * This instance variable used to contain the set of attributes mapped in
      * PersonDir.xml.  It now is merely an empty Set.  It is no longer used by
      * PersonDirectory and should be removed in a future release.
+     * 
      * @deprecated you cannot get the list of attributes in the abstract, only
      * for a particular user.
      */
@@ -54,14 +61,14 @@ public class PersonDirectory {
     private static PersonDirectory instance;
 
     /** Wrapped class which provides the functionality */
-    private IPersonDirectory impl;
+    private IPersonAttributeDao impl;
 
     /**
      * Private constructor to allow for singleton behavior.
      * 
-     * @param impl The {@link IPersonDirectory} instance to wrap.
+     * @param impl The {@link IPersonAttributeDao} instance to wrap.
      */
-    private PersonDirectory(IPersonDirectory impl) {
+    private PersonDirectory(IPersonAttributeDao impl) {
         this.impl = impl;
     }
 
@@ -69,37 +76,21 @@ public class PersonDirectory {
      * Obtain the singleton instance of PersonDirectory.
      * 
      * @return the singleton instance of PersonDirectory.
-     * @deprecated Use the {@link IPersonDirectory} interface via {@link #getInterfaceInstance()}
+     * @deprecated Use Spring to get a {@link IPersonAttributeDao} instance via
+     * {@link org.jasig.portal.spring.PortalApplicationContextFacade} or use the
+     * {@link SpringPersonAttributeDaoImpl} class.
      */
     public static synchronized PersonDirectory instance() {
-        /*
-         * If our singleton exists already, return it. Otherwise, try to
-         * instantiate it using Spring to parse an XML file
-         * conforming to beans.dtd defining an IPersonDirectory named
-         * "personDirectory" (see SpringPersonDirectoryImpl implementation).
-         * The default configuration of SpringPersonDirectoryImpl,
-         * as specified in its personDirectory.xml file, is to use the legacy
-         * PersonDir.xml file to configure PersonDirectory.
-         */
         if (instance == null) {
             try {
-                instance = new PersonDirectory(new SpringPersonDirectoryImpl(
-                        "/properties/personDirectory.xml"));
-            } catch (Throwable t) {
+                instance = new PersonDirectory(new SpringPersonAttributeDaoImpl());
+            }
+            catch (Throwable t) {
                 log.error("Error instantiating PersonDirectory", t);
             }
         }
 
         return instance;
-    }
-    
-    /**
-     * Gets a singleton reference to the {@link IPersonDirectory} implemenation.
-     * 
-     * @return A reference to the {@link IPersonDirectory} implemenation.
-     */
-    public static IPersonDirectory getInterfaceInstance() {
-        return instance().impl;
     }
 
     /**
@@ -110,18 +101,17 @@ public class PersonDirectory {
      * namespace of all possible attributes.
      * 
      * @return an iterator for an empty list.
-     * @deprecated Use {@link IPersonDirectory#getAttributeNames()} via the {@link #getInterfaceInstance()} method.
+     * @deprecated Use {@link IPersonAttributeDao#getPossibleUserAttributeNames()}
      */
     public static Iterator getPropertyNamesIterator() {
-        final Set attrNames = instance().impl.getAttributeNames();
+        final Set attrNames = instance().impl.getPossibleUserAttributeNames();
         
         if (attrNames != null)
-            //Make sure the set we return can't be modified
-            return Collections.unmodifiableSet(attrNames).iterator();
+            return attrNames.iterator();
         else
-            //Return a dummy iterator of the IPerson impl didn't provide one.
             return (new ArrayList()).iterator();
     }
+
     /**
      * Returns a reference to a restricted IPerson represented by the supplied
      * user ID. The restricted IPerson allows access to person attributes, but
@@ -129,10 +119,17 @@ public class PersonDirectory {
      * 
      * @param uid the user ID
      * @return the corresponding person, restricted so that its security context is inaccessible
-     * @deprecated Use {@link IPersonDirectory#getRestrictedPerson(String)} via the {@link #getInterfaceInstance()} method.
+     * @deprecated Use {@link PersonFactory#createRestrictedPerson()} and
+     * {@link IPersonAttributeDao#getUserAttributes(String)} and
+     * {@link RestrictedPerson#setAttributes(Map)}
      */
-    public static RestrictedPerson getRestrictedPerson(String uid) {
-        return instance().impl.getRestrictedPerson(uid);
+    public static RestrictedPerson getRestrictedPerson(final String uid) {
+        final RestrictedPerson rp = PersonFactory.createRestrictedPerson();
+        final Map attributes = instance().impl.getUserAttributes(uid);
+        
+        rp.setAttributes(attributes);
+        
+        return rp;
     }
 
 
@@ -141,15 +138,11 @@ public class PersonDirectory {
      * 
      * @param username the name of the user
      * @return a Hashtable from user names to attributes.
-     * @deprecated Use {@link IPersonDirectory#getUserDirectoryInformation(String)} via the {@link #getInterfaceInstance()} method.
+     * @deprecated Use {@link IPersonAttributeDao#getUserAttributes(String)}
      */
     public Hashtable getUserDirectoryInformation(String username) {
-        /*
-         * Currently we translate from the Map to a Hashtable.
-         */
-        Hashtable table = new Hashtable();
-        table.putAll(this.impl.getUserDirectoryInformation(username));
-        return table;
+        final Map attrs = this.impl.getUserAttributes(username);
+        return new Hashtable(attrs);
     }
 
     /**
@@ -158,9 +151,11 @@ public class PersonDirectory {
      * 
      * @param uid person for whom we are obtaining attributes
      * @param person person object into which to store the attributes
-     * @deprecated Use {@link IPersonDirectory#getUserDirectoryInformation(String, IPerson)} via the {@link #getInterfaceInstance()} method.
+     * @deprecated Use {@link IPersonAttributeDao#getUserAttributes(String)} and
+     * {@link IPerson#setAttributes(Map)}
      */
     public void getUserDirectoryInformation(String uid, IPerson person) {
-        this.impl.getUserDirectoryInformation(uid, person);
+        final Map attrs = this.impl.getUserAttributes(uid);
+        person.setAttributes(attrs);
     }
 }

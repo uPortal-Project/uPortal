@@ -14,6 +14,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.jasig.portal.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.portal.services.persondir.support.merger.NoncollidingAttributeAdder;
 
 /**
@@ -26,8 +27,9 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
     private MockPersonAttributeDao sourceTwo;
     private MockPersonAttributeDao collidesWithOne;
     private Map oneAndTwo;
-    private Map twoAndThree;
-    
+    private Map oneAndTwoAndThree;
+    private final String queryAttr = "ThisDoesntMatterForMockDaos";
+        
     protected void setUp() {
         this.sourceOne = new MockPersonAttributeDao();
         Map sourceOneMap = new HashMap();
@@ -51,9 +53,11 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         collidingMap.put("favoriteColor", "red");
         this.collidesWithOne.setBackingMap(collidingMap);
         
-        this.twoAndThree = new HashMap();
-        this.twoAndThree.putAll(sourceTwoMap);
-        this.twoAndThree.putAll(collidingMap);
+        this.oneAndTwoAndThree = new HashMap();
+        MultivaluedAttributeMerger merger = new MultivaluedAttributeMerger();
+        this.oneAndTwoAndThree = merger.mergeAttributes(this.oneAndTwoAndThree, sourceOneMap);
+        this.oneAndTwoAndThree = merger.mergeAttributes(this.oneAndTwoAndThree, sourceTwoMap);
+        this.oneAndTwoAndThree = merger.mergeAttributes(this.oneAndTwoAndThree, collidingMap);
     }
     
     /**
@@ -69,7 +73,10 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
         impl.setPersonAttributeDaos(attributeSources);
         
-        Map result = impl.attributesForUser("awp9");
+        Map queryMap = new HashMap();
+        queryMap.put(queryAttr, "awp9");
+        
+        Map result = impl.getUserAttributes(queryMap);
         assertEquals(this.oneAndTwo, result);
     }
     
@@ -86,26 +93,9 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
         impl.setPersonAttributeDaos(attributeSources);
         
-        Set attributeNames = impl.getAttributeNames();
+        Set attributeNames = impl.getPossibleUserAttributeNames();
         
         assertEquals(this.oneAndTwo.keySet(), attributeNames);
-    }
-
-    /**
-     * Test the default attribute collision handling.
-     */
-    public void testDefaultCollisionHandling() {
-        List attributeSources = new ArrayList();
-        
-        attributeSources.add(this.sourceOne);
-        attributeSources.add(this.sourceTwo);
-        attributeSources.add(this.collidesWithOne);
-        
-        MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
-        impl.setPersonAttributeDaos(attributeSources);
-        
-        Map result = impl.attributesForUser("awp9");
-        assertEquals(this.twoAndThree, result);
     }
     
     /**
@@ -123,13 +113,16 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
         impl.setPersonAttributeDaos(attributeSources);
         
-        Map result = impl.attributesForUser("awp9");
-        assertEquals(this.twoAndThree, result);
+        Map queryMap = new HashMap();
+        queryMap.put(queryAttr, "awp9");
+        
+        Map result = impl.getUserAttributes(queryMap);
+        assertEquals(this.oneAndTwoAndThree, result);
     }
     
     /**
      * Test handling of underlying sources which return null on 
-     * getAttributeNames().
+     * getPossibleUserAttributeNames().
      */
     public void testNullAttribNames() {
         List attributeSources = new ArrayList();
@@ -142,12 +135,12 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         MergingPersonAttributeDaoImpl impl = new MergingPersonAttributeDaoImpl();
         impl.setPersonAttributeDaos(attributeSources);
         
-        Set attribNames = impl.getAttributeNames();
+        Set attribNames = impl.getPossibleUserAttributeNames();
         
         Set expectedAttribNames = new HashSet();
-        expectedAttribNames.addAll(this.sourceOne.getAttributeNames());
-        expectedAttribNames.addAll(this.sourceTwo.getAttributeNames());
-        expectedAttribNames.addAll(this.collidesWithOne.getAttributeNames());
+        expectedAttribNames.addAll(this.sourceOne.getPossibleUserAttributeNames());
+        expectedAttribNames.addAll(this.sourceTwo.getPossibleUserAttributeNames());
+        expectedAttribNames.addAll(this.collidesWithOne.getPossibleUserAttributeNames());
         
         assertEquals(expectedAttribNames, attribNames);
     }
@@ -169,7 +162,10 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         impl.setRecoverExceptions(false);
         
         try {
-            impl.attributesForUser("awp9");
+            Map queryMap = new HashMap();
+            queryMap.put(queryAttr, "awp9");
+            
+            impl.getUserAttributes(queryMap);
         } catch (RuntimeException rte) {
             // good, was propogated
             return;
@@ -192,7 +188,10 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
         impl.setPersonAttributeDaos(attributeSources);
         impl.setMerger(new NoncollidingAttributeAdder());
         
-        Map result = impl.attributesForUser("awp9");
+        Map queryMap = new HashMap();
+        queryMap.put(queryAttr, "awp9");
+        
+        Map result = impl.getUserAttributes(queryMap);
         assertEquals(this.oneAndTwo, result);
     }
     
@@ -202,16 +201,23 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
      * @author andrew.petro@yale.edu
      * @version $Revision$ $Date$
      */
-    private class ThrowingPersonAttributeDao implements PersonAttributeDao {
+    private class ThrowingPersonAttributeDao implements IPersonAttributeDao {
 
-        public Map attributesForUser(String uid) {
+        public Map getUserAttributes(String uid) {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
         }
         
-        public Set getAttributeNames() {
+        public Map getUserAttributes(Map queryMap) {
+            throw new RuntimeException("ThrowingPersonAttributeDao always throws");
+        }
+
+        public Set getPossibleUserAttributeNames() {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
         }
         
+        public String getDefaultAttributeName() {
+            throw new RuntimeException("ThrowingPersonAttributeDao always throws");
+        }
     }
     
     /**
@@ -220,13 +226,21 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
      * @author andrew.petro@yale.edu
      * @version $Revision$ $Date$
      */
-    private class NullAttribNamesPersonAttributeDao implements PersonAttributeDao {
+    private class NullAttribNamesPersonAttributeDao implements IPersonAttributeDao {
 
-        public Map attributesForUser(String uid) {
-            throw new RuntimeException("ThrowingPersonAttributeDao always throws");
+        public Map getUserAttributes(String uid) {
+            throw new RuntimeException("NullAttribNamesPersonAttributeDao always throws");
         }
         
-        public Set getAttributeNames() {
+        public Map getUserAttributes(Map queryMap) {
+            throw new RuntimeException("NullAttribNamesPersonAttributeDao always throws");
+        }
+        
+        public Set getPossibleUserAttributeNames() {
+            return null;
+        }
+        
+        public String getDefaultAttributeName() {
             return null;
         }
         

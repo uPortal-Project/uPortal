@@ -14,7 +14,7 @@ import java.util.Map;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */
-public class NoncollidingAttributeAdder implements AttributeMerger {
+public class NoncollidingAttributeAdder implements IAttributeMerger {
 
     /**
      * For entries in toConsider the keys of which are not keys in toModify, 

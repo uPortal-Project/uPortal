@@ -7,6 +7,7 @@ package  org.jasig.portal.security;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Map;
 
 import org.jasig.portal.IBasicEntity;
 
@@ -63,6 +64,12 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializab
    * @param value
    */
   public void setAttribute (String key, Object value);
+  
+  /**
+   * Associates attributes with the user
+   * @param attrs
+   */
+  public void setAttributes (Map attrs);
 
   /**
    * Gets all of the attributes associated with the user
