@@ -18,10 +18,6 @@
         <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
       <row>
-        <column><name>SEQUENCE_NAME</name><value>UP_ROLE</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
-      </row>
-      <row>
         <column><name>SEQUENCE_NAME</name><value>UP_SS_STRUCT</value></column>
         <column><name>SEQUENCE_VALUE</name><value>0</value></column>
       </row>
@@ -1087,117 +1083,6 @@
     </rows>
   </table>
 
-
-  <table>
-    <name>UP_ROLE</name>
-    <rows>
-      <row>
-        <column><name>ROLE_ID</name><value>0</value></column>
-        <column><name>ROLE_TITLE</name><value>channelPublisher</value></column>
-        <column><name>ROLE_DESC</name><value>This user is able to publish new channels.</value></column>
-        <column><name>ROLE_OWNER_ID</name><value>0</value></column>
-      </row>
-      <row>
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>ROLE_TITLE</name><value>channelDeveloper</value></column>
-        <column><name>ROLE_DESC</name><value>This user is a uPortal channel developer.</value></column>
-        <column><name>ROLE_OWNER_ID</name><value>0</value></column>
-      </row>
-      <row>
-        <column><name>ROLE_ID</name><value>2</value></column>
-        <column><name>ROLE_TITLE</name><value>student</value></column>
-        <column><name>ROLE_DESC</name><value>This user is a student at the institution.</value></column>
-        <column><name>ROLE_OWNER_ID</name><value>0</value></column>
-      </row>
-      <row>
-        <column><name>ROLE_ID</name><value>3</value></column>
-        <column><name>ROLE_TITLE</name><value>portalAdmin</value></column>
-        <column><name>ROLE_DESC</name><value>This user is an authorized uPortal administrator.</value></column>
-        <column><name>ROLE_OWNER_ID</name><value>0</value></column>
-      </row>
-      <row>
-        <column><name>ROLE_ID</name><value>4</value></column>
-        <column><name>ROLE_TITLE</name><value>PermissionTest</value></column>
-        <column><name>ROLE_DESC</name><value>There should be non-one in this role</value></column>
-        <column><name>ROLE_OWNER_ID</name><value>0</value></column>
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_USER_ROLE</name>
-    <rows>
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>ROLE_ID</name><value>0</value></column>
-        <column><name>PRIM_ROLE_IND</name><value>Y</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>ROLE_ID</name><value>0</value></column>
-        <column><name>PRIM_ROLE_IND</name><value>Y</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>PRIM_ROLE_IND</name><value>Y</value></column>
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_ROLE_CHAN</name>
-    <rows>
-      <!-- An example of a channel that we are have no access to -->
-      <row>
-        <column><name>ROLE_ID</name><value>4</value></column>
-        <column><name>CHAN_ID</name><value>21</value></column>
-        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
-        <column><name>APPROVAL_FLG</name><value>Y</value></column>
-      </row>
-
-      <!-- Channel Manager-->
-      <row> <!-- channel publisher -->
-        <column><name>ROLE_ID</name><value>0</value></column>
-        <column><name>CHAN_ID</name><value>90</value></column>
-        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
-        <column><name>APPROVAL_FLG</name><value>Y</value></column>
-      </row>
-      <row> <!-- portal administrator -->
-        <column><name>ROLE_ID</name><value>3</value></column>
-        <column><name>CHAN_ID</name><value>90</value></column>
-        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
-        <column><name>APPROVAL_FLG</name><value>Y</value></column>
-      </row>
-
-      <!-- Developer channels -->
-      <row>   <!-- Person Attributes -->
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>4</value></column>
-        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
-        <column><name>APPROVAL_FLG</name><value>Y</value></column>
-      </row>
-      <row>   <!-- Snooper -->
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>16</value></column>
-        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
-        <column><name>APPROVAL_FLG</name><value>Y</value></column>
-      </row>
-      <row>   <!-- uPortal Development Books -->
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>20</value></column>
-        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
-        <column><name>APPROVAL_FLG</name><value>Y</value></column>
-      </row>
-
-      <row>   <!-- uPortal Data Dictionary -->
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>22</value></column>
-        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
-        <column><name>APPROVAL_FLG</name><value>Y</value></column>
-      </row>
-    </rows>
-  </table>
 
   <table>
     <name>UP_USER_LAYOUT</name>

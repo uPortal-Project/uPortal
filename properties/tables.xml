@@ -161,43 +161,6 @@
   </table>
 
   <table>
-    <name>UP_ROLE</name>
-    <columns>
-      <column> <name>ROLE_ID</name>          <type>INTEGER</type>                      </column>
-      <column> <name>ROLE_TITLE</name>       <type>VARCHAR</type>   <param>35</param>  </column>
-      <column> <name>ROLE_DESC</name>        <type>VARCHAR</type>   <param>255</param> </column>
-      <column> <name>ROLE_DFLT_USR_ID</name> <type>INTEGER</type>                      </column>
-      <column> <name>ROLE_DFLT_LAY_ID</name> <type>INTEGER</type>                      </column>
-      <column> <name>ROLE_OWNER_ID</name>    <type>INTEGER</type>                      </column>
-      <column> <name>ROLE_CREATE_ID</name>   <type>TIMESTAMP</type>                    </column>
-    </columns>
-    <primary-key>ROLE_ID</primary-key>
-  </table>
-
-  <table>
-    <name>UP_USER_ROLE</name>
-    <columns>
-      <column> <name>USER_ID</name>       <type>INTEGER</type>                  </column>
-      <column> <name>ROLE_ID</name>       <type>INTEGER</type>                  </column>
-      <column> <name>PRIM_ROLE_IND</name> <type>VARCHAR</type> <param>1</param> </column>
-    </columns>
-    <not-null>USER_ID</not-null>
-    <not-null>ROLE_ID</not-null>
-  </table>
-
-  <table>
-    <name>UP_ROLE_CHAN</name>
-    <columns>
-      <column> <name>ROLE_ID</name>      <type>INTEGER</type>                    </column>
-      <column> <name>CHAN_ID</name>      <type>INTEGER</type>                    </column>
-      <column> <name>RELEASE_DT</name>   <type>TIMESTAMP</type>                  </column>
-      <column> <name>APPROVAL_FLG</name> <type>VARCHAR</type>   <param>1</param> </column>
-    </columns>
-    <not-null>ROLE_ID</not-null>
-    <not-null>CHAN_ID</not-null>
-  </table>
-
-  <table>
     <name>UP_KEYWORD</name>
     <columns>
       <column> <name>CHAN_ID</name> <type>INTEGER</type>                     </column>
