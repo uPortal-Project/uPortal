@@ -60,8 +60,8 @@ public class RDBMServices {
     private static final String FLAG_TRUE = "Y";
     private static final String FLAG_TRUE_OTHER = "T";
     private static final String FLAG_FALSE = "N";
-    
-    /** Specifies how long to wait before trying to look a JNDI data source that previously failed */ 
+
+    /** Specifies how long to wait before trying to look a JNDI data source that previously failed */
     private static final int JNDI_RETRY_TIME = PropertiesManager.getPropertyAsInt("org.jasig.portal.RDBMServices.jndiRetryDelay", 30000); // JNDI retry delay;
 
 
@@ -69,14 +69,17 @@ public class RDBMServices {
     public static boolean supportsOuterJoins = false;
     public static boolean supportsTransactions = false;
     public static int RETRY_COUNT = 5;
-    
+
     protected static boolean supportsPreparedStatements = false;
     protected static final boolean usePreparedStatements = true;
-    
+
     private static boolean rdbmPropsLoaded = false;
     private static Map namedDbServers =  Collections.synchronizedMap(new HashMap());
     private static Map namedDbServerFailures = Collections.synchronizedMap(new HashMap());
     private static IDatabaseServer jdbcDbServer = null;
+
+    private static final Object syncObject = new Object();
+    private static int activeConnections;
 
     /**
      * Perform one time initialization of the data source
@@ -175,10 +178,10 @@ public class RDBMServices {
 
     /**
      * Gets the default {@link IDatabaseServer}. If getDatasourceFromJndi
-     * is true {@link #getDatabaseServer(String)} is called with 
+     * is true {@link #getDatabaseServer(String)} is called with
      * {@link RDBMServices#PORTAL_DB} as the argument. If no server is found
      * the jdbc based server loaded from rdbm.properties is used.
-     * 
+     *
      * @return The default {@link IDatabaseServer}.
      */
     public static IDatabaseServer getDatabaseServer() {
@@ -208,22 +211,22 @@ public class RDBMServices {
         if (DEFAULT_DATABASE.equals(name)) {
             return getDatabaseServer();
         }
-        
+
         IDatabaseServer dbs = (IDatabaseServer)namedDbServers.get(name);
 
         if (dbs == null) {
             final Long failTime = (Long)namedDbServerFailures.get(name);
-            
+
             if (failTime == null || (failTime.longValue() + JNDI_RETRY_TIME) <= System.currentTimeMillis()) {
                 if (failTime != null) {
                     namedDbServerFailures.remove(name);
                 }
-                
+
                 try {
                     final Context initCtx = new InitialContext();
                     final Context envCtx = (Context)initCtx.lookup("java:comp/env");
                     final DataSource ds = (DataSource)envCtx.lookup("jdbc/" + name);
-    
+
                     if (ds != null) {
                         if (LOG.isInfoEnabled())
                             LOG.info("Creating IDatabaseServer instance for " + name);
@@ -250,10 +253,17 @@ public class RDBMServices {
         return dbs;
     }
 
+    /**
+     * Return the current number of active connections
+     * @return int
+     */
+    public static int getActiveConnectionCount() {
+      return activeConnections;
+    }
 
     /**
      * Gets a database connection to the portal database.
-     * 
+     *
      * This implementation will first try to get the connection by looking in the
      * JNDI context for the name defined by the portal property
      * org.jasig.portal.RDBMServices.PortalDatasourceJndiName
@@ -269,9 +279,12 @@ public class RDBMServices {
     public static Connection getConnection() {
         final IDatabaseServer dbs = getDatabaseServer();
 
-        if (dbs != null)
-            return dbs.getConnection();
-        
+        if (dbs != null) {
+          synchronized(syncObject) {
+            activeConnections++;
+          }
+          return dbs.getConnection();
+        }
         throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDatabaseServer() returned null.");
     }
 
@@ -287,9 +300,12 @@ public class RDBMServices {
     public static Connection getConnection(final String dbName) {
         final IDatabaseServer dbs = getDatabaseServer(dbName);
 
-        if (dbs != null)
-            return dbs.getConnection();
-        
+        if (dbs != null) {
+          synchronized(syncObject) {
+            activeConnections++;
+          }
+          return dbs.getConnection();
+        }
         throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDatabaseServer() returned null.");
     }
 
@@ -299,6 +315,10 @@ public class RDBMServices {
      */
     public static void releaseConnection(final Connection con) {
         try {
+          synchronized(syncObject) {
+            activeConnections--;
+          }
+
             con.close();
         }
         catch (Exception e) {
@@ -340,7 +360,7 @@ public class RDBMServices {
                 LOG.warn("Error closing Statement: " + st, e);
         }
     }
-    
+
     /**
      * Close a PreparedStatement. Simply delegates the call to
      * {@link #closeStatement(Statement)}
@@ -350,7 +370,7 @@ public class RDBMServices {
     public static void closePreparedStatement(final java.sql.PreparedStatement pst) {
         closeStatement(pst);
     }
-    
+
     /**
      * Commit pending transactions
      * @param connection
@@ -393,36 +413,36 @@ public class RDBMServices {
                 LOG.warn("Error rolling back Connection: " + connection, e);
         }
     }
-    
-    
-    
+
+
+
     /**
-     * Returns the name of the JDBC driver being used for the default 
+     * Returns the name of the JDBC driver being used for the default
      * uPortal database connections.
-     * 
+     *
      * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#getJdbcDriver()} on the returned instance.
-     * 
+     *
      * @see IDatabaseServer#getJdbcDriver()
      * @return the name of the JDBC Driver.
      * @throws DataAccessException if unable to determine name of driver.
      */
     public static String getJdbcDriver () {
         final IDatabaseServer dbs = getDatabaseServer();
-        
+
         if (dbs != null)
             return dbs.getJdbcDriver();
-        
+
         throw new DataAccessResourceFailureException("RDBMServices " +
                 "fatally misconfigured such that getDatabaseServer() returned null.");
     }
 
     /**
      * Gets the JDBC URL of the default uPortal database connections.
-     * 
+     *
      * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#getJdbcUrl()} on the returned instance.
-     * 
+     *
      * @see IDatabaseServer#getJdbcUrl()
      * @throws DataAccessException on internal failure
      * @return the JDBC URL of the default uPortal database connections
@@ -432,7 +452,7 @@ public class RDBMServices {
 
         if (dbs != null)
             return dbs.getJdbcUrl();
-        
+
         throw new DataAccessResourceFailureException("RDBMServices " +
             "fatally misconfigured such that getDatabaseServer() returned null.");
     }
@@ -440,10 +460,10 @@ public class RDBMServices {
     /**
      * Get the username under which we are connecting for the default uPortal
      * database connections.
-     * 
+     *
      * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#getJdbcUser()} on the returned instance.
-     * 
+     *
      * @see IDatabaseServer#getJdbcUser()
      * @return the username under which we are connecting for default connections
      * @throws DataAccessException on internal failure
@@ -456,7 +476,7 @@ public class RDBMServices {
 
         throw new DataAccessResourceFailureException("RDBMServices " +
             "fatally misconfigured such that getDatabaseServer() returned null.");
-    }    
+    }
 
 
     //******************************************
@@ -483,14 +503,14 @@ public class RDBMServices {
     public static final boolean dbFlag(final String flag) {
         return flag != null && (FLAG_TRUE.equalsIgnoreCase(flag) || FLAG_TRUE_OTHER.equalsIgnoreCase(flag));
     }
-    
+
     /**
-     * Returns a String representing the current time 
+     * Returns a String representing the current time
      * in SQL suitable for use with the default database connections.
-     * 
+     *
      * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#sqlTimeStamp()} on the returned instance.
-     * 
+     *
      * @see IDatabaseServer#sqlTimeStamp()
      * @return SQL representing the current time
      */
@@ -508,12 +528,12 @@ public class RDBMServices {
     /**
      * Calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#sqlTimeStamp(long)} on the returned instance.
-     * 
+     *
      * @see IDatabaseServer#sqlTimeStamp(long)
      */
     public static final String sqlTimeStamp(final long date) {
         final IDatabaseServer dbs = getDatabaseServer();
-        
+
         if (dbs != null) {
             return dbs.sqlTimeStamp(date);
         }
@@ -525,7 +545,7 @@ public class RDBMServices {
     /**
      * Calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#sqlTimeStamp(Date)} on the returned instance.
-     * 
+     *
      * @see IDatabaseServer#sqlTimeStamp(Date)
      */
     public static final String sqlTimeStamp(final Date date) {
@@ -541,21 +561,21 @@ public class RDBMServices {
                 return localSqlTimeStamp(date.getTime());
         }
     }
-    
+
     /**
      * Utility method if there is no default {@link IDatabaseServer}
      * instance.
-     * 
+     *
      * @param date The date in milliseconds to convert into a SQL TimeStamp.
      * @return A SQL TimeStamp representing the date.
      */
     private static final String localSqlTimeStamp(final long date) {
         final StringBuffer sqlTS = new StringBuffer();
-        
+
         sqlTS.append("'");
         sqlTS.append(new Timestamp(date).toString());
         sqlTS.append("'");
-        
+
         return sqlTS.toString();
     }
 
@@ -682,7 +702,7 @@ public class RDBMServices {
             tempProperties.putAll(this.jdbcProperties);
             tempProperties.put("user", user);
             tempProperties.put("password", pass);
-            
+
             return this.driverRef.connect(this.jdbcUrl, tempProperties);
         }
 
@@ -699,7 +719,7 @@ public class RDBMServices {
         private java.sql.PreparedStatement pstmt;
         private Statement stmt;
         private int lastIndex;
-        
+
 
         public PreparedStatement(Connection con, String query) throws SQLException {
             this.con = con;
