@@ -40,15 +40,12 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 
-import java.util.Hashtable;
-
 /**
  * IAggregatedUserLayoutStore defines the base methods working with aggregated user layout store.
  *
  * @author Michael Ivanov
  * @version $Revision$
  */
-
 public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
 
 

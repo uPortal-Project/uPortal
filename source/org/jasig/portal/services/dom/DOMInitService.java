@@ -35,8 +35,6 @@
 
 package  org.jasig.portal.services.dom;
 
-import org.jasig.portal.PropertiesManager;
-
 /**
  *  This service is meant to run at system initialization that will provide
  *  any DOM initialization. For example, with resin, you can configure which

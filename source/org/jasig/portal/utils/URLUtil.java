@@ -35,26 +35,22 @@
 
 package org.jasig.portal.utils;
 
-import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.UserInstance;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.services.LogService;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
-import java.net.URL;
-import java.net.HttpURLConnection;
-
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.HashMap;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.UserInstance;
+import org.jasig.portal.services.LogService;
 
 /**
  * The URLUtil class offers static helper methods for manipulating the
@@ -62,8 +58,9 @@ import java.util.HashMap;
  * and performing redirections based on the new parameters and URLs. 
  * and request parameters.
  * 
- * @author      Andreas Christoforides, achristoforides@unicon.net, Nick Bolton, nbolton@unicon.net
- * @version     1.1
+ * @author Andreas Christoforides, achristoforides@unicon.net
+ * @author Nick Bolton, nbolton@unicon.net
+ * @version $Revision$
  */
  
 public class URLUtil

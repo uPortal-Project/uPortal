@@ -46,27 +46,26 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.sax.SAXSource;
+
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CounterStoreFactory;
-import org.jasig.portal.utils.ICounterStore;
-import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.IPortalDocument;
+import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.sax.SAXSource;
 
 /**
  * SQL implementation for the 2.x relational database model

@@ -37,8 +37,6 @@ package org.jasig.portal.utils;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -47,15 +45,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 
-import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
-import org.w3c.dom.Entity;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.Notation;
 import org.xml.sax.ContentHandler;
 
 

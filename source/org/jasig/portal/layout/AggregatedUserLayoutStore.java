@@ -51,7 +51,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Vector;
 import java.util.List;
 
 import org.jasig.portal.ChannelDefinition;
@@ -66,8 +65,8 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
-import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
+import org.jasig.portal.layout.restrictions.UserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,34 +35,26 @@
 
 package org.jasig.portal.layout.channels;
 
-import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.IPrivileged;
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.UserLayoutStoreFactory;
-import org.jasig.portal.UserPreferences;
-import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.XML;
-import org.jasig.portal.utils.CommonUtils;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.ChannelStaticData;
-
-import org.xml.sax.ContentHandler;
 import java.io.InputStream;
 
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IPrivileged;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.utils.XSLT;
+import org.xml.sax.ContentHandler;
+
 /**
- * <p>Title: CSkinSelector</p>
- * <p>Description: A channel for selecting skins</p>
- * <p>Copyright: Copyright (c) 2003</p>
+ * <p>A channel for selecting skins</p>
  * @author Michael Ivanov
- * @version 1.0
+ * @version $Revision$
  */
-
-
   public class CSkinSelector extends BaseChannel implements IPrivileged {
 
     private static final String SKINS_PATH = "media/org/jasig/portal/layout/AL_TabColumn/integratedModes";

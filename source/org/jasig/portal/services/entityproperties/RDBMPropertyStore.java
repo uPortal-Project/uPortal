@@ -42,10 +42,8 @@ import java.sql.Timestamp;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.services.EntityCachingService;
-import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.EntityPropertyRegistry;
+import org.jasig.portal.services.LogService;
 
 
 /**

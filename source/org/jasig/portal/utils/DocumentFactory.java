@@ -41,9 +41,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import java.lang.reflect.Constructor;
 
 /**
  * Produces an empty Document implementation

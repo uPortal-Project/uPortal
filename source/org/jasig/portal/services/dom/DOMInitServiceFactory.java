@@ -34,7 +34,6 @@
  */
 package org.jasig.portal.services.dom;
 
-import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
 
