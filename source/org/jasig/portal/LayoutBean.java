@@ -233,7 +233,7 @@ public class LayoutBean extends GenericPortalBean
    * @param user name
    * @return handle to the layout xml
    */
-  public IXml getDefaultLayoutXml (HttpServletRequest req, String sUserName)
+  public IXml getDefaultLayoutXml (HttpServletRequest req)
   {    
     RdbmServices rdbmService = new RdbmServices ();
     Connection con = null;
@@ -245,14 +245,14 @@ public class LayoutBean extends GenericPortalBean
       con = rdbmService.getConnection ();
       Statement stmt = con.createStatement();
           
-      String sQuery = "SELECT DEFAULT_LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
+      String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
       Logger.log (Logger.DEBUG, sQuery);
       
       ResultSet rs = stmt.executeQuery (sQuery);
         
       if (rs.next ())
       {
-        String sLayoutXml = rs.getString ("DEFAULT_LAYOUT_XML");
+        String sLayoutXml = rs.getString ("LAYOUT_XML");
           
         // Tack on the full path to layout.dtd
         int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
