@@ -178,16 +178,6 @@ Version $Revision$
 									</a>
 								</td>
 							</tr>
-							<tr>
-								<td colspan="4">
-									authenticated=<xsl:value-of select="$authenticated"/>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4">
-									channelmanager=<xsl:value-of select="$channelManager"/>
-								</td>
-							</tr>
 						</table>
 					</td>
 				</xsl:if>
