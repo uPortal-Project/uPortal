@@ -142,4 +142,8 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
             this.preferences.put(preference.getName(), preference);
         }
     }
+    
+    public int size() {
+        return preferences.size();
+    }
 }
