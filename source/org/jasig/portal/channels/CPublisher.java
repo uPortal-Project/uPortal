@@ -55,31 +55,34 @@ public class CPublisher implements IPrivilegedChannel
 {
   private boolean DEBUG = false;
    
-  ChannelStaticData staticData = null;
-  ChannelRuntimeData runtimeData = null;
-  StylesheetSet set = null;
-  ChannelRegistryImpl chanReg = null;
+  private ChannelStaticData staticData = null;
+  private ChannelRuntimeData runtimeData = null;
+  private StylesheetSet set = null;
+  private ChannelRegistryImpl chanReg = null;
 
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
   String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CPublisher";
 
   // channel modes
-  private static final int NONE = 0;
-  private static final int CHOOSE = 1;
-  private static final int PUBLISH = 2;
-  private static final int PUBTO = 3;
-  private static final int PREVIEW = 4;
+  private static final int NONE     = 0;
+  private static final int CHOOSE   = 1;
+  private static final int PUBLISH  = 2;
+  private static final int PUBCATS  = 3;
+  private static final int CATS     = 4;
+  private static final int ROLES    = 5;
+  private static final int PUBROLES = 6;
+  private static final int PREVIEW  = 7;
 
   private int mode = NONE;
   private Document channelTypes = null;
   private Document channelDecl = null;
+  private Document chanDoc = null;
   private String action = null;
   private String currentStep = "1";
   private int numSteps;
   private String declURI;
-  private String catID;
-  private String[] catIDs = null; // contains the IDs of channels categories
+  private String catID[] = null;
   private boolean modified = false; // modification flag
   public static Vector vReservedParams = getReservedParams();
   private Hashtable hParams = null;
@@ -167,8 +170,8 @@ public class CPublisher implements IPrivilegedChannel
         prepareChoose ();
       else if (action.equals ("publish"))
         preparePublish ();
-      else if (action.equals ("publishTo"))
-        preparePublishTo ();
+      else if (action.equals ("publishCats"))
+        preparePublishCats ();
       else if (action.equals ("saveChanges"))
         prepareSaveChanges ();
       else if (action.equals("cancel"))
@@ -215,6 +218,9 @@ public class CPublisher implements IPrivilegedChannel
         case PUBLISH:
           xmlSource = new XSLTInputSource (channelDecl);
           break;
+        case CATS: 
+            xmlSource = new XSLTInputSource(chanReg.getCategoryXML(null));
+            break;
         default:
           xmlSource = new XSLTInputSource (channelTypes);
           break;
@@ -238,6 +244,8 @@ public class CPublisher implements IPrivilegedChannel
   private void prepareChoose ()
   {
     mode = CHOOSE;
+    currentStep = "1";
+    catID = null;
     String runtimeURI = runtimeData.getParameter ("channel");
 
     if (runtimeURI != null)
@@ -261,14 +269,24 @@ public class CPublisher implements IPrivilegedChannel
     Enumeration e = runtimeData.getParameterNames();
 
     if(!currentStep.equals("end")) {
+        
         int i = Integer.parseInt(currentStep);
+        
         if(i < numSteps){
             currentStep = Integer.toString(i+1);
         }
+        else if(i == numSteps){
+            mode = CATS;
+            currentStep = Integer.toString(i+1);
+        }
+       // else if(i == numSteps + 1) {
+       //     mode = ROLES;
+       //     currentStep = Integer.toString(i+1);
+       // }   
         else {
             publishChannel();
             currentStep = "end";
-    }
+        }
 
     //System.out.println("numSteps: "+ numSteps);
     //System.out.println("currentStep: "+ currentStep);
@@ -312,50 +330,14 @@ public class CPublisher implements IPrivilegedChannel
         }
         doc.appendChild(chan);
 
-        chanReg.addChannel(nextID, "new channel", doc);
+        chanReg.addChannel(nextID, "new channel", doc, catID);
     }
 
 
-  private void preparePublishTo ()
+  private void preparePublishCats ()
   {
-    mode = PUBTO;
-    String destinationID = runtimeData.getParameter ("destination");
-    Node destination = null;
-
-    if (destinationID == null) {
-        Logger.log(Logger.ERROR,"CPublisher::preparePublishTo() : received a null destinationID !");
-    } else {
-        if (destinationID.equals (this.catID))
-            destination = channelDecl.getDocumentElement (); // the layout element
-        else
-            destination = channelDecl.getElementById (destinationID);
-
-        if(destination==null) {
-            Logger.log(Logger.ERROR,"CPublisher::preparePublishTo() : destinationID=\""+destinationID+"\" results in an empty node !");
-        } else {
-            for (int i = 0; i < catIDs.length; i++) {
-
-                Node channel = channelTypes.getElementById (catIDs[i]);
-
-                // user wants to add an entire category to layout
-                if(catIDs[i].startsWith("cat")) {
-                   // Node channel = channelRegistry.getElementById (subIDs[i]);
-                    NodeList channels = channel.getChildNodes();
-
-                    for (int j=0; j<channels.getLength(); j++) {
-                        channel = channels.item(j);
-                        destination.insertBefore (channelDecl.importNode(channel, false), null);
-                    }
-                }
-                else {
-
-                    //Node channel = channelRegistry.getElementById (subIDs[i]);
-                    destination.insertBefore (channelDecl.importNode(channel, false), null);
-                }
-            }
-            modified = true;
-        }
-    }
+    mode = PUBLISH;
+    catID = runtimeData.getParameterValues("cat");
   }
 
   private void prepareSaveChanges ()

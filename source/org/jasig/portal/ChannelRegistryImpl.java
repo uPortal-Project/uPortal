@@ -56,6 +56,9 @@ public class ChannelRegistryImpl implements IChannelRegistry {
     private Document chanDoc = null;
     private Document types = null;
     String sRegDtd = "channelRegistry.dtd";
+    private RdbmServices rdbmService = new RdbmServices ();
+    private Connection con = null;
+
     
     /**
      * Return a Document object based on the XML string returned
@@ -98,8 +101,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  */
     public Document getRegistryXML(String catID, String role) {
         //System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
-        RdbmServices rdbmService = new RdbmServices ();
-        Connection con = null;
+        
         String chanXML = null;
         String catid = "";
         
@@ -168,8 +170,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return a string of XML
  */
     public Document getTypesXML(String role) {
-        RdbmServices rdbmService = new RdbmServices ();
-        Connection con = null;
+        
         String chanXML = null;
         String catid = "";
         
@@ -225,8 +226,8 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @return Document
  */
     public Document getCategoryXML(String role) {
-        //System.out.println("Enterering ChannelRegistryImpl::getRegistryXML()");
-        RdbmServices rdbmService = new RdbmServices ();
+        //System.out.println("Enterering ChannelRegistryImpl::getCategoryXML()");
+        
         Document catsDoc = null;
         Connection con = null;
         
@@ -246,7 +247,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
             ResultSet rs = stmt.executeQuery (sQuery);
             
             catsDoc = new org.apache.xerces.dom.DocumentImpl();
-            Element root = chanDoc.createElement("channelCats");
+            Element root = catsDoc.createElement("channelCats");
             Element cat = null;
             while (rs.next ())
             {
@@ -266,10 +267,14 @@ public class ChannelRegistryImpl implements IChannelRegistry {
         } finally {
             rdbmService.releaseConnection (con);
         }
+        //System.out.println("catsDoc: "+ serializeDOM(catsDoc));
         return catsDoc;
     }        
+    
             
-            
+    public void addChannel(String catID[], String chanXML, String role[]) {
+    }
+           
     
 /** A method for adding a channel to the channel registry.
  * This would be called by a publish channel.
@@ -277,7 +282,39 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  * @param chanXML XML that describes the channel
  * @param role an array of roles
  */
-    public void addChannel(String catID[], String chanXML, String role[]) {
+    public void addChannel(String id, String title, Document doc, String catID[]) {
+        
+        Statement stmt = null;
+        
+         try {
+            con = rdbmService.getConnection ();
+            stmt = con.createStatement ();
+            
+            for(int i=0; i < catID.length; i++) {
+                
+                String sInsert  = "INSERT INTO UP_CHAN_CLASS (CLASS_ID, CHAN_ID) ";
+                sInsert += "VALUES (" + catID[i] + "," + id + ")";
+
+            int iInserted = stmt.executeUpdate (sInsert);
+            
+            Logger.log (Logger.DEBUG, sInsert);
+            }
+        }
+        catch (Exception e) {
+            Logger.log (Logger.ERROR, e);
+            //return status;
+        }
+        finally{
+            try{
+                if (stmt != null)
+                stmt.close ();
+            }
+            catch (SQLException ex){
+                Logger.log(Logger.ERROR, ex);
+            }
+        rdbmService.releaseConnection(con);
+        addChannel(id, title, doc);
+        }
     }
     
 /** A method for adding a channel to the channel registry.
@@ -286,8 +323,7 @@ public class ChannelRegistryImpl implements IChannelRegistry {
  */
     public void addChannel(String id, String title, Document doc) {
         //System.out.println("Enterering ChannelRegistryImpl::addChannel()");
-        RdbmServices rdbmService = new RdbmServices ();
-        Connection con = null;
+        
         Statement stmt = null;
         String chanXML = null;
         String catid = "";
