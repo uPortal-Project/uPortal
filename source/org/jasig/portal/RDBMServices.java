@@ -474,20 +474,24 @@ public class RDBMServices {
     }
 
     public void setString(int index, String value) throws SQLException {
-      if (RDBMServices.supportsPreparedStatements) {
-        pstmt.setString(index, value);
+      if (value == null || value.length() == 0 ) {
+        setNull(index, java.sql.Types.VARCHAR);
       } else {
-        if (index != lastIndex+1) {
-          throw new SQLException("Out of order index");
+        if (RDBMServices.supportsPreparedStatements) {
+            pstmt.setString(index, value);
         } else {
-          int pos = activeQuery.indexOf("?");
-          if (pos == -1) {
-            throw new SQLException("Missing '?'");
+          if (index != lastIndex+1) {
+            throw new SQLException("Out of order index");
+          } else {
+            int pos = activeQuery.indexOf("?");
+            if (pos == -1) {
+              throw new SQLException("Missing '?'");
+            }
+            activeQuery = activeQuery.substring(0, pos) + "'" + sqlEscape(value) + "'" + activeQuery.substring(pos+1);
+            lastIndex = index;
           }
-          activeQuery = activeQuery.substring(0, pos) + "'" + value + "'" + activeQuery.substring(pos+1);
-          lastIndex = index;
         }
-       }
+      }
     }
 
     public void setTimestamp(int index, java.sql.Timestamp value) throws SQLException {

@@ -2168,14 +2168,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
     else {
       structStmt.setNull(5,java.sql.Types.NUMERIC);
-      structStmt.setString(6, RDBMServices.sqlEscape(structure.getAttribute("name")));
+      structStmt.setString(6, structure.getAttribute("name"));
     }
     String structType = structure.getAttribute("type");
-    if (structType.length() > 0) {
-      structStmt.setString(7, structType);
-    } else {
-      structStmt.setNull(7,java.sql.Types.VARCHAR);
-    }
+    structStmt.setString(7, structType);
     structStmt.setString(8, RDBMServices.dbFlag(xmlBool(structure.getAttribute("hidden"))));
     structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
     structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
