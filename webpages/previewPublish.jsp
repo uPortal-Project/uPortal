@@ -72,7 +72,7 @@ else { %>
 <font size=4><b>Preview Channel for Registration</b></font>
 </form>
 
-<form method="POST" name="channel" action="previewPublish.jsp?action=register">
+
 <table border=0 cellpadding=3 cellspacing=3>
 This is a preview of the channel you are registering. If it is rendered correctly then pick any appropriate categories and click 'Finished'
 button to register. Otherwise cancel or go back and make necessary corrections.
@@ -82,11 +82,13 @@ button to register. Otherwise cancel or go back and make necessary corrections.
 </td>
 <td valign="top">
 <b>Channel Categories</b><p>
+<form method="POST" name="channel" action="previewPublish.jsp?action=register">
 <% publish.writeChannelCats(request, response, out); %>
+</form>
 </td>
 </tr>
 </table>
-</form>
+
 
 <%-- Finished and Cancel Changes buttons --%>
 <form>
