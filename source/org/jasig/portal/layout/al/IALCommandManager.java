@@ -15,7 +15,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @author Michael Ivanov: mvi at immagic.com
  */
-public interface IAggregatedLayoutCommandManager extends IAggregatedLayoutManagerCommands {
+public interface IALCommandManager extends IALCommands {
     
     /**
      * Specify the layout manager

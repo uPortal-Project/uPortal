@@ -26,7 +26,7 @@ import org.xml.sax.ContentHandler;
  */
 public class AggregatedLayoutImpl implements  IAggregatedLayout {
 	
-    private IAggregatedLayoutCommandManager layoutCommandManager;
+    private IALCommandManager layoutCommandManager;
     private IRestrictionManager restrictionManager;
     
     // internal representation of an assembled layout
@@ -229,14 +229,14 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
 	/**
      * @return Returns the layoutCommandManager.
      */
-    public IAggregatedLayoutCommandManager getLayoutCommandManager() {
+    public IALCommandManager getLayoutCommandManager() {
         return layoutCommandManager;
     }
     /**
      * Secify layout command manager to be used
      * @param layoutCommandManager The layoutCommandManager to set.
      */
-    public void setLayoutCommandManager(IAggregatedLayoutCommandManager layoutCommandManager) {
+    public void setLayoutCommandManager(IALCommandManager layoutCommandManager) {
         this.layoutCommandManager = layoutCommandManager;
     }
     /**

@@ -16,7 +16,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision$
  */
-public interface ILayoutManagerCommands {
+public interface ILayoutCommands {
     /**
      * Import and attach a new node structure to the layout.
      * Note: it's important to understand that the <code>INode</code> supplied will

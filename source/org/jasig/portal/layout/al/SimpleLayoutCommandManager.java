@@ -21,7 +21,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
  */
-public class SimpleLayoutCommandManager implements IAggregatedLayoutCommandManager {
+public class SimpleLayoutCommandManager implements IALCommandManager {
     List commands;
     IAggregatedLayout layoutManager;
     

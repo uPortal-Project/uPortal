@@ -16,7 +16,7 @@ import org.jasig.portal.layout.al.common.ILayout;
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.1
  */
-public interface IAggregatedLayout extends ILayout, IAggregatedLayoutManagerCommands {
+public interface IAggregatedLayout extends ILayout, IALCommands {
 
     // the tag names constants
     public static final String LAYOUT = "layout";

@@ -14,7 +14,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision$
  */
-public interface ILayoutSubtree extends ILayoutManagerCommands {
+public interface ILayoutSubtree extends ILayoutCommands {
     /**
      * Returns an id of the root folder.
      *

@@ -22,7 +22,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
  */
-public class ReducingLayoutCommandManager implements IAggregatedLayoutCommandManager {
+public class ReducingLayoutCommandManager implements IALCommandManager {
     List commands;
     IAggregatedLayout layoutManager;
     

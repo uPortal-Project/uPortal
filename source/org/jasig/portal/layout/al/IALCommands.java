@@ -7,7 +7,7 @@
 package org.jasig.portal.layout.al;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayoutManagerCommands;
+import org.jasig.portal.layout.al.common.ILayoutCommands;
 import org.jasig.portal.layout.al.common.node.ILayoutNode;
 import org.jasig.portal.layout.al.common.node.INodeId;
 
@@ -17,7 +17,7 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision$
  */
-public interface IAggregatedLayoutManagerCommands extends ILayoutManagerCommands {
+public interface IALCommands extends ILayoutCommands {
     
     
     /**
