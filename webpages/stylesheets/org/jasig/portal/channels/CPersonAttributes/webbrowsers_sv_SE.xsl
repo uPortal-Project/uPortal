@@ -30,14 +30,10 @@
         <td colspan="2">Tillgängliga attribut</td>
       </tr>
       <xsl:apply-templates select="attribute" mode="defined"/>
-      <tr class="uportal-background-light">
-        <td colspan="2">Ej tillgängliga attribut</td>
-      </tr>
-      <xsl:apply-templates select="attribute" mode="undefined"/>
     </table>
   </xsl:template>
 
-  <xsl:template match="attribute" mode="defined">
+  <xsl:template match="attribute">
     <xsl:if test="value">
       <tr>
         <td><xsl:value-of select="name"/></td>
@@ -49,15 +45,6 @@
             <td><xsl:value-of select="value"/></td>
         </xsl:otherwise>
         </xsl:choose>
-      </tr>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template match="attribute" mode="undefined">
-    <xsl:if test="not(value)">
-      <tr>
-        <td><xsl:value-of select="name"/></td>
-        <td>[Ej tillgänglig]</td>
       </tr>
     </xsl:if>
   </xsl:template>

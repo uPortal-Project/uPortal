@@ -29,15 +29,11 @@
       <tr class="uportal-background-light">
         <td colspan="2">利用可能な属性：</td>
       </tr>
-      <xsl:apply-templates select="attribute" mode="defined"/>
-      <tr class="uportal-background-light">
-        <td colspan="2">利用不可能な属性：</td>
-      </tr>
-      <xsl:apply-templates select="attribute" mode="undefined"/>
+      <xsl:apply-templates select="attribute"/>
     </table>
   </xsl:template>
 
-  <xsl:template match="attribute" mode="defined">
+  <xsl:template match="attribute">
     <xsl:if test="value">
       <tr>
         <td><xsl:value-of select="name"/></td>
@@ -49,15 +45,6 @@
             <td><xsl:value-of select="value"/></td>
         </xsl:otherwise>
         </xsl:choose>
-      </tr>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template match="attribute" mode="undefined">
-    <xsl:if test="not(value)">
-      <tr>
-        <td><xsl:value-of select="name"/></td>
-        <td>[利用不可]</td>
       </tr>
     </xsl:if>
   </xsl:template>
