@@ -75,7 +75,7 @@ public class ChannelManager {
     private Hashtable targetParams;
     private BrowserInfo binfo;
 
-    public static String channelAddressingPathElement="channel";
+    public static final String channelAddressingPathElement="channel";
     public String uPElement;
 
     public ChannelManager () {
