@@ -1,5 +1,5 @@
 /**
- * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ import java.net.URLDecoder;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
@@ -332,12 +333,16 @@ public class PortletStateManager {
 	  * @param request a <code>HttpServletRequest</code> instance
 	  */  
 	public static void clearState( HttpServletRequest request ) {
+	 HttpSession session = request.getSession();	
+	 if ( session == null ) 
+	 	return;
 	 Map map = windowStates;	
 	 for ( int i = 0; i < 2; i++ )	{
 	  Iterator keyIterator = map.keySet().iterator();
 	  while ( keyIterator.hasNext() ) {
 		  String name = (String) keyIterator.next();
-		  if (name.startsWith(request.getSession().getId())) {
+		  
+		  if (name.startsWith(session.getId())) {
 			  keyIterator.remove();
 		  }
 	  }
