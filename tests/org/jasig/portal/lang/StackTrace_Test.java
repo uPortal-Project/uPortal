@@ -133,7 +133,7 @@ public class StackTrace_Test
         StackTrace frame = StackTrace.getStackTrace( 0 );
         assertNotNull( frame );
         int lineNumber = frame.getLineNumber();
-        assertTrue( "Invalid line number: " + lineNumber, lineNumber == -1 || lineNumber == 148 );
+        assertTrue( "Invalid line number: " + lineNumber, lineNumber == -1 || lineNumber == 133 );
     }
     
     public void test_StackTrace()
