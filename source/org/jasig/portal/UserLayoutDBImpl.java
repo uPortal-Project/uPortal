@@ -14,6 +14,7 @@ import java.sql.*;
 import java.util.*;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.jasig.portal.utils.DTDResolver;
 
 
 public class UserLayoutDBImpl implements IUserLayoutDB {
@@ -24,105 +25,86 @@ public class UserLayoutDBImpl implements IUserLayoutDB {
     String sPathToLayoutDtd;
 
     public Document getUserLayout(String userName,String media) {
-	RdbmServices rdbmService = new RdbmServices ();
-	Connection con = null;
-	String str_uLayoutXML = null;
+        RdbmServices rdbmService = new RdbmServices ();
+        Connection con = null;
+        String str_uLayoutXML = null;
 
 
-	try {
+        try {
 
 
-	    con = rdbmService.getConnection ();
-	    Statement stmt = con.createStatement ();
-	    
-	    // for now, the media parameter gets ignored. Need to restructure PORTAL_USERS table to sepearate layouts, so they can be media-specific
-	    String sQuery = "SELECT USER_LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + userName + "'";
-	    Logger.log (Logger.DEBUG, sQuery);
+            con = rdbmService.getConnection ();
+            Statement stmt = con.createStatement ();
 
-	    ResultSet rs = stmt.executeQuery (sQuery);
-	    
-	    if (rs.next ()) 
-		{
-		    str_uLayoutXML = rs.getString ("USER_LAYOUT_XML");
-		} 
-	    stmt.close();
-	} catch (Exception e) {
-	    Logger.log(Logger.ERROR,e);
-	} finally {
-	    rdbmService.releaseConnection (con);
-	}
+            // for now, the media parameter gets ignored. Need to restructure PORTAL_USERS table to sepearate layouts, so they can be media-specific
+            String sQuery = "SELECT USER_LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + userName + "'";
+            Logger.log (Logger.DEBUG, sQuery);
 
-	if(str_uLayoutXML==null) return null;
-	else {
-	    try {
-		DTDResolver er=new DTDResolver();
-		// read in the layout DOM
-		// note that we really do need to have a DOM structure here in order to introduce
-		// persistent changes on the level of userLayout.
-		//org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
-		org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
-		parser.setEntityResolver(er);
-		// set parser features
-		parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
-		
-		parser.parse (new org.xml.sax.InputSource (new StringReader (str_uLayoutXML)));
-		return parser.getDocument ();
-	    } catch (Exception e) {
-		Logger.log(Logger.ERROR,"UserLayoutDBImpl::getUserLayout() : unable to parse the user layout XML."+e);
-	    }
-	}
-	return null;
+            ResultSet rs = stmt.executeQuery (sQuery);
+
+            if (rs.next ())
+                {
+                    str_uLayoutXML = rs.getString ("USER_LAYOUT_XML");
+                }
+            stmt.close();
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
+
+        if(str_uLayoutXML==null) return null;
+        else {
+            try {
+                DTDResolver userLayoutDtdResolver = new DTDResolver("userLayout.dtd");
+                // read in the layout DOM
+                // note that we really do need to have a DOM structure here in order to introduce
+                // persistent changes on the level of userLayout.
+                //org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser();
+                org.apache.xerces.parsers.DOMParser parser = new org.apache.xerces.parsers.DOMParser ();
+                parser.setEntityResolver(userLayoutDtdResolver);
+                // set parser features
+                parser.setFeature ("http://apache.org/xml/features/validation/dynamic", true);
+
+                parser.parse (new org.xml.sax.InputSource (new StringReader (str_uLayoutXML)));
+                return parser.getDocument ();
+            } catch (Exception e) {
+                Logger.log(Logger.ERROR,"UserLayoutDBImpl::getUserLayout() : unable to parse the user layout XML."+e);
+            }
+        }
+        return null;
     }
 
 
     public void setUserLayout(String userName,String media,Document layoutXML) {
-	RdbmServices rdbmService = new RdbmServices ();
-	Connection con = null;
+        RdbmServices rdbmService = new RdbmServices ();
+        Connection con = null;
 
-	try {
-	    con = rdbmService.getConnection ();
-	    Statement stmt = con.createStatement ();
-	    
-	    StringWriter outString = new StringWriter ();
-	    org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
-	    format.setOmitXMLDeclaration(false);
-	    format.setIndenting(false);
-	    org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
-	    xsl.serialize (layoutXML);
-	    String str_userLayoutXML=outString.toString();
+        try {
+            con = rdbmService.getConnection ();
+            Statement stmt = con.createStatement ();
 
-	    // for now, the media parameter gets ignored. Need to restructure PORTAL_USERS table to sepearate layouts, so they can be media-specific
-	    String sQuery = "UPDATE PORTAL_USERS SET USER_LAYOUT_XML='"+str_userLayoutXML+"' WHERE USER_NAME='"+userName+"';";
-	    Logger.log (Logger.DEBUG, sQuery);
+            StringWriter outString = new StringWriter ();
+            org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+            format.setOmitXMLDeclaration(false);
+            format.setIndenting(false);
+            org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+            xsl.serialize (layoutXML);
+            String str_userLayoutXML=outString.toString();
 
-	    ResultSet rs = stmt.executeQuery (sQuery);
+            // for now, the media parameter gets ignored. Need to restructure PORTAL_USERS table to sepearate layouts, so they can be media-specific
+            String sQuery = "UPDATE PORTAL_USERS SET USER_LAYOUT_XML='"+str_userLayoutXML+"' WHERE USER_NAME='"+userName+"';";
+            Logger.log (Logger.DEBUG, sQuery);
 
-	} catch (Exception e) {
-	    Logger.log(Logger.ERROR,e);
-	} finally {
-	    rdbmService.releaseConnection (con);
-	}
+            ResultSet rs = stmt.executeQuery (sQuery);
+
+        } catch (Exception e) {
+            Logger.log(Logger.ERROR,e);
+        } finally {
+            rdbmService.releaseConnection (con);
+        }
 
     }
-
-    private class DTDResolver implements EntityResolver {
-	public InputSource resolveEntity (String publicId, String systemId)
-	{
-	    Logger.log(Logger.DEBUG,"UserLayoutDBImpl.DTDResolver::resolveEntity() : publicID="+publicId+" , systemId="+systemId+".");
-	    if (systemId.equals("file:/userLayout.dtd")) {
-		try {
-		    FileReader fr=new FileReader(UtilitiesBean.getPortalBaseDir()+"webpages"+File.separator+"dtd"+File.separator+"userLayout.dtd");
-		    return new InputSource(fr);
-		} catch (Exception e) {
-		    Logger.log(Logger.ERROR,"UserLayoutDBImpl.DTDResolver::resolveEntity() : unable to open userLayout.dtd. "+e);
-		    return null;
-		}
-	    } else {
-		return null;
-	    }
-	}
-    }
-
 }
 
 
