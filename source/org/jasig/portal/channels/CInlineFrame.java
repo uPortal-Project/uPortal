@@ -109,6 +109,8 @@ public class CInlineFrame extends BaseChannel
    */
   public void renderXML (DocumentHandler out) throws PortalException
   {
+    String ssTitle = getStylesheetTitle();
+
     try
     {
       StringBuffer sbXML = new StringBuffer("<?xml version=\"1.0\"?>");
@@ -116,12 +118,26 @@ public class CInlineFrame extends BaseChannel
       sbXML.append("  <url>").append(srcUrl).append("</url>");
       sbXML.append("  <height>").append(frameHeight).append("</height>");
       sbXML.append("</iframe>");
-      XSLT.transform(sbXML.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, media);
+      XSLT.transform(sbXML.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, ssTitle, media);
     }
     catch (Exception e)
     {
       Logger.log(Logger.ERROR, e);
       throw new GeneralRenderingException(e.getMessage());
     }
+  }
+
+  private String getStylesheetTitle()
+  {
+    String ssTitle = "noIFrameSupport";
+    String userAgent = runtimeData.getBrowserInfo().getUserAgent();
+
+    if ((userAgent.indexOf("MSIE 3") >= 0)||
+        (userAgent.indexOf("MSIE 4") >= 0) ||
+        (userAgent.indexOf("MSIE 5") >= 0) ||
+        (userAgent.indexOf("Mozilla/5") >= 0))
+      ssTitle = "IFrameSupport";
+
+    return ssTitle;
   }
 }
