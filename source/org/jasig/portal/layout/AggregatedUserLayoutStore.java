@@ -3184,5 +3184,45 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		  }
 		return groupKeys.elements();
    }
+   
+   /**
+		  * Persists the user groups which the fragment is published to
+		  * @param groups an array of <code>IGroupMember</code> objects
+		  * @param person an <code>IPerson</code> object specifying the user
+		  * @param fragmentId a <code>String</code> value
+		  * @exception PortalException if an error occurs
+		  */
+	public void setPublishGroups ( IGroupMember[] groups, IPerson person, String fragmentId ) throws PortalException {
+		int userId = person.getID();
+	    Connection con = RDBMServices.getConnection();
+	 try {
+		 
+		 boolean isUpdateAllowed = false;
+		 String query = "SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId+ " AND OWNER_ID="+userId; 
+		 Statement stmt = con.createStatement();
+		 ResultSet rs = stmt.executeQuery(query);
+		 if ( rs.next() ) 
+		   isUpdateAllowed = true;
+		 rs.close();  
+		   
+		 if ( isUpdateAllowed ) {  
+		  RDBMServices.setAutoCommit(con, false);   	
+		  // Deleting all the group key for the given fragment
+		  stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+		  PreparedStatement ps = con.prepareStatement("INSERT INTO UP_GROUP_FRAGMENT (GROUP_KEY,FRAGMENT_ID) VALUES (?,"+fragmentId+")");
+		  for ( int i = 0; i < groups.length; i++ ) {
+		  	ps.setString(1,groups[i].getKey());
+		  	ps.executeUpdate();
+		  }
+		    ps.close();		
+		  RDBMServices.commit(con);
+		 } 
+			if ( stmt != null ) stmt.close();
+	  } catch ( Exception e ) {
+			throw new PortalException(e);
+		} finally {
+			RDBMServices.releaseConnection(con);
+		  }	
+	}
 
 }

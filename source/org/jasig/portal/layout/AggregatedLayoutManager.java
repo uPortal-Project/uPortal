@@ -40,6 +40,7 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
 
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
@@ -1114,6 +1115,16 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 				*/
 	public Enumeration getPublishGroups (String fragmentId ) throws PortalException {
 	  return layoutStore.getPublishGroups(person,fragmentId);	
+	}
+	
+	/**
+					* Persists the user groups which the fragment is published to
+					* @param groups an array of <code>IGroupMember</code> objects
+					* @param fragmentId a <code>String</code> value
+					* @exception PortalException if an error occurs
+					*/
+    public void setPublishGroups ( IGroupMember[] groups, String fragmentId ) throws PortalException {
+		  layoutStore.setPublishGroups(groups,person,fragmentId);	
 	}
 	
 	public ILayoutFragment getFragment ( String fragmentId ) throws PortalException {

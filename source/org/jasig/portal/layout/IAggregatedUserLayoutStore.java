@@ -41,6 +41,7 @@ import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.groups.IGroupMember;
 
 /**
  * IAggregatedUserLayoutStore defines the base methods working with aggregated user layout store.
@@ -153,6 +154,15 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
 		* @exception PortalException if an error occurs
 		*/
     public Enumeration getPublishGroups (IPerson person, String fragmentId ) throws PortalException;
+    
+	/**
+		  * Persists the user groups which the fragment is published to
+		  * @param groups an array of <code>IGroupMember</code> objects
+		  * @param person an <code>IPerson</code> object specifying the user
+		  * @param fragmentId a <code>String</code> value
+		  * @exception PortalException if an error occurs
+		  */
+	public void setPublishGroups ( IGroupMember[] groups, IPerson person, String fragmentId ) throws PortalException;
 
 
     /**

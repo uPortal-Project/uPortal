@@ -40,6 +40,7 @@ package org.jasig.portal.layout;
 import java.util.Set;
 import java.util.Enumeration;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.groups.IGroupMember;
 
 /**
  * An aggregated-layout specific extension of the user layout manager interface
@@ -159,5 +160,13 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 			* @exception PortalException if an error occurs
 			*/
 	public Enumeration getPublishGroups (String fragmentId ) throws PortalException;
+	
+	/**
+	  * Persists the user groups which the fragment is published to
+	  * @param groups an array of <code>IGroupMember</code> objects
+	  * @param fragmentId a <code>String</code> value
+	  * @exception PortalException if an error occurs
+	  */
+	public void setPublishGroups ( IGroupMember[] groups, String fragmentId ) throws PortalException;
 
 }
