@@ -35,17 +35,16 @@
 
 package  org.jasig.portal.channels;
 
-import org.jasig.portal.IMultithreadedChannel;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
-import org.jasig.portal.PortalException;
 import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IMultithreadedChannel;
 import org.jasig.portal.PortalEvent;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.HashMap;
-
+import org.jasig.portal.PortalException;
 import org.xml.sax.ContentHandler;
 
 /**

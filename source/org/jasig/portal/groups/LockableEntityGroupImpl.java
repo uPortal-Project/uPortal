@@ -37,7 +37,7 @@ package org.jasig.portal.groups;
 
 import org.jasig.portal.concurrency.IEntityLock;
 
-  /**
+    /**
  * Extends <code>EntityGroupImpl</code> to make it lockable for writing.
  * <p>
  * @author Dan Ellentuck
@@ -77,22 +77,28 @@ protected ILockableGroupService getLockableGroupService() throws GroupsException
     return (ILockableGroupService) super.getLocalGroupService();
 }
 /**
- *
+ * Ask the service to update this group (in the store), update the 
+ * back-pointers of the updated members, and force the retrieval of 
+ * containing groups in case the memberships of THIS group have 
+ * changed during the time the group has been locked.  
  */
 private void primUpdate(boolean renewLock) throws GroupsException
 {
     getLockableGroupService().updateGroup(this, renewLock);
-    primUpdateMembers();
     clearPendingUpdates();
+    setGroupKeysInitialized(false);
 }
 /**
- *
+ * Ask the service to update this group (in the store), update the 
+ * back-pointers of the updated members, and force the retrieval of 
+ * containing groups in case the memberships of THIS group have 
+ * changed during the time the group has been locked.  
  */
 private void primUpdateMembers(boolean renewLock) throws GroupsException
 {
     getLockableGroupService().updateGroupMembers(this, renewLock);
-    primUpdateMembers();
     clearPendingUpdates();
+    setGroupKeysInitialized(false);
 }
 /**
  * @param lock org.jasig.portal.concurrency.IEntityLock

@@ -39,18 +39,21 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.naming.Name;
+import javax.naming.NamingException;
+
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.CompositeEntityIdentifier;
-import javax.naming.*;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.SqlTransaction;
 
 /**
  * Reference implementation of IPermissionStore.  Performs CRUD operations
@@ -61,6 +64,9 @@ import org.jasig.portal.utils.SqlTransaction;
 public class RDBMPermissionImpl implements IPermissionStore {
 
     private static RDBMPermissionImpl singleton;
+
+    // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
+    private static boolean timestampHasMillis;
 
     // sql Strings:
     private static String PERMISSION_TABLE = "UP_PERMISSION";
@@ -83,6 +89,9 @@ public class RDBMPermissionImpl implements IPermissionStore {
  */
 public RDBMPermissionImpl() {
     super();
+    Date testDate = new Date();
+    Timestamp testTimestamp = new Timestamp(testDate.getTime());
+    timestampHasMillis = (testDate.getTime() == testTimestamp.getTime());
 }
 /**
  * Add the IPermissions to the store.
@@ -123,7 +132,7 @@ public void add(IPermission perm) throws AuthorizationException
         try
         {
             primAdd(perm, ps);
-            LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.add(): " + ps);
+            LogService.log(LogService.DEBUG, "RDBMPermissionImpl.add(): " + ps);
             rc = ps.executeUpdate();
             if ( rc != 1 )
                 { throw new AuthorizationException("Problem adding Permission " + perm); }
@@ -211,7 +220,7 @@ public boolean existsInDatabase(IPermission perm) throws AuthorizationException,
             ps.setString(3, getPrincipalKey(perm));
             ps.setString(4, perm.getActivity());
             ps.setString(5, perm.getTarget());
-            LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.existsInDatabase(): " + ps);
+            LogService.log(LogService.DEBUG, "RDBMPermissionImpl.existsInDatabase(): " + ps);
             ResultSet rs = ps.executeQuery();
             try {
               return ( rs.next() );
@@ -438,8 +447,7 @@ private static String getUpdatePermissionSql()
  */
 private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
 {
-    java.sql.Timestamp ts = null;
-    int nanos = 0;
+    Timestamp ts = null;
 
     IPermission perm = newInstance(rs.getString(OWNER_COLUMN));
     perm.setPrincipal(rs.getString(PRINCIPAL_TYPE_COLUMN) + "." + rs.getString(PRINCIPAL_KEY_COLUMN) );
@@ -449,17 +457,11 @@ private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
 
     ts = rs.getTimestamp(EFFECTIVE_COLUMN);
     if ( ts != null )
-    {
-        nanos = ts.getNanos() / 1000000;
-        perm.setEffective(new java.util.Date(ts.getTime()+nanos));
-    }
+        { perm.setEffective(new Date(getTimestampMillis(ts))); }
 
     ts = rs.getTimestamp(EXPIRES_COLUMN);
     if ( ts != null )
-    {
-        nanos = ts.getNanos() / 1000000;
-        perm.setExpires(new java.util.Date(ts.getTime()+nanos));
-    }
+        { perm.setExpires(new Date(getTimestampMillis(ts))); }
 
     return perm;
 }
@@ -492,7 +494,7 @@ private void primAdd(IPermission[] perms) throws Exception
             for ( int i=0; i<perms.length; i++ )
             {
                 primAdd(perms[i], ps);
-                LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primAdd(): " + ps);
+                LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primAdd(): " + ps);
                 rc = ps.executeUpdate();
 
                 if ( rc != 1 )
@@ -547,7 +549,7 @@ private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws
         { ps.setString(6, perm.getType()); }
     // EFFECTIVE:
     if ( perm.getEffective() == null )
-        { ps.setNull(7, Types.DATE); }
+        { ps.setNull(7, Types.TIMESTAMP); }
     else
         {
             ts = new java.sql.Timestamp(perm.getEffective().getTime());
@@ -555,7 +557,7 @@ private void primAdd(IPermission perm, RDBMServices.PreparedStatement ps) throws
         }
     // EXPIRES:
     if ( perm.getExpires() == null )
-        { ps.setNull(8, Types.DATE); }
+        { ps.setNull(8, Types.TIMESTAMP); }
     else
         {
             ts = new java.sql.Timestamp(perm.getExpires().getTime());
@@ -616,7 +618,7 @@ private int primDelete(IPermission perm, RDBMServices.PreparedStatement ps) thro
     ps.setString(3, getPrincipalKey(perm));
     ps.setString(4, perm.getActivity());
     ps.setString(5, perm.getTarget());
-    LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primDelete(): " + ps);
+    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primDelete(): " + ps);
 
     return ps.executeUpdate();
 }
@@ -680,7 +682,7 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
         { ps.setString(1, perm.getType()); }
     // EFFECTIVE:
     if ( perm.getEffective() == null )
-        { ps.setNull(2, Types.DATE); }
+        { ps.setNull(2, Types.TIMESTAMP); }
     else
     {
         ts = new java.sql.Timestamp(perm.getEffective().getTime());
@@ -688,7 +690,7 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
     }
     // EXPIRES:
     if ( perm.getExpires() == null )
-        { ps.setNull(3, Types.DATE); }
+        { ps.setNull(3, Types.TIMESTAMP); }
     else
     {
         ts = new java.sql.Timestamp(perm.getExpires().getTime());
@@ -700,7 +702,7 @@ private int primUpdate(IPermission perm, RDBMServices.PreparedStatement ps) thro
     ps.setString(6, getPrincipalKey(perm));
     ps.setString(7, perm.getActivity());
     ps.setString(8, perm.getTarget());
-    LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.primUpdate(): " + ps);
+    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.primUpdate(): " + ps);
 
 
     return ps.executeUpdate();
@@ -732,7 +734,7 @@ throws AuthorizationException
     {
         sqlQuery.append(OWNER_COLUMN);
         sqlQuery.append(" = '");
-        sqlQuery.append(owner);
+        sqlQuery.append(RDBMServices.sqlEscape(owner));
         sqlQuery.append("' ");
     }
     else
@@ -759,7 +761,7 @@ throws AuthorizationException
             sqlQuery.append("AND ");
             sqlQuery.append(ACTIVITY_COLUMN);
             sqlQuery.append(" = '");
-            sqlQuery.append(activity);
+            sqlQuery.append(RDBMServices.sqlEscape(activity));
             sqlQuery.append("' ");
         }
 
@@ -768,7 +770,7 @@ throws AuthorizationException
             sqlQuery.append("AND ");
             sqlQuery.append(TARGET_COLUMN);
             sqlQuery.append(" = '");
-            sqlQuery.append(target);
+            sqlQuery.append(RDBMServices.sqlEscape(target));
             sqlQuery.append("' ");
         }
 
@@ -781,7 +783,7 @@ throws AuthorizationException
             sqlQuery.append("' ");
         }
 
-    LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.select(): " + sqlQuery.toString());
+    LogService.log(LogService.DEBUG, "RDBMPermissionImpl.select(): " + sqlQuery.toString());
 
     try
     {
@@ -853,7 +855,7 @@ public void update(IPermission perm) throws AuthorizationException
     {
         conn = RDBMServices.getConnection();
         String sQuery = getUpdatePermissionSql();
-        LogService.instance().log(LogService.DEBUG, "RDBMPermissionImpl.update(): " + sQuery);
+        LogService.log(LogService.DEBUG, "RDBMPermissionImpl.update(): " + sQuery);
         RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sQuery);
         try
             { primUpdate(perm, ps); }
@@ -867,5 +869,15 @@ public void update(IPermission perm) throws AuthorizationException
     }
     finally
         { RDBMServices.releaseConnection(conn); }
+}
+/**
+ * @return long
+ */
+private static long getTimestampMillis(Timestamp ts)
+{
+    if ( timestampHasMillis )
+        { return ts.getTime(); }
+    else
+        { return (ts.getTime() + ts.getNanos() / 1000000); }
 }
 }

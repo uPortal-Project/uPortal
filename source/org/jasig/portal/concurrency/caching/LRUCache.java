@@ -35,8 +35,8 @@
 
 package org.jasig.portal.concurrency.caching;
 
-import  java.util.HashMap;
-import  java.util.Iterator;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * A rewrite of SmartCache that uses a moderate LRU algorithm:  entries

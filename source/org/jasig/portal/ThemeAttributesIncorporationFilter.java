@@ -42,17 +42,14 @@
 
 package org.jasig.portal;
 
+import java.util.Enumeration;
+
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
-import java.util.Enumeration;
-
 import org.xml.sax.helpers.AttributesImpl;
-
-import org.jasig.portal.services.LogService;
 
 public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
 {
@@ -78,7 +75,7 @@ public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
             for(Enumeration ca=ssup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
                 String attrName=(String) ca.nextElement();
                 attsImpl.addAttribute("",attrName,attrName,"CDATA",ssup.getChannelAttributeValue(channelSubscribeId,attrName));
-                //		LogService.instance().log(LogService.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
+                //		LogService.log(LogService.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
             }
             super.startElement(uri,localName,qName,attsImpl);
         } else {

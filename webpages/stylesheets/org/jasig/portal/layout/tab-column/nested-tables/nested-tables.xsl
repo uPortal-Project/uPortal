@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="baseIdempotentActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="skin" select="'imm'"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
   <!-- This template is supposed to render a fragment of the layout. 
@@ -41,7 +42,7 @@
   <xsl:template match="layout">
     <html>
       <head>
-        <title>uPortal 2.0</title>
+        <title>uPortal 2.1.3</title>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <script language="JavaScript">function openBrWindow(theURL,winName,features) {window.open(theURL,winName,features);}</script>
       </head>
@@ -52,9 +53,9 @@
         </xsl:if>
         <xsl:apply-templates select="content"/>
         <table width="100%" border="0" cellpadding="1" cellspacing="0">
-          <tr>
+          <tr><td>
             <xsl:apply-templates select="footer"/>
-          </tr>
+          </td></tr>
         </table>
       </body>
     </html>
@@ -380,7 +381,7 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
-    <a href="#" onClick="openBrWindow('{$baseActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
+    <a href="#" onClick="openBrWindow('{$baseIdempotentActionURL}?uP_detach_target={@ID}','detachedChannel','toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes,width=640,height=480')">
       <img alt="detach" title="detach" src="{$mediaPath}/{$skin}/controls/detach.gif" width="16" height="16" border="0"/>
     </a>
     <xsl:if test="not(@unremovable='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">

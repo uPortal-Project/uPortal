@@ -38,7 +38,8 @@
 
 package  org.jasig.portal.security;
 
-import  java.util.Enumeration;
+import java.util.Enumeration;
+
 import org.jasig.portal.IBasicEntity;
 
 

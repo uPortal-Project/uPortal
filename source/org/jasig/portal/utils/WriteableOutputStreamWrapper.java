@@ -35,8 +35,8 @@
 
 package org.jasig.portal.utils;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * A simple wrapper to present {@link IWriteable} interface for a regular <code>java.io.OutputStream</code>.

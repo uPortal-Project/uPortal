@@ -36,11 +36,10 @@
 
 package org.jasig.portal.security.provider;
 
+import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.services.LogService;
-import java.security.MessageDigest;
 
 
 /**

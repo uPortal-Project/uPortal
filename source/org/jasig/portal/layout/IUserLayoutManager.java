@@ -37,11 +37,12 @@
 
 package org.jasig.portal.layout;
 
+import java.util.List;
+
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
-import org.xml.sax.ContentHandler;
-import java.util.List;
 import org.w3c.dom.Document;
+import org.xml.sax.ContentHandler;
 
 /**
  * An interface for abstracting operations performed on the user layout.

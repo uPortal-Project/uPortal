@@ -67,7 +67,7 @@ Version $Revision$
         <example>http://www.udel.edu/uPortal</example>
       </parameter>
 
-      <parameter modify="subscribe">
+      <parameter modify="publish">
         <name>height</name>
         <label>Frame Height (pixels)</label>
         <type base="integer" input="text" display="text">

@@ -34,7 +34,6 @@
  */
 package org.jasig.portal.utils.threading;
 
-import org.jasig.portal.services.LogService;
 
 /**
  * A ThreadPool worker thread.

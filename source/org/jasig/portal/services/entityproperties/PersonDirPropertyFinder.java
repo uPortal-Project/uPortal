@@ -36,11 +36,12 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  java.util.*;
-import  org.jasig.portal.utils.*;
-import  java.sql.*;
+import java.util.Hashtable;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.utils.SmartCache;
 
 
 /**
@@ -72,7 +73,10 @@ public class PersonDirPropertyFinder
     public String getProperty(EntityIdentifier entityID, String name) {
         String r = null;
         if (entityID.getType().equals(person)) {
-            r = (String)getPropertiesHash(entityID).get(name);
+            Object o = getPropertiesHash(entityID).get(name);
+            if (o instanceof String) {
+                r = (String)o;
+            }
         }
         return  r;
     }
@@ -84,7 +88,7 @@ public class PersonDirPropertyFinder
             try {
                 ht = pd.getUserDirectoryInformation(entityID.getKey());
             } catch (Exception e) {
-                LogService.instance().log(LogService.ERROR, e);
+                LogService.log(LogService.ERROR, e);
             }
             cache.put(entityID.getKey(), ht);
         }

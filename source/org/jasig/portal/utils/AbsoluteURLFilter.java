@@ -36,9 +36,8 @@
 package org.jasig.portal.utils;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.utils.SAX2FilterImpl;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -86,6 +85,16 @@ public abstract class AbsoluteURLFilter extends SAX2FilterImpl {
     filter.baseUrl = baseUrl;
     
     return filter;
+  }
+
+  /**
+   * Sets the base URL.
+   * @param url the new base URL 
+   */
+  protected void setBaseUrl(String url)
+  {
+    if (url != null)
+      this.baseUrl = url;
   }
 
   /**

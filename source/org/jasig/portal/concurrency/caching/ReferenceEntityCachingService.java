@@ -35,12 +35,16 @@
 
 package org.jasig.portal.concurrency.caching;
 
-import java.util.*;
-import org.jasig.portal.PropertiesManager;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.concurrency.*;
-import org.jasig.portal.services.LogService;
+import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.IEntityCache;
+import org.jasig.portal.concurrency.IEntityCachingService;
 /**
  * Caching service reference implementation.
  * @author Dan Ellentuck

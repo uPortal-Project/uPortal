@@ -35,9 +35,7 @@
 
 package org.jasig.portal.layout;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.jasig.portal.PortalException;
 
 /**
  * This is a temp solution for top-level <layout> node element.

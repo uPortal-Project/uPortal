@@ -36,8 +36,8 @@ package org.jasig.portal.groups;
 
 import java.util.Iterator;
 /**
- * Defines a component group service that finds and maintains 
- * <code>IGroupMembers</code> within a composite group service.  
+ * Defines a component group service that finds and maintains
+ * <code>IGroupMembers</code> within a composite group service.
  *
  * @author Dan Ellentuck
  * @version $Revision$
@@ -49,7 +49,7 @@ public interface IIndividualGroupService extends ICompositeGroupService {
   public void deleteGroup(IEntityGroup group) throws GroupsException;
   /**
    * Returns a preexisting <code>IEntityGroup</code> from the store.
-   * @param ent CompositeEntityIdentifier 
+   * @param ent CompositeEntityIdentifier
    */
   public IEntityGroup findGroup(CompositeEntityIdentifier ent)
   throws GroupsException;
@@ -64,12 +64,16 @@ public interface IIndividualGroupService extends ICompositeGroupService {
    */
   public boolean isEditable(IEntityGroup group) throws GroupsException;
   /**
+   * Answers if the service can be updated by the portal.
+   */
+  public boolean isEditable();
+  /**
    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
    * key.
    */
   public IEntityGroup newGroup(Class type) throws GroupsException;
   /**
-   * Commits the updated <code>IEntityGroup</code> and its memberships to the 
+   * Commits the updated <code>IEntityGroup</code> and its memberships to the
    * store.
    * @param group IEntityGroup
    */

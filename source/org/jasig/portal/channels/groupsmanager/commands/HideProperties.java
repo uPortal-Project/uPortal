@@ -35,10 +35,11 @@
 
 package org.jasig.portal.channels.groupsmanager.commands;
 
-import org.jasig.portal.channels.groupsmanager.*;
-import org.jasig.portal.*;
-import org.w3c.dom.*;
-import org.jasig.portal.services.*;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
+import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 /**
  * A Groups Manager command to hide properties for any entity or group
  *

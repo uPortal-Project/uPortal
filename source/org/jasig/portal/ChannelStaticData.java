@@ -1,13 +1,14 @@
 package org.jasig.portal;
 
-import  java.util.Map;
-import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.ISecurityContext;
-import  org.jasig.portal.security.IAuthorizationPrincipal;
-import  org.jasig.portal.services.AuthorizationService;
-import  org.jasig.portal.services.LogService;
-import  javax.naming.Context;
-import  java.util.Hashtable;
+import java.util.Hashtable;
+import java.util.Map;
+
+import javax.naming.Context;
+
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.LogService;
 
 
 /**
@@ -48,7 +49,7 @@ public class ChannelStaticData extends Hashtable {
     }
     catch (AuthorizationException ae)
     {
-        LogService.instance().log(LogService.ERROR, "Could not get authorization service: " + ae);
+        LogService.log(LogService.ERROR, "Could not get authorization service: " + ae);
     }
     return ap;
   }

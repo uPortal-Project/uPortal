@@ -35,11 +35,11 @@
 
 package org.jasig.portal.services.stats;
 
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
 import org.jasig.portal.layout.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.ChannelDefinition;
 
 /**
  * <p>Gathers portal usage statistics such as user logins.

@@ -35,13 +35,13 @@
 
 package org.jasig.portal.layout;
 
-import org.jasig.portal.IUserLayoutStore;
-import org.jasig.portal.PortalException;
-import org.xml.sax.ContentHandler;
 import java.util.List;
 
-import  org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.dom.DocumentImpl;
+import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
+import org.xml.sax.ContentHandler;
 
 
 /**

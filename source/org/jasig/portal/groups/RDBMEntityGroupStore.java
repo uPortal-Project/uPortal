@@ -36,19 +36,20 @@ package org.jasig.portal.groups;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.services.GroupService;
 
 /**
  * Store for <code>EntityGroupImpl</code>.
@@ -959,7 +960,7 @@ protected static void logNoTransactionWarning()
     String msg = "You are running the portal on a database that does not support transactions.  " +
                  "This is not a supported production environment for uPortal.  " +
                  "Sooner or later, your database will become corrupt.";
-    LogService.instance().log(LogService.WARN, msg);
+    LogService.log(LogService.WARN, msg);
 }
 /**
  * @return org.jasig.portal.groups.IEntity
@@ -1389,8 +1390,8 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
             }
             ps.close();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR,"RDBMChannelDefSearcher.searchForEntities(): " + ps);
+            LogService.log(LogService.ERROR, e);
         } finally {
             RDBMServices.releaseConnection(conn);
         }

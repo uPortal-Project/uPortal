@@ -35,16 +35,14 @@
 
 package org.jasig.portal;
 
-import javax.servlet.http.*;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
-import java.io.File;
-import java.util.Enumeration;
-import javax.servlet.ServletOutputStream;
-import java.io.IOException;
-import  org.jasig.portal.car.CarResources;
-import  org.jasig.portal.car.CarClassLoader;
+
+import org.jasig.portal.car.CarClassLoader;
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.services.LogService;
+
 import com.oreilly.servlet.multipart.Part;
 
 /**
@@ -255,7 +253,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
                 url=channelUPFile.getUPFile();
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
+            LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
         }
         return url;
     }
@@ -273,7 +271,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         try {
             url=getBaseWorkerURL(worker,false);
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+            LogService.log(LogService.ERROR,"ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
         return url;
     }
@@ -356,7 +354,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
         url=upfs.getUPFile();
             /*
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+            LogService.log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
             */
         return url;

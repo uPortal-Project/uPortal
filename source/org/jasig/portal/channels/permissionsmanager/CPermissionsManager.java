@@ -38,17 +38,25 @@
 
 package  org.jasig.portal.channels.permissionsmanager;
 
-import  java.io.*;
-import  java.util.*;
-import  org.jasig.portal.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.utils.*;
-import  org.jasig.portal.groups.*;
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.security.provider.*;
-import  org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
-import  org.w3c.dom.Document;
-import org.w3c.dom.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Enumeration;
+
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Element;
 
 
 /**
@@ -77,7 +85,7 @@ public class CPermissionsManager
     public void setRuntimeData (org.jasig.portal.ChannelRuntimeData rD) {
         session.startRD = Calendar.getInstance().getTime().getTime();
         session.runtimeData = rD;
-        LogService.instance().log(LogService.DEBUG, "PermissionsManager - setting runtime data");
+        LogService.log(LogService.DEBUG, "PermissionsManager - setting runtime data");
         // test if servant exists and has finished
         if (session.servant != null){
           try {
@@ -87,7 +95,7 @@ public class CPermissionsManager
             }
           }
           catch (Exception e){
-            LogService.instance().log(LogService.ERROR,e);
+            LogService.log(LogService.ERROR,e);
           }
         }
 
@@ -98,7 +106,7 @@ public class CPermissionsManager
                 pc.execute(session);
               }
               catch(Exception e){
-                LogService.instance().log(LogService.ERROR,e);
+                LogService.log(LogService.ERROR,e);
                 session.runtimeData.setParameter("commandResponse","Error executing command "+session.runtimeData.getParameter("prmCommand")+": "+e.getMessage());
               }
             }
@@ -117,19 +125,20 @@ public class CPermissionsManager
             session.view="Select Targets";
         }
         if (session.gotTargets && (session.principals == null)) {
-            LogService.instance().log(LogService.DEBUG, "PermissionsManager - Checking Servant");
+            LogService.log(LogService.DEBUG, "PermissionsManager - Checking Servant");
             prepServant(session);
         }
         if (session.principals != null){
-          if (session.staticData.getParameter("prmView") != null) {
-            session.view=session.staticData.getParameter("prmView");
-          }
-          else if (session.runtimeData.getParameter("prmView") != null) {
-            session.view=session.runtimeData.getParameter("prmView");
-          }
-          else {
-            session.view="Assign By Principal";
-          }
+            if (session.staticData.getParameter("prmView") != null) {
+              session.view=session.staticData.getParameter("prmView");
+              session.staticData.remove("prmView");
+            }
+            else if (session.runtimeData.getParameter("prmView") != null) {
+              session.view=session.runtimeData.getParameter("prmView");
+            }
+            else if (!session.view.startsWith("Assign")){
+              session.view="Assign By Principal";
+            }
         }
     }
 
@@ -139,7 +148,7 @@ public class CPermissionsManager
 
               // get a different version of the servant depnding on whether Owners have been retrieved
               if (!session.gotOwners){
-                LogService.instance().log(LogService.DEBUG, "PermissionsManager - creating new basic Servant");
+                LogService.log(LogService.DEBUG, "PermissionsManager - creating new basic Servant");
                 session.servant =
                   CGroupsManagerServantFactory.getGroupsServantforSelection(
                     session.staticData,"Select principals you would like to assign permissions to",
@@ -147,11 +156,11 @@ public class CPermissionsManager
               }
               else {
                   // build an array of groupmembers for pre-selection
-                  LogService.instance().log(LogService.DEBUG, "PermissionsManager - creating new pre-selecting Servant");
+                  LogService.log(LogService.DEBUG, "PermissionsManager - creating new pre-selecting Servant");
                   ArrayList gmembers = new ArrayList();
                   Element[] owners = PermissionsXML.getSelectedOwners(session);
                   for (int j= 0; j < owners.length ; j++){
-                    LogService.instance().log(LogService.DEBUG, "analyzing owner "+owners[j].getAttribute("name"));
+                    LogService.log(LogService.DEBUG, "analyzing owner "+owners[j].getAttribute("name"));
                     String ownerKey = owners[j].getAttribute("token");
                     IPermissionManager pm = AuthorizationService.instance().newPermissionManager(ownerKey);
                     String[] acts = null;
@@ -203,35 +212,35 @@ public class CPermissionsManager
               session.view="Select Principals";
           }
           else {
-              LogService.instance().log(LogService.DEBUG, "PermissionsManager - using existing Servant");
+              LogService.log(LogService.DEBUG, "PermissionsManager - using existing Servant");
           }
 
 
 
       } catch (Exception e) {
-          LogService.instance().log(LogService.ERROR, e);
+          LogService.log(LogService.ERROR, e);
       }
     }
 
     protected void populateMembers(ArrayList gmembers, IAuthorizationPrincipal[] aps){
-      LogService.instance().log(LogService.DEBUG, "PermissionsManager.PopulateMembers(): checking principal set of size"+aps.length);
+      LogService.log(LogService.DEBUG, "PermissionsManager.PopulateMembers(): checking principal set of size"+aps.length);
       for (int a = 0; a< aps.length ; a++){
         try {
           IGroupMember agm = AuthorizationService.instance().getGroupMember(aps[a]);
-          LogService.instance().log(LogService.DEBUG,"PermissionsManager.PopulateMembers(): checking whether "+agm.getType()+"."+agm.getKey()+" needs to be added");
+          LogService.log(LogService.DEBUG,"PermissionsManager.PopulateMembers(): checking whether "+agm.getType()+"."+agm.getKey()+" needs to be added");
           if (!gmembers.contains(agm)){
             gmembers.add(agm);
           }
         }
         catch(Exception e){
-          LogService.instance().log(LogService.ERROR,e);
+          LogService.log(LogService.ERROR,e);
         }
       }
     }
 
     protected void getGroupServantResults(PermissionsSessionData session){
       try {
-        LogService.instance().log(LogService.DEBUG, "PermissionsManager - Getting servant results");
+        LogService.log(LogService.DEBUG, "PermissionsManager - Getting servant results");
         Object[] results = session.servant.getResults();
         if (results != null && results.length > 0) {
             IAuthorizationPrincipal[] iap = new IAuthorizationPrincipal[results.length];
@@ -240,12 +249,12 @@ public class CPermissionsManager
               iap[i] = AuthorizationService.instance().newPrincipal(gm);
             }
             session.principals=iap;
-            LogService.instance().log(LogService.DEBUG, "PermissionsManager - Getting rid of Servant");
+            LogService.log(LogService.DEBUG, "PermissionsManager - Getting rid of Servant");
             session.servant=null;
             PermissionsXML.populatePrincipals(session);
         }
         else {
-            LogService.instance().log(LogService.DEBUG, "PermissionsManager - Group Servant yielded no results, assuming abort and running Cancel");
+            LogService.log(LogService.DEBUG, "PermissionsManager - Group Servant yielded no results, assuming abort and running Cancel");
             IPermissionCommand cmd = CommandFactory.get("Cancel");
             cmd.execute(session);
             //session.isFinished=true;
@@ -253,7 +262,7 @@ public class CPermissionsManager
         }
       }
       catch (Exception e) {
-        LogService.instance().log(LogService.ERROR, e);
+        LogService.log(LogService.ERROR, e);
       }
     }
 
@@ -281,11 +290,11 @@ public class CPermissionsManager
             if (session.view.equals("Select Principals") &&
                     session.isAuthorized) {
                 try {
-                    LogService.instance().log(LogService.DEBUG, "PermissionsManager - Calling servant renderXML");
+                    LogService.log(LogService.DEBUG, "PermissionsManager - Calling servant renderXML");
                     //IChannel servant = (IChannel)staticData.get("prmServant");
                     ((IChannel)session.servant).renderXML(out);
                 } catch (Exception e) {
-                    LogService.instance().log(LogService.ERROR, "CPermissionsManager: failed to use servant"
+                    LogService.log(LogService.ERROR, "CPermissionsManager: failed to use servant"
                             + e);
                 }
             }
@@ -303,14 +312,14 @@ public class CPermissionsManager
                 xslt.setXSL(sslLocation, "CPermissions", session.runtimeData.getBrowserInfo());
                 transform(xslt);
                 long time3 = Calendar.getInstance().getTime().getTime();
-                LogService.instance().log(LogService.DEBUG, "CPermissionsManager timer: "
+                LogService.log(LogService.DEBUG, "CPermissionsManager timer: "
                         + String.valueOf((time3 - time1)) + " ms total, xsl took "
                         + String.valueOf((time3 - time2)) + " ms for view " + session.view);
-                LogService.instance().log(LogService.DEBUG, "CPermissionsManager timer: "
+                LogService.log(LogService.DEBUG, "CPermissionsManager timer: "
                         + String.valueOf((time3 - session.startRD)) + " since start RD");
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 
@@ -325,7 +334,7 @@ public class CPermissionsManager
             }
             xslt.transform();
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
     }
 
@@ -343,7 +352,7 @@ public class CPermissionsManager
                 session.isAuthorized = true;
             }
         } catch (Exception e) {
-            LogService.instance().log(LogService.ERROR, e);
+            LogService.log(LogService.ERROR, e);
         }
         session.isFinished=false;
 
@@ -360,7 +369,7 @@ public class CPermissionsManager
             cck = new ChannelCacheKey();
             cck.setKey(session.staticData.getChannelPublishId()+"-"+session.staticData.getChannelSubscribeId() + "-" + String.valueOf(session.staticData.getPerson().getID()));
             cck.setKeyValidity(session.runtimeData.getParameter("prmView"));
-            LogService.instance().log(LogService.DEBUG, "CPermissionsManager.generateKey() : set validity to "
+            LogService.log(LogService.DEBUG, "CPermissionsManager.generateKey() : set validity to "
                     + session.runtimeData.getParameter("prmView"));
         }
         else {
@@ -384,7 +393,7 @@ public class CPermissionsManager
                 }
             }
             long time3 = Calendar.getInstance().getTime().getTime();
-            LogService.instance().log(LogService.DEBUG, "CPermissionsManager.isCacheValid() time since setRD: "
+            LogService.log(LogService.DEBUG, "CPermissionsManager.isCacheValid() time since setRD: "
                     + String.valueOf((time3 - session.startRD)) + ", valid=" + valid);
         }
         else {

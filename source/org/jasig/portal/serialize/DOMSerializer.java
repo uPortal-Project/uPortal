@@ -60,9 +60,10 @@ package org.jasig.portal.serialize;
 
 
 import java.io.IOException;
-import org.w3c.dom.Element;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
 
 
 

@@ -35,11 +35,9 @@
 
 package  org.jasig.portal;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+
 import org.jasig.portal.services.LogService;
 
 /**
@@ -66,8 +64,8 @@ public class PropertiesManager {
     try {
       props.load(PropertiesManager.class.getResourceAsStream(PORTAL_PROPERTIES_FILE_NAME));
     } catch (IOException ioe) {
-      LogService.instance().log(LogService.ERROR, "Unable to read portal.properties file.");
-      LogService.instance().log(LogService.ERROR, ioe);
+      LogService.log(LogService.ERROR, "Unable to read portal.properties file.");
+      LogService.log(LogService.ERROR, ioe);
     }
   }
 

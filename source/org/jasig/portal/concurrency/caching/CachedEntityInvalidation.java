@@ -35,9 +35,10 @@
 
 package org.jasig.portal.concurrency.caching;
 
+import java.util.Date;
+
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
-import java.util.Date;
 /**
  * An instance of this class represents an event: a change to an
  * IBasicEntity that renders any cached instances of the entity

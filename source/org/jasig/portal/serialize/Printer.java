@@ -65,9 +65,9 @@
 package org.jasig.portal.serialize;
 
 
-import java.io.Writer;
-import java.io.StringWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 
 
 /**

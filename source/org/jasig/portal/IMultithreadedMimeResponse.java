@@ -35,9 +35,9 @@
 
 package  org.jasig.portal;
 
-import  java.util.Map;
-import  java.io.IOException;
-import  java.io.OutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * An interface that a multithreaded channel that wants to download MIME files must implement.

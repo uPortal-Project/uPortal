@@ -2,6 +2,7 @@ package org.jasig.portal.groups;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.ResultSet;
 import java.util.*;
 import junit.framework.*;
 import org.jasig.portal.EntityTypes;
@@ -87,13 +88,26 @@ protected void deleteTestEntityType()
  */
 protected void deleteTestGroups()
 {
+    String sql = " FROM UP_GROUP WHERE ENTITY_TYPE_ID = " +
+                      EntityTypes.getEntityTypeID(TEST_ENTITY_CLASS);
+    String selectSql = "SELECT GROUP_ID" + sql;
+    String deleteSql = "DELETE" + sql;
+    String deleteMemberSql = "DELETE FROM UP_GROUP_MEMBERSHIP WHERE GROUP_ID = ";
     try
     {
         Connection conn = org.jasig.portal.RDBMServices.getConnection();
-        Statement stmnt = conn.createStatement();
-        String sql =  "DELETE FROM UP_GROUP WHERE ENTITY_TYPE_ID = " +
-                      EntityTypes.getEntityTypeID(TEST_ENTITY_CLASS);
-        int rc = stmnt.executeUpdate( sql );
+        Statement selectStmnt = conn.createStatement();
+        ResultSet rs = selectStmnt.executeQuery( selectSql );
+        while ( rs.next() )
+        {
+            String key = rs.getString(1);
+            Statement deleteMemberStmnt = conn.createStatement();
+            int memberRC = deleteMemberStmnt.executeUpdate( deleteMemberSql + key );
+            print("Test member rows deleted: " + memberRC);
+        }
+
+        Statement deleteGroupStmnt = conn.createStatement();
+        int rc = deleteGroupStmnt.executeUpdate( deleteSql );
         print("Test group rows deleted: " + rc);
 
     }
@@ -273,6 +287,9 @@ public static junit.framework.Test suite() {
   suite.addTest(new GroupsTester("testUpdateMembersVisibility"));
   suite.addTest(new GroupsTester("testUpdateLockableGroups"));
   suite.addTest(new GroupsTester("testUpdateLockableGroupsWithRenewableLock"));
+  suite.addTest(new GroupsTester("testContains"));
+  suite.addTest(new GroupsTester("testDeleteChildGroup"));
+  suite.addTest(new GroupsTester("testMixLockableAndNonLockableGroups"));
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -406,6 +423,193 @@ public void testAddAndDeleteMembers() throws Exception
 
 
     print(CR + "***** LEAVING GroupsTester.testAddAndDeleteMembers() *****" + CR);
+
+}
+/**
+ */
+public void testContains() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testContains() *****" + CR);
+    String msg = null;
+    Class type = TEST_ENTITY_CLASS;
+    int totNumEntities = 1;
+    IEntityGroup containingGroup, childGroup, dupContainingGroup = null;
+    IEntity[] entities = new IEntity[totNumEntities];
+    IGroupMember[] groupMembers = null;
+    Iterator itr = null;
+    ArrayList list = null;
+    int idx = 0;
+    boolean testValue = false;
+
+    msg = "Creating new parent group.";
+    print(msg);
+    containingGroup = getNewGroup();
+    assertNotNull(msg, containingGroup);
+
+    msg = "Creating new child group.";
+    print(msg);
+    childGroup = getNewGroup();
+    assertNotNull(msg, childGroup);
+
+    msg = "Creating " + totNumEntities + " new entities.";
+    print(msg);
+    for(idx=0; idx<totNumEntities; idx++)
+        { entities[idx] = getNewEntity("E" + idx); }    
+
+
+    msg = "Adding " + (totNumEntities) + " to containing group.";
+    print(msg);
+    for(idx=0; idx<totNumEntities; idx++)
+        { containingGroup.addMember(entities[idx]); }
+
+    msg = "Testing if containing group contains entities.";
+    print(msg);
+    for(idx=0; idx<totNumEntities; idx++)
+    { 
+        testValue = containingGroup.contains(entities[idx]); 
+        assertTrue(msg, testValue);
+    }
+
+    msg = "Adding child group to containing group.";
+    print(msg);
+    containingGroup.addMember(childGroup);
+
+    msg = "Testing if containing group contains child group.";
+    print(msg);
+    testValue = containingGroup.contains(childGroup); 
+    assertTrue(msg, testValue);
+
+    msg = "Updating containing group.";
+    print(msg);
+    containingGroup.update();
+
+    msg = "Getting duplicate containing group.";
+    print(msg);
+    dupContainingGroup = findGroup(containingGroup.getKey());
+    assertNotNull(msg,dupContainingGroup);
+
+    msg = "Testing if RETRIEVED containing group contains entities.";
+    print(msg);
+    for(idx=0; idx<totNumEntities; idx++)
+    { 
+        testValue = dupContainingGroup.contains(entities[idx]); 
+        assertTrue(msg, testValue);
+    }
+
+    msg = "Testing if RETRIEVED containing group contains child group.";
+    print(msg);
+    testValue = dupContainingGroup.contains(childGroup);
+    assertTrue(msg, testValue);
+
+    msg = "Deleting containing group from db.";
+    print(msg);
+    containingGroup.delete();
+
+
+
+    print(CR + "***** LEAVING GroupsTester.testContains() *****" + CR);
+
+}
+/**
+ */
+public void testDeleteChildGroup() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testDeleteChildGroup() *****" + CR);
+    String msg = null;
+    Class type = TEST_ENTITY_CLASS;
+    int totNumGroups = 3;
+    int totNumEntities = 5;
+    IEntityGroup[] groups = new IEntityGroup[totNumGroups];
+    IEntity[] entities = new IEntity[totNumEntities];
+    IGroupMember[] groupMembers = null;
+    Iterator itr = null;
+    ArrayList list = null;
+    int idx = 0;
+    Exception e = null;
+
+    msg = "Creating 3 new groups; 2 parents and 1 child...";
+    print(msg);
+    
+    for (idx=0; idx<totNumGroups; idx++)
+    {
+        groups[idx] = getNewGroup();
+        assertNotNull(msg, groups[idx]);
+    }
+
+    IEntityGroup child = groups[0];
+
+
+    msg = "Adding child to " + (totNumGroups - 1) + " parent groups.";
+    print(msg);
+    for(idx=1; idx<totNumGroups; idx++)
+    { 
+        groups[idx].addMember(child);
+        groups[idx].update();
+	}
+
+    msg = "Retrieving containing groups from child.";
+    print(msg);
+    list = new ArrayList();
+    for( itr=child.getContainingGroups(); itr.hasNext(); )
+        { list.add(itr.next()); }
+    assertEquals(msg, (totNumGroups - 1), list.size());
+
+    msg = "Adding " + (totNumEntities) + " to child group.";
+    print(msg);
+    for(idx=0; idx<(totNumEntities) ; idx++)
+        { child.addMember(testEntities[idx]); }
+
+    msg = "Retrieving members from child group.";
+    print(msg);
+    list = new ArrayList();
+    for( itr=child.getMembers(); itr.hasNext(); )
+        { list.add(itr.next()); }
+    assertEquals(msg, (totNumEntities), list.size());
+
+    msg = "Updating child.";
+    print(msg);
+    child.update();
+
+    msg = "Will now lock one of the parent groups. (Delete of child should fail.)";
+    print(msg);
+    ILockableEntityGroup lockedParent = findLockableGroup(groups[1].getKey());
+    assertNotNull(msg, lockedParent);
+    assertTrue(msg, lockedParent.getLock().isValid());
+    
+    msg = "Deleting child. (Should FAIL).";
+    print(msg);
+    ILockableEntityGroup legDelete = findLockableGroup(child.getKey());
+    try
+    {
+        legDelete.delete();
+    }
+    catch (GroupsException ge) { e = ge; }
+    assertNotNull(msg, e);
+    
+    msg = "Will now UN-lock the parent group.";
+    print(msg);
+    lockedParent.getLock().release();
+    assertTrue(msg, ! lockedParent.getLock().isValid());
+
+    msg = "Deleting child.  (Should SUCCEED).";
+    print(msg);
+    ILockableEntityGroup legDeleteDup = findLockableGroup(child.getKey());
+    legDeleteDup.delete();
+
+    msg = "Retrieving members from parent groups (should be EMPTY).";
+    print(msg);
+    for(idx=1; idx<totNumGroups; idx++)
+    { 
+        String groupKey = groups[idx].getKey();
+        IEntityGroup g = findGroup(groupKey);
+        list = new ArrayList();
+        for( itr=g.getMembers(); itr.hasNext(); )
+            { list.add(itr.next()); }
+        assertEquals(msg, 0, list.size());
+	}
+    
+    
+    print(CR + "***** LEAVING GroupsTester.testDeleteChildGroup() *****" + CR);
 
 }
 /**
@@ -988,17 +1192,103 @@ public void testUpdateMembersVisibility() throws Exception
     testValue = testEntities[totNumEntities].isMemberOf(childGroup);
     assertEquals(msg, true, testValue);
 
+    msg = "Getting child entity thru the service (should be cached copy).";
+    print(msg);
+    EntityIdentifier entID = testEntities[totNumEntities].getUnderlyingEntityIdentifier();
+    IGroupMember ent = getService().getGroupMember(entID);
+    msg = "Checking child entity for membership in child group.";
+    print(msg);
+    testValue = ent.isMemberOf(childGroup);
+    assertEquals(msg, true, testValue);
+
     // Child entity should now be aware of both of its parents.
     msg = "Checking child entity for ALL containing groups.";
     print(msg);
     list = new ArrayList();
-    for (itr = testEntities[totNumEntities].getAllContainingGroups(); itr.hasNext();)
+    for (itr = ent.getAllContainingGroups(); itr.hasNext();)
             { list.add(itr.next()); }
     assertEquals(msg, 2, list.size());
     
 
 
     print(CR + "***** LEAVING GroupsTester.testUpdateMembersVisibility() *****" + CR);
+
+}
+
+/**
+ */
+public void testMixLockableAndNonLockableGroups() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testMixLockableAndNonLockableGroups() *****" + CR);
+    String msg = null;
+    Class type = TEST_ENTITY_CLASS;
+    int totNumGroups = 3;
+    IEntityGroup[] groups = new IEntityGroup[totNumGroups];
+    boolean testValue = false;
+    Exception e = null;
+    int idx = 0;
+
+    msg = "Creating " + totNumGroups + " new groups.";
+    print(msg);
+    for (idx=0; idx<totNumGroups; idx++)
+    {
+        groups[idx] = getNewGroup();
+        groups[idx].update();
+        assertNotNull(msg, groups[idx]);
+        groups[idx].update();
+    }
+    
+    msg = "Getting group keys.";
+    print(msg);
+    String[] groupKeys = new String[totNumGroups];
+    for (idx=0; idx<totNumGroups; idx++)
+    {
+        groupKeys[idx] = groups[idx].getKey();
+    }
+
+    msg = "Retrieving nonLockable group " + groupKeys[0];
+    print(msg);
+    IEntityGroup group1 = findGroup(groupKeys[0]);
+    assertNotNull(msg, group1);
+
+    msg = "Retrieving lockable group for key " + groupKeys[0];
+    print(msg);
+    ILockableEntityGroup lockableGroup = findLockableGroup(groupKeys[0]);
+    testValue = lockableGroup.getLock().isValid();
+    assertTrue(msg, testValue);
+    
+    msg = "Updating lockable group.";
+    print(msg);
+    String oldName = lockableGroup.getName();
+    String newName = "NEW GROUP NAME";
+    print(msg);
+    lockableGroup.setName(newName);
+    lockableGroup.update();
+
+    msg = "Retrieving a second nonLockable group for " + groupKeys[0];
+    print(msg);
+    IEntityGroup group2 = findGroup(groupKeys[0]);
+    assertNotNull(msg, group2);
+    assertEquals(msg, newName, group2.getName());
+
+    msg = "Updating second nonLockable group.";
+    print(msg);
+    group2.setName(oldName);
+    group2.update();
+
+    msg = "Retrieving a second lockable group for key " + groupKeys[0];
+    print(msg);
+    ILockableEntityGroup lockableGroup2 = findLockableGroup(groupKeys[0]);
+    testValue = lockableGroup2.getLock().isValid();
+    assertTrue(msg, testValue);
+    
+    msg = "Updating second lockable group.";
+    print(msg);
+    lockableGroup2.setName(newName);
+    lockableGroup2.update();
+    
+
+    print(CR + "***** LEAVING GroupsTester.testMixLockableAndNonLockableGroups() *****" + CR);
 
 }
 }

@@ -3,7 +3,7 @@
 <!DOCTYPE web-app
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
-    
+
 <web-app>
 
   <servlet>
@@ -46,11 +46,11 @@
     <servlet-name>Authentication</servlet-name>
     <url-pattern>/Authentication</url-pattern>
   </servlet-mapping>
-  
+
   <servlet-mapping>
     <servlet-name>Logout</servlet-name>
     <url-pattern>/Logout</url-pattern>
-  </servlet-mapping>  
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>AxisServlet</servlet-name>
@@ -76,12 +76,12 @@
     <extension>wbmp</extension>
     <mime-type>image/vnd.wap.wbmp</mime-type>
   </mime-mapping>
-  
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>  
-  </welcome-file-list>  
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
 
   <resource-ref>
     <description>
@@ -97,7 +97,7 @@
   <resource-ref>
     <description>
       Resource reference to a factory for java.sql.Connection
-      instances that may be used for talking to a 
+      instances that may be used for talking to a
       database that may referenced in the PersonDirs.xml file
       and configured in the server.xml file.
     </description>

@@ -1,19 +1,21 @@
 package org.jasig.portal.layout;
 
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Hashtable;
 
-import org.jasig.portal.security.*;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.UserLayoutStoreFactory;
-
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
-
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import java.io.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
