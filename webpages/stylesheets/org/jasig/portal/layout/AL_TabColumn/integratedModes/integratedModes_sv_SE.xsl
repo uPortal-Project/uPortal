@@ -993,7 +993,7 @@ Version $Revision$
     <table width="100%" cols="2" border="0" cellspacing="9" cellpadding="0">
       <tr>
         <td valign="top" width="100%" class="uportal-background-dark">
-          <xsl:apply-templates select="*[1]"/>
+          <xsl:apply-templates select="*"/>
         </td>
       </tr>
     </table>
