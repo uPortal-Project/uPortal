@@ -69,7 +69,7 @@ public final class LogService {
   private final static String fs = File.separator;
   private final static String sLogRelativePath = "logs" + fs + "portal.log";
   private static boolean bInitialized = false;
-  private static Category m_category = null;
+  private static Logger m_logger = null;
   private static final LogService m_instance = new LogService();
 
 
@@ -99,7 +99,8 @@ public final class LogService {
       e.printStackTrace();
     }
     try {
-      m_category = Category.getRoot();
+      // use a logger for the uPortal package to allow isolating logging
+      m_logger = Logger.getLogger("org.jasig.portal");
       bInitialized = true;
     } catch (Exception e) {
       System.err.println("Problem writing to log.");
@@ -114,7 +115,7 @@ public final class LogService {
   public final static void log (Priority pLogLevel, String sMessage) {
     try {
       initialize();
-      m_category.log(pLogLevel, sMessage);
+      m_logger.log(pLogLevel, sMessage);
     } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
@@ -128,7 +129,7 @@ public final class LogService {
   public final static void log (Priority pLogLevel, Throwable ex) {
     try {
       initialize();
-      m_category.log(pLogLevel, "EXCEPTION: " + ex, ex);
+      m_logger.log(pLogLevel, "EXCEPTION: " + ex, ex);
     } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
@@ -142,7 +143,7 @@ public final class LogService {
   public final static void log (Priority pLogLevel, String sMessage, Throwable ex) {
     try {
       initialize();
-      m_category.log(pLogLevel, sMessage, ex);
+      m_logger.log(pLogLevel, sMessage, ex);
     } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
@@ -155,7 +156,7 @@ public final class LogService {
   public final static void log (String sMessage) {
     try {
       initialize();
-      m_category.log(INFO, sMessage);
+      m_logger.log(INFO, sMessage);
     } catch (Exception e) {
       System.err.println("Problem writing to log.");
       e.printStackTrace();
