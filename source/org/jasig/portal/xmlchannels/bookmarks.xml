@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE bookmarks SYSTEM "http://localhost:8080/xmlportal/dtd/bookmarks.dtd">
+
+<bookmarks>
+  <bookmark url="http://yahoo.com" name="Yahoo" comments="Search engine"/>
+  <bookmark url="http://ask.com" name="Ask Jeeves" comments="They use frames to keep you from leaving"/>
+  <bookmark url="http://evite.com" name="eVite.com" comments="Plan an event"/>
+  <bookmark url="http://ibm.com" name="IBM" comments="International Business Machines"/>
+  <bookmark url="http://amazon.com" name="Amazon" comments="World's largest internet superstore"/>
+  <bookmark url="http://interactivebusiness.com" name="IBS" comments="Interactive Business Solutions"/>
+  <bookmark url="http://shopping.com" name="Shopping.com" comments="Shopping.com"/>
+  <bookmark url="http://slashdot.org" name="Slashdot" comments="News for nerds, stuff that matters"/>
+  <bookmark url="http://www.biztravel.com/" name="BizTravel" comments="Travel site for businesses"/>
+  <bookmark url="http://www.ja-sig.org" name="JA-SIG" comments="Java in Administration SIG"/>
+  <bookmark url="http://paypal.com" name="PayPal" comments="Lets you pay people with credit cards"/>
+</bookmarks>
