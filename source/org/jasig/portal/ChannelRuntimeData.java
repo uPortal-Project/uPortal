@@ -31,16 +31,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import javax.servlet.http.*;
-import java.util.Hashtable;
-import java.util.Map;
-import java.io.File;
-import java.util.Enumeration;
-import org.apache.xalan.xslt.XSLTInputSource;
+package  org.jasig.portal;
+
+import  javax.servlet.http.*;
+import  java.util.Hashtable;
+import  java.util.Map;
+import  java.io.File;
+import  java.util.Enumeration;
+import  org.apache.xalan.xslt.XSLTInputSource;
+
 
 /**
  * A set of runtime data acessable by a channel.
@@ -53,18 +57,19 @@ import org.apache.xalan.xslt.XSLTInputSource;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class ChannelRuntimeData extends Hashtable implements Cloneable
-{
+public class ChannelRuntimeData extends Hashtable
+    implements Cloneable {
   private HttpServletRequest request;
   private HttpServletResponse response;
   private String baseActionURL;
   private static final String fs = File.separator;
-    private BrowserInfo binfo;
+  private BrowserInfo binfo;
 
-  public ChannelRuntimeData ()
-  {
-    super ();
-
+  /**
+   * put your documentation comment here
+   */
+  public ChannelRuntimeData () {
+    super();
     // set the default values for the parameters here
     request = null;
     response = null;
@@ -75,90 +80,122 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
    * Create a new instance of ourself
    * Used by the CError channel
    */
-  public Object clone() {
+  public Object clone () {
     ChannelRuntimeData crd = new ChannelRuntimeData();
     crd.request = request;
     crd.response = response;
     crd.baseActionURL = baseActionURL;
-    crd.binfo=binfo;
+    crd.binfo = binfo;
     crd.putAll(this);
-    return crd;
+    return  crd;
   }
 
   // the set methods ...
-
-  public void setBaseActionURL (String baURL)
-  {
+  public void setBaseActionURL (String baURL) {
     baseActionURL = baURL;
   }
 
-    public void setBrowserInfo(BrowserInfo bi) {
-        this.binfo=bi;
-    }
+  /**
+   * put your documentation comment here
+   * @param bi
+   */
+  public void setBrowserInfo (BrowserInfo bi) {
+    this.binfo = bi;
+  }
 
-    public BrowserInfo getBrowserInfo() {
-        return binfo;
-    }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public BrowserInfo getBrowserInfo () {
+    return  binfo;
+  }
 
-  public void setHttpRequest (HttpServletRequest req)
-  {
+  /**
+   * put your documentation comment here
+   * @param req
+   */
+  public void setHttpRequest (HttpServletRequest req) {
     request = req;
   }
 
-  public void setHttpResponse (HttpServletResponse res)
-  {
+  /**
+   * put your documentation comment here
+   * @param res
+   */
+  public void setHttpResponse (HttpServletResponse res) {
     response = res;
   }
 
-  public void setParameters (Map params)
-  {
+  /**
+   * put your documentation comment here
+   * @param params
+   */
+  public void setParameters (Map params) {
     // copy a Map
-    this.putAll (params);
+    this.putAll(params);
   }
 
-    public synchronized String[]  setParameterValues(String pName, String[] values) {
-        return (String[]) super.put(pName,values);
-    }
+  /**
+   * put your documentation comment here
+   * @param pName
+   * @param values
+   * @return 
+   */
+  public synchronized String[] setParameterValues (String pName, String[] values) {
+    return  (String[])super.put(pName, values);
+  }
 
-    public synchronized void setParameter (String key, String value)
-    {
-        String[] valueArray=new String[1];
-        valueArray[0]=value;
-        super.put(key,valueArray);
-    }
+  /**
+   * put your documentation comment here
+   * @param key
+   * @param value
+   */
+  public synchronized void setParameter (String key, String value) {
+    String[] valueArray = new String[1];
+    valueArray[0] = value;
+    super.put(key, valueArray);
+  }
 
-    public synchronized com.oreilly.servlet.multipart.Part[]  setParameterValues(String pName, com.oreilly.servlet.multipart.Part[] values) {
-        return (com.oreilly.servlet.multipart.Part[]) super.put(pName,values);
-    }
+  /**
+   * put your documentation comment here
+   * @param pName
+   * @param values
+   * @return 
+   */
+  public synchronized com.oreilly.servlet.multipart.Part[] setParameterValues (String pName, com.oreilly.servlet.multipart.Part[] values) {
+    return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
+  }
 
-    public synchronized void setParameter (String key, com.oreilly.servlet.multipart.Part value)
-    {
-        com.oreilly.servlet.multipart.Part[] valueArray=new com.oreilly.servlet.multipart.Part[1];
-        valueArray[0]=value;
-        super.put(key,valueArray);
-    }
-      // the get methods ...
+  /**
+   * put your documentation comment here
+   * @param key
+   * @param value
+   */
+  public synchronized void setParameter (String key, com.oreilly.servlet.multipart.Part value) {
+    com.oreilly.servlet.multipart.Part[] valueArray = new com.oreilly.servlet.multipart.Part[1];
+    valueArray[0] = value;
+    super.put(key, valueArray);
+  }
 
-  public String getBaseActionURL ()
-  {
-    return baseActionURL;
+  // the get methods ...
+  public String getBaseActionURL () {
+    return  baseActionURL;
   }
 
   /**
    * Return the HttpRequest object
    * @deprecated
    */
-  public HttpServletRequest getHttpRequest ()
-  {
-    return request;
+  public HttpServletRequest getHttpRequest () {
+    return  request;
   }
 
   /**
    * Do a HTTP redirect
    * @parameter URL string to append to baseActionURL
    */
-  public void redirect(String redirectURL) throws Exception
-  {
+  public void redirect (String redirectURL) throws Exception {
     redirect(getBaseActionURL(), redirectURL);
   }
 
@@ -167,8 +204,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
    * @parameter host to redirect to
    * @parameter URL string to include
    */
-  public void redirect(String redirectHost, String redirectURL) throws Exception
-  {
+  public void redirect (String redirectHost, String redirectURL) throws Exception {
     response.sendRedirect(redirectHost + redirectURL);
   }
 
@@ -177,22 +213,25 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
    * @param object name
    * @return null if Object, String otherwise
    */
-  public synchronized String getParameter (String key)
-  {
-      String[] value_array=this.getParameterValues(key);
-      if((value_array!=null) && (value_array.length>0)) return value_array[0];
-      else return null;
+  public synchronized String getParameter (String key) {
+    String[] value_array = this.getParameterValues(key);
+    if ((value_array != null) && (value_array.length > 0))
+      return  value_array[0]; 
+    else 
+      return  null;
   }
+
   /**
    * Return the object corresponding to the key
    * @param object name
    * @return Object
    */
-  public synchronized Object getObjectParameter (String key)
-  {
-      Object[] value_array=this.getParameterValues(key);
-      if((value_array!=null) && (value_array.length>0)) return value_array[0];
-      else return null;
+  public synchronized Object getObjectParameter (String key) {
+    Object[] value_array = this.getParameterValues(key);
+    if ((value_array != null) && (value_array.length > 0))
+      return  value_array[0]; 
+    else 
+      return  null;
   }
 
   /**
@@ -200,41 +239,39 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
    * @param object name
    * @return null if Object[], otherwise String[]
    */
-
-  public String[] getParameterValues(String parameter)
-  {
-    Object[] pars = (Object[]) super.get(parameter);
+  public String[] getParameterValues (String parameter) {
+    Object[] pars = (Object[])super.get(parameter);
     if (pars instanceof String[]) {
-      return (String[]) pars;
-    } else {
-      return null;
+      return  (String[])pars;
+    } 
+    else {
+      return  null;
     }
   }
+
   /**
    * Return the Object[] corresponding to the key
    * @param object name
    * @return Object[]
    */
-  public Object[] getObjectParameterValues(String parameter){
-      return (Object[]) super.get(parameter);
+  public Object[] getObjectParameterValues (String parameter) {
+    return  (Object[])super.get(parameter);
   }
 
   /**
    * Return the names of all the runtimeData parameters
    */
-  public Enumeration getParameterNames()
-  {
-    return (Enumeration) super.keys();
+  public Enumeration getParameterNames () {
+    return  (Enumeration)super.keys();
   }
 
   /**
    * Return a session attribute
    * @param attribute wanted
    */
-  public Object getSessionAttribute(String attribute)
-  {
-    HttpSession session = request.getSession (false);
-    return session.getAttribute (attribute);
+  public Object getSessionAttribute (String attribute) {
+    HttpSession session = request.getSession(false);
+    return  session.getAttribute(attribute);
   }
 
   /**
@@ -243,9 +280,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
    * @parameter Stylesheet object
    * @deprecated
    */
-  public String getStylesheetURI(String title, StylesheetSet set)
-  {
-    return set.getStylesheetURI(title, request);
+  public String getStylesheetURI (String title, StylesheetSet set) throws GeneralRenderingException {
+    return  set.getStylesheetURI(title, request);
   }
 
   /**
@@ -254,9 +290,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
    * @parameter Stylesheet object
    * @deprecated
    */
-  public XSLTInputSource getStylesheet(String title, StylesheetSet set)
-  {
-    return set.getStylesheet(title, request);
+  public XSLTInputSource getStylesheet (String title, StylesheetSet set) {
+    return  set.getStylesheet(title, request);
   }
 
   /**
@@ -265,29 +300,33 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
    * @parameter Stylesheet object
    * @depricated
    */
-  public XSLTInputSource getStylesheet(StylesheetSet set)
-  {
-    return set.getStylesheet(request);
+  public XSLTInputSource getStylesheet (StylesheetSet set) throws GeneralRenderingException {
+    return  set.getStylesheet(request);
   }
 
   /**
    * Return media type for this connection
    */
-  public String getMedia()
-  {
+  public String getMedia () {
     MediaManager mm = new MediaManager();
     mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
-    return mm.getMedia(request);
+    return  mm.getMedia(request);
   }
 
   // if you need to pass objects, use this
-  public synchronized Object put (Object key, Object value)
-  {
-    return super.put (key, value);
+  public synchronized Object put (Object key, Object value) {
+    return  super.put(key, value);
   }
 
-  public synchronized Object get (Object key)
-  {
-    return super.get (key);
+  /**
+   * put your documentation comment here
+   * @param key
+   * @return 
+   */
+  public synchronized Object get (Object key) {
+    return  super.get(key);
   }
 }
+
+
+
