@@ -1257,7 +1257,7 @@
         <column><name>CHAN_ID</name><value>9</value></column>
         <column><name>CHAN_PARM_NM</name><value>codeBase</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.nrr.co.uk/javamine</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://nrr.dnsalias.net/javamine</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
