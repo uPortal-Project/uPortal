@@ -41,6 +41,9 @@ package  org.jasig.portal;
 import org.jasig.portal.security.IPerson;
 import  org.w3c.dom.*;
 import java.util.Date;
+import java.sql.Connection;
+import java.sql.SQLException;
+import  org.apache.xerces.dom.DocumentImpl;
 
 
 /**
@@ -113,6 +116,36 @@ public interface IChannelRegistryStore {
    * @exception Exception
    */
   public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception;
+
+  /**
+   * Get a prepared statement for Channels
+   */
+  public RdbmServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException;
+
+  /**
+   * Get a prepared statement for channel parameters (if needed)
+   */
+  public RdbmServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException;
+
+  /**
+   * Get a channel definition
+   */
+  public ChannelStoreDefinition getChannel(int chanId);
+
+  /**
+   * Invalidate a channel definition
+   */
+  public void flushChannelEntry(int chanId);
+
+  /**
+   * Get a channel definition (from the store if necessary)
+   */
+  public ChannelStoreDefinition getChannel(int chanId, boolean cacheChannel, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException;
+
+  /**
+   * Get an XML representation of a channel
+   */
+  public Element getChannelXML(int chanId, DocumentImpl doc, String idTag);
 }
 
 

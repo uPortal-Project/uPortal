@@ -215,8 +215,6 @@ public interface IUserLayoutStore {
   /* ChannelRegistry */
   public String getNextStructChannelId(IPerson person) throws Exception;
   public String getNextStructFolderId(IPerson person) throws Exception;
-  public Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException;
-  public void flushChannelEntry(int chanId);
 
   /**
    *  CoreStylesheetDescription

@@ -63,14 +63,9 @@ import  org.jasig.portal.services.LogService;
 import  org.apache.xml.serialize.OutputFormat;
 import  org.apache.xml.serialize.XMLSerializer;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.security.IPerson;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
-
-
-import java.io.PrintWriter;
-
 
 
 /**
@@ -84,233 +79,7 @@ public class RDBMUserLayoutStore
   static int DEBUG = 0;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
-  protected static boolean supportsOuterJoins = false;
-
-  static class DbStrings {
-    String testJoin;
-    String layoutStructure;
-    String channel;
-    String structureStylesheet;
-    String themeStylesheet;
-    public DbStrings(String testJoin, String layoutStructure, String channel, String structureStylesheet,
-      String themeStylesheet) {
-      this.testJoin = testJoin;
-      this.layoutStructure = layoutStructure;
-      this.channel = channel;
-      this.structureStylesheet = structureStylesheet;
-      this.themeStylesheet = themeStylesheet;
-    }
-  }
-  static final DbStrings jdbcDb = new DbStrings(
-    "FROM {oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE",
-    "FROM {oj UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.STRUCT_ID = USP.STRUCT_ID} WHERE",
-    "FROM {oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE",
-    "FROM {oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE",
-    "FROM {oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
-
-  /* Some database with broken jdbc drivers */
-  static final DbStrings PostgreSQLDb = new DbStrings(
-    "FROM UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE",
-    "FROM UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.STRUCT_ID = USP.STRUCT_ID WHERE",
-    "FROM UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE",
-    "FROM UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE",
-    "FROM UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
-  static final DbStrings OracleDb = new DbStrings(
-    "FROM UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND",
-    "FROM UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND",
-    "FROM UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND",
-    "FROM UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND",
-    "FROM UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
-
-  static final DbStrings[] joinDbStrings = {jdbcDb, PostgreSQLDb, OracleDb};
-  static DbStrings dbStrings;
-  static {
-      String sql;
-      Connection con = RdbmServices.getConnection();
-      try {
-        try {
-          if (con.getMetaData().supportsOuterJoins()) {
-            Statement stmt = con.createStatement();
-            DbStrings joinDb = null;
-            try {
-              for (int i = 0; i < joinDbStrings.length; i++) {
-                sql = "SELECT UP_USER.USER_ID " + joinDbStrings[i].testJoin + " UP_USER.USER_ID=1";
-                try {
-                  stmt.executeQuery(sql);
-                  dbStrings = joinDbStrings[i];
-                  supportsOuterJoins = true;
-                  break;
-                } catch (SQLException sqle) {}
-              }
-            } finally {
-              stmt.close();
-            }
-          }
-        } catch (SQLException sqle) {
-        }
-
-        LogService.instance().log(LogService.INFO, "Database supports: Outer Joins=" + supportsOuterJoins);
-      } finally {
-        RdbmServices.releaseConnection(con);
-      }
-  }
-
-  private static final Object channelLock = new Object();
-  static final HashMap channelCache = new HashMap();
-
-  protected final class ChannelDefinition {
-    int chanId = -1;
-    String chanTitle = "";
-    String chanDesc = "";
-    String chanClass = "";
-    int chanTypeId;
-    int chanPupblUsrId;
-    int chanApvlId;
-    java.sql.Timestamp chanPublDt;
-    java.sql.Timestamp chanApvlDt;
-    int chanTimeout;
-    boolean chanEditable;
-    boolean chanHasHelp;
-    boolean chanHasAbout;
-    String chanName = "";
-    String chanFName = "";
-    ArrayList parameters;
-
-    private class ChannelParameter {
-      String name;
-      String value;
-      boolean override;
-
-      public ChannelParameter(String name, String value, String override) {
-        this(name, value, RdbmServices.dbFlag(override));
-      }
-      public ChannelParameter(String name, String value, boolean override) {
-        this.name = name;
-        this.value = value;
-        this.override = override;
-      }
-    }
-
-    public java.sql.Timestamp getchanApvlDt() { return chanApvlDt;}
-
-    public ChannelDefinition(int chanId, String chanTitle) {
-      this.chanId = chanId;
-      this.chanTitle = chanTitle;
-    }
-
-    public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-      java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
-      String chanHasAbout, String chanName, String chanFName) {
-        this(chanId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
-              RdbmServices.dbFlag(chanEditable), RdbmServices.dbFlag(chanHasHelp),
-              RdbmServices.dbFlag(chanHasAbout),
-              chanName, chanFName);
-    }
-
-    public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-      java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, boolean chanEditable, boolean chanHasHelp,
-      boolean chanHasAbout, String chanName, String chanFName) {
-
-      this.chanId = chanId;
-      this.chanTitle = chanTitle;
-      this.chanDesc = chanDesc;
-      this.chanClass = chanClass;
-      this.chanTypeId = chanTypeId;
-      this.chanPupblUsrId = chanPupblUsrId;
-      this.chanApvlId = chanApvlId;
-      this.chanPublDt = chanPublDt;
-      this.chanApvlDt = chanApvlDt;
-      this.chanTimeout = chanTimeout;
-      this.chanEditable = chanEditable;
-      this.chanHasHelp = chanHasHelp;
-      this.chanHasAbout = chanHasAbout;
-      this.chanName = chanName;
-      this.chanFName =chanFName;
-      }
-
-      public void addParameter(String name, String value, String override) {
-        if (parameters == null) {
-          parameters = new ArrayList(5);
-        }
-
-        parameters.add(new ChannelParameter(name, value, override));
-      }
-
-      /**
-       * Minimum attributes a channel must have
-       */
-      private Element getBase(DocumentImpl doc, String idTag, String chanClass,
-        boolean editable, boolean hasHelp, boolean  hasAbout) {
-        Element channel = doc.createElement("channel");
-        doc.putIdentifier(idTag, channel);
-        channel.setAttribute("ID", idTag);
-        channel.setAttribute("chanID", chanId + "");
-        if (DEBUG > 1) {
-          System.err.println("channel " + chanName + "@" + chanId + " has tag " + chanId);
-        }
-        channel.setAttribute("timeout", chanTimeout + "");
-        channel.setAttribute("name", chanName);
-        channel.setAttribute("title", chanTitle);
-        channel.setAttribute("fname", chanFName);
-        channel.setAttribute("class", chanClass);
-        channel.setAttribute("typeID", chanTypeId + "");
-        channel.setAttribute("editable", editable ? "true" : "false");
-        channel.setAttribute("hasHelp", hasHelp ? "true" : "false");
-        channel.setAttribute("hasAbout", hasAbout ? "true" : "false");
-        return channel;
-      }
-
-      private final Element nodeParameter(DocumentImpl doc, String name, int value) {
-        return nodeParameter(doc, name, Integer.toString(value));
-      }
-      private final Element nodeParameter(DocumentImpl doc, String name, String value) {
-        Element parameter = doc.createElement("parameter");
-        parameter.setAttribute("name", name);
-        parameter.setAttribute("value", value);
-        return parameter;
-      }
-
-      private final void addParameters(DocumentImpl doc, Element channel) {
-        if (parameters != null) {
-          for (int i = 0; i < parameters.size(); i++) {
-            ChannelParameter cp = (ChannelParameter) parameters.get(i);
-
-            Element parameter = nodeParameter(doc, cp.name, cp.value);
-            if (cp.override) {
-              parameter.setAttribute("override", "yes");
-            }
-            channel.appendChild(parameter);
-          }
-        }
-      }
-      /**
-       * Display a message where this channel should be
-       */
-      public Element getDocument(DocumentImpl doc, String idTag, String statusMsg, int errorId) {
-        Element channel = getBase(doc, idTag, "org.jasig.portal.channels.CError", false, false, false);
-        addParameters(doc, channel);
-        channel.appendChild(nodeParameter(doc, "CErrorMessage", statusMsg));
-        channel.appendChild(nodeParameter(doc, "CErrorChanId", idTag));
-        channel.appendChild(nodeParameter(doc, "CErrorErrorId", errorId));
-        return channel;
-      }
-      /**
-       * return an xml representation of this channel
-       */
-      public Element getDocument(DocumentImpl doc, String idTag) {
-        Element channel = getBase(doc, idTag, chanClass, chanEditable, chanHasHelp, chanHasAbout);
-        channel.setAttribute("description", chanDesc);
-        addParameters(doc, channel);
-        return channel;
-      }
-
-      /**
-       * Is it time to reload me from the data store
-       */
-      public boolean refreshMe() {
-        return false;
-      }
-  }
+  protected IChannelRegistryStore crsdb;
 
   /**
    * LayoutStructure
@@ -377,10 +146,10 @@ public class RDBMUserLayoutStore
       Element structure = null;
 
       if (isChannel()) {
-        structure = getChannel(chanId, doc, channelPrefix + structId);
+        structure = crsdb.getChannelXML(chanId, doc, channelPrefix + structId);
         if (structure == null) {
           // Can't find channel
-          ChannelDefinition cd = new ChannelDefinition(chanId, "Missing channel");
+          ChannelStoreDefinition cd = new ChannelStoreDefinition(chanId, "Missing channel");
           structure = cd.getDocument(doc, channelPrefix + structId,
            "This channel no longer exists. You should remove it from your layout.",
            CError.CHANNEL_MISSING_EXCEPTION);
@@ -428,7 +197,29 @@ public class RDBMUserLayoutStore
   /**
    * put your documentation comment here
    */
-  public RDBMUserLayoutStore () {
+  public RDBMUserLayoutStore () throws Exception {
+    crsdb = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+    if (RdbmServices.supportsOuterJoins) {
+      if (RdbmServices.joinQuery instanceof RdbmServices.JdbcDb) {
+        RdbmServices.joinQuery.addQuery("layout",
+          "{oj UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.STRUCT_ID = USP.STRUCT_ID} WHERE");
+        RdbmServices.joinQuery.addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
+        RdbmServices.joinQuery.addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
+      } else if (RdbmServices.joinQuery instanceof RdbmServices.PostgreSQLDb) {
+         RdbmServices.joinQuery.addQuery("layout",
+          "UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.STRUCT_ID = USP.STRUCT_ID WHERE");
+        RdbmServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
+        RdbmServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
+     } else if (RdbmServices.joinQuery instanceof RdbmServices.OracleDb) {
+        RdbmServices.joinQuery.addQuery("layout",
+          "UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND");
+        RdbmServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
+        RdbmServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
+      } else {
+        throw new Exception("Unknown database driver");
+      }
+    }
+
   }
   /**
    *
@@ -764,27 +555,6 @@ public class RDBMUserLayoutStore
       return (approvedDate != null && rightNow.after(approvedDate));
    }
   /**
-   * See if the channel is already in the cache
-   * @param channel id
-   */
-  protected boolean channelCached(int chanId) {
-    return channelCache.containsKey(new Integer(chanId));
-  }
-
-  /**
-   * Remove channel entry from cache
-   * @param channel id
-   */
-  public void flushChannelEntry(int chanId) {
-    synchronized (channelLock) {
-      if (channelCache.remove(new Integer(chanId)) != null) {
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): flushed channel "
-          + chanId + " from cache");
-      }
-    }
-  }
-
-  /**
    * put your documentation comment here
    * @param tableName
    * @exception Exception
@@ -894,153 +664,6 @@ public class RDBMUserLayoutStore
     dumpDoc(node.getNextSibling(), indent);
   }
 
-    /**
-     * Manage the Channel cache
-     */
-
-     /**
-      * Get a channel from the cache (it better be there)
-      */
-  protected ChannelDefinition getChannel(int chanId) {
-    return (ChannelDefinition)channelCache.get(new Integer(chanId));
-  }
-     /**
-      * Get a channel from the cache (it better be there)
-      */
-  protected Element getChannel(int chanId, DocumentImpl doc, String idTag) {
-    ChannelDefinition channel = getChannel(chanId);
-    if (channel != null) {
-      return channel.getDocument(doc, idTag);
-    } else {
-      return null;
-    }
-  }
-  /**
-   * Get a channel from the cache or the store
-   */
-  protected ChannelDefinition getChannel(int chanId, boolean cacheChannel, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
-    Integer chanID = new Integer(chanId);
-    boolean inCache = true;
-    ChannelDefinition channel = (ChannelDefinition)channelCache.get(chanID);
-    if (channel == null) {
-      synchronized (channelLock) {
-        channel = (ChannelDefinition)channelCache.get(chanID);
-        if (channel == null || cacheChannel && channel.refreshMe()) {  // Still undefined or stale, let's get it
-          channel = getChannelDefinition(chanId, pstmtChannel, pstmtChannelParm);
-          inCache = false;
-          if (cacheChannel) {
-            channelCache.put(chanID, channel);
-            if (DEBUG > 1) {
-              System.err.println("Cached channel " + chanId);
-            }
-          }
-        }
-      }
-    }
-
-    if (inCache) {
-      LogService.instance().log(LogService.DEBUG,
-        "RDBMUserLayoutStore::getChannelDefinition(): Got channel " + chanId + " from the cache");
-    }
-
-    return channel;
-  }
-  /**
-   * Read a channel definition from the data store
-   */
-  protected ChannelDefinition getChannelDefinition (int chanId, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
-    ChannelDefinition channel = null;
-
-    pstmtChannel.clearParameters();
-    pstmtChannel.setInt(1, chanId);
-    LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannel(): " + pstmtChannel);
-    ResultSet rs = pstmtChannel.executeQuery();
-    try {
-      if (rs.next()) {
-        channel = new ChannelDefinition(chanId, rs.getString(1), rs.getString(2), rs.getString(3),
-        rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getTimestamp(7), rs.getTimestamp(8), rs.getInt(9),
-          rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
-          rs.getString(14));
-
-        int dbOffset = 0;
-        if (pstmtChannelParm == null) { // we are using a join statement so no need for a new query
-          dbOffset = 14;
-        } else {
-          rs.close();
-          pstmtChannelParm.clearParameters();
-          pstmtChannelParm.setInt(1, chanId);
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannel(): " + pstmtChannelParm);
-          rs = pstmtChannelParm.executeQuery();
-        }
-        while (true) {
-          if (pstmtChannelParm != null && !rs.next()) {
-            break;
-          }
-          channel.addParameter(rs.getString(dbOffset + 1), rs.getString(dbOffset + 2),rs.getString(dbOffset + 3));
-          if (pstmtChannelParm == null && !rs.next()) {
-            break;
-          }
-        }
-      }
-    } finally {
-      rs.close();
-    }
-
-    LogService.instance().log(LogService.DEBUG,
-      "RDBMUserLayoutStore::getChannelDefinition(): Read channel " + chanId + " from the store");
-    return  channel;
-  }
-  /**
-   * put your documentation comment here
-   * @param con
-   * @param doc
-   * @param chanId
-   * @param idTag
-   * @return
-   * @exception java.sql.SQLException
-   */
-
-  public Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException {
-    RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
-    try {
-      RdbmServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
-      try {
-        ChannelDefinition cd = getChannel(chanId, false, pstmtChannel, pstmtChannelParm);
-        if (cd != null) {
-          return cd.getDocument(doc, idTag);
-        } else {
-          return null;
-        }
-      } finally {
-        if (pstmtChannelParm != null) {
-          pstmtChannelParm.close();
-        }
-      }
-    } finally {
-      pstmtChannel.close();
-    }
-  }
-  protected static final RdbmServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
-    if (supportsOuterJoins) {
-      return null;
-    } else {
-      return new RdbmServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
-    }
-  }
-   protected static final RdbmServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
-    String sql;
-    sql = "SELECT UC.CHAN_TITLE,UC.CHAN_DESC,UC.CHAN_CLASS,UC.CHAN_TYPE_ID,UC.CHAN_PUBL_ID,UC.CHAN_APVL_ID,UC.CHAN_PUBL_DT,UC.CHAN_APVL_DT,"+
-      "UC.CHAN_TIMEOUT,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_NAME,UC.CHAN_FNAME";
-
-    if (supportsOuterJoins) {
-      sql += ",CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC " + dbStrings.channel;
-    } else {
-      sql += " FROM UP_CHANNEL UC WHERE";
-    }
-    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RdbmServices.sqlTimeStamp();
-
-    return new RdbmServices.PreparedStatement(con, sql);
-  }
   /* DBCounter */
   /*
    * get&increment method.
@@ -1195,8 +818,8 @@ public class RDBMUserLayoutStore
     try {
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT";
-      if (supportsOuterJoins) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT " + dbStrings.structureStylesheet;
+      if (RdbmServices.supportsOuterJoins) {
+        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + RdbmServices.joinQuery.getQuery("ss_struct");
         dbOffset = 4;
       } else {
         sQuery += " FROM UP_SS_STRUCT USS WHERE";
@@ -1215,7 +838,7 @@ public class RDBMUserLayoutStore
           ssd.setStylesheetWordDescription(rs.getString(4));
         }
 
-        if (!supportsOuterJoins) {
+        if (!RdbmServices.supportsOuterJoins) {
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
@@ -1224,7 +847,7 @@ public class RDBMUserLayoutStore
         }
 
         while (true) {
-          if (!supportsOuterJoins && !rs.next()) {
+          if (!RdbmServices.supportsOuterJoins && !rs.next()) {
             break;
           }
 
@@ -1248,7 +871,7 @@ public class RDBMUserLayoutStore
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + rs.getInt(dbOffset + 1) + ").");
           }
-          if (supportsOuterJoins && !rs.next()) {
+          if (RdbmServices.supportsOuterJoins && !rs.next()) {
             break;
           }
 
@@ -1443,8 +1066,8 @@ public class RDBMUserLayoutStore
     try {
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS";
-      if (supportsOuterJoins) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT " + dbStrings.themeStylesheet;
+      if (RdbmServices.supportsOuterJoins) {
+        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + RdbmServices.joinQuery.getQuery("ss_theme");
         dbOffset = 11;
       } else {
         sQuery += " FROM UP_SS_THEME UTS WHERE";
@@ -1469,7 +1092,7 @@ public class RDBMUserLayoutStore
           tsd.setCustomUserPreferencesManagerClass(rs.getString(11));
         }
 
-        if (!supportsOuterJoins) {
+        if (!RdbmServices.supportsOuterJoins) {
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
@@ -1477,7 +1100,7 @@ public class RDBMUserLayoutStore
           rs = stmt.executeQuery(sQuery);
         }
         while (true) {
-          if (!supportsOuterJoins && !rs.next()) {
+          if (!RdbmServices.supportsOuterJoins && !rs.next()) {
             break;
           }
           int type = rs.getInt(dbOffset + 1);
@@ -1501,7 +1124,7 @@ public class RDBMUserLayoutStore
             LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + rs.getInt(dbOffset + 1) + ").");
           }
-          if (supportsOuterJoins && !rs.next()) {
+          if (RdbmServices.supportsOuterJoins && !rs.next()) {
             break;
           }
         }
@@ -2082,8 +1705,8 @@ public class RDBMUserLayoutStore
 
         String sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE";
-        if (supportsOuterJoins) {
-          sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL " + dbStrings.layoutStructure;
+        if (RdbmServices.supportsOuterJoins) {
+          sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RdbmServices.joinQuery.getQuery("layout");
         } else {
           sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
         }
@@ -2110,7 +1733,7 @@ public class RDBMUserLayoutStore
               } else {
                 chanIds.add(new Integer(chanId)); // For later
               }
-              if (supportsOuterJoins) {
+              if (RdbmServices.supportsOuterJoins) {
                 do {
                   String name = rs.getString(10);
                   String value = rs.getString(11); // Oracle JDBC requires us to do this for longs
@@ -2145,14 +1768,14 @@ public class RDBMUserLayoutStore
         * layout structure ResultSet (in other words, Oracle is a pain to program for)
         */
         if (chanIds.size() > 0) {
-          RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
+          RdbmServices.PreparedStatement pstmtChannel = crsdb.getChannelPstmt(con);
           try {
-            RdbmServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
+            RdbmServices.PreparedStatement pstmtChannelParm = crsdb.getChannelParmPstmt(con);
             try {
               // Pre-prime the channel pump
               for (int i = 0; i < chanIds.size(); i++) {
                 int chanId = ((Integer) chanIds.get(i)).intValue();
-                getChannel(chanId, true, pstmtChannel, pstmtChannelParm);
+                crsdb.getChannel(chanId, true, pstmtChannel, pstmtChannelParm);
                 if (DEBUG > 1) {
                   System.err.println("Precached " + chanId);
                 }
@@ -2168,7 +1791,7 @@ public class RDBMUserLayoutStore
           chanIds.clear();
         }
 
-        if (!supportsOuterJoins) { // Pick up structure parameters
+        if (!RdbmServices.supportsOuterJoins) { // Pick up structure parameters
           sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);

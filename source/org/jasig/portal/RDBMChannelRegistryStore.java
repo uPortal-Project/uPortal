@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,16 +43,22 @@ import  org.jasig.portal.services.LogService;
 import  org.jasig.portal.services.AuthorizationService;
 import  org.jasig.portal.security.IAuthorizationPrincipal;
 import  org.jasig.portal.security.IPerson;
-import  java.io.*;
+import  java.io.StringWriter;
 import  java.sql.Connection;
 import  java.sql.ResultSet;
 import  java.sql.SQLException;
 import  java.sql.Statement;
-import java.util.Date;
-import  org.apache.xml.serialize.*;
-import  org.apache.xerces.dom.*;
-import  org.w3c.dom.*;
-
+import  java.util.ArrayList;
+import  java.util.Date;
+import  java.util.HashMap;
+import  org.apache.xml.serialize.OutputFormat;
+import  org.apache.xml.serialize.XMLSerializer;
+import  org.w3c.dom.Document;
+import  org.w3c.dom.Element;
+import  org.w3c.dom.NamedNodeMap;
+import  org.w3c.dom.Node;
+import  org.w3c.dom.NodeList;
+import  org.apache.xerces.dom.DocumentImpl;
 
 /**
  * Reference implementation of IChannelRegistry.
@@ -61,9 +67,28 @@ import  org.w3c.dom.*;
  * @version $Revision$
  */
 public class RDBMChannelRegistryStore implements IChannelRegistryStore {
-  private DocumentImpl chanDoc = null;
-  private Document types = null;
+  private static final int DEBUG = 0;
   String sRegDtd = "channelRegistry.dtd";
+
+  private static final Object channelLock = new Object();
+  private static final HashMap channelCache = new HashMap();
+
+  public RDBMChannelRegistryStore() throws Exception {
+    if (RdbmServices.supportsOuterJoins) {
+      if (RdbmServices.joinQuery instanceof RdbmServices.JdbcDb) {
+        RdbmServices.joinQuery.addQuery("channel",
+          "{oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE");
+      } else if (RdbmServices.joinQuery instanceof RdbmServices.PostgreSQLDb) {
+         RdbmServices.joinQuery.addQuery("channel",
+          "UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE");
+     } else if (RdbmServices.joinQuery instanceof RdbmServices.OracleDb) {
+        RdbmServices.joinQuery.addQuery("channel",
+          "UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND");
+      } else {
+        throw new Exception("Unknown database driver");
+      }
+    }
+  }
 
   /**
    * Returns an XML document which describes the channel registry.
@@ -86,7 +111,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(userKey, userType);
           try {
             String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelRegistryXML(): " + query);
+            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelRegistryXML(): " + query);
             ResultSet rs = stmt.executeQuery(query);
             try {
               while (rs.next()) {
@@ -130,7 +155,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     try {
       stmt = con.createStatement();
       String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID=" + catId;
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): " + query);
+      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): " + query);
       rs = stmt.executeQuery(query);
       while (rs.next()) {
         int childCatId = rs.getInt(1);
@@ -152,15 +177,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       // Append children channels
       chanStmt.clearParameters();
       chanStmt.setInt(1, catId);
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): " + chanStmt);
+      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): " + chanStmt);
       rs = chanStmt.executeQuery();
       try {
         while (rs.next()) {
           int chanId = rs.getInt(1);
           if (ap.canSubscribe(chanId)) {
-            Element channel = UserLayoutStoreFactory.getUserLayoutStoreImpl().getChannelNode (chanId, con, (org.apache.xerces.dom.DocumentImpl)doc, "chan" + chanId);
+            Element channel = getChannelNode (chanId, con, (org.apache.xerces.dom.DocumentImpl)doc, "chan" + chanId);
             if (channel == null) {
-              LogService.instance().log(LogService.WARN, "RDBMUserLayoutStore::appendChildCategoriesAndChannels(): channel " + chanId +
+              LogService.instance().log(LogService.WARN, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): channel " + chanId +
                 " in category " + catId + " does not exist in the store");
             } else {
               category.appendChild(channel);
@@ -209,7 +234,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT TYPE_ID, TYPE, TYPE_NAME, TYPE_DESCR, TYPE_DEF_URI FROM UP_CHAN_TYPE";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getChannelTypesXML(): " + sQuery);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelTypesXML(): " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
@@ -277,7 +302,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       try {
         // First delete existing categories for this channel
         String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + id;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sDelete);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sDelete);
         int recordsDeleted = stmt.executeUpdate(sDelete);
 
         for (int i = 0; i < catID.length; i++) {
@@ -285,7 +310,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           String categoryID = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
 
           String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + categoryID + ")";
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
+          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
           stmt.executeUpdate(sInsert);
         }
         // Commit the transaction
@@ -349,7 +374,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       String sqlFName = RdbmServices.sqlEscape(channel.getAttribute("fname"));
 
       String sQuery = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + id;
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sQuery);
+      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
 
       // If channel is already there, do an update, otherwise do an insert
@@ -370,7 +395,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         "CHAN_NAME='" + sqlName + "', " +
         "CHAN_FNAME='" + sqlFName + "' " +
         "WHERE CHAN_ID=" + id;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sUpdate);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
       } else {
         String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
@@ -379,13 +404,13 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             + publisher.getID() + ", " + sysdate + ", " + timeout
             + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
             + "', '" + sqlName + "', '" + sqlFName + "')";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
         stmt.executeUpdate(sInsert);
       }
 
       // First delete existing parameters for this channel
       String sDelete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + id;
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sDelete);
+      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sDelete);
       int recordsDeleted = stmt.executeUpdate(sDelete);
 
       NodeList parameters = channel.getChildNodes();
@@ -414,14 +439,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             }
             String sInsert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
                 ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
+            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
             stmt.executeUpdate(sInsert);
           }
         }
       }
       // Commit the transaction
       RdbmServices.commit(con);
-      UserLayoutStoreFactory.getUserLayoutStoreImpl().flushChannelEntry(id);
+      flushChannelEntry(id);
     } catch (SQLException sqle) {
       RdbmServices.rollback(con);
       throw  sqle;
@@ -444,7 +469,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
         ", CHAN_APVL_DT = " + RdbmServices.sqlTimeStamp(approveDate) +
         " WHERE CHAN_ID = " + chanId;
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::approveChannel(): " + sUpdate);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannel(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
       } finally {
         stmt.close();
@@ -486,17 +511,17 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
         // Delete channel/category associations
         //String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + chanID;
-        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sDelete);
+        //LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.removeChannel(): " + sDelete);
         //stmt.executeUpdate(sDelete);
 
         // Delete channel/role associations
         //sDelete = "DELETE FROM UP_ROLE_CHAN WHERE CHAN_ID=" + chanID;
-        //LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::removeChannel(): " + sDelete);
+        //LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.removeChannel(): " + sDelete);
         //stmt.executeUpdate(sDelete);
 
         // Delete channel.
         String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_DT=NULL WHERE CHAN_ID=" + chanID;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore::removeChannel(): " + sUpdate);
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.removeChannel(): " + sUpdate);
         stmt.executeUpdate(sUpdate);
 
         // Commit the transaction
@@ -549,7 +574,178 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   protected static final boolean xmlBool (String value) {
       return (value != null && value.equals("true") ? true : false);
   }
+    /**
+     * Manage the Channel cache
+     */
+  /**
+   * See if the channel is already in the cache
+   * @param channel id
+   */
+  protected boolean channelCached(int chanId) {
+    return channelCache.containsKey(new Integer(chanId));
+  }
 
+  /**
+   * Remove channel entry from cache
+   * @param channel id
+   */
+  public void flushChannelEntry(int chanId) {
+    synchronized (channelLock) {
+      if (channelCache.remove(new Integer(chanId)) != null) {
+        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): flushed channel "
+          + chanId + " from cache");
+      }
+    }
+  }
+
+
+  /**
+   * Get a channel from the cache (it better be there)
+   */
+  public ChannelStoreDefinition getChannel(int chanId) {
+    return (ChannelStoreDefinition)channelCache.get(new Integer(chanId));
+  }
+
+  /**
+   * Get a channel from the cache (it better be there)
+   */
+  public Element getChannelXML(int chanId, DocumentImpl doc, String idTag) {
+    ChannelStoreDefinition channel = getChannel(chanId);
+    if (channel != null) {
+      return channel.getDocument(doc, idTag);
+    } else {
+      return null;
+    }
+  }
+  /**
+   * Get a channel from the cache or the store
+   */
+  public ChannelStoreDefinition getChannel(int chanId, boolean cacheChannel, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+    Integer chanID = new Integer(chanId);
+    boolean inCache = true;
+    ChannelStoreDefinition channel = (ChannelStoreDefinition)channelCache.get(chanID);
+    if (channel == null) {
+      synchronized (channelLock) {
+        channel = (ChannelStoreDefinition)channelCache.get(chanID);
+        if (channel == null || cacheChannel && channel.refreshMe()) {  // Still undefined or stale, let's get it
+          channel = getChannelStoreDefinition(chanId, pstmtChannel, pstmtChannelParm);
+          inCache = false;
+          if (cacheChannel) {
+            channelCache.put(chanID, channel);
+            if (DEBUG > 1) {
+              System.err.println("Cached channel " + chanId);
+            }
+          }
+        }
+      }
+    }
+
+    if (inCache) {
+      LogService.instance().log(LogService.DEBUG,
+        "RDBMChannelRegistryStore.getChannelStoreDefinition(): Got channel " + chanId + " from the cache");
+    }
+
+    return channel;
+  }
+
+  /**
+   * Read a channel definition from the data store
+   */
+  protected ChannelStoreDefinition getChannelStoreDefinition (int chanId, RdbmServices.PreparedStatement pstmtChannel, RdbmServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+    ChannelStoreDefinition channel = null;
+
+    pstmtChannel.clearParameters();
+    pstmtChannel.setInt(1, chanId);
+    LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannel(): " + pstmtChannel);
+    ResultSet rs = pstmtChannel.executeQuery();
+    try {
+      if (rs.next()) {
+        channel = new ChannelStoreDefinition(chanId, rs.getString(1), rs.getString(2), rs.getString(3),
+        rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getTimestamp(7), rs.getTimestamp(8), rs.getInt(9),
+          rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
+          rs.getString(14));
+
+        int dbOffset = 0;
+        if (pstmtChannelParm == null) { // we are using a join statement so no need for a new query
+          dbOffset = 14;
+        } else {
+          rs.close();
+          pstmtChannelParm.clearParameters();
+          pstmtChannelParm.setInt(1, chanId);
+          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannel(): " + pstmtChannelParm);
+          rs = pstmtChannelParm.executeQuery();
+        }
+        while (true) {
+          if (pstmtChannelParm != null && !rs.next()) {
+            break;
+          }
+          channel.addParameter(rs.getString(dbOffset + 1), rs.getString(dbOffset + 2),rs.getString(dbOffset + 3));
+          if (pstmtChannelParm == null && !rs.next()) {
+            break;
+          }
+        }
+      }
+    } finally {
+      rs.close();
+    }
+
+    LogService.instance().log(LogService.DEBUG,
+      "RDBMChannelRegistryStore.getChannelStoreDefinition(): Read channel " + chanId + " from the store");
+    return  channel;
+  }
+  /**
+   * put your documentation comment here
+   * @param con
+   * @param doc
+   * @param chanId
+   * @param idTag
+   * @return
+   * @exception java.sql.SQLException
+   */
+
+  public Element getChannelNode (int chanId, Connection con, DocumentImpl doc, String idTag) throws java.sql.SQLException {
+    RdbmServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
+    try {
+      RdbmServices.PreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
+      try {
+        ChannelStoreDefinition cd = getChannel(chanId, false, pstmtChannel, pstmtChannelParm);
+        if (cd != null) {
+          return cd.getDocument(doc, idTag);
+        } else {
+          return null;
+        }
+      } finally {
+        if (pstmtChannelParm != null) {
+          pstmtChannelParm.close();
+        }
+      }
+    } finally {
+      pstmtChannel.close();
+    }
+  }
+
+  public final RdbmServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
+    if (RdbmServices.supportsOuterJoins) {
+      return null;
+    } else {
+      return new RdbmServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
+    }
+  }
+
+  public final RdbmServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
+    String sql;
+    sql = "SELECT UC.CHAN_TITLE,UC.CHAN_DESC,UC.CHAN_CLASS,UC.CHAN_TYPE_ID,UC.CHAN_PUBL_ID,UC.CHAN_APVL_ID,UC.CHAN_PUBL_DT,UC.CHAN_APVL_DT,"+
+      "UC.CHAN_TIMEOUT,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_NAME,UC.CHAN_FNAME";
+
+    if (RdbmServices.supportsOuterJoins) {
+      sql += ",CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM " + RdbmServices.joinQuery.getQuery("channel");
+    } else {
+      sql += " FROM UP_CHANNEL UC WHERE";
+    }
+    sql += " UC.CHAN_ID=? AND CHAN_APVL_DT IS NOT NULL AND CHAN_APVL_DT <= " + RdbmServices.sqlTimeStamp();
+
+    return new RdbmServices.PreparedStatement(con, sql);
+  }
 }
 
 
