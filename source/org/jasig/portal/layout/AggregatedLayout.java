@@ -197,7 +197,7 @@ public class AggregatedLayout implements IAggregatedLayout {
         Element alternate = document.createElement("fragment");
         String key = (String) fragEnum.nextElement();
         alternate.setAttribute("ID",key);
-        alternate.setAttribute("name",(String) fragments.get(key));
+        alternate.setAttribute("desc",(String) fragments.get(key));
         alternateLayouts.appendChild(alternate);
        }
       }
@@ -215,7 +215,7 @@ public class AggregatedLayout implements IAggregatedLayout {
         AttributesImpl attributes = new AttributesImpl();
         String key = (String) fragEnum.nextElement();
         attributes.addAttribute("","ID","ID","CDATA",key);
-        attributes.addAttribute("","name","name","CDATA",(String) fragments.get(key));
+        attributes.addAttribute("","desc","desc","CDATA",(String) fragments.get(key));
         contentHandler.startElement("","fragment","fragment",attributes);
         contentHandler.endElement("","fragment","fragment");
        }

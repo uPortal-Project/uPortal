@@ -1560,7 +1560,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
  }
 
 
- /**   Gets the fragment IDs/names for a given user
+ /**   Gets the fragment IDs/fragment descriptions for a given user
      * @param person an <code>IPerson</code> object specifying the user
      * @return a <code>Map</code> object containing the IDs of the fragments the user owns
      * @exception Exception if an error occurs
@@ -1571,7 +1571,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     Map fragments = new Hashtable();
     Statement stmt = con.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT FRAGMENT_ID, FRAGMENT_NAME FROM UP_OWNER_FRAGMENT WHERE OWNER_ID="+person.getID());
+    ResultSet rs = stmt.executeQuery("SELECT FRAGMENT_ID, FRAGMENT_DESCRIPTION FROM UP_OWNER_FRAGMENT WHERE OWNER_ID="+person.getID());
     while ( rs.next() )
       fragments.put ( rs.getInt(1) + "", rs.getString(2) );
 
