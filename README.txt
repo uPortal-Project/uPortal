@@ -1,4 +1,6 @@
-uPortal 2.4.1 Distribution
+$Id$
+
+uPortal 2.4.2 Distribution
 --------------------------
 
 Purpose
@@ -16,15 +18,14 @@ Ant tool from the Apache Jakarta project.
 
 Contents
 --------
-1) uPortal 2.4.1
-2) uPortal 2.4.1 java libraries (Xalan, Pluto, etc).
+1) uPortal
+2) uPortal dependencies (Xalan, Pluto, etc).
 3) uPortal Architecture overview and JavaDoc API
-   (see docs directory)
 
 
 System requirements
 -------------------
-JDK 1.3 or higher
+JDK 1.4 or higher
 JAVA_HOME environment variable must be set
 Installation of Ant from Jakarta: 
   http://ant.apache.org/
@@ -110,63 +111,30 @@ uPortal website:
  http://www.uportal.org
 
 
-Changes since uPortal 2.4
--------------------------
-
-************
-* Database *
-************
-
--Bug 1710, Changed not-null constraint of UP_PORTLET_ENTITY_PREFS and UP_PORTLET_DEFINITION_PREFS
-           from PORTLET_PREFERENCES_NAME (which didn't exist) to PORTLET_PREF_NAME.
-
-
-**************
-* Properties *
-**************
-
--security.properties
-  
-   Changed naming convention of security context property parameters.
-
-
-*************
-* Bug fixes *
-*************
-
--Bug 1504, Supported portlet ResourceBundles and made portlet-info optional.
--Bug 1550, Removed duplicate setting the uploaded file in the parameter Map.
--Bug 1633, Made portlets work after web application is reloaded.
--Bug 1660, Prevented setting of invalid channel timeouts.
--Bug 1691, Set runtime data on error channel.
--Bug 1693, Made sure channel registry in CContentSubscriber is properly updated.
--Bug 1695, Fixed ExternalServices parser error.
--Bug 1700, Fixed WSRP Consumer NullPointerException caused by missing user attribute.
--Bug 1702, Fixed logging calls to use log.error(String, Throwable) rather than log.error(Object).
--Bug 1703, Replaced Campus Pipeline license with JA-SIG license in test source files.
--Bug 1704, Set new LocaleManager when UserProfile is created in RDBMUserLayoutStore.getProfileById().
--Bug 1706, Changed regular statements to prepared statements in RDBMUserLayoutStore.setUserLayout() method.
--Bug 1710, (See database section above).
--Bug 1711, Prevented anchors from being added to javascript commands.
--Bug 1713, Fixed label of portlet management interface parameter.
--Bug 1715, Fixed improper handling of channel parameter override attribute.
--Bug 1716, Saved layout in CFragmentManager to prevent NPE.
--Bug 1728, Updated cache of persons when a user succesfully authenticates.
--Bug 1729, Fixed classpath for pubchan ant target so that log messages are handled properly.
--Bug 1737, Replaced ldap.properties default connection with ldap.xml default connection when specified.
--Bug 1741, Fixed ability to recover from missing profile in AggregatedUserLayoutStore.
--Bug 1744, Fixed portlet file uploading ability.
--Bug 1750, ExceptionHelper.shortStackTrace() no longer obscures meaningful cause of exception.
--Bug 1756, Fixed logic in LRUCache to avoid endless sweep.
--Bug 1757, Restored upgrade and locale features missing from the DbLoader in uPortal 2.4.
--Bug 1764, Changed DbUtils to use first data type mapping when more than one is available.
--Bug 1774, Enabled chained security contexts to be more than 2 levels deep.
--Bug 1775, Changed PersonDirectory to assume that a base DN from ldap.xml includes the usercontext.
+Release Notes - uPortal - Version 2.4.2
+---------------------------------------
+** Bug
+    * [UP-338] - RENDERING_DONE Event never sent
+    * [UP-476] - User's LDAP groups not loaded if username contains uppercase
+    * [UP-744] - PersonDirectory has a memory leak related to caching IPersons in a WeakHashMap
+    * [UP-745] - ChannelManager has a memory leak, when it swaps out a channel for the CError channel, the end session events never progagate to the original channel
+    * [UP-746] - CSecureInfo has a memory leak, when ChannelManager swaps out a channel for the CSecureInfo channel, the to end session events never propagate to the original channel
+    * [UP-747] - Change to portlet parameter encoding breaks download worker URLs
+    * [UP-748] - Infinite recursion in RestrictedPerson
+    * [UP-749] - render parameter does not survive refresh
+    * [UP-753] - ChannelFactory should not expose internal map of static channels, not create more than one instance of a multithreaded channel
+    * [UP-759] - Xalan jar should be deployed to endorsed directory
+    * [UP-760] - Entity locks not expired correctly
+    * [UP-761] - A lock owner is limited to single READ lock on an entity
+    * [UP-772] - Classpath resources not being copied to build
+    * [UP-775] - Duplicate read locks for a single owner not permitted.
+    * [UP-776] - WebApplicationMarshaller.java turns resource-ref into resource-env-ref
+    * [UP-778] - AggregatedLayoutManager.loadUserLayout() fails to log stack trace for exception
+    * [UP-779] - ChannelRenderer declares constants that are already declared in its base class
+    * [UP-780] - Eliminate "unknown additional descriptor warning" when using ChainingSecurityContext
+    * [UP-796] - contains() doesn't always work for PAGS groups
+    * [UP-798] - GroupService.isComposite always returns null
 
 
-*****************
-* Other changes *
-*****************
-
--Updated Pluto and testsuite portlet to CVS snapshot on November 2, 2004.
--Updated WSRP4J to CVS snapshot on November 2, 2004.
+** Improvement
+    * [UP-770] - Document hsqldb version included with uPortal
