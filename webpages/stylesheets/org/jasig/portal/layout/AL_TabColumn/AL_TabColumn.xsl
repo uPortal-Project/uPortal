@@ -41,7 +41,7 @@ Version $Revision$
     <xsl:param name="lastSessionTabID" select="'no lastSessionTabID parameter'"/>
     <!--modes: view (default), preferences, fragment-->
     <!--<xsl:param name="mode" select="'view'"/>-->
-    <xsl:param name="mode" select="'preferences'"/>
+    <xsl:param name="mode" select="'view'"/>
     <!--Target restrictions: tab, column, channel-->
     <xsl:param name="targetRestriction" select="'no targetRestriction parameter'"/>
     <!--<xsl:param name="targetRestriction" select="'channel'"/>-->
