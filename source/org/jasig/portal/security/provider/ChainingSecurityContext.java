@@ -289,8 +289,13 @@ public abstract class ChainingSecurityContext implements ISecurityContext
    return scNames.elements();
   }
 
-
+  /**
+   * A default, placeholder implementation of IAdditionalDescriptor an instance of which
+   * is the default value for the instance variable "myAdditionalDescriptor" of instances of
+   * this class.
+   */
   public class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
+      // do nothing
   }
 
 // entries in our subcontext list
