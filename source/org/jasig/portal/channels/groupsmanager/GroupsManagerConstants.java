@@ -65,4 +65,12 @@ public interface GroupsManagerConstants {
    String BROWSE_MODE = "browse";
    String EDIT_MODE = "edit";
    String SELECT_MODE = "select";
+   
+   String VIEW_PERMISSION = "VIEW";
+   String CREATE_PERMISSION = "CREATE";
+   String UPDATE_PERMISSION = "UPDATE";
+   String DELETE_PERMISSION = "DELETE";
+   String SELECT_PERMISSION = "SELECT";
+   String ADD_REMOVE_PERMISSION="ADD/REMOVE";
+   String ASSIGN_PERMISSION = "ASSIGNPERMISSIONS";
 }
