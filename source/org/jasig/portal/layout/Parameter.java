@@ -1,5 +1,5 @@
 /**
- * Parameter.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * Parameter.java	Java 1.3.0 Mon Dec 11 17:52:48 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -15,8 +15,8 @@
 package org.jasig.portal.layout;
 
 import java.util.Hashtable;
-import com.objectspace.xml.IClassDeclaration;
 import com.objectspace.xml.xgen.ClassDecl;
+import com.objectspace.xml.IClassDeclaration;
 
 public class Parameter implements IParameter
   {
@@ -61,21 +61,6 @@ public class Parameter implements IParameter
     return (String) _Attributes.remove( name );
     }
   
-  public String getValueAttribute()
-    {
-    return getAttribute( "value" );
-    }
-  
-  public void setValueAttribute( String value )
-    {
-    setAttribute( "value", value );
-    }
-  
-  public String removeValueAttribute()
-    {
-    return removeAttribute( "value" );
-    }
-  
   public String getNameAttribute()
     {
     return getAttribute( "name" );
@@ -89,5 +74,20 @@ public class Parameter implements IParameter
   public String removeNameAttribute()
     {
     return removeAttribute( "name" );
+    }
+  
+  public String getValueAttribute()
+    {
+    return getAttribute( "value" );
+    }
+  
+  public void setValueAttribute( String value )
+    {
+    setAttribute( "value", value );
+    }
+  
+  public String removeValueAttribute()
+    {
+    return removeAttribute( "value" );
     }
   }

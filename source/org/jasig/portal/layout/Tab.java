@@ -1,5 +1,5 @@
 /**
- * Tab.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * Tab.java	Java 1.3.0 Mon Dec 11 17:52:47 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -14,11 +14,11 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Hashtable;
-import com.objectspace.xml.IClassDeclaration;
-import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
 import com.objectspace.xml.xgen.ClassDecl;
+import com.objectspace.xml.IClassDeclaration;
 
 public class Tab implements ITab
   {

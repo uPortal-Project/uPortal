@@ -1,5 +1,5 @@
 /**
- * IColumn.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * IColumn.java	Java 1.3.0 Mon Dec 11 17:52:47 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -14,9 +14,9 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.Vector;
 
 public interface IColumn extends com.objectspace.xml.IDXMLInterface ,com.objectspace.xml.IAttributeContainer
   {

@@ -1,5 +1,5 @@
 /**
- * Factory.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * Factory.java	Java 1.3.0 Mon Dec 11 17:52:47 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -21,14 +21,14 @@ public class Factory
     return new org.jasig.portal.layout.Tab();
     }
 
+  public static IColumn newColumn()
+    {
+    return new org.jasig.portal.layout.Column();
+    }
+
   public static IChannel newChannel()
     {
     return new org.jasig.portal.layout.Channel();
-    }
-
-  public static IParameter newParameter()
-    {
-    return new org.jasig.portal.layout.Parameter();
     }
 
   public static ILayout newLayout()
@@ -36,9 +36,9 @@ public class Factory
     return new org.jasig.portal.layout.Layout();
     }
 
-  public static IColumn newColumn()
+  public static IParameter newParameter()
     {
-    return new org.jasig.portal.layout.Column();
+    return new org.jasig.portal.layout.Parameter();
     }
 
   }

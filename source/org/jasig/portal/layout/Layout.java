@@ -1,5 +1,5 @@
 /**
- * Layout.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * Layout.java	Java 1.3.0 Mon Dec 11 17:52:48 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -14,11 +14,11 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Hashtable;
-import com.objectspace.xml.IClassDeclaration;
-import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
 import com.objectspace.xml.xgen.ClassDecl;
+import com.objectspace.xml.IClassDeclaration;
 
 public class Layout implements ILayout
   {
@@ -64,19 +64,19 @@ public class Layout implements ILayout
     return (String) _Attributes.remove( name );
     }
   
-  public String getChannelHeadingColorAttribute()
+  public String getActiveTabAttribute()
     {
-    return getAttribute( "channelHeadingColor" );
+    return getAttribute( "activeTab" );
     }
   
-  public void setChannelHeadingColorAttribute( String value )
+  public void setActiveTabAttribute( String value )
     {
-    setAttribute( "channelHeadingColor", value );
+    setAttribute( "activeTab", value );
     }
   
-  public String removeChannelHeadingColorAttribute()
+  public String removeActiveTabAttribute()
     {
-    return removeAttribute( "channelHeadingColor" );
+    return removeAttribute( "activeTab" );
     }
   
   public String getBgcolorAttribute()
@@ -94,6 +94,21 @@ public class Layout implements ILayout
     return removeAttribute( "bgcolor" );
     }
   
+  public String getActiveTabColorAttribute()
+    {
+    return getAttribute( "activeTabColor" );
+    }
+  
+  public void setActiveTabColorAttribute( String value )
+    {
+    setAttribute( "activeTabColor", value );
+    }
+  
+  public String removeActiveTabColorAttribute()
+    {
+    return removeAttribute( "activeTabColor" );
+    }
+  
   public String getFgcolorAttribute()
     {
     return getAttribute( "fgcolor" );
@@ -109,19 +124,19 @@ public class Layout implements ILayout
     return removeAttribute( "fgcolor" );
     }
   
-  public String getActiveTabAttribute()
+  public String getChannelHeadingColorAttribute()
     {
-    return getAttribute( "activeTab" );
+    return getAttribute( "channelHeadingColor" );
     }
   
-  public void setActiveTabAttribute( String value )
+  public void setChannelHeadingColorAttribute( String value )
     {
-    setAttribute( "activeTab", value );
+    setAttribute( "channelHeadingColor", value );
     }
   
-  public String removeActiveTabAttribute()
+  public String removeChannelHeadingColorAttribute()
     {
-    return removeAttribute( "activeTab" );
+    return removeAttribute( "channelHeadingColor" );
     }
   
   public String getTabColorAttribute()
@@ -137,21 +152,6 @@ public class Layout implements ILayout
   public String removeTabColorAttribute()
     {
     return removeAttribute( "tabColor" );
-    }
-  
-  public String getActiveTabColorAttribute()
-    {
-    return getAttribute( "activeTabColor" );
-    }
-  
-  public void setActiveTabColorAttribute( String value )
-    {
-    setAttribute( "activeTabColor", value );
-    }
-  
-  public String removeActiveTabColorAttribute()
-    {
-    return removeAttribute( "activeTabColor" );
     }
 
   // element Tab

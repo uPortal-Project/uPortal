@@ -1,5 +1,5 @@
 /**
- * ILayout.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * ILayout.java	Java 1.3.0 Mon Dec 11 17:52:47 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -14,32 +14,32 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.Vector;
 
 public interface ILayout extends com.objectspace.xml.IDXMLInterface ,com.objectspace.xml.IAttributeContainer
   {
 
   // element Attributes
-  public String getChannelHeadingColorAttribute();
-  public void setChannelHeadingColorAttribute( String value );
-  public String removeChannelHeadingColorAttribute();
-  public String getBgcolorAttribute();
-  public void setBgcolorAttribute( String value );
-  public String removeBgcolorAttribute();
-  public String getFgcolorAttribute();
-  public void setFgcolorAttribute( String value );
-  public String removeFgcolorAttribute();
   public String getActiveTabAttribute();
   public void setActiveTabAttribute( String value );
   public String removeActiveTabAttribute();
-  public String getTabColorAttribute();
-  public void setTabColorAttribute( String value );
-  public String removeTabColorAttribute();
+  public String getBgcolorAttribute();
+  public void setBgcolorAttribute( String value );
+  public String removeBgcolorAttribute();
   public String getActiveTabColorAttribute();
   public void setActiveTabColorAttribute( String value );
   public String removeActiveTabColorAttribute();
+  public String getFgcolorAttribute();
+  public void setFgcolorAttribute( String value );
+  public String removeFgcolorAttribute();
+  public String getChannelHeadingColorAttribute();
+  public void setChannelHeadingColorAttribute( String value );
+  public String removeChannelHeadingColorAttribute();
+  public String getTabColorAttribute();
+  public void setTabColorAttribute( String value );
+  public String removeTabColorAttribute();
 
   // element Tab
   public void addTab( ITab arg0  );

@@ -1,5 +1,5 @@
 /**
- * IParameter.java	Java 1.2.2 Mon Mar 06 10:59:19 PST 2000
+ * IParameter.java	Java 1.3.0 Mon Dec 11 17:52:48 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -20,10 +20,10 @@ public interface IParameter extends com.objectspace.xml.IDXMLInterface ,com.obje
   {
 
   // element Attributes
-  public String getValueAttribute();
-  public void setValueAttribute( String value );
-  public String removeValueAttribute();
   public String getNameAttribute();
   public void setNameAttribute( String value );
   public String removeNameAttribute();
+  public String getValueAttribute();
+  public void setValueAttribute( String value );
+  public String removeValueAttribute();
   }

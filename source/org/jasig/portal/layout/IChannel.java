@@ -1,5 +1,5 @@
 /**
- * IChannel.java	Java 1.2.2 Thu May 25 11:55:37 PDT 2000
+ * IChannel.java	Java 1.3.0 Mon Dec 11 17:52:47 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -14,23 +14,29 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.Vector;
 
 public interface IChannel extends com.objectspace.xml.IDXMLInterface ,com.objectspace.xml.IAttributeContainer
   {
 
   // element Attributes
-  public String getInstanceIDAttribute();
-  public void setInstanceIDAttribute( String value );
-  public String removeInstanceIDAttribute();
-  public String getClassAttribute();
-  public void setClassAttribute( String value );
-  public String removeClassAttribute();
   public String getMinimizedAttribute();
   public void setMinimizedAttribute( String value );
   public String removeMinimizedAttribute();
+  public String getGlobalChannelIDAttribute();
+  public void setGlobalChannelIDAttribute( String value );
+  public String removeGlobalChannelIDAttribute();
+  public String getInstanceIDAttribute();
+  public void setInstanceIDAttribute( String value );
+  public String removeInstanceIDAttribute();
+  public String getHiddenAttribute();
+  public void setHiddenAttribute( String value );
+  public String removeHiddenAttribute();
+  public String getClassAttribute();
+  public void setClassAttribute( String value );
+  public String removeClassAttribute();
 
   // element Parameter
   public void addParameter( IParameter arg0  );

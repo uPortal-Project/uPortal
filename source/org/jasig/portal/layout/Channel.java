@@ -1,5 +1,5 @@
 /**
- * Channel.java	Java 1.2.2 Thu May 25 11:55:37 PDT 2000
+ * Channel.java	Java 1.3.0 Mon Dec 11 17:52:47 EST 2000
  *
  * Copyright 1999 by ObjectSpace, Inc.,
  * 14850 Quorum Dr., Dallas, TX, 75240 U.S.A.
@@ -14,11 +14,11 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Hashtable;
-import com.objectspace.xml.IClassDeclaration;
-import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
 import com.objectspace.xml.xgen.ClassDecl;
+import com.objectspace.xml.IClassDeclaration;
 
 public class Channel implements IChannel
   {
@@ -47,6 +47,9 @@ public class Channel implements IChannel
     if( "minimized".equals( name ) )
       return "true";
 
+    if( "hidden".equals( name ) )
+      return "false";
+
     return null;
     }
   
@@ -56,6 +59,9 @@ public class Channel implements IChannel
 
     if( clone.get( "minimized" ) == null )
       clone.put( "minimized", "true" );
+
+    if( clone.get( "hidden" ) == null )
+      clone.put( "hidden", "false" );
 
     return clone;
     }
@@ -68,6 +74,36 @@ public class Channel implements IChannel
   public String removeAttribute( String name )
     {
     return (String) _Attributes.remove( name );
+    }
+  
+  public String getMinimizedAttribute()
+    {
+    return getAttribute( "minimized" );
+    }
+  
+  public void setMinimizedAttribute( String value )
+    {
+    setAttribute( "minimized", value );
+    }
+  
+  public String removeMinimizedAttribute()
+    {
+    return removeAttribute( "minimized" );
+    }
+  
+  public String getGlobalChannelIDAttribute()
+    {
+    return getAttribute( "globalChannelID" );
+    }
+  
+  public void setGlobalChannelIDAttribute( String value )
+    {
+    setAttribute( "globalChannelID", value );
+    }
+  
+  public String removeGlobalChannelIDAttribute()
+    {
+    return removeAttribute( "globalChannelID" );
     }
   
   public String getInstanceIDAttribute()
@@ -85,6 +121,21 @@ public class Channel implements IChannel
     return removeAttribute( "instanceID" );
     }
   
+  public String getHiddenAttribute()
+    {
+    return getAttribute( "hidden" );
+    }
+  
+  public void setHiddenAttribute( String value )
+    {
+    setAttribute( "hidden", value );
+    }
+  
+  public String removeHiddenAttribute()
+    {
+    return removeAttribute( "hidden" );
+    }
+  
   public String getClassAttribute()
     {
     return getAttribute( "class" );
@@ -98,21 +149,6 @@ public class Channel implements IChannel
   public String removeClassAttribute()
     {
     return removeAttribute( "class" );
-    }
-  
-  public String getMinimizedAttribute()
-    {
-    return getAttribute( "minimized" );
-    }
-  
-  public void setMinimizedAttribute( String value )
-    {
-    setAttribute( "minimized", value );
-    }
-  
-  public String removeMinimizedAttribute()
-    {
-    return removeAttribute( "minimized" );
     }
 
   // element Parameter
