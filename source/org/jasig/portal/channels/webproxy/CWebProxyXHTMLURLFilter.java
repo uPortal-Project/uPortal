@@ -142,6 +142,7 @@ public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
       {
         initRewrite();
         insideForm = false;
+        actionURL = null;
         buffer.endElement(uri, localName, qName);
         buffer.stopBuffering();
         buffer.outputBuffer(new FormFilter(this.contentHandler));
