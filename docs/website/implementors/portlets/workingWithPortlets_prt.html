@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
   <title>Guide to Working with Portlets in uPortal 2.3</title>
 </head>
 <body>
@@ -104,7 +104,11 @@ Note: The Google Portlet will not be fully functional until you
 configure a license key in the <code>&lt;init-param&gt;</code> element
 of Google Portlet's <code>portlet.xml</code> file.&nbsp; To obtain a
 license key, visit <a href="http://www.google.com/apis/">Google Web
-APIs</a> and follow instructions to set up an account.<br>
+APIs</a> and follow instructions to set up an account.&nbsp; Once you
+have the license key, unzip the <code>GooglePortlet.war</code> file,
+modify
+the <code>WEB-INF/portlet.xml</code> file, and then zip it all up
+again.
 <h2><a name="Deploying_Portlets"></a>Deploying Portlets</h2>
 The sample portlets mentioned above were all deployed as part of
 uPortal's <code>initportal</code> ant target.&nbsp; The ant target
