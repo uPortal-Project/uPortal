@@ -393,8 +393,9 @@
       <li>Suppression of JTidy diagnostic output has not been
       tested on non-UNIX platforms.</li>
 
-      <li>When using JTidy, the character encoding must be specified
-      in the HTTP headers, otherwise the default ASCII is assumed.
+      <li>UTF-8 is the default character encoding for JTidy.  If
+      the character encoding is specified in the HTTP headers,
+      CWebProxy will set it accordingly. Note that
       JTidy does not yet recognize the use of the HTML meta element 
       for specifying the character encoding.</li>
 
