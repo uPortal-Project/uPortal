@@ -51,6 +51,7 @@ import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.LogService;
@@ -452,6 +453,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                 }
             }
         }
+        sbKey.append(", locales=").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
         k.setKey(sbKey.toString());
         return k;
     }

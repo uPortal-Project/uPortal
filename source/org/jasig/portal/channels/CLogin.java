@@ -46,6 +46,7 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -187,6 +188,7 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     sbKey.append("bauthenticationAttemptFailed:").append(bauthenticationAttemptFailed).append(", ");
     sbKey.append("attemptedUserName:").append(attemptedUserName).append(", ");
     sbKey.append("bSecurityError:").append(bSecurityError);
+    sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
     k.setKey(sbKey.toString());
     k.setKeyValidity(new Long(System.currentTimeMillis()));
     return k;

@@ -45,6 +45,7 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -156,6 +157,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
       sbKey.append("Not available, ");
     }
     sbKey.append("staticData:").append(staticData.toString());
+    sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
     return sbKey.toString();
   }
 }

@@ -43,6 +43,7 @@ import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
@@ -162,6 +163,7 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
         
         sbKey.append("org.jasig.portal.channels.CSecureInfo: channelID=");
         sbKey.append(str_channelSubscribeId);
+        sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
 
         k.setKey(sbKey.toString());
         return k;

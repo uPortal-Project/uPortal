@@ -38,6 +38,7 @@ package org.jasig.portal.channels;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -154,6 +155,7 @@ public class CHeader extends BaseChannel implements ICacheable {
         // otherwise cache is instance-specific
         k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
     }
+    sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
     sbKey.append("authenticated:").append(staticData.getPerson().getSecurityContext().isAuthenticated()).append(", ");
     sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL()).append(", ");
     sbKey.append("hasPermissionToPublish:").append(String.valueOf(canUserPublish())).append(", ");

@@ -58,6 +58,7 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.LocalConnectionContext;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.DTDResolver;
@@ -378,6 +379,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       xslUriForKey = "Not attainable: " + e;
     }
 
+    sbKey.append("locales:").append(LocaleManager.stringValueOf(state.runtimeData.getLocales()));
     sbKey.append("xslUri:").append(xslUriForKey).append(", ");
     sbKey.append("cacheTimeout:").append(state.cacheTimeout).append(", ");
     sbKey.append("isRenderingAsRoot:").append(state.runtimeData.isRenderingAsRoot()).append(", ");
