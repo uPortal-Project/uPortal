@@ -105,7 +105,12 @@ public class MediaManager {
       else
         url = new URL(uri);
       if (url != null) {
-        mediaProps = new OrderedProps(url.openStream());
+        InputStream in = url.openStream();
+        try {
+          mediaProps = new OrderedProps(in);
+        } finally {
+          in.close();
+        }
       }
     } catch (IOException ioe) {
       LogService.log(LogService.ERROR, "MediaManager::setMediaProps : Exception occurred while loading media properties file: " +
@@ -125,7 +130,12 @@ public class MediaManager {
       else
         url = new URL(uri);
       if (url != null) {
-        mimeProps = new OrderedProps(url.openStream());
+        InputStream in = url.openStream();
+        try {
+          mimeProps = new OrderedProps(in);
+        } finally {
+          in.close();
+        }
       }
     } catch (IOException ioe) {
       LogService.log(LogService.ERROR, "MediaManager::setMimeProps : Exception occurred while loading mime properties file: " +
@@ -145,7 +155,12 @@ public class MediaManager {
       else
         url = new URL(uri);
       if (url != null) {
-        serializerProps = new OrderedProps(url.openStream());
+        InputStream in = url.openStream();
+        try {
+          serializerProps = new OrderedProps(in);
+        } finally {
+          in.close();
+        }
       }
     } catch (IOException ioe) {
       LogService.log(LogService.ERROR, "MediaManager::setSerializerProps : Exception occurred while loading serializer properties file: " +
@@ -393,7 +408,7 @@ public class MediaManager {
           attVec.addElement(temp);
         }
       }
-		input.close();
+                input.close();
     }
 
     /**
