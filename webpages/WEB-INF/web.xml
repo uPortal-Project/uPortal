@@ -25,31 +25,18 @@
   </servlet>
 
   <servlet>
-    <servlet-name>AxisServlet</servlet-name>
-    <display-name>Apache-Axis Servlet</display-name>
-    <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
-  </servlet>
-
-  <servlet>
-    <servlet-name>AdminServlet</servlet-name>
-    <display-name>Axis Admin Servlet</display-name>
-    <servlet-class>org.apache.axis.transport.http.AdminServlet</servlet-class>
-    <load-on-startup>100</load-on-startup>
-  </servlet>
-
-  <servlet>
-        <servlet-name>HttpProxyServlet</servlet-name>
-        <servlet-class>org.jasig.portal.HttpProxyServlet</servlet-class>
+    <servlet-name>HttpProxyServlet</servlet-name>
+    <servlet-class>org.jasig.portal.HttpProxyServlet</servlet-class>
   </servlet>
   
   <servlet>
-		<servlet-name>Problems</servlet-name>
-		<servlet-class>org.jasig.portal.Problems</servlet-class>
+    <servlet-name>Problems</servlet-name>
+    <servlet-class>org.jasig.portal.Problems</servlet-class>
   </servlet>
   
   <servlet>
-	<servlet-name>MissingProperties</servlet-name>
-	<servlet-class>org.jasig.portal.properties.MissingPropertiesServlet</servlet-class>
+    <servlet-name>MissingProperties</servlet-name>
+    <servlet-class>org.jasig.portal.properties.MissingPropertiesServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -68,26 +55,6 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/servlet/AxisServlet</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>*.jws</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/services/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>AdminServlet</servlet-name>
-    <url-pattern>/servlet/AdminServlet</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
     <servlet-name>HttpProxyServlet</servlet-name>
     <url-pattern>/servlet/ProxyServlet/*</url-pattern>
   </servlet-mapping>
@@ -98,13 +65,13 @@
   </servlet-mapping>
   
   <servlet-mapping>
-	<servlet-name>Problems</servlet-name>
-	<url-pattern>/problems</url-pattern>
+    <servlet-name>Problems</servlet-name>
+    <url-pattern>/problems</url-pattern>
   </servlet-mapping>
   
   <servlet-mapping>
-	<servlet-name>MissingProperties</servlet-name>
-	<url-pattern>/missingProperties</url-pattern>
+    <servlet-name>MissingProperties</servlet-name>
+    <url-pattern>/missingProperties</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
