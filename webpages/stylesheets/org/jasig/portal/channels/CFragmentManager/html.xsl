@@ -239,7 +239,7 @@ Version $Revision$
                             <img height="1" width="20" src="{$mediaPath}/transparent.gif" alt=""/>
                         </td>
                         <td width="100%" valign="bottom">
-                            <a href="{$baseActionURL}?uPcFM_action=defaultView&amp;uPcFM_selectedID={ID}" class="uportal-navigation-channel">
+                            <a href="{$baseActionURL}?uPcFM_action=properties&amp;uPcFM_selectedID={ID}" class="uportal-navigation-channel">
                                 <xsl:value-of select="name"/>
                             </a>
                         </td>
