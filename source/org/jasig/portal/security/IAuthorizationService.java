@@ -36,6 +36,7 @@
 package org.jasig.portal.security;
 
 import java.util.Vector;
+import java.util.Enumeration;
 
 import org.jasig.portal.security.IRole;
 import org.jasig.portal.security.IPerson;
@@ -43,7 +44,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * @author Bernie Durfee
  */
-public interface IAuthorization
+public interface IAuthorizationService
 {
   public boolean isUserInRole(IPerson person, String sRoleTitle);
   public boolean isUserInRole(IPerson person, IRole iRole);

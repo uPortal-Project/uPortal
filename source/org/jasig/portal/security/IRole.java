@@ -35,6 +35,8 @@
 
 package org.jasig.portal.security;
 
+import java.util.Enumeration;
+
 /**
  * @author Bernie Durfee
  */

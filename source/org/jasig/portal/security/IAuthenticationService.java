@@ -37,7 +37,7 @@ package org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
 
-public interface IAuthenticationBean
+public interface IAuthenticationService
 {
   public boolean authenticate(String sUserName, String sPassword);
   public IPerson getPerson();
