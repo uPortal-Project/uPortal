@@ -29,6 +29,7 @@
 		</columns>
 		<primary-key>ID</primary-key>
 	</table>
+
 	<table>
 		<name>UP_SHADOW</name>
 		<columns>
@@ -44,6 +45,41 @@
 			</column>
 		</columns>
 	</table>
+
+        <table>
+            <name>UP_ROLES</name>
+            <columns>
+                <column>
+                    <name>ROLE</name>
+                    <type>VARCHAR</type>
+                    <param>30</param>
+                </column>
+                <column>
+                    <name>DESCR</name>
+                    <type>VARCHAR</type>
+                    <param>200</param>
+                </column>
+            </columns>
+            <primary-key>ROLE</primary-key>
+        </table>
+
+        <table>
+            <name>UP_USER_ROLES</name>
+            <columns>
+                <column>
+                    <name>USER_ID</name>
+                    <type>INTEGER</type>
+                </column>
+                <column>
+                    <name>ROLE</name>
+                    <type>VARCHAR</type>
+                    <param>30</param>
+                </column>
+            </columns>
+            <primary-key>USER_ID</primary-key>
+            <primary-key>ROLE</primary-key>
+        </table>
+
 	<table>
 		<name>UP_CHANNELS</name>
 		<columns>
@@ -71,6 +107,24 @@
 		</columns>
 		<primary-key>CHAN_ID</primary-key>
 	</table>
+
+        <table>
+            <name>UP_CHAN_ROLES</name>
+            <columns>
+                <column>
+                    <name>CHAN_ID</name>
+                    <type>INTEGER</type>
+                </column>
+                <column>
+                    <name>ROLE</name>
+                    <type>VARCHAR</type>
+                    <param>30</param>
+                </column>
+            </columns>
+            <primary-key>CHAN_ID</primary-key>
+            <primary-key>ROLE</primary-key>
+        </table>
+
 	<table>
 		<name>UP_CHAN_TYPES</name>
 		<columns>
@@ -96,6 +150,7 @@
 		</columns>
 		<primary-key>NAME</primary-key>
 	</table>
+
 	<table>
 		<name>UP_CLASS</name>
 		<columns>
@@ -111,6 +166,7 @@
 		</columns>
 		<primary-key>CLASS_ID</primary-key>
 	</table>
+
 	<table>
 		<name>UP_CHAN_CLASS</name>
 		<columns>
@@ -124,6 +180,7 @@
 			</column>
 		</columns>
 	</table>
+
 	<table>
 		<name>UP_USER_PROFILES</name>
 		<columns>
@@ -153,6 +210,7 @@
 			</column>
 		</columns>
 	</table>
+
 	<table>
 		<name>UP_USER_SS_PREFS</name>
 		<columns>
@@ -176,6 +234,7 @@
 			</column>
 		</columns>
 	</table>
+
 	<table>
 		<name>UP_STRUCT_SS</name>
 		<columns>
@@ -201,6 +260,7 @@
 		</columns>
 		<primary-key>STYLESHEET_NAME</primary-key>
 	</table>
+
 	<table>
 		<name>UP_THEME_SS</name>
 		<columns>
@@ -226,6 +286,7 @@
 		</columns>
 		<primary-key>STYLESHEET_NAME</primary-key>
 	</table>
+
 	<table>
 		<name>UP_SS_MAP</name>
 		<columns>
@@ -246,6 +307,7 @@
 			</column>
 		</columns>
 	</table>
+
 	<table>
 		<name>UP_USER_UA_MAP</name>
 		<columns>
@@ -265,6 +327,7 @@
 			</column>
 		</columns>
 	</table>
+
 	<table>
 		<name>UPC_BOOKMARKS</name>
 		<columns>
@@ -283,6 +346,7 @@
 		</columns>
 		<primary-key>ID</primary-key>
 	</table>
+
 	<table>
 		<name>UP_MIME_TYPES</name>
 		<columns>
