@@ -53,20 +53,20 @@ import java.lang.reflect.Constructor;
 public class DocumentFactory {
   /**
    * Returns a new copy of a Document implementation. This will
-   * return an <code>IUPortalDocument</code> implementation.
+   * return an <code>IPortalDocument</code> implementation.
    * @return an empty org.w3c.dom.Document implementation
    */
   public static Document getNewDocument() {
-    IUPortalDocument doc = null;
+    IPortalDocument doc = null;
     try {
         String className = PropertiesManager.getProperty(
-          "org.jasig.portal.utils.IUPortalDocument.implementation");
-        doc = (IUPortalDocument)Class.forName(className).newInstance();
+          "org.jasig.portal.utils.IPortalDocument.implementation");
+        doc = (IPortalDocument)Class.forName(className).newInstance();
     } catch (Exception e) {
       LogService.log(LogService.ERROR, e);
       throw new RuntimeException(
         "org.jasig.portal.utils.DocumentFactory could not create new " +
-        "IUPortalDocument: " + e.getMessage());
+        "IPortalDocument: " + e.getMessage());
     }
     return doc;
   }

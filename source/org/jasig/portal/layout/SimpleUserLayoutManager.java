@@ -53,7 +53,7 @@ import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.IUPortalDocument;
+import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -255,13 +255,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
             markLayoutDirty();
             // register element id
-            if (ulm instanceof IUPortalDocument) {
-                ((IUPortalDocument)ulm).putIdentifier(
+            if (ulm instanceof IPortalDocument) {
+                ((IPortalDocument)ulm).putIdentifier(
                     node.getId(),childElement);
             } else {
                 StringBuffer msg = new StringBuffer(128);
                 msg.append("SimpleUserLayoutManager::addNode() : ");
-                msg.append("User Layout does not implement IUPortalDocument, ");
+                msg.append("User Layout does not implement IPortalDocument, ");
                 msg.append("so element caching cannot be performed.");
                 LogService.log(LogService.ERROR, msg.toString());
             }
@@ -401,14 +401,14 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.removeChild(oldChannelElement);
                     parent.insertBefore(newChannelElement,nextSibling);
                     // register new child instead
-                    if (ulm instanceof IUPortalDocument) {
-                        ((IUPortalDocument)ulm).putIdentifier(
+                    if (ulm instanceof IPortalDocument) {
+                        ((IPortalDocument)ulm).putIdentifier(
                             node.getId(),newChannelElement);
                     } else {
                         StringBuffer msg = new StringBuffer(128);
                         msg.append("SimpleUserLayoutManager::updateNode() : ");
                         msg.append("User Layout does not implement ");
-                        msg.append("IUPortalDocument, ");
+                        msg.append("IPortalDocument, ");
                         msg.append("so element caching cannot be performed.");
                         LogService.log(LogService.ERROR, msg.toString());
                     }
@@ -446,14 +446,14 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.removeChild(oldFolderElement);
                     parent.insertBefore(newFolderElement,nextSibling);
                     // register new child instead
-                    if (ulm instanceof IUPortalDocument) {
-                        ((IUPortalDocument)ulm).putIdentifier(
+                    if (ulm instanceof IPortalDocument) {
+                        ((IPortalDocument)ulm).putIdentifier(
                             node.getId(), newFolderElement);
                     } else {
                         StringBuffer msg = new StringBuffer(128);
                         msg.append("SimpleUserLayoutManager::updateNode() : ");
                         msg.append("User Layout does not implement ");
-                        msg.append("IUPortalDocument, ");
+                        msg.append("IPortalDocument, ");
                         msg.append("so element caching cannot be performed.");
                         LogService.log(LogService.ERROR, msg.toString());
                     }

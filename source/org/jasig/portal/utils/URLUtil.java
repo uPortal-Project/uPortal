@@ -48,7 +48,6 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 
 import java.net.URL;
 import java.net.HttpURLConnection;
@@ -86,18 +85,23 @@ public class URLUtil
      */
     public static void redirect(HttpServletRequest req, HttpServletResponse res,
         String targetNodeId, boolean asRoot, String[] ignoreParams,
-        Charset charset)
+        String charset)
     throws PortalException {
         String httpMethod     = req.getMethod();
         String extras = new UPFileSpec(req).getUPFileExtras();
         UPFileSpec uPFileSpec = buildUPFileSpec(targetNodeId, extras, asRoot); 
+
+        // only handles get methods at this time
+        redirectGet(req, res, uPFileSpec, ignoreParams);
     
         // Determine if this is an HTTP GET or POST request
+/*
         if (httpMethod.equalsIgnoreCase(HTTP_GET_REQUEST)) {
             redirectGet(req, res, uPFileSpec, ignoreParams);
         } else if (httpMethod.equalsIgnoreCase(HTTP_POST_REQUEST)) {
             redirectPost(req, res, uPFileSpec, ignoreParams, charset);
         }
+*/
     }      
    
     /**
@@ -223,12 +227,12 @@ public class URLUtil
             if (qs != null && !"".equals(qs)) {
                 sb.append('?').append(buildRequestParams(req, ignoreParams));
             }
-            LogService.instance().log(LogService.DEBUG,
+            LogService.log(LogService.DEBUG,
                 "URLUtil::redirectGet() " +
                 "Redirecting to framework: " + sb.toString());
              res.sendRedirect(res.encodeRedirectURL(sb.toString()));
         } catch (IOException ioe) {
-            LogService.instance().log(LogService.ERROR,
+            LogService.log(LogService.ERROR,
                 "URLUtil::redirectGet() " +
                 "Failed redirecting to framework: " + sb.toString(), ioe);
             throw new PortalException(ioe);
@@ -265,7 +269,7 @@ public class URLUtil
      */
     public static void redirectPost(HttpServletRequest req,
         HttpServletResponse res, UPFileSpec up, String[] ignoreParams,
-        Charset charset)
+        String charset)
     throws PortalException {
         
         String parameters = buildRequestParams(req, ignoreParams);
@@ -274,9 +278,20 @@ public class URLUtil
     
         urlStr.append("http://").append(req.getServerName());
         urlStr.append(":").append(req.getServerPort());
-        urlStr.append(thisUri.replaceFirst("tag.+", up.getUPFile()));
+
+        int pos = thisUri.indexOf("tag");
+        if (pos >= 0) {
+            urlStr.append(thisUri.substring(0, pos));
+            urlStr.append(up.getUPFile());
+        } else {
+            LogService.log(LogService.ERROR,
+                "URLUtil::redirectPost() " +
+                "Invalid url, no tag found: " + thisUri);
+            throw new PortalException("Invalid URL, no tag found: " +
+                thisUri);
+        }
     
-        LogService.instance().log(LogService.DEBUG,
+        LogService.log(LogService.DEBUG,
             "URLUtil::redirectPost() " +
             "Redirecting to framework: " + urlStr.toString());
     
@@ -313,7 +328,7 @@ public class URLUtil
             // send the results back to the original requestor
             res.getWriter().print(results.toString());
         } catch (IOException ioe) {
-            LogService.instance().log(LogService.ERROR, ioe);
+            LogService.log(LogService.ERROR, ioe);
             throw new PortalException(ioe);
         }
     }

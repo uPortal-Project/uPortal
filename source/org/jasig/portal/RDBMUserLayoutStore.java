@@ -54,7 +54,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.IUPortalDocument;
+import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -164,7 +164,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
       } else {
         structure = doc.createElement("folder");
-        ((IUPortalDocument)doc).putIdentifier(folderPrefix+structId, structure);
+        ((IPortalDocument)doc).putIdentifier(folderPrefix+structId, structure);
         structure.setAttribute("ID", folderPrefix + structId);
         structure.setAttribute("name", name);
         structure.setAttribute("type", (type != null ? type : "regular"));

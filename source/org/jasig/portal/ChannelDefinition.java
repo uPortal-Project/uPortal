@@ -36,7 +36,7 @@
 package org.jasig.portal;
 
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.IUPortalDocument;
+import org.jasig.portal.utils.IPortalDocument;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -174,12 +174,12 @@ public class ChannelDefinition implements IBasicEntity {
     boolean editable, boolean hasHelp, boolean  hasAbout) {
     Element channel = doc.createElement("channel");
     
-    if (doc instanceof IUPortalDocument) {
-      ((IUPortalDocument)doc).putIdentifier(idTag, channel);
+    if (doc instanceof IPortalDocument) {
+      ((IPortalDocument)doc).putIdentifier(idTag, channel);
     } else {
       StringBuffer msg = new StringBuffer(128);
       msg.append("ChannelDefinition::getBase() : ");
-      msg.append("Document does not implement IUPortalDocument, ");
+      msg.append("Document does not implement IPortalDocument, ");
       msg.append("so element caching cannot be performed.");
       LogService.log(LogService.ERROR, msg.toString());
     }

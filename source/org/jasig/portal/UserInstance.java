@@ -39,7 +39,6 @@ package  org.jasig.portal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -305,8 +304,7 @@ public class UserInstance implements HttpSessionBindingListener {
                             
                             try {
                                 URLUtil.redirect(req, res, newRootNodeId,
-                                    true, skipParams,
-                                    Charset.forName(CHARACTER_SET));
+                                    true, skipParams, CHARACTER_SET);
                             } catch (PortalException pe) {
                                 StringBuffer sb = new StringBuffer(128);
                                 sb.append("UserInstance::renderState() : ");
