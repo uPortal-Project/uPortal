@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">reviewChannel</xsl:param>
+  <xsl:param name="action">channelDef</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:param name="mediaPath">C:\LaJolla\uPortal\webpages\media\org\jasig\portal\channels\CChannelManager</xsl:param>
@@ -835,12 +835,28 @@
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
           <br/>
-          <select name="{name}" class="uportal-input-text">
+<select name="{name}" class="uportal-input-text">
             <xsl:for-each select="type/restriction/value">
+            <xsl:variable name="name"><xsl:value-of select="../../../name"/></xsl:variable>
+            <xsl:variable name="value"><xsl:value-of select="."/></xsl:variable>
+
+
               <option value="{.}">
-                <xsl:if test=". = ../defaultValue[1]">
-                  <xsl:attribute name="selected">selected</xsl:attribute>
-                </xsl:if>
+
+<xsl:choose>
+<xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]">
+<xsl:if test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value = $value">
+<xsl:attribute name="selected">selected</xsl:attribute>
+</xsl:if>
+</xsl:when>
+
+<xsl:otherwise>
+<xsl:if test=". = ../defaultValue[1]"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+</xsl:otherwise>
+
+</xsl:choose>
+      
+
                 <xsl:choose>
                   <xsl:when test="@display">
                     <xsl:value-of select="@display"/>
@@ -849,8 +865,11 @@
                     <xsl:value-of select="."/>
                   </xsl:otherwise>
                 </xsl:choose>
+
               </option>
+
             </xsl:for-each>
+
           </select>
         </td>
       </xsl:when>
@@ -2532,6 +2551,7 @@ Detachable<br/>
   </xsl:template>
 
 </xsl:stylesheet>
+
 
 
 
