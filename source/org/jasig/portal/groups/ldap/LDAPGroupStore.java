@@ -483,9 +483,13 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
   }
 
   protected IEntityGroup makeGroup(GroupShadow shadow) throws GroupsException{
-    IEntityGroup group = new EntityGroupImpl(shadow.key,iperson);
-    group.setDescription(shadow.description);
-    group.setName(shadow.name);
+    IEntityGroup group = null;
+    if (shadow != null)
+    {
+        group = new EntityGroupImpl(shadow.key,iperson); 
+        group.setDescription(shadow.description);
+        group.setName(shadow.name);
+    }
     return group;
   }
 
