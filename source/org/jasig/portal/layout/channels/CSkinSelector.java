@@ -72,7 +72,7 @@ import org.xml.sax.ContentHandler;
       try {
           store.putUserPreferences(staticData.getPerson(), userPrefs);
       } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+        throw new PortalException(e);
       }
      }
 

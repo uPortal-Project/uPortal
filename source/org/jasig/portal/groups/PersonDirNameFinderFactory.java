@@ -37,7 +37,7 @@ public IEntityNameFinder newFinder() throws GroupsException
     catch ( SQLException sqle )
     {
         log.error( "ReferencePersonNameFinderFactory.newFinder(): " + sqle);
-        throw new GroupsException(sqle.getMessage());
+        throw new GroupsException(sqle);
     }
 }
 }

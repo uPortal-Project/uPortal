@@ -22,6 +22,15 @@ public class GeneralRenderingException extends PortalException {
     public GeneralRenderingException() {
         super();
     }
+    
+    /**
+     * Instantiate a GeneralRenderingException,
+     * with cause of the problem.
+     * @param cause - cause of the problem
+     */
+    public GeneralRenderingException(Throwable cause) {
+        super(cause);
+    }
 
     /**
      * Instantiate a GeneralRenderingException,

@@ -25,6 +25,14 @@ public class LockingException extends org.jasig.portal.PortalException {
     public LockingException() {
         super();
     }
+    
+    /**
+     * Instantiate a LockingException with the given cause.
+     * @param cause Throwable that caused the locking problem
+     */
+    public LockingException(Throwable cause) {
+        super(cause);
+    }
 
     /**
      * Instantiate a LockingException with the given message.

@@ -42,7 +42,7 @@ public class GroupRestriction extends ALRestriction {
             if ( groupService == null )
              groupService = groupServiceFactory.newGroupService();
            } catch ( Exception e ) {
-             throw new RuntimeException(e.getMessage());
+             throw new RuntimeException(e);
            }
          }  
 
@@ -74,7 +74,7 @@ public class GroupRestriction extends ALRestriction {
               groups = (IEntityGroup[]) groupsList.toArray();
 
            } catch ( Exception e ) {
-             throw new PortalException(e.getMessage());
+             throw new PortalException(e);
             }
 
          }

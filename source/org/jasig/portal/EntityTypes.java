@@ -135,7 +135,7 @@ throws java.lang.Exception
                     if ( getEntityTypesByType().get(newType) == null )
                     {
                         String errString = "Attempt to add entity type failed: " + ex.getMessage();
-                        log.error( errString);
+                        log.error( errString, ex);
                         throw ex;
                     }
                 }  // end catch

@@ -49,7 +49,7 @@ throws GroupsException
     try
         { compositeKey = getParser().parse(entityKey); }
     catch (NamingException ne)
-        { throw new GroupsException("Error in group key: " + ne.getMessage());}
+        { throw new GroupsException("Error in group key", ne);}
 }
 /**
  * @return javax.naming.Name

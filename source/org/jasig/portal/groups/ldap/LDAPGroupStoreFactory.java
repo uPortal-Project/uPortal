@@ -66,8 +66,8 @@ public IEntityGroupStore newInstance() throws GroupsException
         { return getGroupStore(); }
     catch ( Exception ex )
     {
-        log.error( "LdapEntityGroupStoreFactory.newInstance(): " + ex);
-        throw new GroupsException(ex.getMessage());
+        log.error(ex.getMessage(), ex);
+        throw new GroupsException(ex);
     }
 }
 }

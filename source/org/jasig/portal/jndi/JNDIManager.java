@@ -120,7 +120,7 @@ public class JNDIManager {
       try {
           topContext=(Context)getContext();
       } catch (NamingException ne) {
-          log.error( "JNDIManager.initializeSessionContext(): Unable to obtain initial context - " + ne.getMessage());
+          log.error( "JNDIManager.initializeSessionContext(): Unable to obtain initial context", ne);
           return;
       }
 
@@ -129,7 +129,7 @@ public class JNDIManager {
           Context tsessionContext=(Context)topContext.lookup("/sessions");
           tsessionContext.bind(session.getId(),userId);
       } catch (NamingException ne) {
-          log.error( "JNDIManager.initializeSessionContext(): Unable to obtain /sessions context - " + ne.getMessage());
+          log.error( "JNDIManager.initializeSessionContext(): Unable to obtain /sessions context", ne);
       }
 
       // bind listener
@@ -142,7 +142,7 @@ public class JNDIManager {
           // get /users context
           usersContext = (Context)topContext.lookup("/users");
       } catch (NamingException ne) {
-          log.error( "JNDIManager.initializeSessionContext(): Could not find /users context - " + ne.getMessage());
+          log.error( "JNDIManager.initializeSessionContext(): Could not find /users context", ne);
           throw  new PortalException("JNDIManager.initializeSessionContext(): Could not find /users context",ne);
       }
 
@@ -179,7 +179,7 @@ public class JNDIManager {
                   log.debug("JNDIManager.initializeSessionContext(): " +
                         "initialized context for a userId=\""+userId+"\".");
           } catch (NamingException ne2) {
-              log.error( "JNDIManager.initializeSessionContext(): exception encountered while trying to create  /users/"+userId+" and layouts/sessions contexts ! "+ne2.getMessage());
+              log.error( "JNDIManager.initializeSessionContext(): exception encountered while trying to create  /users/"+userId+" and layouts/sessions contexts !", ne2);
               throw new PortalException("JNDIManager.initializeSessionContext(): exception encountered while trying to create  /users/"+userId+" and layouts/sessions contexts !",ne2);
           }
       }
@@ -193,7 +193,7 @@ public class JNDIManager {
           //          sessionIdContext=(Context)sessionsContext.lookup(sessionId);
           throw new PortalException("JNDIManager.initializeSessionContext(): trying to initialize session twice. sessionId=\""+sessionId+"\"",nabe);
       } catch (Exception e) {
-          log.error( "JNDIManager.initializeSessionContext(): error encountered while trying to create context /users/"+userId+"/sessions/"+sessionId+" "+e.getMessage());
+          log.error( "JNDIManager.initializeSessionContext(): error encountered while trying to create context /users/"+userId+"/sessions/"+sessionId, e);
           throw new PortalException("JNDIManager.initializeSessionContext(): error encountered while trying to create context /users/"+userId+"/sessions/"+sessionId,e);
       }
 
@@ -201,7 +201,7 @@ public class JNDIManager {
       try {
           sessionIdContext.bind("layoutId",layoutId);
       } catch (Exception e) {
-          log.error( "JNDIManager.initializeSessionContext(): error encountered while trying to bind /users/"+userId+"/sessions/"+sessionId+"/layoutId "+e.getMessage());
+          log.error( "JNDIManager.initializeSessionContext(): error encountered while trying to bind /users/"+userId+"/sessions/"+sessionId+"/layoutId", e);
           throw new PortalException("JNDIManager.initializeSessionContext(): error encountered while trying to bind /users/"+userId+"/sessions/"+sessionId+"/layoutId",e);
       }
 
@@ -226,7 +226,7 @@ public class JNDIManager {
                         "created /users/"+userId+"/layouts/"+layoutId+"/sessions/"+sessionId);
 
               } catch (Exception e) {
-                  log.error( "JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed ! "+e.getMessage());
+                  log.error( "JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed !", e);
                   throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while looking up context /users/"+userId+"/layouts/"+layoutId+"/sessions , although /users/"+userId+"/layouts context already existed !",e);
               }
           } catch (NamingException nne) {
@@ -281,12 +281,12 @@ public class JNDIManager {
                       }
                   }
               } catch (NamingException ne) {
-                  log.error( "JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context. "+ne.getMessage());
+                  log.error( "JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context.", ne);
                   throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while creating cahnnel-ids context.",ne);
               }
           }
       } catch (Exception e) {
-          log.error( "JNDIManager.initializeSessionContext(): exception occured while pupulating context /users/"+userId+"/layouts/"+layoutId+"  "+e.getMessage());
+          log.error( "JNDIManager.initializeSessionContext(): exception occured while pupulating context /users/"+userId+"/layouts/"+layoutId, e);
           throw new PortalException("JNDIManager.initializeSessionContext(): exception occured while pupulating context /users/"+userId+"/layouts/"+layoutId,e);
       }
   }
@@ -330,8 +330,8 @@ public class JNDIManager {
         // Get the portal JNDI context
         context = getContext();
       } catch (NamingException ne) {
-        log.error( "JNDISessionListener.valueUnbound(): Could not get portal context " +
-            ne.getMessage());
+        log.error( "JNDISessionListener.valueUnbound(): Could not get portal context", 
+            ne);
         return;
       }
 
@@ -340,8 +340,8 @@ public class JNDIManager {
           // get users context
         usersContext = (Context)context.lookup("/users");
       } catch (NamingException ne) {
-        log.error( "JNDISessionListener.valueUnbound(): Could not get /users context "
-            + ne.getMessage());
+        log.error( "JNDISessionListener.valueUnbound(): Could not get /users context",
+            ne);
         return;
       }
       if (usersContext == null) {
@@ -355,7 +355,7 @@ public class JNDIManager {
       try {
         tsessionsContext = (Context)context.lookup("/sessions");
       } catch (NamingException ne) {
-          log.error( "JNDISessionListener.valueUnbound(): Could not get /sessions context "+ne.getMessage());
+          log.error( "JNDISessionListener.valueUnbound(): Could not get /sessions context", ne);
           return;
       }
 
@@ -364,7 +364,7 @@ public class JNDIManager {
       try {
           userId=(String)tsessionsContext.lookup(sessionId);
       } catch (NamingException ne) {
-          log.error( "JNDISessionListener.valueUnbound(): Session "+sessionId+" does is not registered under /sessions context ! "+ne.getMessage());
+          log.error( "JNDISessionListener.valueUnbound(): Session "+sessionId+" does is not registered under /sessions context !", ne);
           return;
       }
       if(userId==null) {
@@ -377,7 +377,7 @@ public class JNDIManager {
       try {
           tsessionsContext.unbind(sessionId);
       } catch (NamingException ne) {
-          log.error( "JNDISessionListener.valueUnbound(): Problems unbinding /sessions/"+sessionId+" "+ne.getMessage());
+          log.error( "JNDISessionListener.valueUnbound(): Problems unbinding /sessions/"+sessionId, ne);
       }
 
       Context userIdContext=null;
@@ -417,7 +417,7 @@ public class JNDIManager {
           sessionsContext.unbind(sessionId);
           log.debug("JNDISessionListener.valueUnbound(): destroyed context /users/"+userId+"/sessions/"+sessionId);
       } catch (Exception e) {
-          log.error( "JNDISessionListener.valueUnbound(): exception occurred while trying to destroy context  /users/"+userId+"/sessions/"+sessionId+" "+e.getMessage());
+          log.error( "JNDISessionListener.valueUnbound(): exception occurred while trying to destroy context  /users/"+userId+"/sessions/"+sessionId, e);
       }
 
       // see if this was the only session
@@ -448,21 +448,21 @@ public class JNDIManager {
                                   log.debug("JNDISessionListener.valueUnbound(): destroyed context /users/"+userId+"/layouts/"+layoutId+" since the last session using it has been unbound.");
 
                               } catch (Exception e) {
-                                  log.error( "JNDISessionListener.valueUnbound(): error destroying /users/"+userId+"/layouts/"+layoutId+" "+e.getMessage());
+                                  log.error( "JNDISessionListener.valueUnbound(): error destroying /users/"+userId+"/layouts/"+layoutId, e);
                               }
                           }
                       } catch (Exception e) {
-                      log.error( "JNDISessionListener.valueUnbound(): error looking up  /users/"+userId+"/layouts/"+layoutId+"/sesions "+e.getMessage());
+                      log.error( "JNDISessionListener.valueUnbound(): error looking up  /users/"+userId+"/layouts/"+layoutId+"/sesions", e);
                       }
                   } catch (Exception e) {
-                      log.error( "JNDISessionListener.valueUnbound(): error looking up  /users/"+userId+"/layouts/"+layoutId+" "+e.getMessage());
+                      log.error( "JNDISessionListener.valueUnbound(): error looking up  /users/"+userId+"/layouts/"+layoutId, e);
                   }
               } catch (Exception e) {
-                  log.error( "JNDISessionListener.valueUnbound(): error looking up  /users/"+userId+"/layouts "+e.getMessage());
+                  log.error( "JNDISessionListener.valueUnbound(): error looking up  /users/"+userId+"/layouts", e);
               }
           }
       } catch (Exception e) {
-          log.error( "JNDISessionListener.valueUnbound(): error listing  /users/"+userId+"/sessions/ "+e.getMessage());
+          log.error( "JNDISessionListener.valueUnbound(): error listing  /users/"+userId+"/sessions/", e);
       }
     }
   }

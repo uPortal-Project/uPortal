@@ -264,7 +264,7 @@ protected Iterator findContainingGroups(IEntity ent) throws GroupsException
             }
         }
         catch (Exception ex)
-            { throw new GroupsException("Problem reading group files: " + ex.getMessage()); }
+            { throw new GroupsException("Problem reading group files", ex); }
     }
 
     return groups.iterator();
@@ -300,7 +300,7 @@ protected Iterator findContainingGroups(IEntityGroup group) throws GroupsExcepti
             }
         }
         catch (Exception ex)
-            { throw new GroupsException("Problem reading group files: " + ex.getMessage()); }
+            { throw new GroupsException("Problem reading group files", ex); }
     }
     return groups.iterator();
 }
@@ -385,7 +385,7 @@ public java.lang.String[] findMemberGroupKeys(IEntityGroup group) throws GroupsE
         }
         catch (Exception ex)
             { throw new GroupsException(DEBUG_CLASS_NAME + ".findMemberGroupKeys(): " +
-                 "problem finding group members: " + ex.getMessage()); }
+                 "problem finding group members", ex); }
     }
     return keys;
 }
@@ -462,7 +462,7 @@ protected Collection getEntitiesFromFile(File idFile) throws GroupsException
     try
         { ids = getEntityIdsFromFile(idFile); }
     catch (Exception ex)
-        { throw new GroupsException("Problem retrieving keys from file: " + ex.getMessage()); }
+        { throw new GroupsException("Problem retrieving keys from file", ex); }
 
     Collection entities = new ArrayList(ids.size());
 
@@ -878,8 +878,7 @@ throws GroupsException
     }
     catch (Exception ex)
     {
-        throw new GroupsException("Error retrieving ids from file: " 
-          + ex.getMessage());
+        throw new GroupsException("Error retrieving ids from file", ex);
     }
     return ids.contains(member.getKey());
 }
@@ -920,7 +919,7 @@ throws GroupsException
         String otherName = ((IEntityGroup)itr.next()).getName();
         found = otherName != null && otherName.equals(name);
     }
-	return found;
+    return found;
 }
 
 }

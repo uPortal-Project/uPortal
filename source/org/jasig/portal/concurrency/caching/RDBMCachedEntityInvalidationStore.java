@@ -77,7 +77,7 @@ public void add(CachedEntityInvalidation cachedEnt) throws CachingException
     }
 
     catch (SQLException sqle)
-        { throw new CachingException("Problem adding " + cachedEnt + ": " + sqle.getMessage()); }
+        { throw new CachingException("Problem adding " + cachedEnt, sqle); }
 
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -118,7 +118,7 @@ public void deleteAll() throws CachingException
             { if ( stmnt != null ) stmnt.close(); }
     }
     catch (SQLException sqle)
-        { throw new CachingException("Problem deleting locks: " + sqle.getMessage()); }
+        { throw new CachingException("Problem deleting locks", sqle); }
 
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -140,7 +140,7 @@ public void deleteBefore(Date expiration) throws CachingException
     }
 
     catch (SQLException sqle)
-        { throw new CachingException("Problem deleting invalid entities: " + sqle.getMessage()); }
+        { throw new CachingException("Problem deleting invalid entities", sqle); }
     finally
         { RDBMServices.releaseConnection(conn); }
 }
@@ -359,7 +359,7 @@ throws CachingException, SQLException
 
             if (log.isDebugEnabled())
                 log.debug(
-                        "RDBMInvalidCacheableEntityStore.primDeleteBefore(): " + 
+                        "RDBMInvalidCacheableEntityStore.primDeleteBefore(): " +
                         ps + " (" + ts + ")");
 
             int rc = ps.executeUpdate();
@@ -411,7 +411,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     catch (SQLException sqle)
     {
         log.error(sqle, sqle);
-        throw new CachingException("Problem retrieving Invalid Entities " + sqle.getMessage());
+        throw new CachingException("Problem retrieving Invalid Entities", sqle);
     }
 
     return ((CachedEntityInvalidation[])entities.toArray(new CachedEntityInvalidation[entities.size()]));

@@ -49,8 +49,8 @@ public IEntityStore newEntityStore() throws GroupsException
         { return getGroupStore(); }
     catch ( Exception ex )
     {
-        log.error( "FileSystemGroupStoreFactory.newEntityStore(): " + ex);
-        throw new GroupsException(ex.getMessage());
+        log.error(ex.getMessage(), ex);
+        throw new GroupsException(ex);
     }
 }
 /**
@@ -80,8 +80,8 @@ throws GroupsException
     }
     catch ( Exception ex )
     {
-        log.error( "FileSystemGroupStoreFactory.newGroupStore(): " + ex);
-        throw new GroupsException(ex.getMessage());
+        log.error(ex.getMessage(), ex);
+        throw new GroupsException(ex);
     }
 }
 }

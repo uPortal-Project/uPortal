@@ -270,7 +270,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
           }
           catch (Exception e)
           {
-            log.error( "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+            log.error( "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext"), e);
           }
         }
         inputStream = urlConnect.getInputStream();
@@ -278,7 +278,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
       catch (IOException ioe)
       {
-        throw new ResourceMissingException (state.xmlUri, "", ioe.getMessage());
+        throw new ResourceMissingException (state.xmlUri, "", ioe);
       }
       catch (Exception e)
       {

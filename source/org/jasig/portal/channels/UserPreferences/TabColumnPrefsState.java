@@ -178,7 +178,7 @@ public class TabColumnPrefsState extends BaseState
     }
     catch (Exception e)
     {
-      throw new GeneralRenderingException(e.getMessage());
+      throw new GeneralRenderingException(e);
     }
   }
 
@@ -286,7 +286,7 @@ public class TabColumnPrefsState extends BaseState
     if(method.equals("insertBefore")) 
       siblingId=destinationTabId;
     ulm.addNode(newTab,ulm.getRootFolderId(),siblingId);
-    
+
     // Add a new column to this tab
     IUserLayoutFolderDescription newColumn = createFolder("Column");
     ulm.addNode(newColumn, newTab.getId(), null);    
@@ -620,7 +620,7 @@ public class TabColumnPrefsState extends BaseState
       try {
           ulStore.putUserPreferences(staticData.getPerson(), userPrefs);
       } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+        throw new PortalException(e);
       }
     }
   }
@@ -1051,7 +1051,7 @@ public class TabColumnPrefsState extends BaseState
         }
       } catch (Exception e) {
         log.error( e);
-        throw new GeneralRenderingException(e.getMessage());
+        throw new GeneralRenderingException(e);
       }
     }
   }

@@ -175,7 +175,7 @@ public class CookieCutter
            }
            catch(ParseException e)
            {
-             log.warn("CookieCutter: Cannot process Set Cookie header: " + e.getMessage());
+             log.warn("CookieCutter: Cannot process Set Cookie header", e);
            }
          }
        }
@@ -340,7 +340,7 @@ public class CookieCutter
            if ( (!ageSet && (token.indexOf("=")!=-1)) && token.substring(0, token.indexOf("=")).trim().equalsIgnoreCase("expires") )
            {
               SimpleDateFormat f = new SimpleDateFormat("EEE, d-MMM-yyyy HH:mm:ss z", Locale.ENGLISH);
-	      f.setTimeZone(TimeZone.getTimeZone("GMT"));
+          f.setTimeZone(TimeZone.getTimeZone("GMT"));
               f.setLenient(true);
               Date date = f.parse( token.substring(token.indexOf("=")+1).trim());
               Date current = new Date();

@@ -124,7 +124,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                     log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to stop caching!");
                 }
             } catch (IOException ioe) {
-                log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to stop caching! Exception: "+ioe.getMessage());
+                log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to stop caching!", ioe);
             }
 
         }

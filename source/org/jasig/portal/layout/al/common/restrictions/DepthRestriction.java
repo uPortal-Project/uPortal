@@ -72,7 +72,7 @@ public class DepthRestriction extends ALRestriction {
                 depthArray[i] = Integer.valueOf((String) depthList.get(i));
         } catch (Exception e) {
             e.printStackTrace();
-            throw new PortalException(e.getMessage());
+            throw new PortalException(e);
         }
     }
     /**

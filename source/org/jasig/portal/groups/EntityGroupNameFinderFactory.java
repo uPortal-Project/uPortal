@@ -24,9 +24,8 @@ public class EntityGroupNameFinderFactory
         try {
             return  EntityGroupNameFinder.singleton();
         } catch (Exception e) {
-            log.error( "EntityGroupNameFinderFactory.newFinder(): "
-                    + e);
-            throw new GroupsException(e.getMessage());
+            log.error(e.getMessage(), e);
+            throw new GroupsException(e);
         }
     }
 }

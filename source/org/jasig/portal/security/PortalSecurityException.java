@@ -22,6 +22,15 @@ public class PortalSecurityException extends PortalException {
     public PortalSecurityException() {
         super();
     }
+    
+    
+    /**
+     * Instantiate a PortalSecurityException with the given cause.
+     * @param cause Throwable that caused the error condition
+     */
+    public PortalSecurityException(Throwable cause) {
+        super(cause);
+    }
 
     /**
      * Instantiate a PortalSecurityException with the given message.

@@ -529,7 +529,7 @@ public class CChannelManager extends BaseChannel {
                     try {
                         ChannelRegistryManager.removeChannel(channelPublishId, person);
                     } catch (Exception e) {
-                        throw  new GeneralRenderingException(e.getMessage());
+                        throw  new GeneralRenderingException(e);
                     }
                 }
                 channelManagerDoc = getChannelManagerDoc(modChanSettings);

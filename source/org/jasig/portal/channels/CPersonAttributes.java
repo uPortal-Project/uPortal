@@ -224,7 +224,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
      * @param e
      */
     public void reportDownloadError(Exception e) {
-      log.error( "CPersonAttributes::reportDownloadError(): " + e.getMessage());
+      log.error(e.getMessage(), e);
     }
 
 }

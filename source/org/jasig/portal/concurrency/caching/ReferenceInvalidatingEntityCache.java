@@ -236,8 +236,7 @@ public void removeInvalidEntities()
     }
     catch (Exception ex)
     {
-        log.error(
-            "ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + ex.getMessage());
+        log.error(ex.getMessage(), ex);
     }
 
     lastUpdateMillis = nowMillis;
@@ -278,9 +277,8 @@ private void initializeCacheID() throws CachingException
     }
     catch (Exception ex)
     {
-        log.error(
-            "ReferenceInvalidatingEntityCache.initializeCacheID(): " + ex.getMessage());
-        throw new CachingException(ex.getMessage());
+        log.error(ex.getMessage(), ex);
+        throw new CachingException(ex);
     }
 }
 

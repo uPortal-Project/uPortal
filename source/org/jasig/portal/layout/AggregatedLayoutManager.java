@@ -876,7 +876,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
           
          updateCacheKey();
       } catch ( Exception e ) {
-        throw new PortalException(e.getMessage());
+        throw new PortalException(e);
       }
     }
       
@@ -983,7 +983,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 
 		  } catch ( Exception e ) {
 		  	e.printStackTrace();
-			throw new PortalException(e.getMessage());
+			throw new PortalException(e);
 		  }
 	}
 
@@ -996,7 +996,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         this.fragmentId = fragmentId;
         updateCacheKey();
       } catch ( Exception e ) {
-        throw new PortalException(e.getMessage());
+        throw new PortalException(e);
       }
     }
 
@@ -1010,7 +1010,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        }
         updateCacheKey();
       } catch ( Exception e ) {
-        throw new PortalException(e.getMessage());
+        throw new PortalException(e);
       }
     }
     
@@ -1026,7 +1026,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		    loadUserLayout();
 			updateCacheKey();
 	    } catch ( Exception e ) {
-			throw new PortalException(e.getMessage());
+			throw new PortalException(e);
 		  }		
 	}
 
@@ -1282,7 +1282,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
             if ( prevNode != null )
                 layoutStore.updateUserLayoutNode(person,userProfile,prevNode);
-    
+
             // Update the parent node
             layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
         }  

@@ -62,7 +62,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
       doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     } catch (ParserConfigurationException pce) {
       log.error("Error getting Document", pce);
-      throw new GeneralRenderingException(pce.getMessage(), pce);
+      throw new GeneralRenderingException(pce);
     }
 
     // Create XML doc

@@ -104,7 +104,7 @@ public class InitialSecurityContextFactory {
                     securityProperties.load(securityPropertiesStream);      
                 }
                 catch (IOException e) {
-                  PortalSecurityException ep = new PortalSecurityException(e.getMessage());
+                  PortalSecurityException ep = new PortalSecurityException(e);
                   log.error("Exception loading security properties", ep);
                   throw(ep);
                 } 

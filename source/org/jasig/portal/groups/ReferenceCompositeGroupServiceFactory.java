@@ -40,7 +40,7 @@ throws GroupsException
     catch ( Exception ex )
     {
         log.error( "ReferenceCompositeGroupServiceFactory.newGroupService(): " + ex);
-        throw new GroupsException(ex.getMessage());
+        throw new GroupsException(ex);
     }
 }
 }

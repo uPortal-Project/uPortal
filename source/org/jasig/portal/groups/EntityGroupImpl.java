@@ -91,7 +91,7 @@ public void addMember(IGroupMember gm) throws GroupsException
     try
         { checkProspectiveMember(gm); }
     catch (GroupsException ge)
-        { throw new GroupsException("Could not add IGroupMember: " + ge.getMessage() );}
+        { throw new GroupsException("Could not add IGroupMember", ge);}
 
     if ( ! this.contains( gm ) )
     {
@@ -677,7 +677,7 @@ public void setServiceName(Name newServiceName) throws GroupsException
     try 
         { getCompositeEntityIdentifier().setServiceName(newServiceName); }
     catch (javax.naming.InvalidNameException ine)
-        { throw new GroupsException("Problem setting service name: " + ine.getMessage()); }
+        { throw new GroupsException("Problem setting service name", ine); }
 
 }
 /**

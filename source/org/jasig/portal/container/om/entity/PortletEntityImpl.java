@@ -102,7 +102,11 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             
         } catch (Exception e) {
             log.error("Could not store portlet entity preferences", e);
-            throw new IOException("Could not store portlet entity preferences: " + e.getMessage());
+            
+            if (e instanceof IOException)
+                throw (IOException)e;
+            else
+                throw new IOException("Could not store portlet entity preferences: " + e.getMessage());
         }
     }
     
@@ -145,7 +149,11 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             ((PreferenceSetImpl)originalPreferences).addAll(preferences);            
         } catch (Exception e) {
             log.error("Could not load portlet entity preferences.", e);
-            throw new IOException("Could not load portlet entity preferences: " + e.getMessage());
+            
+            if (e instanceof IOException)
+                throw (IOException)e;
+            else
+                throw new IOException("Could not load portlet entity preferences: " + e.getMessage());
         }
     }
     
@@ -160,8 +168,12 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
             portletPrefsStore.deletePortletPreferencesByInstance(userId, layoutId, channelDescId);
         } catch (Exception e) {
             log.error("Could not delete portlet entity preferences", e);
-            throw new IOException("Could not delete portlet entity preferences: " + e.getMessage());
-        }    
+            
+            if (e instanceof IOException)
+                throw (IOException)e;
+            else
+                throw new IOException("Could not delete portlet entity preferences: " + e.getMessage());
+        }
     }
 
     

@@ -341,7 +341,7 @@ public class FragmentLoader {
               ai.addAttribute(uri,"id","id","CDATA",id);
               ai.addAttribute(uri,"owner","owner","CDATA",getAdminId());
              } catch ( Exception pe ) {
-                 throw new SAXException(pe.getMessage());
+                 throw new SAXException(pe);
                }
             } // Getting the channel ID by the fname
             else if ( qName.equals("channel") ) {

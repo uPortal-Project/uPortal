@@ -196,7 +196,7 @@ public class CUserPreferences implements IPrivilegedChannel {
                   }
               }
             } catch (Exception e) {
-                throw new PortalException(e.getMessage(), e);
+                throw new PortalException(e);
             }
           }
 

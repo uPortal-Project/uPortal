@@ -35,8 +35,8 @@ public IGroupService newGroupService() throws GroupsException
         { return ReferenceGroupService.singleton(); }
     catch ( GroupsException ge )
     {
-        log.error( "ReferenceGroupServiceFactory.newGroupService(): " + ge);
-        throw new GroupsException(ge.getMessage());
+        log.error(ge.getMessage(), ge);
+        throw new GroupsException(ge);
     }
 }
 }

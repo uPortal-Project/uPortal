@@ -89,7 +89,7 @@ public class PriorityRestriction extends ALRestriction {
                 maxPriority = minPriority;
               }
           } catch ( Exception e ) {
-             throw new PortalException(e.getMessage());
+             throw new PortalException(e);
             }
          }
 

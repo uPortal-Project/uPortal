@@ -121,7 +121,7 @@ throws GroupsException
     }
     catch (GroupsException ge)
         { throw new GroupsException("Could not remove deleted group " + group.getKey() +
-                " from parent : " + ge.getMessage()); }
+                " from parent", ge); }
     finally
     {
         for ( itr = lockableGroups.iterator(); itr.hasNext(); )
@@ -136,7 +136,7 @@ throws GroupsException
             {
                 log.error(
                     "ReferenceIndividualGroupService.removeDeletedGroupFromContainingGroups(): " +
-                    "Problem unlocking parent group: " + le.getMessage());
+                    "Problem unlocking parent group", le);
             }
         }
     }
@@ -162,8 +162,8 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
                 " has invalid lock."); }
     }
     catch (LockingException le)
-        { throw new GroupsException("Could not delete group " + group.getKey() +
-                " : " + le.getMessage()); }
+        { throw new GroupsException("Could not delete group " + group.getKey(),
+                le); }
     finally
     {
         try { group.getLock().release(); }
@@ -203,7 +203,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
                     { cacheAdd(group); }
             }
             catch (CachingException ce)
-                { throw new GroupsException("Problem finding containing groups: " + ce.getMessage()); }
+                { throw new GroupsException("Problem finding containing groups", ce); }
         }
     }
     return groups.iterator();
@@ -256,7 +256,7 @@ protected IEntityGroup findGroupWithCache(CompositeEntityIdentifier ent) throws 
     return group;
     }
     catch (CachingException ce)
-        { throw new GroupsException("Problem retrieving group " + ent.getKey() + " : " + ce.getMessage());}
+        { throw new GroupsException("Problem retrieving group " + ent.getKey(), ce);}
 }
 
 /**
@@ -299,7 +299,7 @@ public ILockableEntityGroup findGroupWithLock(
         return group;
     } catch (LockingException le) {
         throw new GroupsException(
-            "Problem getting lock for group " + key + " : " + le.getMessage());
+            "Problem getting lock for group " + key, le);
     }
 
 }
@@ -325,7 +325,7 @@ protected Iterator findLocalMemberGroups(IEntityGroup eg) throws GroupsException
                     { cacheAdd(group); }
             }
             catch (CachingException ce)
-                { throw new GroupsException("Problem finding member groups: " + ce.getMessage()); }
+                { throw new GroupsException("Problem finding member groups", ce); }
         }
     }
     return groups.iterator();
@@ -406,7 +406,7 @@ public IEntity getEntity(String key, Class type) throws GroupsException
                 { ent = cachedEnt; }
         }
         catch (CachingException ce)
-            { throw new GroupsException("Problem retrieving group member " + type + "(" + key + ") : " + ce.getMessage());}
+            { throw new GroupsException("Problem retrieving group member " + type + "(" + key + ")", ce);}
     }
     return ent;
 }
@@ -650,7 +650,7 @@ protected IEntityGroup primFindGroup(String localKey) throws GroupsException
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
     return filterEntities(searchForGroups(query,method,leaftype),ancestor);
   }
-  
+
 /**
  *
  */
@@ -713,8 +713,8 @@ throws GroupsException
 
     }
     catch (LockingException le)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + le.getMessage()); }
+        { throw new GroupsException("Problem updating group " + group.getKey(),
+                le); }
 }
 
 /**
@@ -766,8 +766,8 @@ throws GroupsException
 
     }
     catch (LockingException le)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + le.getMessage()); }
+        { throw new GroupsException("Problem updating group " + group.getKey(),
+                le); }
 }
 
 /**

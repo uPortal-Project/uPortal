@@ -22,6 +22,14 @@ public class AuthorizationException extends PortalException {
     public AuthorizationException() {
         super();
     }
+    
+    /**
+     * Instantiate an AuthorizationException with the given cause.
+     * @param cause defines the causing Throwable of the authorization violation.
+     */
+    public AuthorizationException(Throwable cause) {
+        super(cause);
+    }
 
     /**
      * Instantiate an AuthorizationException with the given explanatory message.

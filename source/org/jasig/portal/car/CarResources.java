@@ -323,7 +323,7 @@ public class CarResources {
                                        " could not be loaded. Details: " +
                                        ( ioe.getMessage() != null ?
                                          ioe.getMessage() :
-                                         ioe.getClass().getName() ) );
+                                         ioe.getClass().getName() ), ioe );
             return;
         }
         Vector entryList = new Vector();

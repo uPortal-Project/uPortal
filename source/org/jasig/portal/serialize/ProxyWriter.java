@@ -182,7 +182,7 @@ public class ProxyWriter {
             return value;
 
          } catch(Exception e) {
-             log.error("ProxyWriter::catpture3XXCodes():Failed to rewrite the value: " + e.getMessage());
+             log.error("Failed to rewrite the value", e);
              return value;
          }
     }
@@ -231,7 +231,7 @@ public class ProxyWriter {
               } catch(Exception e) {
                  log.error(
                                 "ProxyWriter::rewrite():Failed to rewrite the file for: " +
-                                scriptUri + " " + e.getMessage());
+                                scriptUri, e);
                  outputFile.delete();
                  return scriptUri;
                } //end catch
@@ -254,7 +254,7 @@ public class ProxyWriter {
              }
 
          } catch(Exception e) {
-             log.error("ProxyWriter::rewrite():Failed to read the file at : "  + filePath + " " + e.getMessage());
+             log.error("Failed to read the file at : "  + filePath, e);
              return scriptUri;
           }
     }
@@ -299,7 +299,7 @@ public class ProxyWriter {
         }
       } catch(Exception e) {
 
-        log.error("ProxyWriter::processLine():Failed to process a line : "  + line + " " + e.getMessage());
+        log.error("Failed to process a line : "  + line, e);
         throw e;
        }
     }

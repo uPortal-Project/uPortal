@@ -27,6 +27,14 @@ public class GroupsException extends org.jasig.portal.PortalException {
     public GroupsException() {
         super();
     }
+    
+    /**
+     * Instantiate a GroupsException with the given cause.
+     * @param cause Throwable that caused the problem
+     */
+    public GroupsException(Throwable cause) {
+        super(cause);
+    }
 
     /**
      * Instantiate a GroupsException with the given message.

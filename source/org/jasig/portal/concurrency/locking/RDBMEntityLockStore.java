@@ -79,7 +79,7 @@ public void add(IEntityLock lock) throws LockingException
     }
 
     catch (SQLException sqle)
-        { throw new LockingException("Problem creating " + lock + ": " + sqle.getMessage()); }
+        { throw new LockingException("Problem creating " + lock, sqle); }
 
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -99,7 +99,7 @@ public void delete(IEntityLock lock) throws LockingException
     }
 
     catch (SQLException sqle)
-        { throw new LockingException("Problem deleting " + lock + " : " + sqle.getMessage()); }
+        { throw new LockingException("Problem deleting " + lock, sqle); }
     finally
         { RDBMServices.releaseConnection(conn); }
 }
@@ -132,7 +132,7 @@ public void deleteAll() throws LockingException
             { if ( stmnt != null ) stmnt.close(); }
     }
     catch (SQLException sqle)
-        { throw new LockingException("Problem deleting locks: " + sqle.getMessage()); }
+        { throw new LockingException("Problem deleting locks", sqle); }
 
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -167,7 +167,7 @@ throws LockingException
     }
 
     catch (SQLException sqle)
-        { throw new LockingException("Problem deleting expired locks: " + sqle.getMessage()); }
+        { throw new LockingException("Problem deleting expired locks", sqle); }
     finally
         { RDBMServices.releaseConnection(conn); }
 }
@@ -482,7 +482,7 @@ throws LockingException, SQLException
     }
 
     catch (SQLException sqle)
-        { throw new LockingException("Problem deleting expired locks: " + sqle.getMessage()); }
+        { throw new LockingException("Problem deleting expired locks", sqle); }
 
     finally
         { if ( stmnt != null ) stmnt.close(); }
@@ -523,7 +523,7 @@ private IEntityLock[] primSelect(String sql) throws LockingException
     catch (SQLException sqle)
     {
         log.error(sqle, sqle);
-        throw new LockingException("Problem retrieving EntityLocks " + sqle.getMessage());
+        throw new LockingException("Problem retrieving EntityLocks", sqle);
     }
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -722,7 +722,7 @@ throws LockingException
     }
 
     catch (SQLException sqle)
-        { throw new LockingException("Problem updating " + lock + ": " + sqle.getMessage()); }
+        { throw new LockingException("Problem updating " + lock, sqle); }
     finally
         { RDBMServices.releaseConnection(conn); }
 }

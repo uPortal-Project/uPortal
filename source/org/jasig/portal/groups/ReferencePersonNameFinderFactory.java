@@ -36,8 +36,8 @@ public IEntityNameFinder newFinder() throws GroupsException
         { return ReferencePersonNameFinder.singleton(); }
     catch ( SQLException sqle )
     {
-        log.error( "ReferencePersonNameFinderFactory.newFinder(): " + sqle);
-        throw new GroupsException(sqle.getMessage());
+        log.error(sqle.getMessage(), sqle);
+        throw new GroupsException(sqle);
     }
 }
 }

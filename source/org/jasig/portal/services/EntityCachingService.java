@@ -117,9 +117,9 @@ private void initialize() throws CachingException
     }
     catch (Exception e)
     {
-        eMsg = "EntityCachingService.initialize(): Problem creating entity caching service... " + e.getMessage();
-        log.error( eMsg);
-        throw new CachingException(eMsg);
+        eMsg = "EntityCachingService.initialize(): Problem creating entity caching service...";
+        log.error( eMsg, e);
+        throw new CachingException(eMsg, e);
     }
 }
     public static synchronized EntityCachingService instance() throws CachingException {

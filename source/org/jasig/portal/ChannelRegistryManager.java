@@ -650,7 +650,7 @@ public class ChannelRegistryManager {
         try {
           cpd = ResourceLoader.getResourceAsDocument(ChannelRegistryManager.class, cpdUri);
         } catch (java.io.IOException ioe) {
-          throw new ResourceMissingException(cpdUri, "Channel publishing document", ioe.getMessage());
+          throw new ResourceMissingException(cpdUri, "Channel publishing document", ioe);
         } catch (org.xml.sax.SAXException se) {
           throw new PortalException("Unable to parse CPD file: " + cpdUri, se);
         } catch (ParserConfigurationException pce) {

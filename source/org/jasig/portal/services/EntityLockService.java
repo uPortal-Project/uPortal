@@ -99,9 +99,9 @@ private void initialize() throws LockingException
     }
     catch (Exception e)
     {
-        eMsg = "EntityLockService.initialize(): Problem creating entity lock service... " + e.getMessage();
-        log.error( eMsg);
-        throw new LockingException(eMsg);
+        eMsg = "EntityLockService.initialize(): Problem creating entity lock service...";
+        log.error( eMsg, e);
+        throw new LockingException(eMsg, e);
     }
 }
     public static synchronized EntityLockService instance() throws LockingException {

@@ -402,18 +402,18 @@ public class XSLT {
               log.info( "Caching templates for: " + stylesheetURI);
         }
       } catch (IOException ioe) {
-        throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
+        throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL", ioe);
       } catch (TransformerConfigurationException tce) {
-        log.error( "XSLT::getTemplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
-        throw new GeneralRenderingException("XSLT: current TRAX configuration does not allow for TemplateHandlers. Please reconfigure/reinstall your TRAX implementation.");
+        log.error( "XSLT::getTemplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!", tce);
+        throw new GeneralRenderingException("XSLT: current TRAX configuration does not allow for TemplateHandlers. Please reconfigure/reinstall your TRAX implementation.", tce);
       } catch (SAXParseException px) {
         throw new GeneralRenderingException("XSLT:getTemplates(): SAXParseExeption: " +
-        px.getMessage() + " line:" + px.getLineNumber() + " col:"+px.getColumnNumber());
+        px.getMessage() + " line:" + px.getLineNumber() + " col:"+px.getColumnNumber(), px);
       } catch (SAXException sx) {
         // Catch the sax exception so we can report line number info
         if ( null != sx.getException() && (sx.getException() instanceof TransformerException)) {
           TransformerException trx = (TransformerException)sx.getException();
-          throw new GeneralRenderingException("XSLT.getTemplates():" + trx.getMessageAndLocation());
+          throw new GeneralRenderingException(trx);
         }
         throw sx;
       }
@@ -432,7 +432,7 @@ public class XSLT {
     try {
       t = getTemplates(stylesheetURI,l18n).newTransformer();
     } catch (TransformerConfigurationException tce) {
-      log.error("XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
+      log.error("XSLT::getTransformer() : TRAX transformer is misconfigured", tce);
     }
     return t;
   }
@@ -449,7 +449,7 @@ public class XSLT {
     try {
       t = getTemplates(stylesheetURI).newTransformer();
     } catch (TransformerConfigurationException tce) {
-      log.error("XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
+      log.error("XSLT::getTransformer() : TRAX transformer is misconfigured", tce);
     }
     return t;
   }
@@ -465,7 +465,7 @@ public class XSLT {
       try {
         th = getSAXTFactory().newTransformerHandler(getTemplates(stylesheetURI));
       } catch (TransformerConfigurationException tce) {
-        log.error("XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
+        log.error("XSLT::getTransformerHandler() : TRAX transformer is misconfigured", tce);
       }
       return th;
   }
@@ -484,7 +484,7 @@ public class XSLT {
         String localizedStylesheetURI = LocaleAwareXSLT.getLocaleAwareXslUri(stylesheetURI, locales, caller);
         th = getSAXTFactory().newTransformerHandler(getTemplates(localizedStylesheetURI));
       } catch (TransformerConfigurationException tce) {
-        log.error("XSLT::getTransformerHandler() : TRAX transformer is misconfigured : "+tce.getMessage());
+        log.error("XSLT::getTransformerHandler() : TRAX transformer is misconfigured", tce);
       }
       return th;
   }

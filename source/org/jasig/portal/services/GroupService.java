@@ -194,7 +194,7 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
     try
         { return GroupServiceConfiguration.getConfiguration(); }
     catch (Exception ex)
-        { throw new GroupsException("Problem retrieving service configuration: " + ex.getMessage());}
+        { throw new GroupsException("Problem retrieving service configuration", ex);}
 }
     /*
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
@@ -236,7 +236,7 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
         }
         catch (CachingException ce)
         {
-            throw new GroupsException("Problem removing group member " + gm.getKey() + " from cache: " + ce.getMessage());
+            throw new GroupsException("Problem removing group member " + gm.getKey() + " from cache", ce);
         }
     }
 
@@ -302,7 +302,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
         try
             { return compositeGroupService.newGroup(type, parseServiceName(serviceName)); }
         catch (InvalidNameException ine)
-            { throw new GroupsException("GroupService.inewGroup(): invalid service name: " + ine.getMessage());}
+            { throw new GroupsException("GroupService.inewGroup(): invalid service name", ine);}
     }
     /**
      * @exception org.jasig.portal.groups.GroupsException
@@ -329,9 +329,9 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
       }
       catch (Exception e)
       {
-          eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-          log.error( eMsg);
-          throw new GroupsException(eMsg);
+          eMsg = "GroupService.initialize(): Problem creating groups service...";
+          log.error( eMsg, e);
+          throw new GroupsException(eMsg, e);
       }
     }
 /**

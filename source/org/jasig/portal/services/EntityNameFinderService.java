@@ -94,7 +94,7 @@ private synchronized void initialize()
                 {
                     String eMsg = "EntityNameFinderService.initialize(): " +
                         "Could not instantiate finder for " + type.getName() + ": ";
-                    log.error( eMsg + e.getMessage() );
+                    log.error( eMsg, e);
                 }
             }
         }

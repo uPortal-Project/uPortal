@@ -152,7 +152,7 @@ public class AggregatedLayout implements IAggregatedLayout {
       contentHandler.startElement("",leafName,leafName,attributes);
       contentHandler.endElement("",leafName,leafName);
      } catch ( SAXException saxe ) {
-         throw new PortalException(saxe.getMessage());
+         throw new PortalException(saxe);
        }
   }
 
@@ -164,7 +164,7 @@ public class AggregatedLayout implements IAggregatedLayout {
       markingLeaf.setAttribute("nextID",nextNodeId);
       node.appendChild(markingLeaf);
      } catch ( Exception saxe ) {
-         throw new PortalException(saxe.getMessage());
+         throw new PortalException(saxe);
        }
   }
 
@@ -439,7 +439,7 @@ public class AggregatedLayout implements IAggregatedLayout {
          }
 
       } catch ( SAXException saxe ) {
-         throw new PortalException(saxe.getMessage());
+         throw new PortalException(saxe);
         }
 
      }

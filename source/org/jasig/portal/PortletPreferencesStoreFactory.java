@@ -74,7 +74,7 @@ public class PortletPreferencesStoreFactory {
           return portletPreferencesStoreImpl;
       } catch (Exception e) {
           log.error( "PortletPreferencesStoreFactory: Could not instantiate " + className, e);
-          throw new PortalException(e.getMessage());  
+          throw new PortalException(e);
       }
     }
 

@@ -453,7 +453,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
       } catch (Exception e) {
         log.error("Exception setting new user layout manager " + newUlm + 
                 " and/or new prefererences " + newPreferences, e);
-        throw  new GeneralRenderingException(e.getMessage());
+        throw  new GeneralRenderingException(e);
       }
     }
 

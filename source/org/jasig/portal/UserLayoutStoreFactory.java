@@ -69,7 +69,7 @@ public class UserLayoutStoreFactory {
         return userLayoutStoreImpl;
     } catch (Exception e) {
       log.error( "UserLayoutStoreFactory: Could not instantiate " + className, e);
-      throw new PortalException(e.getMessage());
+      throw new PortalException(e);
     }
   }
 

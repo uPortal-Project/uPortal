@@ -108,7 +108,7 @@ public class ChannelFactory {
             try {
                 cobj =  channelClass.newInstance();
             } catch (Throwable t) {
-                throw new PortalException("Unable to instantiate class '" + className + "'", new Exception(t.getMessage()));
+                throw new PortalException("Unable to instantiate class '" + className + "'", t);
             }            
         }
 

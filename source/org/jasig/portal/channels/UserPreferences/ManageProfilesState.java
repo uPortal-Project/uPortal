@@ -84,7 +84,7 @@ class ManageProfilesState extends BaseState {
       try {
         userProfileList = this.getUserLayoutStore().getUserProfileList(context.getUserPreferencesManager().getPerson());
       } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+        throw new PortalException(e);
       }
     }
     return  userProfileList;
@@ -96,7 +96,7 @@ class ManageProfilesState extends BaseState {
       try {
         systemProfileList = this.getUserLayoutStore().getSystemProfileList();
       } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+        throw new PortalException(e);
       }
     }
     return  systemProfileList;
@@ -135,7 +135,7 @@ class ManageProfilesState extends BaseState {
                         try {
                           p=this.getUserLayoutStore().addUserProfile(context.getUserPreferencesManager().getPerson(),p);
                         } catch (Exception e) {
-                          throw new PortalException(e.getMessage(), e);
+                          throw new PortalException(e);
                         }
                         // reset user profile listing
                         userProfileList=null;
@@ -150,7 +150,7 @@ class ManageProfilesState extends BaseState {
                       try {
                         this.getUserLayoutStore().deleteUserProfile(context.getUserPreferencesManager().getPerson(), Integer.parseInt(profileId));
                       } catch (Exception e) {
-                        throw new PortalException(e.getMessage(), e);
+                        throw new PortalException(e);
                       }
 
                       userProfileList = null;
@@ -159,7 +159,7 @@ class ManageProfilesState extends BaseState {
                   try {
                     this.getUserLayoutStore().setUserBrowserMapping(context.getUserPreferencesManager().getPerson(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
                   } catch (Exception e) {
-                    throw new PortalException(e.getMessage(), e);
+                    throw new PortalException(e);
                   }
                   // let userPreferencesManager know that the current profile has changed : everything must be reloaded
                 } else if (action.equals("changeView")) {
@@ -183,7 +183,7 @@ class ManageProfilesState extends BaseState {
                     try {
                       p=this.getUserLayoutStore().addUserProfile(context.getUserPreferencesManager().getPerson(),p);
                     } catch (Exception e) {
-                      throw new PortalException(e.getMessage(), e);
+                      throw new PortalException(e);
                     }
 
                     // reset user profile listing
@@ -418,7 +418,7 @@ class ManageProfilesState extends BaseState {
                     profile = context.getUserLayoutStore().getUserProfileById(context.getPerson(), profileId.intValue());
                 }
               } catch (Exception e) {
-                throw new PortalException(e.getMessage(), e);
+                throw new PortalException(e);
               }
               
               if (profile == null) {
@@ -449,7 +449,7 @@ class ManageProfilesState extends BaseState {
                     context.getUserLayoutStore().updateUserProfile(context.getPerson(), profile);
                 }
             } catch (Exception e) {
-              throw new PortalException(e.getMessage(), e);
+              throw new PortalException(e);
             }
             context.setState(null);
           }
@@ -573,7 +573,7 @@ class ManageProfilesState extends BaseState {
         try {
           tsList = context.getUserLayoutStore().getThemeStylesheetList(profile.getStructureStylesheetId());
         } catch (Exception e) {
-          throw new PortalException(e.getMessage(), e);
+          throw new PortalException(e);
         }
         if (tsList == null) {
             throw  new ResourceMissingException("", "List of theme stylesheets for the structure stylesheet \"" + profile.getStructureStylesheetId()+ "\"", "Unable to obtain a list of theme stylesheets for the specified structure stylesheet");

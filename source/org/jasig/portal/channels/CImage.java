@@ -70,7 +70,7 @@ public class CImage extends BaseMultithreadedChannel implements IMultithreadedCa
       doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     } catch (ParserConfigurationException pce) {
       log.error("Error getting a Document", pce);
-      throw new GeneralRenderingException(pce.getMessage(), pce);
+      throw new GeneralRenderingException(pce);
     }
 
     // Create XML doc

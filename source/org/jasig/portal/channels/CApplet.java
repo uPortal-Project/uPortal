@@ -53,7 +53,7 @@ public class CApplet extends BaseMultithreadedChannel implements IMultithreadedC
       doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     } catch (ParserConfigurationException pce) {
       log.error("Error obtaining a Document", pce);
-      throw new GeneralRenderingException(pce.getMessage());
+      throw new GeneralRenderingException(pce);
     }
 
     // Create XML doc

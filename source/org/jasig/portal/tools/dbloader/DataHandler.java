@@ -185,7 +185,7 @@ import org.xml.sax.helpers.DefaultHandler;
                String msg = "Error generating next ID in sequence: "+e.getMessage();
                config.getLog().println(msg);
                e.printStackTrace(config.getLog());
-               throw new SAXException(msg);
+               throw new SAXException(msg, e);
       }
             sequences.put(name, charBuff);
     }

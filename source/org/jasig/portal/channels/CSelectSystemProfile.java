@@ -51,7 +51,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
           try {
             ulsdb.setSystemBrowserMapping(this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
           } catch (Exception e) {
-            throw new PortalException(e.getMessage(), e);
+            throw new PortalException(e);
           }
         }
       }
@@ -63,7 +63,7 @@ public class CSelectSystemProfile extends StandaloneChannelRenderer {
           try {
               systemProfileList = ulsdb.getSystemProfileList();
           } catch (Exception e) {
-              throw new PortalException(e.getMessage(), e);
+              throw new PortalException(e);
           }
       }
       

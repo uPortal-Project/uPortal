@@ -37,7 +37,7 @@ public IEntityLockService newLockService() throws LockingException
     catch ( LockingException le )
     {
         log.error( "ReferenceEntityLockServiceFactory.newLockService(): " + le);
-        throw new LockingException(le.getMessage());
+        throw new LockingException(le);
     }
 }
 }

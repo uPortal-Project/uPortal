@@ -38,6 +38,19 @@ public class ResourceMissingException extends PortalException {
     }
 
     /**
+     * Instantiate a ResourceMissingException providing the URI of the missing resource,
+     * a description of the missing resource, and a cause.
+     * @param resourceURI URI of the missing resource
+     * @param resourceDescription description of the missing resource
+     * @param cause the cause of the error condition
+     */
+    public ResourceMissingException(String resourceURI, String resourceDescription, Throwable cause) {
+        super(cause);
+        this.resourceURI = resourceURI;
+        this.description = resourceDescription;
+    }
+    
+    /**
      * Instantiate a ResourceMissingException providing a URI of the missing resource,
      * a description of the missing resource, a message, and indicating whether
      * channel refresh and channel reinstantiation are appropriate responses to the

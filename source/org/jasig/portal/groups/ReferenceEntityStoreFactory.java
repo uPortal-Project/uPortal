@@ -45,7 +45,7 @@ public IEntityStore newInstance() throws GroupsException
     catch ( Exception ex )
     {
         log.error( "ReferenceEntityStoreFactory.newInstance(): " + ex);
-        throw new GroupsException(ex.getMessage());
+        throw new GroupsException(ex);
     }
 }
 }

@@ -56,7 +56,7 @@ public abstract class BooleanRestriction extends ALRestriction {
              boolValue2 = strToBool(restrictionExp.substring(commaIndex+1));
             }
           } catch ( Exception e ) {
-             throw new PortalException(e.getMessage());
+             throw new PortalException(e);
             }
          }
 

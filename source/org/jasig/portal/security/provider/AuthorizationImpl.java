@@ -88,7 +88,7 @@ protected void cacheAdd(IPermissionSet ps) throws AuthorizationException
     try
         { EntityCachingService.instance().add(ps); }
     catch (CachingException ce)
-        { throw new AuthorizationException("Problem adding permissions for " + ps + " to cache: " + ce.getMessage() ); }
+        { throw new AuthorizationException("Problem adding permissions for " + ps + " to cache", ce); }
 }
 
 /**
@@ -104,7 +104,7 @@ throws AuthorizationException
           EntityCachingService.instance().get(PERMISSION_SET_TYPE, principal.getPrincipalString());
     }
     catch (CachingException ce)
-        { throw new AuthorizationException("Problem adding permissions for " + principal + " to cache: " + ce.getMessage() ); }
+        { throw new AuthorizationException("Problem adding permissions for " + principal + " to cache", ce); }
 }
 
 /**
@@ -116,7 +116,7 @@ protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationExcep
     try
         { EntityCachingService.instance().remove(PERMISSION_SET_TYPE, ap.getPrincipalString()); }
     catch (CachingException ce)
-        { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache: " + ce.getMessage() ); }
+        { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache", ce); }
 }
 
 /**
@@ -127,7 +127,7 @@ protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
     try
         { EntityCachingService.instance().update(ps); }
     catch (CachingException ce)
-        { throw new AuthorizationException("Problem updating permissions for " + ps + " in cache: " + ce.getMessage() ); }
+        { throw new AuthorizationException("Problem updating permissions for " + ps + " in cache", ce); }
 }
 
 /**
@@ -532,9 +532,9 @@ private void initialize() throws AuthorizationException
     }
     catch (Exception e)
     {
-        eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... " + e.getMessage();
-        log.error( eMsg);
-        throw new AuthorizationException(eMsg);
+        eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... ";
+        log.error( eMsg, e);
+        throw new AuthorizationException(eMsg, e);
     }
 
     try
@@ -543,9 +543,9 @@ private void initialize() throws AuthorizationException
     }
     catch (Exception e)
     {
-        eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... " + e.getMessage();
-        log.error( eMsg);
-        throw new AuthorizationException(eMsg);
+        eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... ";
+        log.error( eMsg, e);
+        throw new AuthorizationException(eMsg, e);
     }
 
     try
@@ -554,9 +554,9 @@ private void initialize() throws AuthorizationException
     }
     catch (ClassNotFoundException cnfe)
     {
-        eMsg = "AuthorizationImpl.initialize(): Problem initializing service. " + cnfe.getMessage();
-        log.error( eMsg);
-        throw new AuthorizationException(eMsg);
+        eMsg = "AuthorizationImpl.initialize(): Problem initializing service. ";
+        log.error( eMsg, cnfe);
+        throw new AuthorizationException(eMsg, cnfe);
     }
 }
 

@@ -223,7 +223,7 @@ protected void initializeComponentServices() throws GroupsException
 
     }
     catch (Exception ex)
-        { throw new GroupsException("Problem initializing component services: " + ex.getMessage()); }
+        { throw new GroupsException("Problem initializing component services", ex); }
 }
 /**
  * Returns a <code>CompositeEntityIdentifier</code> for the group identified
@@ -359,7 +359,7 @@ protected void cacheAdd(IGroupMember gm) throws GroupsException
     try
         { EntityCachingService.instance().add(gm); }
     catch (CachingException ce)
-        { throw new GroupsException("Problem adding group member " + gm.getKey() + " to cache: " + ce.getMessage() ); }
+        { throw new GroupsException("Problem adding group member " + gm.getKey() + " to cache", ce); }
 }
 
  /**
@@ -370,7 +370,7 @@ protected void cacheRemove(IGroupMember gm) throws GroupsException
     try
         { EntityCachingService.instance().remove(gm.getEntityIdentifier()); }
     catch (CachingException ce)
-        { throw new GroupsException("Problem removing group member " + gm.getKey() + " from cache: " + ce.getMessage() ); }
+        { throw new GroupsException("Problem removing group member " + gm.getKey() + " from cache", ce); }
 }
 
  /**
@@ -381,7 +381,7 @@ protected void cacheUpdate(IGroupMember gm) throws GroupsException
     try
         { EntityCachingService.instance().update(gm); }
     catch (CachingException ce)
-        { throw new GroupsException("Problem updating group member " + gm.getKey() + " in cache: " + ce.getMessage() ); }
+        { throw new GroupsException("Problem updating group member " + gm.getKey() + " in cache", ce); }
 }
 
 /**

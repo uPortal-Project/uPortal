@@ -5,6 +5,9 @@
 
 package org.jasig.portal.utils.threading;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * A thread pool with a maxium number of possible worker threads
  *
@@ -13,6 +16,7 @@ package org.jasig.portal.utils.threading;
  */
 
 public class BoundedThreadPool extends AbstractPool{
+    private static final Log LOG = LogFactory.getLog(BoundedThreadPool.class);
 
 	/**
 	 * BoundedThreadPool Construcutor
@@ -77,7 +81,8 @@ public class BoundedThreadPool extends AbstractPool{
                 return tracker;
 
               } catch ( Exception e ) {
-                  throw new IllegalStateException(e.getMessage());
+                  LOG.error("Failed to execute task: " + task, e);
+                  throw new IllegalStateException("Failed to execute task: " + task + " With message: " + e.getMessage());
                 }
 
 

@@ -183,37 +183,34 @@ public class DescriptorHandler
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
-                            " because a fatal parser error occurred. " +
-                            "Details: " + re.getMessage() );
+                            " because a fatal parser error occurred. ", re);
         }
         catch( IOException ioe )
         {
             log.error(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
-                            " in " + jarFile.getName() +
-                            ". Details: " + ioe );
+                            " in " + jarFile.getName(), ioe );
         }
         catch( SAXException sxe )
         {
             log.error(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
-                            " in " + jarFile.getName() +
-                            ". Details: " + sxe );
+                            " in " + jarFile.getName(), sxe );
         }
         finally 
         {
-			try 
-			{
-				if(is != null)
-			    is.close();
-			} 
-			catch (IOException ioe) {
-				log.error(
-						"Unable to close inputStream " + ioe);
-			}
-		}
+            try 
+            {
+                if(is != null)
+                is.close();
+            } 
+            catch (IOException ioe) {
+                log.error(
+                        "Unable to close inputStream", ioe);
+            }
+        }
     }
 
     /////// Methods for use by CarResources to aquire descriptor info.

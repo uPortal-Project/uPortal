@@ -45,8 +45,8 @@ throws GroupsException
         { return new ReferenceIndividualGroupService(svcDescriptor); }
     catch ( GroupsException ge )
     {
-        log.error( "ReferenceIndividualGroupServiceFactory.newGroupService(): " + ge);
-        throw new GroupsException(ge.getMessage());
+        log.error(ge.getMessage(), ge);
+        throw new GroupsException(ge);
     }
 }
 }

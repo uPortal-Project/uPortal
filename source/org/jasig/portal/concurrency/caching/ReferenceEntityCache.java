@@ -91,8 +91,7 @@ private void initializeEntityType(Class type) throws CachingException
     try
         { EntityTypes.addIfNecessary(type, "Added by ReferenceEntityCache"); }
     catch (Exception ex)
-        { throw new CachingException("Problem adding entity type " + type +
-          " : " + ex.getMessage()); }
+        { throw new CachingException("Problem adding entity type " + type, ex); }
 }
 
 /**

@@ -293,8 +293,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
            }
 
        } catch (Exception e) {
-           log.error( "RDBMUserIdentityStore::getPortalUID()", e);
-           throw new AuthorizationException(e.getMessage(), e);
+           log.error(e.getMessage(), e);
+           throw new AuthorizationException(e);
        }
      
        return portalUser.getUserId();

@@ -81,7 +81,7 @@ public void add(IPermission[] perms) throws AuthorizationException
         catch (Exception ex)
         {
             log.error("Exception adding permissions " + perms, ex);
-            throw new AuthorizationException(ex.getMessage());
+            throw new AuthorizationException(ex);
         }
     }
 }
@@ -137,7 +137,7 @@ public void delete(IPermission[] perms) throws AuthorizationException
         catch (Exception ex)
         {
             log.error("Exception deleting permissions " + perms, ex);
-            throw new AuthorizationException(ex.getMessage());
+            throw new AuthorizationException(ex);
         }
     }
 }
@@ -768,7 +768,7 @@ throws AuthorizationException
     catch (SQLException sqle)
     {
         log.error("Problem retrieving permissions", sqle);
-        throw new AuthorizationException("Problem retrieving Permissions " + sqle.getMessage());
+        throw new AuthorizationException("Problem retrieving Permissions", sqle);
     }
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -800,7 +800,7 @@ public void update(IPermission[] perms) throws AuthorizationException
         catch (Exception ex)
         {
             log.error("Exception updating permissions " + perms, ex);
-            throw new AuthorizationException(ex.getMessage());
+            throw new AuthorizationException(ex);
         }
     }
 }

@@ -79,7 +79,7 @@ public class StylesheetSet extends SAX2FilterImpl {
             } catch (IOException ioe) {
                 throw new ResourceMissingException(url.toString(),"XSLT stylesheet","StylesheetSet(uri) : Unable to read stylesheet set from the specified location. Please check the URL.");
             } catch (SAXException se) {
-                throw new GeneralRenderingException("StylesheetSet(uri) : Unable to parse stylesheet set (.ssl) file. URL=\""+url+"\", exception message: "+se.getMessage());
+                throw new GeneralRenderingException("StylesheetSet(uri) : Unable to parse stylesheet set (.ssl) file. URL=\""+url+"\"", se);
             }
         } catch (SAXException se) {
             // Log the exception
@@ -478,7 +478,7 @@ public class StylesheetSet extends SAX2FilterImpl {
     }
     catch (IOException ioe)
     {
-      throw new ResourceMissingException(uri, "The media.properties file ", ioe.getMessage());
+      throw new ResourceMissingException(uri, "The media.properties file ", ioe);
     }
   }
 

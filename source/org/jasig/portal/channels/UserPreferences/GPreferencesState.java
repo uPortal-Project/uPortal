@@ -172,7 +172,7 @@ class GPreferencesState extends BaseState {
         up = ulsdb.getUserPreferences(context.getUserPreferencesManager().getPerson(), this.getProfile());
         up.synchronizeWithUserLayoutXML(this.getUserLayoutManager().getUserLayoutDOM());
       } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+        throw new PortalException(e);
       }
     }
     return  up;
@@ -185,7 +185,7 @@ class GPreferencesState extends BaseState {
       try {
         tsd = ulsdb.getThemeStylesheetDescription(ssup.getStylesheetId());
       } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+        throw new PortalException(e);
       }
     }
     return  tsd;
@@ -197,7 +197,7 @@ class GPreferencesState extends BaseState {
       try {
         ssd = ulsdb.getStructureStylesheetDescription(fsup.getStylesheetId());
       } catch (Exception e) {
-        throw new PortalException(e.getMessage(), e);
+        throw new PortalException(e);
       }
     }
     return  ssd;
@@ -686,7 +686,7 @@ class GPreferencesState extends BaseState {
             context.getUserLayoutManager().saveUserLayout();
             ulsdb.putUserPreferences(context.getUserPreferencesManager().getPerson(), context.getUserPreferences());
         } catch (Exception e) {
-            throw new PortalException(e.getMessage(), e);
+            throw new PortalException(e);
         }
       }
     }

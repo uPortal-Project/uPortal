@@ -78,42 +78,42 @@ import org.xml.sax.ContentHandler;
  *                  and <code>cw_xslTitle</code> will be ignored.
  *  <li>"cw_passThrough" - indicates how RunTimeData is to be passed through.
  *                  <i>If <code>cw_passThrough</code> is supplied, and not set
- *		    to "all" or "application", additional RunTimeData
- *		    parameters not starting with "cw_" or "upc_" will be
- *		    passed as request parameters to the XML URI.  If
- *		    <code>cw_passThrough</code> is set to "marked", this will
- *		    happen only if there is also a RunTimeData parameter of
- *		    <code>cw_inChannelLink</code>.  "application" is intended
- *		    to keep application-specific links in the channel, while
- *		    "all" should keep all links in the channel.  This
- *		    distinction is handled entirely in the URL Filters.
+ *          to "all" or "application", additional RunTimeData
+ *          parameters not starting with "cw_" or "upc_" will be
+ *          passed as request parameters to the XML URI.  If
+ *          <code>cw_passThrough</code> is set to "marked", this will
+ *          happen only if there is also a RunTimeData parameter of
+ *          <code>cw_inChannelLink</code>.  "application" is intended
+ *          to keep application-specific links in the channel, while
+ *          "all" should keep all links in the channel.  This
+ *          distinction is handled entirely in the URL Filters.
  *  <li>"cw_tidy" - output from <code>xmlUri</code> will be passed though Jtidy
  *  <li>"cw_info" - a URI to be called for the <code>info</code> event.
  *  <li>"cw_help" - a URI to be called for the <code>help</code> event.
  *  <li>"cw_edit" - a URI to be called for the <code>edit</code> event.
  *  <li>"cw_cacheDefaultMode" - Default caching mode.
- *		    <i>May be <code>none</code> (normally don't cache), or
- *		    <code>all</code> (cache everything).
+ *          <i>May be <code>none</code> (normally don't cache), or
+ *          <code>all</code> (cache everything).
  *  <li>"cw_cacheDefaultTimeout" - Default timeout in seconds.
  *  <li>"cw_cacheMode" - override default for this request only.
- *		    <i>Primarily intended as a runtime parameter, but can
- *	            used statically to override the first instance.</i>
+ *          <i>Primarily intended as a runtime parameter, but can
+ *              used statically to override the first instance.</i>
  *  <li>"cw_cacheTimeout" - override default for this request only.
- *		    <i>Primarily intended as a runtime parameter, but can
- *	            be used statically to override the first instance.</i>
+ *          <i>Primarily intended as a runtime parameter, but can
+ *              be used statically to override the first instance.</i>
  *  <li>"cw_person" - IPerson attributes to pass.
- *		    <i>A comma-separated list of IPerson attributes to
- *		    pass to the back end application.  The static data
- *		    value will be passed on </i>all<i> requests not
- *		    overridden by a runtime data cw_person except some
- *		    refresh requests.</i>
+ *          <i>A comma-separated list of IPerson attributes to
+ *          pass to the back end application.  The static data
+ *          value will be passed on </i>all<i> requests not
+ *          overridden by a runtime data cw_person except some
+ *          refresh requests.</i>
  *  <li>"cw_personAllow" - Restrict IPerson attribute passing to this list.
- *		    <i>A comma-separated list of IPerson attributes that
- *		    may be passed via cw_person.  An empty or non-existent
- *		    value means use the default value from the corresponding
- *		    property.  The special value "*" means all attributes
- *		    are allowed.  The value "!*" means none are allowed.
- *		    Static data only.</i>
+ *          <i>A comma-separated list of IPerson attributes that
+ *          may be passed via cw_person.  An empty or non-existent
+ *          value means use the default value from the corresponding
+ *          property.  The special value "*" means all attributes
+ *          are allowed.  The value "!*" means none are allowed.
+ *          Static data only.</i>
  *  <li>"upc_localConnContext" - LocalConnectionContext implementation class.
  *                  <i>The name of a class to use when data sent to the
  *                  backend application needs to be modified or added
@@ -124,10 +124,10 @@ import org.xml.sax.ContentHandler;
  * </p>
  * <ol>
  *  <li>"cw_reset" - an instruction to return to reset internal variables.
- *		   <i>The value <code>return</code> resets <code>cw_xml</code>
- *		   to its last value before changed by button events.  The
- *		   value "reset" returns all variables to the static data
- *		   values.</i>
+ *         <i>The value <code>return</code> resets <code>cw_xml</code>
+ *         to its last value before changed by button events.  The
+ *         value "reset" returns all variables to the static data
+ *         values.</i>
  *  <li>"cw_download" - use download worker for this link or form
  *                 <i>any link or form that contains this parameter will be
  *                 handled by the download worker, if the pass-through mode
@@ -840,7 +840,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             }
             catch (Exception e)
             {
-              log.error( "CWebProxy: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext") + ": " + e.getMessage());
+              log.error( "CWebProxy: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext"), e);
             }
           }
 
@@ -967,7 +967,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     k.setKey(sbKey.toString());
     k.setKeyValidity(new Long(System.currentTimeMillis()));
     //log.debug("CWebProxy:generateKey("
-    //		+ uid + ") : cachekey=\"" + sbKey.toString() + "\"");
+    //      + uid + ") : cachekey=\"" + sbKey.toString() + "\"");
     return k;
   }
 
@@ -1035,7 +1035,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
   public void reportDownloadError(Exception e) {
     // We really should report this to the user somehow??
-    log.error( "CWebProxy::reportDownloadError(): " + e.getMessage());
+    log.error(e.getMessage(), e);
   }
 
 }

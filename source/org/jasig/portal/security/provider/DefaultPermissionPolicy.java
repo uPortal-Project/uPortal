@@ -75,7 +75,7 @@ throws org.jasig.portal.AuthorizationException
          }
     }
     catch ( GroupsException ge )
-        { throw new AuthorizationException(ge.getMessage(),ge); }
+        { throw new AuthorizationException(ge); }
 
     return hasPermission;
 }

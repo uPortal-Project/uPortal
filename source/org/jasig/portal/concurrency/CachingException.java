@@ -26,6 +26,15 @@ public class CachingException extends org.jasig.portal.PortalException {
     public CachingException() {
         super();
     }
+    
+    
+    /**
+     * Instantiate a CachingException with the given cause.
+     * @param cause A throwable that caused the caching problem.
+     */
+    public CachingException(Throwable cause) {
+        super(cause);
+    }
 
     /**
      * Instantiate a CachingException with the given message.

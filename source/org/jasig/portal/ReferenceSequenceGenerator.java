@@ -32,7 +32,7 @@ public class ReferenceSequenceGenerator implements ISequenceGenerator
             super(msg);
         }
     }
-	private Random rand = new Random();
+    private Random rand = new Random();
 
     // Constant strings for SEQUENCE table:
     private static String SEQUENCE_TABLE = "UP_SEQUENCE";
@@ -278,7 +278,7 @@ throws Exception
         }
         catch ( DataIntegrityException die )
         {
-        	Thread.sleep(rand.nextInt(2000));
+            Thread.sleep(rand.nextInt(2000));
             current = getCurrentCounterValue(tableName, conn);
         }
     }
@@ -315,8 +315,7 @@ throws SQLException
         }
         catch (SQLException sqle)
         {
-            log.error(
-                "ReferenceSequenceGenerator.primIncrementCounter(): " + sqle.getMessage());
+            log.error(sqle.getMessage(), sqle);
             throw sqle;
         }
     }

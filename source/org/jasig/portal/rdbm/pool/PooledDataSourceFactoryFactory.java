@@ -67,7 +67,7 @@ public final class PooledDataSourceFactoryFactory {
         }
         catch (Exception e) {
             log.error("Could not instantiate " + className, e);
-            throw new PortalException(e.getMessage());
+            throw new PortalException(e);
         }
     }
 

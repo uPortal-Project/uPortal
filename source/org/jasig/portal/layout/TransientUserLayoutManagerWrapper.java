@@ -78,13 +78,13 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
-	public IUserLayoutManager getOriginalLayoutManager() throws PortalException {
-		   return man;
-	}
+    public IUserLayoutManager getOriginalLayoutManager() throws PortalException {
+           return man;
+    }
 
-	public void setOriginalLayoutManager(IUserLayoutManager man ) throws PortalException {
-		   this.man = man;
-	}
+    public void setOriginalLayoutManager(IUserLayoutManager man ) throws PortalException {
+           this.man = man;
+    }
 
     public IUserLayout getUserLayout() throws PortalException {
         return man.getUserLayout();
@@ -271,16 +271,16 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getRootFolderId();
     }
     
-	/**
-				 * Returns the depth of a node in the layout tree.
-				 *
-				 * @param nodeId a <code>String</code> value
-				 * @return a depth value
-				 * @exception PortalException if an error occurs
-				 */
-	public int getDepth(String nodeId) throws PortalException {
-		return man.getDepth(nodeId);
-	}
+    /**
+                 * Returns the depth of a node in the layout tree.
+                 *
+                 * @param nodeId a <code>String</code> value
+                 * @return a depth value
+                 * @exception PortalException if an error occurs
+                 */
+    public int getDepth(String nodeId) throws PortalException {
+        return man.getDepth(nodeId);
+    }
 
 
     public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException {
@@ -581,7 +581,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                         log.error(
                                        "Could not obtain channel definition " +
                                        "from database for subscribe id: " +
-                                       subscribeId + " - error is: " + e.getMessage() );
+                                       subscribeId, e);
                     }
 
                     // now pass folder up the chain so it's closed

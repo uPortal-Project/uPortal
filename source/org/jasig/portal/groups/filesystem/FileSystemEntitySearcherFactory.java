@@ -40,8 +40,8 @@ public IEntitySearcher newEntitySearcher() throws GroupsException
         { return getGroupStore(); }
     catch ( Exception ex )
     {
-        log.error( "FileSystemEntitySearcherFactory.newEntitySearcher(): " + ex);
-        throw new GroupsException(ex.getMessage());
+        log.error(ex.getMessage(), ex);
+        throw new GroupsException(ex);
     }
 }
 }

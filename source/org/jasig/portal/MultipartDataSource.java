@@ -53,7 +53,7 @@ public class MultipartDataSource implements DataSource {
         out.close();
     }
     catch(IOException ioe){
-        log.error("MultipartDataSource unable to create temp file: "+ioe.getMessage());
+        log.error("MultipartDataSource unable to create temp file", ioe);
         if(tempfile!=null){
             try{
                 tempfile.delete();

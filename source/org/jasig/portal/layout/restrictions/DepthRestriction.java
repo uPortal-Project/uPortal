@@ -73,7 +73,7 @@ public class DepthRestriction extends ALRestriction {
 
            } catch ( Exception e ) {
              e.printStackTrace();
-             throw new PortalException(e.getMessage());
+             throw new PortalException(e);
             }
 
          }

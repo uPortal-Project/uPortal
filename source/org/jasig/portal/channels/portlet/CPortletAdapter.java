@@ -590,7 +590,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
             // was overkill? -andrew.petro@yale.edu
             
             log.error(t, t);
-            throw new PortalException(t.getMessage());
+            throw new PortalException(t);
         } finally {
             PortletContainerServices.release();
         }

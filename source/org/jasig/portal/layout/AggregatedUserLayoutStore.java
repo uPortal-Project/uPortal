@@ -381,7 +381,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             log.debug("AggregatedUserLayoutStore::addUserLayoutNode(): " + subSelectString);
         rs = stmt.executeQuery(subSelectString);
         try {
-          if ( rs.next() )  	
+          if ( rs.next() )      
             layoutId = rs.getInt(1);
         } finally {
             rs.close();
@@ -472,10 +472,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      } catch (Exception e) {
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           log.error( sqle.toString() );
+           log.error( sqle.getMessage(), sqle );
            errorMessage += ":" + sqle.getMessage();
         }
-         throw new PortalException(errorMessage);
+         throw new PortalException(errorMessage, e);
        }
     }
 
@@ -658,7 +658,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          PreparedStatement psRestr = null;
 
 
-         if ( fragmentId > 0 && layoutId < 0 ) {  	
+         if ( fragmentId > 0 && layoutId < 0 ) {    
 
            Enumeration restrictions = restrHash.elements();
            
@@ -774,7 +774,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      } catch (Exception e) {
         e.printStackTrace();
         String errorMessage = e.getMessage();
-        throw new PortalException(errorMessage);
+        throw new PortalException(errorMessage, e);
        }
 
     }
@@ -856,7 +856,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
            log.error( sqle.toString() );
            errorMessage += ":" + sqle.getMessage();
         }
-         throw new PortalException(errorMessage);
+         throw new PortalException(errorMessage, e);
        }
  }
 
@@ -1146,7 +1146,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      } catch (Exception e) {
         e.printStackTrace();
         String errorMessage = e.getMessage();
-        throw new PortalException(errorMessage);
+        throw new PortalException(errorMessage, e);
        }
   }
 
@@ -1317,10 +1317,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      } catch (Exception e) {
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           log.error( sqle.toString() );
+           log.error( sqle.getMessage(), sqle );
            errorMessage += ":" + sqle.getMessage();
         }
-         throw new PortalException(errorMessage);
+         throw new PortalException(errorMessage, e);
        }
     }
 
@@ -1355,22 +1355,22 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     Connection con = RDBMServices.getConnection();
 
-	try {
+    try {
 
       RDBMServices.setAutoCommit(con, false);
 
       Statement stmt = con.createStatement();
 
-	  String sQuery = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-	  ResultSet rs = stmt.executeQuery(sQuery);
-	 if (rs.next()) {
-	 	int layout_id = rs.getInt(1);
-		if ( rs.wasNull() ) {
-	  	sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID="+layoutId+" WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-		stmt.executeUpdate(sQuery);
-	  }
-	 }
-	  rs.close();	
+      String sQuery = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+      ResultSet rs = stmt.executeQuery(sQuery);
+     if (rs.next()) {
+        int layout_id = rs.getInt(1);
+        if ( rs.wasNull() ) {
+        sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID="+layoutId+" WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+        stmt.executeUpdate(sQuery);
+      }
+     }
+      rs.close();   
 
       sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
       if (log.isDebugEnabled())
@@ -1462,12 +1462,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         e.printStackTrace();
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           log.error( sqle.toString() );
+           log.error( sqle.getMessage(), sqle );
            errorMessage += ":" + sqle.getMessage();
         }
-         throw new PortalException(errorMessage);
+         throw new PortalException(errorMessage, e);
       } finally {
-		RDBMServices.releaseConnection(con); 
+        RDBMServices.releaseConnection(con); 
       }
  }
 
@@ -1502,7 +1502,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     return fragments;
   } catch ( Exception e ) {
-  	  throw new PortalException(e);
+      throw new PortalException(e);
   }
  }
 
@@ -1530,55 +1530,55 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
        Statement stmt = con.createStatement();
 
-	     boolean isOwner = false;
-	     boolean isNewFragment = false;
-		 // Check if the user was an owner
-		 ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-		 if ( rs.next() ) {
-		  if ( rs.getInt(1) == userId )
-		    isOwner = true;
-		 } else
-		    isNewFragment = true;
-		 if ( rs != null ) rs.close();
+         boolean isOwner = false;
+         boolean isNewFragment = false;
+         // Check if the user was an owner
+         ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+         if ( rs.next() ) {
+          if ( rs.getInt(1) == userId )
+            isOwner = true;
+         } else
+            isNewFragment = true;
+         if ( rs != null ) rs.close();
 
-		 if ( !isOwner && !isNewFragment )
-		  throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
+         if ( !isOwner && !isNewFragment )
+          throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
 
-	  ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
-	  String fragmentRootId = rootNode.getFirstChildNodeId();
+      ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
+      String fragmentRootId = rootNode.getFirstChildNodeId();
 
       // Check if the fragment is new
       if ( isNewFragment ) {
 
-		String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+
-		"VALUES (?,?,?,?,?,?)";
-		PreparedStatement ps = con.prepareStatement(sqlInsert);
-		ps.setInt(1,CommonUtils.parseInt(fragmentId));
-		if ( fragmentRootId != null )
-		 ps.setInt(2,CommonUtils.parseInt(fragmentRootId));
-		else
-		 ps.setNull(2,Types.INTEGER);
-		ps.setInt(3,userId);
-		ps.setString(4,layout.getName());
-		ps.setString(5,layout.getDescription());
-		ps.setString(6,(layout.isPushedFragment())?"Y":"N");
-     	ps.executeUpdate();
-     	ps.close();
+        String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+
+        "VALUES (?,?,?,?,?,?)";
+        PreparedStatement ps = con.prepareStatement(sqlInsert);
+        ps.setInt(1,CommonUtils.parseInt(fragmentId));
+        if ( fragmentRootId != null )
+         ps.setInt(2,CommonUtils.parseInt(fragmentRootId));
+        else
+         ps.setNull(2,Types.INTEGER);
+        ps.setInt(3,userId);
+        ps.setString(4,layout.getName());
+        ps.setString(5,layout.getDescription());
+        ps.setString(6,(layout.isPushedFragment())?"Y":"N");
+        ps.executeUpdate();
+        ps.close();
       } else {
 
-		 String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=?,FRAGMENT_ROOT_ID=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";
-		 PreparedStatement ps = con.prepareStatement(sqlUpdate);
-		 ps.setString(1,layout.getName());
-		 ps.setString(2,layout.getDescription());
-		 ps.setString(3,(layout.isPushedFragment())?"Y":"N");
-		 if ( fragmentRootId != null )
-		  ps.setInt(4,CommonUtils.parseInt(fragmentRootId));
-	     else
-		  ps.setNull(4,Types.INTEGER);
-		 ps.setInt(5,userId);
-		 ps.setInt(6,CommonUtils.parseInt(fragmentId));
-		 ps.executeUpdate();
-		 ps.close();
+         String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=?,FRAGMENT_ROOT_ID=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";
+         PreparedStatement ps = con.prepareStatement(sqlUpdate);
+         ps.setString(1,layout.getName());
+         ps.setString(2,layout.getDescription());
+         ps.setString(3,(layout.isPushedFragment())?"Y":"N");
+         if ( fragmentRootId != null )
+          ps.setInt(4,CommonUtils.parseInt(fragmentRootId));
+         else
+          ps.setNull(4,Types.INTEGER);
+         ps.setInt(5,userId);
+         ps.setInt(6,CommonUtils.parseInt(fragmentId));
+         ps.executeUpdate();
+         ps.close();
         }
 
       // Clear the previous data related to the user layout
@@ -1630,74 +1630,74 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         e.printStackTrace();
         String errorMessage = e.getMessage();
         try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           log.error( sqle.toString() );
+           log.error( sqle.getMessage(), sqle );
            errorMessage += ":" + sqle.getMessage();
         }
-         throw new PortalException(errorMessage);
+         throw new PortalException(errorMessage, e);
       }
  }
 
 
 
     /**
-	 * Deletes the layout fragment
-	 * @param person an <code>IPerson</code> object specifying the user
-	 * @param fragmentId a fragment ID
-	 * @exception PortalException if an error occurs
-	 */
+     * Deletes the layout fragment
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param fragmentId a fragment ID
+     * @exception PortalException if an error occurs
+     */
    public void deleteFragment (IPerson person, String fragmentId) throws PortalException {
 
-	   int userId = person.getID();
-	   Connection con = RDBMServices.getConnection();
+       int userId = person.getID();
+       Connection con = RDBMServices.getConnection();
 
-	try {
+    try {
 
-	    RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
+        RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
-		Statement stmt = con.createStatement();
-		boolean isOwner = false;
-		// Check if the user was an owner
-		ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-		if ( rs.next() ) {
-		 if ( rs.getInt(1) == userId )
-			isOwner = true;
-		}
-	     if ( rs != null ) rs.close();
+        Statement stmt = con.createStatement();
+        boolean isOwner = false;
+        // Check if the user was an owner
+        ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+        if ( rs.next() ) {
+         if ( rs.getInt(1) == userId )
+            isOwner = true;
+        }
+         if ( rs != null ) rs.close();
 
-		 if ( !isOwner )
-			throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
+         if ( !isOwner )
+            throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
 
-		stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
-		
-		stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+        stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
+        
+        stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
 
-		stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
-		
-		String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";
-		PreparedStatement ps = con.prepareStatement(sqlUpdate);
-		ps.setInt(1,userId);
-		ps.setInt(2,CommonUtils.parseInt(fragmentId));
-		ps.executeUpdate();
-		ps.close();
+        stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
+        
+        String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";
+        PreparedStatement ps = con.prepareStatement(sqlUpdate);
+        ps.setInt(1,userId);
+        ps.setInt(2,CommonUtils.parseInt(fragmentId));
+        ps.executeUpdate();
+        ps.close();
 
-		if ( stmt != null ) stmt.close();
+        if ( stmt != null ) stmt.close();
 
-	    // Commit all the changes
-		RDBMServices.commit(con);
+        // Commit all the changes
+        RDBMServices.commit(con);
 
         // Close the connection
-	    if ( con != null ) con.close();
+        if ( con != null ) con.close();
 
 
-	  } catch (Exception e) {
-				e.printStackTrace();
-				String errorMessage = e.getMessage();
-				try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-				   log.error( sqle.toString() );
-				   errorMessage += ":" + sqle.getMessage();
-				}
-				 throw new PortalException(errorMessage);
-			  }
+      } catch (Exception e) {
+                e.printStackTrace();
+                String errorMessage = e.getMessage();
+                try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
+                   log.error( sqle.getMessage(), sqle );
+                   errorMessage += ":" + sqle.getMessage();
+                }
+                 throw new PortalException(errorMessage, e);
+              }
 
    }
 
@@ -2392,50 +2392,50 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
 /**
-	 * Returns the layout fragment as a user layout
-	 * @param person an <code>IPerson</code> object specifying the user
-	 * @param fragmentId a fragment ID
-	 * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
-	 * @exception PortalException if an error occurs
-	 */
+     * Returns the layout fragment as a user layout
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param fragmentId a fragment ID
+     * @return a <code>IAggregatedLayout</code> object containing the internal representation of the user layout
+     * @exception PortalException if an error occurs
+     */
  public ILayoutFragment getFragment (IPerson person, String fragmentId ) throws PortalException {
-	 int userId = person.getID();
-	 Connection con = RDBMServices.getConnection();
-	 boolean permitted = false;
-	 try {	
-		 String query = "SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId+ " AND OWNER_ID="+userId; 
-		 Statement stmt = con.createStatement();
-		 ResultSet rs = stmt.executeQuery(query);
-		 if ( rs.next() ) 
-		   permitted = true;
-		 rs.close();  
-		   
-		 if ( !permitted ) {  
-		   EntityIdentifier personIdentifier = person.getEntityIdentifier();
-		   IGroupMember groupPerson = GroupService.getGroupMember(personIdentifier);
-		   query = "SELECT GROUP_KEY FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId; 
-		   rs = stmt.executeQuery(query);
-		   while ( rs.next() ) {	
-			IEntityGroup group = GroupService.findGroup(rs.getString(1));
-		    if ( group != null && groupPerson.isDeepMemberOf(group) ) {
-		      permitted = true;
-		      break;	
-		    }			    
-		   } 
-		    rs.close(); 
-		 } 
-			if ( stmt != null ) stmt.close();
-	 } catch ( Exception e ) {
-			throw new PortalException(e);
-		} finally {
-			RDBMServices.releaseConnection(con);
-		  }	
-		  
-		if ( permitted )
-		  return getFragment(fragmentId);
-		  
-		throw new PortalException ( "The user with ID="+userId+" is not allowed to get the fragment with ID="+fragmentId);   
-		  
+     int userId = person.getID();
+     Connection con = RDBMServices.getConnection();
+     boolean permitted = false;
+     try {  
+         String query = "SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId+ " AND OWNER_ID="+userId; 
+         Statement stmt = con.createStatement();
+         ResultSet rs = stmt.executeQuery(query);
+         if ( rs.next() ) 
+           permitted = true;
+         rs.close();  
+           
+         if ( !permitted ) {  
+           EntityIdentifier personIdentifier = person.getEntityIdentifier();
+           IGroupMember groupPerson = GroupService.getGroupMember(personIdentifier);
+           query = "SELECT GROUP_KEY FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId; 
+           rs = stmt.executeQuery(query);
+           while ( rs.next() ) {    
+            IEntityGroup group = GroupService.findGroup(rs.getString(1));
+            if ( group != null && groupPerson.isDeepMemberOf(group) ) {
+              permitted = true;
+              break;    
+            }               
+           } 
+            rs.close(); 
+         } 
+            if ( stmt != null ) stmt.close();
+     } catch ( Exception e ) {
+            throw new PortalException(e);
+        } finally {
+            RDBMServices.releaseConnection(con);
+          } 
+          
+        if ( permitted )
+          return getFragment(fragmentId);
+          
+        throw new PortalException ( "The user with ID="+userId+" is not allowed to get the fragment with ID="+fragmentId);   
+          
   }
 
   /**
@@ -2478,11 +2478,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          if ( rs.next() ) {
           firstStructId = rs.getInt(1);
           layout.setName(rs.getString(2));
-		  layout.setDescription(rs.getString(3));
-		  if ("Y".equals(rs.getString(4)))
-		     layout.setPushedFragment();
-		  else
-		     layout.setPulledFragment();
+          layout.setDescription(rs.getString(3));
+          if ("Y".equals(rs.getString(4)))
+             layout.setPushedFragment();
+          else
+             layout.setPulledFragment();
          }    
         } finally {
           rs.close();
@@ -2496,11 +2496,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          // Putting the lost folder
         layoutData.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
 
-	    // Setting the first layout node ID to the root folder
-	    if ( firstStructId > 0 )
-		 rootNode.setFirstChildNodeId(firstStructId+"");
-		else
-	     rootNode.setFirstChildNodeId(null);
+        // Setting the first layout node ID to the root folder
+        if ( firstStructId > 0 )
+         rootNode.setFirstChildNodeId(firstStructId+"");
+        else
+         rootNode.setFirstChildNodeId(null);
 
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
@@ -2808,7 +2808,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
   public void fillChannelDescription( IALChannelDescription channelDesc ) throws PortalException {
-  	try {
+    try {
 
               String publishId =  channelDesc.getChannelPublishId();
 
@@ -2818,25 +2818,25 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                if ( channelDef == null || !channelApproved(channelDef.getApprovalDate()) ) {
                  // Create an error channel if channel is missing or not approved
-				 ChannelDefinition cd = new ChannelDefinition(Integer.parseInt(publishId));
-				 cd.setTitle("Missing channel");
-				 cd.setName("Missing channel");
-				 cd.setTimeout(20000);
-				 cd.setJavaClass(CError.class.getName());
-				 cd.setEditable(false);
-				 cd.setHasAbout(false);
-				 cd.setHasHelp(false);
-				 String missingChannel = "Unknown";
-				 if (channelDef != null) {
-				   missingChannel = channelDef.getName();
-				 }
-				
-				 String errMsg = "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.";
-				 cd.addParameter("CErrorChanId",publishId,String.valueOf(false));
-				 cd.addParameter("CErrorMessage",errMsg,String.valueOf(false));
-				 cd.addParameter("CErrorErrorId",ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode()+"",String.valueOf(false));
-				 channelDef = cd;
-               }	
+                 ChannelDefinition cd = new ChannelDefinition(Integer.parseInt(publishId));
+                 cd.setTitle("Missing channel");
+                 cd.setName("Missing channel");
+                 cd.setTimeout(20000);
+                 cd.setJavaClass(CError.class.getName());
+                 cd.setEditable(false);
+                 cd.setHasAbout(false);
+                 cd.setHasHelp(false);
+                 String missingChannel = "Unknown";
+                 if (channelDef != null) {
+                   missingChannel = channelDef.getName();
+                 }
+                
+                 String errMsg = "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.";
+                 cd.addParameter("CErrorChanId",publishId,String.valueOf(false));
+                 cd.addParameter("CErrorMessage",errMsg,String.valueOf(false));
+                 cd.addParameter("CErrorErrorId",ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode()+"",String.valueOf(false));
+                 channelDef = cd;
+               }    
 
                  channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
                  channelDesc.setClassName(channelDef.getJavaClass());
@@ -2863,9 +2863,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                  channelDesc.setTitle(channelDef.getTitle());
 
               }
-  	} catch ( Exception e ) {
-  		throw new PortalException(e);        
-  	}
+    } catch ( Exception e ) {
+        throw new PortalException(e);        
+    }
 
   }
 
@@ -3169,7 +3169,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       String nodeId = rs.getInt(2)+"";
       String groupKey = rs.getString(3);
       if ( !correctIds.contains(nodeId) ) {
-       boolean isGroupKey = groupKeys.contains(groupKey);	
+       boolean isGroupKey = groupKeys.contains(groupKey);   
        if( !isGroupKey ) {
         IEntityGroup group = GroupService.findGroup(groupKey);
         if ( group == null || !groupPerson.isDeepMemberOf(group) ) {
@@ -3184,7 +3184,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
            incorrectIds.add(nodeId);
       }     
     }
-	  if ( rs != null ) rs.close();
+      if ( rs != null ) rs.close();
       if ( stmt != null ) stmt.close();
   } catch ( Exception e ) {
        throw new PortalException(e);
@@ -3196,158 +3196,158 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
  
  
     /**
-	  * Returns the list of Ids of the fragments that the user can subscribe to
-	  * @param person an <code>IPerson</code> object specifying the user
-	  * @return <code>Collection</code> a set of the fragment IDs
-	  * @exception PortalException if an error occurs
-	  */
+      * Returns the list of Ids of the fragments that the user can subscribe to
+      * @param person an <code>IPerson</code> object specifying the user
+      * @return <code>Collection</code> a set of the fragment IDs
+      * @exception PortalException if an error occurs
+      */
   public Collection getSubscribableFragments(IPerson person) throws PortalException {
-	int userId = person.getID();
+    int userId = person.getID();
     Set fragmentIds = new HashSet();
     Connection con = RDBMServices.getConnection();
     try {
-	 IGroupMember groupPerson = null;
-	 String query1 = "SELECT UGF.FRAGMENT_ID,UGF.GROUP_KEY FROM UP_GROUP_FRAGMENT UGF, UP_OWNER_FRAGMENT UOF WHERE UOF.FRAGMENT_ID=UGF.FRAGMENT_ID" + 
-	 " AND UOF.PUSHED_FRAGMENT='N'";
-	 Statement stmt = con.createStatement();
-	 ResultSet rs = stmt.executeQuery(query1);
-	 Set groupKeys = new HashSet();
+     IGroupMember groupPerson = null;
+     String query1 = "SELECT UGF.FRAGMENT_ID,UGF.GROUP_KEY FROM UP_GROUP_FRAGMENT UGF, UP_OWNER_FRAGMENT UOF WHERE UOF.FRAGMENT_ID=UGF.FRAGMENT_ID" + 
+     " AND UOF.PUSHED_FRAGMENT='N'";
+     Statement stmt = con.createStatement();
+     ResultSet rs = stmt.executeQuery(query1);
+     Set groupKeys = new HashSet();
 
-	 while ( rs.next() ) {
-	  if ( groupPerson == null ) {
-	   EntityIdentifier personIdentifier = person.getEntityIdentifier();
-	   groupPerson = GroupService.getGroupMember(personIdentifier);
-	  }
-	   int fragmentId = rs.getInt(1);
-	   String groupKey = rs.getString(2);
-	   String fragStrId = Integer.toString(fragmentId);
-	   if ( !fragmentIds.contains(fragStrId) ) {
-	    if ( groupKeys.contains(groupKey) )
-		  fragmentIds.add(fragStrId);
-	    else {
-		 IEntityGroup group = GroupService.findGroup(groupKey);
-		 if ( group != null && groupPerson.isDeepMemberOf(group) ) {
-		  fragmentIds.add(fragStrId);
-		  groupKeys.add(groupKey);
-		 }
-	    }
-	   } 
-	 }
-	   if ( rs != null ) rs.close();
-	   if ( stmt != null ) stmt.close();
+     while ( rs.next() ) {
+      if ( groupPerson == null ) {
+       EntityIdentifier personIdentifier = person.getEntityIdentifier();
+       groupPerson = GroupService.getGroupMember(personIdentifier);
+      }
+       int fragmentId = rs.getInt(1);
+       String groupKey = rs.getString(2);
+       String fragStrId = Integer.toString(fragmentId);
+       if ( !fragmentIds.contains(fragStrId) ) {
+        if ( groupKeys.contains(groupKey) )
+          fragmentIds.add(fragStrId);
+        else {
+         IEntityGroup group = GroupService.findGroup(groupKey);
+         if ( group != null && groupPerson.isDeepMemberOf(group) ) {
+          fragmentIds.add(fragStrId);
+          groupKeys.add(groupKey);
+         }
+        }
+       } 
+     }
+       if ( rs != null ) rs.close();
+       if ( stmt != null ) stmt.close();
     } catch ( Exception e ) {
-		throw new PortalException(e);
-	 } finally {
-		RDBMServices.releaseConnection(con);
-	   }
-	 return fragmentIds;
+        throw new PortalException(e);
+     } finally {
+        RDBMServices.releaseConnection(con);
+       }
+     return fragmentIds;
   }
  
    /**
-		* Returns the user group keys which the fragment is published to
-		* @param person an <code>IPerson</code> object specifying the user
-		* @param fragmentId a <code>String</code> value
-		* @return a <code>Collection</code> object containing the group keys
-		* @exception PortalException if an error occurs
-		*/
+        * Returns the user group keys which the fragment is published to
+        * @param person an <code>IPerson</code> object specifying the user
+        * @param fragmentId a <code>String</code> value
+        * @return a <code>Collection</code> object containing the group keys
+        * @exception PortalException if an error occurs
+        */
    public Collection getPublishGroups (IPerson person, String fragmentId ) throws PortalException {
-	  int userId = person.getID();
-	  Vector groupKeys = new Vector();
-	  Connection con = RDBMServices.getConnection();
-	  try {
-		String query1 = "SELECT UGF.GROUP_KEY FROM UP_GROUP_FRAGMENT UGF, UP_OWNER_FRAGMENT UOF WHERE UOF.FRAGMENT_ID=UGF.FRAGMENT_ID"+
-		" AND UGF.FRAGMENT_ID="+fragmentId+ " AND UOF.OWNER_ID="+userId;
-		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery(query1);
-		
-		while ( rs.next() ) {
-		  String groupKey = rs.getString(1);
-		  if ( groupKey != null )
-		    groupKeys.add(groupKey);
-		}
-		  if ( rs != null ) rs.close();
-		  if ( stmt != null ) stmt.close();
-	  } catch ( Exception e ) {
-		   throw new PortalException(e);
-		} finally {
-		   RDBMServices.releaseConnection(con);
-		  }
-		return groupKeys;
+      int userId = person.getID();
+      Vector groupKeys = new Vector();
+      Connection con = RDBMServices.getConnection();
+      try {
+        String query1 = "SELECT UGF.GROUP_KEY FROM UP_GROUP_FRAGMENT UGF, UP_OWNER_FRAGMENT UOF WHERE UOF.FRAGMENT_ID=UGF.FRAGMENT_ID"+
+        " AND UGF.FRAGMENT_ID="+fragmentId+ " AND UOF.OWNER_ID="+userId;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query1);
+        
+        while ( rs.next() ) {
+          String groupKey = rs.getString(1);
+          if ( groupKey != null )
+            groupKeys.add(groupKey);
+        }
+          if ( rs != null ) rs.close();
+          if ( stmt != null ) stmt.close();
+      } catch ( Exception e ) {
+           throw new PortalException(e);
+        } finally {
+           RDBMServices.releaseConnection(con);
+          }
+        return groupKeys;
    }
    
    /**
-		  * Persists the user groups which the fragment is published to
-		  * @param groups an array of <code>IGroupMember</code> objects
-		  * @param person an <code>IPerson</code> object specifying the user
-		  * @param fragmentId a <code>String</code> value
-		  * @exception PortalException if an error occurs
-		  */
-	public void setPublishGroups ( IGroupMember[] groups, IPerson person, String fragmentId ) throws PortalException {
-		int userId = person.getID();
-	    Connection con = RDBMServices.getConnection();
-	 try {
-		 
-		 boolean isUpdateAllowed = false;
-		 String query = "SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId+ " AND OWNER_ID="+userId; 
-		 Statement stmt = con.createStatement();
-		 ResultSet rs = stmt.executeQuery(query);
-		 if ( rs.next() ) 
-		   isUpdateAllowed = true;
-		 rs.close();  
-		   
-		 if ( isUpdateAllowed ) {  
-		  RDBMServices.setAutoCommit(con, false);   	
-		  // Deleting all the group key for the given fragment
-		  stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-		  PreparedStatement ps = con.prepareStatement("INSERT INTO UP_GROUP_FRAGMENT (GROUP_KEY,FRAGMENT_ID) VALUES (?,"+fragmentId+")");
-		  for ( int i = 0; i < groups.length; i++ ) {
-		  	ps.setString(1,groups[i].getKey());
-		  	ps.executeUpdate();
-		  }
-		    ps.close();		
-		  RDBMServices.commit(con);
-		 } 
-			if ( stmt != null ) stmt.close();
-	  } catch ( Exception e ) {
-			throw new PortalException(e);
-		} finally {
-			RDBMServices.releaseConnection(con);
-		  }	
-	}
-	
+          * Persists the user groups which the fragment is published to
+          * @param groups an array of <code>IGroupMember</code> objects
+          * @param person an <code>IPerson</code> object specifying the user
+          * @param fragmentId a <code>String</code> value
+          * @exception PortalException if an error occurs
+          */
+    public void setPublishGroups ( IGroupMember[] groups, IPerson person, String fragmentId ) throws PortalException {
+        int userId = person.getID();
+        Connection con = RDBMServices.getConnection();
+     try {
+         
+         boolean isUpdateAllowed = false;
+         String query = "SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId+ " AND OWNER_ID="+userId; 
+         Statement stmt = con.createStatement();
+         ResultSet rs = stmt.executeQuery(query);
+         if ( rs.next() ) 
+           isUpdateAllowed = true;
+         rs.close();  
+           
+         if ( isUpdateAllowed ) {  
+          RDBMServices.setAutoCommit(con, false);       
+          // Deleting all the group key for the given fragment
+          stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+          PreparedStatement ps = con.prepareStatement("INSERT INTO UP_GROUP_FRAGMENT (GROUP_KEY,FRAGMENT_ID) VALUES (?,"+fragmentId+")");
+          for ( int i = 0; i < groups.length; i++ ) {
+            ps.setString(1,groups[i].getKey());
+            ps.executeUpdate();
+          }
+            ps.close();     
+          RDBMServices.commit(con);
+         } 
+            if ( stmt != null ) stmt.close();
+      } catch ( Exception e ) {
+            throw new PortalException(e);
+        } finally {
+            RDBMServices.releaseConnection(con);
+          } 
+    }
+    
     /**
-			* Returns the priority range defined for the given user group
-			* @param groupKey a <code>String</code> group key
-			* @return a int array containing the min and max priority values
-			* @exception PortalException if an error occurs
-			*/
-	public int[] getPriorityRange ( String groupKey ) throws PortalException {
-		Connection con = RDBMServices.getConnection();
-			try {
-		        int[] range = new int[2];
-				String query = "SELECT MIN_PRIORITY, MAX_PRIORITY FROM UP_GROUP_PRIORITY_RANGE WHERE GROUP_KEY='"+groupKey+"'"; 
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(query);
-				if ( rs.next() ) {
-				  range[0] = rs.getInt(1);
-				  range[1] = rs.getInt(2);	 
-				}
-				rs.close();  
-		        if ( stmt != null ) stmt.close();
-		        return ( range[1] > 0 ) ? range : new int[] {};
-		    } catch ( Exception e ) {
-				   throw new PortalException(e);
-			   } finally {
-				   RDBMServices.releaseConnection(con);
-				 }		
-	}
-	
-	public String getNextNodeId(IPerson person) throws PortalException {
-	 try {	
-	  return getNextStructId(person,"");
-	 } catch ( Exception e ) {
-	 	throw new PortalException(e);
-	 } 
-	}
+            * Returns the priority range defined for the given user group
+            * @param groupKey a <code>String</code> group key
+            * @return a int array containing the min and max priority values
+            * @exception PortalException if an error occurs
+            */
+    public int[] getPriorityRange ( String groupKey ) throws PortalException {
+        Connection con = RDBMServices.getConnection();
+            try {
+                int[] range = new int[2];
+                String query = "SELECT MIN_PRIORITY, MAX_PRIORITY FROM UP_GROUP_PRIORITY_RANGE WHERE GROUP_KEY='"+groupKey+"'"; 
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+                if ( rs.next() ) {
+                  range[0] = rs.getInt(1);
+                  range[1] = rs.getInt(2);   
+                }
+                rs.close();  
+                if ( stmt != null ) stmt.close();
+                return ( range[1] > 0 ) ? range : new int[] {};
+            } catch ( Exception e ) {
+                   throw new PortalException(e);
+               } finally {
+                   RDBMServices.releaseConnection(con);
+                 }      
+    }
+    
+    public String getNextNodeId(IPerson person) throws PortalException {
+     try {  
+      return getNextStructId(person,"");
+     } catch ( Exception e ) {
+        throw new PortalException(e);
+     } 
+    }
 
 }

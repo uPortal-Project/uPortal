@@ -271,7 +271,7 @@ public void delete(IEntityGroup group) throws GroupsException
         try
             { primDelete(group); }
         catch (SQLException sqle)
-            { throw new GroupsException("Problem deleting " + group + ": " + sqle.getMessage()); }
+            { throw new GroupsException("Problem deleting " + group, sqle); }
     }
 }
 
@@ -488,7 +488,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
     catch (SQLException sqle)
     {
         log.error("Problem retrieving Entities for Group: " + group, sqle);
-        throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());
+        throw new GroupsException("Problem retrieving Entities for Group", sqle);
     }
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -1149,7 +1149,7 @@ public IEntityGroup newInstance(Class type) throws GroupsException
     try
         { return new EntityGroupImpl(getNextKey(), type); }
     catch ( Exception ex )
-        { throw new GroupsException("Could not create new group: " + ex.getMessage()); }
+        { throw new GroupsException("Could not create new group", ex); }
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
@@ -1648,13 +1648,13 @@ public void update(IEntityGroup group) throws GroupsException
     }
 
     catch ( SQLException sqlex )
-        { throw new GroupsException(sqlex.getMessage()); }
+        { throw new GroupsException(sqlex); }
 
     finally
     {
         try { setAutoCommit(conn, true); }
         catch (SQLException sqle)
-            { throw new GroupsException(sqle.getMessage()); }
+            { throw new GroupsException(sqle); }
         finally { RDBMServices.releaseConnection(conn); }
     }
 }
@@ -1681,18 +1681,18 @@ public void updateMembers(IEntityGroup eg) throws GroupsException
         catch ( SQLException sqle )
         {
             rollback(conn);
-            throw new GroupsException("Problem updating memberships for " + egi + " " + sqle.getMessage());
+            throw new GroupsException("Problem updating memberships for " + egi, sqle);
         }
     }
 
     catch ( SQLException sqlex )
-        { throw new GroupsException(sqlex.getMessage()); }
+        { throw new GroupsException(sqlex); }
 
     finally
     {
         try { setAutoCommit(conn, true); }
         catch (SQLException sqle)
-            { throw new GroupsException(sqle.getMessage()); }
+            { throw new GroupsException(sqle); }
         finally { RDBMServices.releaseConnection(conn); }
     }
 }

@@ -88,7 +88,7 @@ public void deleteGroup(IEntityGroup group) throws GroupsException
         try
             { removeGroupFromCache(group); }
         catch (CachingException ce)
-            { throw new GroupsException("Problem deleting group " + group.getKey() + " : " + ce.getMessage()); }
+            { throw new GroupsException("Problem deleting group " + group.getKey(), ce); }
     }
     getGroupStore().delete(group);
 }
@@ -111,8 +111,7 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
                 " has invalid lock."); }
     }
     catch (LockingException le)
-        { throw new GroupsException("Could not delete group " + group.getKey() +
-                " : " + le.getMessage()); }
+        { throw new GroupsException("Could not delete group " + group.getKey(), le); }
 }
 
 /**
@@ -135,7 +134,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
                     { addGroupToCache(group); }
             }
             catch (CachingException ce)
-                { throw new GroupsException("Problem finding containing groups: " + ce.getMessage()); }
+                { throw new GroupsException("Problem finding containing groups", ce); }
         }
     }
     return groups.iterator();
@@ -168,7 +167,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
         return group;
         }
         catch (CachingException ce)
-            { throw new GroupsException("Problem retrieving group " + key + " : " + ce.getMessage());}
+            { throw new GroupsException("Problem retrieving group " + key, ce);}
     }
     
 /**
@@ -204,7 +203,7 @@ throws GroupsException
         return group;
     }
     catch (LockingException le)
-        { throw new GroupsException("Problem getting lock for group " + key + " : " + le.getMessage()); }
+        { throw new GroupsException("Problem getting lock for group " + key, le); }
 
 }
 
@@ -228,7 +227,7 @@ public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException
                     { addGroupToCache(group); }
             }
             catch (CachingException ce)
-                { throw new GroupsException("Problem finding member groups: " + ce.getMessage()); }
+                { throw new GroupsException("Problem finding member groups", ce); }
         }
     }
     return groups.iterator();
@@ -303,7 +302,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
     {
         return groupFactory;
     }
-    
+
     /**
      * Refers to the PropertiesManager to get the key for the root group
      * associated with 'type' and asks the group store implementation for the corresponding
@@ -312,7 +311,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
     public IEntityGroup getRootGroup(Class type) throws GroupsException{
       return getDistinguishedGroup(type.getName());
     }
-    
+
     /**
      * @exception org.jasig.portal.groups.GroupsException
      */
@@ -365,7 +364,7 @@ public IEntityGroup newGroup(Class type) throws GroupsException
     }
     catch (Exception e)
     {
-        throw new GroupsException("ReferenceGroupService.newGroup(): " + e.getMessage());
+        throw new GroupsException(e);
     }
 }
 
@@ -399,7 +398,7 @@ public void updateGroup(IEntityGroup group) throws GroupsException
         try
             { updateGroupInCache(group); }
         catch (CachingException ce)
-            { throw new GroupsException("Problem updating group " + group.getKey() + " : " + ce.getMessage()); }
+            { throw new GroupsException("Problem updating group " + group.getKey(), ce); }
     }
     getGroupStore().update(group);
 }
@@ -441,11 +440,9 @@ throws GroupsException
         }
     }
     catch (LockingException le)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + le.getMessage()); }
+        { throw new GroupsException("Problem updating group " + group.getKey(), le); }
     catch (CachingException ce)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + ce.getMessage()); }
+        { throw new GroupsException("Problem updating group " + group.getKey(), ce); }
 }
 
 /**
@@ -467,7 +464,7 @@ public void updateGroupMembers(IEntityGroup group) throws GroupsException
         try
             { EntityCachingService.instance().update(group); }
         catch (CachingException ce)
-            { throw new GroupsException("Problem updating members for group " + group.getKey() + " : " + ce.getMessage()); }
+            { throw new GroupsException("Problem updating members for group " + group.getKey(), ce); }
     }
     getGroupStore().updateMembers(group);
 }
@@ -509,11 +506,9 @@ throws GroupsException
         }
     }
     catch (LockingException le)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + le.getMessage()); }
+        { throw new GroupsException("Problem updating group " + group.getKey(), le); }
     catch (CachingException ce)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + ce.getMessage()); }
+        { throw new GroupsException("Problem updating group " + group.getKey(), ce); }
 }
 
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
