@@ -1,4 +1,5 @@
-/* Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+/**
+ * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,15 +54,17 @@ public abstract class GroupMemberImpl implements IGroupMember
  * that underlies the <code>IGroupMember</code>.
  */
     private EntityIdentifier underlyingEntityIdentifier;
-
     private static java.lang.Class defaultEntityType;
 
-/*
- * A cache for the <code>IEntityGroups</code> that contain this
- * <code>IGroupMember</code>.
+    // Our home service.
+    protected IGroupService groupService;
+
+/* 
+ * The Set of keys to groups that contain this <code>IGroupMember</code>.
+ * the groups themselves are cached by the service.
  */
-    private HashMap groups;
-    private boolean groupsInitialized;
+    private Set groupKeys;
+    private boolean groupKeysInitialized;
 /**
  * GroupMemberImpl constructor
  */
@@ -81,13 +84,19 @@ public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsExcept
         { throw new GroupsException("Unknown entity type: " + newEntityIdentifier.getType()); }
 }
 /**
- * Adds the <code>IEntityGroup</code> to our groups <code>Map</code>.
+ * Adds the key of the <code>IEntityGroup</code> to our groups <code>Collection</code>.
  * @return void
  * @param gm org.jasig.portal.groups.IEntityGroup
  */
 public void addGroup(IEntityGroup eg)
 {
-    primGetGroups().put(eg.getName(), eg);
+    getGroupKeys().add(eg.getEntityIdentifier().getKey());
+}
+/**
+ * @return boolean
+ */
+private boolean areGroupKeysInitialized() {
+    return groupKeysInitialized;
 }
 /**
  * Default implementation, overridden on EntityGroupImpl.
@@ -137,7 +146,8 @@ public java.util.Iterator getAllMembers() throws GroupsException
  * @return java.lang.String
  */
 protected String getCacheKey() {
-    return getKey() + new Boolean(isGroup()).hashCode();
+	return getEntityIdentifier().getKey();
+//  return getKey() + new Boolean(isGroup()).hashCode();
 }
 /**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
@@ -145,9 +155,15 @@ protected String getCacheKey() {
  */
 public java.util.Iterator getContainingGroups() throws GroupsException
 {
-    if ( ! isGroupsInitialized() )
-        { initializeGroups(); }
-    return primGetGroups().values().iterator();
+    if ( ! areGroupKeysInitialized() )
+        { initializeGroupKeys(); }
+    Collection groupsColl = new ArrayList(getGroupKeys().size());
+    for ( Iterator i = getGroupKeys().iterator(); i.hasNext(); )
+    {
+        String groupKey = (String) i.next();
+        groupsColl.add(getGroupService().findGroup(groupKey));
+    } 
+    return groupsColl.iterator();
 }
 /**
  * @return java.lang.Class
@@ -187,6 +203,23 @@ protected IEntityStore getEntityFactory() throws GroupsException {
  */
 protected IEntityGroupStore getEntityGroupFactory() throws GroupsException {
     return GroupService.getGroupService().getGroupStore();
+}
+/**
+ * @return java.util.Set
+ */
+private java.util.Set getGroupKeys() {
+    if ( this.groupKeys == null )
+        this.groupKeys = new HashSet(10);
+    return groupKeys;
+}
+/**
+ * @return org.jasig.portal.groups.IGroupService
+ */
+protected IGroupService getGroupService() throws GroupsException
+{
+    if (groupService == null)
+        { groupService = GroupService.getGroupService(); }
+    return groupService;
 }
 /**
  * @return java.lang.String
@@ -239,35 +272,45 @@ public boolean hasMembers() throws GroupsException
     return false;
 }
 /**
- * Load and cache <code>IEntityGroups</code> that contain this <code>IGroupMember</code>.
+ * Cache the keys for <code>IEntityGroups</code> that contain this <code>IGroupMember</code>.
  * @return void
  */
-private void initializeContainingGroups() throws GroupsException
+private void initializeContainingGroupKeys() throws GroupsException
 {
-    Iterator eGroups = getEntityGroupFactory().findContainingGroups(this);
-
-    while (eGroups.hasNext())
-    {
-        IEntityGroup eg = (IEntityGroup) eGroups.next();
-        addGroup(eg);
-    }
+    for ( Iterator it = getGroupService().findContainingGroups(this); it.hasNext(); )
+        {  addGroup((IEntityGroup) it.next()); }
 }
 /**
- * Load and cache <code>IEntityGroups</code> that contain this IGroupMember.
+ * Cache <code>IEntityGroup</code> keys for groups that contain this IGroupMember.
  */
-private void initializeGroups() throws GroupsException
+private void initializeGroupKeys() throws GroupsException
 {
-    initializeContainingGroups();
-    setGroupsInitialized(true);
+    initializeContainingGroupKeys();
+    setGroupKeysInitialized(true);
 }
 /**
  * Answers if this <code>IGroupMember</code> is, recursively, a member of <code>IGroupMember</code> gm.
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException{
-    return gm.deepContains(this);
+public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException {
+
+	if ( gm.isEntity() )
+	    return false;
+    if ( this.isMemberOf(gm) )
+        return true;
+
+    boolean isMember = false;
+    Iterator it = gm.getMembers();
+    while ( it.hasNext() && !isMember )
+    {
+        IGroupMember potentialParent = (IGroupMember) it.next();
+        isMember = this.isDeepMemberOf(potentialParent);
+    }
+
+    return isMember;
 }
+
 /**
  * @return boolean
  */
@@ -283,12 +326,6 @@ public boolean isGroup()
     return false;
 }
 /**
- * @return boolean
- */
-private boolean isGroupsInitialized() {
-    return groupsInitialized;
-}
-/**
  * @return boolean.
  */
 protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
@@ -302,7 +339,13 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
  */
 public boolean isMemberOf(IGroupMember gm) throws GroupsException
 {
-    return gm.contains(this);
+	if ( gm.isEntity() )
+	    { return false; }
+    if ( ! areGroupKeysInitialized() )
+        { initializeGroupKeys(); }
+
+    Object cacheKey = gm.getKey();
+    return getGroupKeys().contains(cacheKey);
 }
 /**
  * Returns the <code>Set</code> of groups in our member <code>Collection</code> and,
@@ -322,26 +365,18 @@ protected java.util.Set primGetAllContainingGroups(Set s) throws GroupsException
     return s;
 }
 /**
- * @return java.util.HashMap
- */
-private java.util.HashMap primGetGroups() {
-    if ( this.groups == null )
-        this.groups = new HashMap();
-    return groups;
-}
-/**
- * Remove the <code>IEntityGroup</code> from our groups <code>Map</code>.
+ * Remove the <code>IEntityGroup</code> key from our group keys <code>Set</code>.
  * @return void
  * @param gm org.jasig.portal.groups.IEntityGroup
  */
 public void removeGroup(IEntityGroup eg)
 {
-    primGetGroups().remove(eg.getName());
+    getGroupKeys().remove(eg.getEntityIdentifier().getKey());
 }
 /**
  * @param newGroupsInitialized boolean
  */
-private void setGroupsInitialized(boolean newGroupsInitialized) {
-    groupsInitialized = newGroupsInitialized;
+private void setGroupKeysInitialized(boolean newGroupKeysInitialized) {
+    groupKeysInitialized = newGroupKeysInitialized;
 }
 }

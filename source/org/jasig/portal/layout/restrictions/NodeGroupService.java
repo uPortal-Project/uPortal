@@ -36,7 +36,7 @@
 package org.jasig.portal.layout.restrictions;
 
 import java.io.*;
-import java.util.Properties;
+import java.util.*;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.services.LogService;
@@ -47,6 +47,7 @@ import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.groups.RDBMEntityStore;
 
 /**
@@ -72,6 +73,15 @@ public class NodeGroupService implements IGroupService {
     }
 
     /**
+     * Removes the <code>IEntityGroup</code> from the cache and the store.
+     * @param group IEntityGroup
+     */
+    public void deleteGroup(IEntityGroup group) throws GroupsException
+    {
+        getGroupStore().delete(group);
+    }
+
+    /**
      * Returns a pre-existing <code>IEntityGroup</code> or null if it
      * does not exist.
      */
@@ -79,6 +89,55 @@ public class NodeGroupService implements IGroupService {
       return groupStore.find(key);
     }
 
+   /**
+     * Returns the containg groups for the <code>IGroupMember</code>
+     * @param gm IGroupMember
+     */
+    public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+    {
+        Collection groups = new ArrayList(10);
+        IEntityGroup group = null;
+        for ( Iterator it = getGroupStore().findContainingGroups(gm); it.hasNext(); )
+        {
+            group = (IEntityGroup) it.next();
+            groups.add(group);
+        }
+        return groups.iterator();
+    }
+
+    /**
+     * Returns the member groups for the <code>IEntityGroup</code>
+     * @param eg IEntityGroup
+     */
+    public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException
+    {
+        Collection groups = new ArrayList(10);
+        IEntityGroup group = null;
+        for ( Iterator it = getGroupStore().findMemberGroups(eg); it.hasNext(); )
+        {
+            group = (IEntityGroup) it.next();
+            groups.add(group);
+        }
+        return groups.iterator();
+    }
+
+    /**
+     * Updates the cache and the store with the new <code>IEntityGroup</code>.
+     * @param group IEntityGroup
+     */
+    public void updateGroup(IEntityGroup group) throws GroupsException
+    {
+        getGroupStore().update(group);
+    }
+
+    /**
+     * Synchronizes the store with the updated <code>IEntityGroup</code>.
+     * @param group IEntityGroup
+     */
+    public void updateGroupMembers(IEntityGroup group) throws GroupsException
+    {
+        getGroupStore().updateMembers(group);
+    }
     /**
      * Returns an <code>IEntity</code> representing a portal entity.  This does
      * not guarantee that the entity actually exists.

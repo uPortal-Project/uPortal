@@ -1,7 +1,5 @@
-package org.jasig.portal.groups;
-
 /**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +32,8 @@ package org.jasig.portal.groups;
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+package org.jasig.portal.groups;
 
 /**
  * Interface for finding and maintaining <code>IEntityGroups</code>.
@@ -83,4 +83,11 @@ public void update(IEntityGroup group) throws GroupsException;
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 public void updateMembers(IEntityGroup group) throws GroupsException;
+
+/**
+ * Returns an instance of the <code>ILockableEntityGroup</code> from the data store.
+ * @return org.jasig.portal.groups.IEntityGroup
+ * @param key java.lang.String
+ */
+public ILockableEntityGroup findLockable(String key) throws GroupsException;
 }

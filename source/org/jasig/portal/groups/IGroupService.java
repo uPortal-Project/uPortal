@@ -35,6 +35,8 @@
 
 package org.jasig.portal.groups;
 
+import java.util.Iterator;
+
 /**
  * Defines an api for discovering an entry point into the groups system,
  * represented by an <code>IGroupMember</code>.  This is analogous to getting an
@@ -90,4 +92,31 @@ public interface IGroupService {
    * Returns an <code>IEntityGroupStore</code>.
    */
   public IEntityGroupStore getGroupStore() throws GroupsException;
+
+  /**
+   * Removes the <code>IEntityGroup</code> from the store.
+   */
+  public void deleteGroup(IEntityGroup group) throws GroupsException;
+
+  /**
+   * Commits the updated <code>IEntityGroup</code> to the store.
+   */
+  public void updateGroup(IEntityGroup group) throws GroupsException;
+
+  /**
+   * Commits the updated <code>IEntityGroup</code> to the store.
+   */
+  public void updateGroupMembers(IEntityGroup group) throws GroupsException;
+
+  /**
+   * Returns the containing groups for the <code>IGroupMember</code>
+   * @param gm IGroupMember
+   */
+  public Iterator findContainingGroups(IGroupMember gm) throws GroupsException;
+
+  /**
+   * Returns the member groups for the <code>IEntityGroup</code>
+   * @param eg IEntityGroup
+   */
+  public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException;
 }

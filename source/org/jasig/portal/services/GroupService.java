@@ -32,6 +32,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
 package org.jasig.portal.services;
 
 import org.jasig.portal.groups.*;
@@ -224,5 +225,31 @@ public class GroupService implements IGroupConstants
     public static IGroupService getGroupService() throws GroupsException
     {
         return instance().groupService;
+    }
+
+    /*
+     * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
+     * group is not found.
+     * @param key String - the group key.
+     * @param lockOwner String - the owner of the lock, typically the user.
+     * @return org.jasig.portal.groups.ILockableEntityGroup
+     */
+    public static ILockableEntityGroup findLockableGroup(String key, String lockOwner)
+    throws GroupsException
+    {
+        return instance().ifindLockableGroup(key, lockOwner);
+    }
+
+    /*
+     * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
+     * group is not found.
+     * @param key String - the group key.
+     * @param lockOwner String - typically the user.
+     * @return org.jasig.portal.groups.ILockableEntityGroup
+     */
+    protected ILockableEntityGroup ifindLockableGroup(String key, String lockOwner)
+    throws GroupsException
+    {
+        return ((ILockableGroupService)groupService).findGroupWithLock(key, lockOwner);
     }
 }

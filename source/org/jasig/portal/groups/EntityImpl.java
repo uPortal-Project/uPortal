@@ -35,6 +35,7 @@
 package org.jasig.portal.groups;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.services.LogService;
 
 /**
  * Reference implementation for <code>IEntity</code>.

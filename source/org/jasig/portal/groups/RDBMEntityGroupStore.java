@@ -137,38 +137,7 @@ private boolean existsInDatabase(IEntityGroup group) throws GroupsException
  */
 public IEntityGroup find(String groupID) throws GroupsException
 {
-    IEntityGroup ug = null;
-    java.sql.Connection conn = null;
-    try
-    {
-            conn = RDBMServices.getConnection();
-            String sql = getFindGroupSql();
-            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
-            try
-            {
-                    ps.setString(1, groupID);
-                    LogService.log (LogService.DEBUG, "RDBMEntityGroupStore.find(): " + ps);
-                    java.sql.ResultSet rs = ps.executeQuery();
-                    try
-                    {
-                            while (rs.next())
-                                { ug = instanceFromResultSet(rs); }
-                    }
-                    finally
-                        { rs.close(); }
-            }
-            finally
-                { ps.close(); }
-    }
-    catch (Exception e)
-    {
-        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.find(): " + e);
-        throw new GroupsException("Error retrieving " + groupID + ": " + e);
-    }
-    finally
-        { RDBMServices.releaseConnection(conn); }
-
-    return ug;
+    return primFind(groupID, false);
 }
 /**
  * Find the groups associated with this member key.
@@ -193,7 +162,9 @@ throws GroupsException
                     ps.setString(1, memberKey);
                     ps.setInt(2, type);
                     ps.setString(3, groupOrEntity);
-                    LogService.log (LogService.DEBUG, "RDBMEntityGroupStore.findContainingGroups(): " + ps);
+                    LogService.log (LogService.DEBUG,
+                      "RDBMEntityGroupStore.findContainingGroups(): " + ps +
+                      " (" + memberKey + ", " + type + ", " + groupOrEntity + ")");
                     java.sql.ResultSet rs = ps.executeQuery();
                     try
                     {
@@ -291,27 +262,28 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
 
     try
     {
-            conn = RDBMServices.getConnection();
-            String sql = getFindMemberGroupsSql();
-            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+        conn = RDBMServices.getConnection();
+        String sql = getFindMemberGroupsSql();
+        RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+        try
+        {
+            ps.setString(1, group.getKey());
+            LogService.log (LogService.DEBUG,
+              "RDBMEntityGroupStore.findMemberGroups(): " + ps + " (" + group.getKey() + ")");
+            java.sql.ResultSet rs = ps.executeQuery();
             try
             {
-                    ps.setString(1, group.getKey());
-                    LogService.log (LogService.DEBUG, "RDBMEntityGroupStore.findMemberGroups(): " + ps);
-                    java.sql.ResultSet rs = ps.executeQuery();
-                    try
-                    {
-                            while (rs.next())
-                            {
-                                    eg = instanceFromResultSet(rs);
-                                    groups.add(eg);
-                            }
-                        }
-                    finally
-                        { rs.close(); }
+                while (rs.next())
+                {
+                    eg = instanceFromResultSet(rs);
+                    groups.add(eg);
+                }
             }
             finally
-                { ps.close(); }
+                { rs.close(); }
+        }
+        finally
+            { ps.close(); }
     }
     catch (Exception sqle)
         {
@@ -1032,5 +1004,104 @@ public void updateMembers(IEntityGroup eg) throws GroupsException
             { throw new GroupsException(sqle.getMessage()); }
         RDBMServices.releaseConnection(conn);
     }
+}
+
+/**
+ * Find and return an instance of the group.
+ * @return org.jasig.portal.groups.ILockableEntityGroup
+ * @param key java.lang.Object
+ */
+public ILockableEntityGroup findLockable(String groupID) throws GroupsException
+{
+    return (ILockableEntityGroup) primFind(groupID, true);
+}
+
+/**
+ * Find and return an instance of the group.
+ * @return org.jasig.portal.groups.ILockableEntityGroup
+ * @param key java.lang.Object
+ */
+private ILockableEntityGroup lockableInstanceFromResultSet(java.sql.ResultSet rs)
+throws  SQLException,
+        GroupsException
+{
+    ILockableEntityGroup eg = null;
+
+    String key = rs.getString(1);
+    String creatorID = rs.getString(2);
+    Integer entityTypeID = new Integer(rs.getInt(3));
+    Class entityType = EntityTypes.getEntityType(entityTypeID);
+    String groupName = rs.getString(4);
+    String description = rs.getString(5);
+
+    if ( key != null )
+        { eg = newLockableInstance(key, entityType, creatorID, groupName, description); }
+
+    return eg;
+}
+
+/**
+ * @return org.jasig.portal.groups.ILockableEntityGroup
+ */
+private ILockableEntityGroup newLockableInstance
+    (String newKey,
+    Class newType,
+    String newCreatorID,
+    String newName,
+    String newDescription)
+    throws GroupsException
+{
+    LockableEntityGroupImpl group = new LockableEntityGroupImpl(newKey, newType);
+    group.setCreatorID(newCreatorID);
+    group.primSetName(newName);
+    group.setDescription(newDescription);
+    return group;
+}
+
+/**
+ * Find and return an instance of the group.
+ * @return org.jasig.portal.groups.IEntityGroup
+ * @param key java.lang.Object
+ * @param lockable boolean 
+ */
+private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsException
+{
+    IEntityGroup eg = null;
+    java.sql.Connection conn = null;
+    try
+    {
+            conn = RDBMServices.getConnection();
+            String sql = getFindGroupSql();
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
+            try
+            {
+                    ps.setString(1, groupID);
+                    LogService.log (LogService.DEBUG,
+                      "RDBMEntityGroupStore.find(): " + ps + " (" + groupID + ")");
+                    java.sql.ResultSet rs = ps.executeQuery();
+                    try
+                    {
+                            while (rs.next())
+                            { 
+                                eg = (lockable) 
+                                    ? lockableInstanceFromResultSet(rs) 
+                                    : instanceFromResultSet(rs); 
+	                        }
+                    }
+                    finally
+                        { rs.close(); }
+            }
+            finally
+                { ps.close(); }
+    }
+    catch (Exception e)
+    {
+        LogService.log (LogService.ERROR, "RDBMEntityGroupStore.find(): " + e);
+        throw new GroupsException("Error retrieving " + groupID + ": " + e);
+    }
+    finally
+        { RDBMServices.releaseConnection(conn); }
+
+    return eg;
 }
 }
