@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright (c) 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -353,21 +353,22 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        }
       }
 
-      if ( isFolder ) {
-          ++depth;
-          ALFolder folder = (ALFolder) node;
-          String firstChildId = folder.getFirstChildNodeId();
-          if ( firstChildId != null ) {
-              String id = getLastSiblingNode(firstChildId).getId();
-              while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
-	          String lastNodeId = getLastSiblingNode(id).getId();
-	          id = getLayoutNode(lastNodeId).getPreviousNodeId();
-                  moveNodeToLostFolder(lastNodeId);
-              }  
-              for ( String nextId = folder.getFirstChildNodeId(); nextId != null; nextId = getLayoutNode(nextId).getNextNodeId() )
-                  moveWrongNodesToLostFolder(nextId,depth);
-          }
-      }
+        if ( isFolder ) {
+            ++depth;
+            ALFolder folder = (ALFolder) node;
+            String firstChildId = folder.getFirstChildNodeId();
+            if ( firstChildId != null ) {
+             String id = getLastSiblingNode(firstChildId).getId();
+             while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
+			   String lastNodeId = getLastSiblingNode(id).getId();
+			   id = getLayoutNode(lastNodeId).getPreviousNodeId();
+			   moveNodeToLostFolder(lastNodeId);
+             }  
+             for ( String nextId = folder.getFirstChildNodeId(); nextId != null; 
+                   nextId = getLayoutNode(nextId).getNextNodeId() )
+               moveWrongNodesToLostFolder(nextId,depth);
+            } 
+        }
 
   }
 
@@ -972,7 +973,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
            Node paramNameNode = attributes.getNamedItem("name");
            String paramName = (paramNameNode!=null)?paramNameNode.getFirstChild().getNodeValue():null;
            Node paramValueNode = attributes.getNamedItem("value");
-           String paramValue = (paramValueNode!=null)?paramValueNode.getFirstChild().getNodeValue():null;
+           String paramValue = (paramValueNode!=null && paramValueNode.getFirstChild()!=null)?paramValueNode.getFirstChild().getNodeValue():null;
            Node overParamNode = attributes.getNamedItem("override");
            String overParam = (overParamNode!=null)?overParamNode.getFirstChild().getNodeValue():"yes";
 
@@ -988,7 +989,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
              Node restrTypeNode = attributes.getNamedItem("type");
              String restrType = (restrTypeNode!=null)?restrTypeNode.getFirstChild().getNodeValue():"0";
 
-             if ( restrValue != null ) {
+             if ( restrValue != null && restrPathNode != null ) {
               IUserLayoutRestriction restriction = UserLayoutRestrictionFactory.createRestriction(CommonUtils.parseInt(restrType),restrValue,restrPath);
               nodeDesc.addRestriction(restriction);
              }
@@ -1060,11 +1061,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       rootFolder.setFirstChildNodeId(((Element)rootNode.getFirstChild()).getAttribute("ID"));
       layoutData.put(rootId,rootFolder);
       NodeList childNodes = rootNode.getChildNodes();
-
+      layout.setLayoutData(layoutData);
       for ( int i = 0; i < childNodes.getLength(); i++ )
        setUserLayoutDOM ( childNodes.item(i), rootId, layoutData );
-
-      layout.setLayoutData(layoutData);
       updateCacheKey();
     }
 
