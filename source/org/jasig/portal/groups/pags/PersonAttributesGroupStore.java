@@ -127,7 +127,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
              { return false; }
          IPerson person = null;
          try 
-             { person = PersonDirectory.getRestrictedPerson(member.getKey()); }
+             { person = PersonDirectory.instance().getRestrictedPerson(member.getKey()); }
          catch (Exception ex)
              { return false; }
          return testRecursively(groupDef, person);
