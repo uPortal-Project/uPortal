@@ -202,7 +202,7 @@ public class CUserPreferences implements IPrivilegedChannel {
       ;
       boolean systemProfile = false;
       if (profileId != null) {
-        String profileType = runtimeData.getParameter("proifileType");
+        String profileType = runtimeData.getParameter("profileType");
         if (profileType != null && profileType.equals("system"))
           systemProfile = true;
       }
@@ -275,6 +275,10 @@ public class CUserPreferences implements IPrivilegedChannel {
       up = upStore.getUserPreferences(getUserLayoutManager().getPerson().getID(), profile);
       up.synchronizeWithUserLayoutXML(GenericPortalBean.getUserLayoutStore().getUserLayout(getUserLayoutManager().getPerson().getID(), getCurrentUserPreferences().getProfile().getProfileId()));
       return up;
+  }
+  
+  protected UserProfile getEditedUserProfile() {
+    return editedProfile;
   }
 }
 
