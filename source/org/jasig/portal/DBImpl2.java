@@ -127,9 +127,9 @@ public class DBImpl2
           String chanDesc = rs.getString("CHAN_DESC");
           String chanClass = rs.getString("CHAN_CLASS");
           int chanPupblUsrId = rs.getInt("CHAN_PUBL_ID");
-          java.sql.Date chanPublDt = rs.getDate("CHAN_PUBL_DT");
+          java.sql.Timestamp chanPublDt = rs.getTimestamp("CHAN_PUBL_DT");
           int chanApvlId = rs.getInt("CHAN_APVL_ID");
-          java.sql.Date chanApvlDt = rs.getDate("CHAN_APVL_DT");
+          java.sql.Timestamp chanApvlDt = rs.getTimestamp("CHAN_APVL_DT");
           String chanIdTag = rs.getString("CHAN_ID_TAG");
           int chanPriority = rs.getInt("CHAN_PRIORITY");
           int chanTimeout = rs.getInt("CHAN_TIMEOUT");
