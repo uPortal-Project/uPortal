@@ -96,6 +96,15 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
   // Cache transformed content in this smartcache - should be moved out of the channel
   protected static SmartCache bufferCache = new SmartCache(15 * 60); // 15 mins
 
+  // developmentMode flag should be set to false for production to
+  // ensure that this channel's output is cached
+  // I'm hoping that this setting can come from some globally-set
+  // property.  I'll leave this for later.
+  // Until then, it'll stay checked in set to true so that
+  // developers can simply reload the page to see the effect of
+  // a modified XML document or XSLT stylesheet
+  private static boolean developmentMode = true;
+
   public CGenericXSLT ()
   {
   }
@@ -196,8 +205,12 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
           else
             XSLT.transform(xmlDoc, new URL(sslUri), cache, runtimeData, media);
         }
-        Logger.log(Logger.INFO, "Caching output of CGenericXSLT for: " + key);
-        bufferCache.put(key, cache);
+
+        if (!developmentMode)
+        {
+          Logger.log(Logger.INFO, "Caching output of CGenericXSLT for: " + key);
+          bufferCache.put(key, cache);
+        }
       }
       catch (SAXException se)
       {
@@ -223,6 +236,8 @@ public class CGenericXSLT implements org.jasig.portal.IChannel
 
   private String getKey()
   {
+    // Maybe not the best way to generate a key, but it seems to work.
+    // If you know a better way, please change it!
     StringBuffer sbKey = new StringBuffer(1024);
     sbKey.append("xmluri:").append(xmlUri).append(", ");
     sbKey.append("sslUri:").append(sslUri).append(", ");
