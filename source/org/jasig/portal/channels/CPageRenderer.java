@@ -140,10 +140,15 @@ public class CPageRenderer implements org.jasig.portal.IChannel
         iBegin = sHTML.indexOf ('>', sHTML.indexOf ("<body")) + 1;
         iEnd = sHTML.indexOf ("</body>");
       }
-      else
+      else if (sHTML.indexOf ("<BODY") >= 0)
       {
         iBegin = sHTML.indexOf ('>', sHTML.indexOf ("<BODY")) + 1;
         iEnd = sHTML.indexOf ("</BODY>");
+      }
+      else
+      {
+        iBegin = 0;
+        iEnd = sHTML.length();
       }
       
       return sHTML.substring (iBegin, iEnd);
