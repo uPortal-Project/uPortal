@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
-  <xsl:param name="action">selectGeneralSettings</xsl:param>
+  <xsl:param name="action">reviewChannel</xsl:param>
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
@@ -41,6 +41,9 @@
           </xsl:when>
           <xsl:when test="$action='selectCategories'">
             <xsl:call-template name="selectCategories"/>
+          </xsl:when>
+          <xsl:when test="$action='selectGroups'">
+            <xsl:call-template name="selectGroups"/>
           </xsl:when>
           <xsl:when test="$action='selectRoles'">
             <xsl:call-template name="selectRoles"/>
@@ -1886,7 +1889,7 @@
       <tr>
         <td>
           <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
-          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectRoles'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
         </td>
@@ -2300,6 +2303,7 @@ Printable<br/>
 
 
 
+
 </a>
 
 
@@ -2395,7 +2399,7 @@ Printable<br/>
       </tr>
 
 
-
+<!--
       <tr class="uportal-channel-text">
 
         <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
@@ -2422,8 +2426,55 @@ Printable<br/>
         </a></td>
 
       </tr>
+-->
 
 
+
+
+      <tr class="uportal-channel-text">
+
+        <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+
+
+
+        <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+
+
+
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">Selected Groups:</a></strong></td>
+
+
+
+        <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+
+
+
+        <td ><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">
+
+        <xsl:for-each select="//selectGroups//groups//group[@ID = //selectedGroup]">
+<img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
+            <xsl:for-each select="ancestor-or-self::group">
+
+                          <xsl:choose>
+
+                            <xsl:when test="position() != last()">
+                              <em>
+                                <xsl:value-of select="@name"/>
+                              </em>
+                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/>::<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
+
+                            <xsl:otherwise>
+                              <xsl:value-of select="@name"/>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </xsl:for-each><br/>
+                        </xsl:for-each>
+
+        </a>
+
+        </td>
+
+      </tr>
 
 
 
@@ -2442,7 +2493,7 @@ Printable<br/>
       </tr>
       <tr>
         <td>
-          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectRoles'" class="uportal-button" />
+          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button" />
           <input type="submit" name="uPCM_submit" value="Finished" onclick="document.workflow.uPCM_action.value='finished'" class="uportal-button" />
           <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button" />
         </td>
@@ -2582,19 +2633,345 @@ Printable<br/>
     </table>
   </xsl:template>
 
+<xsl:template name="selectGroups">
+    <xsl:variable name="groupID">
+      <xsl:value-of select="//browsingGroup[1]"/>
+    </xsl:variable><xsl:value-of select="$groupID"/>
+
+    <xsl:call-template name="workflow"/>
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
+      <tr class="uportal-channel-text">
+
+        <td>
+          <strong>Groups:</strong> Browse and add the groups that have access to this channel</td>
+      </tr>
+
+
+
+      <tr>
+
+        <td>
+
+          <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
+
+            <tr valign="top">
+
+              <td class="uportal-label">
+
+                <table width="100%" border="0" class="uportal-channel-text">
+                  <xsl:choose>
+                    <xsl:when test="//selectGroups//groups/group">
+                      <tr>
+                        <td align="left" valign="top">
+                          <xsl:choose>
+                            <xsl:when test="$groupID = 'top' or $groupID = 'all'">
+
+                              <form name="selectGroup" method="post" action="{$baseActionURL}">
+                                <input type="hidden" name="uPCM_action" value="selectGroups"/>
+                                <input type="hidden" name="uPCM_capture" value="selectGroups"/>
+                                <input type="hidden" name="uPCM_step" value="changeMe"/>
+
+                              <table width="100%" border="0">
+                                  <tr>
+                                    <td nowrap="nowrap" align="left" valign="top">
+                                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                                      <img alt="interface image" src="{$mediaPath}/arrow_right.gif" width="16" height="16"/>
+                                      <select name="selectedGroup" class="uportal-input-text">
+                                        <option value=" " selected="selected"/>
+                                        <xsl:for-each select="//selectGroups//groups/group">
+                                          <xsl:sort select="@name"/>
+                                          <option value="{@ID}">
+                                            <xsl:value-of select="@name"/>
+                                          </option>
+                                        </xsl:for-each>
+                                        
+                                        </select>
+                                      <input type="submit" name="uPCM_browse" value="go" class="uportal-button"/>
+                                      <input type="submit" name="uPCM_select" value="add" class="uportal-button"/>
+                                    </td>
+                                  </tr>
+                              </table>
+                              </form>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <xsl:for-each select="//selectGroups//groups//group[@ID=$groupID]">
+                              <xsl:value-of select="."/>
+                                <xsl:for-each select="ancestor-or-self::group">
+
+                                  <form name="selectGroup" method="post" action="{$baseActionURL}">
+                                    <input type="hidden" name="uPCM_action" value="selectGroups"/>
+                                    <input type="hidden" name="uPCM_capture" value="selectGroups"/>
+                                    <input type="hidden" name="uPCM_step" value="changeMe"/>
+
+                                  <table width="100%" border="0">
+                                      <tr>
+                                        <td nowrap="nowrap" align="left" valign="top">
+                                          <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16">
+                                            <xsl:attribute name="width">
+                                              <xsl:value-of select="(count(ancestor::group)+1)*16"/>
+                                            </xsl:attribute>
+                                          </img>
+                                          <xsl:choose>
+                                            <xsl:when test="position() = last()">
+                                              <img alt="interface image" src="{$mediaPath}/arrow_right.gif" width="16" height="16"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                              <img alt="interface image" src="{$mediaPath}/arrow_down.gif" width="16" height="16"/>
+                                            </xsl:otherwise>
+                                          </xsl:choose>
+                                          <select name="selectedGroup" class="uportal-input-text">
+                                            <xsl:for-each select="ancestor::*[1]/group">
+                                              <xsl:sort select="@name"/>
+                                              <option value="{@ID}">
+                                                <xsl:if test="@ID=$groupID or descendant::group[@ID=$groupID]">
+                                                  <xsl:attribute name="selected">selected</xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:value-of select="@name"/>
+                                              </option>
+
+                                            </xsl:for-each>
+                                          </select>
+                                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                                          <input type="submit" name="uPCM_browse" value="go" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_select" value="add" class="uportal-button"/>
+                                        </td>
+                                      </tr>
+                                  </table>
+                                  </form>
+                                </xsl:for-each>
+                                <xsl:if test="child::group">
+                                  <table width="100%" border="0" class="uportal-channel-text">
+                                    <tr>
+                                      <td colspan="2">
+                                        <hr/>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                  <form name="selectGroup" method="post" action="{$baseActionURL}">
+                                    <input type="hidden" name="uPCM_action" value="selectGroups"/>
+                                    <input type="hidden" name="uPCM_capture" value="selectGroups"/>
+                                    <input type="hidden" name="uPCM_step" value="changeMe"/>
+                                  <table width="100%" border="0">
+                                      <tr>
+                                        <td nowrap="nowrap" align="left" valign="top">
+                                          <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
+                                          <select name="selectedGroup" class="uportal-input-text">
+                                            <xsl:for-each select="group">
+                                              <xsl:sort select="@name"/>
+                                              <option value="{@ID}">
+                                                <xsl:value-of select="@name"/>
+                                              </option>
+                                            </xsl:for-each>
+                                            <option value=" ">____________________</option>
+                                            <option value=" " selected="selected">Select a sub-group</option>
+                                          </select>
+                                          <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                                          <input type="submit" name="uPCM_browse" value="go" class="uportal-button"/>
+                                          <input type="submit" name="uPCM_select" value="add" class="uportal-button"/>
+                                        </td>
+                                      </tr>
+                                  </table>
+                                  </form>
+                                </xsl:if>
+                              </xsl:for-each>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </td>
+                      </tr>
+                    </xsl:when>
+
+                    <xsl:otherwise>
+                      <tr>
+                        <td colspan="3">
+                          <hr/>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="3" class="uportal-channel-warning">
+                          <b>No Groups data is available at this time...</b>
+                        </td>
+                      </tr>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </table>
+              </td>
+
+
+
+              <td>
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+              </td>
+
+
+
+              <td class="uportal-background-light">
+                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="2" height="2"/>
+              </td>
+
+
+
+              <td width="100%">
+
+                <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
+
+                  <tr>
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">Option</td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">
+                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    </td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header" width="50%">Selected Group</td>
+
+
+
+                    <td nowrap="nowrap" class="uportal-channel-table-header">
+                      <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
+                    </td>
+
+
+
+                    <td width="50%" class="uportal-channel-table-header">Description</td>
+                  </tr>
+
+
+
+                  <tr class="uportal-channel-text" valign="top">
+
+                    <td nowrap="nowrap" colspan="5">
+
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                        <tr>
+
+                          <td>
+                            <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="2"/>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+
+
+                  <xsl:for-each select="//selectGroups//group[@ID = //selectGroups//selectedGroup]">
+
+                    <tr class="uportal-channel-text" valign="top">
+                      <td nowrap="nowrap" align="center">
+                        <a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=selectGroups&amp;removeGroup={@ID}">
+                          <img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this group"/>
+                        </a>
+                      </td>
+                      <td nowrap="nowrap">
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                      </td>
+                      <td>
+
+                        <xsl:for-each select="ancestor-or-self::group">
+
+                          <xsl:choose>
+
+                            <xsl:when test="position() != last()">
+                              <em>
+                                <xsl:value-of select="@name"/>
+                              </em>
+                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/>::<img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4"/></xsl:when>
+
+                            <xsl:otherwise>
+                              <strong>
+                                <xsl:value-of select="@name"/>
+                              </strong>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </xsl:for-each>
+                      </td>
+
+                      <td nowrap="nowrap">
+                        <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
+                      </td>
+
+
+
+                      <td width="100%">
+                        <xsl:value-of select="@description"/>
+                      </td>
+                    </tr>
+
+
+
+                    <tr class="uportal-channel-text" valign="top">
+
+                      <td colspan="5" align="center">
+
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                          <tr>
+
+                            <td>
+                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </xsl:for-each>
+
+<xsl:if test="not(//selectedGroups)">
+<tr class="uportal-channel-text" valign="top">
+                            <td colspan="2">
+                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                            </td>
+                            <td colspan="3">
+                              No groups have been selected
+                            </td>
+                          </tr>
+<tr class="uportal-channel-text" valign="top">
+
+                      <td colspan="5" align="center">
+
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+
+                          <tr>
+
+                            <td>
+                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    </xsl:if>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <form name="workflow" method="post" action="{$baseActionURL}">
+        <input type="hidden" name="uPCM_action" value="changeMe"/>
+        <input type="hidden" name="uPCM_capture" value="selectGroups"/>
+        <input type="hidden" name="uPCM_step" value="changeMe"/>
+
+      <tr>
+        <td>
+          <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+          <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+        </td>
+      </tr>
+
+      </form>
+
+    </table>
+
+</xsl:template>
 </xsl:stylesheet>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
