@@ -163,5 +163,17 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
   </db-type-mapping>
 
+  <db-type-mapping>
+    <db-name>Sybase SQL Server</db-name>
+    <db-version>Adaptive Server Enterprise/11.9.2.3/1159/P/SWR 9222 ESD 3/RS6000/AIX 4.2.1/FBO/Tue Sep  5 07:09:31 2000</db-version>
+    <driver-name>jConnect (TM) for JDBC (TM)</driver-name>
+    <driver-version>jConnect (TM) for JDBC(TM)/5.2(Build 20765)/P/EBF9109/JDK12/Fri Jun 16  9:31:01 2000</driver-version>
+    <type><generic>INTEGER</generic><local>INTEGER</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+
 </properties>
 
