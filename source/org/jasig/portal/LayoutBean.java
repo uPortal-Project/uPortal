@@ -1374,14 +1374,24 @@ public class LayoutBean extends GenericPortalBean
    */
   public void addChannel (HttpServletRequest req)
   {
-    SubscriberBean subscribe = new SubscriberBean();
+    HttpSession ses = req.getSession(false);
+    SubscriberBean subscribe = (SubscriberBean)ses.getAttribute("subscribe");
     try
     {
       int iTab = getActiveTab(req);
       int iCol = Integer.parseInt (req.getParameter ("column"));
 
       IColumn column = getColumn (req, iTab, iCol);
-      column.addChannel(subscribe.getChannel(req));
+      if(subscribe==null){
+       subscribe = new SubscriberBean();
+       subscribe.setChannel(req);
+       column.addChannel(subscribe.channel);
+       //column.addChannel(subscribe.getChannel(req));
+      }
+      else {
+       column.addChannel(subscribe.channel);
+       ses.removeAttribute("subscribe");
+      }
     }
     catch (Exception e)
     {
