@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='utf-8' ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 	<xsl:import href="bookmark_tree_html.xsl" /> 
@@ -10,12 +10,12 @@
 	<xsl:param name="EditMode">DeleteBookmark</xsl:param>
 	
 	<xsl:template match="/">
-		<div>
+		
 			<form action="{$baseActionURL}?command={$EditMode}" method="post">
 				<xsl:call-template name="BookmarkTree">
 					<xsl:with-param name="TreeMode"><xsl:value-of select="$EditMode"/></xsl:with-param>
 				</xsl:call-template>
-				Please select the
+				<hr/>Please select the
 				<xsl:choose>
 					<xsl:when test="$EditMode='DeleteBookmark'">
 						bookmarks
@@ -24,12 +24,17 @@
 						folders
 					</xsl:when>
 				</xsl:choose>
-				you wish to delete.<br/>
-				<input type="submit" name="SubmitButton" value="Delete"/>
+				you wish to delete.<hr/>
+				<input type="submit" name="SubmitButton" value="Delete" class="uportal-button"/>
 				<img src="{$imagesURL}trans20x20.gif" width="10" height="20"/>
-				<input type="submit" name="SubmitButton" value="Cancel"/>
+				<input type="submit" name="SubmitButton" value="Cancel" class="uportal-button"/>
 			</form>
-		</div>
+		
 	</xsl:template>
 
 </xsl:stylesheet>
+<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
+<metaInformation>
+<scenarios/>
+</metaInformation>
+-->

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='utf-8' ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<!-- Import the bookmark tree stylesheet -->
 	<xsl:import href="bookmark_tree_html.xsl"/>
@@ -22,7 +22,7 @@
 			
 				<hr/>
 				
-				Please fill in the information below and select the folder that the new
+				Please fill out the form below and select the folder in which the new
 				<xsl:choose>
 					<xsl:when test="$EditMode='AddBookmark'">
 						bookmark
@@ -31,7 +31,7 @@
 						folder
 					</xsl:when>
 				</xsl:choose>
-				should appear in.
+				will appear.
 				
 				<hr/>
 				
@@ -84,3 +84,8 @@
 	</xsl:template>
 
 </xsl:stylesheet>
+<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
+<metaInformation>
+<scenarios/>
+</metaInformation>
+-->
