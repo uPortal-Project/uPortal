@@ -194,10 +194,13 @@ public class CChannelManager extends BaseChannel {
       } else if (capture.equals("selectGeneralSettings")) {
         String name = runtimeData.getParameter("name");
         String timeout = runtimeData.getParameter("timeout");
+        String javaClass = runtimeData.getParameter("class");
         if (name != null)
           channelDef.setName(name);
         if (timeout != null)
           channelDef.setTimeout(timeout);
+        if (javaClass != null)
+          channelDef.setJavaClass(javaClass);
       // Custom parameters
       } else if (capture.equals("customSettings")) {
         String subAction = runtimeData.getParameter("uPCM_subAction");
@@ -401,6 +404,19 @@ public class CChannelManager extends BaseChannel {
         workflow.setReviewSection(reviewSection);
 
         channelManagerDoc = workflow.toXML();
+
+      } else if (action.equals("finished")) {
+
+        state = DEFAULT_STATE; // we need to add a confirmation and channel preview screen
+        Set catIDs = categorySettings.getSelectedCategories();
+        Set roles = roleSettings.getSelectedRoles();
+        int publisherID = staticData.getPerson().getID();
+        try {
+          ChannelRegistryManager.publishChannel(channelDef.toXML(), catIDs, roles, publisherID);
+        } catch (Exception e) {
+          // need to revisit this and handle the error!
+          throw new GeneralRenderingException(e.getMessage());
+        }
 
       } else if (action.equals("selectModifyChannel")) {
 
@@ -830,6 +846,7 @@ public class CChannelManager extends BaseChannel {
     protected void setTypeID(String typeID) { this.typeID = typeID; }
     protected void setName(String name) { this.name = name; }
     protected void setTimeout(String timeout) { this.timeout = timeout; }
+    protected void setJavaClass(String javaClass) { this.javaClass = javaClass; }
     protected void setMinimizable(String minimizable) { this.minimizable = minimizable; }
     protected void setEditable(String editable) { this.editable = editable; }
     protected void setHasHelp(String hasHelp) { this.hasHelp = hasHelp; }
@@ -911,13 +928,14 @@ public class CChannelManager extends BaseChannel {
 
   protected class CategorySettings {
     protected String browsingCategory;
-    protected List selectedCategories;
+    protected Set selectedCategories;
 
     protected CategorySettings() {
       browsingCategory = "top";
-      selectedCategories = new ArrayList();
+      selectedCategories = new TreeSet();
     }
 
+    protected Set getSelectedCategories() { return selectedCategories; }
     protected void setBrowsingCategory(String browsingCategory) { this.browsingCategory = browsingCategory; }
 
     protected void addSelectedCategory(String category) {
@@ -957,6 +975,8 @@ public class CChannelManager extends BaseChannel {
     protected RoleSettings() {
       selectedRoles = new TreeSet();
     }
+
+    protected Set getSelectedRoles() { return selectedRoles; }
 
     protected void addSelectedRole(String selectedRole) {
       selectedRoles.add(selectedRole);
