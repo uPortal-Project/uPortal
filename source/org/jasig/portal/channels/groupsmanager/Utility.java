@@ -6,15 +6,14 @@
 package  org.jasig.portal.channels.groupsmanager;
 
 import java.io.StringWriter;
-import java.util.Calendar;
 import java.util.Iterator;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Priority;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xml.serialize.XMLSerializer;
+import org.jasig.portal.channels.CGenericXSLT;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,6 +25,8 @@ import org.w3c.dom.Element;
 public class Utility
       implements GroupsManagerConstants {
 
+    private static final Log log = LogFactory.getLog(CGenericXSLT.class);
+    
    /** Creates new Utility */
    public Utility () {
    }
@@ -70,41 +71,18 @@ public class Utility
     * @param th Throwable
     */
    public static void logMessage (String msgTypeStr, String msg, Throwable th) {
-      // delay hesitates printing until a new millisecond is reached in order to
-      // prevent overlapping messages during debugging
 
-      /* @todo next 4 lines are for running test */
-      //if (msg != null){
-      //   if (!msgTypeStr.equals("DEBUG")){
-      //      System.out.println(msgTypeStr+"::"+msg);
-      //      return;
-      //   }
-      //   else{
-      //      return;
-      //   }
-      //}
-
-      boolean delay = false;
-      Priority msgType;
-      if (msgTypeStr == null | msgTypeStr.equals(""))
-         msgType = LogService.DEBUG;
-      else
-         msgType = Level.toLevel(msgTypeStr.toUpperCase());
-
-      if (delay && msgTypeStr.toUpperCase().equals("DEBUG")) {
-         long ts1 = Calendar.getInstance().getTime().getTime();
-         long ts2 = ts1;
-         while(ts2 <= ts1){
-            ts2 = Calendar.getInstance().getTime().getTime();
-         }
-      }
-      LogService.log(msgType, msg);
-
-      // if an exception object was passed, print it's stack trace
-      if (th != null){
-         LogService.log(msgType, th);
-      }
-
+      if (msgTypeStr != null && msgTypeStr.equals("ERROR"))
+          log.error(msg, th);
+      else if (msgTypeStr != null && msgTypeStr.equals("WARN"))
+          log.warn(msg, th);
+      else if (msgTypeStr != null && msgTypeStr.equals("INFO"))
+          log.info(msg, th);
+      else if (msgTypeStr != null && msgTypeStr.equals("FATAL"))
+          log.fatal(msg, th);
+      else 
+          log.debug(msg, th);
+ 
       return;
    }
 
