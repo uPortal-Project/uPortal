@@ -490,7 +490,7 @@ public class PortalSessionManager extends HttpServlet {
                 if (contentType != null && contentType.startsWith("multipart/form-data")) {
                     com.oreilly.servlet.multipart.Part attachmentPart;
                     try {
-                        MultipartParser multi = new MultipartParser(source, sizeLimit, true, true);
+                        MultipartParser multi = new MultipartParser(source, sizeLimit, true, true, "UTF-8");
                         while ((attachmentPart = multi.readNextPart()) != null) {
                             String partName = attachmentPart.getName();
 
