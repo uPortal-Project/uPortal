@@ -8,7 +8,7 @@
     <name>Test Portlet 1</name>
     <fname>test-portlet-1</fname>
     <desc>Test portlet 1 from Apache Pluto</desc>
-    <type>Custom</type>
+    <type>Portlet</type>
     <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
     <timeout>60000</timeout>
     
