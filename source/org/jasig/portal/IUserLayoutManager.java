@@ -143,8 +143,9 @@ public interface IUserLayoutManager {
     /**
      * Removes a channel 
      * @param channelId channel instance Id
+     * @return true if the remove operation was successful
      */
-    public void removeChannel (String channelId) throws PortalException;
+    public boolean removeChannel (String channelId) throws PortalException;
 }
 
 

@@ -515,24 +515,25 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
      * Removes a specified channel
      * @param channelId channel id
      */
-    public void removeChannel (String channelId,String sessionId) throws PortalException {
+    public boolean removeChannel (String channelId,String sessionId) throws PortalException {
 	MState state=(MState)stateTable.get(sessionId);
 	if(state==null) {
 	    Logger.log(Logger.ERROR,"GuestUserLayoutManager::removeChannel() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-	    return;
+	    return false;
 	}
 	Element channel = state.uLayoutXML.getElementById(channelId);
 	if (channel != null) {
 	    if(!this.deleteNode(channel)) {
 		// unable to remove channel due to unremovable/immutable restrictionsn
 		Logger.log(Logger.INFO,"GuestUserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
+                return false;
 	    } else {
 		// channel has been removed from the userLayoutXML .. persist the layout ?
 		// NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
 		// (or, alternatively, an incremental update should be done on the UserLayoutStore())
 		try {
 		    /*
-		      The following patch has been kindly contributed by Sir Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
+		      The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
 		    */
 		    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), state.complete_up.getProfile().getProfileId(), state.uLayoutXML);
 		    /* end of patch */
@@ -540,13 +541,15 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
 		    Logger.log(Logger.ERROR,"GuestUserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
 		    throw new GeneralRenderingException("Unable to save layout changes.");
 		}
-	    }  	
-	}
-	else
+                return true;
+	    }	
+	} else {
 	    Logger.log(Logger.ERROR, "GuestUserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
+            return false;
+        }
     }
 
-    public void removeChannel (String channelId) throws PortalException {
+    public boolean removeChannel (String channelId) throws PortalException {
 	throw new UnsupportedOperationException();
     }
 }

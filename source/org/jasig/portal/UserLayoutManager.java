@@ -336,20 +336,21 @@ public class UserLayoutManager implements IUserLayoutManager {
             return  null;
     }
 
-    public void removeChannel (String channelId) throws PortalException {
+    public boolean removeChannel (String channelId) throws PortalException {
         // warning .. the channel should also be removed from uLayoutXML
         Element channel = uLayoutXML.getElementById(channelId);
         if (channel != null) {
             if(!this.deleteNode(channel)) {
                 // unable to remove channel due to unremovable/immutable restrictionsn
                 Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
+                return false;
             } else {
                 // channel has been removed from the userLayoutXML .. persist the layout ?
                 // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
                 // (or, alternatively, an incremental update should be done on the UserLayoutStore())
                 try {
                     /*
-                      The following patch has been kindly contributed by Sir Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
+                      The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                     */
                     GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
                     /* end of patch */
@@ -358,10 +359,12 @@ public class UserLayoutManager implements IUserLayoutManager {
                     throw new GeneralRenderingException("Unable to save layout changes.");
                 }
                 //	    Logger.log(Logger.INFO,"UserLayoutManager::removeChannlel() : removed a channel \""+channelId+"\"");
-            }  	
-        }
-        else
+                return true;
+            }
+        } else {
             Logger.log(Logger.ERROR, "UserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
+            return false;
+        }
     }
 
     /**
