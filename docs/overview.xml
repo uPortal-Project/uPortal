@@ -237,13 +237,16 @@
     
     <procedure>  
        <step>
-          <para>As of this writing, the most current <quote>Quick Start</quote> release is 
-             <filename class="zipfile">LaJolla.zip</filename>, which was released in May 2001. You can 
-              obtain the release from the <orgname>JA-SIG</orgname> website, located at 
-             <ulink url="http://www.mis2.udel.edu/ja-sig/portal.html">http://www.ja-sig.org/</ulink>. 
-             Download <filename class="zipfile">LaJolla.zip</filename> from that link to your local 
-             filesystem. Once the download is complete, you should have 9.8 MB file. 
-          </para> 
+          <para>As of this writing, the most current <quote>Quick
+             Start</quote> release is <filename
+             class="zipfile">LaJolla.zip</filename>, which was
+             released in May 2001. You can obtain the release from the
+             <orgname>JA-SIG</orgname> website, located at <ulink
+             url="http://mis105.mis.udel.edu/ja-sig/uportal/download.html">http://mis105.mis.udel.edu/ja-sig/uportal/download.html</ulink>.
+             Download <filename class="zipfile">LaJolla.zip</filename>
+             from that link to your local filesystem. Once the
+             download is complete, you should have 9.8 MB file.
+          </para>
        </step>
        <step>
           <para>
@@ -262,20 +265,7 @@
           </para>
           <para>
              <screen>
-             Volume in drive C is SYSTEM         Serial number is 2350:717C
-             Directory of  C:\
-
-             10/17/97   9:04         &lt;DIR&gt;    bin
-             10/16/97  14:11         &lt;DIR&gt;    DOS
-             10/16/97  14:40         &lt;DIR&gt;    Program Files
-             10/16/97  14:46         &lt;DIR&gt;    TEMP
-             10/17/97   9:04         &lt;DIR&gt;    tmp
-             10/16/97  14:37         &lt;DIR&gt;    WINNT
-             10/16/97  14:25             119  AUTOEXEC.BAT
-              2/13/94   6:21          54,619  COMMAND.COM
-             10/16/97  14:25             115  CONFIG.SYS
-             11/16/97  17:17      61,865,984  pagefile.sys
-              2/13/94   6:21           9,349  WINA20.386
+ant  ant.bat  ant.sh  build.xml  fix-unix-modes.sh  README  tomcat  uPortal
              </screen>
           </para>
        </step>
