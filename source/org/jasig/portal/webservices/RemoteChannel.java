@@ -52,6 +52,7 @@ import org.jasig.portal.MultithreadedPrivilegedChannelAdapter;
 import org.jasig.portal.MultithreadedPrivilegedCacheableChannelAdapter;
 import org.jasig.portal.ChannelFactory;
 import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.InternalTimeoutException;
@@ -101,7 +102,6 @@ public class RemoteChannel implements IRemoteChannel {
   protected static final String CHANNEL_DEFINITION_ID_PREFIX = "chandef_";
   
   protected static final Authentication authenticationService = new Authentication();
-  protected static final Map multithreadedChannelTable = new HashMap();
   protected static final Random randomNumberGenerator = new Random();
 
   protected static String baseUrl = null;
@@ -178,9 +178,6 @@ public class RemoteChannel implements IRemoteChannel {
     session.set(CHANNEL_INSTANCE_ID_PREFIX + instanceId, channel);
     session.set(CHANNEL_DEFINITION_ID_PREFIX + instanceId, channelDef);
 
-    // Use this for multithreaded channels
-    //multithreadedChannelTable.put(instanceId, channel);
-
     return instanceId;
   }
 
@@ -198,15 +195,15 @@ public class RemoteChannel implements IRemoteChannel {
    * @param baseActionURL a String representing the base action URL to which
             channels will append '?' and a set of name/value pairs delimited by '&'.
    * @return xml an XML element representing the channel's output
-   * @throws java.lang.Throwable if the channel cannot respond with the expected rendering
+   * @throws java.lang.Exception if the channel cannot respond with the expected rendering
    */
   public Element renderChannel(String instanceId, Map headers, Cookie[] cookies,
-                               Map parameters, String baseActionURL) throws Throwable {
+                               Map parameters, String baseActionURL) throws Exception {
 
     Element channelElement = null;
     IChannel channel = null;
     ChannelDefinition channelDef = null;
-
+    
     MessageContext messageContext = MessageContext.getCurrentContext();
     Session session = messageContext.getSession();
     channel = (IChannel)session.get(CHANNEL_INSTANCE_ID_PREFIX + instanceId);
@@ -260,7 +257,7 @@ public class RemoteChannel implements IRemoteChannel {
         throw new InternalTimeoutException("The remote channel has timed out");
       }
     } catch (Throwable t) {
-      throw new Exception(t.getMessage()); // Consider throwing the Throwable!
+      throw new Exception(t.getMessage());
     }
 
     th.endElement("", MARKUP_FRAGMENT_ROOT, MARKUP_FRAGMENT_ROOT);
@@ -268,10 +265,25 @@ public class RemoteChannel implements IRemoteChannel {
     Document doc = (Document)domResult.getNode();
     channelElement = doc.getDocumentElement();
 
-    //System.out.println("Rendering '" + channelDef.getName() + "' channel");
-    //System.out.println(org.jasig.portal.utils.XML.serializeNode(channelElement));
-
     return channelElement;
+  }
+
+  /**
+   * Passes portal events to the channel.
+   * @param instanceId an identifier for the channel instance returned by instantiateChannel()
+   * @param event a portal event
+   * @throws java.lang.Exception if the channel cannot receive its event
+  */
+  public void receiveEvent(String instanceId, PortalEvent event) throws Exception {
+    MessageContext messageContext = MessageContext.getCurrentContext();
+    Session session = messageContext.getSession();
+    IChannel channel = (IChannel)session.get(CHANNEL_INSTANCE_ID_PREFIX + instanceId);  
+
+    if (channel == null)
+      throw new PortalException("No channel found for instance ID '" + instanceId);
+
+    // Pass the channel its event
+    channel.receiveEvent(event);
   }
 
   /**
