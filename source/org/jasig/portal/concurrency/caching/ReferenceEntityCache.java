@@ -119,8 +119,10 @@ public void clearCache()
  */
 void debug(String msg)
 {
-    java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-    log.debug(ts + " : " + msg);
+    if (log.isDebugEnabled()) {
+        java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
+        log.debug(ts + " : " + msg);
+    }
 }
 
 /**
