@@ -81,7 +81,10 @@ public class PropertiesManager {
    * @return value the value of the property matching the requested name, <code>null</code> if proeprty doesn't exist
    */
   public static String getProperty(String name) {
-    return props.getProperty(name);
+    String val = props.getProperty(name);
+    if (val == null)
+      throw new RuntimeException("Property " + name + " not found!");
+    return val;
   }
   
   /**
