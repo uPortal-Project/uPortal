@@ -66,6 +66,22 @@ public class PortalControlParameter {
     private Map requestParameters = new HashMap();
     private Map statefulControlParameters = new HashMap();
     private Map statelessControlParameters = new HashMap();
+    
+    
+    // The constructor
+	public PortalControlParameter(Map requestParameters) {
+	 this.requestParameters = requestParameters;
+	 for ( Iterator names = requestParameters.keySet().iterator(); names.hasNext(); ) {
+	   String paramName = (String) names.next();
+	   if ( isControlParameter(paramName) ) { 
+	    if ( isStatefulParameter(paramName))
+		 statefulControlParameters.put(paramName,requestParameters.get(paramName));
+		else 
+	 	 statelessControlParameters.put(paramName,requestParameters.get(paramName)); 
+	   }	 	
+	 }
+	}
+    
 
     public static String decodeParameterName(String paramName) {
         return paramName.substring(PREFIX.length());
@@ -160,7 +176,7 @@ public class PortalControlParameter {
         return param.startsWith(PREFIX);
     }
 
-    public static boolean isstatefulParameter(String param) {
+    public static boolean isStatefulParameter(String param) {
         if (isControlParameter(param)) {
             if ((param.startsWith(PREFIX + MODE))
                 || (param.startsWith(PREFIX + PREV_MODE))
@@ -173,10 +189,6 @@ public class PortalControlParameter {
         return false;
     }
 
-    public PortalControlParameter(Map requestParameters) {
-        this.requestParameters = requestParameters;
-        // GET statefulControlParameters and statelessControlParameters from requestParameters!!!	
-    }
 
     public void clearRenderParameters(PortletWindow portletWindow) {
         String prefix = getRenderParamKey(portletWindow);
@@ -221,22 +233,6 @@ public class PortalControlParameter {
         return PORTLET_ID;
     }
 
-    public PortletWindow getPortletWindowOfAction() {
-        Iterator iterator = getStatelessControlParameters().keySet().iterator();
-        while (iterator.hasNext()) {
-            String name = (String)iterator.next();
-            if (name.startsWith(ACTION)) {
-                String id = name.substring(ACTION.length() + 1);
-                /*Fragment fragment = org.apache.pluto.portalImpl.services.pageregistry.PageRegistry.getFragment(id);
-                if (fragment instanceof PortletFragment) {
-                    return((PortletFragment)fragment).getPortletWindow();
-                }*/
-                // TO IMPLEMENT
-            }
-        }
-        return null;
-    }
-
     public PortletMode getPrevMode(PortletWindow window) {
         String mode = (String)statefulControlParameters.get(getPrevModeKey(window));
         if (mode != null)
@@ -244,6 +240,7 @@ public class PortalControlParameter {
         else
             return PortletMode.VIEW;
     }
+    
     private String getPrevModeKey(PortletWindow window) {
         return PREV_MODE + "_" + window.getId().toString();
     }
@@ -255,6 +252,7 @@ public class PortalControlParameter {
         else
             return WindowState.NORMAL;
     }
+    
     private String getPrevStateKey(PortletWindow window) {
         return PREV_STATE + "_" + window.getId().toString();
     }
@@ -331,7 +329,6 @@ public class PortalControlParameter {
 
     public void setPortletId(PortletWindow window) {
         getstatefulControlParameters().put(getPortletIdKey(), window.getId().toString());
-        //getStateLessControlParameter().put(getPortletIdKey(),window.getId().toString());
     }
 
     public void setRenderParam(PortletWindow window, String name, String[] values) {

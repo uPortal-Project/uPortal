@@ -67,20 +67,28 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         this.provider = provider;
         this.portletWindow = portletWindow;
         this.controlParameter = controlParameter;
+		this.controlParameter.setPortletId(portletWindow);
     }
     
     // PortletURLProvider methods
 
     public void setPortletMode(PortletMode mode) {
-        this.portletMode = mode;
+	  if ( mode != null && !controlParameter.getMode(portletWindow).equals(mode) ) {	
+		 this.portletMode = mode;
+		 controlParameter.setMode(portletWindow, portletMode);
+	  }		 
     }
 
     public void setWindowState(WindowState state) {
-        this.windowState = state;
+      if ( state != null && !controlParameter.getState(portletWindow).equals(state) ) {	
+         this.windowState = state;
+		 controlParameter.setState(portletWindow, windowState);
+      }		 
     }
 
     public void setAction() {
-        action = true;
+    	action = true;
+		controlParameter.setAction(portletWindow);
     }
 
     public void setSecure() {
@@ -89,31 +97,19 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     public void clearParameters() {
         clearParameters = true;
+		controlParameter.clearRenderParameters(portletWindow);
     }
 
     public void setParameters(Map parameters) {
         this.parameters = parameters;
+        controlParameter = new PortalControlParameter(parameters);
     }
 
     public String toString() {
         ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
         String baseActionURL = runtimeData.getBaseActionURL();
 		StringBuffer url = new StringBuffer(baseActionURL);
-		
-		controlParameter.setPortletId(portletWindow);
-		
-		if ( portletMode != null )
-	        controlParameter.setMode(portletWindow, portletMode);
-        
-        if (windowState != null)
-		    controlParameter.setState(portletWindow, windowState);
-
-        if (clearParameters)
-			controlParameter.clearRenderParameters(portletWindow);
-		
-		if (action)
-		    controlParameter.setAction(portletWindow);
-        
+	
         if ( parameters != null && !parameters.isEmpty() ) {        
          Iterator names = parameters.keySet().iterator();
          boolean firstValue = true;
