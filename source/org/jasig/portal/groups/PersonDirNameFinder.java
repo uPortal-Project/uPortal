@@ -60,10 +60,6 @@ public class PersonDirNameFinder
         implements IEntityNameFinder {
     // Singleton instance:
     private static IEntityNameFinder singleton;
-    // SQL Strings:
-    private static String USER_TABLE = "UP_USER";
-    private static String USER_ID_COLUMN = "USER_ID";
-    private static String USER_NAME_COLUMN = "USER_NAME";
     private static PersonDirectory pd;
     // Our cache of entity names:
     private SoftHashMap names;
@@ -104,14 +100,6 @@ public class PersonDirNameFinder
     }
 
     /**
-     * @return java.lang.String
-     */
-    private String getSelectUserNameSql (String key) {
-        return  "SELECT " + USER_NAME_COLUMN + " FROM " + USER_TABLE + " WHERE "
-                + USER_ID_COLUMN + " = " + key;
-    }
-
-    /**
      * Returns the entity type for this <code>IEntityFinder</code>.
      * @return java.lang.Class
      */
@@ -126,36 +114,13 @@ public class PersonDirNameFinder
      * @exception java.sql.SQLException
      */
     private String primGetName (String key) throws java.sql.SQLException {
-        Connection conn = null;
-        Statement stmnt = null;
-        String name = null;
-        try {
-            conn = RDBMServices.getConnection();
-            try {
-                stmnt = conn.createStatement();
-                String sql = getSelectUserNameSql(key);
-                LogService.log(LogService.DEBUG, "PersonDirNameFinder.primGetName(): "
-                        + sql);
-                ResultSet rs = stmnt.executeQuery(sql);
-                if (rs.next()) {
-                    name = rs.getString(USER_NAME_COLUMN);
-                }
-            } finally {
-                stmnt.close();
-            }
-        } catch (SQLException sqle) {
-            LogService.log(LogService.ERROR, sqle);
-            throw  sqle;
-        } finally {
-            RDBMServices.releaseConnection(conn);
+        String name = key;
+        Hashtable userInfo = pd.getUserDirectoryInformation(name);
+        String displayName = (String)userInfo.get("displayName");
+        if ((displayName != null)&& !(displayName.trim().equals(""))) {
+            name = displayName;
         }
-        if (name != null) {
-            Hashtable userInfo = pd.getUserDirectoryInformation(name);
-            String displayName = (String)userInfo.get("displayName");
-            if ((displayName != null)&& !(displayName.trim().equals(""))) {
-                name = displayName+" ("+name+")";
-            }
-        }
+  
         return  name;
     }
 
