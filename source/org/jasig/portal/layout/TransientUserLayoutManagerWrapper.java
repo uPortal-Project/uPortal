@@ -36,28 +36,23 @@
 package org.jasig.portal.layout;
 
 import java.util.Collections;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.xerces.dom.DocumentImpl;
-import org.w3c.dom.Document;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.SAX2FilterImpl;
-import org.xml.sax.ContentHandler;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
@@ -72,7 +67,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * are the target channel.
  *
  * @author <a href="mailto:kstacks@sct.com">Keith Stacks</a>
- * @version 1.0
+ * @version $Revision$
  */
 public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
