@@ -15,6 +15,7 @@ import javax.servlet.http.*;
  */
 public class PortalSessionManager extends HttpServlet {
     private boolean baseDirSet=false;
+    public static String renderBase="render.uP";
     
     public void doPost (HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException
@@ -41,17 +42,42 @@ public class PortalSessionManager extends HttpServlet {
 	}
 
 	if(baseDirSet) {
-	    // look if the LayoutBean object is already in the session, otherwise
-	    // make a new one
-	    HttpSession session=req.getSession();
+	    // forwarding
+	    ServletContext sc=this.getServletContext();
+
+	    HttpSession session = req.getSession ();
 	    if(session!=null) {
-		LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
-		if(layout==null) {
-		    layout=new LayoutBean();
-		    session.setAttribute("LayoutBean",layout);
-		    Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
+		Boolean forwarded = (Boolean) session.getAttribute ("forwarded");
+		if((forwarded==null) && !((req.getServletPath().equals("/"+renderBase)) && !(req.getParameterNames().hasMoreElements()))) {
+		    // cache request
+		    sc.setAttribute(session.getId(),new RequestParamWrapper(req));
+		    // initial request, requeres forwarding
+		    session.setAttribute("forwarded",new Boolean(true));
+		    // forward
+		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : caching request, sending redirect");
+		    //this.getServletContext().getRequestDispatcher("/render.uP").forward(req,res);
+		    res.sendRedirect(req.getContextPath()+"/"+renderBase);
+		} else {
+		    // delete old request
+		    session.removeAttribute("forwarded");
+		    // proceed with rendering
+		    Logger.log(Logger.DEBUG,"PortalSessionManager::doGet() : processing redirected request");		    
+		    // look if the LayoutBean object is already in the session, otherwise
+		    // make a new one
+		    LayoutBean layout=(LayoutBean) session.getAttribute("LayoutBean");
+		    if(layout==null) {
+			layout=new LayoutBean();
+			session.setAttribute("LayoutBean",layout);
+			Logger.log(Logger.DEBUG,"PortalSessionManager;:doGet() : instantiating new LayoutBean");
+		    }
+		    RequestParamWrapper oreqp=(RequestParamWrapper) sc.getAttribute(session.getId());
+		    if(oreqp!=null) {
+			oreqp.setBaseRequest(req);
+			layout.writeContent(oreqp,res,res.getWriter());
+		    } else {
+			layout.writeContent(req,res,res.getWriter());
+		    }
 		}
-		layout.writeContent(req,res,res.getWriter());
 	    } else {
 		res.setContentType("text/html");
 		PrintWriter out = res.getWriter ();
@@ -74,6 +100,114 @@ public class PortalSessionManager extends HttpServlet {
 	    out.println("</body></html>");
 	}
 
-      }
-      
+    }
+
+
+    /* RequestParamWrapper persists various information 
+     * from the source request.
+     * Once given a "base request", it substitutes corresponding
+     * base information with that acquired from the source.
+     *
+     * The following information is extracted from the source:
+     * request parameters
+     * path info
+     * path translated
+     * context path
+     * query string
+     * servlet path
+     * request uri
+     */
+    protected class RequestParamWrapper implements HttpServletRequest, Serializable {
+	// the request being wrapped
+	private HttpServletRequest req;
+	private Hashtable parameters;
+	private String pathInfo;
+	private String pathTranslated;
+	private String contextPath;
+	private String queryString;
+	private String servletPath;
+	private String requestURI;
+	
+	public RequestParamWrapper(HttpServletRequest source) {
+	    // leech all of the information from the source request
+	    parameters=new Hashtable();
+	    for(Enumeration e=source.getParameterNames(); e.hasMoreElements();) {
+		String pName=(String) e.nextElement();
+		this.parameters.put(pName,source.getParameterValues(pName));
+	    }
+	    
+	    pathInfo=source.getPathInfo();
+	    pathTranslated=source.getPathTranslated();
+	    contextPath=source.getContextPath();
+	    queryString=source.getQueryString();
+	    servletPath=source.getServletPath();
+	    requestURI=source.getRequestURI();
+	}
+	
+	public void setBaseRequest(HttpServletRequest base) {
+	    this.req=base;
+	}
+
+	// overloaded methods
+	public String getParameter(String name){ 
+	    String[] value_array=this.getParameterValues(name);
+	    if((value_array!=null) && (value_array.length>0)) return value_array[0];
+	    else return null;
+	}
+	public Enumeration getParameterNames(){ return this.parameters.keys(); }
+	public String[] getParameterValues(String name){ 
+	    return (String[]) this.parameters.get(name);
+	}
+
+	public String getPathInfo(){ return pathInfo; }
+	public String getPathTranslated(){ return pathTranslated; }
+	public String getContextPath(){ return contextPath; }
+	public String getQueryString(){ return queryString; }
+	public String getServletPath(){ return servletPath; }
+	public String getRequestURI(){ return requestURI; }
+
+	// pass through methods
+	public String getAuthType(){ return req.getAuthType(); }
+	public Cookie[] getCookies(){ return req.getCookies(); }
+	public long getDateHeader(String name) { return req.getDateHeader(name); }
+
+	public String getHeader(String name){ return req.getHeader(name); }
+	public Enumeration getHeaders(String name){ return req.getHeaders(name); }
+        public Enumeration getHeaderNames(){ return req.getHeaderNames(); }
+	public int getIntHeader(String name){ return req.getIntHeader(name); }
+
+	public String getMethod(){ return req.getMethod(); }
+	public String getRemoteUser(){ return req.getRemoteUser(); }
+	public boolean isUserInRole(String role){ return req.isUserInRole(role); }
+	public java.security.Principal getUserPrincipal(){ return req.getUserPrincipal(); }
+	public String getRequestedSessionId(){ return req.getRequestedSessionId(); }
+	public HttpSession getSession(boolean create){ return req.getSession(create); }
+	public HttpSession getSession(){ return req.getSession(); }
+	public boolean isRequestedSessionIdValid(){ return req.isRequestedSessionIdValid(); }
+	public boolean isRequestedSessionIdFromCookie(){ return req.isRequestedSessionIdFromCookie(); }
+	public boolean isRequestedSessionIdFromURL(){ return req.isRequestedSessionIdFromURL(); }
+	public boolean isRequestedSessionIdFromUrl(){ return req.isRequestedSessionIdFromUrl(); }
+	public Object getAttribute(String name){ return req.getAttribute(name); }
+	public Enumeration getAttributeNames(){ return req.getAttributeNames(); }
+	public String getCharacterEncoding(){ return req.getCharacterEncoding(); }
+	public int getContentLength(){ return req.getContentLength(); }
+	public String getContentType(){ return req.getContentType(); }
+	public ServletInputStream getInputStream() throws IOException { return req.getInputStream(); }
+	public String getProtocol(){ return req.getProtocol(); }
+	public String getScheme(){ return req.getScheme(); }
+	public String getServerName(){ return req.getServerName(); }
+	public int getServerPort(){ return req.getServerPort(); }
+	public BufferedReader getReader() throws IOException { return req.getReader(); }
+	public String getRemoteAddr(){ return req.getRemoteAddr(); }
+	public String getRemoteHost(){ return req.getRemoteHost(); }
+	public void setAttribute(String name, Object o){ req.setAttribute(name,o); }
+	public void removeAttribute(String name){ req.removeAttribute(name); }
+	public Locale getLocale(){ return req.getLocale(); }
+	public Enumeration getLocales(){ return req.getLocales(); }
+	public boolean isSecure(){ return req.isSecure(); }
+	public RequestDispatcher getRequestDispatcher(String path){ return req.getRequestDispatcher(path); }
+	public String getRealPath(String path){ return req.getRealPath(path); }
+	
+    }
+     
 }

@@ -130,6 +130,96 @@ public class UserLayoutManager {
     }
   }
 
+
+    /* This function processes request parameters related to
+     * setting Structure/Theme stylesheet parameters and attributes.
+     * (uP_sparam, uP_tparam, uP_sfattr, uP_scattr uP_tcattr)
+     * It also processes layout root requests (uP_root) 
+     */
+    public void processUserPreferencesParameters(HttpServletRequest req) {
+	
+	// layout root setting
+	String root;
+	if((root=req.getParameter("uP_root"))!=null) {
+	    complete_up.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot",root);
+	}
+
+	// other params
+        String[] sparams=req.getParameterValues("uP_sparam");
+	if(sparams!=null) {
+	    for(int i=0;i<sparams.length;i++) {
+		String pValue=req.getParameter(sparams[i]);
+		complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i],pValue);
+		Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting sparam \""+sparams[i]+"\"=\""+pValue+"\".");
+	    }
+	}
+
+        String[] tparams=req.getParameterValues("uP_tparam");
+	if(tparams!=null) {
+	    for(int i=0;i<tparams.length;i++) {
+		String pValue=req.getParameter(tparams[i]);
+		complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i],pValue);
+		Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting tparam \""+tparams[i]+"\"=\""+pValue+"\".");
+	    }
+	}
+
+	// attribute processing
+
+	// structure transformation 
+	String[] sfattrs=req.getParameterValues("uP_sfattr");
+	if(sfattrs!=null) {
+	    for(int i=0;i<sfattrs.length;i++) {
+		String aName=sfattrs[i];
+		String[] aNode=req.getParameterValues(aName+"_folderId");
+		if(aNode!=null && aNode.length>0) {
+		    for(int j=0;j<aNode.length;j++) {
+			String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
+			complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j],aName,aValue);
+			Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting sfattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
+		    }
+		}
+	    }
+	}
+
+	String[] scattrs=req.getParameterValues("uP_scattr");
+	if(scattrs!=null) {
+	    for(int i=0;i<scattrs.length;i++) {
+		String aName=scattrs[i];
+		String[] aNode=req.getParameterValues(aName+"_channelId");
+		if(aNode!=null && aNode.length>0) {
+		    for(int j=0;j<aNode.length;j++) {
+			String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
+			complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j],aName,aValue);
+			Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting scattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
+		    }
+		}
+	    }
+	}
+
+
+	// theme stylesheet attributes
+	String[] tcattrs=req.getParameterValues("uP_tcattr");
+	if(tcattrs!=null) {
+	    for(int i=0;i<tcattrs.length;i++) {
+		String aName=tcattrs[i];
+		String[] aNode=req.getParameterValues(aName+"_channelId");
+		if(aNode!=null && aNode.length>0) {
+		    for(int j=0;j<aNode.length;j++) {
+			String aValue=req.getParameter(aName+"_"+aNode[j]+"_value");
+			complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j],aName,aValue);
+			Logger.log(Logger.DEBUG,"UserLayoutManager::processUserPreferencesParameters() : setting tcattr \""+aName+"\" of \""+aNode[j]+"\" to \""+aValue+"\".");
+		    }
+		}
+	    }
+	}
+    }
+
+
+
+
+
+
+
     public IPerson getPerson() { 
 	return person; 
     }
@@ -381,21 +471,6 @@ public class UserLayoutManager {
     return argumentedUserLayoutXML;
   }
 
-
-  public void minimizeChannel (String str_ID)
-  {
-    Element channel = argumentedUserLayoutXML.getElementById (str_ID);
-
-    if (channel != null)
-    {
-      if (channel.getAttribute ("minimized").equals ("false"))
-        channel.setAttribute ("minimized", "true");
-      else
-        channel.setAttribute ("minimized", "false");
-    }
-    else
-      Logger.log (Logger.ERROR, "UserLayoutManager::minimizeChannel() : unable to find a channel with ID=" + str_ID);
-  }
 
     // helper function that allows to determine the name of a channel or
     // folder in the current user layout given their ID.

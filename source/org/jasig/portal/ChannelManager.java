@@ -73,6 +73,8 @@ public class ChannelManager {
     private String channelTarget;
     private Hashtable targetParams;
 
+    public static String channelAddressingPathElement="channel";
+
     public ChannelManager () {
         channelTable = new Hashtable ();
         rendererTable = new Hashtable ();
@@ -115,83 +117,96 @@ public class ChannelManager {
         // clear the previous settings
         channelTarget = null;
         targetParams = new Hashtable ();
-
-        if ((channelTarget = req.getParameter ("channelTarget")) != null) {
-            Enumeration en = req.getParameterNames ();
-            if (en != null) {
-                while (en.hasMoreElements ()) {
-                    String pName= (String) en.nextElement ();
-                    if (!pName.equals ("channelTarget"))
-                        targetParams.put (pName, req.getParameter (pName));
-                }
-            }
-            // check if the channel is an IPrivilegedChannel, and if it is,
-            // pass portal control structures and runtime data.
-            Object chObj;
-            if ((chObj=channelTable.get(channelTarget)) == null) {
-                try {
-                    chObj=instantiateChannel(channelTarget);
-                } catch (Exception e) {
-                    CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,channelTarget,null);
-                    channelTable.put(channelTarget,errorChannel);
-                    chObj=errorChannel;
-                    Logger.log(Logger.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus ID ? ! (id=\""+channelTarget+"\").");
-                }
-            }
-
-            if(chObj!=null && (chObj instanceof IPrivilegedChannel)) {
-                IPrivilegedChannel isc=(IPrivilegedChannel) chObj;
-
-                try {
-                    isc.setPortalControlStructures(pcs);
-                } catch (Exception e) {
-                    channelTable.remove(isc);
-                    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,channelTarget,isc);
-                    channelTable.put(channelTarget,errorChannel);
-                    isc=errorChannel;
-                    // set portal control structures
-                    try {
-                        errorChannel.setPortalControlStructures(pcs);
-                    } catch (Exception e2) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e2.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                        Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
-                }
-
-                ChannelRuntimeData rd = new ChannelRuntimeData ();
-                rd.setParameters(targetParams);
-                rd.setHttpRequest (req);
-                String reqURI = req.getRequestURI ();
-                reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
-                rd.setBaseActionURL (reqURI + "?channelTarget=" + channelTarget + "&");
-                try {
-                    isc.setRuntimeData (rd);
-                }
-                catch (Exception e) {
-                    channelTable.remove(isc);
-                    CError errorChannel=new CError(CError.SET_RUNTIME_DATA_EXCEPTION,e,channelTarget,isc);
-                    channelTable.put(channelTarget,errorChannel);
-                    isc=errorChannel;
-                    // demand output
-                    try {
-                        ChannelRuntimeData erd = new ChannelRuntimeData ();
-                        erd.setHttpRequest (req);
-                        erd.setBaseActionURL (reqURI + "?channelTarget=" + channelTarget + "&");
-                        errorChannel.setPortalControlStructures(pcs);
-                        errorChannel.setRuntimeData (erd);
-                    } catch (Exception e2) {
-                        // things are looking bad for our hero
-                        StringWriter sw=new StringWriter();
-                        e2.printStackTrace(new PrintWriter(sw));
-                        sw.flush();
-                            Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
-                    }
-                }
-            }
-        }
+	String sp=req.getServletPath();
+	if(sp!=null) {
+	    int si1=sp.indexOf(this.channelAddressingPathElement+"/");
+	    if(si1!=-1) {
+		si1+=channelAddressingPathElement.length()+1;
+		int si2=sp.indexOf("/",si1);
+		if(si2!=-1) {
+		    channelTarget=sp.substring(si1,si2);
+		    if(channelTarget==null) {
+			Logger.log(Logger.ERROR,"ChannelManager.processRequestChannelParameters() : malformed channel address. Null channel target ID.");
+			return;
+		    }
+		    Logger.log(Logger.DEBUG,"ChannelManager::processRequestChannelParameters() : channelTarget=\""+channelTarget+"\".");
+		    Enumeration en = req.getParameterNames ();
+		    if (en != null) {
+			while (en.hasMoreElements ()) {
+			    String pName= (String) en.nextElement ();
+			    if (!pName.equals ("channelTarget"))
+				targetParams.put (pName, req.getParameter (pName));
+			}
+		    }
+		    // check if the channel is an IPrivilegedChannel, and if it is,
+		    // pass portal control structures and runtime data.
+		    Object chObj;
+		    if ((chObj=channelTable.get(channelTarget)) == null) {
+			try {
+			    chObj=instantiateChannel(channelTarget);
+			} catch (Exception e) {
+			    CError errorChannel=new CError(CError.SET_STATIC_DATA_EXCEPTION,e,channelTarget,null);
+			    channelTable.put(channelTarget,errorChannel);
+			    chObj=errorChannel;
+			    Logger.log(Logger.ERROR,"ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus ID ? ! (id=\""+channelTarget+"\").");
+			}
+		    }
+		    if(chObj!=null && (chObj instanceof IPrivilegedChannel)) {
+			IPrivilegedChannel isc=(IPrivilegedChannel) chObj;
+			
+			try {
+			    isc.setPortalControlStructures(pcs);
+			} catch (Exception e) {
+			    channelTable.remove(isc);
+			    CError errorChannel=new CError(CError.SET_PCS_EXCEPTION,e,channelTarget,isc);
+			    channelTable.put(channelTarget,errorChannel);
+			    isc=errorChannel;
+			    // set portal control structures
+			    try {
+				errorChannel.setPortalControlStructures(pcs);
+			    } catch (Exception e2) {
+				// things are looking bad for our hero
+				StringWriter sw=new StringWriter();
+				e2.printStackTrace(new PrintWriter(sw));
+				sw.flush();
+				Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+			    }
+			}
+			
+			ChannelRuntimeData rd = new ChannelRuntimeData ();
+			rd.setParameters(targetParams);
+			rd.setHttpRequest (req);
+			/*			String reqURI = req.getRequestURI ();
+			reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
+			rd.setBaseActionURL (reqURI + "?channelTarget=" + channelTarget + "&");*/
+			rd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/channelTarget.uP");
+			try {
+			    isc.setRuntimeData (rd);
+			}
+			catch (Exception e) {
+			    channelTable.remove(isc);
+			    CError errorChannel=new CError(CError.SET_RUNTIME_DATA_EXCEPTION,e,channelTarget,isc);
+			    channelTable.put(channelTarget,errorChannel);
+			    isc=errorChannel;
+			    // demand output
+			    try {
+				ChannelRuntimeData erd = new ChannelRuntimeData ();
+				erd.setHttpRequest (req);
+				erd.setBaseActionURL(req.getContextPath()+"/channel/"+channelTarget+"/channelTarget.uP");
+				errorChannel.setPortalControlStructures(pcs);
+				errorChannel.setRuntimeData (erd);
+			    } catch (Exception e2) {
+				// things are looking bad for our hero
+				StringWriter sw=new StringWriter();
+				e2.printStackTrace(new PrintWriter(sw));
+				sw.flush();
+				Logger.log(Logger.ERROR,"ChannelManager::outputChannels : Error channel threw ! "+sw.toString());
+			    }
+			}
+		    }
+		}
+	    }
+	}
     }
 
     public IChannel instantiateChannel(String chanID) {
@@ -284,17 +299,13 @@ public class ChannelManager {
             }
             rd = new ChannelRuntimeData ();
             rd.setHttpRequest (req);
-            String reqURI = req.getRequestURI ();
-            reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
-            rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+	    rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
         } else {
             if(!(ch instanceof IPrivilegedChannel)) {
                 rd = new ChannelRuntimeData ();
                 rd.setParameters(targetParams);
                 rd.setHttpRequest (req);
-                String reqURI = req.getRequestURI ();
-                reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
-                rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+		rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
             }
         }
         ChannelRenderer cr = new ChannelRenderer (ch,rd);
@@ -328,9 +339,7 @@ public class ChannelManager {
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
                         rd.setHttpRequest (req);
-                        String reqURI = req.getRequestURI ();
-                        reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
-                        rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
                         errorChannel.setRuntimeData (rd);
 
                         errorChannel.setPortalControlStructures(pcs);
@@ -360,9 +369,7 @@ public class ChannelManager {
                     try {
                         ChannelRuntimeData rd = new ChannelRuntimeData ();
                         rd.setHttpRequest (req);
-                        String reqURI = req.getRequestURI ();
-                        reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
-                        rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
+			rd.setBaseActionURL(req.getContextPath()+"/channel/"+chanID+"/channelTarget.uP");
                         errorChannel.setRuntimeData (rd);
 
                         errorChannel.setPortalControlStructures(pcs);

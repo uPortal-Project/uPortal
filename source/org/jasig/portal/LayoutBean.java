@@ -139,6 +139,12 @@ public class LayoutBean
 
     try
     {
+      //debug
+      Logger.log(Logger.DEBUG,"--------Context Path=\""+req.getContextPath()+"\".");
+      Logger.log(Logger.DEBUG,"--------Path info=\""+req.getPathInfo()+"\".");
+      Logger.log(Logger.DEBUG,"--------Path translated=\""+req.getPathTranslated()+"\".");
+      Logger.log(Logger.DEBUG,"--------Query String=\""+req.getQueryString()+"\".");
+      Logger.log(Logger.DEBUG,"--------Servlet Path=\""+req.getServletPath()+"\".");
 
       // get the layout manager
       if (uLayoutManager == null) {
@@ -163,6 +169,7 @@ public class LayoutBean
       // (examples of such events are "remove channel", "minimize channel", etc.
       //  basically things that directly affect the userLayout structure)
       processUserLayoutParameters (req, uLayoutManager);
+      
 
 
 
@@ -172,9 +179,6 @@ public class LayoutBean
       else
         channelManager.setReqNRes (req, res);
 
-      // The preferences we get below are complete, that is all of the default
-      // values that are usually null are filled out
-      UserPreferences cup=uLayoutManager.getCompleteCurrentUserPreferences();
 
       // set the response mime type
       res.setContentType (uLayoutManager.getMimeType());
@@ -210,7 +214,12 @@ public class LayoutBean
       sLayoutProcessor.setStylesheetParam("userName", sLayoutProcessor.createXString(userDisplayName));
       // End of temporary section
 
+      // call layout manager to process all stylesheet-related request parameters
+      uLayoutManager.processUserPreferencesParameters(req);
 
+      // The preferences we get below are complete, that is all of the default
+      // values that are usually null are filled out
+      UserPreferences cup=uLayoutManager.getCompleteCurrentUserPreferences();
 
       // initialize a filter to fill in channel attributes for the
       // "theme" (second) transformation.
@@ -232,8 +241,8 @@ public class LayoutBean
 
       // "layoutRoot" signifies a node of the userLayout structure
       // that will serve as a root for constructing structuredLayout
-      String req_layoutRoot = req.getParameter ("userLayoutRoot");
-      String ses_layoutRoot = (String) session.getAttribute ("userLayoutRoot");
+      //      String req_layoutRoot = req.getParameter ("userLayoutRoot");
+      //String ses_layoutRoot = (String) session.getAttribute ("userLayoutRoot");
 
       /*      if (req_layoutRoot != null)
       {
@@ -259,67 +268,24 @@ public class LayoutBean
       */
 
       Node rElement=uLayoutManager.getRoot ();
-
-      // "stylesheetTarget" allows to specify one of two stylesheet sets "u" or "s" to
-      // a selected member of which the stylesheet parameters will be passed
-      // "u" stands for the stylesheet set used for userLayout->structuredLayout transform.,
-      // and "s" is a set used for structuedLayout->pageContent transformation.
-
-      Hashtable upTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
-      Hashtable spTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
-
-      String stylesheetTarget = null;
-
-      if ( (stylesheetTarget = (req.getParameter ("stylesheetTarget"))) != null)
-      {
-        if (stylesheetTarget.equals ("u"))
-        {
-          Enumeration e=req.getParameterNames ();
-
-          if (e!=null)
-          {
-            while (e.hasMoreElements ())
-            {
-              String pName= (String) e.nextElement ();
-
-              if (!pName.equals ("stylesheetTarget"))
-              upTable.put (pName,req.getParameter (pName));
-            }
-          }
-        }
-        else if (stylesheetTarget.equals ("s"))
-        {
-          Enumeration e=req.getParameterNames ();
-
-          if (e!=null)
-          {
-            while (e.hasMoreElements ())
-            {
-              String pName= (String) e.nextElement ();
-
-              if (!pName.equals ("stylesheetTarget"))
-              spTable.put (pName,req.getParameter (pName));
-            }
-          }
-        }
+      
+      Hashtable supTable=cup.getStructureStylesheetUserPreferences().getParameterValues();
+      Hashtable tupTable=cup.getThemeStylesheetUserPreferences().getParameterValues();
+      
+      for (Enumeration e = supTable.keys (); e.hasMoreElements ();) {
+	  String pName= (String) e.nextElement ();
+	  String pValue= (String) supTable.get (pName);
+	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting sparam \""+pName+"\"=\""+pValue+"\".");
+	  uLayoutProcessor.setStylesheetParam (pName,uLayoutProcessor.createXString (pValue));
       }
 
-      for (Enumeration e = upTable.keys (); e.hasMoreElements ();)
-      {
-        String pName= (String) e.nextElement ();
-        String pValue= (String) upTable.get (pName);
-        uLayoutProcessor.setStylesheetParam (pName,uLayoutProcessor.createXString (pValue));
+      for (Enumeration e = tupTable.keys (); e.hasMoreElements ();) {
+	  String pName= (String) e.nextElement ();
+	  String pValue= (String) tupTable.get (pName);
+	  Logger.log(Logger.DEBUG,"LayoutBean::writeContent() : setting tparam \""+pName+"\"=\""+pValue+"\".");
+	  sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
       }
 
-      for (Enumeration e = spTable.keys (); e.hasMoreElements ();)
-      {
-        String pName= (String) e.nextElement ();
-        String pValue= (String) spTable.get (pName);
-        sLayoutProcessor.setStylesheetParam (pName,sLayoutProcessor.createXString (pValue));
-      }
-
-       cup.getStructureStylesheetUserPreferences().setParameterValues(upTable);
-       cup.getThemeStylesheetUserPreferences().setParameterValues(spTable);
 
 
       // all the parameters are set up, fire up the filter transforms
@@ -334,44 +300,55 @@ public class LayoutBean
   }
 
 
+    public void outputContent(HttpServletRequest req, HttpServletResponse res, java.io.PrintWriter out) {
+	// at this point the response can be commited
+	
+
+    }
+
   /**
-   * Processes "userLayoutTarget" and a corresponding(?) "action".
-   * Function basically calls UserLayoutManager functions that correspond
-   * to the requested action.
+   * Process layout action events.
+   * Events are described by the following request params:
+   * uP_help_target
+   * uP_about_target
+   * uP_edit_target
+   * uP_remove_target
+   * uP_detach_target
    * @param the servlet request object
    * @param the userLayout manager object
    */
   private void processUserLayoutParameters (HttpServletRequest req, UserLayoutManager man)
   {
-    String layoutTarget;
+      String[] values;
+      if((values=req.getParameterValues("uP_help_target"))!=null) {
+	  for(int i=0;i<values.length;i++) {
+	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.HELP_BUTTON_EVENT));
+	  }
+      }
+      
+      if((values=req.getParameterValues("uP_about_target"))!=null) {
+	  for(int i=0;i<values.length;i++) {
+	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.ABOUT_BUTTON_EVENT));
+	  }
+      }
 
-    if ((layoutTarget = req.getParameter ("userLayoutTarget")) != null)
-    {
-      String action = req.getParameter ("action");
+      if((values=req.getParameterValues("uP_edit_target"))!=null) {
+	  for(int i=0;i<values.length;i++) {
+	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.EDIT_BUTTON_EVENT));
+	  }
+      }
 
-      // determine what action is
-      if (action.equals ("minimize"))
-      {
-        man.minimizeChannel (layoutTarget);
-        channelManager.passLayoutEvent (layoutTarget, new LayoutEvent (LayoutEvent.MINIMIZE_BUTTON_EVENT));
+      if((values=req.getParameterValues("uP_detach_target"))!=null) {
+	  for(int i=0;i<values.length;i++) {
+	      channelManager.passLayoutEvent(values[i], new LayoutEvent(LayoutEvent.DETACH_BUTTON_EVENT));
+	  }
       }
-      else if (action.equals ("remove"))
-      {
-        man.removeChannel (layoutTarget);
+      
+      if((values=req.getParameterValues("uP_remove_target"))!=null) {
+	  for(int i=0;i<values.length;i++) {
+	      man.removeChannel(values[i]);
+	  }
       }
-      else if (action.equals ("edit"))
-      {
-        channelManager.passLayoutEvent (layoutTarget, new LayoutEvent (LayoutEvent.EDIT_BUTTON_EVENT));
-      }
-      else if (action.equals ("help"))
-      {
-        channelManager.passLayoutEvent (layoutTarget, new LayoutEvent (LayoutEvent.HELP_BUTTON_EVENT));
-      }
-      else if (action.equals ("detach"))
-      {
-        channelManager.passLayoutEvent (layoutTarget, new LayoutEvent (LayoutEvent.DETACH_BUTTON_EVENT));
-      }
-    }
   }
 }
 
