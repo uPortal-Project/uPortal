@@ -35,6 +35,7 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
+import  org.apache.log4j.Level;
 import  org.apache.log4j.Priority;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.groups.*;
@@ -120,7 +121,7 @@ public class Utility
       if (msgTypeStr == null | msgTypeStr.equals(""))
          msgType = LogService.DEBUG;
       else
-         msgType = Priority.toPriority(msgTypeStr.toUpperCase());
+         msgType = Level.toLevel(msgTypeStr.toUpperCase());
 
       if (delay && msgTypeStr.toUpperCase().equals("DEBUG")) {
          long ts1 = Calendar.getInstance().getTime().getTime();
