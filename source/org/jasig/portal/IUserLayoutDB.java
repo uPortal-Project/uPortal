@@ -6,9 +6,11 @@ package org.jasig.portal;
  * @version $Revision$
  */
 
+import org.w3c.dom.*;
+
 public interface IUserLayoutDB {
-    public String getUserLayout(String userName,String media);
-    public void setUserLayout(String userName,String media,String layoutXML);
+    public Document getUserLayout(String userName,String media);
+    public void setUserLayout(String userName,String media,Document layoutXML);
 }
 
 
