@@ -201,7 +201,7 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
     }
   }
 
-  public Element renderChannel(String instanceId, Map headers, Cookie[] cookies, Map parameters, String baseActionURL) throws RemoteException, org.jasig.portal.channels.remotechannel.Throwable {
+  public Element renderChannel(String instanceId, Map headers, Cookie[] cookies, Map parameters, String baseActionURL) throws RemoteException, org.jasig.portal.channels.remotechannel.Exception {
     if (super.cachedEndpoint == null) {
         throw new org.apache.axis.NoEndPointException();
     }
