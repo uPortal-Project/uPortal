@@ -40,7 +40,6 @@ import org.jasig.portal.services.stats.StatsRecorderSettings;
 import org.jasig.portal.services.stats.StatsRecorderWorkerTask;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.jasig.portal.utils.threading.ThreadPool;
-import org.jasig.portal.utils.threading.WorkTracker;
 
 /**
  * Stats recorder service. Various parts of the portal call
@@ -143,7 +142,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_LOGIN)) {
       StatsRecorderWorkerTask task = new RecordLoginWorkerTask(person);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }
 
@@ -155,7 +154,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_LOGOUT)) {
       StatsRecorderWorkerTask task = new RecordLogoutWorkerTask(person);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }
   
@@ -167,7 +166,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_SESSION_CREATED)) {
       StatsRecorderWorkerTask task = new RecordSessionCreatedWorkerTask(person);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }
   
@@ -181,7 +180,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_SESSION_DESTROYED)) {
       StatsRecorderWorkerTask task = new RecordSessionDestroyedWorkerTask(person);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }
   
@@ -194,7 +193,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_PUBLISHED)) {
       StatsRecorderWorkerTask task = new RecordChannelDefinitionPublishedWorkerTask(person, channelDef);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   } 
   
@@ -207,7 +206,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_MODIFIED)) {
       StatsRecorderWorkerTask task = new RecordChannelDefinitionModifiedWorkerTask(person, channelDef);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }  
   
@@ -220,7 +219,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_DEFINITION_REMOVED)) {
       StatsRecorderWorkerTask task = new RecordChannelDefinitionRemovedWorkerTask(person, channelDef);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }  
   
@@ -234,7 +233,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_ADDED_TO_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelAddedToLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }    
   
@@ -248,7 +247,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_UPDATED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelUpdatedInLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }  
 
@@ -262,7 +261,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_MOVED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelMovedInLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }
   
@@ -276,7 +275,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_REMOVED_FROM_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordChannelRemovedFromLayoutWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }
   
@@ -290,7 +289,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_ADDED_TO_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderAddedToLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }    
   
@@ -304,7 +303,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_UPDATED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderUpdatedInLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }  
 
@@ -318,7 +317,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_MOVED_IN_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderMovedInLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }
   
@@ -332,7 +331,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_FOLDER_REMOVED_FROM_LAYOUT)) {
       StatsRecorderWorkerTask task = new RecordFolderRemovedFromLayoutWorkerTask(person, profile, folderDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }  
   
@@ -346,7 +345,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_INSTANTIATED)) {
       StatsRecorderWorkerTask task = new RecordChannelInstantiatedWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }  
   
@@ -360,7 +359,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_RENDERED)) {
       StatsRecorderWorkerTask task = new RecordChannelRenderedWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }  
 
@@ -376,7 +375,7 @@ public class StatsRecorder {
     if (instance().statsRecorderSettings.get(StatsRecorderSettings.RECORD_CHANNEL_TARGETED)) {
       StatsRecorderWorkerTask task = new RecordChannelTargetedWorkerTask(person, profile, channelDesc);
       task.setStatsRecorder(instance().statsRecorder);
-      WorkTracker workTracker = instance().threadPool.execute(task);
+      instance().threadPool.execute(task);
     }
   }   
 }
