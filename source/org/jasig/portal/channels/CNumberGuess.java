@@ -142,11 +142,7 @@ public class CNumberGuess implements IChannel
   {
     this.runtimeData = rd;
 
-    // The media will soon be passed to the channel I think.
-    // This code can then be replaced with runtimeData.getMedia()
-    MediaManager mm = new MediaManager();
-    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
-    media = mm.getMedia(runtimeData.getHttpRequest());
+    media = runtimeData.getMedia();
 
     String sGuess = runtimeData.getParameter ("guess");
 

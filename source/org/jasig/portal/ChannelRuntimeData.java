@@ -38,6 +38,9 @@ package org.jasig.portal;
 import javax.servlet.http.*;
 import java.util.Hashtable;
 import java.util.Map;
+import java.io.File;
+import java.util.Enumeration;
+import org.apache.xalan.xslt.XSLTInputSource;
 
 /**
  * A set of runtime data acessable by a channel.
@@ -50,10 +53,12 @@ import java.util.Map;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class ChannelRuntimeData extends Hashtable
+public class ChannelRuntimeData extends Hashtable implements Cloneable
 {
   private HttpServletRequest request;
+  private HttpServletResponse response;
   private String baseActionURL;
+  private static final String fs = File.separator;
 
   public ChannelRuntimeData ()
   {
@@ -61,20 +66,38 @@ public class ChannelRuntimeData extends Hashtable
 
     // set the default values for the parameters here
     request = null;
+    response = null;
     baseActionURL = null;
   }
 
+  /**
+   * Create a new instance of ourself
+   * Used by the CError channel
+   */
+  public Object clone() {
+    ChannelRuntimeData crd = new ChannelRuntimeData();
+    crd.request = request;
+    crd.response = response;
+    crd.baseActionURL = baseActionURL;
+    crd.putAll(this);
+    return crd;
+  }
 
   // the set methods ...
 
   public void setBaseActionURL (String baURL)
-  { 
-    baseActionURL = baURL; 
+  {
+    baseActionURL = baURL;
   }
-  
+
   public void setHttpRequest (HttpServletRequest req)
-  { 
-    request = req; 
+  {
+    request = req;
+  }
+
+  public void setHttpResponse (HttpServletResponse res)
+  {
+    response = res;
   }
 
   public void setParameters (Map params)
@@ -89,15 +112,38 @@ public class ChannelRuntimeData extends Hashtable
   }
 
   // the get methods ...
-  
+
   public String getBaseActionURL ()
-  { 
-    return baseActionURL; 
+  {
+    return baseActionURL;
   }
-  
+
+  /**
+   * Return the HttpRequest object
+   * @deprecated
+   */
   public HttpServletRequest getHttpRequest ()
-  { 
-    return request; 
+  {
+    return request;
+  }
+
+  /**
+   * Do a HTTP redirect
+   * @parameter URL string to append to baseActionURL
+   */
+  public void redirect(String redirectURL) throws Exception
+  {
+    redirect(getBaseActionURL(), redirectURL);
+  }
+
+  /**
+   * Do a HTTP redirect
+   * @parameter host to redirect to
+   * @parameter URL string to include
+   */
+  public void redirect(String redirectHost, String redirectURL) throws Exception
+  {
+    response.sendRedirect(redirectHost + redirectURL);
   }
 
   // Parameters are strings !
@@ -105,10 +151,80 @@ public class ChannelRuntimeData extends Hashtable
   {
     return (String) super.put (key, value);
   }
-  
+
   public synchronized String getParameter (Object key)
   {
     return (String) super.get (key);
+  }
+
+  /**
+   * wrapper for getParameterValues
+   * @parameter parmeter to look for
+   */
+  public String[] getParameterValues(String parameter)
+  {
+    return request.getParameterValues(parameter);
+  }
+
+  /**
+   * Wrapper for getParameterNames
+   */
+  public Enumeration getParameterNames()
+  {
+    return request.getParameterNames();
+  }
+
+  /**
+   * Return a session attribute
+   * @param attribute wanted
+   */
+  public Object getSessionAttribute(String attribute)
+  {
+    HttpSession session = request.getSession (false);
+    return session.getAttribute (attribute);
+  }
+
+  /**
+   * Find a stylesheet for this connection
+   * @parameter stylesheet title
+   * @parameter Stylesheet object
+   * @deprecated
+   */
+  public String getStylesheetURI(String title, StylesheetSet set)
+  {
+    return set.getStylesheetURI(title, request);
+  }
+
+  /**
+   * Find a stylesheet for this connection
+   * @parameter stylesheet title
+   * @parameter Stylesheet object
+   * @deprecated
+   */
+  public XSLTInputSource getStylesheet(String title, StylesheetSet set)
+  {
+    return set.getStylesheet(title, request);
+  }
+
+  /**
+   * Find a stylesheet for this connection
+   * @parameter stylesheet title
+   * @parameter Stylesheet object
+   * @depricated
+   */
+  public XSLTInputSource getStylesheet(StylesheetSet set)
+  {
+    return set.getStylesheet(request);
+  }
+
+  /**
+   * Return media type for this connection
+   */
+  public String getMedia()
+  {
+    MediaManager mm = new MediaManager();
+    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
+    return mm.getMedia(request);
   }
 
   // if you need to pass objects, use this
@@ -116,7 +232,7 @@ public class ChannelRuntimeData extends Hashtable
   {
     return super.put (key, value);
   }
-  
+
   public synchronized Object get (Object key)
   {
     return super.get (key);

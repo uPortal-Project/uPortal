@@ -61,40 +61,39 @@ public class CHeader extends BaseChannel
     String stylesheetDir = GenericPortalBean.getPortalBaseDir () + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CBookmarks" + fs;
 
     public CHeader() {
-	set = new StylesheetSet (stylesheetDir + "CHeader.ssl");
-	set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
+        set = new StylesheetSet (stylesheetDir + "CHeader.ssl");
+        set.setMediaProps (GenericPortalBean.getPortalBaseDir () + "properties" + fs + "media.properties");
     }
-    
-    public ChannelSubscriptionProperties getSubscriptionProperties () 
+
+    public ChannelSubscriptionProperties getSubscriptionProperties ()
     {
-	ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-	csb.setName ("HeaderChannel");
-	return csb;
+        ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
+        csb.setName ("HeaderChannel");
+        return csb;
     }
-    
+
     public void renderXML (DocumentHandler out)
     {
-	HttpSession session = (runtimeData.getHttpRequest ()).getSession (false);    
-	String userName = (String) session.getAttribute ("userName");
+        String userName = (String) runtimeData.getSessionAttribute ("userName");
 
-	Document doc = new org.apache.xerces.dom.DocumentImpl();
-	Element headerEl=doc.createElement("header");
-	Element titleEl=doc.createElement("title");
-	titleEl.appendChild(doc.createTextNode("Welcome "+userName+" !"));
-	headerEl.appendChild(titleEl);
-	doc.appendChild(headerEl);
+        Document doc = new org.apache.xerces.dom.DocumentImpl();
+        Element headerEl=doc.createElement("header");
+        Element titleEl=doc.createElement("title");
+        titleEl.appendChild(doc.createTextNode("Welcome "+userName+" !"));
+        headerEl.appendChild(titleEl);
+        doc.appendChild(headerEl);
 
-	try {
-	    
-	    XSLTInputSource xmlSource = new XSLTInputSource (doc);
-	    XSLTInputSource xslSource = set.getStylesheet(runtimeData.getHttpRequest());
-	    if(xslSource==null) {
-	    Logger.log(Logger.ERROR,"CHeader::renderXML() : unable to locate a stylesheet");
-	    }
-	    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-	    
-	    XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-	    processor.process (xmlSource, xslSource, xmlResult);
-	} catch (Exception e) { Logger.log(Logger.ERROR,e); }
+        try {
+
+            XSLTInputSource xmlSource = new XSLTInputSource (doc);
+            XSLTInputSource xslSource = runtimeData.getStylesheet(set);
+            if(xslSource==null) {
+            Logger.log(Logger.ERROR,"CHeader::renderXML() : unable to locate a stylesheet");
+            }
+            XSLTResultTarget xmlResult = new XSLTResultTarget(out);
+
+            XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
+            processor.process (xmlSource, xslSource, xmlResult);
+        } catch (Exception e) { Logger.log(Logger.ERROR,e); }
     }
 }

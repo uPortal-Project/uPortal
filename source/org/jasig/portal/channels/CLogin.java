@@ -58,12 +58,8 @@ public class CLogin implements IPrivilegedChannel
   private boolean bAuthenticated = false;
   private boolean bAuthorizationAttemptFailed = false;
 
-  MediaManager mm;
-
   public CLogin()
   {
-    mm = new MediaManager();
-    mm.setMediaProps(UtilitiesBean.getPortalBaseDir() + "properties" + fs + "media.properties");
   }
 
   public ChannelSubscriptionProperties getSubscriptionProperties()
@@ -104,10 +100,7 @@ public class CLogin implements IPrivilegedChannel
   {
     this.runtimeData = rd;
 
-    // The media will soon be passed to the channel I think.
-    // This code can then be replaced with runtimeData.getMedia()
-
-    media = mm.getMedia(runtimeData.getHttpRequest());
+    media = runtimeData.getMedia();
   }
 
   public void renderXML (DocumentHandler out) throws PortalException
