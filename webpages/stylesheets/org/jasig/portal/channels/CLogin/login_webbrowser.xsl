@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output method="html" indent="yes"/>
+  <xsl:param name="baseActionURL">default</xsl:param>
   
   <xsl:template match="login-status">
     <div style="text-align: center">
         <table border="0" width="100%" cellspacing="0" cellpadding="10">
         <form action="authentication.jsp" method="post">
           <input type="hidden" name="action" value="login"/>
+          <input type="hidden" name="baseActionURL" value="{$baseActionURL}"/>
           <tr>
             <td width="100%" class="uportal-background-dark">
               <xsl:apply-templates/>
