@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
+import java.util.Locale;
 import org.jasig.portal.utils.SoftHashMap;
 import java.util.Collections;
 import org.xml.sax.ContentHandler;
@@ -104,6 +105,7 @@ public class ChannelManager implements LayoutEventListener {
     private String channelTarget;
     private Hashtable targetParams;
     private BrowserInfo binfo;
+    private Locale[] locales;
 
     private Context portalContext;
     private Context channelContext;
@@ -514,6 +516,7 @@ public class ChannelManager implements LayoutEventListener {
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
+            rd.setLocales(locales);
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
@@ -741,6 +744,7 @@ public class ChannelManager implements LayoutEventListener {
                 if (qs != null && qs.indexOf("=") == -1)
                   rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
+                rd.setLocales(locales);
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelTarget);
@@ -807,6 +811,7 @@ public class ChannelManager implements LayoutEventListener {
         this.pcs.setHttpServletRequest(request);
         this.pcs.setHttpServletResponse(response);
         this.binfo=new BrowserInfo(request);
+        this.locales = new Locale[] { Locale.getDefault() }; // temporary: need to consult a LocaleManager which isn't written yet
         this.uPElement=uPElement;
         rendererTable.clear();
         processRequestChannelParameters(request);
@@ -936,6 +941,7 @@ public class ChannelManager implements LayoutEventListener {
             }
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
+            rd.setLocales(locales);
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 
             UPFileSpec up=new UPFileSpec(uPElement);
@@ -951,6 +957,7 @@ public class ChannelManager implements LayoutEventListener {
                 if (qs != null && qs.indexOf("=") == -1)
                   rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
+                rd.setLocales(locales);
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 
                 UPFileSpec up=new UPFileSpec(uPElement);
