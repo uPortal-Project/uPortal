@@ -3,44 +3,44 @@
     <category name="Fragments" expanded="true">
         <fragment>
             <ID>f001</ID>
-            <type>undefined</type>
+            <type>pulled</type>
             <fname>News</fname>
-            <displayName>News Feeds</displayName>
+            <name>News Feeds</name>
             <description>A tab fragment with 2 columns each containing news feeds</description>
         </fragment>
         <fragment>
             <ID>f005</ID>
             <type>pushed</type>
             <fname>BioDept</fname>
-            <displayName>Biology Department</displayName>
+            <name>Biology Department</name>
             <description>A tab fragment with 3 columns each containing Biology Department channels</description>
         </fragment>
         <fragment>
             <ID>f006</ID>
             <type>pulled</type>
             <fname>Bio180</fname>
-            <displayName>Biology 180</displayName>
+            <name>Biology 180</name>
             <description>A tab fragment with 2 columns each containing Biology 180 class channels</description>
         </fragment>
         <fragment>
             <ID>f004</ID>
             <type>pulled</type>
             <fname>Bio101</fname>
-            <displayName>Biology 101</displayName>
+            <name>Biology 101</name>
             <description>A tab fragment with 2 columns each containing Biology 101 class channels</description>
         </fragment>
         <fragment>
             <ID>f002</ID>
             <type>pushed</type>
             <fname>Bio123</fname>
-            <displayName>Biology123</displayName>
+            <name>Biology123</name>
             <description>A tab fragment with 2 columns each containing Biology 123 class channels</description>
         </fragment>
         <fragment>
             <ID>f003</ID>
             <type>pushed</type>
             <fname>Bio322</fname>
-            <displayName>Biology 322</displayName>
+            <name>Biology 322</name>
             <description>A tab fragment with 2 columns each containing Biology 322 class channels</description>
         </fragment>
     </category>
