@@ -7,9 +7,9 @@
   <mimeType>text/html</mimeType>
   <serializer>HTML</serializer>
   <deviceType>workstation</deviceType>
-  <samplePictureURI></samplePictureURI>
-  <sampleIconURI></sampleIconURI>
-  <UPManagerClass>org.jasig.portal.channels.UserPreferences.GPreferencesState</UPManagerClass> 
+  <samplePictureURI>media/org/jasig/portal/layout/tab-column/nested-tables/sample_full.gif</samplePictureURI>
+  <sampleIconURI>media/org/jasig/portal/layout/tab-column/nested-tables/sample_icon.gif</sampleIconURI>
+  <userPreferencesModuleClass>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</userPreferencesModuleClass> 
  
   <parameters>
   	<parameter name="skin">
