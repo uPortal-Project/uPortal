@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 
 <!--
-     This build file can be used to upgrade a database serving uPortal 2.1.x
-     to the current version.  It performs all of the 2.2+ database population
-     tasks in the main initportal target, plus an upgrade task which replaces
-     the "db" task of the initportal task.  The upgrade task just populates
-     the data that is new since 2.1.x.
-     
-     Once this is done, there may be additional steps needed, such as:
-      - updating user profiles to use aggregated layouts
-      - updating themes to use the new path scheme
+    This build file contains targets useful for upgrading from uPortal
+    2.1 to uPortal 2.3.  It is possible to perform this upgrade
+    with either of these scenarios:
+
+    1) Simple uPortal 2.1-style layouts along with "nested tables"-based theme.
+    2) Aggregated layouts along with "integrated modes"-based theme.
+   
+    For more information on the usage of upgrade21.xml, please see
+    http://www.uportal.org/implementors/upgrade/upgrade21.html
       
-     Author: Al Wold
-     Version: $Revision$
+    Author: Al Wold (ASU), Nick Bolton (Unicon)
+    Version: $Revision$
 -->
 <project name="upgrade21" default="upgrade21">
 <import file="build.xml"/>
