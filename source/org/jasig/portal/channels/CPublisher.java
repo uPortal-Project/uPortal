@@ -102,7 +102,7 @@ public class CPublisher implements IPrivilegedChannel
   private Vector vRoles = null;
   private Vector vCats = null;
   private String chanName = "New Channel";
-  
+
   //default settings for channel controls
   private String timeout = "5000";
   private String priority = "1";
@@ -326,6 +326,7 @@ public class CPublisher implements IPrivilegedChannel
         chan.setAttribute("minimized", "false");
         chan.setAttribute("editable", "false");
         chan.setAttribute("hasHelp", "false");
+        chan.setAttribute("hasAbout", "false");
         chan.setAttribute("removable", "true");
         chan.setAttribute("detachable", "true");
         chan.setAttribute("class", (String)hParams.get("class"));
@@ -360,7 +361,7 @@ public class CPublisher implements IPrivilegedChannel
     currentStep = Integer.toString(i+1);
     catID = runtimeData.getParameterValues("cat");
   }
-  
+
   private void preparePublishRoles ()
   {
     mode = NAME;
@@ -381,7 +382,7 @@ public class CPublisher implements IPrivilegedChannel
     //currentStep = "end";
     chanName = runtimeData.getParameter("chanName");
   }
-  
+
   private void prepareSaveChanges ()
   {
     // save layout copy
@@ -488,7 +489,7 @@ public class CPublisher implements IPrivilegedChannel
       return(false);
     }
   }
-  
+
   private Document getNameDoc()
   {
     Document nameDoc = null;
@@ -497,8 +498,8 @@ public class CPublisher implements IPrivilegedChannel
     Element field  = nameDoc.createElement("field");
     root.appendChild(field);
     nameDoc.appendChild(root);
-    
+
     return nameDoc;
   }
-  
+
 }
