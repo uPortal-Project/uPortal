@@ -72,7 +72,10 @@ public class PersonDirPropertyFinder
     public String getProperty(EntityIdentifier entityID, String name) {
         String r = null;
         if (entityID.getType().equals(person)) {
-            r = (String)getPropertiesHash(entityID).get(name);
+            Object o = getPropertiesHash(entityID).get(name);
+            if (o instanceof String) {
+                r = (String)o;
+            }
         }
         return  r;
     }
