@@ -77,7 +77,7 @@
   <xsl:value-of select="."/>
   </a>
   -->
-  <xsl:value-of select="."/>
+  <xsl:value-of select="."/><br/>
 </xsl:for-each>
 </xsl:template>
 
