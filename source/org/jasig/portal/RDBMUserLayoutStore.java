@@ -1201,15 +1201,15 @@ public class RDBMUserLayoutStore
 
               /* insert row(s) into up_ss_user_atts */
               String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
-                " SELECT "+userId+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
-                " FROM UP_SS_USER_ATTS WHERE USER_ID="+defaultUserId;
+                " SELECT "+userId+", USUA.PROFILE_ID, USUA.SS_ID, USUA.SS_TYPE, USUA.STRUCT_ID, USUA.PARAM_NAME, USUA.PARAM_TYPE, USUA.PARAM_VAL "+
+                " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+defaultUserId;
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
               stmt.executeUpdate(Insert);
 
               /* insert row(s) into up_ss_user_parm */
               Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
-                " SELECT "+userId+", PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
-                " FROM UP_SS_USER_PARM WHERE USER_ID="+defaultUserId;
+                " SELECT "+userId+", USUP.PROFILE_ID, USUP.SS_ID, USUP.SS_TYPE, USUP.PARAM_NAME, USUP.PARAM_VAL "+
+                " FROM UP_SS_USER_PARM USUP WHERE USER_ID="+defaultUserId;
               LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
               stmt.executeUpdate(Insert);
 

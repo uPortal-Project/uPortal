@@ -284,33 +284,33 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_layout */
         Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID ) "+
-          " SELECT "+newUID+", LAYOUT_ID, LAYOUT_TITLE, NULL FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
+          " SELECT "+newUID+", UUL.LAYOUT_ID, UUL.LAYOUT_TITLE, NULL FROM UP_USER_LAYOUT UUL WHERE UUL.USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
         /* insert row into up_user_param */
         Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
-          " SELECT "+newUID+", USER_PARAM_NAME, USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
+          " SELECT "+newUID+", UUP.USER_PARAM_NAME, UUP.USER_PARAM_VALUE FROM UP_USER_PARAM UUP WHERE UUP.USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
         /* insert row into up_user_profile */
         Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
-          " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
-          "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
+          " SELECT "+newUID+", UUP.PROFILE_ID, UUP.PROFILE_NAME, UUP.DESCRIPTION, NULL, NULL, NULL "+
+          "FROM UP_USER_PROFILE UUP WHERE UUP.USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
         /* insert row into up_user_role */
         Insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID, PRIM_ROLE_IND) "+
-          " SELECT "+newUID+", ROLE_ID, PRIM_ROLE_IND FROM UP_USER_ROLE WHERE USER_ID="+templateUID;
+          " SELECT "+newUID+", UUR.ROLE_ID, UUR.PRIM_ROLE_IND FROM UP_USER_ROLE UUR WHERE UUR.USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
         /* insert row into up_user_ua_map */
         Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
-          " SELECT "+newUID+", USER_AGENT, PROFILE_ID"+
-          " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
+          " SELECT "+newUID+", UUUA.USER_AGENT, UUUA.PROFILE_ID"+
+          " FROM UP_USER_UA_MAP UUUA WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
