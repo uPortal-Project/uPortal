@@ -73,7 +73,7 @@ public class BoundedThreadPool extends AbstractPool{
 		if(isDestroyed){
 			throw new IllegalStateException ("This thread pool has been destroyed, no additional tasks may be executed.");
 		}
-		if(totalThreads() < maxWorkers || idleThreads() == 0){
+		if(totalThreads() < maxWorkers && idleThreads() == 0){
 			initWorkers(1);
 		}
 		

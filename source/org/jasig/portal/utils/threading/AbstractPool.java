@@ -162,6 +162,7 @@ public abstract class AbstractPool implements ThreadPool {
 
 		for (int i = 0; i < numberOfThreads; i++) {
 			totalWorkers++;
+                        idleWorkers++;
 			worker = new Worker(this, workQueue);
 			workerThreads[i] = worker;
 			worker.setDaemon(true);
