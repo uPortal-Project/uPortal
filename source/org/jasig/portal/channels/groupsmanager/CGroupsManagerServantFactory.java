@@ -120,63 +120,7 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     * @throws PortalException
     */
     public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect, IGroupMember[] members) throws PortalException{
-      long time1 = System.currentTimeMillis();
-      CGroupsManagerServant servant;
-
-      try {
-        servant = getGroupsServant();
-        ChannelStaticData slaveSD =  cloneStaticData(staticData);
-        Utility.logMessage("DEBUG", "CGroupsManagerFactory::getGroupsServantforSelection: slaveSD before setting servant static data: " + slaveSD);
-        servant.setStaticData(slaveSD);
-
-        servant.getSessionData().mode = "select";
-        servant.getSessionData().allowFinish = allowFinish;
-        if(!allowEntitySelect){
-           servant.getSessionData().gmPermissions = GroupsManagerBlockEntitySelectPermissions.getInstance();
-           //servant.getSessionData().blockEntitySelect = true;
-        }
-        if (message != null){
-          servant.getSessionData().customMessage = message;
-        }
-        String typeKey = null;
-        if (type!=null && !type.equals("")){
-          try{
-            typeKey = GroupService.getDistinguishedGroup(type).getKey();
-          }
-          catch(Exception e){
-            ;
-          }
-        }
-        if (typeKey!=null){
-          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().getUnrestrictedData());
-        }
-        servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
-        if (members!=null && members.length>0){
-          Document viewDoc = servant.getSessionData().model;
-          CGroupsManagerUnrestrictedSessionData ursd = servant.getSessionData().getUnrestrictedData();
-
-            Element rootElem = viewDoc.getDocumentElement();
-            try{
-                for (int mm = 0; mm< members.length;mm++){
-                  IGroupMember mem = members[mm];
-                  Element memelem = GroupsManagerXML.getGroupMemberXml(mem,false,null,ursd);
-                  memelem.setAttribute("selected","true");
-                  rootElem.appendChild(memelem);
-                }
-            }
-            catch (Exception e){
-              Utility.logMessage("ERROR", e.toString(), e);
-            }
-        }
-      }
-      catch (Exception e){
-          Utility.logMessage("ERROR", e.toString(), e);
-          throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
-      }
-      long time2 = System.currentTimeMillis();
-      Utility.logMessage("INFO", "CGroupsManagerFactory took  "
-         + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
-      return (IServant) servant;
+        return getGroupsServantforSelection(staticData, message, type, allowFinish, allowEntitySelect, members, null);
     }
 
     /**
@@ -357,5 +301,95 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
       return  newUid;
    }
 
+    /**
+    * Returns a servant that is used to select IGroupMembers. The
+    * list of selected IGroupMembers is available via the getResults() method
+    *
+    * @return IServant
+    * @param staticData
+    *   the master channel's staticData
+    * @param message
+    *   a custom message to present the user to explain what they should select
+    * @param type
+    *   the distinguished group name representing the desired root group for
+    *   selection, e.g. GroupService.EVERYONE or GroupService.ALL_CATEGORIES
+    * @param allowFinish
+    *   whether or not the user can "finish" selecting. if false, the servant
+    *   method "isFinished()" will always return false; the master must have
+    *   some other mechanism for allowing the user to change screens.
+    * @param allowEntitySelect
+    *   if false, only groups can be selected
+    * @param members
+    *   an IGroupMember[] of pre-selected members.
+    * @param permissions
+    *   an instance of IGroupsManagerPermissions
+    * @throws PortalException
+    */
+    public static IServant getGroupsServantforSelection(ChannelStaticData staticData, String message, String type, boolean allowFinish, boolean allowEntitySelect, IGroupMember[] members, IGroupsManagerPermissions permissions) throws PortalException{
+      long time1 = System.currentTimeMillis();
+      CGroupsManagerServant servant;
+
+      try {
+        servant = getGroupsServant();
+        ChannelStaticData slaveSD =  cloneStaticData(staticData);
+        Utility.logMessage("DEBUG", "CGroupsManagerFactory::getGroupsServantforSelection: slaveSD before setting servant static data: " + slaveSD);
+        servant.setStaticData(slaveSD);
+
+        servant.getSessionData().mode = "select";
+        servant.getSessionData().allowFinish = allowFinish;
+
+        // An instance of permissions and allowEntitySelect set to false both trigger the setting
+        // of the gmPermissions in sessionData. The permissions object takes precedence. If 
+        // gmPermissions is not set here, the default policy will be set in GroupsManagerXML.
+        if(permissions != null){
+           servant.getSessionData().gmPermissions = permissions;
+        }
+        else if(!allowEntitySelect) {
+           servant.getSessionData().gmPermissions = GroupsManagerBlockEntitySelectPermissions.getInstance();
+        }
+
+        if (message != null){
+          servant.getSessionData().customMessage = message;
+        }
+        String typeKey = null;
+        if (type!=null && !type.equals("")){
+          try{
+            typeKey = GroupService.getDistinguishedGroup(type).getKey();
+          }
+          catch(Exception e){
+            ;
+          }
+        }
+        if (typeKey!=null){
+          servant.getSessionData().rootViewGroupID = Utility.translateKeytoID(typeKey,servant.getSessionData().getUnrestrictedData());
+        }
+        servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
+        if (members!=null && members.length>0){
+          Document viewDoc = servant.getSessionData().model;
+          CGroupsManagerUnrestrictedSessionData ursd = servant.getSessionData().getUnrestrictedData();
+
+            Element rootElem = viewDoc.getDocumentElement();
+            try{
+                for (int mm = 0; mm< members.length;mm++){
+                  IGroupMember mem = members[mm];
+                  Element memelem = GroupsManagerXML.getGroupMemberXml(mem,false,null,ursd);
+                  memelem.setAttribute("selected","true");
+                  rootElem.appendChild(memelem);
+                }
+            }
+            catch (Exception e){
+              Utility.logMessage("ERROR", e.toString(), e);
+            }
+        }
+      }
+      catch (Exception e){
+          Utility.logMessage("ERROR", e.toString(), e);
+          throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
+      }
+      long time2 = System.currentTimeMillis();
+      Utility.logMessage("INFO", "CGroupsManagerFactory took  "
+         + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
+      return (IServant) servant;
+    }
 
 }
