@@ -209,7 +209,7 @@ public class ChannelRegistryManager {
    * @throws PortalException
    */
   public static Element getChannel (String channelPublishId) throws PortalException {
-    Document channelRegistry = (Document)channelRegistryCache.get(CHANNEL_REGISTRY_CACHE_KEY);
+    Document channelRegistry = getChannelRegistry();
     Element channelE = null;
     try {
       // This is unfortunately dependent on Xalan 2.  Is there a way to use a standard interface?
