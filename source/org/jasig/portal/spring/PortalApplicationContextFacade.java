@@ -20,7 +20,7 @@ import org.springframework.beans.factory.access.SingletonBeanFactoryLocator;
  * a singleton manner. 
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision $
+ * @version $Revision$ $Date$
  */
 public final class PortalApplicationContextFacade {
     /**
@@ -57,6 +57,6 @@ public final class PortalApplicationContextFacade {
         return reference.getFactory();
     }
     
-    /** ensure this class can't be instanciated */
+    /** ensure this class can't be instantiated */
     private PortalApplicationContextFacade() { }
 }
