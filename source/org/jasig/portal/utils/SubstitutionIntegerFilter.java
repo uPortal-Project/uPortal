@@ -81,10 +81,10 @@ public class SubstitutionIntegerFilter {
             } else {
                 // we have a match, roll back buffer and add substitute
                 bufferindex = bufferindex - matchindex;
+                matchindex=0;
                 for (int x =0; x<substitute.length;x++){
                   addToBuffer(substitute[x]);
                 }
-                matchindex=0;
             }
         } else {
             matchindex=0;
