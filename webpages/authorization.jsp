@@ -28,6 +28,8 @@ if (bAuthorized)
   // Put the username in the session
   session.setAttribute ("userName", sUserName);
 }
+else
+  session.setAttribute ("userName", "guest");
 
 response.sendRedirect("layout.jsp");
 %>
