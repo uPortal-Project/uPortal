@@ -799,16 +799,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         Enumeration en = baseContext.getSubContexts();
         while (password == null && en.hasMoreElements()) {
             ISecurityContext subContext = (ISecurityContext)en.nextElement();
-            IOpaqueCredentials soc = subContext.getOpaqueCredentials();
-            
-            if (soc instanceof NotSoOpaqueCredentials) {
-                NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)soc;
-                password = nsoc.getCredentials();
-            }
-            
-            if (password == null) {
-                password = this.getPassword(subContext);
-            }
+            password = this.getPassword(subContext);
         }
         
         return password;
