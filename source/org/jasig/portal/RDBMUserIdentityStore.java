@@ -303,38 +303,104 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
+        // replaced INSERT INTO SELECT statements with queries followed
+        // by INSERTS because MySQL does not support this using the same
+        // table.
+        // Courtesy of John Fereira <jaf30@cornell.edu>
+
         /* insert row into up_user_layout */
-        Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID ) "+
-          " SELECT "+newUID+", UUL.LAYOUT_ID, UUL.LAYOUT_TITLE, NULL FROM UP_USER_LAYOUT UUL WHERE UUL.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query =  "SELECT USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID,LAYOUT_ID,LAYOUT_TITLE,INIT_STRUCT_ID) "+
+           "VALUES("+
+           newUID+","+
+           rset.getInt("LAYOUT_ID")+","+
+           "'"+rset.getString("LAYOUT_TITLE")+"',"+
+           "NULL)";
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           stmt.executeUpdate(Insert);
+        }
 
         /* insert row into up_user_param */
-        Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
-          " SELECT "+newUID+", UUP.USER_PARAM_NAME, UUP.USER_PARAM_VALUE FROM UP_USER_PARAM UUP WHERE UUP.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query = "SELECT USER_ID,USER_PARAM_NAME,USER_PARAM_VALUE FROM UP_USER_PARAM WHERE USER_ID="+templateUID;
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE ) "+
+           "VALUES("+
+           newUID+","+
+           ",'"+rset.getString("USER_PARAM_NAME")+"',"+
+           ",'"+rset.getString("USER_PARAM_VALUE")+"')";
+
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           stmt.executeUpdate(Insert);
+        }
 
         /* insert row into up_user_profile */
-        Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
-          " SELECT "+newUID+", UUP.PROFILE_ID, UUP.PROFILE_NAME, UUP.DESCRIPTION, NULL, NULL, NULL "+
-          "FROM UP_USER_PROFILE UUP WHERE UUP.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+
+        query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, NULL, NULL "+
+                "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+
+           Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
+           "VALUES("+
+           newUID+","+
+           rset.getInt("PROFILE_ID")+","+
+           "'"+rset.getString("PROFILE_NAME")+"',"+
+           "'"+rset.getString("DESCRIPTION")+"',"+
+           "NULL,"+
+           "NULL,"+
+           "NULL)";
+
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           stmt.executeUpdate(Insert);
+        }
 
         /* insert row into up_user_ua_map */
-        Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
-          " SELECT "+newUID+", UUUA.USER_AGENT, UUUA.PROFILE_ID"+
-          " FROM UP_USER_UA_MAP UUUA WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query = " SELECT USER_ID, USER_AGENT, PROFILE_ID"+
+                " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
+           "VALUES("+
+           newUID+","+
+           "'"+rset.getString("USER_AGENT")+"',"+
+           rset.getInt("PROFILE_ID")+")";
+
+           LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           stmt.executeUpdate(Insert);
+        }
 
         /* insert row(s) into up_ss_user_parm */
-        Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
-          " SELECT "+newUID+", USUP.PROFILE_ID, USUP.SS_ID, USUP.SS_TYPE, USUP.PARAM_NAME, USUP.PARAM_VAL "+
-          " FROM UP_SS_USER_PARM USUP WHERE USUP.USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
-        stmt.executeUpdate(Insert);
+        query = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
+          " FROM UP_SS_USER_PARM WHERE USER_ID="+templateUID;
+        if (DEBUG>0) System.err.println(query);
+        rset = stmt.executeQuery(query);
+        while (rset.next()) {
+           Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+           "VALUES("+
+           newUID+","+
+           rset.getInt("PROFILE_ID")+","+
+           rset.getInt("SS_ID")+","+
+           rset.getInt("SS_TYPE")+","+
+           "'"+rset.getString("PARAM_NAME")+"',"+
+           "'"+rset.getString("PARAM_VAL")+"')";
+
+           LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+           if (DEBUG>0) System.err.println(Insert);
+           stmt.executeUpdate(Insert);
+        }
+
+        // end of changes for MySQL support
 
         // Check to see if the database supports transactions
         boolean supportsTransactions = false;
