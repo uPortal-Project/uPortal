@@ -46,7 +46,6 @@ $Revision$
         <xsl:when test="$unauthenticated='true'">
           <form action="Authentication" method="post">
             <input type="hidden" name="action" value="login"/>
-            <input type="hidden" name="baseActionURL" value="{$baseActionURL}"/>
             <xsl:call-template name="buildTable"/>
           </form>
         </xsl:when>
@@ -219,8 +218,4 @@ document.write(date + ', ' + year);
     </tr>
   </xsl:template>
 </xsl:stylesheet>
-<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
-<metaInformation>
-<scenarios/>
-</metaInformation>
--->
+
