@@ -67,22 +67,4 @@ public interface IAuthorization
     }
   }
 
-  // For the publish mechanism to use
-  public boolean isUserInRole(IPerson person, IRole role);
-  public Vector  getAllRoles();
-  public Vector getChannelRoles(int channelID);
-  public int     setChannelRoles(int channelID, RoleAuthorization[] roles);
-  public boolean canUserPublish(IPerson person);
-
-  // For the subscribe mechanism to use
-  public Vector  getAuthorizedChannels(IPerson person);
-  public boolean canUserSubscribe(IPerson person, int channelID);
-
-  // For the render mechanism to use
-  public boolean canUserRender(IPerson person, int channelID);
-
-  // For the administration mechanism to use
-  public Vector getUserRoles(IPerson person);
-  public void addUserRoles(IPerson person, Vector roles);
-  public void removeUserRoles(IPerson person, Vector roles);
 }

@@ -867,51 +867,6 @@ public class RDBMUserLayoutStore
     }
     return  profile;
   }
-  /**
-   * put your documentation comment here
-   * @param person
-   * @param roles
-   * @exception Exception
-   */
-  public void addUserRoles (IPerson person, Vector roles) throws Exception {
-    int userId = person.getID();
-    Connection con = rdbmService.getConnection();
-    try {
-      // Set autocommit false for the connection
-      setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        int insertCount = 0;
-        for (int i = 0; i < roles.size(); i++) {
-          String query = "SELECT ROLE_ID, ROLE_TITLE FROM UP_ROLE WHERE ROLE_TITLE = '" + roles.elementAt(i) + "'";
-          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addUserRoles(): " + query);
-          ResultSet rs = stmt.executeQuery(query);
-          try {
-            rs.next();
-            int roleId = rs.getInt("ROLE_ID");
-            String insert = "INSERT INTO UP_USER_ROLE (USER_ID, ROLE_ID) VALUES (" + userId + ", " + roleId + ")";
-            LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addUserRoles(): " + insert);
-            insertCount = stmt.executeUpdate(insert);
-            if (insertCount != 1) {
-              LogService.instance().log(LogService.ERROR, "AuthorizationBean addUserRoles(): SQL failed -> " + insert);
-            }
-          } finally {
-            rs.close();
-          }
-        }
-        // Commit the transaction
-        commit(con);
-      } catch (Exception e) {
-        // Roll back the transaction
-        rollback(con);
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-  }
   protected void appendChildCategoriesAndChannels (Connection con, IAuthorizationPrincipal ap, MyPreparedStatement chanStmt, Element category, int catId) throws SQLException, AuthorizationException {
     Document doc = category.getOwnerDocument();
     Statement stmt = null;
@@ -2529,71 +2484,6 @@ public class RDBMUserLayoutStore
       rdbmService.releaseConnection(con);
     }
     return  pv;
-  }
-  /**
-   * Get the roles that a user belongs to
-   * @param userRoles
-   * @param person
-   * @exception Exception
-   */
-  public void getUserRoles (Vector userRoles, IPerson person) throws Exception {
-    int userId = person.getID();
-    Connection con = rdbmService.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String query = "SELECT ROLE_TITLE, USER_ID FROM UP_USER_ROLE UUR, UP_ROLE UR, UP_USER UU " + "WHERE UU.USER_ID="
-            + userId + " AND UU.USER_ID=UUR.USER_ID AND UUR.ROLE_ID=UR.ROLE_ID";
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserRoles(): " + query);
-        ResultSet rs = stmt.executeQuery(query);
-        try {
-          while (rs.next()) {
-            userRoles.addElement(rs.getString("ROLE_TITLE"));
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
-  }
-  /**
-   *
-   *   ReferenceAuthorization
-   *
-   */
-  /**
-   * Is a user in this role
-   */
-  public boolean isUserInRole (IPerson person, String role) throws Exception {
-    int userId = person.getID();
-    Connection con = rdbmService.getConnection();
-    try {
-      String query = "SELECT * FROM UP_USER_ROLE UUR, UP_ROLE UR, UP_USER UU " + "WHERE UU.USER_ID=" + userId + " UUR.USER_ID=UU.USER_ID AND UUR.ROLE_ID=UR.ROLE_ID "
-          + "AND " + "UPPER(ROLE_TITLE)=UPPER('" + role + "')";
-      LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::isUserInRole(): " + query);
-      Statement stmt = con.createStatement();
-      try {
-        ResultSet rs = stmt.executeQuery(query);
-        try {
-          if (rs.next()) {
-            return  (true);
-          }
-          else {
-            return  (false);
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      rdbmService.releaseConnection(con);
-    }
   }
   /**
    * Removes a channel from the channel registry.  The channel
