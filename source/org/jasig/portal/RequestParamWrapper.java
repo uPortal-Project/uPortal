@@ -121,6 +121,10 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                                 parameters.put(partName, valueArray);
                             } else if (filename != null) {
                                 fileUpload = new MultipartDataSource(filePart);
+                            }
+                            
+                            if (fileUpload != null) {
+                                
                                 if (parameters.containsKey(partName)) {
                                     MultipartDataSource[] oldValueArray = (MultipartDataSource[])parameters.get(partName);
                                     MultipartDataSource[] valueArray = new MultipartDataSource[oldValueArray.length + 1];
