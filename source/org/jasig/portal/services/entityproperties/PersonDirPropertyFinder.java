@@ -8,11 +8,13 @@ package  org.jasig.portal.services.entityproperties;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.jasig.portal.EntityIdentifier;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.services.persondir.IPersonDirectory;
 import org.jasig.portal.utils.SoftHashMap;
 
 
@@ -29,11 +31,11 @@ public class PersonDirPropertyFinder
     private static final Log log = LogFactory.getLog(PersonDirPropertyFinder.class);
     
     private Class person = org.jasig.portal.security.IPerson.class;
-    private PersonDirectory pd;
+    private IPersonDirectory pd;
     private SoftHashMap cache;
 
     public PersonDirPropertyFinder() {
-        pd = PersonDirectory.instance();
+        pd = PersonDirectory.getInterfaceInstance();
         cache = new SoftHashMap(120);
     }
 
@@ -67,7 +69,7 @@ public class PersonDirPropertyFinder
         return  r;
     }
     protected Hashtable getPropertiesHash(EntityIdentifier entityID) {
-        Hashtable ht;
+        Map ht;
         if ((ht = (Hashtable)cache.get(entityID.getKey())) == null) {
             ht = new Hashtable(0);
             try {
@@ -77,7 +79,7 @@ public class PersonDirPropertyFinder
             }
             cache.put(entityID.getKey(), ht);
         }
-        return  ht;
+        return  new Hashtable(ht);
     }
 
 }

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,9 @@ public class JdbcPersonAttributeDaoImpl extends MappingSqlQuery implements
      * value of the specified column.
      */
     private Map columnsToAttributes = new HashMap();
+    /** Track the set of attribute names, this lets us avoid creating the set every time getAttributeNames is called */
+    private Set attrNames = new HashSet();
+    
 
     /**
      * Instantiate the query, providing a DataSource against which the query
@@ -56,7 +60,7 @@ public class JdbcPersonAttributeDaoImpl extends MappingSqlQuery implements
     /*
      * (non-Javadoc)
      * 
-     * @see edu.yale.its.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
      */
     public Map attributesForUser(String uid) {
         if (uid == null)
@@ -65,6 +69,15 @@ public class JdbcPersonAttributeDaoImpl extends MappingSqlQuery implements
         if (uniqueResult == null)
             return new HashMap();
         return (Map) uniqueResult;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        return Collections.unmodifiableSet(this.attrNames);
     }
 
     /*
@@ -188,6 +201,19 @@ public class JdbcPersonAttributeDaoImpl extends MappingSqlQuery implements
         }
         
         this.columnsToAttributes = internalColumnsToAttributes;
+        this.updateAttrNameSet();
     }
 
+    /**
+     * Create a set of the attribute names to avoid doing it for every getAttributeNames call
+     */
+    private void updateAttrNameSet() {
+        this.attrNames.clear();
+        
+        for (final Iterator attrNameSets = this.columnsToAttributes.values().iterator(); attrNameSets.hasNext(); ) {
+            final Set attrNameSet = (Set)attrNameSets.next();
+            
+            this.attrNames.addAll(attrNameSet);
+        }
+    }
 }

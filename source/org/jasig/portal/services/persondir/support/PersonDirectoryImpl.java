@@ -7,15 +7,14 @@ package org.jasig.portal.services.persondir.support;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.RestrictedPerson;
-
 import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-
+import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.services.persondir.IPersonDirectory;
 
 /**
@@ -35,14 +34,14 @@ public class PersonDirectoryImpl implements IPersonDirectory {
     private PersonAttributeDao attributeSource;
     
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.PersonDirectory#getUserDirectoryInformation(java.lang.String)
+     * @see org.jasig.portal.services.persondir.IPersonDirectory#getPossibleUserAttributeNames()
      */
     public Map getUserDirectoryInformation(String username) {
         return this.attributeSource.attributesForUser(username);
     }
 
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.PersonDirectory#getUserDirectoryInformation(java.lang.String, org.jasig.portal.security.IPerson)
+     * @see org.jasig.portal.services.persondir.IPersonDirectory#getUserDirectoryInformation(java.lang.String, org.jasig.portal.security.IPerson)
      */
     public void getUserDirectoryInformation(String uid, IPerson person) {
         Map attribs = this.attributeSource.attributesForUser(uid);
@@ -51,9 +50,16 @@ public class PersonDirectoryImpl implements IPersonDirectory {
             person.setAttribute(key, attribs.get(key));
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.services.persondir.IPersonDirectory#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        return this.attributeSource.getAttributeNames();
+    }
 
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.PersonDirectory#getRestrictedPerson(java.lang.String)
+     * @see org.jasig.portal.services.persondir.IPersonDirectory#getRestrictedPerson(java.lang.String)
      */
     public RestrictedPerson getRestrictedPerson(String uid) {
         /*

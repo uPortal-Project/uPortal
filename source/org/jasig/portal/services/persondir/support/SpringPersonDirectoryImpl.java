@@ -7,13 +7,13 @@ package org.jasig.portal.services.persondir.support;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.RestrictedPerson;
+import org.jasig.portal.services.persondir.IPersonDirectory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
-
-import org.jasig.portal.services.persondir.IPersonDirectory;
 
 /**
  * This IPersonDirectory implementation uses a Spring XmlBeanFactory to attempt
@@ -74,7 +74,7 @@ public class SpringPersonDirectoryImpl implements IPersonDirectory {
     /*
      * (non-Javadoc)
      * 
-     * @see edu.yale.its.portal.services.persondir.IPersonDirectory#getUserDirectoryInformation(java.lang.String)
+     * @see org.jasig.portal.services.persondir.IPersonDirectory#getUserDirectoryInformation(java.lang.String)
      */
     public Map getUserDirectoryInformation(String username) {
         return this.delegate.getUserDirectoryInformation(username);
@@ -83,17 +83,24 @@ public class SpringPersonDirectoryImpl implements IPersonDirectory {
     /*
      * (non-Javadoc)
      * 
-     * @see edu.yale.its.portal.services.persondir.IPersonDirectory#getUserDirectoryInformation(java.lang.String,
+     * @see org.jasig.portal.services.persondir.IPersonDirectory#getUserDirectoryInformation(java.lang.String,
      *         org.jasig.portal.security.IPerson)
      */
     public void getUserDirectoryInformation(String uid, IPerson person) {
         this.delegate.getUserDirectoryInformation(uid, person);
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.services.persondir.PersonDirectory#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        return this.delegate.getAttributeNames();
+    }
 
     /*
      * (non-Javadoc)
      * 
-     * @see edu.yale.its.portal.services.persondir.IPersonDirectory#getRestrictedPerson(java.lang.String)
+     * @see org.jasig.portal.services.persondir.IPersonDirectory#getRestrictedPerson(java.lang.String)
      */
     public RestrictedPerson getRestrictedPerson(String uid) {
         return this.delegate.getRestrictedPerson(uid);

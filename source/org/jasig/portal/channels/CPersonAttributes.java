@@ -8,7 +8,11 @@ package org.jasig.portal.channels;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +22,7 @@ import org.jasig.portal.IMultithreadedMimeResponse;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -47,12 +52,17 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
     Document doc = DocumentFactory.getNewDocument();
 
     Element attributesE = doc.createElement("attributes");
-
-    Enumeration attribs = person.getAttributeNames();
     
-    while ( attribs.hasMoreElements() ) {
+    Set possibleAttrs = PersonDirectory.getInterfaceInstance().getAttributeNames();
+    possibleAttrs = new HashSet(possibleAttrs);
+    
+    for (Enumeration attribs = person.getAttributeNames(); attribs.hasMoreElements(); ) {
       // Get the attribute name
       String attName = (String) attribs.nextElement();
+      
+      // Remove this attr from the list of possible attrs
+      possibleAttrs.remove(attName);
+      
       // Set the attribute
       Element attributeE = doc.createElement("attribute");
 
@@ -74,6 +84,24 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
       }
 
       attributesE.appendChild(attributeE);
+    }
+    
+    //Sort the set of possible attributes
+    possibleAttrs = new TreeSet(possibleAttrs);
+    
+    //Add the unknown attributes to the element list.
+    for (Iterator attribs = possibleAttrs.iterator(); attribs.hasNext(); ) {
+        // Get the attribute name
+        String attName = (String) attribs.next();
+        
+        // Set the attribute
+        Element attributeE = doc.createElement("attribute");
+
+        Element nameE = doc.createElement("name");
+        nameE.appendChild(doc.createTextNode(attName));
+        attributeE.appendChild(nameE);
+
+        attributesE.appendChild(attributeE);
     }
 
     doc.appendChild(attributesE);

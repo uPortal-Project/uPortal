@@ -59,7 +59,7 @@ public class MergingAttributesFromAttributesDaoImpl implements AttributesFromAtt
     }
 
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.PersonAttributeDao#attributesForUser(java.util.Map)
+     * @see org.jasig.portal.services.PersonAttributeDao#attributesForUser(java.util.Map)
      */
     public Map attributesFromAttributes(Map attributes) {
         

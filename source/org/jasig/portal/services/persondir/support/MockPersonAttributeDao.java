@@ -5,7 +5,9 @@
 
 package org.jasig.portal.services.persondir.support;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A mock PersonAttributeDao to be used for testing.
@@ -22,6 +24,15 @@ public class MockPersonAttributeDao
      */
     public Map attributesForUser(String uid) {
         return this.backingMap;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        return Collections.unmodifiableSet(this.backingMap.keySet());
     }
 
     /**

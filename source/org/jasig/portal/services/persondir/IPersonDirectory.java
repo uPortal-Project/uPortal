@@ -6,6 +6,7 @@
 package org.jasig.portal.services.persondir;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.RestrictedPerson;
@@ -50,6 +51,21 @@ public interface IPersonDirectory {
      *                IPerson representing the user
      */
     public void getUserDirectoryInformation(String uid, IPerson person);
+    
+    /**
+     * Gets a {@link Set} of attribute names that may be returned for 
+     * a user query. No guarantee is made that all the attributes in the
+     * {@link Set} will be avalable for every user.
+     * <br>
+     * Implementations may return <code>null</code> if they cannot provide
+     * a list of attribute names.
+     * <br>
+     * It is recommended that implementations return an immutable
+     * {@link Set}.
+     * 
+     * @return A {@link Set} of possible attribute names for user queries.
+     */
+    public Set getAttributeNames();
 
     /**
      * Returns a reference to a restricted IPerson represented by the supplied

@@ -8,6 +8,7 @@ package org.jasig.portal.services.persondir.support;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +54,17 @@ public class LdapPersonAttributeDaoImpl implements PersonAttributeDao {
     /**
      * Map from LDAP attribute names to uPortal attribute names.
      */
-    private Map ldapAttributesToPortalAttributes;
+    private Map ldapAttributesToPortalAttributes = new HashMap();
+    /** Track the set of attribute names, this lets us avoid creating the set every time getAttributeNames is called */
+    private Set attrNames = new HashSet();
+
 
     private ILdapServer ldapServer;
     
     /*
      * (non-Javadoc)
      * 
-     * @see edu.yale.its.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
      */
     public Map attributesForUser(String uid) {
         
@@ -153,6 +157,15 @@ public class LdapPersonAttributeDaoImpl implements PersonAttributeDao {
         }
 
     }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        return Collections.unmodifiableSet(this.attrNames);
+    }
 
     /**
      * @return Returns the ldapAttributesToPortalAttributes.
@@ -225,6 +238,20 @@ public class LdapPersonAttributeDaoImpl implements PersonAttributeDao {
         }
         
         this.ldapAttributesToPortalAttributes = internalLdapToAttributes;
+        this.updateAttrNameSet();
+    }
+    
+    /**
+     * Create a set of the attribute names to avoid doing it for every getAttributeNames call
+     */
+    private void updateAttrNameSet() {
+        this.attrNames.clear();
+        
+        for (final Iterator attrNameSets = this.ldapAttributesToPortalAttributes.values().iterator(); attrNameSets.hasNext(); ) {
+            final Set attrNameSet = (Set)attrNameSets.next();
+            
+            this.attrNames.addAll(attrNameSet);
+        }
     }
     
     /**

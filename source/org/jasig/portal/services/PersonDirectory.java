@@ -6,15 +6,16 @@
 package org.jasig.portal.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.RestrictedPerson;
-
 import org.jasig.portal.services.persondir.IPersonDirectory;
 import org.jasig.portal.services.persondir.support.SpringPersonDirectoryImpl;
 
@@ -49,10 +50,17 @@ public class PersonDirectory {
      */
     public static HashSet propertynames = new HashSet();
 
+    /** Singleton reference to PersonDirectory */
     private static PersonDirectory instance;
 
+    /** Wrapped class which provides the functionality */
     private IPersonDirectory impl;
 
+    /**
+     * Private constructor to allow for singleton behavior.
+     * 
+     * @param impl The {@link IPersonDirectory} instance to wrap.
+     */
     private PersonDirectory(IPersonDirectory impl) {
         this.impl = impl;
     }
@@ -61,6 +69,7 @@ public class PersonDirectory {
      * Obtain the singleton instance of PersonDirectory.
      * 
      * @return the singleton instance of PersonDirectory.
+     * @deprecated Use the {@link IPersonDirectory} interface via {@link #getInterfaceInstance()}
      */
     public static synchronized PersonDirectory instance() {
         /*
@@ -80,7 +89,17 @@ public class PersonDirectory {
                 log.error("Error instantiating PersonDirectory", t);
             }
         }
+
         return instance;
+    }
+    
+    /**
+     * Gets a singleton reference to the {@link IPersonDirectory} implemenation.
+     * 
+     * @return A reference to the {@link IPersonDirectory} implemenation.
+     */
+    public static IPersonDirectory getInterfaceInstance() {
+        return instance().impl;
     }
 
     /**
@@ -91,18 +110,38 @@ public class PersonDirectory {
      * namespace of all possible attributes.
      * 
      * @return an iterator for an empty list.
-     * @deprecated no longer supported
+     * @deprecated Use {@link IPersonDirectory#getAttributeNames()} via the {@link #getInterfaceInstance()} method.
      */
     public static Iterator getPropertyNamesIterator() {
-        return new ArrayList().iterator();
+        final Set attrNames = instance().impl.getAttributeNames();
+        
+        if (attrNames != null)
+            //Make sure the set we return can't be modified
+            return Collections.unmodifiableSet(attrNames).iterator();
+        else
+            //Return a dummy iterator of the IPerson impl didn't provide one.
+            return (new ArrayList()).iterator();
     }
+    /**
+     * Returns a reference to a restricted IPerson represented by the supplied
+     * user ID. The restricted IPerson allows access to person attributes, but
+     * not the security context.
+     * 
+     * @param uid the user ID
+     * @return the corresponding person, restricted so that its security context is inaccessible
+     * @deprecated Use {@link IPersonDirectory#getRestrictedPerson(String)} via the {@link #getInterfaceInstance()} method.
+     */
+    public static RestrictedPerson getRestrictedPerson(String uid) {
+        return instance().impl.getRestrictedPerson(uid);
+    }
+
 
     /**
      * Obtain a HashTable of attributes for the given user.
      * 
-     * @param username -
-     *                the name of the user
+     * @param username the name of the user
      * @return a Hashtable from user names to attributes.
+     * @deprecated Use {@link IPersonDirectory#getUserDirectoryInformation(String)} via the {@link #getInterfaceInstance()} method.
      */
     public Hashtable getUserDirectoryInformation(String username) {
         /*
@@ -117,39 +156,11 @@ public class PersonDirectory {
      * Populate an IPerson with the attributes from the user directory for the
      * given uid.
      * 
-     * @param uid -
-     *                person for whom we are obtaining attributes
-     * @param person -
-     *                person object into which to store the attributes
+     * @param uid person for whom we are obtaining attributes
+     * @param person person object into which to store the attributes
+     * @deprecated Use {@link IPersonDirectory#getUserDirectoryInformation(String, IPerson)} via the {@link #getInterfaceInstance()} method.
      */
     public void getUserDirectoryInformation(String uid, IPerson person) {
         this.impl.getUserDirectoryInformation(uid, person);
     }
-
-    /**
-     * Returns a reference to a restricted IPerson represented by the supplied
-     * user ID. The restricted IPerson allows access to person attributes, but
-     * not the security context.
-     * 
-     * @param uid
-     *                the user ID
-     * @return the corresponding person, restricted so that its security context
-     *            is inaccessible
-     */
-    public RestrictedPerson getRestrictedPerson(String uid) {
-        return this.impl.getRestrictedPerson(uid);
-    }
-    
-    /**
-     * Supplies to PersonDirectory an updated IPerson to cache for the particular 
-     * user identifier.
-     * May have no effect, depending upon whether and how the underlying
-     * IPerson implementation implements this method.
-     * @param uid - user identifier
-     * @param person - IPerson keyed by the uid
-     */
-    public void cachePerson(String uid, IPerson person){
-        this.impl.cachePerson(uid, person);
-    }
-
 }

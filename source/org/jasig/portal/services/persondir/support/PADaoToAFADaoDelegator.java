@@ -7,8 +7,7 @@ package org.jasig.portal.services.persondir.support;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jasig.portal.services.persondir.support.PersonAttributeDao;
+import java.util.Set;
 
 /**
  * A thin adaptor from PersonAttributeDao 
@@ -49,7 +48,15 @@ public class PADaoToAFADaoDelegator implements PersonAttributeDao {
         return this.attributesFromAttributesDao.attributesFromAttributes(seedMap);
     }
 
-    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        //TODO Could some of the AttributesFromAttributesDao impls provide this information?
+        return null;
+    }
     
     /**
      * Get the delegate DAO which this implementation uses to do its actual work.

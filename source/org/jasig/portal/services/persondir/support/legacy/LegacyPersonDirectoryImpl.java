@@ -10,17 +10,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.RestrictedPerson;
-
-import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.services.persondir.IPersonDirectory;
 import org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.PersonDirectoryImpl;
+import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -86,21 +86,28 @@ public class LegacyPersonDirectoryImpl implements IPersonDirectory {
     }
     
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.PersonDirectory#getUserDirectoryInformation(java.lang.String)
+     * @see org.jasig.portal.services.persondir.PersonDirectory#getUserDirectoryInformation(java.lang.String)
      */
     public Map getUserDirectoryInformation(String username) {
         return this.delegate.getUserDirectoryInformation(username);
     }
 
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.PersonDirectory#getUserDirectoryInformation(java.lang.String, org.jasig.portal.security.IPerson)
+     * @see org.jasig.portal.services.persondir.PersonDirectory#getUserDirectoryInformation(java.lang.String, org.jasig.portal.security.IPerson)
      */
     public void getUserDirectoryInformation(String uid, IPerson person) {
         this.delegate.getUserDirectoryInformation(uid, person);
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.services.persondir.PersonDirectory#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        return this.delegate.getAttributeNames();
+    }
 
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.PersonDirectory#getRestrictedPerson(java.lang.String)
+     * @see org.jasig.portal.services.persondir.PersonDirectory#getRestrictedPerson(java.lang.String)
      */
     public RestrictedPerson getRestrictedPerson(String uid) {
         return this.delegate.getRestrictedPerson(uid);

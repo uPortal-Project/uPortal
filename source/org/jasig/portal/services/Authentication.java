@@ -7,7 +7,6 @@ package  org.jasig.portal.services;
 
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -112,11 +111,11 @@ public class Authentication {
          // Populate the person object using the PersonDirectory if applicable
          if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
             // Retrieve all of the attributes associated with the person logging in
-            Hashtable attribs = PersonDirectory.instance().getUserDirectoryInformation((String)person.getAttribute(IPerson.USERNAME));
+            Map attribs = PersonDirectory.getInterfaceInstance().getUserDirectoryInformation((String)person.getAttribute(IPerson.USERNAME));
             // Add each of the attributes to the IPerson
-            Enumeration en = attribs.keys();
-            while (en.hasMoreElements()) {
-               String key = (String)en.nextElement();
+            Iterator en = attribs.keySet().iterator();
+            while (en.hasNext()) {
+               String key = (String)en.next();
                // String value = (String)attribs.get(key);
                // person.setAttribute(key, value);
                person.setAttribute(key, attribs.get(key));
@@ -158,7 +157,7 @@ public class Authentication {
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
-         PersonDirectory.instance().cachePerson(
+         PersonDirectory.getInterfaceInstance().cachePerson(
                  (String) person.getAttribute(IPerson.USERNAME), person);
          
          // Record the successful authentication

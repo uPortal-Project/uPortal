@@ -8,11 +8,11 @@ package  org.jasig.portal.groups;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.services.persondir.IPersonDirectory;
 import org.jasig.portal.utils.SoftHashMap;
 
 
@@ -25,7 +25,7 @@ public class PersonDirNameFinder
         implements IEntityNameFinder {
     // Singleton instance:
     private static IEntityNameFinder singleton;
-    private static PersonDirectory pd;
+    private static IPersonDirectory pd;
     // Our cache of entity names:
     private SoftHashMap names;
 
@@ -35,7 +35,7 @@ public class PersonDirNameFinder
     private PersonDirNameFinder () throws SQLException
     {
         super();
-        pd = PersonDirectory.instance();
+        pd = PersonDirectory.getInterfaceInstance();
         names = new SoftHashMap();
     }
 
@@ -80,7 +80,7 @@ public class PersonDirNameFinder
      */
     private String primGetName (String key) throws java.sql.SQLException {
         String name = key;
-        Hashtable userInfo = pd.getUserDirectoryInformation(name);
+        Map userInfo = pd.getUserDirectoryInformation(name);
         Object displayName = userInfo.get("displayName");
         String displayNameStr = "";
         if (displayName != null)

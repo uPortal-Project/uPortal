@@ -14,16 +14,14 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
 import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.rdbm.RDBMServicesDataSource;
-
-import org.jasig.portal.services.persondir.support.PersonAttributeDao;
-import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
 import org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl;
+import org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl;
+import org.jasig.portal.services.persondir.support.PersonAttributeDao;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * Adapts from a PersonDirInfo to a PersonAttributeDao.
@@ -183,10 +181,17 @@ public class PersonDirInfoAdaptor implements PersonAttributeDao {
     }
 
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
      */
     public Map attributesForUser(String uid) {
         return this.delegate.attributesForUser(uid);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        return this.delegate.getAttributeNames();
     }
     
     public String toString() {

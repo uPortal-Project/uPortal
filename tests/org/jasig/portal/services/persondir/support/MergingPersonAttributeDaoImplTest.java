@@ -5,10 +5,11 @@
 
 package org.jasig.portal.services.persondir.support;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -160,6 +161,10 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
     private class ThrowingPersonAttributeDao implements PersonAttributeDao {
 
         public Map attributesForUser(String uid) {
+            throw new RuntimeException("ThrowingPersonAttributeDao always throws");
+        }
+        
+        public Set getAttributeNames() {
             throw new RuntimeException("ThrowingPersonAttributeDao always throws");
         }
         

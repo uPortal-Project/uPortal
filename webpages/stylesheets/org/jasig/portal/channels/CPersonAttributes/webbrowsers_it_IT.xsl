@@ -29,11 +29,15 @@
       <tr class="uportal-background-light">
         <td colspan="2">Attributi disponibili:</td>
       </tr>
-      <xsl:apply-templates select="attribute"/>
+      <xsl:apply-templates select="attribute" mode="defined"/>
+      <tr class="uportal-background-light">
+        <td colspan="2">Attributi non disponibili:</td>
+      </tr>
+      <xsl:apply-templates select="attribute" mode="undefined"/>
     </table>
   </xsl:template>
 
-  <xsl:template match="attribute">
+  <xsl:template match="attribute" mode="defined">
     <xsl:if test="value">
       <tr>
         <td><xsl:value-of select="name"/></td>
@@ -45,6 +49,15 @@
             <td><xsl:value-of select="value"/></td>
         </xsl:otherwise>
         </xsl:choose>
+      </tr>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="attribute" mode="undefined">
+    <xsl:if test="not(value)">
+      <tr>
+        <td><xsl:value-of select="name"/></td>
+        <td>[Non disponibile]</td>
       </tr>
     </xsl:if>
   </xsl:template>

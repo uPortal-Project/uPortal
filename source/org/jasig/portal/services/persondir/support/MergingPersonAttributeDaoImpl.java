@@ -5,14 +5,16 @@
 
 package org.jasig.portal.services.persondir.support;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.jasig.portal.services.persondir.support.merger.AttributeMerger;
 import org.jasig.portal.services.persondir.support.merger.ReplacingAttributeAdder;
 
@@ -45,7 +47,7 @@ public class MergingPersonAttributeDaoImpl
     private boolean recoverExceptions = true;
     
     /* (non-Javadoc)
-     * @see edu.yale.its.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#attributesForUser(java.lang.String)
      */
     public Map attributesForUser(String uid) {
         
@@ -71,6 +73,25 @@ public class MergingPersonAttributeDaoImpl
         }
         
         return attributes;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jasig.portal.services.persondir.support.PersonAttributeDao#getAttributeNames()
+     */
+    public Set getAttributeNames() {
+        final Set attrNames = new HashSet();
+        
+        for (final Iterator iter = this.personAttributeDaos.iterator(); iter.hasNext();) {
+            final PersonAttributeDao currentDao = (PersonAttributeDao) iter.next();
+            final Set currentDaoAttrNames = currentDao.getAttributeNames();
+            
+            if (currentDaoAttrNames != null)
+                attrNames.addAll(currentDaoAttrNames);
+        }
+        
+        return Collections.unmodifiableSet(attrNames);
     }
 
     /**
