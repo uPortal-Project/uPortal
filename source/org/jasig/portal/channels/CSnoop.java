@@ -41,14 +41,14 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.XMLEscaper;
+import org.jasig.portal.utils.DocumentFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * <p>A channel which displays HTTP request and HTML header info.
@@ -59,8 +59,7 @@ import java.io.File;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
-public class CSnoop implements IPrivilegedChannel
-{
+public class CSnoop implements IPrivilegedChannel {
   private PortalControlStructures pcs;
   private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
@@ -70,8 +69,7 @@ public class CSnoop implements IPrivilegedChannel
   /**
    * No-argument constructor for CSnoop.
    */
-  public CSnoop ()
-  {
+  public CSnoop () {
     this.staticData = new ChannelStaticData ();
     this.runtimeData = new ChannelRuntimeData ();
   }
@@ -81,8 +79,7 @@ public class CSnoop implements IPrivilegedChannel
    * HttpServletResponse, UserPreferencesManager, etc.
    * @param pcs the portal control structures
    */
-  public void setPortalControlStructures(PortalControlStructures pcs)
-  {
+  public void setPortalControlStructures(PortalControlStructures pcs) {
     this.pcs = pcs;
   }
 
@@ -90,8 +87,7 @@ public class CSnoop implements IPrivilegedChannel
    * Returns channel runtime properties.
    * @return handle to runtime properties
    */
-  public ChannelRuntimeProperties getRuntimeProperties ()
-  {
+  public ChannelRuntimeProperties getRuntimeProperties () {
     // Channel will always render, so the default values are ok
     return new ChannelRuntimeProperties ();
   }
@@ -100,8 +96,7 @@ public class CSnoop implements IPrivilegedChannel
    * Processes layout-level events coming from the portal
    * @param ev a portal layout event
    */
-  public void receiveEvent (PortalEvent ev)
-  {
+  public void receiveEvent (PortalEvent ev) {
     // no events for this channel
   }
 
@@ -109,8 +104,7 @@ public class CSnoop implements IPrivilegedChannel
    * Receive static channel data from the portal
    * @param sd static channel data
    */
-  public void setStaticData (ChannelStaticData sd)
-  {
+  public void setStaticData (ChannelStaticData sd) {
     this.staticData = sd;
   }
 
@@ -119,8 +113,7 @@ public class CSnoop implements IPrivilegedChannel
    * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
-  public void setRuntimeData (ChannelRuntimeData rd)
-  {
+  public void setRuntimeData (ChannelRuntimeData rd) {
     this.runtimeData = rd;
   }
 
@@ -128,51 +121,116 @@ public class CSnoop implements IPrivilegedChannel
    * Output channel content to the portal
    * @param out a sax document handler
    */
-  public void renderXML (ContentHandler out) throws PortalException
-  {
+  public void renderXML (ContentHandler out) throws PortalException {
     HttpServletRequest request = pcs.getHttpServletRequest();
-    StringBuffer sb = new StringBuffer();
-    sb.append("<?xml version='1.0'?>");
+    Document doc = DocumentFactory.getNewDocument();
 
-    sb.append("<request-info>");
-    sb.append("  <request-protocol>").append(XMLEscaper.escape(request.getProtocol())).append("</request-protocol>");
-    sb.append("  <request-method>").append(XMLEscaper.escape(request.getMethod())).append("</request-method>");
-    sb.append("  <server-name>").append(XMLEscaper.escape(request.getServerName())).append("</server-name>");
-    sb.append("  <server-port>").append(XMLEscaper.escape(String.valueOf(request.getServerPort()))).append("</server-port>");
-    sb.append("  <request-uri>").append(XMLEscaper.escape(request.getRequestURI())).append("</request-uri>");
-    sb.append("  <context-path>").append(XMLEscaper.escape(request.getContextPath())).append("</context-path>");
-    sb.append("  <servlet-path>").append(XMLEscaper.escape(request.getServletPath())).append("</servlet-path>");
-    sb.append("  <query-string>").append(XMLEscaper.escape(request.getQueryString())).append("</query-string>");
-    sb.append("  <path-info>").append(XMLEscaper.escape(request.getPathInfo())).append("</path-info> ");
-    sb.append("  <path-translated>").append(XMLEscaper.escape(request.getPathTranslated())).append("</path-translated>");
-    sb.append("  <content-length>").append(XMLEscaper.escape(String.valueOf(request.getContentLength()))).append("</content-length>");
-    sb.append("  <content-type>").append(XMLEscaper.escape(request.getContentType())).append("</content-type>");
-    sb.append("  <remote-user>").append(XMLEscaper.escape(request.getRemoteUser())).append("</remote-user>");
-    sb.append("  <remote-address>").append(XMLEscaper.escape(request.getRemoteAddr())).append("</remote-address>");
-    sb.append("  <remote-host>").append(XMLEscaper.escape(request.getRemoteHost())).append("</remote-host>");
-    sb.append("  <authorization-scheme>").append(XMLEscaper.escape(request.getAuthType())).append("</authorization-scheme>");
-    sb.append("  <locale>").append(XMLEscaper.escape(request.getLocale().toString())).append("</locale>");
+    // <request-info>
+    Element requestInfoE = doc.createElement("request-info");
 
-    sb.append("  <headers>");
+    // <request-protocol>
+    Element requestProtocolE = doc.createElement("request-protocol");
+    requestProtocolE.appendChild(doc.createTextNode(request.getProtocol()));
+    requestInfoE.appendChild(requestProtocolE);
+    
+    // <request-method>
+    Element requestMethodE = doc.createElement("request-method");
+    requestMethodE.appendChild(doc.createTextNode(request.getMethod()));
+    requestInfoE.appendChild(requestMethodE);
 
+    // <server-name>
+    Element serverNameE = doc.createElement("server-name");
+    serverNameE.appendChild(doc.createTextNode(request.getServerName()));
+    requestInfoE.appendChild(serverNameE);
+
+    // <server-port>
+    Element serverPortE = doc.createElement("server-port");
+    serverPortE.appendChild(doc.createTextNode(String.valueOf(request.getServerPort())));
+    requestInfoE.appendChild(serverPortE);
+
+    // <request-uri>
+    Element requestUriE = doc.createElement("request-uri");
+    requestUriE.appendChild(doc.createTextNode(request.getRequestURI()));
+    requestInfoE.appendChild(requestUriE);
+
+    // <context-path>
+    Element contextPathE = doc.createElement("context-path");
+    contextPathE.appendChild(doc.createTextNode(request.getContextPath()));
+    requestInfoE.appendChild(contextPathE);
+
+    // <servlet-path>
+    Element servletPathE = doc.createElement("servlet-path");
+    servletPathE.appendChild(doc.createTextNode(request.getServletPath()));
+    requestInfoE.appendChild(servletPathE);
+    
+    // <query-string>
+    Element queryStringE = doc.createElement("query-string");
+    queryStringE.appendChild(doc.createTextNode(request.getQueryString()));
+    requestInfoE.appendChild(queryStringE);
+
+    // <path-info>
+    Element pathInfoE = doc.createElement("path-info");
+    pathInfoE.appendChild(doc.createTextNode(request.getPathInfo()));
+    requestInfoE.appendChild(pathInfoE);
+
+    // <path-translated>
+    Element pathTranslatedE = doc.createElement("path-translated");
+    pathTranslatedE.appendChild(doc.createTextNode(request.getPathTranslated()));
+    requestInfoE.appendChild(pathTranslatedE);
+
+    // <content-length>
+    Element contentLengthE = doc.createElement("content-length");
+    contentLengthE.appendChild(doc.createTextNode(String.valueOf(request.getContentLength())));
+    requestInfoE.appendChild(contentLengthE);
+
+    // <content-type>
+    Element contentTypeE = doc.createElement("content-type");
+    contentTypeE.appendChild(doc.createTextNode(request.getContentType()));
+    requestInfoE.appendChild(contentTypeE);
+
+    // <remote-user>
+    Element remoteUserE = doc.createElement("remote-user");
+    remoteUserE.appendChild(doc.createTextNode(request.getRemoteUser()));
+    requestInfoE.appendChild(remoteUserE);
+
+    // <remote-address>
+    Element remoteAddressE = doc.createElement("remote-address");
+    remoteAddressE.appendChild(doc.createTextNode(request.getRemoteAddr()));
+    requestInfoE.appendChild(remoteAddressE);
+
+    // <remote-host>
+    Element remoteHostE = doc.createElement("remote-host");
+    remoteHostE.appendChild(doc.createTextNode(request.getRemoteHost()));
+    requestInfoE.appendChild(remoteHostE);
+
+    // <authorization-scheme>
+    Element authorizationSchemeE = doc.createElement("authorization-scheme");
+    authorizationSchemeE.appendChild(doc.createTextNode(request.getAuthType()));
+    requestInfoE.appendChild(authorizationSchemeE);
+
+    // <locale>
+    Element localeE = doc.createElement("locale");
+    localeE.appendChild(doc.createTextNode(request.getLocale().toString()));
+    requestInfoE.appendChild(localeE);
+    
+    // <headers>
+    Element headersE = doc.createElement("headers");
     java.util.Enumeration enum = request.getHeaderNames();
-
-    while (enum.hasMoreElements())
-    {
+    while (enum.hasMoreElements()) {
       String name = (String)enum.nextElement();
       String value = request.getHeader(name);
-      sb.append("<header name=\"");
-      sb.append(XMLEscaper.escape(name));
-      sb.append("\">");
-      sb.append(XMLEscaper.escape(value));
-      sb.append("</header>");
-    }
+      Element headerE = doc.createElement("header");
+      headerE.setAttribute("name", name);
+      headerE.appendChild(doc.createTextNode(value));
+      headersE.appendChild(headerE);
+    }    
+    requestInfoE.appendChild(headersE);
 
-    sb.append("  </headers>");
-    sb.append("</request-info>");
-
+    doc.appendChild(requestInfoE);
+    
+    // Now perform the transformation
     XSLT xslt = new XSLT(this);
-    xslt.setXML(sb.toString());
+    xslt.setXML(doc);
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.transform();
