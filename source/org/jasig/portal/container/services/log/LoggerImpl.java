@@ -36,84 +36,82 @@
 package org.jasig.portal.container.services.log;
 
 import org.apache.pluto.services.log.Logger;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * Implementation of Apache Pluto Logger.
+ * Implementation of Apache Pluto Logger by delegation to Apache Commons Logging.
  * @author Ken Weiner, kweiner@unicon.net
+ * @author andrew.petro@yale.edu
  * @version $Revision$
  */
 public class LoggerImpl implements Logger {
-    
-    String component = null;
-    Class klass = null;
+    private final Log log;
     
     public LoggerImpl() {
+        // TODO: revisit to obtain correct logger for this case.
+        this.log = LogFactory.getLog(LoggerImpl.class);
     }
     
     public LoggerImpl(String component) {
-        this.component = component;
+        this.log = LogFactory.getLog(component);
     }
     
+    /**
+     * Instantiate a LoggerImpl for a particular class.
+     * This implementation passes the class to the Commons
+     * LogFactory to obtain the underlying Apache Commons Log 
+     * implementation.
+     * @param klass - the class for which a logger is desired
+     */
     public LoggerImpl(Class klass) {
-        this.klass = klass;
+        this.log = LogFactory.getLog(klass);
     }
 
     // Logger methods
     
     public boolean isDebugEnabled() {
-        return true;
+        return this.log.isDebugEnabled();
     }
 
     public boolean isInfoEnabled() {
-        return true;
+        return this.log.isInfoEnabled();
     }
 
     public boolean isWarnEnabled() {
-        return true;
+        return this.log.isWarnEnabled();
     }
 
     public boolean isErrorEnabled() {
-        return true;
+        return this.log.isErrorEnabled();
     }
 
     public void debug(String aMessage) {
-        LogService.log(LogService.DEBUG, createMessage(aMessage));
+        this.log.debug(aMessage);
     }
 
     public void debug(String aMessage, Throwable aThrowable) {
-        LogService.log(LogService.DEBUG, createMessage(aMessage), aThrowable);
+        this.log.debug(aMessage, aThrowable);
     }
 
     public void info(String aMessage) {
-        LogService.log(LogService.INFO, createMessage(aMessage));
+        this.log.info(aMessage);
     }
 
     public void warn(String aMessage) {
-        LogService.log(LogService.WARN, createMessage(aMessage));
+        this.log.warn(aMessage);
     }
 
     public void error(String aMessage) {
-        LogService.log(LogService.ERROR, createMessage(aMessage));
+        this.log.error(aMessage);
     }
     
     public void error(String aMessage, Throwable aThrowable) {
-        LogService.log(LogService.ERROR, createMessage(aMessage), aThrowable);
+        this.log.error(aMessage, aThrowable);
     }    
     
     public void error(Throwable aThrowable) {
-        LogService.log(LogService.ERROR, aThrowable);
-    }
-    
-    protected String createMessage(String aMessage) {
-        StringBuffer sb = new StringBuffer(512);
-        if (component != null) {
-            sb.append(component).append(": ");
-        } else if (klass != null) {
-            sb.append(klass.getName()).append(": ");
-        }
-        sb.append(aMessage);
-        return sb.toString();
+        this.log.error( aThrowable);
     }
 
 }
