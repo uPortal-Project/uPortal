@@ -12,6 +12,7 @@ import org.jasig.portal.groups.pags.testers.IntegerGTTester;
 import org.jasig.portal.groups.pags.testers.IntegerLETester;
 import org.jasig.portal.groups.pags.testers.IntegerLTTester;
 import org.jasig.portal.groups.pags.testers.RegexTester;
+import org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester;
 import org.jasig.portal.groups.pags.testers.StringEqualsTester;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
@@ -131,6 +132,7 @@ public static junit.framework.Test suite() {
     TestSuite suite = new TestSuite();
 
   suite.addTest(new PAGSTester("testStringEqualsTester"));
+  suite.addTest(new PAGSTester("testStringEqualsIgnoreCaseTester"));
   suite.addTest(new PAGSTester("testIntegerEQTester"));
   suite.addTest(new PAGSTester("testIntegerGTTester")); 
   suite.addTest(new PAGSTester("testIntegerLTTester"));
@@ -188,6 +190,36 @@ public void testStringEqualsTester() throws Exception
 
     print("Success!");
     print(CR + "***** LEAVING PAGSTester.testStringEqualsTester() *****" + CR);
+
+}
+public void testStringEqualsIgnoreCaseTester() throws Exception
+{
+    print(CR + "***** ENTERING PAGSTester.testStringEqualsIgnoreCaseTester() *****" + CR);
+    String msg = null;
+   
+    msg = "Creating a new IPerson";
+    print(msg);
+    IPerson newPerson = getIPerson("de3");
+    assertNotNull(msg, newPerson);
+        
+    print("Adding attributes to IPerson.");
+    newPerson.setAttribute(key1, randomStrings[0]);
+    newPerson.setAttribute(key2, randomStrings[1].toLowerCase());
+ 
+    msg = "Testing IPerson " + newPerson;
+    print(msg);
+
+    String testKey = randomStrings[0].toLowerCase();
+    IPersonTester tester1 = new StringEqualsIgnoreCaseTester(key1, testKey);
+    IPersonTester tester2 = new StringEqualsIgnoreCaseTester(key2, randomStrings[1]);
+
+    msg = "Testing " + tester1;
+    assertTrue(msg, tester1.test(newPerson));
+    msg = "Testing " + tester2;
+    assertTrue(msg, tester2.test(newPerson));
+ 
+    print("Success!");
+    print(CR + "***** LEAVING PAGSTester.testStringEqualsIgnoreCaseTester() *****" + CR);
 
 }
 /**
