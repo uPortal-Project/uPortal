@@ -2,6 +2,7 @@
 
 <xsl:param name="activeTab">1</xsl:param>
 <xsl:param name="userLayoutRoot">root</xsl:param>
+<xsl:variable name="activeID" select="/layout/folder[@type='regular'][position()=$activeTab]/@ID"/>
 
 <!-- document fragment template. See structure stylesheet for more comments -->
 <xsl:template match="layout_fragment">
@@ -52,7 +53,7 @@
       <tab>
         <xsl:attribute name="ID"><xsl:value-of select="@ID"/></xsl:attribute>
       	<xsl:choose>
-      	  <xsl:when test="$activeTab = position()">
+      	  <xsl:when test="$activeID = @ID">
       	    <xsl:attribute name="activeTab">true</xsl:attribute>
       	  </xsl:when>
       	  <xsl:otherwise>
@@ -67,7 +68,7 @@
 </xsl:template>
 
 <xsl:template match="folder">
-  <xsl:if test="$activeTab = position()">
+  <xsl:if test="$activeID = @ID">
     <xsl:if test="child::folder">
       <xsl:for-each select="folder">
         <column>
