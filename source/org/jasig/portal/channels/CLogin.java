@@ -35,14 +35,23 @@
 
 package org.jasig.portal.channels;
 
-import org.jasig.portal.*;
+import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.security.*;
 import org.xml.sax.DocumentHandler;
-import java.io.File;
 import java.util.Hashtable;
 import java.net.URL;
 import javax.servlet.http.HttpSession;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * <p>Allows a user to logon to the portal.  Logon info is posted to
@@ -58,9 +67,8 @@ public class CLogin implements IPrivilegedChannel
   private ChannelRuntimeData runtimeData;
   private String channelName = "Log in...";
   private String media;
-  private String userName="";
-  private static final String fs = File.separator;
-  private static final String sslLocation = UtilitiesBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLogin" + fs + "CLogin.ssl";
+  private String attemptedUserName="";
+  private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CLogin/CLogin.ssl");
   private boolean bAuthenticated = false;
   private boolean bAuthorizationAttemptFailed = false;
   private boolean bSecurityError = false;
@@ -80,7 +88,7 @@ public class CLogin implements IPrivilegedChannel
     if (authorizationAttempted != null)
       bAuthorizationAttemptFailed = true;
 
-    if (authorizationError!=null)
+    if (authorizationError != null)
       bSecurityError = true;
   }
 
@@ -108,29 +116,48 @@ public class CLogin implements IPrivilegedChannel
     this.runtimeData = rd;
 
     media = runtimeData.getMedia();
-    userName = runtimeData.getParameter("userName");
+    attemptedUserName = runtimeData.getParameter("userName");
   }
 
   public void renderXML (DocumentHandler out) throws PortalException
   {
+    String fullName = (String)staticData.getPerson().getFullName();
+    Document doc = new org.apache.xerces.dom.DocumentImpl();
 
-    StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
-    sb.append("<login-status>\n");
+    // Create <login-status> element
+    Element loginStatusElement = doc.createElement("login-status");
 
-      if  (bSecurityError)
-        sb.append("  <error />\n");
-      else
-        if (bAuthorizationAttemptFailed && !bAuthenticated)
-          sb.append("  <failure userName=\"" + userName + "\"/>\n");
+    if (bSecurityError)
+    {
+      // Create <error> element under <login-status>
+      Element errorElement = doc.createElement("error");
+      loginStatusElement.appendChild(errorElement);
+    }
+    else if (bAuthorizationAttemptFailed && !bAuthenticated)
+    {
+      // Create <failure> element under <login-status>
+      Element failureElement = doc.createElement("failure");
+      failureElement.setAttribute("attemptedUserName", attemptedUserName);
+      loginStatusElement.appendChild(failureElement);
+    }
+    else
+    {
+      // Create <full-name> element under <header>
+      Element fullNameElement = doc.createElement("full-name");
+      fullNameElement.appendChild(doc.createTextNode(fullName));
+      loginStatusElement.appendChild(fullNameElement);
+    }
 
-    sb.append("</login-status>\n");
+    doc.appendChild(loginStatusElement);
 
-    Hashtable params = new Hashtable(1);
+    Hashtable params = new Hashtable(2);
     params.put("baseActionURL", runtimeData.getBaseActionURL());
+    if (fullName != null && fullName.equals("Guest"))
+      params.put("guest", "true");
 
     try
     {
-      XSLT.transform(sb.toString(), new URL(UtilitiesBean.fixURI(sslLocation)), out, params, "login", media);
+      XSLT.transform(doc, new URL(UtilitiesBean.fixURI(sslLocation)), out, params, "login", media);
     }
     catch (Exception e)
     {
