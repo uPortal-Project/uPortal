@@ -565,6 +565,13 @@ public boolean isLeafService() {
     return true;
 }
 /**
+ * Answers if this service is updateable by the portal.
+ */
+public boolean isEditable()
+{
+    return isInternallyManaged();
+}
+/**
  * Returns a new <code>IEntityGroup</code> for the given Class with an unused
  * key.
  */
