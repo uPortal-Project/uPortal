@@ -40,19 +40,17 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.SmartCache;
 import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.apache.xpath.XPathAPI;
-import org.w3c.dom.traversal.NodeIterator;
 import javax.xml.transform.TransformerException;
-
+import  java.util.Iterator;
 /**
  * This channel demonstrates the method of obtaining and displaying
  * standard uPortal person attributes.
@@ -61,9 +59,6 @@ import javax.xml.transform.TransformerException;
  */
 public class CPersonAttributes extends BaseMultithreadedChannel {
   private static final String sslLocation = "CPersonAttributes/CPersonAttributes.ssl";
-  private static final String eduPersonDocLocation = "/properties/PersonDirs.xml";
-  private static final SmartCache eduPersonDocCache = new SmartCache();
-  private static final String eduPersonDocCacheKey = "eduPersonDocKey";
 
   public void renderXML (ContentHandler out, String uid) throws PortalException {
     ChannelState channelState = (ChannelState)channelStateMap.get(uid);
@@ -75,19 +70,11 @@ public class CPersonAttributes extends BaseMultithreadedChannel {
     Element attributesE = doc.createElement("attributes");
 
     // Grab all the name elements from eduPerson.xml
-    NodeIterator ni = null;
-    try {
-      // There may be a problem with this XPath expression if more than one PersonDirInfo element
-      // is added to PersonDirs.xml.  Considering making a separate xml file to store the eduPerson attributes.
-      ni = XPathAPI.selectNodeIterator(getEduPersonDoc(), "/PersonDirs/PersonDirInfo/attributes/attribute/alias");
-    } catch (TransformerException te) {
-      LogService.log(LogService.ERROR, te);
-      throw new PortalException(te);
-    }
-
-    for (Node n = ni.nextNode(); n != null; n = ni.nextNode()) {
-      String attName = XML.getElementText((Element)n);
-
+    Iterator attribs = PersonDirectory.getPropertyNamesIterator();
+    while ( attribs.hasNext() ) {
+      // Get the attribute name
+      String attName = (String)attribs.next();
+      // Set the attribute
       Element attributeE = doc.createElement("attribute");
 
       Element nameE = doc.createElement("name");
@@ -114,21 +101,4 @@ public class CPersonAttributes extends BaseMultithreadedChannel {
     xslt.transform();
   }
 
-  // Need to see if there is a way to get this Doc from PersonDirectory instead
-  // of duplicating the effort here.
-  private Document getEduPersonDoc() throws PortalException {
-    Document doc = (Document)eduPersonDocCache.get(eduPersonDocCacheKey);
-    // If doc isn't in cache, get it and put it in the cache
-    if (doc == null) {
-      try {
-        doc = ResourceLoader.getResourceAsDocument(this.getClass(), eduPersonDocLocation);
-      } catch (PortalException pe) {
-        throw pe;
-      } catch (Exception e) {
-        throw new PortalException("Could not parse eduPerson.xml", e);
-      }
-      eduPersonDocCache.put(eduPersonDocCacheKey, doc);
-    }
-    return doc;
-  }
 }
