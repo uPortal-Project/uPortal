@@ -170,11 +170,11 @@ A.uportal-navigation-channel:hover{
 	text-align: center;
 }
 .uportal-channel-table-header{
-	color : black;
+	color : #32CD32;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 12px;
 	font-weight : bold;
-  text-align: left;
+	text-align: left;
 }
 .uportal-channel-table-row-even{
 	color : Olive;
