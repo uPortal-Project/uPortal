@@ -85,7 +85,9 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
             if (contentType != null && contentType.startsWith("multipart/form-data") && portletAction == null) {
                 com.oreilly.servlet.multipart.Part attachmentPart;
                 try {
-                    MultipartParser multi = new MultipartParser(source, sizeLimit, true, true, "UTF-8");
+                    MultipartParser multi = new MultipartParser(source, source.getContentLength(), true, true, "UTF-8");
+                    boolean noAttachments = source.getContentLength() > sizeLimit;
+                    
                     while ((attachmentPart = multi.readNextPart()) != null) {
                         String partName = attachmentPart.getName();
 
@@ -111,9 +113,15 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                             FilePart filePart = (FilePart)attachmentPart;
                             String filename = filePart.getFileName();
 
-                            if (filename != null) {
-                                MultipartDataSource fileUpload = new MultipartDataSource(filePart);
-
+                            MultipartDataSource fileUpload = null;
+                            // check if this file has exceeded the maximum allowed upload size
+                            if (noAttachments){
+                                fileUpload = new MultipartDataSource(filename, "Exceeded file size allowed");
+                                MultipartDataSource[] valueArray = new MultipartDataSource[1];
+                                valueArray[0] = fileUpload;
+                                parameters.put(partName, valueArray);
+                            } else if (filename != null) {
+                                fileUpload = new MultipartDataSource(filePart);
                                 if (parameters.containsKey(partName)) {
                                     MultipartDataSource[] oldValueArray = (MultipartDataSource[])parameters.get(partName);
                                     MultipartDataSource[] valueArray = new MultipartDataSource[oldValueArray.length + 1];
