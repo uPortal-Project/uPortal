@@ -35,11 +35,16 @@
 
 package  org.jasig.portal;
 
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.groups.IEntityGroup;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -47,6 +52,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Text;
 import java.util.Set;
 import java.util.Date;
+import java.util.Iterator;
 import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xpath.XPathAPI;
@@ -140,7 +146,9 @@ public class ChannelRegistryManager {
    * @param a list of roles that are permitted to subscribe to the channel
    * @param the user ID of the channel publisher
    * @throws java.lang.Exception
+   * @deprecated
    */
+  /*
   public static void publishChannel (Element channel, Set categoryIDs, Set roles, IPerson publisher) throws Exception {
     // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
@@ -168,6 +176,70 @@ public class ChannelRegistryManager {
     int rolesSet = new org.jasig.portal.services.Authorization().setChannelRoles(ID, aRoles);
 
     // Approve channel
+    chanRegStore.approveChannel(ID, publisher, new Date(System.currentTimeMillis()));
+
+    LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
+  }
+  */
+
+  /**
+   * Publishes a channel.
+   *
+   * I think we need to change the types of some of the arguments to arrays so they are more clearly
+   * defined.  For example,
+   *
+   *   publishChannel (Element channel, String[] categoryIDs, IEntityGroups[] groups, IPerson publisher)
+   *
+   * CChannelManager is currently sending over a Set of group IDs or "keys".  It should be changed to
+   * maintain IEntityGroup objects instead of group keys.  Hopefully I'll get to that soon.
+   *     -Ken
+   *
+   * @param the channel XML fragment
+   * @param a list of categories that the channel belongs to
+   * @param a list of group keys that are permitted to subscribe to and view the channel
+   * @param the user ID of the channel publisher
+   * @throws java.lang.Exception
+   */
+  public static void publishChannel (Element channel, Set categoryIDs, Set groups, IPerson publisher) throws Exception {
+    // Reset the channel registry cache
+    channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
+
+    // Use current channel ID if modifying previously published channel, otherwise get a new ID
+    int ID = 0;
+    String chanID = channel.getAttribute("ID");
+    if (chanID != null && chanID.trim().length() > 0) {
+      ID = Integer.parseInt(chanID.startsWith("chan") ? chanID.substring(4) : chanID);
+      LogService.instance().log(LogService.INFO, "Attempting to modify channel " + ID + "...");
+    }
+    else {
+      ID = chanRegStore.getNextId();
+      LogService.instance().log(LogService.INFO, "Attempting to publish new channel " + ID + "...");
+    }
+
+    // Add channel
+    String[] catIDs = (String[])categoryIDs.toArray(new String[0]);
+    Document channelDoc = DocumentFactory.getNewDocument();
+    channelDoc.appendChild(channelDoc.importNode(channel, true));
+    chanRegStore.addChannel(ID, publisher, channelDoc, catIDs);
+
+    // Set groups
+    AuthorizationService authService = AuthorizationService.instance();
+    String owner = "*"; // the whole framework
+    IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(owner);
+    IPermission[] permissions = new IPermission[groups.size()];
+    Iterator iter = groups.iterator();
+    for (int i = 0; iter.hasNext(); i++) {
+      String groupKey = (String)iter.next();
+      String principalKey = groupKey.startsWith("g") ? groupKey.substring(1) : groupKey; // Messy!
+      IAuthorizationPrincipal authPrincipal = authService.newPrincipal(principalKey, IEntityGroup.class);
+      permissions[i] = upm.newPermission(authPrincipal);
+      permissions[i].setType("GRANT");
+      permissions[i].setActivity("SUBSCRIBE");
+      permissions[i].setTarget("CHAN_ID." + ID);
+    }
+    upm.addPermissions(permissions);
+
+    // Approve channel - this can be removed when there is a mechanism to approve channels
     chanRegStore.approveChannel(ID, publisher, new Date(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been published/modified.");
