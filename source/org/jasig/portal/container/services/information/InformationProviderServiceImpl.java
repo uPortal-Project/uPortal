@@ -1,5 +1,5 @@
 /**
- * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ï¿½ 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 package org.jasig.portal.container.services.information;
 
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +55,10 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
     
     private ServletConfig servletConfig;
     private Properties properties;
+    private DynamicInformationProvider provider;
 	private static StaticInformationProviderImpl staticInfoProvider;
+	private static int MAX_HASH_CODE_NUMBER = 10;
+	private Vector hashCodes;
     
     private static final String dynamicInformationProviderRequestParameterName = "org.apache.pluto.services.information.DynamicInformationProvider";
 
@@ -63,6 +67,7 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
     public void init(ServletConfig servletConfig, Properties properties) throws Exception {
         this.servletConfig = servletConfig;
         this.properties = properties;
+        hashCodes = new Vector();
         if ( staticInfoProvider == null ) {
 		 staticInfoProvider = new StaticInformationProviderImpl();
          staticInfoProvider.init(servletConfig, properties);
@@ -73,6 +78,7 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
         properties = null;
         servletConfig = null;
 		staticInfoProvider = null;
+		hashCodes = null;
     }    
     
     // InformationProviderService methods
@@ -81,14 +87,14 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
 	   return staticInfoProvider;
     }
 
-    public DynamicInformationProvider getDynamicProvider(HttpServletRequest request) {
-        DynamicInformationProvider provider = (DynamicInformationProvider)request.getAttribute(dynamicInformationProviderRequestParameterName);
-
-        if (provider == null) {
-            provider = new DynamicInformationProviderImpl(request,servletConfig);
-            request.setAttribute(dynamicInformationProviderRequestParameterName, provider);
-        }
-
+    public synchronized DynamicInformationProvider getDynamicProvider(HttpServletRequest request) {
+      String hashCode = Integer.toString(request.hashCode());	
+      if ( !hashCodes.contains(hashCode) ) {
+      	if ( hashCodes.size() >= MAX_HASH_CODE_NUMBER )
+      	  hashCodes.removeAllElements();	
+      	hashCodes.add(hashCode);
+        provider = new DynamicInformationProviderImpl(request,servletConfig);
+      }  
         return provider;
     }
 
