@@ -198,7 +198,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                     crd.clear();
                     try {
                         if((the_channel=cm.instantiateChannel(str_channelSubscribeId))==null) {
-                            resetCError(this.GENERAL_ERROR,null,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
+                            resetCError(CError.GENERAL_ERROR,null,this.str_channelSubscribeId,null,"Channel failed to reinstantiate!");
                         } else {
                             try {
                                 if(the_channel instanceof IPrivilegedChannel) {
