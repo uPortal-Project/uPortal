@@ -161,10 +161,12 @@ class ManageProfilesState extends BaseState {
    */
   private IUserPreferencesStore getUserPreferencesStore () throws PortalException {
     // Should obtain implementation in a different way!!
-    if (updb == null)
-      updb = new RDBMUserPreferencesStore();
-    if (updb == null)
+    if (updb == null) {
+      updb = RdbmServices.getUserPreferencesStoreImpl();
+    }
+    if (updb == null) {
       throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
+    }
     return  updb;
   }
 
@@ -174,10 +176,12 @@ class ManageProfilesState extends BaseState {
    * @exception PortalException
    */
   public ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionStore () throws PortalException {
-    if (csddb == null)
-      csddb = new RDBMCoreStylesheetDescriptionStore();
-    if (csddb == null)
+    if (csddb == null) {
+      csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
+    }
+    if (csddb == null) {
       throw  new ResourceMissingException("", "Stylesheet description database", "Unable to obtain the list of available stylesheets since the database holding them is not avaiable.");
+    }
     return  csddb;
   }
 

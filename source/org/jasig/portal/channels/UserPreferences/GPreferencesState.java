@@ -67,7 +67,7 @@ class GPreferencesState extends BaseState {
   private Document userLayoutXML = null;
   ThemeStylesheetDescription tsd = null;
   StructureStylesheetDescription ssd = null;
-  ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
+  ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
   // these state variables are kept for the use by the internalStates
   private static final String layoutID = "top";                 // just a way to refer to the layout element since it doesn't have an ID attribute
   private String folderID = layoutID;
@@ -170,10 +170,12 @@ class GPreferencesState extends BaseState {
    * @exception ResourceMissingException
    */
   public IUserPreferencesStore getUserPreferencesStore () throws ResourceMissingException {
-    if (updb == null)
-      updb = new RDBMUserPreferencesStore();
-    if (updb == null)
+    if (updb == null) {
+      updb = RdbmServices.getUserPreferencesStoreImpl();
+    }
+    if (updb == null) {
       throw  new ResourceMissingException("", "User preference database", "Unable to obtain the list of user profiles, since the user preference database is currently down");
+    }
     return  updb;
   }
 
@@ -197,7 +199,7 @@ class GPreferencesState extends BaseState {
    */
   public ICoreStylesheetDescriptionStore getCoreStylesheetDescriptionStore () {
     if (csddb == null)
-      csddb = new RDBMCoreStylesheetDescriptionStore();
+      csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
     return  csddb;
   }
 
@@ -224,7 +226,7 @@ class GPreferencesState extends BaseState {
    */
   public StructureStylesheetDescription getStructureStylesheetDescription () throws ResourceMissingException, PortalException {
     if (ssd == null) {
-      ICoreStylesheetDescriptionStore csddb = new RDBMCoreStylesheetDescriptionStore();
+      ICoreStylesheetDescriptionStore csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
       StructureStylesheetUserPreferences fsup = this.getUserPreferences().getStructureStylesheetUserPreferences();
       ssd = this.getCoreStylesheetDescriptionStore().getStructureStylesheetDescription(fsup.getStylesheetId());
       if (ssd == null) {

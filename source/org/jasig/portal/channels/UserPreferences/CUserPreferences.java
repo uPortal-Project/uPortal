@@ -188,7 +188,7 @@ public class CUserPreferences
         UserProfile profile = null;
         if (profileId != null) {
           // find the profile mapping
-          updb = new RDBMUserPreferencesStore();
+          updb = RdbmServices.getUserPreferencesStoreImpl();
           if (systemProfile)
             profile = updb.getSystemProfileById(profileId.intValue()); 
           else 
