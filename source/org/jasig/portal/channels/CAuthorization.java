@@ -14,7 +14,6 @@ import java.net.*;
 /**
  * Authorization channel.  This channel works in conjunction with
  * authorization.jsp
- * 
  * @author Ken Weiner
  */
 public class CAuthorization implements org.jasig.portal.IChannel                             
@@ -30,6 +29,12 @@ public class CAuthorization implements org.jasig.portal.IChannel
   public int getDefaultDetachWidth () {return 0;}
   public int getDefaultDetachHeight () {return 0;}
   
+  /**
+   * Called when channel should output its contents
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
   public void render (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
     try 
@@ -44,17 +49,31 @@ public class CAuthorization implements org.jasig.portal.IChannel
       System.out.println ("\nERROR: \n" + e);
     }
   }
+  
+  /**
+   * Called when user clicks this channel's edit button
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
   public void edit (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {
     // This channel is not editable
   }
   
+  /**
+   * Called by this channels render method.  Outputs an html form prompting
+   * for user name and password.
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
   protected void doDisplaySignIn (HttpServletRequest req, HttpServletResponse res, JspWriter out) throws IOException
   {
     HttpSession session = req.getSession (false);
-    String sLogonStatus = (String) session.getAttribute ("logonStatus");
+    String sUserName = (String) session.getAttribute ("userName");
     
-    if (sLogonStatus != null && sLogonStatus.equals ("true"))
+    if (sUserName != null && sUserName.equals ("guest"))
       doDisplayFailedLogonMsg (req, res, out);
       
     out.println ("<p>");
@@ -78,10 +97,17 @@ public class CAuthorization implements org.jasig.portal.IChannel
     out.println ("</form>");
   }
   
+  /**
+   * Called when this channel is redisplayed after an incorrect username/password
+   * is submitted by the user
+   * @param the servlet request object
+   * @param the servlet response object
+   * @param the JspWriter object
+   */
   protected void doDisplayFailedLogonMsg (HttpServletRequest req, HttpServletResponse res, JspWriter out) throws IOException
   {
     out.print ("<font face=\"Helvetica,Arial,sans-serif\" color=red size=-1>");
-    out.print ("Invalid user name or password!");
+    out.print ("Invalid user name or password!<br>");
     out.print ("Please try again.");
     out.print ("</font>");
   }
