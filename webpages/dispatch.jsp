@@ -50,7 +50,7 @@
 <% UtilitiesBean.preventPageCaching (response); %>
 
 <%
-String sMethodName = request.getParameter ("method");  
+String sMethodName = request.getParameter ("method");
 String sTitle = ch.getName ();
 session.setAttribute ("headerTitle", sTitle);
 %>
@@ -73,27 +73,10 @@ Class[] paramTypes = null;
 Object[] methodParams = null;
 Method method = null;
 
-if (ch instanceof org.jasig.portal.XMLChannelWrapper)
-{
-  paramTypes = new Class[] {Class.forName ("org.xml.sax.DocumentHandler")};
-  HTMLSerializer htmlSerializer= new HTMLSerializer(out, new OutputFormat("HTML","UTF-8",true));
-  methodParams = new Object[] {htmlSerializer};
-  IXMLChannel xmlCh = ((XMLChannelWrapper)ch).getXMLChannel();
-  
-  ChannelRuntimeData rd = new ChannelRuntimeData();
-  rd.setHttpRequest(request);
-  xmlCh.setRuntimeData(rd);
-  
-  method = xmlCh.getClass ().getMethod (sMethodName, paramTypes);
-  method.invoke (xmlCh, methodParams);
-}
-else
-{
   paramTypes = new Class[] {Class.forName ("javax.servlet.http.HttpServletRequest"), Class.forName ("javax.servlet.http.HttpServletResponse"), Class.forName ("javax.servlet.jsp.JspWriter")};
   methodParams = new Object[] {request, response, out};
   method = ch.getClass ().getMethod (sMethodName, paramTypes);
   method.invoke (ch, methodParams);
-}
 %>
 
 <%-- Footer --%>
