@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -33,6 +33,8 @@ import org.jasig.portal.rdbm.IJoinQueryString;
 import org.jasig.portal.rdbm.JoinQueryString;
 import org.jasig.portal.rdbm.pool.IPooledDataSourceFactory;
 import org.jasig.portal.rdbm.pool.PooledDataSourceFactoryFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 
 
@@ -251,7 +253,8 @@ public class RDBMServices {
 
     /**
      * Gets a database connection to the portal database.
-     * This method will first try to get the connection by looking in the
+     * 
+     * This implementation will first try to get the connection by looking in the
      * JNDI context for the name defined by the portal property
      * org.jasig.portal.RDBMServices.PortalDatasourceJndiName
      * if the org.jasig.portal.RDBMServices.getDatasourceFromJndi
@@ -261,14 +264,15 @@ public class RDBMServices {
      * {@link java.sql.Driver#connect(java.lang.String, java.util.Properties)}
      *
      * @return a database Connection object
+     * @throws DataAccessException if unable to return a connection
      */
     public static Connection getConnection() {
         final IDatabaseServer dbs = getDatabaseServer();
 
         if (dbs != null)
             return dbs.getConnection();
-        else
-            return null;
+        
+        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDatabaseServer() returned null.");
     }
 
 
@@ -285,8 +289,8 @@ public class RDBMServices {
 
         if (dbs != null)
             return dbs.getConnection();
-        else
-            return null;
+        
+        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDatabaseServer() returned null.");
     }
 
     /**
@@ -340,7 +344,7 @@ public class RDBMServices {
     /**
      * Close a PreparedStatement. Simply delegates the call to
      * {@link #closeStatement(Statement)}
-     * @param st a database PreparedStatement object
+     * @param pst a database PreparedStatement object
      * @deprecated Use {@link #closeStatement(Statement)}.
      */
     public static void closePreparedStatement(final java.sql.PreparedStatement pst) {
@@ -393,48 +397,65 @@ public class RDBMServices {
     
     
     /**
-     * Calls {@link #getDatabaseServer()} then calls
+     * Returns the name of the JDBC driver being used for the default 
+     * uPortal database connections.
+     * 
+     * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#getJdbcDriver()} on the returned instance.
      * 
      * @see IDatabaseServer#getJdbcDriver()
+     * @return the name of the JDBC Driver.
+     * @throws DataAccessException if unable to determine name of driver.
      */
     public static String getJdbcDriver () {
         final IDatabaseServer dbs = getDatabaseServer();
         
         if (dbs != null)
             return dbs.getJdbcDriver();
-        else
-            return null;
+        
+        throw new DataAccessResourceFailureException("RDBMServices " +
+                "fatally misconfigured such that getDatabaseServer() returned null.");
     }
 
     /**
-     * Calls {@link #getDatabaseServer()} then calls
+     * Gets the JDBC URL of the default uPortal database connections.
+     * 
+     * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#getJdbcUrl()} on the returned instance.
      * 
      * @see IDatabaseServer#getJdbcUrl()
+     * @throws DataAccessException on internal failure
+     * @return the JDBC URL of the default uPortal database connections
      */
     public static String getJdbcUrl () {
         final IDatabaseServer dbs = getDatabaseServer();
 
         if (dbs != null)
             return dbs.getJdbcUrl();
-        else
-            return null;
+        
+        throw new DataAccessResourceFailureException("RDBMServices " +
+            "fatally misconfigured such that getDatabaseServer() returned null.");
     }
 
     /**
-     * Calls {@link #getDatabaseServer()} then calls
+     * Get the username under which we are connecting for the default uPortal
+     * database connections.
+     * 
+     * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#getJdbcUser()} on the returned instance.
      * 
      * @see IDatabaseServer#getJdbcUser()
+     * @return the username under which we are connecting for default connections
+     * @throws DataAccessException on internal failure
      */
     public static String getJdbcUser () {
         final IDatabaseServer dbs = getDatabaseServer();
 
         if (dbs != null)
             return dbs.getJdbcUser();
-        else
-            return null;
+
+        throw new DataAccessResourceFailureException("RDBMServices " +
+            "fatally misconfigured such that getDatabaseServer() returned null.");
     }    
 
 
@@ -464,10 +485,14 @@ public class RDBMServices {
     }
     
     /**
-     * Calls {@link #getDatabaseServer()} then calls
+     * Returns a String representing the current time 
+     * in SQL suitable for use with the default database connections.
+     * 
+     * This implementation calls {@link #getDatabaseServer()} then calls
      * {@link IDatabaseServer#sqlTimeStamp()} on the returned instance.
      * 
      * @see IDatabaseServer#sqlTimeStamp()
+     * @return SQL representing the current time
      */
     public static final String sqlTimeStamp() {
         final IDatabaseServer dbs = getDatabaseServer();
