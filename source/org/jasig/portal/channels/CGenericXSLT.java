@@ -310,7 +310,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
          }
       }
 
-      XSLT xslt = XSLT.getTransformer(this, state.runtimeData.getLocales());
+      XSLT xslt = XSLT.getTransformer(this);
       xslt.setXML(xmlDoc);
       if (state.xslUri != null)
         xslt.setXSL(state.xslUri);
