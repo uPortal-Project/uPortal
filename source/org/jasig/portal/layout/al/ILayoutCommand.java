@@ -3,7 +3,7 @@
  * available online at http://www.uportal.org/license.html
  */
 
-package org.jasig.portal.layout.al.common;
+package org.jasig.portal.layout.al;
 
 import org.jasig.portal.PortalException;
 
@@ -19,5 +19,5 @@ public interface ILayoutCommand {
      * @param manager
      * @return
      */
-    public boolean execute(ILayout manager) throws PortalException;
+    public boolean execute(IAggregatedLayout manager) throws PortalException;
 }

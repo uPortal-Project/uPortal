@@ -5,7 +5,6 @@
 
 package org.jasig.portal.layout.al;
 
-import org.jasig.portal.layout.al.common.ILayoutCommand;
 import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**

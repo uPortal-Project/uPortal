@@ -3,7 +3,7 @@
  * available online at http://www.uportal.org/license.html
  */
 
-package org.jasig.portal.layout.al.common;
+package org.jasig.portal.layout.al;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.al.common.node.INodeId;
@@ -15,13 +15,13 @@ import org.jasig.portal.layout.al.common.node.INodeId;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @author Michael Ivanov: mvi at immagic.com
  */
-public interface ILayoutCommandManager extends ILayoutManagerCommands {
+public interface IAggregatedLayoutCommandManager extends IAggregatedLayoutManagerCommands {
     
     /**
      * Specify the layout manager
      * @param manager - manager for which the commands are issued
      */
-    public void setLayoutManager(ILayout manager);
+    public void setLayoutManager(IAggregatedLayout manager);
     
     /**
      * Execute a sequence of the recorded commands.
