@@ -1629,12 +1629,28 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
-          String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
-            " SELECT "+realUserId+", USUA.PROFILE_ID, USUA.SS_ID, USUA.SS_TYPE, USUA.STRUCT_ID, USUA.PARAM_NAME, USUA.PARAM_TYPE, USUA.PARAM_VAL "+
-            " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+userId;
-          LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
-          stmt.executeUpdate(Insert);
+          // modifed INSERT INTO SELECT statement for MySQL support
+          sQuery = " SELECT "+realUserId+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
+            " FROM UP_SS_USER_ATTS WHERE USER_ID="+userId;
+          rs = stmt.executeQuery(sQuery);
+          while (rs.next()) {
+             String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) " +
+             "VALUES("+realUserId+","+
+              rs.getInt("PROFILE_ID")+","+
+              rs.getInt("SS_ID")+"," +
+              rs.getInt("SS_TYPE")+"," +
+              rs.getInt("STRUCT_ID")+"," +
+              "'"+rs.getString("PARAM_NAME")+"'," +
+              rs.getInt("PARAM_TYPE")+"," +
+              "'"+rs.getString("PARAM_VAL")+"')";
+// old code
+//          String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
+//            " SELECT "+realUserId+", USUA.PROFILE_ID, USUA.SS_ID, USUA.SS_TYPE, USUA.STRUCT_ID, USUA.PARAM_NAME, USUA.PARAM_TYPE, USUA.PARAM_VAL "+
+//            " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+userId;
 
+              LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+              stmt.executeUpdate(Insert);
+          }
           RDBMServices.commit(con); // Make sure it appears in the store
         }
 
