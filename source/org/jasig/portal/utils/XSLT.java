@@ -45,70 +45,89 @@ import org.xml.sax.DocumentHandler;
 
 /**
  * This utility provides methods for transforming XML documents
- * via XSLT.
+ * via XSLT. It takes advantage of Xalan's ability to pre-compile
+ * stylehseets into StylesheetRoot objects.  The first time a transform
+ * is requested, a stylesheet is compiled and cached.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
  */
 public class XSLT
 {
   private static final String mediaProps = UtilitiesBean.getPortalBaseDir() + "properties" + File.separator + "media.properties";
+  private static Hashtable stylesheetRootCache = new Hashtable();
 
   /**
-   * Transforms an xml document.
+   * Performs an XSL transformation.
    * @param out a document handler
-   * @param media
-   * @param xml
-   * @param sslUrl
-   * @param stylesheetName
+   * @param media the media type
+   * @param xml a string representing the xml document
+   * @param sslUrl the URL of the stylesheet list file (.ssl)
+   * @param stylesheetName the name (or title) that identifies the stylsheet in the stylesheet list file (.ssl)
    */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetName) throws org.xml.sax.SAXException
+  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetName) throws org.xml.sax.SAXException, java.io.IOException
   {
-    StylesheetSet set = new StylesheetSet(sslUrl);
-    set.setMediaProps (mediaProps);
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTInputSource xslSource = set.getStylesheet(stylesheetName, media);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-    processor.process (xmlSource, xslSource, xmlResult);
+    transform(out, media, xml, sslUrl, stylesheetName, null);
   }
 
   /**
-   * Transforms an xml document. Accepts stylesheet parameters
-   * (name, value pairs) stored in a Hashtable.
+   * Performs an XSL transformation. Accepts stylesheet parameters
+   * (key, value pairs) stored in a Hashtable.
    * @param out a document handler
-   * @param media
-   * @param xml
-   * @param sslUrl
-   * @param stylesheetName
-   * @param stylesheetParams
+   * @param media the media type
+   * @param xml a string representing the xml document
+   * @param sslUrl the URL of the stylesheet list file (.ssl)
+   * @param stylesheetName the name (or title) that identifies the stylsheet in the stylesheet list file (.ssl)
+   * @param stylesheetParams a Hashtable of key/value pairs or <code>null</code> if no parameters
    */
-  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetName, Hashtable stylesheetParams) throws org.xml.sax.SAXException
+  public static void transform (DocumentHandler out, String media, String xml, String sslUrl, String stylesheetName, Hashtable stylesheetParams) throws org.xml.sax.SAXException, java.io.IOException
   {
+    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
+    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
     StylesheetSet set = new StylesheetSet(sslUrl);
     set.setMediaProps (mediaProps);
-    XSLTInputSource xmlSource = new XSLTInputSource(new StringReader(xml));
-    XSLTInputSource xslSource = set.getStylesheet(stylesheetName, media);
-    XSLTResultTarget xmlResult = new XSLTResultTarget(out);
+
     XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+    StylesheetRoot stylesheetRoot = getStylesheetRoot(set.getStylesheetURI(stylesheetName, media));
+    processor.reset();
     setStylesheetParams(processor, stylesheetParams);
-    processor.process (xmlSource, xslSource, xmlResult);
+    stylesheetRoot.process(processor, xmlSource, xmlResult);
   }
 
   private static void setStylesheetParams (XSLTProcessor processor, Hashtable stylesheetParams)
   {
-    Enumeration e = stylesheetParams.keys();
-
-    while (e.hasMoreElements())
+    if (stylesheetParams != null)
     {
-      String key = (String)e.nextElement();
-      Object o = stylesheetParams.get(key);
+      Enumeration e = stylesheetParams.keys();
 
-      if (o instanceof String)
-        processor.setStylesheetParam(key, processor.createXString((String)o));
-      else if (o instanceof Boolean)
-        processor.setStylesheetParam(key, processor.createXBoolean(((Boolean)o).booleanValue()));
-      else if (o instanceof Double)
-        processor.setStylesheetParam(key, processor.createXNumber(((Double)o).doubleValue()));
+      while (e.hasMoreElements())
+      {
+        String key = (String)e.nextElement();
+        Object o = stylesheetParams.get(key);
+
+        if (o instanceof String)
+          processor.setStylesheetParam(key, processor.createXString((String)o));
+        else if (o instanceof Boolean)
+          processor.setStylesheetParam(key, processor.createXBoolean(((Boolean)o).booleanValue()));
+        else if (o instanceof Double)
+          processor.setStylesheetParam(key, processor.createXNumber(((Double)o).doubleValue()));
+      }
     }
+  }
+
+  private static StylesheetRoot getStylesheetRoot (String stylesheetURI) throws org.xml.sax.SAXException
+  {
+    // First, check the cache...
+    StylesheetRoot stylesheetRoot = (StylesheetRoot)stylesheetRootCache.get(stylesheetURI);
+
+    if (stylesheetRoot == null)
+    {
+      // Get the StylesheetRoot and cache it
+      XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+      stylesheetRoot = processor.processStylesheet(stylesheetURI);
+      stylesheetRootCache.put(stylesheetURI, stylesheetRoot);
+      Logger.log(Logger.INFO, "Caching StylesheetRoot for: " + stylesheetURI);
+    }
+
+    return stylesheetRoot;
   }
 }
