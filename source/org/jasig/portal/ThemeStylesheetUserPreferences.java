@@ -101,7 +101,7 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
      * @param attributeName name of the attribute
      * @return attribute value or null if the value is determined by the attribute default
      */
-    String getDefinedChannelAttributeValue(String channelSubscribeId,String attributeName) {
+    public String getDefinedChannelAttributeValue(String channelSubscribeId,String attributeName) {
         Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::hasDefinedChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");

@@ -223,7 +223,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   /**
    * Registers a NEW structure stylesheet with the database.
    * @param tsd the Stylesheet description object
-   * @return an <code>Integer</code> id for the registered Stylesheet description object 
+   * @return an <code>Integer</code> id for the registered Stylesheet description object
    */
   public Integer addStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
     Connection con = RDBMServices.getConnection();
@@ -286,7 +286,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * Registers a NEW theme stylesheet with the database.
    * @param tsd Stylesheet description object
    * @return an <code>Integer</code> id of the registered Theme Stylesheet if successful;
-   *                 <code>null</code> otherwise. 
+   *                 <code>null</code> otherwise.
    */
   public Integer addThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
     Connection con = RDBMServices.getConnection();
@@ -430,7 +430,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @return an <code>Integer</code> id of the registered Structure Stylesheet description object if successful;
-   *                      <code>null</code> otherwise. 
+   *                      <code>null</code> otherwise.
    */
   public Integer addStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
     // need to read in the description file to obtain information such as name, word description and media list
@@ -467,7 +467,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * @param stylesheetDescriptionURI
    * @param stylesheetURI
    * @return an <code>Integer</code> id of the registered Theme Stylesheet if successful;
-   *                 <code>null</code> otherwise. 
+   *                 <code>null</code> otherwise.
    */
   public Integer addThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
     // need to read iN the description file to obtain information such as name, word description and mime type list
