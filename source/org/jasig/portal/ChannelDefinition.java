@@ -37,6 +37,7 @@ package org.jasig.portal;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,83 +48,32 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public class ChannelDefinition {
-  private int id = -1;
-  private String chanTitle = "";
-  private String chanDesc = "";
-  private String chanClass = "";
+  private int id;
+  private String chanFName;
+  private String chanName;
+  private String chanDesc;
+  private String chanTitle;
+  private String chanClass;
+  private int chanTimeout;
   private int chanTypeId;
   private int chanPupblUsrId;
   private int chanApvlId;
   private Date chanPublDt;
   private Date chanApvlDt;
-  private int chanTimeout;
   private boolean chanEditable;
   private boolean chanHasHelp;
   private boolean chanHasAbout;
-  private String chanName = "";
-  private String chanFName = "";
   private List parameters;
 
   /**
-   * Describes a published channel's parameter.
-   * A channel can have zero or more parameters.
+   * Constructs a channel definition.
+   * @param id the channel definition ID
    */
-  protected class ChannelParameter {
-    String name;
-    String value;
-    boolean override;
-
-    public ChannelParameter(String name, String value, String override) {
-      this(name, value, RDBMServices.dbFlag(override));
-    }
-
-    public ChannelParameter(String name, String value, boolean override) {
-      this.name = name;
-      this.value = value;
-      this.override = override;
-    }
-
-    // Getter methods
-    public String getName() { return name; }
-    public String getValue() { return value; }
-    public boolean getOverride() { return override; }
-
-  }
-
-  public ChannelDefinition(int id, String chanTitle) {
+  public ChannelDefinition(int id) {
     this.id = id;
-    this.chanTitle = chanTitle;
-  }
-
-  public ChannelDefinition(int id, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-    java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
-    String chanHasAbout, String chanName, String chanFName) {
-      this(id, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
-            RDBMServices.dbFlag(chanEditable), RDBMServices.dbFlag(chanHasHelp),
-            RDBMServices.dbFlag(chanHasAbout),
-            chanName, chanFName);
-  }
-
-  public ChannelDefinition(int id, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-    java.sql.Timestamp chanPublDt, java.sql.Timestamp chanApvlDt, int chanTimeout, boolean chanEditable, boolean chanHasHelp,
-    boolean chanHasAbout, String chanName, String chanFName) {
-
-    this.id = id;
-    this.chanTitle = chanTitle;
-    this.chanDesc = chanDesc;
-    this.chanClass = chanClass;
-    this.chanTypeId = chanTypeId;
-    this.chanPupblUsrId = chanPupblUsrId;
-    this.chanApvlId = chanApvlId;
-    this.chanPublDt = chanPublDt;
-    this.chanApvlDt = chanApvlDt;
-    this.chanTimeout = chanTimeout;
-    this.chanEditable = chanEditable;
-    this.chanHasHelp = chanHasHelp;
-    this.chanHasAbout = chanHasAbout;
-    this.chanName = chanName;
-    this.chanFName =chanFName;
-
+    this.chanTitle = "";
+    this.chanDesc = "";
+    this.chanClass = "";
     this.parameters = new ArrayList();
   }
 
@@ -137,13 +87,30 @@ public class ChannelDefinition {
   public int getTimeout() { return chanTimeout; }
   public int getTypeId() { return chanTypeId; }
   public int getPublisherId() { return chanPupblUsrId; }
-  public int getApprovalId() { return chanApvlId; }
+  public int getApproverId() { return chanApvlId; }
   public Date getPublishDate() { return chanPublDt; }
   public Date getApprovalDate() { return chanApvlDt;}
   public boolean isEditable() { return chanEditable; }
   public boolean hasHelp() { return chanHasHelp; }
   public boolean hasAbout() { return chanHasAbout; }
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.toArray(new ChannelParameter[0]); }
+
+  // Setter methods
+  public void setFName(String fname) {this.chanFName =fname; }
+  public void setName(String name) {this.chanName = name; }
+  public void setDescription(String descr) {this.chanDesc = descr; }
+  public void setTitle(String title) {this.chanTitle = title; }
+  public void setJavaClass(String javaClass) {this.chanClass = javaClass; }
+  public void setTimeout(int timeout) {this.chanTimeout = timeout; }
+  public void setTypeId(int typeId) {this.chanTypeId = typeId; }
+  public void setPublisherId(int publisherId) {this.chanPupblUsrId = publisherId; }
+  public void setApproverId(int approvalId) {this.chanApvlId = approvalId; }
+  public void setPublishDate(Date publishDate) {this.chanPublDt = publishDate; }
+  public void setApprovalDate(Date approvalDate) {this.chanApvlDt = approvalDate; }
+  public void setEditable(boolean editable) {this.chanEditable = editable; }
+  public void setHasHelp(boolean hasHelp) {this.chanHasHelp = hasHelp; }
+  public void setHasAbout(boolean hasAbout) {this.chanHasAbout = hasAbout; }
+  public void setParameters(ChannelParameter[] parameters) { this.parameters = Arrays.asList(parameters); };
 
   public void addParameter(String name, String value, String override) {
     parameters.add(new ChannelParameter(name, value, override));
@@ -222,6 +189,31 @@ public class ChannelDefinition {
    */
   public boolean refreshMe() {
     return false;
+  }
+
+  /**
+   * Describes a published channel's parameter.
+   * A channel can have zero or more parameters.
+   */
+  protected class ChannelParameter {
+    String name;
+    String value;
+    boolean override;
+
+    public ChannelParameter(String name, String value, String override) {
+      this(name, value, RDBMServices.dbFlag(override));
+    }
+
+    public ChannelParameter(String name, String value, boolean override) {
+      this.name = name;
+      this.value = value;
+      this.override = override;
+    }
+
+    // Getter methods
+    public String getName() { return name; }
+    public String getValue() { return value; }
+    public boolean getOverride() { return override; }
   }
 }
 
