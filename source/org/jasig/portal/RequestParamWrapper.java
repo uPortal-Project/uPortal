@@ -11,8 +11,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-
-import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.properties.PropertiesManager;
 
 import com.oreilly.servlet.multipart.FilePart;
@@ -36,6 +34,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      *
      * @param source an <code>HttpServletRequest</code> value that's being wrapped.
      * @param request_verified a <code>boolean</code> flag that determines if the request params should be accessable.
+     * @param isPortletAction a <code>boolean</code> flag indicating if a portlet is currently being interacted with (in the case for a probable upload attempt).
      */
     public RequestParamWrapper(HttpServletRequest source, boolean request_verified, boolean isPortletAction) {
         super(source);        
