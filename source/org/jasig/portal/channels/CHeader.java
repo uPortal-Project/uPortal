@@ -38,28 +38,28 @@
 
 package  org.jasig.portal.channels;
 
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.HashMap;
-import javax.naming.InitialContext;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import org.jasig.portal.security.Permission;
-import org.jasig.portal.security.PermissionManager;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ICacheable;
-import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.MediaManager;
-import org.jasig.portal.UtilitiesBean;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.utils.DocumentFactory;
-import org.xml.sax.ContentHandler;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import  java.net.URL;
+import  java.util.Hashtable;
+import  java.util.HashMap;
+import  javax.naming.InitialContext;
+import  javax.naming.Context;
+import  javax.naming.NamingException;
+import  org.jasig.portal.security.Permission;
+import  org.jasig.portal.security.PermissionManager;
+import  org.jasig.portal.ChannelRuntimeData;
+import  org.jasig.portal.ICacheable;
+import  org.jasig.portal.ChannelCacheKey;
+import  org.jasig.portal.MediaManager;
+import  org.jasig.portal.UtilitiesBean;
+import  org.jasig.portal.PortalException;
+import  org.jasig.portal.GeneralRenderingException;
+import  org.jasig.portal.services.LogService;
+import  org.jasig.portal.utils.XSLT;
+import  org.jasig.portal.utils.SmartCache;
+import  org.jasig.portal.utils.DocumentFactory;
+import  org.xml.sax.ContentHandler;
+import  org.w3c.dom.Document;
+import  org.w3c.dom.Element;
 
 
 /**
@@ -67,12 +67,13 @@ import org.w3c.dom.Element;
  * to be included in a layout folder of type "header".  Most stylesheets
  * will render the content of such header channels consistently on every
  * page.
- * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
+ * @author Peter Kharchenko
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision 1.1$
  */
-public class CHeader extends BaseChannel implements ICacheable {
+public class CHeader extends BaseChannel
+    implements ICacheable {
   // Cache the answers to canUserPublish() to speed things up
   private static SmartCache m_canUserPublishResponses = new SmartCache(60*10);
   private static final String sslLocation = UtilitiesBean.fixURI("webpages/stylesheets/org/jasig/portal/channels/CHeader/CHeader.ssl");
@@ -89,8 +90,9 @@ public class CHeader extends BaseChannel implements ICacheable {
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-    if (staticData.getPerson().getFullName() != null && staticData.getPerson().getFullName().equals("Guest"))
+    if (staticData.getPerson().isGuest() && !staticData.getPerson().getSecurityContext().isAuthenticated()) {
       xslt.setStylesheetParameter("guest", "true");
+    }
     xslt.transform();
   }
 
@@ -101,7 +103,7 @@ public class CHeader extends BaseChannel implements ICacheable {
    */
   private Document getUserXML () {
     // Get the fullname of the current user
-    String fullName = (String)staticData.getPerson().getAttribute("displayName");
+    String fullName = (String)staticData.getPerson().getFullName();
     // Get a new DOM instance
     Document doc = DocumentFactory.getNewDocument();
     // Create <header> element
@@ -119,7 +121,7 @@ public class CHeader extends BaseChannel implements ICacheable {
     timeStampShortEl.appendChild(doc.createTextNode(UtilitiesBean.getDate("M.d.y h:mm a")));
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
-    if (fullName != null && !fullName.equals("Guest")) {
+    if (staticData.getPerson().getSecurityContext().isAuthenticated()) {
       Context globalIDContext = null;
       try {
         // Get the context that holds the global IDs for this user
@@ -143,7 +145,7 @@ public class CHeader extends BaseChannel implements ICacheable {
       }
     }
     doc.appendChild(headerEl);
-    return doc;
+    return  (doc);
   }
 
   /**
@@ -158,7 +160,7 @@ public class CHeader extends BaseChannel implements ICacheable {
       // Return the answer if it's in the cache
       if (((Boolean)m_canUserPublishResponses.get("USER_ID." + userID)).booleanValue()) {
         return  (true);
-      }
+      } 
       else {
         return  (false);
       }
@@ -167,14 +169,14 @@ public class CHeader extends BaseChannel implements ICacheable {
     PermissionManager pm = staticData.getPermissionManager();
     try {
       // Check to see if the user or all user's are specifically denied access
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH",
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "DENY").length > 0 || pm.getPermissions("*", "PUBLISH", 
           "*", "DENY").length > 0) {
         // Cache the result
         m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(false));
         return  (false);
       }
       // Check to see if the user or all users are granted permission by default
-      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH",
+      if (pm.getPermissions("USER_ID." + userID, "PUBLISH", "*", "GRANT").length > 0 || pm.getPermissions("*", "PUBLISH", 
           "*", "GRANT").length > 0) {
         // Cache the result
         m_canUserPublishResponses.put("USER_ID." + userID, new Boolean(true));
@@ -189,39 +191,45 @@ public class CHeader extends BaseChannel implements ICacheable {
     }
   }
 
-    public ChannelCacheKey generateKey() {
-	ChannelCacheKey k=new ChannelCacheKey();
-	StringBuffer sbKey = new StringBuffer(1024);
-	// guest pages are cached system-wide
-
-        k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
-
-	sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
-        sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
-        sbKey.append("stylesheetURI:");
-        try {
-            sbKey.append(XSLT.getStylesheetURI(sslLocation,runtimeData.getBrowserInfo()));
-        } catch (Exception e) {
-            sbKey.append("not defined");
-        }
-
-	k.setKey(sbKey.toString());
-	k.setKeyValidity(new Long(System.currentTimeMillis()));
-	return k;
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public ChannelCacheKey generateKey () {
+    ChannelCacheKey k = new ChannelCacheKey();
+    StringBuffer sbKey = new StringBuffer(1024);
+    // guest pages are cached system-wide
+    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+    sbKey.append("userId:").append(staticData.getPerson().getID()).append(", ");
+    sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
+    sbKey.append("stylesheetURI:");
+    try {
+      sbKey.append(XSLT.getStylesheetURI(sslLocation, runtimeData.getBrowserInfo()));
+    } catch (Exception e) {
+      sbKey.append("not defined");
     }
+    k.setKey(sbKey.toString());
+    k.setKeyValidity(new Long(System.currentTimeMillis()));
+    return  k;
+  }
 
-    public boolean isCacheValid(Object validity) {
-        if(validity instanceof Long) {
-            Long oldtime=(Long) validity;
-            if(staticData.getPerson().getID()==org.jasig.portal.UserInstance.guestUserId) {
-                return true;
-            }
-            if(System.currentTimeMillis()-oldtime.longValue()<1*60*1000) {
-                return true;
-            }
-        }
-        return false;
+  /**
+   * put your documentation comment here
+   * @param validity
+   * @return 
+   */
+  public boolean isCacheValid (Object validity) {
+    if (validity instanceof Long) {
+      Long oldtime = (Long)validity;
+      if (staticData.getPerson().getID() == org.jasig.portal.UserInstance.guestUserId) {
+        return  true;
+      }
+      if (System.currentTimeMillis() - oldtime.longValue() < 1*60*1000) {
+        return  true;
+      }
     }
+    return  false;
+  }
 }
 
 
