@@ -165,11 +165,13 @@ public class PersonImpl
   }
 
   /**
-   * put your documentation comment here
+   * This implementation of a person object is considered a guest if:
+   *   UID = 1
+   *   Unauthenticated
    * @return 
    */
   public boolean isGuest () {
-    if (getID() == 1) {
+    if (getID() == 1 && !m_securityContext.isAuthenticated()) {
       return  (true);
     } 
     else {
