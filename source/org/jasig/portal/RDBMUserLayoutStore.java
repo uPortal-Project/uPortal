@@ -1535,7 +1535,7 @@ public class RDBMUserLayoutStore
           while (rs.next()) {
             UserProfile upl = new UserProfile(rs.getInt("PROFILE_ID"), rs.getString("PROFILE_NAME"), rs.getString("DESCRIPTION"),
                 rs.getInt("LAYOUT_ID"), rs.getInt("STRUCTURE_SS_ID"), rs.getInt("THEME_SS_ID"));
-            pv.put(upl.getProfileName(), upl);
+            pv.put(new Integer(upl.getProfileId()), upl);
           }
         } finally {
           rs.close();
@@ -2012,7 +2012,7 @@ public class RDBMUserLayoutStore
       try {
         String sQuery = "INSERT INTO UP_USER_PROFILES (USER_ID,PROFILE_ID,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION) VALUES ("
             + userId + "," + profile.getProfileId() + ",'" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
-            + "," + profile.getThemeStylesheetId() + "','" + profile.getProfileDescription() + "')";
+            + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "')";
         Logger.log(Logger.DEBUG, "RDBMUserLayoutStore::addUserProfile() : " + sQuery);
         stmt.executeUpdate(sQuery);
       } finally {
