@@ -92,12 +92,12 @@ public class PortalSessionManager extends HttpServlet {
   private static ServletContext servletContext = null;
   private static PortalSessionManager instance = null;
 
-  /*
-    Provides access to the servlet instance ultimately to provide access
-    to the servlet context of the portal.
-  */
-  public static final PortalSessionManager getInstance()
-  {
+  /**
+   * Provides access to the servlet instance ultimately to provide access
+   * to the servlet context of the portal.
+   * @return instance, the PortalSessionManager servlet instance
+   */
+  public static final PortalSessionManager getInstance() {
      return instance;
   }
 
@@ -182,7 +182,7 @@ public class PortalSessionManager extends HttpServlet {
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // Send the uPortal version in a header
-        res.setHeader("uPortal-version", "uPortal_2-0+");
+        res.setHeader("uPortal-version", "uPortal_rel-2-1");
 
         HttpSession session = req.getSession();
 
