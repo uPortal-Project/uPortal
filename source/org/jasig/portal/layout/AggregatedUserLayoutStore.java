@@ -60,6 +60,7 @@ import java.util.Vector;
 
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.channels.CError;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
@@ -1366,31 +1367,28 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     int userId = person.getID();
     int profileId=profile.getProfileId();
+    int layoutId = Integer.parseInt(layoutImpl.getId());
 
     Connection con = RDBMServices.getConnection();
 
 	try {
 
-       RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
+      RDBMServices.setAutoCommit(con, false);
 
-       Statement stmt = con.createStatement();
+      Statement stmt = con.createStatement();
 
-        // eventually, we need to fix template layout implementations so you can just do this:
-        //        int layoutId=profile.getLayoutId();
-        // but for now:
-        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        //LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
-        int layoutId = -1;
-        ResultSet rs = stmt.executeQuery(subSelectString);
-        try {
-            if ( rs.next() )
-             layoutId = rs.getInt(1);
-        } finally {
-            rs.close();
-        }
+	  String sQuery = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+	  ResultSet rs = stmt.executeQuery(sQuery);
+	 if (rs.next()) {
+	 	int layout_id = rs.getInt(1);
+		if ( rs.wasNull() ) {
+	  	sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID="+layoutId+" WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+		stmt.executeUpdate(sQuery);
+	  }
+	 }
+	  rs.close();	
 
-
-      String sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
+      sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
       LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
       String firstNodeId = layout.getLayoutFolder(layout.getRootId()).getFirstChildNodeId();
       rs = stmt.executeQuery(sQuery);
@@ -1832,11 +1830,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
-          // modifed INSERT INTO SELECT statement for MySQL support
           sQuery = " SELECT "+realUserId+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
             " FROM UP_SS_USER_ATTS WHERE USER_ID="+userId;
           rs = stmt.executeQuery(sQuery);
-
 
 
           while (rs.next()) {
@@ -1849,14 +1845,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               "'"+rs.getString("PARAM_NAME")+"'," +
               rs.getInt("PARAM_TYPE")+"," +
               "'"+rs.getString("PARAM_VAL")+"')";
-// old code
-//          String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
-//            " SELECT "+realUserId+", USUA.PROFILE_ID, USUA.SS_ID, USUA.SS_TYPE, USUA.STRUCT_ID, USUA.PARAM_NAME, USUA.PARAM_TYPE, USUA.PARAM_VAL "+
-//            " FROM UP_SS_USER_ATTS USUA WHERE USUA.USER_ID="+userId;
 
-          LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + Insert);
-          insertStmt.executeUpdate(Insert);
-         }
+           LogService.log(LogService.DEBUG, "AggregatedUserLayoutStore::getUserLayout(): " + Insert);
+           insertStmt.executeUpdate(Insert);
+          }
 
           // Close Result Set
           if ( rs != null ) rs.close();
@@ -1918,7 +1910,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlFragment += " ULS.FRAGMENT_ID=UF.FRAGMENT_ID" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
 
         LogService.log(LogService.DEBUG, sqlFragment);
 
@@ -2806,15 +2798,36 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
   }
 
 
-  private void fillChannelDescription( IALChannelDescription channelDesc ) throws Exception {
+  public void fillChannelDescription( IALChannelDescription channelDesc ) throws PortalException {
+  	try {
 
-               String publishId =  channelDesc.getChannelPublishId();
+              String publishId =  channelDesc.getChannelPublishId();
 
               if ( publishId != null ) {
 
                ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(publishId));
 
-               if ( channelDef != null ) {
+               if ( channelDef == null || !channelApproved(channelDef.getApprovalDate()) ) {
+                 // Create an error channel if channel is missing or not approved
+				 ChannelDefinition cd = new ChannelDefinition(Integer.parseInt(publishId));
+				 cd.setTitle("Missing channel");
+				 cd.setName("Missing channel");
+				 cd.setTimeout(20000);
+				 cd.setJavaClass(CError.class.getName());
+				 cd.setEditable(false);
+				 cd.setHasAbout(false);
+				 cd.setHasHelp(false);
+				 String missingChannel = "Unknown";
+				 if (channelDef != null) {
+				   missingChannel = channelDef.getName();
+				 }
+				
+				 String errMsg = "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.";
+				 cd.addParameter("CErrorChanId",publishId,String.valueOf(false));
+				 cd.addParameter("CErrorMessage",errMsg,String.valueOf(false));
+				 cd.addParameter("CErrorErrorId",CError.CHANNEL_MISSING_EXCEPTION+"",String.valueOf(false));
+				 channelDef = cd;
+               }	
 
                  channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
                  channelDesc.setClassName(channelDef.getJavaClass());
@@ -2831,16 +2844,19 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                  for ( int j = 0; j < channelParams.length; j++ ) {
                   String paramName = channelParams[j].getName();
-                  if ( channelDesc.getParameterValue(paramName) == null ) {
+                  String paramValue = channelParams[j].getValue();
+                  if ( paramName != null && paramValue != null && channelDesc.getParameterValue(paramName) == null ) {
                    channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
-                   channelDesc.setParameterValue(paramName,channelParams[j].getValue());
+                   channelDesc.setParameterValue(paramName,paramValue);
                   }
                  }
                  channelDesc.setTimeout(channelDef.getTimeout());
                  channelDesc.setTitle(channelDef.getTitle());
 
-               }
               }
+  	} catch ( Exception e ) {
+  		throw new PortalException(e);        
+  	}
 
   }
 
@@ -3155,7 +3171,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	  */
   public Collection getSubscribableFragments(IPerson person) throws PortalException {
 	int userId = person.getID();
-    Vector fragmentIds = new Vector();
+    Set fragmentIds = new HashSet();
     Connection con = RDBMServices.getConnection();
     try {
 	 IGroupMember groupPerson = null;
@@ -3172,15 +3188,18 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	  }
 	   int fragmentId = rs.getInt(1);
 	   String groupKey = rs.getString(2);
-	   if ( groupKeys.contains(groupKey) )
-		  fragmentIds.add(Integer.toString(fragmentId));
-	   else {
+	   String fragStrId = Integer.toString(fragmentId);
+	   if ( !fragmentIds.contains(fragStrId) ) {
+	    if ( groupKeys.contains(groupKey) )
+		  fragmentIds.add(fragStrId);
+	    else {
 		 IEntityGroup group = GroupService.findGroup(groupKey);
 		 if ( group != null && groupPerson.isDeepMemberOf(group) ) {
-		  fragmentIds.add(Integer.toString(fragmentId));
+		  fragmentIds.add(fragStrId);
 		  groupKeys.add(groupKey);
 		 }
-	   }
+	    }
+	   } 
 	 }
 	   if ( rs != null ) rs.close();
 	   if ( stmt != null ) stmt.close();
@@ -3289,6 +3308,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 			   } finally {
 				   RDBMServices.releaseConnection(con);
 				 }		
+	}
+	
+	public String getNextNodeId(IPerson person) throws PortalException {
+	 try {	
+	  return getNextStructId(person,"");
+	 } catch ( Exception e ) {
+	 	throw new PortalException(e);
+	 } 
 	}
 
 }

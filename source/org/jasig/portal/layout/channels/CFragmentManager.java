@@ -209,7 +209,7 @@ public class CFragmentManager extends FragmentManager {
 					  alm.deleteFragment(fragmentId);
 					  // Updating the fragments map
 					  fragments.remove(fragmentId);  
-					  fragmentId = (fragments != null && fragments.isEmpty())?(String) fragments.keySet().toArray()[0]:"";
+					  fragmentId = (fragments != null && !fragments.isEmpty())?(String) fragments.keySet().toArray()[0]:"";
 					} else
 					   new PortalException ( "Invalid fragment ID="+fragmentId);
 				} else if (action.equals("publish")) {

@@ -40,12 +40,15 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.WeakHashMap;
@@ -250,7 +253,7 @@ public class PersonDirectory {
               }
             }
           } else {
-      	    LogService.log(LogService.ERROR,"PersonDirectory::getParameters(): Unrecognized tag "+tagname+" in PersonDirs.xml");
+            LogService.log(LogService.ERROR,"PersonDirectory::getParameters(): Unrecognized tag "+tagname+" in PersonDirs.xml");
           }
         }
         for (int ii=0;ii<pdi.attributealiases.length;ii++) {
@@ -294,13 +297,9 @@ public class PersonDirectory {
     Hashtable attribs = this.getUserDirectoryInformation(uid);
     Enumeration en = attribs.keys();
       while (en.hasMoreElements()) {
-        String key = (String) en.nextElement();
-        String value=null;
-        Object tvalue = attribs.get(key);
-        if (tvalue instanceof String)
-            value = (String) tvalue;
-        if (value!=null)
-            m_Person.setAttribute(key,value);
+        String key = (String)en.nextElement();
+        Object value = attribs.get(key);
+        m_Person.setAttribute(key,value);
       }
       persons.put(uid, m_Person);
   }
@@ -370,7 +369,7 @@ public class PersonDirectory {
           if (tattrib!=null) {
             // determine if this attribute is a String or a binary (byte array)
             if (tattrib.size() == 1) {
-            	Object att = tattrib.get();
+                Object att = tattrib.get();
                 if (att instanceof byte[]) {
                     attribs.put(pdi.attributealiases[i],(Object)att);
                 } else {
@@ -444,37 +443,61 @@ public class PersonDirectory {
 
       // Execute query substituting Username for parameter
       stmt = conn.prepareStatement(pdi.uidquery);
+      
       stmt.setString(1,username);
       rs = stmt.executeQuery();
-      if (rs.next()) {
-        // get the first (only) row of result
-
-        // Foreach attribute, put its value and alias in the hashtable
-        for (int i=0;i<pdi.attributenames.length;i++) {
-          try {
-            String value = null;
-            String attName = pdi.attributenames[i];
-            if (attName != null && attName.length() != 0)
-              value = rs.getString(attName);
-            if (value!=null) {
-              attribs.put(pdi.attributealiases[i],value);
-            }
-          } catch (SQLException sqle) {
-            ; // Don't let error in a field prevent processing of others.
-            LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error accessing JDBC field "+pdi.attributenames[i]+" "+sqle);
+      
+      // Place data from result set into a list of maps
+      // representing the name/value pairs from each row
+      List results = new ArrayList();
+      while (rs.next()) {
+          Map resultRow = new HashMap(pdi.attributenames.length);
+          for (int i = 0; i < pdi.attributenames.length; i++) {
+              String attName = pdi.attributenames[i];
+              if (attName != null && attName.length() > 0) {
+                  String attValue = rs.getString(attName);
+                  if (attValue != null) {
+                      resultRow.put(attName, attValue);
+                  }
+              }
           }
-        }
+          results.add(resultRow);
       }
-
+      
+      // For each attribute name, gather the non-null values
+      // (one from each result row) and determine whether the 
+      // result is single or multi-valued.
+      for (int i = 0; i < pdi.attributenames.length; i++) {
+          String attAlias = pdi.attributealiases[i];
+          String attName = pdi.attributenames[i];
+          Set attValues = new HashSet();
+          for (Iterator iter = results.iterator(); iter.hasNext();) {
+              Map resultRow = (Map)iter.next();
+              String attValue = (String)resultRow.get(attName);
+              attValues.add(attValue);
+          }
+          if (attValues.size() == 1) {
+              // Single-valued result
+              String attValue = (String)attValues.iterator().next();
+              if (attValue != null) { 
+                attribs.put(attAlias, attValue);
+              }
+          } else if (attValues.size() > 1) {
+              // Multi-valued result
+              attribs.put(attAlias, new ArrayList(attValues));
+          }
+      }
+      
     } catch (Exception e) {
-      ; // If database down or can't logon, ignore this data source
+      // If database down or can't logon, ignore this data source
       // It is not clear that we want to disable the source, since the
       // database may be temporarily down.
-      LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error "+e);
+      LogService.log(LogService.ERROR,"PersonDirectory::processJdbcDir(): Error ", e);
+    } finally {
+        if (rs!=null) try {rs.close();} catch (Exception e) {}
+        if (stmt!=null) try {stmt.close();} catch (Exception e) {}
+        if (conn!=null) try {conn.close();} catch (Exception e) {}
     }
-    if (rs!=null) try {rs.close();} catch (Exception e) {;}
-    if (stmt!=null) try {stmt.close();} catch (Exception e) {;}
-    if (conn!=null) try {conn.close();} catch (Exception e) {;}
   }
 
   /**
@@ -491,7 +514,7 @@ public class PersonDirectory {
       try {
         person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person));
       } catch (Exception e) {
-          // Do nothing
+        LogService.log(LogService.ERROR, e);
       }
       instance().getUserDirectoryInformation(uid, person);
     }

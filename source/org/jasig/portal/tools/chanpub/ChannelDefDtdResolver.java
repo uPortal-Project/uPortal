@@ -67,7 +67,7 @@ public class ChannelDefDtdResolver implements EntityResolver {
                 inputSource =  new InputSource(inStream);
             }
         } catch (Exception e) {
-      	    // Do nothing
+      	    throw new RuntimeException(e.getMessage());
         }
 	  
 	    return inputSource;            

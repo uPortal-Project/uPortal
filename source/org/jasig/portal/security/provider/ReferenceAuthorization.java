@@ -39,6 +39,7 @@
 package  org.jasig.portal.security.provider;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -60,20 +61,25 @@ public class ReferenceAuthorization implements IAuthorization {
   protected static SmartCache chanRolesCache = new SmartCache(300);
   protected static String s_channelPublisherRole = null;
   static {
+  	InputStream stream = null;
     try {
       // Find our properties file and open it
-      java.io.InputStream stream = ReferenceAuthorization.class.getResourceAsStream("/properties/security.properties");
+      stream = ReferenceAuthorization.class.getResourceAsStream("/properties/security.properties");
       Properties securityProps = new Properties();
-      try {
-        securityProps.load(stream);
-		  stream.close();
-        s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
+      securityProps.load(stream);
+      s_channelPublisherRole = securityProps.getProperty("channelPublisherRole");
       } catch (IOException e) {
         LogService.log(LogService.ERROR, new PortalSecurityException(e.getMessage()));
-      }
-    } catch (Exception e) {
+      } catch (Exception e) {
       LogService.log(LogService.ERROR, e);
-    }
+      } finally {
+		try {
+			if (stream != null)
+				stream.close();
+		} catch (IOException exception) {
+			LogService.log(LogService.ERROR,"ReferenceAuthorization:static::unable to close InputStream "+ exception);
+		}
+	}
   }
 
 

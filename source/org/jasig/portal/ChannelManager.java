@@ -900,7 +900,6 @@ public class ChannelManager implements LayoutEventListener {
         this.binfo=new BrowserInfo(request);
         this.uPElement=uPElement;
         rendererTable.clear();
-        processRequestChannelParameters(request);
 
         // check portal JNDI context
         if(portalContext==null) {
@@ -918,6 +917,7 @@ public class ChannelManager implements LayoutEventListener {
                 LogService.log(LogService.ERROR,"ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : "+ne);
             }
         }
+        processRequestChannelParameters(request);
     }
 
     /**

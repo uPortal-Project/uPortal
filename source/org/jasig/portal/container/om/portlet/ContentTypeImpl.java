@@ -35,6 +35,7 @@
 
 package org.jasig.portal.container.om.portlet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,7 +49,7 @@ import org.apache.pluto.om.portlet.ContentType;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class ContentTypeImpl implements ContentType {
+public class ContentTypeImpl implements ContentType, Serializable {
     
     private String contentType = null;
     private Collection portletModes = null;

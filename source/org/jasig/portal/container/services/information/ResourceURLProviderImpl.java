@@ -87,10 +87,9 @@ public class ResourceURLProviderImpl implements ResourceURLProvider {
     // Additional methods
     
     private String getBaseUrl(HttpServletRequest request) {
-        String protocol = request.getProtocol();
-        protocol = protocol.substring(0, protocol.indexOf("/")).toLowerCase();
+        String scheme = request.getScheme();
         String serverName = request.getServerName();
         int serverPort = request.getServerPort();
-        return protocol + "://" + serverName + ":" + serverPort;
+        return scheme + "://" + serverName + ":" + serverPort;
     }
 }

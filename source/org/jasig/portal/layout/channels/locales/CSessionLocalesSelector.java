@@ -38,8 +38,6 @@ package org.jasig.portal.layout.channels.locales;
 import java.util.Locale;
 
 import org.jasig.portal.Constants;
-import org.jasig.portal.IPrivileged;
-import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
@@ -55,19 +53,11 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CSessionLocalesSelector extends BaseChannel implements IPrivileged {
+public class CSessionLocalesSelector extends BaseChannel {
     
     protected final String sslUri = "sessionLocales.ssl";
-    private LocaleManager lm = null;
-
-    public void setPortalControlStructures(PortalControlStructures pcs)
-        throws PortalException {
-        lm = pcs.getUserPreferencesManager().getUserPreferences().getProfile().getLocaleManager();
-        Locale[] userLocales = lm.getUserLocales();
-    }
-
+    
     public void renderXML(ContentHandler out) throws PortalException {
-        if (lm.isLocaleAware()) {
             Locale[] locales = runtimeData.getLocales();
             Document doc = LocaleManager.xmlValueOf(locales, locales[0]);
             XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
@@ -77,7 +67,6 @@ public class CSessionLocalesSelector extends BaseChannel implements IPrivileged 
             xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
             xslt.setStylesheetParameter("localesParam", Constants.LOCALES_PARAM);
             xslt.transform();
-        }
     }
 
 }

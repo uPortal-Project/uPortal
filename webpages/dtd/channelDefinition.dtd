@@ -30,16 +30,18 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
-Author: Freddy Lopez, flopez@interactivebusiness.com
-Author: Ken Weiner, kweiner@interactivebusiness.com
+Author: Freddy Lopez, flopez@unicon.net
+Author: Ken Weiner, kweiner@unicon.net
 $Revision$
 -->
 
-<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, parameters?)>
+<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?)>
 
 <!ELEMENT categories (category)*>
 
 <!ELEMENT groups (group)*>
+
+<!ELEMENT users (user)*>
 
 <!ELEMENT parameters (parameter)*>
 
@@ -60,6 +62,7 @@ $Revision$
 
 <!ELEMENT category (#PCDATA)>
 <!ELEMENT group (#PCDATA)>
+<!ELEMENT user (#PCDATA)>
 
 <!ELEMENT value (#PCDATA)>
 <!ELEMENT description (#PCDATA)>

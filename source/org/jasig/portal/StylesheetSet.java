@@ -515,7 +515,12 @@ public class StylesheetSet extends SAX2FilterImpl {
 
   protected String getMedia (HttpServletRequest req) throws PortalException
   {
-    return(getMediaProps().getValue(req.getHeader("User-Agent")));
+    String ua=req.getHeader("User-Agent");
+    if(ua==null || ua.equals("")) {
+      ua=MediaManager.NULL_USER_AGENT;
+    }
+
+    return(getMediaProps().getValue(ua));
   }
 
 

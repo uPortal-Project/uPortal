@@ -222,7 +222,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             }
 
             if (upl != null) {
-                if (localeManager.isLocaleAware()) {
+                if (LocaleManager.isLocaleAware()) {
                     upl.setLocaleManager(localeManager);
                 }
                 ulm=UserLayoutManagerFactory.getUserLayoutManager(m_person,upl);
@@ -469,6 +469,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         try {
             if(saveUserPreferencesAtLogout) {
                 ulsdb.putUserPreferences(m_person, complete_up);
+                ulm.saveUserLayout();
             }
         } catch (Exception e) {
             LogService.log(LogService.ERROR,"UserPreferencesManager::finishedSession() : unable to persist layout upon session termination !", e);

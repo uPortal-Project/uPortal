@@ -44,6 +44,7 @@ import java.util.StringTokenizer;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.jasig.portal.ChannelRuntimeData;
@@ -226,9 +227,10 @@ public class PortletStateManager {
 	  * @return a String hash key
 	  */ 
 	public static String getKey(PortletWindow window) {
-		    PortletWindowImpl windowImpl = (PortletWindowImpl) window; 
-		    String sessionId = windowImpl.getHttpServletRequest().getSession().getId();
-			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
+            PortletWindowImpl windowImpl = (PortletWindowImpl)window; 
+            HttpSession session = windowImpl.getHttpServletRequest().getSession();
+            String sessionId = (session!=null) ? session.getId() : null;
+            return ((sessionId!=null) ? sessionId + "_" : "") + window.getId().toString() + "_"; 
 	}
 	
 	
@@ -257,12 +259,15 @@ public class PortletStateManager {
 	  * @param request a <code>HttpServletRequest</code> instance
 	  */  
 	public static void clearState( HttpServletRequest request ) {
+         HttpSession session = request.getSession();	
+         if ( session == null ) 
+             return;
 	 Map map = windowStates;	
 	 for ( int i = 0; i < 2; i++ )	{
 	  Iterator keyIterator = map.keySet().iterator();
 	  while ( keyIterator.hasNext() ) {
 		  String name = (String) keyIterator.next();
-		  if (name.startsWith(request.getSession().getId())) {
+		  if (name.startsWith(session.getId())) {
 			  keyIterator.remove();
 		  }
 	  }
@@ -379,6 +384,8 @@ public class PortletStateManager {
 		
 		if ( nextAction )
 		  url.append(ACTION+"=true&");
+        else
+          url.append(ACTION+"=false&");
 		
 		// Window state
 		if ( nextState != null ) {
@@ -427,7 +434,7 @@ public class PortletStateManager {
 		}
    
 		String strURL = url.toString();
-		if ( strURL.endsWith("&") )
+		while ( strURL.endsWith("&") )
 		 strURL = strURL.substring(0,strURL.lastIndexOf("&"));
 		
 		return strURL;
