@@ -235,7 +235,7 @@
 
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
-                       Version: 2.2 or 2.3
+                       Version: 2.2, 2.3, or 2.4
                        URL: http://jakarta.apache.org/tomcat/
 
   jdbc2_0-stdext.jar   JDBC 2.0 Standard Extension.  Needed for use of
@@ -556,12 +556,22 @@
 <!--
 
   The "initportal" target runs all the targets necessary to deploy the portal
-  and prepare the portal database.
+  and prepare the portal database: deploy, db, i18n-db, pubchan, pushfragment
   
 -->
   
-  <target name="initportal" description="Publish a channel" depends="deploy, db, i18n-db, pubchan, pushfragment">
-    <echo message="Finished initializing uPortal"/>    
+  <target name="initportal" description="Publish a channel">
+    <echo message="Initializing uPortal"/> 
+    <antcall target="deploy"/>   
+    <antcall target="db"/>   
+    <antcall target="i18n-db"/>   
+    <antcall target="pubchan">
+      <param name="channel" value="all"/>
+    </antcall>   
+    <antcall target="pushfragment">
+      <param name="fragmentFile" value="/properties/al/pushfragments.xml"/>
+    </antcall>   
+    <echo message="Finished initializing uPortal"/>
   </target>
   
   
