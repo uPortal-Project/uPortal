@@ -1045,6 +1045,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
        fragments = (Hashtable) layoutStore.getFragments(person);
        // Checking restrictions and move "wrong" nodes to the lost folder
        moveWrongNodesToLostFolder();
+       updateCacheKey();
       }
      } catch ( Exception e ) {
          e.printStackTrace();
@@ -1082,6 +1083,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         this.fragmentId = fragmentId;
         // Checking restrictions and move "wrong" nodes to the lost folder
         moveWrongNodesToLostFolder();
+        updateCacheKey();
       } catch ( Exception e ) {
         throw new PortalException(e.getMessage());
       }

@@ -214,6 +214,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                         LayoutEventListener lel=(LayoutEventListener)i.next();
                         lel.layoutLoaded();
                     }
+                    updateCacheKey();
                 } else {
                     throw new PortalException("Null user layout returned for ownerId=\""+owner.getID()+"\", profileId=\""+profile.getProfileId()+"\", layoutId=\""+profile.getLayoutId()+"\"");
                 }
