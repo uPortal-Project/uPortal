@@ -38,3 +38,5 @@ portal.jpx
 Servlet.library
 portal-clean.jpx
 portal.log
+external portal libs.library
+uPortal20.jpx
