@@ -48,7 +48,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
   /**
-   * A channel for selecting skins.
+   * A channel for adding new content to a layout.
    * @author Michael Ivanov
    * @version $Revision$
    */
