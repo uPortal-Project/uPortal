@@ -2,10 +2,11 @@
 
 <!ELEMENT registry (category|channel)*>
 
-<!ELEMENT category (channel)*>
+<!ELEMENT category (category|channel)*>
 <!ATTLIST category
   ID ID #REQUIRED
-  name CDATA #IMPLIED>
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED>
 
 <!ELEMENT channel (parameter)*>
 <!ATTLIST channel 
