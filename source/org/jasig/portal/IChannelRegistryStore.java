@@ -50,9 +50,57 @@ import java.sql.SQLException;
 public interface IChannelRegistryStore {
 
   /**
+   * Get a channel definition.
+   * @param channelPublishId a channel publish ID
+   * @return channelDefinition, a definition of the channel
+   * @throws java.lang.Exception
+   */
+  public ChannelDefinition getChannelDefinition(int channelPublishId) throws Exception;
+
+  /**
+   * Publishes a channel.
+   * @param id the identifier for the channel
+   * @param publisher the user who is publishing this channel
+   * @param chanXML XML that describes the channel
+   * @param catID an array of category IDs
+   * @exception Exception
+   */
+  /*
+  public void addChannelDefinition (ChannelDefinition channelDef, ChannelCategory[] categories, IPerson publisher) throws Exception;
+  */
+
+  /**
+   * Permanently deletes a channel definition from the store.
+   * @param channelPublishId a channel publish ID
+   * @throws java.lang.Exception
+   */
+  public void deleteChannelDefinition(int channelPublishId) throws Exception;
+
+  /**
+   * Sets a channel definition as "approved".  This effectively makes a
+   * channel definition available in the channel registry, making the channel
+   * available for subscription.
+   * @param channelPublishId a channel publish ID
+   * @param approver the user that approves this channel definition
+   * @param approveDate the date when the channel definition should be approved (can be future dated)
+   * @throws java.lang.Exception
+   */
+  public void approveChannelDefinition(int channelPublishId, IPerson approver, Date approveDate) throws Exception;
+
+
+  /**
+   * Sets a channel definition as "unapproved".  This effectively removes a
+   * channel definition from the channel registry, making the channel
+   * unavailable for subscription.
+   * @param channelPublishId a channel publish ID
+   * @throws java.lang.Exception
+   */
+  public void disapproveChannelDefinition (String channelPublishId) throws Exception;
+
+  /**
    * Registers a channel type.
    * @param chanType a channel type
-   * @throws Exception
+   * @throws java.lang.Exception
    */
   public void addChannelType (ChannelType chanType) throws Exception;
 
@@ -64,7 +112,6 @@ public interface IChannelRegistryStore {
    */
   public ChannelType[] getChannelTypes() throws Exception;
 
-  // more to come!!!
 }
 
 
