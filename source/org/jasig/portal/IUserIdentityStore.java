@@ -49,7 +49,7 @@ public interface IUserIdentityStore {
    * @return uPortalUID number
    * @throws Authorization exception if no user is found.
    */
-  public int getPortalUID(IPerson person) throws Exception;
+  public int getPortalUID(IPerson person) throws AuthorizationException;
 
   /**
    * Returns a unique uPortal key for a user.  A boolean flag
