@@ -88,16 +88,16 @@ public class PortalSessionManager extends HttpServlet {
   private static final int sizeLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.PortalSessionManager.File_upload_max_size");
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
-  
 
-    // Following flag allows to disable features that prevent
-    // repeated requests from going through. This is useful
-    // when debugging and typing things in on a command line.
-    // Otherwise, the flag should be set to false.
-    private static final boolean ALLOW_REPEATED_REQUESTS=false;
 
-    // random number generator
-    private static final Random randomGenerator= new Random();
+  // Following flag allows to disable features that prevent
+  // repeated requests from going through. This is useful
+  // when debugging and typing things in on a command line.
+  // Otherwise, the flag should be set to false.
+  private static final boolean ALLOW_REPEATED_REQUESTS = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests");
+
+  // random number generator
+  private static final Random randomGenerator = new Random();
 
   static {
     LogService.instance().log(LogService.INFO, "uPortal started");
@@ -131,7 +131,7 @@ public class PortalSessionManager extends HttpServlet {
               pe.printStackTrace(new PrintWriter(sw));
               sw.flush();
               LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : an unknown exception occurred : "+sw.toString());
-              throw new ServletException(pe);              
+              throw new ServletException(pe);
           }
       }
 
@@ -163,7 +163,7 @@ public class PortalSessionManager extends HttpServlet {
     /**
      * Process HTTP GET request.
      *
-     * @param req an incoming <code>HttpServletRequest</code> 
+     * @param req an incoming <code>HttpServletRequest</code>
      * @param res an outgoing <code>HttpServletResponse</code>
      * @exception ServletException if an error occurs
      * @exception IOException if an error occurs
@@ -173,7 +173,7 @@ public class PortalSessionManager extends HttpServlet {
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
         res.setHeader("uPortal-version", "uPortal_2-0+");
-        res.setDateHeader("Expires", 0);        
+        res.setDateHeader("Expires", 0);
 
         HttpSession session = req.getSession();
         if (session != null) {
@@ -187,7 +187,7 @@ public class PortalSessionManager extends HttpServlet {
                     session.setAttribute("uP_requestTags",requestTags);
                 }
             }
-            
+
             // determine current tag
             UPFileSpec upfs=new UPFileSpec(req);
 
@@ -229,7 +229,7 @@ public class PortalSessionManager extends HttpServlet {
                 if(!requestTags.add(newTag)) {
                     LogService.instance().log(LogService.ERROR,"PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
                 }
-                    
+
                 // fire away
                 if(ALLOW_REPEATED_REQUESTS) {
                     userInstance.writeContent(new RequestParamWrapper(req,true),res);
@@ -258,8 +258,8 @@ public class PortalSessionManager extends HttpServlet {
 
         } else {
             throw new ServletException("Session object is null !");
-        }        
-        
+        }
+
     }
 
   /**
@@ -335,7 +335,7 @@ public class PortalSessionManager extends HttpServlet {
         }
 
 
-        // pass-through implementation methods 
+        // pass-through implementation methods
 
         // implementation of javax.servlet.ServletResponse interface
         public String getCharacterEncoding() {
@@ -435,7 +435,7 @@ public class PortalSessionManager extends HttpServlet {
 
 
     /**
-     * A wrapper around http request object to prevent unverified requests from 
+     * A wrapper around http request object to prevent unverified requests from
      * accessing any of the request parameters.
      *
      * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
@@ -462,7 +462,7 @@ public class PortalSessionManager extends HttpServlet {
 
             // only bother with parameter work if should be accessable
             if(request_verified) {
-                // parse request body 
+                // parse request body
                 String contentType = source.getContentType();
                 if (contentType != null && contentType.startsWith("multipart/form-data")) {
                     com.oreilly.servlet.multipart.Part attachmentPart;
@@ -519,7 +519,7 @@ public class PortalSessionManager extends HttpServlet {
                         LogService.instance().log(LogService.ERROR, e);
                     }
                 }
-                // regular params 
+                // regular params
                 Enumeration en = source.getParameterNames();
                 if (en != null) {
                     while (en.hasMoreElements()) {
@@ -543,7 +543,7 @@ public class PortalSessionManager extends HttpServlet {
                 return  null;
             }
         }
-        
+
         /**
          * Overloaded method
          * @return parameter names
@@ -625,7 +625,7 @@ public class PortalSessionManager extends HttpServlet {
         }
 
 
-        // peterk: this won't work. Spec says that this method has to be executed prior to 
+        // peterk: this won't work. Spec says that this method has to be executed prior to
         // reading request body, and we do exactly this in the constructor of this class :(
 
         // This method is new in Servlet 2.3.
