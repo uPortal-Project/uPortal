@@ -124,7 +124,7 @@ public class RDBMUserLayoutStore
             pstmt.clearParameters ();
             pstmt.setInt(1, 0);
             pstmt.executeQuery();
-            supportsPreparedStatements = true;
+            supportsPreparedStatements = false;
           } finally {
             pstmt.close();
           }
@@ -882,6 +882,7 @@ public class RDBMUserLayoutStore
 
   public Document getUserLayout (IPerson person, int profileId) throws Exception {
     int userId = person.getID();
+    int realUserId = userId;
     Connection con = rdbmService.getConnection();
     setAutoCommit(con, false);          // May speed things up, can't hurt
     String str_uLayoutXML = null;
@@ -890,7 +891,6 @@ public class RDBMUserLayoutStore
       Element root = doc.createElement("layout");
       Statement stmt = con.createStatement();
       try {
-
         long startTime = System.currentTimeMillis();
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
             profileId;
@@ -899,178 +899,195 @@ public class RDBMUserLayoutStore
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
           rs.next();
-          layoutId = rs.getInt("LAYOUT_ID");
+          layoutId = rs.getInt(1);
         } finally {
           rs.close();
         }
+
+        if (layoutId == 0) { // First time, grab the default layout for this user
+          String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+          rs = stmt.executeQuery(sQuery);
+          try {
+            rs.next();
+            userId = rs.getInt(1);
+            layoutId = rs.getInt(2);
+          } finally {
+            rs.close();
+          }
+
+          // Make sure the next struct id is set in case the user adds a channel
+          sQuery = "SELECT MAX(STRUCT_ID) FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
+            " AND LAYOUT_ID=" + layoutId;
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          int nextStructId;
+          rs = stmt.executeQuery(sQuery);
+          try {
+            rs.next();
+            nextStructId = rs.getInt(1) + 1;
+          } finally {
+            rs.close();
+          }
+          sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+          stmt.executeUpdate(sQuery);
+        }
+
+        int firstStructId = -1;
         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
         rs = stmt.executeQuery(sQuery);
         try {
-          String roleIds = ""; // Roles that this user belongs to
+          rs.next();
+          firstStructId = rs.getInt(1);
+        } finally {
+          rs.close();
+        }
 
+        String sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
+          "ULS.UNREMOVABLE,ULS.IMMUTABLE";
+        if (supportsOuterJoins) {
+          sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL " + dbStrings.layoutStructure;
+        } else {
+          sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
+        }
+        sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
+        HashMap layoutStructure = new HashMap();
+        ArrayList chanIds = new ArrayList();
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+          StringBuffer structParms = new StringBuffer();
+        rs = stmt.executeQuery(sql);
+        try {
+          int lastStructId = 0;
+          LayoutStructure ls = null;
+          String sepChar = "";
           if (rs.next()) {
-            int firstStructId = rs.getInt("INIT_STRUCT_ID");
-            if (firstStructId == 0) {                // Grab the default "Guest" layout
-              firstStructId = 1;                     // Should look this up
-            }
-            String sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
-                "ULS.UNREMOVABLE,ULS.IMMUTABLE";
-            if (supportsOuterJoins) {
-              sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL " + dbStrings.layoutStructure;
-            } else {
-              sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
-            }
-            sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
-            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            HashMap layoutStructure = new HashMap();
-            try {
-              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
-              rs = stmt.executeQuery(sql);
-              try {
-                int lastStructId = 0;
-                LayoutStructure ls = null;
-                StringBuffer structParms = new StringBuffer();
-                String sepChar = "";
+            int structId = rs.getInt(1);
+            if (DEBUG > 1) System.err.println("Read layout structrure " + structId);
+            readLayout: while (true) {
+              int chanId = rs.getInt(4);
+              ls = new LayoutStructure(structId,rs.getInt(2), rs.getInt(3), chanId, rs.getString(7),rs.getString(8),rs.getString(9));
+              layoutStructure.put(new Integer(structId), ls);
+              lastStructId = structId;
+              if (!ls.isChannel()) {
+                ls.addFolderData(rs.getString(5), rs.getString(6));
+              } else {
+                chanIds.add(new Integer(chanId)); // For later
+              }
+              if (supportsOuterJoins) {
+                do {
+                  String name = rs.getString(10);
+                  String value = rs.getString(11); // Oracle JDBC requires us to do this for longs
+                  if (name != null) { // may not be there because of the join
+                    ls.addParameter(name, value);
+                  }
+                  if (!rs.next()) {
+                    break readLayout;
+                  }
+                  structId = rs.getInt(1);
+                } while (structId == lastStructId);
+              } else { // Do second SELECT later on for structure parameters
+                if (ls.isChannel()) {
+                  structParms.append(sepChar + ls.chanId);
+                  sepChar = ",";
+                }
                 if (rs.next()) {
-                  int structId = rs.getInt(1);
-                  if (DEBUG > 1) {
-                    System.err.println("Read layout structrure " + structId);
-                  }
-                  ArrayList chanIds = new ArrayList();
-                  readLayout: while (true) {
-                    int chanId = rs.getInt(4);
-                    ls = new LayoutStructure(structId,rs.getInt(2), rs.getInt(3), chanId, rs.getString(7),rs.getString(8),rs.getString(9));
-                    layoutStructure.put(new Integer(structId), ls);
-                    lastStructId = structId;
-                    if (!ls.isChannel()) {
-                      ls.addFolderData(rs.getString(5), rs.getString(6));
-                    } else {
-                      chanIds.add(new Integer(chanId)); // For later
-                    }
-                    if (supportsOuterJoins) {
-                      do {
-                        String name = rs.getString(10);
-                        String value = rs.getString(11); // Oracle JDBC requires us to do this for longs
-                        if (name != null) { // may not be there because of the join
-                          ls.addParameter(name, value);
-                        }
-                        if (!rs.next()) {
-                          break readLayout;
-                        }
-                        structId = rs.getInt(1);
-                      } while (structId == lastStructId);
-                    } else { // Do second SELECT later on for structure parameters
-                      if (ls.isChannel()) {
-                        structParms.append(sepChar + ls.chanId);
-                        sepChar = ",";
-                      }
-                      if (rs.next()) {
-                        structId = rs.getInt(1);
-                      } else {
-                        break readLayout;
-                      }
-                    }
-                  }
-                  rs.close();
-                  rs = null;
-
-                  /**
-                   * We have to retrieve the channel defition after the layout structure
-                   * since retrieving the channel data from the DB may interfere with the
-                   * layout structure ResultSet (in other words Oracle is a pain to work with)
-                   */
-                  if (chanIds.size() > 0) {
-                    MyPreparedStatement pstmtChannel = getChannelPstmt(con);
-                    try {
-                      MyPreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
-                      try {
-                        // Pre-prime the channel pump
-                        for (int i = 0; i < chanIds.size(); i++) {
-                          int chanId = ((Integer) chanIds.get(i)).intValue();
-                          getChannel(chanId, true, pstmtChannel, pstmtChannelParm);
-                          if (DEBUG > 1) {
-                            System.err.println("Precached " + chanId);
-                          }
-                        }
-                      } finally {
-                        if (pstmtChannelParm != null) {
-                          pstmtChannelParm.close();
-                        }
-                      }
-                    } finally {
-                      pstmtChannel.close();
-                    }
-                    chanIds.clear();
-                  }
-                }
-
-                if (!supportsOuterJoins) { // Pick up structure parameters
-                  sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
-                    " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
-                  LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
-                  rs = stmt.executeQuery(sql);
-                  try {
-                    if (rs.next()) {
-                      int structId = rs.getInt(1);
-                      readParm: while(true) {
-                        ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
-                        lastStructId = structId;
-                        do {
-                          ls.addParameter(rs.getString(2), rs.getString(3));
-                          if (!rs.next()) {
-                            break readParm;
-                          }
-                        } while ((structId = rs.getInt(1)) == lastStructId);
-                      }
-                    }
-                  } finally {
-                    rs.close();
-                    rs = null;
-                  }
-                }
-              } finally {
-                if (rs != null) {
-                  rs.close();
-                  rs = null;
+                  structId = rs.getInt(1);
+                } else {
+                  break readLayout;
                 }
               }
-              sQuery = " SELECT ROLE_ID FROM UP_USER_ROLE WHERE USER_ID=" + userId;
-              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-              rs = stmt.executeQuery(sQuery);
-              try {
-                String sep = "";
-                while (rs.next()) {
-                  roleIds += sep + rs.getInt(1);
-                  sep = ",";
-                }
-              } finally {
-                rs.close();
-                rs = null;
-              }
-             } finally {
-              stmt.close();
-            }
-            UserInRole uir = new UserInRole(con, roleIds);
-            try {
-              createLayout(layoutStructure, doc, root, firstStructId, uir);
-            } finally {
-              uir.close();
-            }
+            } // while
           }
         } finally {
-          if (rs != null) {
+          rs.close();
+        }
+
+        /**
+        * We have to retrieve the channel defition after the layout structure
+        * since retrieving the channel data from the DB may interfere with the
+        * layout structure ResultSet (in other words, Oracle is a pain to program for)
+        */
+        if (chanIds.size() > 0) {
+          MyPreparedStatement pstmtChannel = getChannelPstmt(con);
+          try {
+            MyPreparedStatement pstmtChannelParm = getChannelParmPstmt(con);
+            try {
+              // Pre-prime the channel pump
+              for (int i = 0; i < chanIds.size(); i++) {
+                int chanId = ((Integer) chanIds.get(i)).intValue();
+                getChannel(chanId, true, pstmtChannel, pstmtChannelParm);
+                if (DEBUG > 1) {
+                  System.err.println("Precached " + chanId);
+                }
+              }
+            } finally {
+              if (pstmtChannelParm != null) {
+                pstmtChannelParm.close();
+              }
+            }
+          } finally {
+            pstmtChannel.close();
+          }
+          chanIds.clear();
+        }
+
+        if (!supportsOuterJoins) { // Pick up structure parameters
+          sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
+            " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sql);
+          rs = stmt.executeQuery(sql);
+          try {
+            if (rs.next()) {
+              int structId = rs.getInt(1);
+              readParm: while(true) {
+                LayoutStructure ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
+                int lastStructId = structId;
+                do {
+                  ls.addParameter(rs.getString(2), rs.getString(3));
+                  if (!rs.next()) {
+                    break readParm;
+                  }
+                } while ((structId = rs.getInt(1)) == lastStructId);
+              }
+            }
+          } finally {
             rs.close();
           }
         }
-        long stopTime = System.currentTimeMillis();
-        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
+
+        if (layoutStructure.size() > 0) { // We have a layout to work with
+          String roleIds = ""; // Roles that this user belongs to
+
+          sQuery = " SELECT ROLE_ID FROM UP_USER_ROLE WHERE USER_ID=" + userId;
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+          rs = stmt.executeQuery(sQuery);
+          try {
+            String sep = "";
+            while (rs.next()) {
+              roleIds += sep + rs.getInt(1);
+              sep = ",";
+            }
+          } finally {
+            rs.close();
+          }
+
+          UserInRole uir = new UserInRole(con, roleIds);
+          try {
+            createLayout(layoutStructure, doc, root, firstStructId, uir);
+          } finally {
+            uir.close();
+          }
+
+          long stopTime = System.currentTimeMillis();
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
             (stopTime - startTime) + " milliseconds to create");
-        doc.appendChild(root);
-        if (DEBUG > 1) {
-          System.err.println("--> created document");
-          dumpDoc(doc, "");
-          System.err.println("<--");
+          doc.appendChild(root);
+          if (DEBUG > 1) {
+            System.err.println("--> created document");
+            dumpDoc(doc, "");
+            System.err.println("<--");
+          }
         }
       } finally {
         stmt.close();
@@ -1102,12 +1119,17 @@ public class RDBMUserLayoutStore
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + query);
         ResultSet rs = stmt.executeQuery(query);
         try {
-          if (rs.next()) {
-            layoutId = rs.getInt("LAYOUT_ID");
-          }
+          rs.next();
+          layoutId = rs.getInt(1);
         } finally {
           rs.close();
         }
+        boolean firstLayout = false;
+        if (layoutId == 0) { // First personal layout for this user/profile
+          layoutId = 1;
+          firstLayout = true;
+        }
+
         String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
         String sSql = "DELETE FROM UP_LAYOUT_PARAM WHERE " + selectString;
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
@@ -1135,6 +1157,49 @@ public class RDBMUserLayoutStore
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sSql);
             stmt.executeUpdate(sSql);
 
+            if (firstLayout) {
+
+              int defaultUserId;
+              int defaultLayoutId;
+              // Have to copy some of data over from the default user
+              String sQuery = "SELECT USER_DFLT_USR_ID,USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+              rs = stmt.executeQuery(sQuery);
+              try {
+                rs.next();
+                defaultUserId = rs.getInt(1);
+                defaultLayoutId = rs.getInt(2);
+              } finally {
+                rs.close();
+              }
+              sQuery = "UPDATE UP_USER SET CURR_LAY_ID=" + layoutId + " WHERE USER_ID=" + userId;
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+              stmt.executeUpdate(sQuery);
+
+              sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
+              LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + sQuery);
+              stmt.executeQuery(sQuery);
+
+              /**
+               *  Let's hope that the default user data hasn't changed since we loaded the layout
+               */
+
+              /* insert row(s) into up_ss_user_atts */
+              String Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
+                " SELECT "+userId+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
+                " FROM UP_SS_USER_ATTS WHERE USER_ID="+defaultUserId;
+              LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+              stmt.executeUpdate(Insert);
+
+              /* insert row(s) into up_ss_user_parm */
+              Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+                " SELECT "+userId+", PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
+                " FROM UP_SS_USER_PARM WHERE USER_ID="+defaultUserId;
+              LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+              stmt.executeUpdate(Insert);
+
+
+            }
             long stopTime = System.currentTimeMillis();
             LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " +
                 (stopTime - startTime) + " milliseconds to save");
@@ -2562,14 +2627,38 @@ public class RDBMUserLayoutStore
         // get stylesheet description
         StructureStylesheetDescription ssd = getStructureStylesheetDescription(stylesheetId);
         // get user defined defaults
+        String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
+            profileId;
+        LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
+        int layoutId;
+        ResultSet rs = stmt.executeQuery(subSelectString);
+        try {
+          rs.next();
+          layoutId = rs.getInt(1);
+        } finally {
+          rs.close();
+        }
+
+        if (layoutId == 0) { // First time, grab the default layout for this user
+          String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+          LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+          rs = stmt.executeQuery(sQuery);
+          try {
+            rs.next();
+            userId = rs.getInt(1);
+          } finally {
+            rs.close();
+          }
+        }
+
         String sQuery = "SELECT PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID="
             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
+        rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
             // stylesheet param
-            ssd.setStylesheetParameterDefaultValue(rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
+            ssd.setStylesheetParameterDefaultValue(rs.getString(1), rs.getString(2));
             //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read stylesheet param "+rs.getString("PARAM_NAME")+"=\""+rs.getString("PARAM_VAL")+"\"");
           }
         } finally {
@@ -2597,28 +2686,28 @@ public class RDBMUserLayoutStore
         rs = stmt.executeQuery(sQuery);
         try {
           while (rs.next()) {
-            int param_type = rs.getInt("PARAM_TYPE");
+            int param_type = rs.getInt(3);
             if (param_type == 1) {
               // stylesheet param
               LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
-                  + ", param_name=\"" + rs.getString("PARAM_NAME") + "\", param_type=" + Integer.toString(param_type));
+                  + ", param_name=\"" + rs.getString(1) + "\", param_type=" + Integer.toString(param_type));
             }
             else if (param_type == 2) {
               // folder attribute
-              ssup.setFolderAttributeValue(getStructId(rs.getInt("STRUCT_ID"),rs.getInt("CHAN_ID")), rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
+              ssup.setFolderAttributeValue(getStructId(rs.getInt(4),rs.getInt(5)), rs.getString(1), rs.getString(2));
               //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read folder attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
             }
             else if (param_type == 3) {
               // channel attribute
-              ssup.setChannelAttributeValue(getStructId(rs.getInt("STRUCT_ID"),rs.getInt("CHAN_ID")), rs.getString("PARAM_NAME"), rs.getString("PARAM_VAL"));
+              ssup.setChannelAttributeValue(getStructId(rs.getInt(4),rs.getInt(5)), rs.getString(1), rs.getString(2));
               //LogService.instance().log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read channel attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
             }
             else {
               // unknown param type
               LogService.instance().log(LogService.ERROR, "RDBMUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
                   + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
-                  + ", param_name=\"" + rs.getString("PARAM_NAME") + "\", param_type=" + Integer.toString(param_type));
+                  + ", param_name=\"" + rs.getString(1) + "\", param_type=" + Integer.toString(param_type));
             }
           }
         } finally {

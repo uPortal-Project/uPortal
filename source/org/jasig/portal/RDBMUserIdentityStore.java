@@ -211,8 +211,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         int templateUID;
         int templateUSER_DFLT_USR_ID ;
         int templateUSER_DFLT_LAY_ID;
-        int templateCURR_LAY_ID ;
-        int templateNEXT_STRUCT_ID;
         java.sql.Date templateLST_CHAN_UPDT_DT = new java.sql.Date(System.currentTimeMillis());
 
         // Retrieve the username of the user to use as a template for this new user
@@ -238,8 +236,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           templateUID = rset.getInt("USER_ID");
           templateUSER_DFLT_USR_ID = rset.getInt("USER_DFLT_USR_ID");
           templateUSER_DFLT_LAY_ID = rset.getInt("USER_DFLT_LAY_ID");
-          templateCURR_LAY_ID = rset.getInt("CURR_LAY_ID");
-          templateNEXT_STRUCT_ID = rset.getInt("NEXT_STRUCT_ID");
         }
         else
         {
@@ -280,8 +276,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             person.getAttribute("username")+ "',"+
             templateUSER_DFLT_USR_ID+", "+
             templateUSER_DFLT_LAY_ID+", "+
-            templateCURR_LAY_ID+", "+
-            templateNEXT_STRUCT_ID+", "+
+            "null, "+
+            "null, "+
             "null)";
             //"'"+templateLST_CHAN_UPDT_DT+"')";
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
@@ -289,7 +285,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_layout */
         Insert = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID ) "+
-          " SELECT "+newUID+", LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
+          " SELECT "+newUID+", LAYOUT_ID, LAYOUT_TITLE, NULL FROM UP_USER_LAYOUT WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
@@ -301,7 +297,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         /* insert row into up_user_profile */
         Insert = "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID ) "+
-          " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID "+
+          " SELECT "+newUID+", PROFILE_ID, PROFILE_NAME, DESCRIPTION, NULL, STRUCTURE_SS_ID, THEME_SS_ID "+
           "FROM UP_USER_PROFILE WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
@@ -312,38 +308,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
-        /* insert row into up_ss_user_atts */
-        Insert = "INSERT INTO UP_SS_USER_ATTS (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) "+
-          " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
-          " FROM UP_SS_USER_ATTS WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
-
-        /* insert row into up_ss_user_parm */
-        Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
-          " SELECT "+newUID+", PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL "+
-          " FROM UP_SS_USER_PARM WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
-
-        /* insert row into up_layout_param */
-        Insert = "INSERT INTO UP_LAYOUT_PARAM (USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) "+
-          " SELECT "+newUID+", LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL "+
-          " FROM UP_LAYOUT_PARAM WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
-
         /* insert row into up_user_ua_map */
         Insert = "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) "+
           " SELECT "+newUID+", USER_AGENT, PROFILE_ID"+
           " FROM UP_USER_UA_MAP WHERE USER_ID="+templateUID;
-        LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
-        stmt.executeUpdate(Insert);
-
-        /* insert row into up_layout_struct  */
-        Insert = "INSERT INTO UP_LAYOUT_STRUCT (USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID, EXTERNAL_ID, CHAN_ID, NAME, TYPE, HIDDEN, IMMUTABLE, UNREMOVABLE) "+
-          " SELECT "+newUID+", LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID, EXTERNAL_ID, CHAN_ID, NAME, TYPE, HIDDEN, IMMUTABLE, UNREMOVABLE"+
-          " FROM UP_LAYOUT_STRUCT WHERE USER_ID="+templateUID;
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
