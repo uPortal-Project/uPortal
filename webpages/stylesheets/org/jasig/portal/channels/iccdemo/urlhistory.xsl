@@ -27,20 +27,14 @@
       <xsl:attribute name="href">
         <xsl:choose>
           <xsl:when test="$passExternally='true'">
-            <xsl:value-of select="$baseActionURL" />
-            ?uP_channelTarget=
-            <xsl:value-of select="$CURLSelectId" />
-            &amp;url=
-            <xsl:value-of select="." />
+            <xsl:value-of select="$baseActionURL" />?uP_channelTarget=<xsl:value-of select="$CURLSelectId" />&amp;url=<xsl:value-of select="." />
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$baseActionURL" />
-            ?urlN=
-            <xsl:value-of select="position()" />
+            <xsl:value-of select="$baseActionURL" />?urlN=<xsl:value-of select="position()" />
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-
+      
       <xsl:value-of select="." />
     </a>
     </xsl:for-each>
