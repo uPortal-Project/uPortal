@@ -314,6 +314,13 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         LogService.log(LogService.DEBUG, "RDBMUserIdentityStore::getPortalUID(): " + Insert);
         stmt.executeUpdate(Insert);
 
+        /* insert row(s) into up_ss_user_parm */
+        Insert = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) "+
+          " SELECT "+newUID+", USUP.PROFILE_ID, USUP.SS_ID, USUP.SS_TYPE, USUP.PARAM_NAME, USUP.PARAM_VAL "+
+          " FROM UP_SS_USER_PARM USUP WHERE USUP.USER_ID="+templateUID;
+        LogService.log(LogService.DEBUG, "RDBMUserLayoutStore::setUserLayout(): " + Insert);
+        stmt.executeUpdate(Insert);
+
         // Check to see if the database supports transactions
         boolean supportsTransactions = false;
         try
