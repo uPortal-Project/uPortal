@@ -53,18 +53,18 @@ import org.xml.sax.helpers.AttributesImpl;
 
 public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
 {
-    protected ThemeStylesheetUserPreferences ssup;
+    protected ThemeStylesheetUserPreferences tsup;
 
     // downward
     public ThemeAttributesIncorporationFilter(ContentHandler handler, ThemeStylesheetUserPreferences prefs) {
         super(handler);
-        this.ssup=prefs;
+        this.tsup=prefs;
     }
 
     // upward
     public ThemeAttributesIncorporationFilter(XMLReader parent, ThemeStylesheetUserPreferences prefs) {
         super(parent);
-        this.ssup=prefs;
+        this.tsup=prefs;
     }
 
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
@@ -72,10 +72,9 @@ public class ThemeAttributesIncorporationFilter extends SAX2FilterImpl
         if (qName.equals("channel")) {
             AttributesImpl attsImpl=new AttributesImpl(atts);
             String channelSubscribeId = attsImpl.getValue("ID");
-            for(Enumeration ca=ssup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
+            for(Enumeration ca=tsup.getChannelAttributeNames(); ca.hasMoreElements(); ) {
                 String attrName=(String) ca.nextElement();
-                attsImpl.addAttribute("",attrName,attrName,"CDATA",ssup.getChannelAttributeValue(channelSubscribeId,attrName));
-                //		LogService.log(LogService.DEBUG,"ThemeAttributesIncorporationFilter::startElement() : adding attribute to channel="+channelID+" "+attrName+"="+ssup.getChannelAttributeValue(channelID,attrName));
+                attsImpl.addAttribute("",attrName,attrName,"CDATA",tsup.getChannelAttributeValue(channelSubscribeId,attrName));
             }
             super.startElement(uri,localName,qName,attsImpl);
         } else {
