@@ -58,6 +58,7 @@ import org.xml.sax.XMLReader;
 public class GroupServiceConfiguration
 {
     private static final Log log = LogFactory.getLog(GroupServiceConfiguration.class);
+    
     // The file containing the configuration:
     private static String SERVICES_XML = "/properties/groups/compositeGroupServices.xml";
 
@@ -126,11 +127,24 @@ public GroupServiceConfiguration()
     super();
     serviceHandler = new GroupConfigurationHandler();
 }
+
 /**
- *
+ * Record a message at "Debug" level.
+ * @deprecated see comment inside method
  */
-protected void debugMessage(String msg)
-{
+protected void debugMessage(String msg) {
+    /*
+     * This method is not in keeping with best practices.
+     * Prepending "Group services:" to the message is unnecessary because
+     * Commons Logging is capable of reporting from where the logging message
+     * originated when configured to do so.  The org.jasig.portal.groups package 
+     * in its entirety can be mapped to its own logger.
+     * Logging directly allows instutions wishing to take the performance hit of
+     * doing so to configure log4j to report from exactly what line of code
+     * each logging message originates.  Going through this method causes all
+     * such messages to appear to come from here rather than from whereever
+     * this method is being invoked from.
+     */
     log.debug("Group services: " + msg);
 }
 /**
@@ -167,13 +181,28 @@ public List getServiceDescriptors()
 {
     return serviceDescriptors;
 }
+
 /**
- *
+ * Record a message at "info" level.
+ * @deprecated see comment inside method
  */
-protected void infoMessage(String msg)
-{
+protected void infoMessage(String msg) {
+    /*
+     * This method is not in keeping with best practices.
+     * Prepending "Group services:" to the message is unnecessary because
+     * Commons Logging is capable of reporting from where the logging message
+     * originated when configured to do so.  The org.jasig.portal.groups package 
+     * in its entirety can be mapped to its own logger.
+     * Logging directly allows instutions wishing to take the performance hit of
+     * doing so to configure log4j to report from exactly what line of code
+     * each logging message originates.  Going through this method causes all
+     * such messages to appear to come from here rather than from whereever
+     * this method is being invoked from.
+     */
     log.info( "Group services: " + msg);
 }
+
+
 /**
  *
  */
