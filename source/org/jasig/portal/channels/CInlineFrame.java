@@ -27,7 +27,7 @@ public class CInlineFrame implements org.jasig.portal.IChannel
   public void init (ChannelConfig chConfig) {this.chConfig = chConfig;}
   public String getName () {return (String) chConfig.get ("name");}
   public boolean isMinimizable () {return true;}
-  public boolean isDetachable () {return false;}
+  public boolean isDetachable () {return true;}
   public boolean isRemovable () {return true;}
   public boolean isEditable () {return false;}  
   public boolean hasHelp () {return false;}  
