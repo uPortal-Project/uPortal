@@ -119,6 +119,14 @@ import org.jasig.portal.security.IPerson;
  *		   to its last value before changed by button events.  The
  *		   value "reset" returns all variables to the static data
  *		   values.  Runtime data parameter only.
+ *  <li>"cw_download" - use download worker for this link or form 
+ *                 <i>any link or form that contains this parameter will be 
+ *                 handled by the download worker, if the pass-through mode 
+ *                 is set to rewrite the link or form.  This allows downloads
+ *                 from the proxied site to be delivered via the portal, 
+ *                 primarily useful if the download requires verification 
+ *                 of a session referenced by a proxied cookie</i>
+ *  
  * </ol>
  * <p>This channel can be used for all XML formats with appropriate stylesheets.
  *    All static data parameters as well as additional runtime data parameters
@@ -132,7 +140,7 @@ import org.jasig.portal.security.IPerson;
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
  */
-public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
+public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable, IMultithreadedMimeResponse
 
 {
   Map stateTable;
@@ -166,6 +174,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private ChannelRuntimeData runtimeData;
     private Vector cookies;
     private boolean supportSetCookie2;
+    private URLConnection connHolder;
 
     public ChannelState ()
     {
@@ -525,6 +534,7 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
+      state.runtimeData.put("downloadActionURL", state.runtimeData.getBaseWorkerURL("download"));
 
       // Runtime data parameters are handed to the stylesheet.
       // Add any static data parameters so it gets a full set of variables.
@@ -1253,6 +1263,45 @@ LogService.instance().log(LogService.DEBUG, "CWebProxy: ANDREW adding person att
     else
     return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
   }
+  
+  public String getContentType(String uid) {
+    ChannelState state = (ChannelState)stateTable.get(uid);
+    return state.connHolder.getContentType();
+  }
+  
+  public InputStream getInputStream(String uid) throws IOException {
+    ChannelState state = (ChannelState)stateTable.get(uid);
+    InputStream rs = state.connHolder.getInputStream();
+    state.connHolder = null;
+    return rs;
+  }
+  
+  public void downloadData(OutputStream out,String uid) throws IOException {
+    throw(new IOException("CWebProxy: donloadData method not supported - use getInputStream only"));
+  }
+  
+  public String getName(String uid) {
+    ChannelState state = (ChannelState)stateTable.get(uid);
+    return "proxyDL";
+  }
+  
+  public Map getHeaders(String uid) {
+    ChannelState state = (ChannelState)stateTable.get(uid);
+    try {
+      state.connHolder= getConnection(state.fullxmlUri, state);
+    }
+    catch (Exception e){
+      LogService.instance().log(LogService.ERROR,e);
+    }
+    Map rhdrs = new HashMap();
+    int i = 0;
+    while (state.connHolder.getHeaderFieldKey(i) != null){
+      rhdrs.put(state.connHolder.getHeaderFieldKey(i),state.connHolder.getHeaderField(i));
+      i++;
+    }
+    return rhdrs;
+  }
+  
 }
 
 /*
