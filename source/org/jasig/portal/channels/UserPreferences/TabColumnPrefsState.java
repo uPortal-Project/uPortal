@@ -43,12 +43,14 @@ import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.Logger;
 import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.RDBMUserPreferencesStore;
+import org.jasig.portal.RdbmServices;
 import org.jasig.portal.StylesheetSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -74,7 +76,8 @@ final class TabColumnPrefsState extends BaseState
   private Document userLayout;
   private UserPreferences userPrefs;
   private IUserPreferencesStore upStore = new RDBMUserPreferencesStore();
-    private StylesheetSet set;
+  private StylesheetSet set;
+  private static SmartCache channelRegistryCache = new SmartCache(60); // One minute
 
   // Here are all the possible error messages for this channel. Maybe these should be moved to
   // a properties file or static parameters.  Actually, the error handling written so far isn't
@@ -91,12 +94,14 @@ final class TabColumnPrefsState extends BaseState
   private static final String errorMessageNewColumn = "Problem trying to add a new column";
   private static final String errorMessageDeleteColumn = "Problem trying to delete column";
   private static final String errorMessageMoveChannel = "Problem trying to move channel";
+  private static final String errorMessageNewChannel = "Problem trying to create a new channel";
   private static final String errorMessageDeleteChannel = "Problem trying to delete channel";
 
   public TabColumnPrefsState()
   {
     super();
     this.internalState = new DefaultState(this);
+    
     // initialize stylesheet set
     set=new StylesheetSet(sslLocation);
   }
@@ -147,7 +152,7 @@ final class TabColumnPrefsState extends BaseState
     if (this.internalState != null)
       this.internalState.renderXML(out);
     else
-      Logger.log(Logger.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
+      LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::renderXML() : No internal state!");
   }
 
   // Helper methods...
@@ -173,6 +178,23 @@ final class TabColumnPrefsState extends BaseState
     return userLayout;
   }
 
+  private final Document getChannelRegistry()
+  {
+    Document channelRegistry = (Document)channelRegistryCache.get("channelRegistry");
+    if (channelRegistry == null)
+    {
+      // Channel registry has expired, so get it and cache it
+      channelRegistry = RdbmServices.getChannelRegistryStoreImpl().getRegistryXML(null, null);   
+
+      if (channelRegistry != null)
+      {
+        channelRegistryCache.put("channelRegistry", channelRegistry);
+        LogService.instance().log(LogService.INFO, "Caching channel registry in TabColumnPrefsState channel");
+      }
+    }
+    return channelRegistry;
+  }
+  
   private final String getActiveTab()
   {
     String activeTab = "none";
@@ -185,7 +207,7 @@ final class TabColumnPrefsState extends BaseState
     }
     catch (Exception e)
     {
-      Logger.log(Logger.ERROR, "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
+      LogService.instance().log(LogService.ERROR, "TabColumnPrefsState::getAcctiveTab : Unable to retrieve active tab.");
     }
 
     return activeTab;
@@ -297,7 +319,7 @@ final class TabColumnPrefsState extends BaseState
       if (widthIsValid)
         ssup.setFolderAttributeValue(folderId, "width", newWidth);
       else
-        Logger.log(Logger.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
+        LogService.instance().log(LogService.DEBUG, "User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
 
     }
 
@@ -373,7 +395,7 @@ final class TabColumnPrefsState extends BaseState
    * Moves a channel from one position in the layout to another.
    * @param sourceChannelId the channel to move
    * @param method either <code>insertBefore</code> or <code>appendAfter</code>
-   * @param destinationChannelId the ID of the channel to insert the new channel before or append after
+   * @param destinationElementId the ID of the channel to insert the new channel before or append after
    * @throws Exception
    */
   private final void moveChannel(String sourceChannelId, String method, String destinationElementId) throws Exception
@@ -408,6 +430,55 @@ final class TabColumnPrefsState extends BaseState
     saveLayout();
   }
 
+  /**
+   * Adds a channel to the layout.
+   * @param selectedChannelId the channel to move from the channel registry
+   * @param position either <code>before</code> or <code>after</code>
+   * @param destinationElementId the ID of the channel to insert the new channel before or append after
+   * @throws Exception
+   */
+  private final void addChannel(String selectedChannelId, String position, String destinationElementId) throws Exception
+  {
+    Element layout = userLayout.getDocumentElement();
+    
+    Document channelRegistry = getChannelRegistry();
+	  Element newChannel = (Element)(userLayout.importNode(channelRegistry.getElementById(selectedChannelId), true));
+    String instanceId = GenericPortalBean.getUserLayoutStore().getNextStructChannelId(staticData.getPerson().getID());
+    newChannel.setAttribute("ID", instanceId);
+    
+    Element destinationElement = userLayout.getElementById(destinationElementId);
+
+    // The destination element might be an empty tab or a column
+    if (isTab(destinationElement))
+    {
+      // Create a new column in this tab and move the source channel there
+      Element newColumn = createFolder("");
+      Node destinationTab = userLayout.getElementById(destinationElementId);
+      context.getUserLayoutManager().moveNode(newColumn, destinationTab, null);
+      context.getUserLayoutManager().moveNode(newChannel, newColumn, null);
+    }
+    else if (isColumn(destinationElement))
+    {
+      // Move the source channel into the destination column
+      context.getUserLayoutManager().moveNode(newChannel, destinationElement, null);
+    }
+    else
+    {
+      // Move the source channel before the destination channel or at the end
+      Node targetColumn = destinationElement.getParentNode();
+      Node siblingChannel = position.equals("before") ? destinationElement : null;
+      context.getUserLayoutManager().moveNode(newChannel, targetColumn, siblingChannel);
+    }
+    
+    // Remove the <registry> XML from the user layout before saving
+    for (Node n = layout.getLastChild(); n != null && n.getNodeType() == Node.ELEMENT_NODE; n = n.getPreviousSibling())
+    {
+      if (n.getNodeName().equals("registry") && n.getParentNode().equals(layout))
+        layout.removeChild(n);
+    }
+    saveLayout();
+  }
+  
   /**
    * Removes a tab, column, or channel element from the layout
    * @param elementId the ID attribute of the element to remove
@@ -496,6 +567,8 @@ final class TabColumnPrefsState extends BaseState
     private String action = "none";
     private String activeTab = "none";
     private String elementID = "none";
+    private String position = "none";
+    private String catID = "none";
 
     public DefaultState(TabColumnPrefsState context)
     {
@@ -526,7 +599,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageSetActiveTab;
           }
@@ -543,7 +616,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageRenameTab;
           }
@@ -569,7 +642,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveTab;
           }
@@ -595,7 +668,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageAddTab;
           }
@@ -611,7 +684,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteTab;
           }
@@ -643,7 +716,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageChangeColumnWidths;
           }
@@ -667,7 +740,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveColumn;
           }
@@ -685,7 +758,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageNewColumn;
           }
@@ -708,7 +781,7 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteColumn;
           }
@@ -740,11 +813,54 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageMoveChannel;
           }
         }
+        // New channel
+        else if (action.equals("newChannel"))
+        {
+          try
+          {
+            // User clicked "?"
+            if (runtimeData.getParameter("channelMoreInfo") != null)
+            {
+              
+            }
+            // User clicked "Add"
+            else if (runtimeData.getParameter("addChannel") != null)
+            {
+              String selectedChannel = runtimeData.getParameter("selectedChannel");              
+              addChannel(selectedChannel, position, elementID);
+              elementID = "none";
+              position = "none";
+              action = "none";
+            }
+            // User clicked "Go"
+            else
+            {
+              String passedPosition = runtimeData.getParameter("position");
+              String passedElementID = runtimeData.getParameter("elementID");
+              if (passedPosition != null)
+                position = passedPosition;
+              if (passedElementID != null)
+                elementID = passedElementID;
+              
+              String selectedCategory = runtimeData.getParameter("selectedCategory");
+              if (selectedCategory != null)
+                catID = selectedCategory;
+              else
+                catID= "top";
+            }            
+          }
+          catch (Exception e)
+          {
+            LogService.instance().log(LogService.ERROR, e);
+            action = "error";
+            errorMessage = errorMessageNewChannel;
+          }
+        }        
         // Delete channel
         else if (action.equals("deleteChannel"))
         {
@@ -756,12 +872,19 @@ final class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
             action = "error";
             errorMessage = errorMessageDeleteChannel;
           }
         }
-       }
+        // Cancel
+        else if (action.equals("cancel"))
+        {
+          elementID = "none";
+          position = "none";
+          catID = "none";
+        }
+      }
       else
         action = "none";
     }
@@ -781,16 +904,25 @@ final class TabColumnPrefsState extends BaseState
         processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
         processor.setStylesheetParam("activeTab", processor.createXString(activeTab));
         processor.setStylesheetParam("action", processor.createXString(action));
-        processor.setStylesheetParam("elementID", processor.createXString(elementID));
+        processor.setStylesheetParam("elementID", processor.createXString(elementID));     
+        processor.setStylesheetParam("position", processor.createXString(position)); // For subscribe     
+        processor.setStylesheetParam("catID", processor.createXString(catID)); // For subscribe
         processor.setStylesheetParam("errorMessage", processor.createXString(errorMessage));
 
         StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
         StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(processor, ssup);
 
+        // Incorporate channel registry document into userLayout if user is in the subscribe process
+        if (action.equals("newChannel"))
+        {
+          Node channelRegistry = getChannelRegistry().getDocumentElement();
+          userLayout.getDocumentElement().appendChild(userLayout.importNode(channelRegistry, true));            
+        }
+        
         // Begin SAX chain
         UtilitiesBean.node2SAX(userLayout, saif);
 
-        //if (action.equals("newTab"))
+        //if (action.equals("newChannel"))
         //  System.out.println(UtilitiesBean.dom2PrettyString(userLayout));
       }
       catch (Exception e)
