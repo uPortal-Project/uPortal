@@ -197,7 +197,7 @@
 
   oro.jar              A set of text-processing Java classes that provide Perl5
                        compatible regular expressions.
-                       Version: 2.0.5
+                       Version: 2.0.6
                        URL: http://jakarta.apache.org/oro/
 
   axis.jar             Web services support. Axis is the next generation of the
