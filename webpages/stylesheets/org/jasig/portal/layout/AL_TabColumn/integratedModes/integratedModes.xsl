@@ -2151,7 +2151,9 @@ Version $Revision$
         <!-- Check if the node is unremovable before allowing delete -->
         <xsl:choose>
             <xsl:when test="/layout/@immutable='false' or @unremovable='false'">
-                    <img alt="Remove tab is disabled" title="Remove tab is disabled" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
+                <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
+                    <img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
+                </a>
             </xsl:when>
             <xsl:otherwise>
                 <img alt="Remove tab is disabled" title="Remove tab is disabled" src="{$mediaPathIcons}/canicondisabled.gif" width="22" height="18" border="0"/>

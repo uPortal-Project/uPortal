@@ -1419,7 +1419,7 @@ Version $Revision$
 						</span>
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						-->
-                        <xsl:if test="$authorizedChannelPublisher='true'">
+                        <xsl:if test="$authorizedFragmentPublisher='true'">
                             <!-- <br/> -->
                             <span> |<xsl:text>&#160;</xsl:text>
                             </span>
