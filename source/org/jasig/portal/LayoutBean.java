@@ -107,25 +107,38 @@ public class LayoutBean extends GenericPortalBean
     org.jasig.portal.layout.IChannel channel = column.getChannelAt (iChan);
     return channel;
   }
-  
+
   /**
-   * Writes an html body tag with colors set according to user preferences
+   * Writes a style tag and an html body tag with colors set according to user preferences
+   * Modified by Princeton University June 2000 (C)  by Debra Rundle
    * @param the servlet request object
    * @param the servlet response object
    * @param the JspWriter object
    */
   public void writeBodyStyle (HttpServletRequest req, HttpServletResponse res, JspWriter out)
-  {    
-    try 
-    {    
+  {
+    try
+    {
       IXml layoutXml = getLayoutXml (req, getUserName (req));
       ILayout layout = (ILayout) layoutXml.getRoot ();
       String sBgColor = layout.getAttribute ("bgcolor");
       String sFgColor = layout.getAttribute ("fgcolor");
-      out.println ("<style type=\"text/css\">");
-      out.println ("<!-- body { color: " + sFgColor + "; background: " + sBgColor + "; } -->");
-      out.println ("<!-- td { color: " + sFgColor + "; } -->");
-      out.println ("</style>");
+      String sATabColor = layout.getAttribute ("activeTabColor");
+      String sTabColor = layout.getAttribute ("tabColor");
+      String sChanColor = layout.getAttribute ("channelHeadingColor");
+      out.println ("<STYLE>");
+      out.println ("<!-- BODY { color: " + sFgColor + "; background: " + sBgColor + "; }");
+      out.println ("td { color: " + sFgColor + "}");
+      out.println ("A:link { color: " + sATabColor + "}");
+      out.println ("A:visited { color: " + sTabColor + "}");
+      out.println ("A:active { color: " + sChanColor + "}");
+      out.println (" --></STYLE>");
+
+      /* <BODY> tag is deprecated.   However Netscape does not properly implement the style tag
+         and ignores the color setting for the body.   When browser versions do handle this, you should remove
+         this redundant body tag code below.  */
+      out.println ("<BODY BGCOLOR=" + sBgColor + " TEXT=" + sFgColor + " LINK=" + sATabColor + " VLINK=" + sTabColor + " ALINK=" + sChanColor + ">");
+
     }
     catch (Exception e)
     {
@@ -189,7 +202,7 @@ public class LayoutBean extends GenericPortalBean
         session.setAttribute ("layoutXml", layoutXml);
       }
       stmt.close ();
-        
+
       return layoutXml;
     }
     catch (Exception e)
@@ -321,7 +334,7 @@ public class LayoutBean extends GenericPortalBean
       HttpSession session = req.getSession (false);
       String sTabParameter = req.getParameter ("tab");
       String sTabSession = (String) session.getAttribute ("activeTab");
-      
+
       if (sTabParameter != null)
         iActiveTab = Integer.parseInt (sTabParameter);
       else if (sTabSession != null)
@@ -354,7 +367,7 @@ public class LayoutBean extends GenericPortalBean
    */
   public void setActiveTab (HttpServletRequest req, int iTab)
   {    
-    try 
+    try
     {      
       HttpSession session = req.getSession (false);
       session.setAttribute ("activeTab", String.valueOf (iTab));
@@ -387,7 +400,7 @@ public class LayoutBean extends GenericPortalBean
             
       int iTab = getActiveTab (req);
       ITab activeTab = getTab (req, iTab);
-                                      
+
       String sBgcolor = null;
       String sTabName = activeTab.getAttribute ("name");    
       String sActiveTab = activeTab.getAttribute ("name");
@@ -397,20 +410,20 @@ public class LayoutBean extends GenericPortalBean
       for (int i = 0; i < tabs.length; i++)
       {
         sTabName = tabs[i].getAttribute ("name");
-        sBgcolor = sTabName.equals (sActiveTab) ? sActiveTabColor : sTabColor;  
-        
+        sBgcolor = sTabName.equals (sActiveTab) ? sActiveTabColor : sTabColor;
+
         if (sTabName.equals (sActiveTab))
           activeTab = tabs[i];
         
-        out.println ("<td bgcolor=" + sBgcolor + " align=center width=20%>");                        
+        out.println ("<td bgcolor=" + sBgcolor + " align=center width=20%>");
         out.println ("  <table bgcolor=" + sBgcolor + " border=0 width=100% cellspacing=0 cellpadding=2>");
         out.println ("    <tr align=center>");
         
         if (sTabName.equals (sActiveTab))
-          out.println ("      <td><font face=Arial >&nbsp;<b>" + sTabName + "</b></font>&nbsp;</td>");
-        else
-          out.println ("      <td><font face=Arial size=-1>&nbsp;<b><a href=\"layout.jsp?tab=" + i + "\">" + sTabName + "</a></b></font>&nbsp;</td>");
-        
+          out.println ("      <td><span class=\"PortalTitleText\">&nbsp;" + sTabName + "</span>&nbsp;</td>");
+                  else
+          out.println ("      <td><a href=\"layout.jsp?tab=" + i + "\"><SPAN CLASS=\"PortalTitleText\">" + sTabName + "</SPAN></a>&nbsp;</td>");
+
         out.println ("    </tr>");
         out.println ("  </table>");
         out.println ("</td>");
@@ -419,12 +432,17 @@ public class LayoutBean extends GenericPortalBean
       
       // Links to personalize layout for users who are logged in
       if (getUserName (req) != null && !getUserName (req).equals ("guest"))
-        out.println ("<td align=right bgcolor=" + sTabColor + " width=98%><font size=-1 face=Arial,Helvetica>Personalize&nbsp;[<a href=\"personalizeTabs.jsp\">Tabs</a>]&nbsp;-&nbsp;[<a href=\"personalizeColors.jsp\">Colors</a>]&nbsp;-&nbsp;[<a href=\"personalizeLayout.jsp\">Layout</a>]&nbsp;-&nbsp;[<a href=\"subscribe.jsp\">Channels</a>]&nbsp;</font></td>");
+        out.println ("<td align=right bgcolor=" + sTabColor + " width=98%>" +
+          "<SPAN CLASS=\"PortalText\">Personalize&nbsp;</span><a href=\"personalizeTabs.jsp\"><SPAN CLASS=\"PortalText\">[Tabs</SPAN></a>" +
+          "<SPAN CLASS=\"PortalText\">]&nbsp;-&nbsp;[</span><a href=\"personalizeColors.jsp\"><SPAN CLASS=\"PortalText\">Colors</span></a>" +
+          "<SPAN CLASS=\"PortalText\">]&nbsp;-&nbsp;[</span><a href=\"personalizeLayout.jsp\"><SPAN CLASS=\"PortalText\">Layout</span></a>" +
+          "<SPAN CLASS=\"PortalText\">]&nbsp;-&nbsp;[</span><a href=\"subscribe.jsp\"><SPAN CLASS=\"PortalText\">Channels</span></a>" +
+          "<SPAN CLASS=\"PortalText\">]&nbsp;</SPAN></td>");
       else
         out.println ("<td width=98%></td>");
-        
+
       out.println ("</tr>");
-      
+
       // This is the strip beneath the tabs
       out.println ("<!-- Strip beneath tabs -->");
       out.println ("<tr><td width=\"100%\" colspan=\"" + (2 * tabs.length + 1) + "\">");
@@ -508,7 +526,7 @@ public class LayoutBean extends GenericPortalBean
             out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=100% bgcolor=" + layout.getAttribute ("channelHeadingColor") + ">");
             out.println ("        <tr>");
             out.println ("          <td>");
-            out.println ("            <font face=arial color=#000000><b>&nbsp;" + ch.getName() + "</b></font>");
+            out.println ("            <SPAN CLASS=\"PortalTitleText\">&nbsp;" + ch.getName() + "</SPAN>");
             out.println ("          </td>");
             out.println ("          <td nowrap valign=center align=right>");
             out.println ("            &nbsp;");
@@ -580,7 +598,7 @@ public class LayoutBean extends GenericPortalBean
       Logger.log (Logger.ERROR, e);
     }
   }  
-  
+
   /**
    * Presents a GUI for manipulating the layout of a tab.
    * @param the servlet request object
@@ -613,7 +631,7 @@ public class LayoutBean extends GenericPortalBean
       
 
       sTabName = tabs[iTab].getAttribute ("name");
-        
+
       out.println ("<form name=\"tabControls\" action=\"personalizeLayout.jsp\" method=post>");
       out.println ("Tab " + (iTab + 1) +": ");        
         
@@ -646,7 +664,7 @@ public class LayoutBean extends GenericPortalBean
         
       for (int iCol = 0; iCol < columns.length; iCol++)
       {
-        out.println ("<td>"); 
+        out.println ("<td>");
         out.println ("Column " + (iCol + 1));
                     
         // Move column left
@@ -712,7 +730,7 @@ public class LayoutBean extends GenericPortalBean
         // List channels for this column
         for (int iChan = 0; iChan < channels.length; iChan++)
         {
-          org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);            
+          org.jasig.portal.IChannel ch = getChannelInstance (channels[iChan]);
           out.println ("<option value=\"" + iChan + "\">" + ch.getName () + "</option>");
         }
           
@@ -877,7 +895,7 @@ public class LayoutBean extends GenericPortalBean
   public String getChannelHeadingColor (HttpServletRequest req, HttpServletResponse res, JspWriter out)
   {    
     try 
-    {  
+    {
       IXml layoutXml = getLayoutXml (req, getUserName (req));
       ILayout layout = (ILayout) layoutXml.getRoot ();
       String sChannelHeadingColor = layout.getAttribute ("channelHeadingColor");
@@ -943,7 +961,7 @@ public class LayoutBean extends GenericPortalBean
         // Load this channel's parameters into the channel config object
         ChannelConfig chConfig = new ChannelConfig ();
         org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
-              
+
         if (parameters != null)
         {
           for (int iParam = 0; iParam < parameters.length; iParam++)
@@ -1108,7 +1126,7 @@ public class LayoutBean extends GenericPortalBean
     {
       Logger.log (Logger.ERROR, e);
     }
-  }      
+  }
   
   /**
    * Sets the default tab
@@ -1414,9 +1432,9 @@ public class LayoutBean extends GenericPortalBean
    * @param the servlet request object
    */
   public void moveChannelLeft (HttpServletRequest req)
-  {    
-    try 
-    {      
+  {
+    try
+    {
       int iTab = Integer.parseInt (req.getParameter ("tab"));
       int iCol = Integer.parseInt (req.getParameter ("column"));
       int iChan = Integer.parseInt (req.getParameter ("channel"));
@@ -1424,7 +1442,7 @@ public class LayoutBean extends GenericPortalBean
       IColumn column = getColumn (req, iTab, iCol);
       IColumn columnToTheLeft = getColumn (req, iTab, iCol - 1);
       org.jasig.portal.layout.IChannel channelToMoveLeft = column.getChannelAt (iChan);
-      
+
       column.removeChannelAt (iChan);
       columnToTheLeft.addChannel(channelToMoveLeft);
     }
@@ -1432,16 +1450,16 @@ public class LayoutBean extends GenericPortalBean
     {
       Logger.log (Logger.ERROR, e);
     }
-  }      
+  }
 
   /**
    * Moves a channel to the bottom of the list of the column to the right
    * @param the servlet request object
    */
   public void moveChannelRight (HttpServletRequest req)
-  {    
-    try 
-    {      
+  {
+    try
+    {
       int iTab = Integer.parseInt (req.getParameter ("tab"));
       int iCol = Integer.parseInt (req.getParameter ("column"));
       int iChan = Integer.parseInt (req.getParameter ("channel"));
@@ -1449,7 +1467,7 @@ public class LayoutBean extends GenericPortalBean
       IColumn column = getColumn (req, iTab, iCol);
       IColumn columnToTheRight = getColumn (req, iTab, iCol + 1);
       org.jasig.portal.layout.IChannel channelToMoveRight = column.getChannelAt (iChan);
-      
+
       column.removeChannelAt (iChan);
       columnToTheRight.addChannel(channelToMoveRight);
     }
@@ -1457,23 +1475,23 @@ public class LayoutBean extends GenericPortalBean
     {
       Logger.log (Logger.ERROR, e);
     }
-  } 
-  
+  }
+
   /**
    * Moves a channel up a position
    * @param the servlet request object
    */
   public void moveChannelUp (HttpServletRequest req)
-  {    
-    try 
-    {      
+  {
+    try
+    {
       int iTab = Integer.parseInt (req.getParameter ("tab"));
       int iCol = Integer.parseInt (req.getParameter ("column"));
       int iChan = Integer.parseInt (req.getParameter ("channel"));
 
       IColumn column = getColumn (req, iTab, iCol);
       org.jasig.portal.layout.IChannel channelToMoveUp = column.getChannelAt (iChan);
-      
+
       // Only move channel if it isn't already at the top
       if (iChan > 0)
       {
@@ -1485,23 +1503,23 @@ public class LayoutBean extends GenericPortalBean
     {
       Logger.log (Logger.ERROR, e);
     }
-  }      
+  }
 
   /**
    * Moves a channel down a position
    * @param the servlet request object
    */
   public void moveChannelDown (HttpServletRequest req)
-  {    
-    try 
-    {      
+  {
+    try
+    {
       int iTab = Integer.parseInt (req.getParameter ("tab"));
       int iCol = Integer.parseInt (req.getParameter ("column"));
       int iChan = Integer.parseInt (req.getParameter ("channel"));
 
       IColumn column = getColumn (req, iTab, iCol);
       org.jasig.portal.layout.IChannel channelToMoveDown = column.getChannelAt (iChan);
-      
+
       // Only move channel if it isn't already at the bottom
       if (iChan < column.getChannelCount () - 1)
       {

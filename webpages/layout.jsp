@@ -19,7 +19,7 @@
 <html>
 <head>
 <title>Portal Framework</title>
-<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
+<link rel=stylesheet href="stylesheets/portal.css" TYPE="text/css">
 <script language="JavaScript">
 <!--hide
 
@@ -33,7 +33,6 @@ function openWin(url, title, width, height)
 </head>
 
 <% layoutBean.writeBodyStyle (request, response, out); %>
-<body>
 
 <!-- Header -->
 <table border=0 cellpadding=0 cellspacing=1 width=100%>
