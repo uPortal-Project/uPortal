@@ -524,7 +524,9 @@ public class ChannelManager implements LayoutEventListener {
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
-            rd.setLocales(lm.getLocales());
+            if (lm != null)  {
+                rd.setLocales(lm.getLocales());
+            }
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
@@ -756,7 +758,9 @@ public class ChannelManager implements LayoutEventListener {
                 if (qs != null && qs.indexOf("=") == -1)
                   rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
-                rd.setLocales(lm.getLocales());
+                if (lm != null)  {
+                    rd.setLocales(lm.getLocales());
+                }
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
                 UPFileSpec up=new UPFileSpec(uPElement);
                 up.setTargetNodeId(channelTarget);
@@ -956,7 +960,9 @@ public class ChannelManager implements LayoutEventListener {
             }
             rd = new ChannelRuntimeData();
             rd.setBrowserInfo(binfo);
-            rd.setLocales(lm.getLocales());
+            if (lm != null)  {
+                rd.setLocales(lm.getLocales());
+            }
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 
             UPFileSpec up=new UPFileSpec(uPElement);
@@ -972,7 +978,9 @@ public class ChannelManager implements LayoutEventListener {
                 if (qs != null && qs.indexOf("=") == -1)
                   rd.setKeywords(qs);
                 rd.setBrowserInfo(binfo);
-                rd.setLocales(lm.getLocales());
+                if (lm != null)  {
+                    rd.setLocales(lm.getLocales());
+                }
                 rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
 
                 UPFileSpec up=new UPFileSpec(uPElement);
