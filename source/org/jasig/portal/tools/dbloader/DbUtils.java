@@ -1,7 +1,7 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
-*  See license distributed with this file and
-*  available online at http://www.uportal.org/license.html
-*/
+/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+ *  See license distributed with this file and
+ *  available online at http://www.uportal.org/license.html
+ */
 
 package org.jasig.portal.tools.dbloader;
 
@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Hashtable;
 
 import org.jasig.portal.RDBMServices;
@@ -65,25 +66,33 @@ class DbUtils
         // Check for a mapping in DbLoader.xml
         localDataTypeName = config.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
 
+        // Find the type code for this generic type name
+        int dataTypeCode = DbUtils.getJavaSqlType(genericDataTypeName);
+        
         if (localDataTypeName != null)
               return localDataTypeName;
 
+        if (config.getLocalTypeMap() == null) {
 
-          if (config.getLocalTypeMap() == null) {
-              config.setLocalTypeMap(new Hashtable());
-              
+            Map localTypeMap = new Hashtable();
+            config.setLocalTypeMap(localTypeMap);
+
               try {
-                  // Find the first local type name matching the type code
+                  
                   ResultSet rs = dbmd.getTypeInfo();
                   try {
                       while (rs.next())
                       {
                           Integer dbTypeCode = new Integer(rs.getInt("DATA_TYPE"));
                           String dbTypeName = rs.getString("TYPE_NAME");
-                              
-                          config.getLocalTypeMap().put(dbTypeCode, dbTypeName);
+
+                          // Add only first occurence of each type code
+                          // See Bugzilla for a detailed explanation                              
+                          if (!localTypeMap.containsKey(dbTypeCode)) {                            
+                              localTypeMap.put(dbTypeCode, dbTypeName);
+                          }                          
                       }
-                  } 
+                  }
                   finally {
                       rs.close();
                   }
@@ -95,13 +104,10 @@ class DbUtils
                 e.printStackTrace(config.getLog());
                 DbLoader.exit(config);
               }
-              
-              config.setLocalTypeMap(Collections.unmodifiableMap(config.getLocalTypeMap()));
           }
-        // Find the type code for this generic type name
-        int dataTypeCode = DbUtils.getJavaSqlType(genericDataTypeName);
-          Integer dataTypeCodeObj = new Integer(dataTypeCode);
-          localDataTypeName = (String)config.getLocalTypeMap().get(dataTypeCodeObj);
+
+        Integer dataTypeCodeObj = new Integer(dataTypeCode);
+        localDataTypeName = (String)config.getLocalTypeMap().get(dataTypeCodeObj);
 
         if (localDataTypeName != null)
           {
