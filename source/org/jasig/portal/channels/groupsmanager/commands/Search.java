@@ -132,7 +132,6 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
          IEntityGroup sr = new EntityGroupImpl(null,type);
          sr.setName("Search Results");
          sr.setDescription("Search for a "+label+" that"+methods[methodInt]+query);
-         Element myGroups = GroupsManagerXML.getElementById (model, "0");
 
          for (int sub=0 ; sub < results.length ; sub++) {
             EntityIdentifier entID = results[sub];
@@ -141,7 +140,7 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
          }
          Element searchElem = GroupsManagerXML.getGroupMemberXml(sr,true,null,sessionData.model);
          searchElem.setAttribute("searchResults", "true");
-         myGroups.appendChild(searchElem);
+         model.getDocumentElement().appendChild(searchElem);
          
          this.setCommandArg(sessionData.runtimeData,searchElem.getAttribute("id"));
          GroupsManagerCommandFactory.get("Highlight").execute(sessionData);
