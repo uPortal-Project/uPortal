@@ -435,7 +435,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
         PreparedStatement  psAddChannelParam = null, psAddChannel = null;
 
-        if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
+        /*if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
           int publishId = CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelPublishId());
           if ( publishId > 0 ) {
            rs = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
@@ -448,7 +448,25 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             rs.close();
            }
           }
-        }
+        }*/
+
+
+       if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
+          IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
+          int publishId = CommonUtils.parseInt(channelDesc.getChannelPublishId());
+          if ( publishId > 0 ) {
+           System.out.println ( "we are here!!!" );
+           rs = stmt.executeQuery("SELECT CHAN_NAME FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
+           try {
+            if ( rs.next() ) {
+             channelDesc.setName(rs.getString(1));
+             fillChannelDescription( channelDesc );
+            }
+           } finally {
+            rs.close();
+           }
+          }
+       }
 
 
       ALNode resultNode = addUserLayoutNode ( userId, layoutId, node, psAddNode, psAddRestriction, null, null );
@@ -2134,50 +2152,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                 ALNode node = (ALNode) layout.get(key);
 
+                fillChannelDescription( (IALChannelDescription) node.getNodeDescription() );
 
-               IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
-               String publishId =  channelDesc.getChannelPublishId();
-
-               if ( publishId != null ) {
-                ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(publishId));
-                if ( channelDef != null ) {
-
-                 channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
-                 channelDesc.setClassName(channelDef.getJavaClass());
-                 channelDesc.setDescription(channelDef.getDescription());
-                 channelDesc.setEditable(channelDef.isEditable());
-                 channelDesc.setFunctionalName(CommonUtils.nvl(channelDef.getFName()));
-                 channelDesc.setHasAbout(channelDef.hasAbout());
-                 channelDesc.setHasHelp(channelDef.hasHelp());
-                 channelDesc.setName(channelDef.getName());
-                 channelDesc.setTitle(channelDef.getTitle());
-                 channelDesc.setChannelPublishId(channelDef.getId()+"");
-                 ChannelParameter[] channelParams = channelDef.getParameters();
-
-
-                 for ( int j = 0; j < channelParams.length; j++ ) {
-                  String paramName = channelParams[j].getName();
-                  if ( channelDesc.getParameterValue(paramName) == null ) {
-                   channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
-                   channelDesc.setParameterValue(paramName,channelParams[j].getValue());
-                  }
-                 }
-                 channelDesc.setTimeout(channelDef.getTimeout());
-                 channelDesc.setTitle(channelDef.getTitle());
-
-                }
-               } // end if
-
-              } // end for
-            /*} finally {
-              if (pstmtChannelParm != null) {
-                pstmtChannelParm.close();
               }
-            }
-          } finally {
-            pstmtChannel.close();
-          }*/
-          chanIds.clear();
+
+            chanIds.clear();
         }
 
         if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
@@ -2643,39 +2622,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                 ALNode node = (ALNode) layout.get(key);
 
-
-               IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
-               String publishId =  channelDesc.getChannelPublishId();
-
-               if ( publishId != null ) {
-                ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(publishId));
-                if ( channelDef != null ) {
-
-                 channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
-                 channelDesc.setClassName(channelDef.getJavaClass());
-                 channelDesc.setDescription(channelDef.getDescription());
-                 channelDesc.setEditable(channelDef.isEditable());
-                 channelDesc.setFunctionalName(CommonUtils.nvl(channelDef.getFName()));
-                 channelDesc.setHasAbout(channelDef.hasAbout());
-                 channelDesc.setHasHelp(channelDef.hasHelp());
-                 channelDesc.setName(channelDef.getName());
-                 channelDesc.setTitle(channelDef.getTitle());
-                 channelDesc.setChannelPublishId(channelDef.getId()+"");
-                 ChannelParameter[] channelParams = channelDef.getParameters();
-
-
-                 for ( int j = 0; j < channelParams.length; j++ ) {
-                  String paramName = channelParams[j].getName();
-                  if ( channelDesc.getParameterValue(paramName) == null ) {
-                   channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
-                   channelDesc.setParameterValue(paramName,channelParams[j].getValue());
-                  }
-                 }
-                 channelDesc.setTimeout(channelDef.getTimeout());
-                 channelDesc.setTitle(channelDef.getTitle());
-
-                }
-               } // end if
+                fillChannelDescription( (IALChannelDescription) node.getNodeDescription() );
 
               } // end for
 
@@ -2736,6 +2683,44 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
            System.out.println ( "fragment (hashtable): \n" + layout );
 
            return layout;
+  }
+
+
+  private void fillChannelDescription( IALChannelDescription channelDesc ) throws Exception {
+
+               String publishId =  channelDesc.getChannelPublishId();
+
+              if ( publishId != null ) {
+
+               ChannelDefinition channelDef = crs.getChannelDefinition(CommonUtils.parseInt(publishId));
+
+               if ( channelDef != null ) {
+
+                 channelDesc.setChannelTypeId(channelDef.getTypeId()+"");
+                 channelDesc.setClassName(channelDef.getJavaClass());
+                 channelDesc.setDescription(channelDef.getDescription());
+                 channelDesc.setEditable(channelDef.isEditable());
+                 channelDesc.setFunctionalName(CommonUtils.nvl(channelDef.getFName()));
+                 channelDesc.setHasAbout(channelDef.hasAbout());
+                 channelDesc.setHasHelp(channelDef.hasHelp());
+                 channelDesc.setName(channelDef.getName());
+                 channelDesc.setTitle(channelDef.getTitle());
+                 channelDesc.setChannelPublishId(channelDef.getId()+"");
+                 ChannelParameter[] channelParams = channelDef.getParameters();
+
+                 for ( int j = 0; j < channelParams.length; j++ ) {
+                  String paramName = channelParams[j].getName();
+                  if ( channelDesc.getParameterValue(paramName) == null ) {
+                   channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
+                   channelDesc.setParameterValue(paramName,channelParams[j].getValue());
+                  }
+                 }
+                 channelDesc.setTimeout(channelDef.getTimeout());
+                 channelDesc.setTitle(channelDef.getTitle());
+
+               }
+              }
+
   }
 
 

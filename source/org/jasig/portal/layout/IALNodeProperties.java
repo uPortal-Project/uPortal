@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * An interface describing methods common to the Aggregated Layout node descriptions 
+ * An interface describing methods common to the Aggregated Layout node descriptions
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0
@@ -57,14 +57,14 @@ public interface IALNodeProperties {
      * @param fragmentId a <code>String</code> value
      */
     public void setFragmentId ( String fragmentId );
-    
+
     /**
      * Get fragment id
      *
      * @return a <code>String</code> value
      */
     public String getFragmentId();
-    
+
     /**
      * Set fragment node id
      *
