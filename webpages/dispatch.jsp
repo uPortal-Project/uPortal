@@ -8,20 +8,21 @@
 <% org.jasig.portal.IChannel ch = dispatchBean.getChannel (request); %>
 <% UtilitiesBean.preventPageCaching (response); %>
 
-<html>
-<head>
-<title>Dispatch</title>
-<link rel=stylesheet href="stylesheets/general.css" TYPE="text/css">
-</head>
-
-<% layoutBean.writeBodyStyle (request, response, out); %>
-<body>
-
 <%
 String sMethodName = request.getParameter ("method");  
 String sTitle = ch.getName ();
 session.setAttribute ("headerTitle", sTitle);
 %>
+
+
+<html>
+<head>
+<title><%= sTitle %></title>
+<link rel="stylesheet" href="stylesheets/general.css" TYPE="text/css" />
+</head>
+
+<% layoutBean.writeBodyStyle (request, response, out); %>
+<body>
 
 <%-- Header --%>
 <%@ include file="header.jsp" %>
