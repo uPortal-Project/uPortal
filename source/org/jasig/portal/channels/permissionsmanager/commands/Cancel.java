@@ -62,6 +62,7 @@ public class Cancel implements IPermissionCommand {
         //sd.remove("prmActivities");
         // re-instate when this funcion is available
         session.principals=null;
+        session.owners = null;
         //sd.remove("prmPrincipals");
         session.servant = null;
         //sd.remove("prmServant");
