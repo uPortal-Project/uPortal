@@ -33,7 +33,13 @@ public abstract class ChainingSecurityContext implements ISecurityContext
 {
     private static final Log log = LogFactory.getLog(ChainingSecurityContext.class);
     
-  protected static boolean stopWhenAuthenticated = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated");
+  /**
+   * Default value for stopWhenAuthenticated.
+   * This value will be used when the corresponding property cannot be loaded.
+   */
+  private static final boolean DEFAULT_STOP_WHEN_AUTHENTICATED = true;
+  protected static boolean stopWhenAuthenticated = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated", DEFAULT_STOP_WHEN_AUTHENTICATED);
+
   protected boolean isauth = false;
   protected Vector mySubContexts;
   protected ChainingPrincipal myPrincipal;
