@@ -45,6 +45,7 @@ import org.jasig.portal.security.provider.PersonImpl;
 public class Authentication
 {
   protected org.jasig.portal.security.IPerson m_Person = null;
+  protected ISecurityContext ic = null;
 
   /**
    * Authenticate a user.
@@ -55,7 +56,7 @@ public class Authentication
   public boolean authenticate (String sUserName, String sPassword)
     throws PortalSecurityException
   {
-    ISecurityContext ic;
+
     IPrincipal me;
     IOpaqueCredentials op;
 
@@ -66,6 +67,7 @@ public class Authentication
     me.setUID(sUserName);
     op.setCredentials(sPassword);
     ic.authenticate();
+    me=ic.getPrincipal(); /* get the principal which may have changed */
 
     boolean bAuthenticated = ic.isAuthenticated ();
 
@@ -99,5 +101,17 @@ public class Authentication
   public IPerson getPerson ()
   {
     return m_Person;
+  }
+    /**
+   * Returns an ISecurityContext object that can be used
+   * later. This object is passed as part of the IChannel Interface.
+   * The security context may be used to gain authorized access to
+   * services.
+   * @return An object that implements the
+   * <code>org.jasig.portal.security.ISecurityContext</code> interface.
+   */
+  public ISecurityContext getSecurityContext ()
+  {
+    return ic;
   }
 }

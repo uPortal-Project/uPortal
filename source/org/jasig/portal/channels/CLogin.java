@@ -37,7 +37,7 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.*;
 import org.xml.sax.DocumentHandler;
 import java.io.File;
 import java.util.Hashtable;
@@ -58,11 +58,14 @@ public class CLogin implements IPrivilegedChannel
   private ChannelRuntimeData runtimeData;
   private String channelName = "Log in...";
   private String media;
+  private String userName="";
   private static final String fs = File.separator;
   private static final String sslLocation = UtilitiesBean.getPortalBaseDir() + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CLogin" + fs + "CLogin.ssl";
   private boolean bAuthenticated = false;
   private boolean bAuthorizationAttemptFailed = false;
-  private String userName;
+  private boolean bSecurityError = false;
+
+  private ISecurityContext ic;
 
   public CLogin()
   {
@@ -71,14 +74,14 @@ public class CLogin implements IPrivilegedChannel
   public void setPortalControlStructures(PortalControlStructures pcs)
   {
     HttpSession session = pcs.getHttpSession();
-    IPerson person = (IPerson)session.getAttribute("up_person");
     String authorizationAttempted = (String)session.getAttribute("up_authorizationAttempted");
-
-    if (person != null)
-      bAuthenticated = true;
+    String authorizationError = (String)session.getAttribute("up_authorizationError");
 
     if (authorizationAttempted != null)
       bAuthorizationAttemptFailed = true;
+
+    if (authorizationError!=null)
+      bSecurityError = true;
   }
 
   public ChannelRuntimeProperties getRuntimeProperties()
@@ -93,6 +96,11 @@ public class CLogin implements IPrivilegedChannel
   public void setStaticData (ChannelStaticData sd)
   {
     this.staticData = sd;
+    ic = staticData.getSecurityContext();
+
+    if (ic!=null && ic.isAuthenticated())
+      bAuthenticated = true;
+
   }
 
   public void setRuntimeData (ChannelRuntimeData rd)
@@ -105,11 +113,15 @@ public class CLogin implements IPrivilegedChannel
 
   public void renderXML (DocumentHandler out) throws PortalException
   {
+
     StringBuffer sb = new StringBuffer ("<?xml version='1.0'?>\n");
     sb.append("<login-status>\n");
 
-    if (bAuthorizationAttemptFailed && !bAuthenticated)
-       sb.append("  <failure userName=\"" + userName + "\"/>\n");
+      if  (bSecurityError)
+        sb.append("  <error />\n");
+      else
+        if (bAuthorizationAttemptFailed && !bAuthenticated)
+          sb.append("  <failure userName=\"" + userName + "\"/>\n");
 
     sb.append("</login-status>\n");
 
