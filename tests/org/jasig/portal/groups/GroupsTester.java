@@ -142,9 +142,10 @@ protected void deleteTestGroups()
     String selectSql = "SELECT GROUP_ID" + sql;
     String deleteSql = "DELETE" + sql;
     String deleteMemberSql = "DELETE FROM UP_GROUP_MEMBERSHIP WHERE GROUP_ID = ";
+    Connection conn = null;
     try
     {
-        Connection conn = org.jasig.portal.RDBMServices.getConnection();
+        conn = org.jasig.portal.RDBMServices.getConnection();
         Statement selectStmnt = conn.createStatement();
         ResultSet rs = selectStmnt.executeQuery( selectSql );
         while ( rs.next() )
@@ -161,6 +162,7 @@ protected void deleteTestGroups()
 
     }
     catch (Exception ex) { print("GroupsTester.deleteTestGroups(): " + ex.getMessage());}
+    finally { org.jasig.portal.RDBMServices.releaseConnection(conn); }
  }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
