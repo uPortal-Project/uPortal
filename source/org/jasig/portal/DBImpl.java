@@ -859,7 +859,7 @@ public class DBImpl implements IDBImpl
           rs.next();
           int currentStructId = rs.getInt(1);
           int nextStructId = currentStructId + 1;
-          sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE NEXT_STRUCT_ID=" + currentStructId;
+          sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + userId + " AND NEXT_STRUCT_ID=" + currentStructId;
           Logger.log(Logger.DEBUG, "DBImpl::getNextStructId(): " + sQuery);
           stmt.executeUpdate(sQuery);
 
