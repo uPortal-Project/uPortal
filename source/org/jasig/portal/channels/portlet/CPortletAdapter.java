@@ -288,10 +288,10 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 // not current at this point.
                 
                 case PortalEvent.EDIT_BUTTON_EVENT:
-                    channelState.put(uid + PortletStateManager.MODE, PortletMode.EDIT);
+                    cd.setNewPortletMode(PortletMode.EDIT);
                     break;
                 case PortalEvent.HELP_BUTTON_EVENT:
-                    channelState.put(uid + PortletStateManager.MODE, PortletMode.HELP);
+                    cd.setNewPortletMode(PortletMode.HELP);
                     break;
                 case PortalEvent.ABOUT_BUTTON_EVENT:
                     // We might want to consider a custom ABOUT mode here
@@ -400,9 +400,10 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                     pap.changePortletWindowState(WindowState.NORMAL);
                 }
                 
-                PortletMode newMode = (PortletMode)channelState.remove(uid + PortletStateManager.MODE);
+                PortletMode newMode = cd.getNewPortletMode();
                 if (newMode != null) {
                     pap.changePortletMode(newMode);
+                    cd.setNewPortletMode(null);
                 }
                 
                 // Process action if this is the targeted channel and the URL is an action URL

@@ -35,8 +35,6 @@
 
 package org.jasig.portal.channels.portlet;
 
-import java.util.Hashtable;
-
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalControlStructures;
@@ -48,7 +46,7 @@ import org.jasig.portal.PortalEvent;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class ChannelState extends Hashtable {
+public class ChannelState {
     private ChannelStaticData staticData = null;
     private ChannelRuntimeData runtimeData = null;
     private PortalEvent portalEvent = null;
