@@ -1,4 +1,42 @@
 <?xml version='1.0' encoding='utf-8' ?>
+
+<!--
+Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+   
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+   
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Jultin Tilton, jet@immagic.com
+$Revision$
+-->
+
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:output method="html" indent="no" />
@@ -38,55 +76,33 @@
 <!--Begin Layout Table -->
 
         <table width="100%" border="0" cellspacing="20" cellpadding="0" class="uportal-background-dark">
-
           <tr align="center" valign="top">
-
             <td>
 
 <!--Begin Layout Sub-Table -->
 
               <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
-
                 <tr>
-
                   <td>
-
                     <xsl:call-template name="tabRow" />
-
                   </td>
-
                 </tr>
-
-
-
                 <tr>
-
                   <td>
-
                     <xsl:call-template name="contentRow" />
-
                   </td>
-
                 </tr>
-
               </table>
-
-
 
 <!--End Layout Sub-Table -->
 
             </td>
-
           </tr>
-
         </table>
-
-
 
 <!--End Layout Table -->
 
       </body>
-
     </html>
 
   </xsl:template>
@@ -98,9 +114,7 @@
 <!--Begin Tab Table -->
 
     <table summary="add summary" border="0" cellspacing="0" cellpadding="0" width="100%">
-
       <tr>
-
         <xsl:for-each select="/layout/folder[not(attribute::type='header' or type='footer')]">
 
           <xsl:choose>
@@ -303,7 +317,6 @@
 <!--End Tab Table -->
 
   </xsl:template>
-
 
 
   <xsl:template name="contentRow">
@@ -1638,7 +1651,7 @@
 
 
 
-                      <input type="hidden" name="action" value="coulmnWidth" />
+                      <input type="hidden" name="action" value="columnWidth" />
 
 
 
@@ -1967,199 +1980,94 @@
 
 
   <xsl:template name="optionMenuNewTab">
-
     <form name="formNewTab" method="post" action="{$baseActionURL}">
-
       <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-
         <tr class="uportal-background-light">
-
           <td class="uportal-channel-text">
-
             <p>
-
               <span class="uportal-channel-subtitle-reversed">Steps for adding this new tab:</span>
-
             </p>
-
-
 
             <table width="100%" border="0" cellspacing="0" cellpadding="2">
 
               <tr>
-
                 <td class="uportal-channel-text" align="right">
-
                   <strong>1.</strong>
-
                 </td>
-
-
 
                 <td class="uportal-channel-text">Name the tab: 
-
-                <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
-
-
-                <input type="text" name="tabName" class="uportal-input-text" size="30" />
-
+                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                  <input type="text" name="tabName" class="uportal-input-text" size="30" />
                 </td>
-
               </tr>
 
-
-
               <tr>
-
                 <td class="uportal-channel-text" align="right">
-
                   <strong>
-
                   <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="16" />
-
-
-
                   2.</strong>
-
                 </td>
-
-
-
                 <td class="uportal-channel-text">Select a position for the tab:</td>
-
               </tr>
 
-
-
               <tr>
-
                 <td class="uportal-channel-text" align="right">
-
                   <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                 </td>
-
-
-
                 <td class="uportal-channel-text">
-
                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
                     <tr>
-
-                      <xsl:for-each select="/layout/folder[not(attribute::type='header' or type='footer')]">
-
+                      <xsl:for-each select="/layout/folder[not(@type='header' or @type='footer')]">
                         <td nowrap="nowrap" class="uportal-background-light">
-
                           <input type="radio" name="method_ID" value="insertBefore_{@ID}" />
-
                         </td>
-
-
 
                         <td nowrap="nowrap" class="uportal-background-med">
-
                           <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" border="0" />
-
-
-
                           <span class="uportal-text-small">
-
                             <xsl:value-of select="@name" />
-
                           </span>
-
-
-
                           <img alt="Interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
                         </td>
-
                       </xsl:for-each>
 
-
-
                       <td width="100%">
-
-                        <input type="radio" name="method_ID" value="appendAfter_{@ID}" />
-
+                        <input type="radio" name="method_ID" value="appendAfter_{/layout/folder[not(@type='header' or @type='footer') and position() = last()]/@ID}" />
                       </td>
-
                     </tr>
-
                   </table>
-
                 </td>
-
               </tr>
 
-
-
               <tr>
-
                 <td class="uportal-channel-text" align="right">
-
                   <strong>3.</strong>
-
                 </td>
-
-
-
                 <td class="uportal-channel-text">Submit the choices: 
-
-                <input type="hidden" name="action" value="addTab" />
-
-
-
-                <input type="submit" name="Submit" value="Submit" class="uportal-button" />
-
+                  <input type="hidden" name="action" value="addTab" />
+                  <input type="submit" name="Submit" value="Submit" class="uportal-button" />
                 </td>
-
               </tr>
 
-
-
               <tr>
-
                 <td colspan="2" class="uportal-channel-text">
-
                   <hr/>
-
                 </td>
-
               </tr>
-
-
 
               <tr>
-
                 <td class="uportal-channel-text">
-
                   <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" />
-
                 </td>
-
-
-
                 <td width="100%" class="uportal-channel-text">
-
                   <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
-
                 </td>
-
               </tr>
-
             </table>
-
           </td>
-
         </tr>
-
       </table>
-
     </form>
-
   </xsl:template>
 
 
@@ -2224,86 +2132,42 @@
 
 
 
-                      <input type="hidden" name="action" value="coulmnWidth" />
+                      <input type="hidden" name="action" value="columnWidth" />
 
 
 
                       <xsl:for-each select="/layout/folder[@ID = $activeTabID]/descendant::folder">
 
                         <xsl:if test="$position='before' and $elementID=@ID">
-
                           <td nowrap="nowrap" align="center" class="uportal-text-small">
-
                             <input type="text" name="columnWidth_{@ID}" value="" size="5" maxlength="" class="uportal-input-text" />
-
-
-
                             <br/>
-
-
-
                             <strong>New Column</strong>
-
                           </td>
-
-
-
                           <td nowrap="nowrap">
-
                             <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
-
                           </td>
-
                         </xsl:if>
 
-
-
                         <td nowrap="nowrap" align="center" class="uportal-text-small">
-
-                        <input type="text" name="columnWidth_{@ID}" value="{@width}" size="5" maxlength="" class="uportal-input-text" />
-
-
-
-                        <br/>
-
-
-
-                        Column</td>
-
-
-
-                        <td nowrap="nowrap">
-
-                          <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
-
+                          <input type="text" name="columnWidth_{@ID}" value="{@width}" size="5" maxlength="" class="uportal-input-text" />
+                          <br/>
+                          Column
                         </td>
 
-
+                        <td nowrap="nowrap">
+                          <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
+                        </td>
 
                         <xsl:if test="$position='after' and $elementID=@ID">
-
                           <td nowrap="nowrap" align="center" class="uportal-text-small">
-
                             <input type="text" name="columnWidth_{@ID}" value="" size="5" maxlength="" class="uportal-input-text" />
-
-
-
                             <br/>
-
-
-
                             <strong>New Column</strong>
-
                           </td>
-
-
-
                           <td nowrap="nowrap">
-
                             <img alt="interface image" src="{$mediaPath}\transparent.gif" width="16" height="16" />
-
                           </td>
-
                         </xsl:if>
 
                       </xsl:for-each>
@@ -2311,89 +2175,47 @@
 
 
                       <td width="100%" align="left" nowrap="nowrap">
-
                         <img alt="interface image" src="{$mediaPath}\transparent.gif" width="1" height="1" />
-
                       </td>
-
                     </tr>
 
-
-
                     <tr valign="top" class="uportal-text-small">
-
                     </tr>
 
                   </table>
-
                 </td>
-
               </tr>
 
-
-
               <tr>
-
                 <td class="uportal-channel-text">
-
                   <strong>2.</strong>
-
                 </td>
-
-
 
                 <td class="uportal-channel-text">Submit the choices: 
-
-                <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
-
-
-
-                <input type="submit" name="submitNewColumn" value="Submit" class="uportal-button" />
-
+                  <img alt="interface image" src="{$mediaPath}\transparent.gif" width="10" height="10" />
+                  <input type="submit" name="submitNewColumn" value="Submit" class="uportal-button" />
                 </td>
-
               </tr>
 
-
-
               <tr>
-
                 <td class="uportal-channel-text" colspan="2">
-
                   <hr/>
-
                 </td>
-
               </tr>
 
-
-
               <tr>
-
                 <td class="uportal-channel-text">
-
                   <img alt="interface image" src="{$mediaPath}\bullet.gif" width="16" height="16" />
-
                 </td>
-
-
 
                 <td class="uportal-channel-text" width="100%">
-
                   <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
-
                 </td>
-
               </tr>
-
             </table>
-
           </td>
-
         </tr>
-
       </table>
-
     </form>
 
   </xsl:template>
