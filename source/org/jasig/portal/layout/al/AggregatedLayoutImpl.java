@@ -137,7 +137,30 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.layout.al.ILayout#moveNode(org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId, org.jasig.portal.layout.node.INodeId)
 	 */
-	public boolean moveNode(INodeId nodeId, INodeId parentId, INodeId nextId) {
+	public boolean moveNode(INodeId nodeId, INodeId parentId, INodeId nextId) throws PortalException {
+		if ( nodeId != null && parentId != null && restrictionManager.checkMoveRestrictions(nodeId,parentId,nextId) ) {
+		  IALNode node = (IALNode) getNode(nodeId);
+		  IFragmentLocalNodeId localNodeId = node.getFragmentNodeId();
+		  IALNode nextNode = (IALNode) getNode(nextId);
+		  IFragmentLocalNodeId localNextId = nextNode.getFragmentNodeId();
+		  IALNode parentNode = (IALNode) getNode(parentId);
+		  IFragmentLocalNodeId localParentId = parentNode.getFragmentNodeId();
+          IFragment sourceFragment = fragmentRegistry.getFragment(node.getFragmentId());
+          IFragment destFragment = fragmentRegistry.getFragment(parentNode.getFragmentId());	
+		  if ( isCentralModification(parentId) ) {
+		  	 return ( sourceFragment.deleteNode(localNodeId) && ( isCentralModification(nodeId) ) ?
+		  	         (destFragment.addNode(node,localParentId,localNextId)!=null) :
+		  	         (currentLayout.deleteNode(nodeId) && (destFragment.addNode(node,localParentId,localNextId)!=null)) );
+		  } else {
+		  	 return ( isCentralModification(nodeId) ) ?
+		  	         (sourceFragment.deleteNode(localNodeId) && (layoutCommandManager.addNode(node,parentId,nextId)!=null) 
+					  && (currentLayout.addNode(node,parentId,nextId)!=null)) :
+		  	          (layoutCommandManager.moveNode(nodeId,parentId,nextId) && currentLayout.moveNode(nodeId,parentId,nodeId));
+		  }
+			
+		}
+		
+		return false;
 		// check restrictions
 	    // 
 	    // edit-oriented logic:
@@ -163,7 +186,6 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
 	    // } else {
 	    //   record move operation from d to s
 	    // }
-		return false;
 	}
 
     /* (non-Javadoc)
@@ -174,6 +196,7 @@ public class AggregatedLayoutImpl implements  IAggregatedLayout {
         if(nodeId!=null && nodeDescription!=null && restrictionManager.checkUpdateRestrictions(nodeDescription,nodeId)) {
             if(isCentralModification(nodeId)) {
                 IALNode node=(IALNode) getNode(nodeId);
+                IFragmentLocalNodeId localNodeId = node.getFragmentNodeId();
                 IFragmentId fragmentId=node.getFragmentId();
                 IFragment fragment=fragmentRegistry.getFragment(fragmentId);
                 if(fragment.updateNode(node.getFragmentNodeId(),nodeDescription)) {
