@@ -51,7 +51,7 @@ import  org.jasig.portal.security.provider.PersonImpl;
 import  org.jasig.portal.security.IAuthorization;
 import  org.jasig.portal.security.PortalSecurityException;
 import  org.jasig.portal.PortalSessionManager;
-import  org.jasig.portal.GenericPortalBean;
+import  org.jasig.portal.UserLayoutStoreFactory;
 import  org.jasig.portal.RdbmServices;
 import  org.jasig.portal.services.LogService;
 
@@ -98,7 +98,7 @@ public class ReferenceAuthorization implements IAuthorization {
       return  (false);
     }
     try {
-      return  GenericPortalBean.getUserLayoutStore().isUserInRole(person, (String)role.getRoleTitle());
+      return UserLayoutStoreFactory.getUserLayoutStoreImpl().isUserInRole(person, (String)role.getRoleTitle());
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       return  (false);
@@ -111,7 +111,7 @@ public class ReferenceAuthorization implements IAuthorization {
    */
   public Vector getAllRoles () {
     try {
-      return  GenericPortalBean.getUserLayoutStore().getAllRoles();
+      return UserLayoutStoreFactory.getUserLayoutStoreImpl().getAllRoles();
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       return  (null);
@@ -132,7 +132,7 @@ public class ReferenceAuthorization implements IAuthorization {
     // When changing the channel's roles, we must dump the cache!
     chanRolesCache.remove("" + channelID);
     try {
-      return  GenericPortalBean.getUserLayoutStore().setChannelRoles(channelID, roles);
+      return  UserLayoutStoreFactory.getUserLayoutStoreImpl().setChannelRoles(channelID, roles);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       return  (-1);
@@ -220,7 +220,7 @@ public class ReferenceAuthorization implements IAuthorization {
       channelRoles = new Vector();
     }
     try {
-      GenericPortalBean.getUserLayoutStore().getChannelRoles(channelRoles, channelID);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().getChannelRoles(channelRoles, channelID);
       chanRolesCache.put("" + channelID, channelRoles);
       return  (channelRoles);
     } catch (Exception e) {
@@ -244,7 +244,7 @@ public class ReferenceAuthorization implements IAuthorization {
       userRoles = new Vector();
     }
     try {
-      GenericPortalBean.getUserLayoutStore().getUserRoles(userRoles, person);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserRoles(userRoles, person);
       userRolesCache.put(new Integer(userId), userRoles);
       return  userRoles;
     } catch (Exception e) {
@@ -259,7 +259,7 @@ public class ReferenceAuthorization implements IAuthorization {
       return;
     }
     try {
-      GenericPortalBean.getUserLayoutStore().addUserRoles(person, roles);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().addUserRoles(person, roles);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     }
@@ -275,7 +275,7 @@ public class ReferenceAuthorization implements IAuthorization {
       return;
     }
     try {
-      GenericPortalBean.getUserLayoutStore().removeUserRoles(person, roles);
+      UserLayoutStoreFactory.getUserLayoutStoreImpl().removeUserRoles(person, roles);
       return;
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);

@@ -40,8 +40,7 @@ package  org.jasig.portal.services;
 
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.security.provider.PersonImpl;
-import  org.jasig.portal.GenericPortalBean;
-import  org.jasig.portal.RdbmServices;
+import  org.jasig.portal.UserIdentityStoreFactory;
 import  org.jasig.portal.IUserIdentityStore;
 import  org.jasig.portal.AuthorizationException;
 import  org.jasig.portal.PropertiesManager;
@@ -73,7 +72,7 @@ public class Authentication {
     ISecurityContext securityContext = person.getSecurityContext();
     // NOTE: At this point the service should be looking in a properties file
     //       to determine what tokens to look for that represent the principals
-    //       and credentials. 
+    //       and credentials.
     // Retrieve the username and principal
     String username = (String)principals.get("username");
     String password = (String)credentials.get("password");
@@ -108,7 +107,7 @@ public class Authentication {
             String attributeName = (String)e.nextElement();
             person.setAttribute(attributeName, newPerson.getAttribute(attributeName));
           }
-        } 
+        }
         // If the additional descriptor is a map then we can
         // simply copy all of these additional attributes into the IPerson
         else if (addInfo instanceof Map) {
@@ -121,7 +120,7 @@ public class Authentication {
             // Set the attribute
             person.setAttribute(key, additionalAttributes.get(key));
           }
-        } 
+        }
         else {
           LogService.instance().log(LogService.WARN, "Authentication Service recieved unknown additional descriptor");
         }
@@ -146,7 +145,7 @@ public class Authentication {
         // Use portal display name if one exists
         if (person.getAttribute("portalDisplayName") != null) {
           person.setFullName((String)person.getAttribute("portalDisplayName"));
-        } 
+        }
         // If not try the eduPerson displyName
         else if (person.getAttribute("displayName") != null) {
           person.setFullName((String)person.getAttribute("displayName"));
@@ -169,7 +168,7 @@ public class Authentication {
       }
       try {
         // Attempt to retrieve the UID
-        int newUID = RdbmServices.getUserIdentityStoreImpl().getPortalUID(person, autocreate);
+        int newUID = UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person, autocreate);
         person.setID(newUID);
       } catch (AuthorizationException ae) {
         LogService.instance().log(LogService.ERROR, ae);
@@ -229,7 +228,7 @@ public class Authentication {
         // if still no FullName use an unrecognized string
         if (m_Person.getFullName() == null)
           m_Person.setFullName("Unrecognized person: " + m_Person.getAttribute("username"));
-      } 
+      }
       else {
         // Set the IPerson to be the AdditionalDescriptor object
         m_Person = (IPerson)addInfo;
@@ -244,7 +243,7 @@ public class Authentication {
       if (autocreate && m_Person.getAttribute("uPortalTemplateUserName") == null) {
         m_Person.setAttribute("uPortalTemplateUserName", pm.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName"));
       }
-      IUserIdentityStore UIDStore = RdbmServices.getUserIdentityStoreImpl();
+      IUserIdentityStore UIDStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
       try {
         int newUID = UIDStore.getPortalUID(m_Person, autocreate);
         m_Person.setID(newUID);

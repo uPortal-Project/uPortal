@@ -36,14 +36,13 @@
  */
 
 
-package  org.jasig.portal.security.provider;
+package org.jasig.portal.security.provider;
 
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.RdbmServices;
-import  org.jasig.portal.GenericPortalBean;
-import  java.util.*;
-
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.RdbmServices;
+import org.jasig.portal.UserLayoutStoreFactory;
 
 /**
  * <p>This is an implementation of a SecurityContext that merely checks to see
@@ -83,7 +82,7 @@ class TrustSecurityContext extends ChainingSecurityContext
     if (this.myPrincipal.UID != null) {
       try {
         String first_name, last_name;
-        String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
           first_name = acct[1];
           last_name = acct[2];

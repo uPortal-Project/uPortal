@@ -36,14 +36,14 @@
  */
 
 
-package  org.jasig.portal.security.provider;
+package org.jasig.portal.security.provider;
 
-import  org.jasig.portal.security.*;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.RdbmServices;
-import  org.jasig.portal.GenericPortalBean;
-import  java.util.*;
-import  java.security.MessageDigest;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.RdbmServices;
+import org.jasig.portal.UserLayoutStoreFactory;
+import java.security.MessageDigest;
 
 
 /**
@@ -73,7 +73,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
   }
 
   /**
-   * put your documentation comment here
+   * Authenticate user.
    * @exception PortalSecurityException
    */
   public synchronized void authenticate () throws PortalSecurityException {
@@ -82,7 +82,7 @@ class SimpleSecurityContext extends ChainingSecurityContext
       String first_name = null, last_name = null, md5_passwd = null;
 
       try {
-        String acct[] = GenericPortalBean.getUserLayoutStore().getUserAccountInformation(this.myPrincipal.UID);
+        String acct[] = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserAccountInformation(this.myPrincipal.UID);
         if (acct[0] != null) {
 
           first_name = acct[1];
@@ -110,7 +110,6 @@ class SimpleSecurityContext extends ChainingSecurityContext
             if (dgx[i] != compare[i])
               same = false;
           if (same) {
-//            this.myPrincipal.globalUID = globalUID;
             this.myPrincipal.FullName = first_name + " " + last_name;
             LogService.log(LogService.INFO, "User " + this.myPrincipal.UID + " is authenticated");
             this.isauth = true;
