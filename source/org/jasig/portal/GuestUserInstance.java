@@ -60,7 +60,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param req a <code>HttpServletRequest</code> value
      */
     public void registerSession(HttpServletRequest req) throws PortalException {
-	      IState newState=new IState();
+	    IState newState=new IState();
         newState.channelManager=new ChannelManager(new GuestUserPreferencesManagerWrapper(uLayoutManager,req.getSession(false).getId()));
         newState.localeManager = new LocaleManager(person, req.getHeader("Accept-Language"));        
         newState.p_rendering_lock=new Object();
@@ -80,6 +80,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
             return;
         }
         state.channelManager.finishedSession();
+        state.channelManager = null;
         uLayoutManager.unbindSession(sessionId);
         stateTable.remove(sessionId);
     }
