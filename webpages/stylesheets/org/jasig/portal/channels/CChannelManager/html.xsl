@@ -2130,72 +2130,22 @@
 
       </tr>
 
-
-<!--
+      <!-- Selected groups/people -->
       <tr class="uportal-channel-text">
-
         <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
-
-
-
         <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-
-
-
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectRoles&amp;uPCM_capture=reviewChannel">Selected Roles:</a></strong></td>
-
-
-
+        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">Selected Groups and/or People:</a></strong></td>
         <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-
-
-
-        <td><a href="{$baseActionURL}?uPCM_action=selectRoles&amp;uPCM_capture=reviewChannel">
-        <xsl:choose><xsl:when test="//selectedRole">
-        <xsl:for-each select="/manageChannels/selectRoles/params/step/userSettings/selectedRoles/selectedRole">
-        <img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/><xsl:value-of select="."/><br/></xsl:for-each></xsl:when>
-        <xsl:otherwise><img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>All roles have access to this channel</xsl:otherwise></xsl:choose>
-        </a></td>
-
-      </tr>
--->
-
-
-
-
-      <tr class="uportal-channel-text">
-
-        <td nowrap="nowrap" align="center"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
-
-
-
-        <td nowrap="nowrap"><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-
-
-
-        <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">Selected Groups:</a></strong></td>
-
-
-
-        <td><img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
-
-
-
-        <td ><a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">
-
-        <xsl:for-each select="//selectedGroup">
-          <img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"  />
-          <xsl:value-of select="@name"/>
-          <br/>
-        </xsl:for-each>
-
-        </a>
-
+        <td>
+          <a href="{$baseActionURL}?uPCM_action=selectGroups&amp;uPCM_capture=reviewChannel">
+            <xsl:for-each select="//selectedGroup">
+              <img alt="interface image" src="{$mediaPath}/unlocked.gif" width="16" height="16" border="0" /><img alt="interface image" src="{$mediaPath}/transparent.gif" width="8" height="8" border="0"/>
+              <xsl:value-of select="@name"/>
+              <br/>
+            </xsl:for-each>
+          </a>
         </td>
-
       </tr>
-
-
 
       <tr class="uportal-channel-text">
 
