@@ -51,6 +51,9 @@ import org.jasig.portal.InternalTimeoutException;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.net.URL;
@@ -97,6 +100,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
     protected boolean placeHolder = false;
 
     private boolean showStackTrace=false;
+    private String ssTitle = null;
 
     private PortalControlStructures portcs;
     private static final String sslLocation = "CError/CError.ssl";
@@ -349,10 +353,12 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         }
 
         // Decide whether to render a friendly or detailed screen
-        String ssTitle = "friendly";
+        ssTitle = "friendly";
         try {
-          boolean viewDetailed = staticData.getAuthorizationPrincipal().hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS");
-          if (viewDetailed)
+          AuthorizationService authService = AuthorizationService.instance();
+          int personID = portcs.getUserLayoutManager().getPerson().getID();
+          IAuthorizationPrincipal ap = authService.newPrincipal(String.valueOf(personID), IPerson.class);
+          if (ap.hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS"))
             ssTitle = "detailed";
         } catch (Exception e) {
           // stay with friendly stylesheet
@@ -401,8 +407,9 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
         sbKey.append("org.jasig.portal.channels.CError: errorId=").append(Integer.toString(errorID)).append(", channelID=");
         sbKey.append(str_channelID).append(", message=").append(str_message).append(" strace=").append(toString(showStackTrace));
+        sbKey.append(", mode=").append(ssTitle);
 
-        // part of the key that species what kind of exception has been generated
+        // part of the key that specifies what kind of exception has been generated
         if(channelException !=null) {
             sbKey.append("exception: ");
             sbKey.append(channelException.getMessage());
