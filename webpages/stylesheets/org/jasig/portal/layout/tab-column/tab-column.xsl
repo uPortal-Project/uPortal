@@ -52,6 +52,8 @@
     <xsl:for-each select="/layout/folder[@type='regular' and @hidden='false']">
       <tab>
         <xsl:attribute name="ID"><xsl:value-of select="@ID"/></xsl:attribute>
+        <xsl:attribute name="immutable"><xsl:value-of select="@immutable"/></xsl:attribute>
+        <xsl:attribute name="unremovable"><xsl:value-of select="@unremovable"/></xsl:attribute>
       	<xsl:choose>
       	  <xsl:when test="$activeID = @ID">
       	    <xsl:attribute name="activeTab">true</xsl:attribute>
