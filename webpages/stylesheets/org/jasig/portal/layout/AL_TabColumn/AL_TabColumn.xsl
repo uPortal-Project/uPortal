@@ -48,7 +48,7 @@
   <xsl:template match="layout">
     <layout mode="{$mode}" selectedID="{$selectedID}" focusedTabID="{$validFocusedTabID}" targetRestriction="{$targetRestriction}" targetAction="{$targetAction}" userLayoutRoot="{$userLayoutRoot}">
       <!--<xsl:if test="$mode='preferences'"><xsl:call-template name="statusCheck"/></xsl:if>-->
-      <xsl:apply-templates select="folder[@ID='userLayoutRootNode']" mode="rootFolder"/>
+      <xsl:apply-templates select="folder[position()=1]" mode="rootFolder"/>
     </layout>
   </xsl:template>
 
