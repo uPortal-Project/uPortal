@@ -138,6 +138,12 @@ public class XMLChannelWrapper implements IChannel
 
     // Add the request object to the runtime data
     rd.setHttpRequest(req);
+    
+    // Create the BrowserInfo object for the RuntimeData object
+    BrowserInfo bi = new BrowserInfo(req);
+    
+    // Add the BrowserInfo object to the RuntimeData object
+    rd.setBrowserInfo(bi);
 
     // Create the baseAction URL
     String baseActionURL = new String(getJSP(req) + "&" + "channelTarget=" + chanID + "&");
