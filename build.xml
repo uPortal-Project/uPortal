@@ -338,8 +338,8 @@
   <property name="commons-logging.jar" value="(set this in build.properties!)"/>
   <property name="portlet-api.jar" value="(set this in build.properties!)"/>
   <property name="pluto.jar" value="(set this in build.properties!)"/>
-  <property name="wsrp-shared.jar" value="(set this in build.properties!)"/>
-  <property name="wsrp-consumer.jar" value="(set this in build.properties!)"/>
+  <property name="wsrp4j-shared.jar" value="(set this in build.properties!)"/>
+  <property name="wsrp4j-consumer.jar" value="(set this in build.properties!)"/>
   <property name="proxyportlet.jar" value="(set this in build.properties!)"/>
   <property name="jdbc2_0-stdext.jar" value="(set this in build.properties!)"/>
   <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
