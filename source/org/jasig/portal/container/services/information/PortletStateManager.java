@@ -118,6 +118,9 @@ public class PortletStateManager {
 	
 	private void analizeRequestInformation() {
 		params.clear();
+		Map renderParams = windowOfAction.getInternalActionResponse().getRenderParameters();
+		if ( renderParams != null && !renderParams.isEmpty() )
+		 params.putAll(renderParams);
 		String windowId = windowOfAction.getId().toString();
 		for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
 		  String paramName = (String) names.nextElement();
@@ -154,12 +157,9 @@ public class PortletStateManager {
 		}  
 	}
 	
-	public void addParameters(Map parameters) {	
-	   params.putAll(parameters);
-	}
-	
 	public void setParameters(Map parameters) {	
-		   params = parameters;
+	  if ( parameters != null && !parameters.isEmpty() )	
+	   params.putAll(parameters);
 	}
 
     public boolean isAction() {
