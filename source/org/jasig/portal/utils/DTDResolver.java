@@ -83,7 +83,7 @@ public class DTDResolver implements EntityResolver
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/" + dtdName);
       else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd"))
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
-      else if (publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN"))
+      else if (publicId != null && publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN"))
          inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
     }
     
