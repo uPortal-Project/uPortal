@@ -104,7 +104,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         // get a folder
         {
             String id="s4";
-            UserLayoutNodeDescription node=man.getNode(id);
+            IUserLayoutNodeDescription node=man.getNode(id);
             assertTrue(node!=null);
             if(node!=null) {
                 // make up a fake node, with the same id
@@ -122,7 +122,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         // get a channel
         {
             String id="n6";
-            UserLayoutNodeDescription node=man.getNode(id);
+            IUserLayoutNodeDescription node=man.getNode(id);
             assertTrue(node!=null);
             if(node!=null) {
                 // make up a fake node, with the same id
@@ -185,7 +185,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         assertEquals("comparing the original and addNode() result: ",nchan,rchan);
 
         // do a get
-        UserLayoutNodeDescription gnode=man.getNode(nchan.getId());
+        IUserLayoutNodeDescription gnode=man.getNode(nchan.getId());
         assertEquals("comparing the original and getNode() result: ",nchan,gnode);
         assertEquals("parentId is the specified attachment point",parentId,man.getParentId(nchan.getId()));
         assertEquals("siblingId is the specified next sibling",siblingId,man.getNextSiblingId(nchan.getId()));
@@ -217,7 +217,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         assertEquals("comparing the original and addNode() result: ",nfold,rfold);
 
         // do a get
-        UserLayoutNodeDescription gnode=man.getNode(nfold.getId());
+        IUserLayoutNodeDescription gnode=man.getNode(nfold.getId());
         assertEquals("comparing the original and getNode() result: ",nfold,gnode);
         assertEquals("parentId is the specified attachment point",parentId,man.getParentId(nfold.getId()));
 
@@ -259,7 +259,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
 
         boolean exception=false;
         try {
-            UserLayoutNodeDescription node=man.getNode(nodeId);
+            IUserLayoutNodeDescription node=man.getNode(nodeId);
         } catch (PortalException e) {
             exception=true;
         }
@@ -298,7 +298,7 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         // try moving a channel
         String nodeId="n3";
         String targetId="root";
-        UserLayoutNodeDescription rootNode=man.getNode(targetId);
+        IUserLayoutNodeDescription rootNode=man.getNode(targetId);
         assertTrue("Can channel \""+nodeId+"\" be moved to folder \""+targetId+"\"",man.canMoveNode(nodeId,targetId,null));
         man.moveNode(nodeId,targetId,null);
         assertEquals("New channel attachment point",man.getParentId(nodeId),targetId);
@@ -362,11 +362,11 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
         // System.out.println("Layout\n"+XML.serializeNode(man.getUserLayoutDOM()));
     }
     
-    protected void assertEquals(UserLayoutNodeDescription one,UserLayoutNodeDescription two) {
+    protected void assertEquals(IUserLayoutNodeDescription one,IUserLayoutNodeDescription two) {
         assertEquals("",one,two);
     }
 
-    protected void assertEquals(String message,UserLayoutNodeDescription one,UserLayoutNodeDescription two) {
+    protected void assertEquals(String message,IUserLayoutNodeDescription one,IUserLayoutNodeDescription two) {
         if(one instanceof UserLayoutFolderDescription) {
             assertTrue(message+"nodes are of a different type!",two instanceof UserLayoutFolderDescription);
         } else {
