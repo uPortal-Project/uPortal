@@ -234,7 +234,9 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 
             // As the container to load the portlet
             HttpServletRequest requestWrapper = pcs.getHttpServletRequest();
-            portletContainer.portletLoad(portletWindow, requestWrapper, pcs.getHttpServletResponse());
+            synchronized(this) {
+                portletContainer.portletLoad(portletWindow, requestWrapper, pcs.getHttpServletResponse());
+            }
             
             cd.setPortletWindowInitialized(true);
             
