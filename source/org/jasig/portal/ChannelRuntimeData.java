@@ -57,6 +57,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private String channelSubscribeId=null;
     private UPFileSpec channelUPFile;
     private String baseActionURL = null; // Not sure if this will stay
+    private String httpRequestMethod=null;
 
     /**
      * Default empty constructor
@@ -88,6 +89,24 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      */
     public void setUPFile(UPFileSpec upfs) {
         channelUPFile = upfs;
+    }
+
+    /**
+     * Set the HTTP Reqeust method.
+     *
+     * @param method a <code>String</code> value
+     */
+    public void setHttpRequestMethod(String method) {
+        this.httpRequestMethod=method;
+    }
+
+    /**
+     * Get HTTP request method (i.e. GET, POST)
+     *
+     * @return a <code>String</code> value
+     */
+    public String getHttpRequestMethod() {
+        return this.httpRequestMethod;
     }
 
     /**
@@ -206,13 +225,32 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL() {
-        // If the base action URL was explicitly set, use it
-        if (baseActionURL != null)
+        return this.getBaseActionURL(false);
+    }
+
+    /**
+     * Returns a baseActionURL - parameters of a request coming in on the baseActionURL
+     * will be placed into the ChannelRuntimeData object for channel's use.
+     *
+     * @param idempotent a <code>boolean</code> value specifying if a given URL should be idepotent.
+     * @return a value of URL to which parameter sequences should be appended.
+     */
+    public String getBaseActionURL(boolean idempotent) {
+        // If the base action URL was explicitly set, use it 
+        // peterk: we should probably introduce idepotent version of this one as well, at some point
+        if (baseActionURL != null) {
           return baseActionURL;
+        }
 
         String url=null;
         try {
-            url=channelUPFile.getUPFile();
+            if(idempotent) {
+                UPFileSpec upfs=new UPFileSpec(channelUPFile);
+                upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+                url=upfs.getUPFile();
+            } else {
+                url=channelUPFile.getUPFile();
+            }
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
         }
@@ -226,17 +264,41 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @param worker - Worker string must be a UPFileSpec.xxx value.
      * @return URL to invoke the worker.
      */
-    public String getWorkerActionURL(String worker) {
+    public String getBaseWorkerURL(String worker) {
         // todo: propagate the exception
         String url=null;
         try {
-            UPFileSpec upfs=new UPFileSpec(channelUPFile);
-            upfs.setMethod(UPFileSpec.WORKER_METHOD);
-            upfs.setMethodNodeId(worker);
-            url=upfs.getUPFile();
+            url=getBaseWorkerURL(worker,false);
         } catch (Exception e) {
             LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
         }
+        return url;
+    }
+
+    /**
+     * Returns the URL to invoke one of the workers specified in PortalSessionManager.
+     * Typically the channel that is invoked with the worker will have to implement an
+     * interface specific for that worker.
+     * @param worker - Worker string must be a UPFileSpec.xxx value.
+     * @param idempotent a <code>boolean</code> value sepcifying if a URL should be idempotent
+     * @return URL to invoke the worker.
+     * @exception PortalException if an error occurs
+     */
+    public String getBaseWorkerURL(String worker, boolean idempotent) throws PortalException {
+        String url=null;
+        UPFileSpec upfs=new UPFileSpec(channelUPFile);
+        upfs.setMethod(UPFileSpec.WORKER_METHOD);
+        upfs.setMethodNodeId(worker);
+        if(idempotent) {
+            upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+        }
+                        
+        url=upfs.getUPFile();
+            /*
+        } catch (Exception e) {
+            LogService.instance().log(LogService.ERROR,"ChannelRuntimeData::getWorkerActionURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+        }
+            */
         return url;
     }
 
