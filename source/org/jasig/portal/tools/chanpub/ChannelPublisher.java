@@ -266,10 +266,11 @@ public class ChannelPublisher {
   private static ChannelInfo getChannelInfo(String chanDefFile) throws Exception {
         ChannelInfo ci = new ChannelInfo();
         Document doc = null;
-    
+        InputStream is = null;
+        
         try {
           // Build a DOM tree out of Channel_To_Publish.xml
-          InputStream is = ResourceLoader.getResourceAsStream(ChannelPublisher.class, chanDefsLocation + "/" + chanDefFile);
+          is = ResourceLoader.getResourceAsStream(ChannelPublisher.class, chanDefsLocation + "/" + chanDefFile);
           doc = domParser.parse(is);
       
           Element chanDefE = doc.getDocumentElement();
@@ -400,6 +401,8 @@ public class ChannelPublisher {
           LogService.log(LogService.ERROR, "getChannelInfo() :: Exception reading channel definition file: " + chanDefFile);
           LogService.log(LogService.ERROR, e);
           throw e;
+        } finally {
+        	is.close();
         }
         return ci;
   }  
