@@ -81,7 +81,7 @@ public class SelectMembers extends org.jasig.portal.channels.groupsmanager.comma
          String tagName = theCommand + "//";
          if (key.indexOf(tagName) > -1) {
             thisPerm = key.substring(key.lastIndexOf("/") + 1);
-            if (thisPerm != null && !thisPerm.equals("")) {
+            if (!Utility.areEqual(thisPerm, "")) {
                //Utility.logMessage("DEBUG","SelectMembers::renderXML(): Iterating over input");
                String princeKey = thisPerm.substring(0, thisPerm.lastIndexOf("|"));
                String princeType = thisPerm.substring(thisPerm.lastIndexOf("|") + 1);
@@ -89,6 +89,7 @@ public class SelectMembers extends org.jasig.portal.channels.groupsmanager.comma
                theElement = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, princeType, princeKey);
                // test first
                if (theElement != null) {
+                  GroupsManagerXML.refreshAllNodesIfRequired(xmlDoc, theElement);
                   theElement.setAttribute("selected", String.valueOf(theCommand.equals("Select")));
                   Utility.logMessage("DEBUG", "SelectMembers::execute(): " + theCommand
                         + "ed element " + princeType + " " + princeKey);

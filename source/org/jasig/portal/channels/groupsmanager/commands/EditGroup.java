@@ -85,8 +85,7 @@ public class EditGroup extends GroupsManagerCommand {
          String parentKey = parentElem.getAttribute("key");
          ILockableEntityGroup lockedGroup = GroupService.findLockableGroup(parentKey, lockKey);
          if (lockedGroup != null){
-            // refresh element
-            //    where does this method go...xml,utility,wrapper AND pull out elem caching
+            GroupsManagerXML.refreshAllNodesIfRequired(sessionData.model, parentElem);
             // store in sessionData
             sessionData.lockedGroup=lockedGroup;
             sessionData.mode = EDIT_MODE;

@@ -180,7 +180,7 @@ public class InitialGroupContextImpl
     * @param newExpanded
     */
    public void setExpanded (String newExpanded) {
-      if (newExpanded != null && (newExpanded.equals("y") || newExpanded.equals("1"))) {
+      if (Utility.areEqual(newExpanded, "y") || Utility.areEqual(newExpanded, "1")) {
          expanded = true;
       }
       else {

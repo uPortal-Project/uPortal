@@ -48,13 +48,13 @@ import  java.util.*;
 import  java.io.*;
 import  org.jasig.portal.EntityTypes;  /** @todo remove when groups/EntityTypes is removed */
 import  org.jasig.portal.*;
-import  org.jasig.portal.groups.IEntity;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
+import  org.jasig.portal.groups.*;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.ChannelStaticData;
+import  org.w3c.dom.Node;
+import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Document;
 import  javax.xml.parsers.*;
@@ -304,6 +304,21 @@ public class GroupsManagerXML
       return  selElem;
    }
 
+   /**
+    * Returns the value of an element for a given name
+    * @param aDoc
+    * @param tagname
+    * @param id
+    * @return Element
+    */
+   public static String getElementValueForTagname (Element anElem, String tagname) {
+      NodeList nList = anElem.getElementsByTagName(tagname);
+      Utility.logMessage("DEBUG", "GroupsManagerXML:getElementValueForTagname(): retrieve element value for tagname: " + tagname);
+      if (nList.getLength() > 0) {
+         return nList.item(0).getFirstChild().getNodeValue();
+      }
+      return "";
+   }
    /**
     * Returns a name from the EntityNameFinderService, for a key and class
     * @param typClass
@@ -584,6 +599,103 @@ public class GroupsManagerXML
       prm.setAttribute("type", prmType);
       prm.setAttribute("target", prmTarget);
       return  prm;
+   }
+
+   /**
+    * Updates all nodes for the same IEntityGroup with information about the IEntityGroup.
+    * @param model  Document
+    * @param entGrp  IEntityGroup
+    * @param compareElement Element
+    * @throws GroupsException
+    */
+   public static void refreshAllNodes (Document model, IEntityGroup entGrp)
+         throws GroupsException {
+      String updKey = entGrp.getKey();
+      Node updNode;
+      Element updElem;
+      Utility.logMessage("DEBUG", "GroupsManagerXML::refreshAllNodes(): About to refresh all nodes for IEntityGroup: "
+            + updKey);
+      Iterator updatedNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
+            updKey);
+      Utility.logMessage("DEBUG", "GroupsManagerXML::refreshAllNodes(): About to gather all elements for key: "
+            + updKey);
+      while (updatedNodes.hasNext()) {
+         updNode = (Node)updatedNodes.next();
+         updElem = (Element)updNode;
+         refreshElement (updElem, entGrp);
+      }
+      return;
+   }
+
+   /**
+    * Updates all nodes representing the same IEntityGroup that is represented by the
+    * anElem, if the anElem is out of date with the IEntityGroup.
+    * @param model  Document
+    * @param anElem Element
+    */
+   public static void refreshAllNodesIfRequired (Document model, Element anElem){
+      try{
+         if (refreshRequired(anElem, null)) {
+            Utility.logMessage("Debug", "GroupsManagerXML::refreshAllNodesIfRequired(): Element needs refreshing : "
+               + anElem);
+            refreshAllNodes(model,retrieveGroup(anElem.getAttribute("key")));
+         }
+      } catch (GroupsException ge){
+         Utility.logMessage("INFO", "GroupsManagerXML::refreshAllNodesIfRequired(): "
+            + "Unable to refresh all elements for IEntityGroup represented by element: "
+            + anElem);
+      }
+      return;
+   }
+
+   /**
+    * Updates an Element with information about the IEntityGroup.
+    * @param updElem  Element
+    * @param entGrp  IEntityGroup
+    */
+   public static void refreshElement (Element updElem, IEntityGroup entGrp) {
+      IEntityGroup updEntGrp = (entGrp != null ? entGrp : retrieveGroup (updElem.getAttribute("key")));
+      Utility.logMessage("DEBUG", "GroupsManagerXML::refreshElement(): About to update xml for element id: "
+            + updElem.getAttribute("id") + " Key: " + updElem.getAttribute("key"));
+      NodeList nList = updElem.getElementsByTagName("dc:title");
+      if (nList.getLength() > 0) {
+         Node titleNode = nList.item(0);
+         titleNode.getFirstChild().setNodeValue(entGrp.getName());
+      }
+
+      NodeList dList = updElem.getElementsByTagName("dc:description");
+      if (dList.getLength() > 0) {
+         Node descNode = dList.item(0);
+         descNode.getFirstChild().setNodeValue(entGrp.getDescription());
+      }
+      return;
+   }
+
+   /**
+    * Updates an Element with information about the IEntityGroup.
+    * @param chkElem Element
+    * @param entGrp  IEntityGroup
+    * @return boolean
+    *
+    */
+   public static boolean refreshRequired (Element chkElem, IEntityGroup entGrp) {
+      IEntityGroup chkEntGrp = (entGrp != null ? entGrp : retrieveGroup (chkElem.getAttribute("key")));
+      Utility.logMessage("DEBUG", "GroupsManagerXML::refreshRequired(): About to check if element needs to be refreshed for Element ID: "
+            + chkElem.getAttribute("id") + " Key: " + chkElem.getAttribute("key"));
+      String elemValue = getElementValueForTagname(chkElem, "dc:title");
+      /** @todo should check for nulls for both element and group values */
+      if (!Utility.areEqual(elemValue, chkEntGrp.getName())){
+         Utility.logMessage("DEBUG", "GroupsManagerXML::refreshRequired(): Name has changed!!");
+         return true;
+      }
+      elemValue = getElementValueForTagname(chkElem, "dc:description");
+      /** @todo should check for nulls for both element and group values */
+      if (!Utility.areEqual(elemValue, chkEntGrp.getDescription())){
+         Utility.logMessage("DEBUG", "GroupsManagerXML::refreshRequired(): Description has changed!!");
+         return true;
+      }
+
+      return false;
    }
 
    /**

@@ -171,7 +171,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
       boolean addit;
       for (int i = 0; i < nList.getLength(); i++) {
          Element elem = (org.w3c.dom.Element)nList.item(i);
-         if (elem.getAttribute("selected") != null && elem.getAttribute("selected").equals("true")) {
+         if (Utility.areEqual(elem.getAttribute("selected"), "true")) {
             addit = true;
             Iterator gmItr = gmCollection.iterator();
             while (gmItr.hasNext()) {

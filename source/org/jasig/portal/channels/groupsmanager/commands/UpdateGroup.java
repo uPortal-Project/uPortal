@@ -71,36 +71,47 @@ public class UpdateGroup extends GroupsManagerCommand {
     * @param sessionData
     */
    public void execute (CGroupsManagerSessionData sessionData) {
+      /** @todo check that the values were actually changed before updating.
+       *  This way we could avoid updating elements. */
       ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Start");
-      //Document xmlDoc = (Document)staticData.get("xmlDoc");sessionData.model
       Document xmlDoc = (Document)sessionData.model;
       String theCommand = runtimeData.getParameter("grpCommand");
-      String newGrpName = runtimeData.getParameter("grpName");                  //?
+      String newName = runtimeData.getParameter("grpName");
       String newDescription = runtimeData.getParameter("grpDescription");
       String updId = getCommandArg(runtimeData);
-      Node updNode;
       Node titleNode;
       Element updElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, updId);
       String updKey = updElem.getAttribute("key");
-      String curGrpName = "unknown";
       String retMsg;
-      NodeList nList = updElem.getElementsByTagName("dc:title");
-      int nListCount = nList.getLength();
-      Utility.logMessage("DEBUG", "UpdateGroup::execute(): nList length = " + nListCount);
-      if (nListCount > 0) {
-         titleNode = nList.item(0);
-         curGrpName = titleNode.getFirstChild().getNodeValue();
-      }
-      else {
+      String curName = GroupsManagerXML.getElementValueForTagname(updElem, "dc:title");
+      if (curName == null || curName.equals("")) {
          Utility.logMessage("ERROR", "UpdateGroup::execute(): Cannot find dc:title element for: "
                + updElem.getAttribute("name"));
          return;
       }
-      Utility.logMessage("DEBUG", "UpdateGroup::execute(): Group: " + curGrpName + "will be updated to :"
-            + newGrpName);
+      String curDescription = GroupsManagerXML.getElementValueForTagname(updElem, "dc:description");
+      boolean hasChanged = false;
+      if (!Utility.areEqual(curName, newName)){
+         Utility.logMessage("DEBUG", "UpdateGroup::execute(): Group name: '" + curName
+            + "' will be updated to : '" + newName +"'");
+         hasChanged = true;
+      }
+      if (!Utility.areEqual(curDescription, newDescription)){
+         Utility.logMessage("DEBUG", "UpdateGroup::execute(): Group: '" + newDescription
+            + "' will be updated to : '" + newDescription +"'");
+         hasChanged = true;
+      }
+
+      if (!hasChanged){
+         Utility.logMessage("DEBUG", "UpdateGroup::execute(): Update was not applied because nothing has been changed.");
+         retMsg = "Update was not applied. No changes were entered.";
+         sessionData.feedback = retMsg;
+         return;
+      }
+
       IEntityGroup updGroup = GroupsManagerXML.retrieveGroup(updKey);
       if (updGroup == null) {
          retMsg = "Unable to retrieve Group!";
@@ -109,46 +120,23 @@ public class UpdateGroup extends GroupsManagerCommand {
       }
       try {
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update group: "
-               + curGrpName);
-         updGroup.setName(newGrpName);
+               + curName);
+         updGroup.setName(newName);
          updGroup.setDescription(newDescription);
          updGroup.update();
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
-               + curGrpName);
+               + curName);
          // update all xml nodes for this group
-         Iterator updatedNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
-               updKey);
-         Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to gather all elements for key: "
-               + updKey);
-         while (updatedNodes.hasNext()) {
-            updNode = (Node)updatedNodes.next();
-            updElem = (Element)updNode;
-            Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml for element id: "
-                  + updElem.getAttribute("id"));
-            nList = updElem.getElementsByTagName("dc:title");
-            if (nList.getLength() > 0) {
-               titleNode = nList.item(0);
-               titleNode.getFirstChild().setNodeValue(newGrpName);
-            }
-            
-            NodeList dList = updElem.getElementsByTagName("dc:description");
-            if (dList.getLength() > 0) {
-               Node descNode = dList.item(0);
-               descNode.getFirstChild().setNodeValue(newDescription);
-            }
-         }
+         GroupsManagerXML.refreshAllNodes(xmlDoc, updGroup);
       } catch (GroupsException ge) {
          retMsg = "Unable to create new group\n" + ge;
          sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "UpdateGroup::execute(): " + retMsg + ge);
       } catch (Exception e) {
-         retMsg = "Unable to update group : " + curGrpName;
+         retMsg = "Unable to update group : " + curName;
          sessionData.feedback = retMsg;
          Utility.logMessage("ERROR", "UpdateGroup::execute(): " + retMsg + ".\n" + e);
       }
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Finished");
    }
 }
-
-
-

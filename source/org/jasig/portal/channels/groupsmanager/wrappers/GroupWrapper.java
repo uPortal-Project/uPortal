@@ -118,6 +118,7 @@ public class GroupWrapper extends GroupMemberWrapper {
     /**
     * Returns a GroupMember for a key.
     * @param aKey
+    * @param aType
     * @return IGroupMember
     */
    protected IGroupMember retrieveGroupMember (String aKey, String aType) {

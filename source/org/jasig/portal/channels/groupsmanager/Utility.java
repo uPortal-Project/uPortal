@@ -68,6 +68,19 @@ public class Utility
    }
 
    /**
+    * Compares 2 strings to determine if they are functionally the same. For this
+    * method null is the same as "".
+    * @param one String
+    * @param two String
+    * @return boolean
+    */
+   public static boolean areEqual (String one, String two) {
+      String str1 = (one==null ? "" : one).trim();
+      String str2 = (one==null ? "" : two).trim();
+      return str1.equals(str2);
+   }
+
+   /**
     *
     * @param ownerID The user/group ID that created this IInitialGroupContext
     * @param ownerType The entity that created this IInitialGroupContext could be either a person (p) or a group (g).

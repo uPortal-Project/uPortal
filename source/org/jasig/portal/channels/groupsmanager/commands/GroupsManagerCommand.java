@@ -92,7 +92,7 @@ public abstract class GroupsManagerCommand
       return  String.valueOf(sessionData.user.getID());
    }
 
-   
+
    /**
     * Returns the grpCommandIds parameter from runtimeData. The string usually
     * hold one element ID but could contain a string of delimited ids. (See
@@ -103,7 +103,7 @@ public abstract class GroupsManagerCommand
    public String getCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData) {
       return  (String)runtimeData.getParameter("grpCommandArg");
    }
-   
+
    /**
     * Set the CommandArg value, useful for commands which would like to chain
     * other commands
@@ -172,7 +172,7 @@ public abstract class GroupsManagerCommand
     * @return boolean
     */
    public boolean parentIsInitialGroupContext (String parentID) {
-      return  (parentID != null && parentID.equals("0"));
+      return  (Utility.areEqual(parentID, "0"));
    }
 
    /**

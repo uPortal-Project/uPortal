@@ -95,14 +95,15 @@ public class DeleteGroup extends GroupsManagerCommand {
       Node parentNode;
       Node deletedNode;
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Group: " + elemName + "will be deleted");
-      if ((delElem.getAttribute("searchResults") != null) && (delElem.getAttribute("searchResults").equals("true") )){
+      if (Utility.areEqual(delElem.getAttribute("searchResults"), "true")){
         // if it is search results, just delete the node and skip the rest
         delElem.getParentNode().removeChild(delElem);
       }
       else{
       try {
+         /** @todo remove this section, no more element caching */
          // Needed to delete cached element
-         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.instance().get(ENTITY_TAGNAME);
+         //IGroupsManagerWrapper rap = (IGroupsManagerWrapper)GroupsManagerWrapperFactory.instance().get(ENTITY_TAGNAME);
 
          IEntityGroup delGroup = GroupsManagerXML.retrieveGroup(delKey);
          if (delGroup == null) {

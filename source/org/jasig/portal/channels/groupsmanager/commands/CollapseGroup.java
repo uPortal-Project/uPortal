@@ -77,6 +77,7 @@ public class CollapseGroup extends org.jasig.portal.channels.groupsmanager.comma
       if (collapseElem != null) {
          Utility.logMessage("DEBUG", "CollapseGroup::execute(): Element to be expanded: \n"
                + collapseElem);
+         GroupsManagerXML.refreshAllNodesIfRequired(xmlDoc, collapseElem);
          collapseElem.setAttribute("expanded", "false");
       }
       return;
