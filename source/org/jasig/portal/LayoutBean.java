@@ -561,13 +561,13 @@ public class LayoutBean extends GenericPortalBean
              String hiddenAttribute = channels[iChan].getAttribute("hidden");
              if(hiddenAttribute != null && hiddenAttribute.equals("false"))
              {
+              // Channel heading
+              IXml layoutXml = getLayoutXml(req, getUserName (req));
+              ILayout layout = (ILayout)layoutXml.getRoot ();
+
               out.println ("<table border=0 cellpadding=1 cellspacing=4 width=\"100%\">");
               out.println ("  <tr>");
-              out.println ("    <td bgcolor=\"#CCCCCC\">");
-
-              // Channel heading
-              IXml layoutXml = getLayoutXml (req, getUserName (req));
-              ILayout layout = (ILayout) layoutXml.getRoot ();
+              out.println ("    <td bgcolor=" + layout.getAttribute("channelHeadingColor") + ">");
 
               out.println ("      <table border=0 cellpadding=0 cellspacing=0 width=\"100%\" bgcolor=\"" + layout.getAttribute ("channelHeadingColor") + "\">");
               out.println ("        <tr>");
