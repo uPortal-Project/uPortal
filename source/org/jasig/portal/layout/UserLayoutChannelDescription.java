@@ -81,10 +81,10 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
                     String pName=e.getAttribute("name");
                     String pValue=e.getAttribute("value");
 
-                    Boolean canOverride=new Boolean(true);
+                    Boolean canOverride=new Boolean(false);
                     String str_override=e.getAttribute("override");
-                    if(str_override!=null && str_override.equals("no")) {
-                        canOverride=new Boolean(false);
+                    if(str_override!=null && str_override.equals("yes")) {
+                        canOverride=new Boolean(true);
                     }
 
                     if(pName!=null && pValue!=null) {
@@ -304,10 +304,10 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
      * Obtain a channel parameter override value.
      *
      * @param parameterName a <code>String</code> value
-     * @return a <code>String</code> value
+     * @return a <code>boolean</code> value
      */
-    public String getParameterOverrideValue(String parameterName) {
-        return (String) override.get(parameterName);
+    public boolean getParameterOverrideValue(String parameterName) {
+        return ((Boolean)override.get(parameterName)).booleanValue();
     }
 
     /**
@@ -428,12 +428,12 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription  {
     }
 
     protected void addParameterChildren(Element node, Document root) {
-
         for(Enumeration enum = this.getParameterNames(); enum.hasMoreElements();) {
             Element pElement=root.createElement("parameter");
             String pName=(String)enum.nextElement();
             pElement.setAttribute("name",pName);
-            pElement.setAttribute("value",getParameterValue(pName));
+            pElement.setAttribute("value",getParameterValue(pName));            
+            pElement.setAttribute("override",getParameterOverrideValue(pName) ? "yes" : "no");
             node.appendChild(pElement);
         }
     }
