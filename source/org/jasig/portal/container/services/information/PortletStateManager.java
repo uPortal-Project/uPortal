@@ -6,6 +6,7 @@
 package org.jasig.portal.container.services.information;
 
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -100,14 +101,18 @@ public class PortletStateManager {
 	}
 	
 	public static synchronized Hashtable getURLDecodedParameters ( HttpServletRequest request ) {
-		String url = request.getRequestURL().toString();
-		if ( url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG) > 0 ) {
-		  int offset = UPFileSpec.PORTLET_PARAMS_DELIM_BEG.length();	
-			 String encodedParams = url.substring(url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG)+offset,
-									url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_END));	
-			return decodeURLParameters(URLDecoder.decode(encodedParams));
-		}	
-			return new Hashtable();	
+	    String url = request.getRequestURL().toString();
+	    if ( url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG) > 0 ) {
+	        int offset = UPFileSpec.PORTLET_PARAMS_DELIM_BEG.length();	
+	        String encodedParams = url.substring(url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG)+offset,
+	                url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_END));	
+	        try {
+	            return decodeURLParameters(URLDecoder.decode(encodedParams,"UTF-8"));
+	        } catch (UnsupportedEncodingException e) {
+	            throw new RuntimeException(e);
+	        }
+	    }	
+	    return new Hashtable();	
 	}
 	
 	/**
@@ -214,13 +219,22 @@ public class PortletStateManager {
 	
 	private static String encodeQueryString ( String text ) {
         String result = CommonUtils.replaceText(text, UPFileSpec.PORTAL_URL_SEPARATOR, getPercentEncodedString(UPFileSpec.PORTAL_URL_SEPARATOR));
-        result = URLEncoder.encode(result);
+        try {
+            result = URLEncoder.encode(result,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
         
         return result;
 	}
     
 	private static String decodeQueryString ( String text ) {
-        String result = result = URLDecoder.decode(text);;
+        String result;
+        try {
+            result = result = URLDecoder.decode(text,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
         result = CommonUtils.replaceText(result, getPercentEncodedString(UPFileSpec.PORTAL_URL_SEPARATOR), UPFileSpec.PORTAL_URL_SEPARATOR);
         
         return result;
@@ -530,7 +544,12 @@ public class PortletStateManager {
         if (encodedUrlParams.length() > 0) {
             actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_BEG);
             
-            final String urlEncodedUrlParams = URLEncoder.encode(encodedUrlParams);
+            final String urlEncodedUrlParams;
+            try {
+                urlEncodedUrlParams = URLEncoder.encode(encodedUrlParams,"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
             actionUrl.append(urlEncodedUrlParams);
             
             actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_END);

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -439,7 +440,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                    // java.util.Vector.  Should check
                    String pVal = (String)state.iperson.getAttribute(pName);
                    if (pVal != null)
-                     newXML.append(URLEncoder.encode(pVal));
+                    try {
+                        newXML.append(URLEncoder.encode(pVal,"UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
                  }
                  else {
                      if (log.isInfoEnabled())
@@ -489,7 +494,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                      appendchar = "&";
                      newXML.append(pName);
                      newXML.append("=");
-                     newXML.append(URLEncoder.encode(value_array[i++].trim()));
+                     try {
+                        newXML.append(URLEncoder.encode(value_array[i++].trim(),"UTF-8"));
+                    } catch (UnsupportedEncodingException e1) {
+                        throw new RuntimeException(e1);
+                    }
                    }
                  }
                }
